@@ -26,8 +26,8 @@ namespace DaggerfallConnect.Arena2
 
         const int nameLength = 32;
 
-        FileProxy magicItemsFile = new FileProxy();
-        List<MagicItemTemplate> magicItems = new List<MagicItemTemplate>();
+        readonly FileProxy magicItemsFile = new FileProxy();
+        readonly List<MagicItemTemplate> magicItems = new List<MagicItemTemplate>();
 
         #endregion
 

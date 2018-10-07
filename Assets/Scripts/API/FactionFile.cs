@@ -28,9 +28,9 @@ namespace DaggerfallConnect.Arena2
     {
         #region Fields
 
-        FileProxy factionFile = new FileProxy();
-        Dictionary<int, FactionData> factionDict = new Dictionary<int, FactionData>();
-        Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
+        readonly FileProxy factionFile = new FileProxy();
+        readonly Dictionary<int, FactionData> factionDict = new Dictionary<int, FactionData>();
+        readonly Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
 
         #endregion
 

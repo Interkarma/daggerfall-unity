@@ -28,7 +28,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         private class BiogFileMacroDataSource : MacroDataSource
         {
-            private BiogFile parent;
+            private readonly BiogFile parent;
 
             private string GetChangeStr(short val)
             {

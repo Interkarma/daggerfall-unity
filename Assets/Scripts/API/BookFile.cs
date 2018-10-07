@@ -27,7 +27,7 @@ namespace DaggerfallConnect.Arena2
         const string books = "books";
         const string naughty = "naughty";
 
-        FileProxy bookFile = new FileProxy();
+        readonly FileProxy bookFile = new FileProxy();
         BookHeader header = new BookHeader();
 
         #endregion

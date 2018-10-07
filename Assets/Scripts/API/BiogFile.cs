@@ -492,10 +492,10 @@ namespace DaggerfallConnect.Arena2
         public class Question
         {
             public const int lines = 2;
-            const int maxAnswers = 10;
+            //const int maxAnswers = 10;
 
-            string[] text = new string[lines];
-            List<Answer> answers = new List<Answer>();
+            readonly string[] text = new string[lines];
+            readonly List<Answer> answers = new List<Answer>();
 
             public Question()
             {
@@ -519,7 +519,7 @@ namespace DaggerfallConnect.Arena2
         public class Answer
         {
             string text = string.Empty;
-            List<string> effects = new List<string>();
+            readonly List<string> effects = new List<string>();
 
             public string Text
             {

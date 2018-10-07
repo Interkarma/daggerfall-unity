@@ -33,7 +33,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// Array of 256x RGB values. Includes 8-byte header for supporting .COL files.
         /// </summary>
-        private byte[] paletteBuffer = new byte[776];
+        private readonly byte[] paletteBuffer = new byte[776];
 
         #endregion
 
@@ -99,7 +99,7 @@ namespace DaggerfallConnect
 
             // Read palette
             BinaryReader reader = fileProxy.GetReader();
-            if (fileProxy.Length != reader.Read(paletteBuffer, 0, (int)fileProxy.Length))
+            if (fileProxy.Length != reader.Read(paletteBuffer, 0, fileProxy.Length))
                 return false;
 
             // Multiply MAP.PAL

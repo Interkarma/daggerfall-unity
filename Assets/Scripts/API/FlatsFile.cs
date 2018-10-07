@@ -26,9 +26,9 @@ namespace DaggerfallConnect.Arena2
     {
         #region Fields
 
-        FileProxy flatsFile = new FileProxy();
+        readonly FileProxy flatsFile = new FileProxy();
 
-        Dictionary<int, FlatData> flatsDict = new Dictionary<int, FlatData>();
+        readonly Dictionary<int, FlatData> flatsDict = new Dictionary<int, FlatData>();
 
         #endregion
 

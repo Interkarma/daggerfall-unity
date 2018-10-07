@@ -32,7 +32,7 @@ namespace DaggerfallConnect.Arena2
         private const int subMeshBufferLength = 32;
         private const int planeBufferLength = 512;
         private const int pointBufferLength = 16;
-        private const int indexBufferLength = 16;
+        //private const int indexBufferLength = 16;
         private const int calculatedUVBufferLength = 24;
 
         // Divisors for points and textures
@@ -40,15 +40,15 @@ namespace DaggerfallConnect.Arena2
         private const float textureDivisor = 16.0f;
 
         // Buffer arrays used during decomposition
-        private int[] cornerPointBuffer = new int[cornerBufferLength];
-        private TextureIndex[] uniqueTextureBuffer = new TextureIndex[uniqueTextureBufferLength];
-        private DFSubMeshBuffer[] subMeshBuffer = new DFSubMeshBuffer[subMeshBufferLength];
+        private readonly int[] cornerPointBuffer = new int[cornerBufferLength];
+        private readonly TextureIndex[] uniqueTextureBuffer = new TextureIndex[uniqueTextureBufferLength];
+        private readonly DFSubMeshBuffer[] subMeshBuffer = new DFSubMeshBuffer[subMeshBufferLength];
         private FaceUVTool.DFPurePoint[] calculatedUVBuffer = new FaceUVTool.DFPurePoint[calculatedUVBufferLength];
 
         /// <summary>
         /// Index lookup dictionary.
         /// </summary>
-        private Dictionary<UInt32, int> recordIndexLookup = new Dictionary<UInt32, int>();
+        private readonly Dictionary<UInt32, int> recordIndexLookup = new Dictionary<UInt32, int>();
 
         /// <summary>
         /// Auto-discard behaviour enabled or disabled.
@@ -63,7 +63,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// The BsaFile representing ARCH3D.BSA
         /// </summary>
-        private BsaFile bsaFile = new BsaFile();
+        private readonly BsaFile bsaFile = new BsaFile();
 
         /// <summary>
         /// Array of decomposed mesh records.
@@ -73,7 +73,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Object for calculating UV values of face points
         /// </summary>
-        private FaceUVTool faceUVTool = new FaceUVTool();
+        private readonly FaceUVTool faceUVTool = new FaceUVTool();
 
         #endregion
 

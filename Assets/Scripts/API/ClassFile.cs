@@ -24,7 +24,7 @@ namespace DaggerfallConnect.Arena2
     {
         #region Fields
 
-        FileProxy file = new FileProxy();
+        readonly FileProxy file = new FileProxy();
         DFCareer career = null;
 
         #endregion

@@ -43,7 +43,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// All region names.
         /// </summary>
-        private string[] regionNames = {
+        private readonly string[] regionNames = {
             "Alik'r Desert", "Dragontail Mountains", "Glenpoint Foothills", "Daggerfall Bluffs",
             "Yeorth Burrowland", "Dwynnen", "Ravennian Forest", "Devilrock",
             "Malekna Forest", "Isle of Balfiera", "Bantha", "Dak'fron",
@@ -60,7 +60,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Block file prefixes.
         /// </summary>
-        private string[] rmbBlockPrefixes = {
+        private readonly string[] rmbBlockPrefixes = {
             "TVRN", "GENR", "RESI", "WEAP", "ARMR", "ALCH", "BANK", "BOOK",
             "CLOT", "FURN", "GEMS", "LIBR", "PAWN", "TEMP", "TEMP", "PALA",
             "FARM", "DUNG", "CAST", "MANR", "SHRI", "RUIN", "SHCK", "GRVE",
@@ -72,12 +72,12 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Letters that form the second part of an RMB block name.
         /// </summary>
-        string[] letter2Array = { "A", "L", "M", "S" };
+        readonly string[] letter2Array = { "A", "L", "M", "S" };
 
         /// <summary>
         /// RDB block letters array.
         /// </summary>
-        private string[] rdbBlockLetters = { "N", "W", "L", "S", "B", "M" };
+        private readonly string[] rdbBlockLetters = { "N", "W", "L", "S", "B", "M" };
 
         /// <summary>
         /// Auto-discard behaviour enabled or disabled.
@@ -92,7 +92,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// The BsaFile representing MAPS.BSA.
         /// </summary>
-        private BsaFile bsaFile = new BsaFile();
+        private readonly BsaFile bsaFile = new BsaFile();
 
         /// <summary>
         /// Array of decomposed region records.
@@ -410,13 +410,6 @@ namespace DaggerfallConnect.Arena2
                     settings.Names = FactionFile.FactionRaces.Breton;
                     break;
                 case (int)Climates.Desert:
-                    settings.ClimateType = DFLocation.ClimateBaseType.Desert;
-                    settings.GroundArchive = 2;
-                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_Desert;
-                    settings.SkyBase = 8;
-                    settings.People = FactionFile.FactionRaces.Redguard;
-                    settings.Names = FactionFile.FactionRaces.Redguard;
-                    break;
                 case (int)Climates.Desert2:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
@@ -903,7 +896,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="dfLocation">DFLocation.</param>
         private void ReadClimatePoliticData(ref DFLocation dfLocation)
         {
-            DFPosition pos = LongitudeLatitudeToMapPixel((int)dfLocation.MapTableData.Longitude, (int)dfLocation.MapTableData.Latitude);
+            DFPosition pos = LongitudeLatitudeToMapPixel(dfLocation.MapTableData.Longitude, dfLocation.MapTableData.Latitude);
 
             // Read politic data. This should always equal region index + 128.
             dfLocation.Politic = politicPak.GetValue(pos.X, pos.Y);
@@ -1175,7 +1168,7 @@ namespace DaggerfallConnect.Arena2
                 // Decompose bitfield
                 UInt16 bitfield = dfLocation.Dungeon.Blocks[i].BlockNumberStartIndexBitfield;
                 dfLocation.Dungeon.Blocks[i].BlockNumber = (UInt16)(bitfield & 0x3ff);
-                dfLocation.Dungeon.Blocks[i].IsStartingBlock = ((bitfield & 0x400) == 0x400) ? true : false;
+                dfLocation.Dungeon.Blocks[i].IsStartingBlock = ((bitfield & 0x400) == 0x400);
                 dfLocation.Dungeon.Blocks[i].BlockIndex = (Byte)(bitfield >> 11);
 
                 // Compose block name

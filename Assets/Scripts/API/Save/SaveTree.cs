@@ -31,7 +31,7 @@ namespace DaggerfallConnect.Save
         public Dictionary<uint, SaveTreeBaseRecord> RecordDictionary = new Dictionary<uint, SaveTreeBaseRecord>();
 
         // Private fields
-        FileProxy saveTreeFile = new FileProxy();
+        readonly FileProxy saveTreeFile = new FileProxy();
         int duplicateKeysFound = 0;
 
         /// <summary>

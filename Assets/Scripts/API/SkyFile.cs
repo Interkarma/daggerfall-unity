@@ -28,19 +28,19 @@ namespace DaggerfallConnect.Arena2
         private const int frameWidth = 512;
         private const int frameHeight = 220;
         private const int frameDataLength = frameWidth * frameHeight;
-        private const int paletteDataLength = 776;
+        //private const int paletteDataLength = 776;
         private const long paletteDataPosition = 0;
         private const long imageDataPosition = 549120;
 
         /// <summary>
         /// Palette array.
         /// </summary>
-        private DFPalette[] palettes = new DFPalette[32];
+        private readonly DFPalette[] palettes = new DFPalette[32];
 
         /// <summary>
         /// Bitmap array.
         /// </summary>
-        private DFBitmap[] bitmaps = new DFBitmap[64];
+        private readonly DFBitmap[] bitmaps = new DFBitmap[64];
 
         #endregion
 

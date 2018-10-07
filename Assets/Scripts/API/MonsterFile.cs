@@ -27,7 +27,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// The BsaFile representing MONSTER.BSA.
         /// </summary>
-        private BsaFile bsaFile = new BsaFile();
+        private readonly BsaFile bsaFile = new BsaFile();
 
         #endregion
 

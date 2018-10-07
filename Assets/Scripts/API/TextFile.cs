@@ -28,7 +28,7 @@ namespace DaggerfallConnect.Arena2
         FileProxy fileProxy;
         bool isLoaded = false;
         TextRecordDatabaseHeader header;
-        Dictionary<int, int> recordIdToIndexDict = new Dictionary<int, int>();
+        readonly Dictionary<int, int> recordIdToIndexDict = new Dictionary<int, int>();
 
         #region Properties
 

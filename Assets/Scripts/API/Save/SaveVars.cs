@@ -37,16 +37,16 @@ namespace DaggerfallConnect.Save
         const int crimeCommittedOffset = 0x3A3;
         const int inDungeonWaterOffset = 0x3A6;
         const int breathRemainingOffset = 0x3AB;
-        const int climateWeathersOffset = 0x3B7;
+        //const int climateWeathersOffset = 0x3B7;
         const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
-        const int maleOrFemaleClothingOffset = 0x3D1; // 6 for male clothing or 12 for female clothing, matching player gender. Not bothering to read right now.
+        //const int maleOrFemaleClothingOffset = 0x3D1; // 6 for male clothing or 12 for female clothing, matching player gender.
         const int usingLeftHandWeaponOffset = 0x3D9;
-        const int currentRegionIdOffset = 0x173A; // Not bothering to read right now.
+        //const int currentRegionIdOffset = 0x173A;
         const int cheatFlagsOffset = 0x173B;
         const int lastSkillCheckTimeOffset = 0x179A;
         const int climateWeathersDuplicateOffset = 0x17A2; // Same data as other climateWeathers
-        const int dungeonWaterLevelOffset = 0x17A8; // Not bothering to read right now.
+        //const int dungeonWaterLevelOffset = 0x17A8;
 
         const int regionDataOffset = 0x3DA;
         const int regionDataLength = 80;
@@ -57,7 +57,7 @@ namespace DaggerfallConnect.Save
 
         // Private fields
 
-        FileProxy saveVarsFile = new FileProxy();
+        readonly FileProxy saveVarsFile = new FileProxy();
 
         int biographyResistDiseaseMod = 0;
         int biographyResistMagicMod = 0;
@@ -94,8 +94,8 @@ namespace DaggerfallConnect.Save
 
         uint lastSkillCheckTime = 0;
 
-        List<PlayerEntity.RegionDataRecord> regionDataList = new List<PlayerEntity.RegionDataRecord>();
-        List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
+        readonly List<PlayerEntity.RegionDataRecord> regionDataList = new List<PlayerEntity.RegionDataRecord>();
+        readonly List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
 
         #endregion
 
@@ -104,7 +104,7 @@ namespace DaggerfallConnect.Save
         /// <summary>
         /// Emperor's son's name.
         /// </summary>
-        string[] emperorSonNames = { "Pelagius", "Cephorus", "Uriel", "Cassynder", "Voragiel", "Trabbatus" };
+        readonly string[] emperorSonNames = { "Pelagius", "Cephorus", "Uriel", "Cassynder", "Voragiel", "Trabbatus" };
 
         /// <summary>
         /// Travel flags.
@@ -416,6 +416,7 @@ namespace DaggerfallConnect.Save
             ReadIsDay(reader);
             ReadCrimeCommitted(reader);
             ReadInDungeonWater(reader);
+            ReadBreathRemaining(reader);
             ReadClimateWeathers(reader);
             ReadWeaponDrawn(reader);
             ReadGameTime(reader);

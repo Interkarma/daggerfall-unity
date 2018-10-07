@@ -27,7 +27,7 @@ namespace DaggerfallConnect.Arena2
         const int CHUNKHEADERSIZE = 6;
 
         FLICHeader header = new FLICHeader();
-        FileProxy managedFile = new FileProxy();
+        readonly FileProxy managedFile = new FileProxy();
         BinaryReader reader;
 
         #endregion
@@ -442,13 +442,13 @@ namespace DaggerfallConnect.Arena2
         }
 
         // Set all pixels in buffer to black
-        void Decode_Black()
+        /*void Decode_Black()
         {
             for (int i = 0; i < FrameBuffer.Length; i++)
             {
                 FrameBuffer[i] = Color.black;
             }
-        }
+        }*/
 
         // Reads count size segment into the buffer
         void Screen_Copy_Seg(int x, int y, int count)

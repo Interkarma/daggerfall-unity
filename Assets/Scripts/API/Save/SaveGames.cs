@@ -33,8 +33,7 @@ namespace DaggerfallConnect.Save
 
         bool isPathOpen = false;
         bool isReadOnly = true;
-
-        Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
+        readonly Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
         SaveTree saveTree;
         SaveVars saveVars;
         BsaFile mapSave;
@@ -236,14 +235,11 @@ namespace DaggerfallConnect.Save
                     DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
                     for (int i = 0; i < regionData.LocationCount; i++)
                     {
-                        if ((data[i] & 0x40) != 0)
+                        // If a location is marked as discovered in classic but not DF Unity, discover it for DF Unity
+                        if ((data[i] & 0x40) != 0 && !regionData.MapTable[i].Discovered)
                         {
-                            // Discover the location in DF Unity's data
-                            if (regionData.MapTable[i].Discovered == false)
-                            {
-                                DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
-                                gps.DiscoverLocation(regionData.Name, location.Name);
-                            }
+                            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
+                            gps.DiscoverLocation(regionData.Name, location.Name);
                         }
                     }
                 }
@@ -281,10 +277,10 @@ namespace DaggerfallConnect.Save
 
         #region Private Methods
 
-        string GetSaveIndexName(int save)
+        /*string GetSaveIndexName(int save)
         {
             return string.Format("SAVE{0}", save);
-        }
+        }*/
 
         string GetArena2Path()
         {

@@ -15,7 +15,7 @@ namespace DaggerfallConnect.Utility
     /// <summary>
     /// Provides static power of two calculations.
     /// </summary>
-    public class PowerOfTwo
+    public static class PowerOfTwo
     {
 
         /// <summary>

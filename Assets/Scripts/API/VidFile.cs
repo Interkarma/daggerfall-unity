@@ -27,12 +27,12 @@ namespace DaggerfallConnect.Arena2
     {
         const string VID = "VID";
         const int sampleRate = 11025;
-        const int delayMultiplier = 185;
+        //const int delayMultiplier = 185;
         const int paletteDataLength = 768;
         const int paletteColorCount = 256;
         const int paletteMultiplier = 4;
 
-        FileProxy vidFile = new FileProxy();
+        readonly FileProxy vidFile = new FileProxy();
         VidHeader header = new VidHeader();
         BinaryReader reader;
         Color32[] palette;
