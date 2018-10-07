@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop
         // Just using a simple animation speed for simple billboard anims
         // You can adjust this or extend as needed
         const int animalFps = 5;
-        const int lightFps = 12;
+        const int lightFps = 20;
 
         public BillboardSummary Summary
         {
