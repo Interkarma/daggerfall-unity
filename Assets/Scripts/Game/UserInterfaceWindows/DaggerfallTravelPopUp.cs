@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //Updates text labels
         void UpdateLabels()
         {
-            availableGoldLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+            availableGoldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
             travelTimeMinutes = travelTimeCalculator.CalculateTravelTime(endPos, speedCautious, sleepModeInn, travelShip, hasHorse, hasCart);
 
             // Players can have fast travel benefit from guild memberships
@@ -326,7 +326,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Return whether player has enough gold for the selected travel options
         bool enoughGoldCheck()
         {
-            return (GameManager.Instance.PlayerEntity.GoldPieces >= tripCost);
+            return (GameManager.Instance.PlayerEntity.GetGoldAmount() >= tripCost);
         }
 
         void showNotEnoughGoldPopup()
@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
             else
-                GameManager.Instance.PlayerEntity.GoldPieces -= tripCost;
+                GameManager.Instance.PlayerEntity.DeductGoldAmount(tripCost);
 
             doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
         }
