@@ -380,7 +380,7 @@ namespace DaggerfallWorkshop.Game
                         motion = transform.up * moveSpeed;
                 }
                 // causes a random delay after being out of pitch range. for more realistic movements
-                else if (Random.Range(0, 100) >= 90)
+                else if (Random.Range(0f, 1.00f) <= Time.deltaTime)
                     pausePursuit = true; // maybe change mobile state to stationary too?
             }
             else if (pausePursuit && withinPitch)
