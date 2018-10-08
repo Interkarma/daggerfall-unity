@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youSeeA = "You see a %s.";
         public const string youSeeADeadPerson = "You see a dead person.";
         public const string youSeeADead = "You see a dead %s.";
+        public const string youCollectArrows = "You pluck your arrows out of the corpse.";
 
         public const string loiterHowManyHours = "Loiter how many hours : ";
         public const string restHowManyHours = "Rest how many hours : ";

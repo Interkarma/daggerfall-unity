@@ -618,6 +618,12 @@ namespace DaggerfallWorkshop.Game
                             DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
                             return;
                         }
+                        else if (loot.Items.Count == 1 && loot.Items.Contains(ItemGroups.Weapons, (int) Weapons.Arrow))
+                        {   // If only one item and it's arrows, then auto-pickup.
+                            GameManager.Instance.PlayerEntity.Items.TransferAll(loot.Items);
+                            DaggerfallUI.AddHUDText(HardStrings.youCollectArrows);
+                            return;
+                        }
                         break;
                     }
                 // No special handling for all other loot container types: (Nothing, RandomTreasure, DroppedLoot)

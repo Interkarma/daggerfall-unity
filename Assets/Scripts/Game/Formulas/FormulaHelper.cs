@@ -1078,6 +1078,11 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <returns>DFCareer.Elements</returns>
         public static DFCareer.Elements GetElementType(IEntityEffect effect)
         {
+            // Always return magic for non-elemental (i.e. magic-only) effects
+            if (effect.Properties.AllowedElements == ElementTypes.Magic)
+                return DFCareer.Elements.Magic;
+
+            // Otherwise return element selected by parent spell bundle
             switch (effect.ParentBundle.elementType)
             {
                 case ElementTypes.Fire:
