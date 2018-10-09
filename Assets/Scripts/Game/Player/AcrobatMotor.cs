@@ -153,8 +153,8 @@ namespace DaggerfallWorkshop.Game
             else if (!climbingMotor.IsRappelling)
             {
                 const float antiBumpFactor = 20.75f;
-                float minRange = (controller.height / 2f);
-                float maxRange = minRange + 0.90f;
+                float minRange = (controller.height / 2f) - 0.15f;
+                float maxRange = minRange + 1.10f;
 
                 // should we apply anti-bump gravity?
                 if (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
