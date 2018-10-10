@@ -1115,7 +1115,8 @@ namespace DaggerfallWorkshop.Utility
                 if (enemy)
                 {
                     enemy.LoadID = DaggerfallUnity.NextUID;
-                    enemy.QuestSpawn = true;
+                    if (foeResource != null)
+                        enemy.QuestSpawn = true;
                 }
 
                 // Disable GameObject, caller must set active when ready

@@ -196,6 +196,13 @@ namespace DaggerfallWorkshop.Game.Serialization
                 // Add QuestResourceBehaviour to GameObject
                 QuestResourceBehaviour questResourceBehaviour = entityBehaviour.gameObject.AddComponent<QuestResourceBehaviour>();
                 questResourceBehaviour.RestoreSaveData(data.questResource);
+
+                // Destroy QuestResourceBehaviour if no actual quest properties are restored from save
+                if (questResourceBehaviour.QuestUID == 0 || questResourceBehaviour.TargetSymbol == null)
+                {
+                    enemy.QuestSpawn = false;
+                    Destroy(questResourceBehaviour);
+                }
             }
 
             // Restore instanced effect bundles

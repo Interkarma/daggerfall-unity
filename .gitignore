@@ -35,7 +35,7 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-#DaggerfallUnity logs
+# DaggerfallUnity logs
 /Assets/DFTFU_Environment.log
 /Assets/DFTFU_Environment.log.meta
 
