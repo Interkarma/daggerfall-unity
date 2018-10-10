@@ -85,6 +85,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public bool WallEject { get; private set; }
         public bool IsRappelling { get; private set; }
+        public bool IsHanging { get; private set; }
         void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -216,9 +217,16 @@ namespace DaggerfallWorkshop.Game
 
             // reset for next use
             WallEject = false;
-
+            
+            /*bool pushIntoCeiling = (isClimbing && movingForward && (playerMotor.CollisionFlags & CollisionFlags.Above) != 0);
+            if (pushIntoCeiling)
+            {
+                isHanging = true;
+                isClimbing = false;
+                hangingStartTimer = 0;
+            }
             // Should we abort climbing?
-            if (inputAbortCondition
+            else*/ if (inputAbortCondition
                 || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
@@ -231,6 +239,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (isClimbing && inputAbortCondition && advancedClimbingOn)
                     WallEject = true;
+
                 isClimbing = false;
                 isSlipping = false;
                 atOutsideCorner = false;
@@ -344,6 +353,11 @@ namespace DaggerfallWorkshop.Game
                 // direction is set to hitnormal until it can be adjusted when we have a side movement direction
                 myStrafeRay = new Ray(new Vector3(hit.point.x, controller.transform.position.y, hit.point.z), hit.normal);
             }
+        }
+
+        private Vector3 GetCeilingHangVector(Vector3 origin, Vector3 direction)
+        {
+            return Vector3.zero;
         }
 
         private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, bool searchClockwise)
