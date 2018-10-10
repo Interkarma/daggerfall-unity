@@ -11,8 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
-using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -26,7 +24,7 @@ namespace DaggerfallConnect.Arena2
     {
         #region Fields
 
-        FileProxy file = new FileProxy();
+        readonly FileProxy file = new FileProxy();
         DFCareer career = null;
 
         #endregion

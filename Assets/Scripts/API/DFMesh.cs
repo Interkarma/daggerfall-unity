@@ -11,13 +11,12 @@
 
 #region Using Statements
 using System;
-using System.Text;
 #endregion
 
 namespace DaggerfallConnect
 {
     /// <summary>
-    /// Stores decomposed mesh data. A mesh is made up of one or more submeshes (DFSubMesh). Each submesh has a unique texture.
+    ///  Stores decomposed mesh data. A mesh is made up of one or more submeshes (DFSubMesh). Each submesh has a unique texture.
     ///  All faces sharing a texture have been grouped into the appropriate submesh. Each submesh contains one
     ///  or more planes (DFPlane). A plane is a collection of points (DFPoint) in a fan radiating from point 0.
     ///  Planes with 3 points can be written as triangles to your 3D engine, however planes with 4 or more points must be

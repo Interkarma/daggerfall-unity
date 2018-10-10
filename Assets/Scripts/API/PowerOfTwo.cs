@@ -9,17 +9,13 @@
 // Notes:
 //
 
-#region Using Statements
-using System;
-#endregion
-
 namespace DaggerfallConnect.Utility
 {
 
     /// <summary>
     /// Provides static power of two calculations.
     /// </summary>
-    public class PowerOfTwo
+    public static class PowerOfTwo
     {
 
         /// <summary>

@@ -26,8 +26,8 @@ namespace DaggerfallConnect.Arena2
 
         const int nameLength = 32;
 
-        FileProxy magicItemsFile = new FileProxy();
-        List<MagicItemTemplate> magicItems = new List<MagicItemTemplate>();
+        readonly FileProxy magicItemsFile = new FileProxy();
+        readonly List<MagicItemTemplate> magicItems = new List<MagicItemTemplate>();
 
         #endregion
 
@@ -76,11 +76,11 @@ namespace DaggerfallConnect.Arena2
             int recordCount = reader.ReadInt32();
             for (int i = 0; i < recordCount; i++)
             {
-                magicItems.Add(ReadNextMagicItem(reader, i));
+                magicItems.Add(ReadNextMagicItem(reader));
             }
         }
 
-        MagicItemTemplate ReadNextMagicItem(BinaryReader reader, int index)
+        MagicItemTemplate ReadNextMagicItem(BinaryReader reader)
         {
             MagicItemTemplate magicItem = new MagicItemTemplate();
             magicItem.index = reader.BaseStream.Position;
