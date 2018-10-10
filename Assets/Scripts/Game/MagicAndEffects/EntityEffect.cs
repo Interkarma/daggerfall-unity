@@ -326,6 +326,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.caster = caster;
             SetDuration();
             SetChanceSuccess();
+            TallyMagicSkill(caster);
         }
 
         /// <summary>
@@ -342,6 +343,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             variantCount = effectData.variantCount;
             currentVariant = effectData.currentVariant;
             effectEnded = effectData.effectEnded;
+            TallyMagicSkill(caster);
         }
 
         /// <summary>
@@ -650,6 +652,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void SetChanceSuccess()
         {
             chanceSuccess = RollChance();
+        }
+
+        void TallyMagicSkill(DaggerfallEntityBehaviour caster)
+        {
+            if (caster == GameManager.Instance.PlayerEntityBehaviour && properties.MagicSkill != DFCareer.MagicSkills.None)
+            {
+                GameManager.Instance.PlayerEntity.TallySkill((DFCareer.Skills)properties.MagicSkill, 1);
+            }
         }
 
         #endregion
