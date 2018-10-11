@@ -28,13 +28,13 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionSummonId = 5233;
         protected const int PromotionTeleportId = 5233;
 
-        private const int factionId = (int) FactionFile.FactionIDs.The_Mages_Guild;
+        private const int factionId = (int)FactionFile.FactionIDs.The_Mages_Guild;
 
         #endregion
 
         #region Properties & Data
 
-        static string[] rankTitles = new string[] {
+        static string[] rankTitles = {
                 "Apprentice", "Journeyman", "Evoker", "Conjurer", "Magician", "Enchanter", "Warlock", "Wizard", "Master Wizard", "Archmage"
         };
 
@@ -88,9 +88,9 @@ namespace DaggerfallWorkshop.Game.Guilds
             return DaggerfallUnity.Instance.TextProvider.GetRandomTokens(GetPromotionMsgId(newRank));
         }
 
-        private int GetPromotionMsgId(int rank)
+        private int GetPromotionMsgId(int newRank)
         {
-            switch (rank)
+            switch (newRank)
             {
                 case 2:
                     return PromotionLibraryId;
