@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -390,6 +391,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity, characterDocument.classIndex, characterDocument.isCustom);
 
+            // Assign starting spells to player entity
+            SetStartingSpells(playerEntity);
+
             // Apply biography effects to player entity
             BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
 
@@ -657,6 +661,77 @@ namespace DaggerfallWorkshop.Game.Utility
             // Weapon hand and equip state not serialized currently
             // Interim measure is to reset weapon manager state on new game
             GameManager.Instance.WeaponManager.Reset();
+        }
+
+        void SetStartingSpells(PlayerEntity playerEntity)
+        {
+            // Spell indices
+            const int wizardLock = 18, shock = 7, heal = 60, waterWalking = 39, slowFalling = 35, chameleon = 41, buoyancy = 1, balynaBalm = 86, fenrikDoorJam = 0;
+
+            if (characterDocument.classIndex > 6 && !characterDocument.isCustom) // Class does not have starting spells
+                return;
+
+            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, "SPELLS.STD"));
+            if (standardSpells == null || standardSpells.Count == 0)
+            {
+                Debug.LogError("Failed to load SPELLS.STD while assigning starting spells.");
+                return;
+            }
+            List<SpellRecord.SpellRecordData> spellsToAdd = new List<SpellRecord.SpellRecordData>();
+            int spellSet = characterDocument.isCustom ? 1 : characterDocument.classIndex; // Custom class uses Spellsword starting spells
+            switch (spellSet)
+            {
+                case 0: // Mage
+                    spellsToAdd.Add(standardSpells[wizardLock]);
+                    spellsToAdd.Add(standardSpells[shock]);
+                    spellsToAdd.Add(standardSpells[heal]);
+                    spellsToAdd.Add(standardSpells[waterWalking]);
+                    spellsToAdd.Add(standardSpells[slowFalling]);
+                    break;
+                case 1: // Spellsword
+                    spellsToAdd.Add(standardSpells[shock]);
+                    spellsToAdd.Add(standardSpells[slowFalling]);
+                    spellsToAdd.Add(standardSpells[chameleon]);
+                    break;
+                case 2: // Battlemage
+                    spellsToAdd.Add(standardSpells[shock]);
+                    spellsToAdd.Add(standardSpells[slowFalling]);
+                    spellsToAdd.Add(standardSpells[buoyancy]);
+                    break;
+                case 3: // Sorcerer
+                    spellsToAdd.Add(standardSpells[wizardLock]);
+                    spellsToAdd.Add(standardSpells[shock]);
+                    spellsToAdd.Add(standardSpells[heal]);
+                    spellsToAdd.Add(standardSpells[buoyancy]);
+                    spellsToAdd.Add(standardSpells[slowFalling]);
+                    break;
+                case 4: // Healer
+                    spellsToAdd.Add(standardSpells[balynaBalm]);
+                    spellsToAdd.Add(standardSpells[slowFalling]);
+                    spellsToAdd.Add(standardSpells[fenrikDoorJam]);
+                    spellsToAdd.Add(standardSpells[buoyancy]);
+                    break;
+                case 5: // Nightblade
+                    spellsToAdd.Add(standardSpells[buoyancy]);
+                    spellsToAdd.Add(standardSpells[chameleon]);
+                    break;
+                case 6: // Bard
+                    spellsToAdd.Add(standardSpells[slowFalling]);
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (SpellRecord.SpellRecordData record in spellsToAdd)
+            {
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(record, BundleTypes.Spell, out bundle))
+                {
+                    Debug.LogError("Failed to create effect bundle for starting spell.");
+                    continue;
+                }
+                playerEntity.AddSpell(bundle);
+            }
         }
 
         #endregion
