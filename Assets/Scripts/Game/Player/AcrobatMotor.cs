@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game
         ClimbingMotor climbingMotor;
         Transform myTransform;
         PlayerStepDetector stepDetector;
+        RappelMotor rappelMotor;
 
         private float fallStartLevel;
         private bool falling;
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             stepDetector = GetComponent<PlayerStepDetector>();
+            rappelMotor = GetComponent<RappelMotor>();
             myTransform = playerMotor.transform;
         }
 
@@ -109,7 +111,7 @@ namespace DaggerfallWorkshop.Game
 
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
 
-            if ((climbingMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
+            if ((rappelMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
             {
                 moveDirection.x = inputX * speed * inputModifyFactor;
                 moveDirection.z = inputY * speed * inputModifyFactor;
@@ -150,7 +152,7 @@ namespace DaggerfallWorkshop.Game
                 fallStartLevel = myTransform.position.y;
                 moveDirection.y = -slowFallSpeed * Time.deltaTime;
             }
-            else if (!climbingMotor.IsRappelling)
+            else if (!rappelMotor.IsRappelling)
             {
                 const float antiBumpFactor = 20.75f;
                 float minRange = (controller.height / 2f) - 0.15f;
