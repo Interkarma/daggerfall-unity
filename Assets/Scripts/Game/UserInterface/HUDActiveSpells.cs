@@ -214,6 +214,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             // Sort icons into active spells in self and other icon lists
+            int poolIndex = 0;
             for (int i = 0;  i < effectBundles.Length; i++)
             {
                 LiveEffectBundle bundle = effectBundles[i];
@@ -229,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ActiveSpellIcon item = new ActiveSpellIcon();
                 item.displayName = bundle.name;
                 item.iconIndex = bundle.iconIndex;
-                item.poolIndex = i;
+                item.poolIndex = poolIndex++;
                 item.expiring = (GetMaxRoundsRemaining(bundle) <= 2) ? true : false;
                 item.isItem = (effectBundles[i].fromEquippedItem != null);
                 if (bundle.caster == null || bundle.caster != GameManager.Instance.PlayerEntityBehaviour)
