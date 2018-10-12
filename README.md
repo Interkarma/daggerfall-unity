@@ -42,7 +42,7 @@
 ## Versions
 + *Daggerfall Unity* - v0.5.x
 + *Daggerfall Tools for Unity* - v1.7.0
-+ *Minimum Unity3D version* - 2018.1.2f1
++ *Minimum Unity3D version* - 2018.2.11f1
 
 ## License
 
