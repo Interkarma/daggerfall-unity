@@ -297,9 +297,9 @@ namespace DaggerfallWorkshop.Game.Entity
             return SetHealth(currentHealth - amount);
         }
 
-        public virtual int SetHealth(int amount)
+        public virtual int SetHealth(int amount, bool restoreMode = false)
         {
-            currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
+            currentHealth = (restoreMode) ? amount : Mathf.Clamp(amount, 0, MaxHealth);
             if (currentHealth <= 0)
                 RaiseOnDeathEvent();
 
@@ -326,9 +326,9 @@ namespace DaggerfallWorkshop.Game.Entity
             return SetFatigue(currentFatigue - amount);
         }
 
-        public virtual int SetFatigue(int amount)
+        public virtual int SetFatigue(int amount, bool restoreMode = false)
         {
-            currentFatigue = Mathf.Clamp(amount, 0, MaxFatigue);
+            currentFatigue = (restoreMode) ? amount : Mathf.Clamp(amount, 0, MaxFatigue);
             if (currentFatigue <= 0 && currentHealth > 0)
                 RaiseOnExhaustedEvent();
 
@@ -345,9 +345,9 @@ namespace DaggerfallWorkshop.Game.Entity
             return SetMagicka(currentMagicka - amount);
         }
 
-        public virtual int SetMagicka(int amount)
+        public virtual int SetMagicka(int amount, bool restoreMode = false)
         {
-            currentMagicka = Mathf.Clamp(amount, 0, MaxMagicka);
+            currentMagicka = (restoreMode) ? amount : Mathf.Clamp(amount, 0, MaxMagicka);
             if (currentMagicka <= 0)
                 RaiseOnMagickaDepletedEvent();
 
@@ -370,25 +370,16 @@ namespace DaggerfallWorkshop.Game.Entity
 
         int GetCurrentHealth()
         {
-            if (currentHealth > maxHealth)
-                currentHealth = maxHealth;
-
             return currentHealth;
         }
 
         int GetCurrentFatigue()
         {
-            if (currentFatigue > MaxFatigue)
-                currentFatigue = MaxFatigue;
-
             return currentFatigue;
         }
 
         int GetCurrentMagicka()
         {
-            if (currentMagicka > MaxMagicka)
-                currentMagicka = MaxMagicka;
-
             return currentMagicka;
         }
 
