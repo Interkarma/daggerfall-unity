@@ -713,15 +713,8 @@ namespace DaggerfallWorkshop.Game.Utility
             // Add spells to player from standard list
             foreach (StartingSpell spell in spellsToAdd)
             {
-                SpellRecord.SpellRecordData spellData = new SpellRecord.SpellRecordData();
-                for (int i = 0; i < standardSpells.Count; i++)
-                {
-                    if (standardSpells[i].index == spell.SpellID)
-                    {
-                        spellData = standardSpells[i];
-                        break;
-                    }
-                }
+                SpellRecord.SpellRecordData spellData;
+                GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spell.SpellID, out spellData);
                 if (spellData.index == -1)
                 {
                     Debug.LogError("Failed to locate starting spell in standard spells list.");
