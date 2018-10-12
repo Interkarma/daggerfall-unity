@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Fields
 
         const string textDatabase = "ClassicEffects";
+        const string youDontHaveTheSpellPointsMessageKey = "youDontHaveTheSpellPoints";
         const int minAcceptedSpellVersion = 1;
 
         const int magicCastSoundID = 349;
@@ -56,6 +57,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool instantCast = false;
         bool castInProgress = false;
         bool readySpellIsMagicItem = false;
+        int readySpellCastingCost;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         bool isPlayerEntity = false;
@@ -251,6 +253,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
                 return;
 
+            // Get spellpoint costs of this spell
+            int totalGoldCostUnused;
+            FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
+
+            // Allow casting spells of any cost if entity is player and godmode enabled
+            bool godModeCast = (isPlayerEntity && GameManager.Instance.PlayerEntity.GodMode);
+
+            // Enforce spell point costs - Daggerfall does this when setting ready spell
+            if (entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast)
+            {
+                // Output message only for player
+                if (isPlayerEntity)
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
+
+                readySpell = null;
+                readySpellCastingCost = 0;
+                return;
+            }
+
             // Assign spell - caster only spells are cast instantly
             readySpell = spell;
             readySpellIsMagicItem = isMagicItem;
@@ -279,16 +300,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
-            // Get spellpoint costs of this spell
-            int totalGoldCost, totalSpellPointCost;
-            FormulaHelper.CalculateTotalEffectCosts(readySpell.Settings.Effects, readySpell.Settings.TargetType, out totalGoldCost, out totalSpellPointCost);
-
-            // TODO: Enforce spellpoint costs - all spells are free to cast right now, even at 0 mana
-            // This is to allow for easier testing during build-out stages
-
             // Deduct spellpoint cost from entity if not using a magic item
             if (!readySpellIsMagicItem)
-                entityBehaviour.Entity.DecreaseMagicka(totalSpellPointCost);
+                entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
 
             // Play casting animation based on element type
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
@@ -1278,6 +1292,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear ready spell and reset casting - do not store last spell if casting from item
             lastSpell = (readySpellIsMagicItem) ? null : readySpell;
             readySpell = null;
+            readySpellCastingCost = 0;
             instantCast = false;
             castInProgress = false;
             readySpellIsMagicItem = false;
