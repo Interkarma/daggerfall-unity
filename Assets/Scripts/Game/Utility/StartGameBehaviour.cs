@@ -702,14 +702,6 @@ namespace DaggerfallWorkshop.Game.Utility
                 spellsToAdd.Add(startingSpells[spellSetIndex].SpellsList[i]);
             }
 
-            // Get standard list of spells
-            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, "SPELLS.STD"));
-            if (standardSpells == null || standardSpells.Count == 0)
-            {
-                Debug.LogError("Failed to load SPELLS.STD while assigning starting spells.");
-                return;
-            }
-
             // Add spells to player from standard list
             foreach (StartingSpell spell in spellsToAdd)
             {
