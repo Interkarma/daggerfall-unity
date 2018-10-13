@@ -77,6 +77,7 @@ true,                       True
 
 noName,                     <no-name>
 
+youDontHaveTheSpellPoints,  You don't have the spell points.
 youAreSilenced,             You are silenced.
 youAreParalyzed,            You are paralyzed.
 youFeelDrained,             You feel drained.
