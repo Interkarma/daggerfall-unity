@@ -43,6 +43,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
             {
+                // Remove VID extension
+                int index = name.LastIndexOf(".VID");
+                if (index > 0)
+                    name = name.Substring(0, index);
+
                 // Seek from loose files
                 string path = Path.Combine(moviePath, name + ".mp4");
                 if (File.Exists(path))
