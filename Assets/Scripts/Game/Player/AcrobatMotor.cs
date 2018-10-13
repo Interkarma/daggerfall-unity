@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game
                 float maxRange = minRange + 1.10f;
 
                 // should we apply anti-bump gravity?
-                if (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
+                if (!climbingMotor.IsClimbing && stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
                     moveDirection.y -= antiBumpFactor;
 
                 // apply normal gravity

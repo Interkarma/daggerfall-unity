@@ -13,6 +13,7 @@ namespace DaggerfallWorkshop.Game
         private Entity.PlayerEntity player;
         private PlayerGroundMotor groundMotor;
         private RappelMotor rappelMotor;
+        private HangingMotor hangingMotor;
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
@@ -28,7 +29,6 @@ namespace DaggerfallWorkshop.Game
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
         private bool showClimbingModeMessage = true;
-        private bool showHangingModeMessage = true;
         #region Rays/Vectors
         private Vector2 lastHorizontalPosition = Vector2.zero;
         /// <summary>
@@ -82,7 +82,6 @@ namespace DaggerfallWorkshop.Game
         /// True if player just jumped from a wall
         /// </summary>
         public bool WallEject { get; private set; }
-        public bool IsHanging { get; private set; }
         public Vector3 LedgeDirection { get { return myLedgeDirection; } }
         void Start()
         {
@@ -95,6 +94,7 @@ namespace DaggerfallWorkshop.Game
             acrobatMotor = GetComponent<AcrobatMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
             rappelMotor = GetComponent<RappelMotor>();
+            hangingMotor = GetComponent<HangingMotor>();
         }
 
         /// <summary>
@@ -143,20 +143,12 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 inputAbortCondition = !inputForward;
-            
 
             // reset for next use
             WallEject = false;
             
-            /*bool pushIntoCeiling = (isClimbing && movingForward && (playerMotor.CollisionFlags & CollisionFlags.Above) != 0);
-            if (pushIntoCeiling)
-            {
-                isHanging = true;
-                isClimbing = false;
-                hangingStartTimer = 0;
-            }
             // Should we abort climbing?
-            else*/ if (inputAbortCondition
+            if (inputAbortCondition
                 || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
@@ -249,17 +241,7 @@ namespace DaggerfallWorkshop.Game
                 isClimbing = true;
             }
         }
-        private void StartHanging()
-        {
-            if (!isHanging)
-            {
-                if (showHangingModeMessage)
-                    DaggerfallUI.AddHUDText("Hanging Mode");
 
-                showHangingModeMessage = false;
-                isHanging = true;
-            }
-        }
         /// <summary>
         /// Physically check for wall info between player and wall he's attached to.  Searches in front of player if no wall already set.
         /// </summary>
@@ -289,11 +271,6 @@ namespace DaggerfallWorkshop.Game
                 // direction is set to hitnormal until it can be adjusted when we have a side movement direction
                 myStrafeRay = new Ray(new Vector3(hit.point.x, controller.transform.position.y, hit.point.z), hit.normal);
             }
-        }
-
-        private Vector3 GetCeilingHangVector(Vector3 origin, Vector3 direction)
-        {
-            return Vector3.zero;
         }
 
         private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, bool searchClockwise)
@@ -481,7 +458,7 @@ namespace DaggerfallWorkshop.Game
             controller.Move(moveDirection * Time.deltaTime);
             playerMotor.CollisionFlags = controller.collisionFlags;
         }
-
+        #region Helpers
         /// <summary>
         ///  Calculate the intersection point of two lines. Returns true if lines intersect, otherwise false.
         /// </summary>
@@ -522,12 +499,12 @@ namespace DaggerfallWorkshop.Game
                 return true;
             return false;
         }
-
+        // TODO: Migrate this into seperate class accessible to climbingMotor and HangingMotor
         /// <summary>
         /// See if the player can pass a climbing skill check
         /// </summary>
         /// <returns>true if player passed climbing skill check</returns>
-        private bool ClimbingSkillCheck(int basePercentSuccess)
+        public bool ClimbingSkillCheck(int basePercentSuccess)
         {
             player.TallySkill(DFCareer.Skills.Climbing, 1);
 
@@ -562,5 +539,6 @@ namespace DaggerfallWorkshop.Game
             }
             return true;
         }
+        #endregion
     }
 }

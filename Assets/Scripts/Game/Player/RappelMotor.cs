@@ -46,9 +46,9 @@ namespace DaggerfallWorkshop.Game
             if (!rappelAllowed)
                 return;
 
-            float minRange = (controller.height / 2f);
+            float minRange = (0);
             // greater maxRange values mean player won't rappel from longer heights
-            float maxRange = minRange + 2.00f;
+            float maxRange = minRange + 2.90f;
 
             // are we going to step off something too short for rappel to be worthwhile?
             bool dropTooShortForRappel = (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange);

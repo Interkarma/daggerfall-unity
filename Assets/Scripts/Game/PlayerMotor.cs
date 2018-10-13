@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game
 
         private ClimbingMotor climbingMotor;
         private RappelMotor rappelMotor;
+        private HangingMotor hangingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
@@ -224,6 +225,7 @@ namespace DaggerfallWorkshop.Game
             stepDetector = GetComponent<PlayerStepDetector>();
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
             rappelMotor = GetComponent<RappelMotor>();
+            hangingMotor = GetComponent<HangingMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -254,6 +256,8 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            // Check if should hang
+            hangingMotor.HangingChecks();
             // Handle Rappeling
             rappelMotor.RappelChecks();
             // Handle climbing
