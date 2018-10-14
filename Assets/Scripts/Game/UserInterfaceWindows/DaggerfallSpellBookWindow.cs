@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect deleteOrBuyButtonRect = new Rect(3, 152, 38, 9);
         //Rect upButtonRect = new Rect(48, 152, 38, 9);
         //Rect downButtonRect = new Rect(132, 152, 38, 9);
-        //Rect sortButtonRect = new Rect(90, 152, 38, 9);
+        Rect sortButtonRect = new Rect(90, 152, 38, 9);
         Rect upArrowButtonRect = new Rect(121, 11, 9, 16);
         Rect downArrowButtonRect = new Rect(121, 132, 9, 16);
         Rect exitButtonRect = new Rect(216, 149, 43, 15);
@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button buyButton;
         //Button downButton;
         //Button upButton;
-        //Button sortButton;
+        Button sortButton;
         Button upArrowButton;
         Button downArrowButton;
 
@@ -321,8 +321,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
 
                 //upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
-                //sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
+                sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
                 //downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
+
+                sortButton.OnMouseClick += SortButton_OnMouseClick;
             }
             else
             {
@@ -676,6 +678,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Not implemented in Daggerfall, could be useful. Possibly move through different sorts (lexigraphic, date added, cost etc.)
         public void SortButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Just sort as alpha for now
+            GameManager.Instance.PlayerEntity.SortSpellsAlpha();
+            RefreshSpellsList();
         }
 
         public void SpellNameLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -594,6 +595,13 @@ namespace DaggerfallWorkshop.Game.Entity
         public EffectBundleSettings[] GetSpells()
         {
             return spellbook.ToArray();
+        }
+
+        public void SortSpellsAlpha()
+        {
+            List<EffectBundleSettings> sortedSpellbook = spellbook.OrderBy(x => x.Name).ToList();
+            if (sortedSpellbook.Count == spellbook.Count)
+                spellbook = sortedSpellbook;
         }
 
         public void AddSpell(EffectBundleSettings spell)
