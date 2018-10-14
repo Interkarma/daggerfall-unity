@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallEntityBehaviour entityBehaviour;
         EntityEffectManager entityEffectManager;
         EntityEffectBundle selectedSpell;
+        EnemyAttack attack;
 
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         float giveUpTimer;                          // Timer before enemy gives up
@@ -90,6 +91,7 @@ namespace DaggerfallWorkshop.Game
             enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityEffectManager = GetComponent<EntityEffectManager>();
+            attack = GetComponent<EnemyAttack>();
             isAttackFollowsPlayerSet = false;
         }
 
@@ -349,15 +351,19 @@ namespace DaggerfallWorkshop.Game
                 PursueTarget(direction, moveSpeed);
             else if (!senses.TargetIsWithinYawAngle(22.5f))
                 TurnToTarget(direction.normalized);
-            //else
-            //{
-            // TODO: Touch spells.
-            //if (hasSpellPoints && attackCoolDownFinished && CanCastTouchSpells)
-            //{
-            //    Cast Touch Spell
-            //    Spell Cast Animation
-            //}
-            //}
+            else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastTouchSpell(entity))
+            {
+                entityEffectManager.ReadySpell = selectedSpell;
+
+                attack.MeleeTimer = Random.Range(1500, 3001);
+                attack.MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
+                attack.MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
+
+                if (attack.MeleeTimer < 0)
+                    attack.MeleeTimer = 1500;
+
+                attack.MeleeTimer /= 980; // Approximates classic frame update
+            }
             else if (!senses.DetectedTarget && mobile.Summary.EnemyState == MobileStates.Move)
                 mobile.ChangeEnemyState(MobileStates.Idle);
         }
@@ -371,6 +377,32 @@ namespace DaggerfallWorkshop.Game
             {
                 if (spell.TargetType == TargetTypes.SingleTargetAtRange
                     || spell.TargetType == TargetTypes.AreaAtRange)
+                {
+                    rangeSpells.Add(spell);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+                return false;
+
+            EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
+            // TODO: If target has the selected spell already in effect on them, return false
+
+            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+
+            return true;
+        }
+
+        bool CanCastTouchSpell(DaggerfallEntity entity)
+        {
+            EffectBundleSettings[] spells = entity.GetSpells();
+            List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
+            int count = 0;
+            foreach (EffectBundleSettings spell in spells)
+            {
+                if (spell.TargetType == TargetTypes.ByTouch
+                    || spell.TargetType == TargetTypes.AreaAroundCaster)
                 {
                     rangeSpells.Add(spell);
                     count++;
