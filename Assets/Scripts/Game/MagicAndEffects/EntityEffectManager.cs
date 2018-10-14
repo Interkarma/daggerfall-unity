@@ -104,11 +104,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return (entityType == EntityTypes.Player); }
         }
 
-        public bool IsEnemyEntity
-        {
-            get { return (entityType == EntityTypes.EnemyClass || entityType == EntityTypes.EnemyMonster); }
-        }
-
         public LiveEffectBundle[] EffectBundles
         {
             get { return instancedBundles.ToArray(); }
@@ -237,9 +232,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     return;
                 }
             }
-            
             // Enemies always cast ready spell instantly once queued
-            if (IsEnemyEntity)
+            else
             {
                 CastReadySpell();
             }
@@ -319,13 +313,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // TODO: Do not need to show spellcasting animations for certain spell effects
             if (IsPlayerEntity)
                 GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
-
-            // Play enemy casting animation and fire spell
-            if (IsEnemyEntity)
+            else
                 EnemyCastReadySpell();
 
             // Block further casting attempts until previous cast is complete
-            castInProgress = true;
+            // castInProgress = true;
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle, bool showNonPlayerFailures = false)

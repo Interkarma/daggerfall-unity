@@ -11,6 +11,8 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -32,6 +34,8 @@ namespace DaggerfallWorkshop.Game
         CharacterController controller;
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
+        EntityEffectManager entityEffectManager;
+        EntityEffectBundle selectedSpell;
 
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         float giveUpTimer;                          // Timer before enemy gives up
@@ -85,6 +89,7 @@ namespace DaggerfallWorkshop.Game
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            entityEffectManager = GetComponent<EntityEffectManager>();
             isAttackFollowsPlayerSet = false;
         }
 
@@ -323,9 +328,10 @@ namespace DaggerfallWorkshop.Game
                         else if (!mobile.IsPlayingOneShot())
                             mobile.ChangeEnemyState(MobileStates.Idle);
                     }
-                    //else if (spellPoints > 0 && canCastRangeSpells && DFRandom.rand() % 40 == 0) TODO: Ranged spell shooting
-                    //          CastRangedSpell();
-                    //          Spell Cast Animation;
+                    else if (entity.CurrentMagicka > 0 && CanCastRangedSpell(entity) && DFRandom.rand() % 40 == 0)
+                    {
+                        entityEffectManager.ReadySpell = selectedSpell;
+                    }
                     else
                         // If no ranged attack, move towards target
                         PursueTarget(direction, moveSpeed);
@@ -354,6 +360,32 @@ namespace DaggerfallWorkshop.Game
             //}
             else if (!senses.DetectedTarget && mobile.Summary.EnemyState == MobileStates.Move)
                 mobile.ChangeEnemyState(MobileStates.Idle);
+        }
+
+        bool CanCastRangedSpell(DaggerfallEntity entity)
+        {
+            EffectBundleSettings[] spells = entity.GetSpells();
+            List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
+            int count = 0;
+            foreach (EffectBundleSettings spell in spells)
+            {
+                if (spell.TargetType == TargetTypes.SingleTargetAtRange
+                    || spell.TargetType == TargetTypes.AreaAtRange)
+                {
+                    rangeSpells.Add(spell);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+                return false;
+
+            EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
+            // TODO: If target has the selected spell already in effect on them, return false
+
+            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+
+            return true;
         }
 
         private void PursueTarget(Vector3 direction, float moveSpeed)

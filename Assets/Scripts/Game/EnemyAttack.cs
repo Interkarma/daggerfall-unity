@@ -61,9 +61,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // TODO: Determine when enemy will cast a spell and select from their spell list
-            // Once spell is selected, set this as ReadySpell on their peered EntityEffectManager and change local anim state to casting
-
             // If a melee attack has reached the damage frame we can run a melee attempt
             if (mobile.DoMeleeDamage)
             {
