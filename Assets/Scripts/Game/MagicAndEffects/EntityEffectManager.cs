@@ -1278,6 +1278,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 PlayCastSound(readySpell.CasterEntityBehaviour, GetCastSoundID(readySpell.Settings.ElementType));
             }
 
+            // Create magic sparkles effect
+            if (readySpell.Settings.TargetType != TargetTypes.SingleTargetAtRange &&
+                readySpell.Settings.TargetType != TargetTypes.AreaAtRange)
+            {
+                EnemyBlood sparkles = readySpell.CasterEntityBehaviour.GetComponent<EnemyBlood>();
+
+                Vector3 sparklesPos = entityBehaviour.transform.position;
+                CharacterController targetController = entityBehaviour.transform.GetComponent<CharacterController>();
+                sparklesPos.y += targetController.height / 8;
+
+                if (sparkles)
+                {
+                    sparkles.ShowMagicSparkles(sparklesPos);
+                }
+            }
+
             // Assign bundle directly to self if target is caster
             // Otherwise instatiate missile prefab based on element type
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
