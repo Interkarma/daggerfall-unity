@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EntityEffectBundle lastSpell = null;
         bool instantCast = false;
         bool castInProgress = false;
-        bool readySpellIsMagicItem = false;
+        bool readySpellDoesNotCostSpellPoints = false;
         int readySpellCastingCost;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
@@ -247,10 +247,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
-        public void SetReadySpell(EntityEffectBundle spell, bool isMagicItem = false)
+        public void SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
             // Do nothing if silenced
-            if (SilenceCheck())
+            if (SilenceCheck() && !noSpellPointCost)
                 return;
 
             // Spell must appear valid
@@ -265,7 +265,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             bool godModeCast = (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode);
 
             // Enforce spell point costs - Daggerfall does this when setting ready spell
-            if (entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast)
+            if (entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
             {
                 // Output message only for player
                 if (IsPlayerEntity)
@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Assign spell - caster only spells are cast instantly
             readySpell = spell;
-            readySpellIsMagicItem = isMagicItem;
+            readySpellDoesNotCostSpellPoints = noSpellPointCost;
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
                 instantCast = true;
 
@@ -291,7 +291,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void AbortReadySpell()
         {
             readySpell = null;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
 
         public void CastReadySpell()
@@ -304,8 +304,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
-            // Deduct spellpoint cost from entity if not using a magic item
-            if (!readySpellIsMagicItem)
+            // Deduct spellpoint cost from entity if not free (magic item, innate ability)
+            if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
 
             // Play casting animation based on element type
@@ -1089,7 +1089,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             lastSpell = null;
             readySpell = null;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
         
         int GetCastSoundID(ElementTypes elementType)
@@ -1297,7 +1297,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             readySpellCastingCost = 0;
             instantCast = false;
             castInProgress = false;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
 
         #endregion  
@@ -1334,12 +1334,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Clear ready spell and reset casting - do not store last spell if casting from item
-            lastSpell = (readySpellIsMagicItem) ? null : readySpell;
+            lastSpell = (readySpellDoesNotCostSpellPoints) ? null : readySpell;
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
             castInProgress = false;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()

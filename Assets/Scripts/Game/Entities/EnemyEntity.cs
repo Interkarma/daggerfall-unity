@@ -403,7 +403,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 EffectBundleSettings bundle;
                 if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
                 {
-                    Debug.LogError("Failed to create effect bundle for enemy spell.");
+                    Debug.LogError("Failed to create effect bundle for enemy spell: " + spellData.spellName);
                     continue;
                 }
                 AddSpell(bundle);
