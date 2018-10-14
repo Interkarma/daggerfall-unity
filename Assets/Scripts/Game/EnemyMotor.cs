@@ -351,7 +351,7 @@ namespace DaggerfallWorkshop.Game
                 PursueTarget(direction, moveSpeed);
             else if (!senses.TargetIsWithinYawAngle(22.5f))
                 TurnToTarget(direction.normalized);
-            else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastSelfOrTouchSpell(entity))
+            else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastTouchSpell(entity))
             {
                 entityEffectManager.ReadySpell = selectedSpell;
 
@@ -394,15 +394,15 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        bool CanCastSelfOrTouchSpell(DaggerfallEntity entity)
+        bool CanCastTouchSpell(DaggerfallEntity entity)
         {
             EffectBundleSettings[] spells = entity.GetSpells();
             List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
             int count = 0;
             foreach (EffectBundleSettings spell in spells)
             {
-                if (spell.TargetType == TargetTypes.CasterOnly
-                    || spell.TargetType == TargetTypes.ByTouch)
+                if (spell.TargetType == TargetTypes.ByTouch
+                    || spell.TargetType == TargetTypes.AreaAroundCaster)
                 {
                     rangeSpells.Add(spell);
                     count++;
