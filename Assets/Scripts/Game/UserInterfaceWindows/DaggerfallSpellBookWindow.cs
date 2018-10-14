@@ -615,7 +615,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (playerEffectManager)
             {
                 playerEffectManager.SetReadySpell(new EntityEffectBundle(spellSettings, GameManager.Instance.PlayerEntityBehaviour));
-                CloseWindow();
+                DaggerfallUI.Instance.PopToHUD();
             }
         }
 

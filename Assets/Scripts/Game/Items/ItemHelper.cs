@@ -939,6 +939,34 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Ensures that a player has a valid spellbook item on load.
+        /// </summary>
+        public void ValidateSpellbookItem(PlayerEntity playerEntity)
+        {
+            ItemCollection items = playerEntity.Items;
+
+            // Importing a classic save can result in a spellbook with itemgroup 0
+            // This ends up being sorted into ingredients in DFU
+            DaggerfallUnityItem badSpellbook = items.GetItem(ItemGroups.MiscItems, 0);
+            if (badSpellbook != null)
+            {
+                // Double-check this is a bad spellbook and not actually a ruby by using texture indices
+                if (badSpellbook.InventoryTextureArchive == 209 && badSpellbook.InventoryTextureRecord == 4)
+                {
+                    // Remove bad spellbook and assign a new one correctly from template
+                    items.RemoveItem(badSpellbook);
+                    items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+                }
+            }
+
+            // Player should now have a valid spellbook, otherwise create one
+            if (!items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
+            {
+                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+            }
+        }
+
+        /// <summary>
         /// Assigns basic starting gear to a new character.
         /// </summary>
         public void AssignStartingGear(PlayerEntity playerEntity, int classIndex, bool isCustom)
