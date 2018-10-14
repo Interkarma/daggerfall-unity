@@ -726,12 +726,12 @@ namespace DaggerfallWorkshop.Game.Entity
         /// Sets new health value.
         /// Override for godmode support.
         /// </summary>
-        public override int SetHealth(int amount)
+        public override int SetHealth(int amount, bool restoreMode = false)
         {
             if (godMode)
                 return currentHealth = MaxHealth;
 
-            currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
+            currentHealth = (restoreMode) ? amount : Mathf.Clamp(amount, 0, MaxHealth);
             if (currentHealth <= 0)
             {
                 // Players can have avoid death benefit from guild memberships, leaves them on 10% hp
@@ -747,24 +747,24 @@ namespace DaggerfallWorkshop.Game.Entity
         /// Sets new fatigue value.
         /// Override for godmode support.
         /// </summary>
-        public override int SetFatigue(int amount)
+        public override int SetFatigue(int amount, bool restoreMode = false)
         {
             if (godMode)
                 return currentFatigue = MaxFatigue;
             else
-                return base.SetFatigue(amount);
+                return base.SetFatigue(amount, restoreMode);
         }
 
         /// <summary>
         /// Sets new magicka value.
         /// Override for godmode support.
         /// </summary>
-        public override int SetMagicka(int amount)
+        public override int SetMagicka(int amount, bool restoreMode = false)
         {
             if (godMode)
                 return currentMagicka = MaxMagicka;
             else
-                return base.SetMagicka(amount);
+                return base.SetMagicka(amount, restoreMode);
         }
 
         /// <summary>

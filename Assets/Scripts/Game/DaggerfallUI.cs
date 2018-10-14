@@ -387,6 +387,9 @@ namespace DaggerfallWorkshop.Game
 
                 if (Event.current.keyCode != KeyCode.None)
                     lastKeyCode = Event.current.keyCode;
+
+                if (lastCharacterTyped > 255)
+                    lastCharacterTyped = (char)0;
             }
 
             if (Event.current.type == EventType.Repaint)

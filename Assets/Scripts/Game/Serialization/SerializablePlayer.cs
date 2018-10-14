@@ -254,9 +254,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.Skills = data.playerEntity.skills;
             entity.Resistances = (data.playerEntity.resistances != null) ? data.playerEntity.resistances : new DaggerfallResistances();
             entity.MaxHealth = data.playerEntity.maxHealth;
-            entity.CurrentHealth = data.playerEntity.currentHealth;
-            entity.CurrentFatigue = data.playerEntity.currentFatigue;
-            entity.CurrentMagicka = data.playerEntity.currentMagicka;
+            entity.SetHealth(data.playerEntity.currentHealth, true);
+            entity.SetFatigue(data.playerEntity.currentFatigue, true);
+            entity.SetMagicka(data.playerEntity.currentMagicka, true);
             entity.CurrentBreath = data.playerEntity.currentBreath;
             entity.SkillUses = data.playerEntity.skillUses;
             entity.TimeOfLastSkillIncreaseCheck = data.playerEntity.timeOfLastSkillIncreaseCheck;
@@ -364,6 +364,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             transportManager.TransportMode = data.transportMode;
             // Restore pre boarding ship position
             transportManager.BoardShipPosition = data.boardShipPosition;
+
+            // Validate spellbook item
+            DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(entity);
 
             // Restore guild memberships, also done early in SaveLoadManager for interiors
             GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);

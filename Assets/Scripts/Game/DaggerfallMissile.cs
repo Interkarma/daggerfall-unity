@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -162,11 +162,9 @@ namespace DaggerfallWorkshop.Game
             // Setup collider
             myCollider = GetComponent<SphereCollider>();
             myCollider.radius = ColliderRadius;
-            myCollider.isTrigger = true;
 
             // Setup rigidbody
             myRigidbody = GetComponent<Rigidbody>();
-            myRigidbody.isKinematic = true;
             myRigidbody.useGravity = false;
 
             // Use payload when available
@@ -256,7 +254,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Collision Handling
 
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
         {
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
@@ -267,7 +265,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // If entity was hit then add to target list
-            DaggerfallEntityBehaviour entityBehaviour = other.transform.GetComponent<DaggerfallEntityBehaviour>();
+            DaggerfallEntityBehaviour entityBehaviour = collision.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
             if (entityBehaviour)
             {
                 targetEntities.Add(entityBehaviour);

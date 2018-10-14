@@ -163,9 +163,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.Items.DeserializeItems(data.items);
             entity.ItemEquipTable.DeserializeEquipTable(data.equipTable, entity.Items);
             entity.MaxHealth = data.startingHealth;
-            entity.CurrentHealth = data.currentHealth;
-            entity.CurrentFatigue = data.currentFatigue;
-            entity.CurrentMagicka = data.currentMagicka;
+            entity.SetHealth(data.currentHealth, true);
+            entity.SetFatigue(data.currentFatigue, true);
+            entity.SetMagicka(data.currentMagicka, true);
             motor.IsHostile = data.isHostile;
             senses.HasEncounteredPlayer = data.hasEncounteredPlayer;
 
