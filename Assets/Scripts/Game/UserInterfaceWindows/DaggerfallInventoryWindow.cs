@@ -1448,11 +1448,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (item.TemplateIndex == (int)MiscItems.Spellbook)
             {
-                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
-                DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
-                noSpells.SetTextTokens(textTokens);
-                noSpells.ClickAnywhereToClose = true;
-                noSpells.Show();
+                if (playerEntity.SpellbookCount() == 0)
+                {
+                    // Player has no spells
+                    TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
+                    DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
+                    noSpells.SetTextTokens(textTokens);
+                    noSpells.ClickAnywhereToClose = true;
+                    noSpells.Show();
+                }
+                else
+                {
+                    // Show spellbook
+                    DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
+                }
             }
             else if (item.ItemGroup == ItemGroups.Drugs && collection != null)
             {

@@ -365,6 +365,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore pre boarding ship position
             transportManager.BoardShipPosition = data.boardShipPosition;
 
+            // Validate spellbook item
+            DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(entity);
+
             // Restore guild memberships, also done early in SaveLoadManager for interiors
             GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
 

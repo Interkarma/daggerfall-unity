@@ -604,6 +604,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Load character biography text
             playerEntity.BackStory = saveGames.BioFile.Lines;
 
+            // Validate spellbook item
+            DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(playerEntity);
+
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);

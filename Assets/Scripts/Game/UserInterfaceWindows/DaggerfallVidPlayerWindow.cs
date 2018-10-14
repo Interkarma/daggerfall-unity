@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using UnityEngine.Video;
 using System;
 using System.IO;
 using System.Collections;
@@ -25,7 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallVidPlayerWindow : DaggerfallBaseWindow
     {
         DaggerfallVideo video;
-        CustomVideoPlayer customVideo;
+        VideoPlayerDrawer customVideo;
         bool useCustomVideo = false;
 
         bool hideCursor = true;
@@ -44,7 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return video; }
         }
 
-        public CustomVideoPlayer CustomVideo
+        public VideoPlayerDrawer CustomVideo
         {
             get { return customVideo; }
         }
@@ -72,13 +73,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            MovieTexture customMovieTexture;
-            if (useCustomVideo = VideoReplacement.TryImportMovie(PlayOnStart, out customMovieTexture))
+            if (useCustomVideo = VideoReplacement.TryImportMovie(PlayOnStart, out customVideo))
             {
                 // Play custom video
-                customVideo = new CustomVideoPlayer();
-                customVideo.Play(customMovieTexture);
+                customVideo.Size = new Vector2(Screen.width, Screen.height);
                 NativePanel.Components.Add(customVideo);
+                customVideo.Play();
             }
             else
             {
@@ -109,11 +109,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle exit any key or end of video
             if (useCustomVideo)
             {
-                if (endOnAnyKey && Input.anyKeyDown || 
-                    !customVideo.IsPlaying )
+                if (endOnAnyKey && Input.anyKeyDown ||
+                    !customVideo.IsPlaying)
                 {
                     customVideo.Stop();
                     customVideo.Dispose();
+                    customVideo = null;
                     RaiseOnVideoFinishedHandler();
                     RaiseOnVideoEndGlobalEvent();
                     CloseWindow();
