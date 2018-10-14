@@ -239,7 +239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeleeAttackSpeed: 1.25
-  MeleeDistance: 3.2
+  MeleeDistance: 2.5
+  MeleeTimer: 0
 --- !u!114 &11435454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -374,6 +375,8 @@ MonoBehaviour:
       ChanceForAttack5: 0
       PrimaryAttackAnimFrames5: 
       RangedAttackAnimFrames: 
+      HasSpellAnimation: 0
+      SpellAnimFrames: 
       Team: 0
     EnemyState: 0
     StateAnims: []
