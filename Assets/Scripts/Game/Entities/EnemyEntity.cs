@@ -17,6 +17,8 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -377,7 +379,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void SetEnemySpells(byte[] spellList)
         {
-            //MaxMagicka = 10 * level + 100; TODO: Enemies should be able to set maximum spell points independent of the rules used by the player.
+            // Enemies don't follow same rule as player for maximum spell points
+            MaxMagicka = 10 * level + 100;
             currentMagicka = MaxMagicka;
             skills.SetPermanentSkillValue(DFCareer.Skills.Destruction, 80);
             skills.SetPermanentSkillValue(DFCareer.Skills.Restoration, 80);
@@ -386,9 +389,25 @@ namespace DaggerfallWorkshop.Game.Entity
             skills.SetPermanentSkillValue(DFCareer.Skills.Thaumaturgy, 80);
             skills.SetPermanentSkillValue(DFCareer.Skills.Mysticism, 80);
 
-            // Iterate over spellList and assign data from SPELLS.STD
+            // Add spells to enemy from standard list
+            foreach (byte spellID in spellList)
+            {
+                SpellRecord.SpellRecordData spellData;
+                GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellID, out spellData);
+                if (spellData.index == -1)
+                {
+                    Debug.LogError("Failed to locate enemy spell in standard spells list.");
+                    continue;
+                }
 
-            return;
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
+                {
+                    Debug.LogError("Failed to create effect bundle for enemy spell.");
+                    continue;
+                }
+                AddSpell(bundle);
+            }
         }
 
         public DFCareer.EnemyGroups GetEnemyGroup()
