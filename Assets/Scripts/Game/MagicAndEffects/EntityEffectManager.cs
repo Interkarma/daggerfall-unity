@@ -314,12 +314,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
             // TODO: Do not need to show spellcasting animations for certain spell effects
             if (IsPlayerEntity)
+            {
+                // Play casting animation and block further casting attempts until previous cast is complete
                 GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
+                castInProgress = true;
+            }
             else
+            {
                 EnemyCastReadySpell();
-
-            // Block further casting attempts until previous cast is complete
-            // castInProgress = true;
+            }
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle, bool showNonPlayerFailures = false)
