@@ -247,15 +247,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
-        public void SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
+        public bool SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
             // Do nothing if silenced
             if (SilenceCheck() && !noSpellPointCost)
-                return;
+                return false;
 
             // Spell must appear valid
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
-                return;
+                return false;
 
             // Get spellpoint costs of this spell
             int totalGoldCostUnused;
@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 readySpell = null;
                 readySpellCastingCost = 0;
-                return;
+                return false;
             }
 
             // Assign spell - caster only spells are cast instantly
@@ -286,6 +286,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell, 0.4f);
             }
+
+            return true;
         }
 
         public void AbortReadySpell()

@@ -330,9 +330,10 @@ namespace DaggerfallWorkshop.Game
                         else if (!mobile.IsPlayingOneShot())
                             mobile.ChangeEnemyState(MobileStates.Idle);
                     }
-                    else if (entity.CurrentMagicka > 0 && CanCastRangedSpell(entity) && DFRandom.rand() % 40 == 0)
+                    else if (entity.CurrentMagicka > 0 && CanCastRangedSpell(entity) && DFRandom.rand() % 40 == 0
+                        && entityEffectManager.SetReadySpell(selectedSpell) && mobile.Summary.EnemyState != MobileStates.Spell)
                     {
-                        entityEffectManager.SetReadySpell(selectedSpell);
+                        mobile.ChangeEnemyState(MobileStates.Spell);
                     }
                     else
                         // If no ranged attack, move towards target
@@ -351,9 +352,11 @@ namespace DaggerfallWorkshop.Game
                 PursueTarget(direction, moveSpeed);
             else if (!senses.TargetIsWithinYawAngle(22.5f))
                 TurnToTarget(direction.normalized);
-            else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastTouchSpell(entity))
+            else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastTouchSpell(entity)
+                && entityEffectManager.SetReadySpell(selectedSpell))
             {
-                entityEffectManager.SetReadySpell(selectedSpell);
+                if (mobile.Summary.EnemyState != MobileStates.Spell)
+                        mobile.ChangeEnemyState(MobileStates.Spell);
 
                 attack.MeleeTimer = Random.Range(1500, 3001);
                 attack.MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
