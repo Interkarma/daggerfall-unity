@@ -119,11 +119,8 @@ namespace DaggerfallWorkshop.Game
             // Are we in range and facing target? Then start attack.
             if (senses.TargetInSight)
             {
-                // Take the speed of movement during the attack animation into account when deciding if to attack
-                EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-                float attackSpeed = ((entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) / PlayerSpeedChanger.classicToUnitySpeedUnitRatio) / EnemyMotor.AttackSpeedDivisor;
-
-                if (senses.DistanceToTarget >= MeleeDistance + attackSpeed)
+                // Take the rate of target approach into account when deciding if to attack
+                if (senses.DistanceToTarget >= MeleeDistance + senses.TargetRateOfApproach)
                     return;
 
                 // Set melee animation state
