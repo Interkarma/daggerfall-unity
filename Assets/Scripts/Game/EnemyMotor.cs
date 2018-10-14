@@ -387,9 +387,9 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
-            // TODO: If target has the selected spell already in effect on them, return false
-
             selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+            if (EffectsAlreadyOnTarget(selectedSpell))
+                return false;
 
             return true;
         }
@@ -413,9 +413,39 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
-            // TODO: If target has the selected spell already in effect on them, return false
-
             selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+            if (EffectsAlreadyOnTarget(selectedSpell))
+                return false;
+
+            return true;
+        }
+
+        bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
+        {
+            if (entityBehaviour.Target)
+            {
+                EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
+                LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
+
+                for (int i = 0; i < spell.Settings.Effects.Length; i++)
+                {
+                    bool foundEffect = false;
+                    // Get effect template
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(spell.Settings.Effects[i].Key);
+                    for (int j = 0; j < bundles.Length && !foundEffect; j++)
+                    {
+                        for (int k = 0; k < bundles[j].liveEffects.Count && !foundEffect; k++)
+                        {
+
+                            if (bundles[j].liveEffects[k].GetType() == effectTemplate.GetType())
+                                foundEffect = true;
+                        }
+                    }
+
+                    if (!foundEffect)
+                        return false;
+                }
+            }
 
             return true;
         }
