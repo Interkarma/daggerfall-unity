@@ -332,7 +332,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (entity.CurrentMagicka > 0 && CanCastRangedSpell(entity) && DFRandom.rand() % 40 == 0)
                     {
-                        entityEffectManager.ReadySpell = selectedSpell;
+                        entityEffectManager.SetReadySpell(selectedSpell);
                     }
                     else
                         // If no ranged attack, move towards target
@@ -353,7 +353,7 @@ namespace DaggerfallWorkshop.Game
                 TurnToTarget(direction.normalized);
             else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastTouchSpell(entity))
             {
-                entityEffectManager.ReadySpell = selectedSpell;
+                entityEffectManager.SetReadySpell(selectedSpell);
 
                 attack.MeleeTimer = Random.Range(1500, 3001);
                 attack.MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
