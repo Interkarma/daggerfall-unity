@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 
@@ -150,7 +151,7 @@ namespace DaggerfallConnect.FallExe
 
     public struct Recipe
     {
-        public Ingredient[] ingredients;
+       public Ingredient[] ingredients;
     }
 
     public struct Ingredient
@@ -172,13 +173,13 @@ namespace DaggerfallConnect.FallExe
         const string fallExeFilename = "FALL.EXE";
         const int defaultItemsOffset = 1776954;
         const int nameLength = 24;
-        //const int recordLength = 48;
+        const int recordLength = 48;
         const int totalItems = 288;
 
         bool isOpen = false;
         int itemsOffset = defaultItemsOffset;
-        readonly FileProxy fallExeFile = new FileProxy();
-        readonly List<DFItem> items = new List<DFItem>();
+        FileProxy fallExeFile = new FileProxy();
+        List<DFItem> items = new List<DFItem>();
         Exception lastException = new Exception();
 
         #endregion
@@ -333,10 +334,10 @@ namespace DaggerfallConnect.FallExe
                 desc.rarity = item.rarity;
                 desc.variants = item.variants;
                 desc.drawOrderOrEffect = item.drawOrderOrEffect;
-                desc.isBluntWeapon = (((item.propertiesBitfield >> 4) & 1) == 1);
-                desc.isLiquid = (((item.propertiesBitfield >> 3) & 1) == 1);
-                desc.isOneHanded = (((item.propertiesBitfield >> 2) & 1) == 1);
-                desc.isIngredient = ((item.propertiesBitfield & 1) == 1);
+                desc.isBluntWeapon = (((item.propertiesBitfield >> 4) & 1) == 1) ? true : false;
+                desc.isLiquid = (((item.propertiesBitfield >> 3) & 1) == 1) ? true : false;
+                desc.isOneHanded = (((item.propertiesBitfield >> 2) & 1) == 1) ? true : false;
+                desc.isIngredient = ((item.propertiesBitfield & 1) == 1) ? true : false;
                 desc.worldTextureArchive = item.worldTextureBitfield >> 7;
                 desc.worldTextureRecord = item.worldTextureBitfield & 0x7f;
                 desc.playerTextureArchive = item.playerTextureBitfield >> 7;
@@ -357,7 +358,7 @@ namespace DaggerfallConnect.FallExe
         /// <param name="item">Item to rewrite.</param>
         public void RewriteItem(DFItem item)
         {
-            if (isOpen && fallExeFile.Usage == FileUsage.UseDisk && !fallExeFile.ReadOnly)
+            if (isOpen && fallExeFile.Usage == FileUsage.UseDisk && fallExeFile.ReadOnly == false)
             {
                 BinaryWriter writer = fallExeFile.GetWriter();
                 writer.BaseStream.Position = item.position;

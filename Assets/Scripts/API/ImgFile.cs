@@ -11,6 +11,7 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -32,7 +33,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// The image data for this image. Each IMG file only contains a single image.
         /// </summary>
-        private readonly DFBitmap imgRecord = new DFBitmap();
+        private DFBitmap imgRecord = new DFBitmap();
 
         /// <summary>
         /// Specifies if this IMG file defines its own palette.

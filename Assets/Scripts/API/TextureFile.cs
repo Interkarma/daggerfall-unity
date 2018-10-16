@@ -11,6 +11,7 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -748,14 +749,14 @@ namespace DaggerfallConnect.Arena2
 
             // Extract all rows of image
             int dstPos = 0;
-            foreach(SpecialRowHeader SRHeader in SpecialRowHeaders)
+            foreach(SpecialRowHeader header in SpecialRowHeaders)
             {
                 // Get offset to row relative to record data offset
-                position = records[record].Position + SRHeader.RowOffset;
+                position = records[record].Position + header.RowOffset;
                 reader.BaseStream.Position = position;
 
                 // Handle row data based on compression
-                if (RowEncoding.IsRleEncoded == SRHeader.RowEncoding)
+                if (RowEncoding.IsRleEncoded == header.RowEncoding)
                 {
                     // Extract RLE row
                     byte pixel = 0;

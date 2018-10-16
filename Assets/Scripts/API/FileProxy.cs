@@ -14,6 +14,7 @@ using UnityEngine;
 using System;
 using System.Text;
 using System.IO;
+using DaggerfallConnect;
 #endregion
 
 namespace DaggerfallConnect
@@ -294,7 +295,7 @@ namespace DaggerfallConnect.Utility
             BinaryReader reader = GetReader(position);
             if (reader == null)
                 return null;
-
+            
             return reader.ReadBytes(length);
         }
 
@@ -409,9 +410,10 @@ namespace DaggerfallConnect.Utility
 
             for (int i = position; i < Buffer.Length; i++)
             {
-                if (Buffer[i] == bytes[0] && ReadCString(i, pattern.Length) == pattern)
+                if (Buffer[i] == bytes[0])
                 {
-                    return i;
+                    if (ReadCString(i, pattern.Length) == pattern)
+                        return i;
                 }
             }
 

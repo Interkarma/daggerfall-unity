@@ -11,6 +11,7 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -27,7 +28,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Abstracts BSA file to a managed disk or memory stream.
         /// </summary>
-        private readonly FileProxy managedFile = new FileProxy();
+        private FileProxy managedFile = new FileProxy();
 
         /// <summary>
         /// Contains the BSA file header data.

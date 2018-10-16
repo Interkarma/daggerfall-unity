@@ -11,6 +11,7 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -28,19 +29,19 @@ namespace DaggerfallConnect.Arena2
         private const int frameWidth = 512;
         private const int frameHeight = 220;
         private const int frameDataLength = frameWidth * frameHeight;
-        //private const int paletteDataLength = 776;
+        private const int paletteDataLength = 776;
         private const long paletteDataPosition = 0;
         private const long imageDataPosition = 549120;
 
         /// <summary>
         /// Palette array.
         /// </summary>
-        private readonly DFPalette[] palettes = new DFPalette[32];
+        private DFPalette[] palettes = new DFPalette[32];
 
         /// <summary>
         /// Bitmap array.
         /// </summary>
-        private readonly DFBitmap[] bitmaps = new DFBitmap[64];
+        private DFBitmap[] bitmaps = new DFBitmap[64];
 
         #endregion
 
@@ -90,7 +91,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         public override string PaletteName
         {
-            get { return string.Empty; }
+            get { return string.Empty;  }
         }
 
         /// <summary>

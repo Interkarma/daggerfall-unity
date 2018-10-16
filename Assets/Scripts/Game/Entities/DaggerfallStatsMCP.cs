@@ -32,8 +32,8 @@ namespace DaggerfallWorkshop.Game.Entity
         /// 
         private class StatsMacroDataSource : MacroDataSource
         {
-            private readonly int[] statThresholds = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 1000 };
-            private readonly string[][] statRatings = {
+            private int[] statThresholds = new int[] {10, 20, 30, 40, 50, 60, 70, 80, 90, 1000};
+            private string[][] statRatings = new string[8][] {
                 new string[] { "pathetic", "frail", "weak", "below average", "about average", "fairly strong", "athletic", "very strong", "powerful", "superhuman" },
                 new string[] { "vegetable-like", "idiotic", "half-witted", "dim", "about average", "cunning", "fairly clever", "very intelligent", "brilliant", "genius" },
                 new string[] { "inane", "submissive", "passive", "distracted", "unassertive", "stable", "confident", "strong-willed", "very focused", "enlightened" },
@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.Entity
             private DFCareer.Stats lastStat = DFCareer.Stats.Strength;
             private int lastStatValue;
 
-            private readonly DaggerfallStats parent;
+            private DaggerfallStats parent;
             public StatsMacroDataSource(DaggerfallStats parent)
             {
                 this.parent = parent;
@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 lastStatValue = parent.LiveLuck;
                 return lastStatValue.ToString();
             }
-
+                
         }
     }
 }

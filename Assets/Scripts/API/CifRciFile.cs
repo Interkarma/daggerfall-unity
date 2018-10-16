@@ -11,6 +11,7 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion

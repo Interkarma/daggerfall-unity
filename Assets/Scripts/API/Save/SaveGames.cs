@@ -11,7 +11,9 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -29,17 +31,17 @@ namespace DaggerfallConnect.Save
         public const string SaveNameTxt = "SAVENAME.TXT";
 
         string savesPath = string.Empty;
-        string saveName = string.Empty;
-
         bool isPathOpen = false;
         bool isReadOnly = true;
-        readonly Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
+
+        Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
         SaveTree saveTree;
         SaveVars saveVars;
         BsaFile mapSave;
         BioFile bioFile;
         RumorFile rumorFile;
         SaveImage saveImage;
+        string saveName = string.Empty;
 
         #region Properties
 
@@ -235,11 +237,14 @@ namespace DaggerfallConnect.Save
                     DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
                     for (int i = 0; i < regionData.LocationCount; i++)
                     {
-                        // If a location is marked as discovered in classic but not DF Unity, discover it for DF Unity
-                        if ((data[i] & 0x40) != 0 && !regionData.MapTable[i].Discovered)
+                        if ((data[i] & 0x40) != 0)
                         {
-                            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
-                            gps.DiscoverLocation(regionData.Name, location.Name);
+                            // Discover the location in DF Unity's data
+                            if (regionData.MapTable[i].Discovered == false)
+                            {
+                                DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, i);
+                                gps.DiscoverLocation(regionData.Name, location.Name);
+                            }
                         }
                     }
                 }
@@ -250,7 +255,7 @@ namespace DaggerfallConnect.Save
                 UnityEngine.Debug.Log("Could not open RUMOR.DAT for index " + save);
 
             bioFile = new BioFile();
-            if (!bioFile.Load(Path.Combine(saveGameDict[save], "BIO.DAT")))
+            if (!bioFile.Load (Path.Combine(saveGameDict[save], "BIO.DAT")))
                 UnityEngine.Debug.Log("Could not open BIO.DAT for index " + save);
 
             return true;
@@ -277,10 +282,10 @@ namespace DaggerfallConnect.Save
 
         #region Private Methods
 
-        /*string GetSaveIndexName(int save)
+        string GetSaveIndexName(int save)
         {
             return string.Format("SAVE{0}", save);
-        }*/
+        }
 
         string GetArena2Path()
         {
@@ -307,7 +312,7 @@ namespace DaggerfallConnect.Save
             {
                 if (!File.Exists(Path.Combine(saves[i], SaveTree.Filename)) ||
                     !File.Exists(Path.Combine(saves[i], SaveImage.Filename)))
-                //!File.Exists(Path.Combine(saves[i], SaveVars.Filename)))      // TODO: Restore this once savevars supported
+                    //!File.Exists(Path.Combine(saves[i], SaveVars.Filename)))      // TODO: Restore this once savevars supported
                 {
                     continue;
                 }

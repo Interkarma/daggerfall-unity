@@ -11,6 +11,8 @@
 
 #region Using Statements
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -29,9 +31,19 @@ namespace DaggerfallConnect.Arena2
         public const int SampleRate = 11025;
 
         /// <summary>
+        /// Auto-discard behaviour enabled or disabled.
+        /// </summary>
+        private bool autoDiscardValue = true;
+
+        /// <summary>
+        /// The last record opened. Used by auto-discard logic.
+        /// </summary>
+        private int lastSound = -1;
+
+        /// <summary>
         /// The BsaFile representing DAGGER.SND.
         /// </summary>
-        private readonly BsaFile bsaFile = new BsaFile();
+        private BsaFile bsaFile = new BsaFile();
 
         /// <summary>
         /// Array of decomposed sound records.
@@ -54,6 +66,18 @@ namespace DaggerfallConnect.Arena2
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// If true then decomposed sound records will be destroyed every time a different sound is fetched.
+        ///  If false then decomposed sound records will be maintained until DiscardRecord() or DiscardAllRecords() is called.
+        ///  Turning off auto-discard will speed up sound retrieval times at the expense of RAM. For best results, disable
+        ///  auto-discard and impose your own caching scheme based on your application needs.
+        /// </summary>
+        public bool AutoDiscard
+        {
+            get { return autoDiscardValue; }
+            set { autoDiscardValue = value; }
+        }
 
         /// <summary>
         /// Number of BSA records in DAGGER.SND.
@@ -168,6 +192,12 @@ namespace DaggerfallConnect.Arena2
             {
                 soundOut = sounds[sound].DFSound;
                 return true;
+            }
+
+            // Discard previous sound
+            if (AutoDiscard == true && lastSound != -1)
+            {
+                DiscardSound(lastSound);
             }
 
             // Load sound data
@@ -309,7 +339,7 @@ namespace DaggerfallConnect.Arena2
 
             // Write the RIFF tag and file length
             writer.Write(sRIFF.ToCharArray());
-            writer.Write(fileLength);
+            writer.Write((Int32)fileLength);
 
             // Write the WAVE tag and fmt header
             writer.Write(sWAVE.ToCharArray());

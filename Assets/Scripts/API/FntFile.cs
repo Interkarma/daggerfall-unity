@@ -11,6 +11,7 @@
 
 #region Using Statements
 using System;
+using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -28,7 +29,7 @@ namespace DaggerfallConnect.Arena2
         public const int GlyphDataLength = 32;          // Fixed data length of each glyph
         public const int GlyphFixedDimension = 16;      // Fixed pixel dimension of each glyph (i.e. 16x16 pixels)
 
-        readonly FileProxy managedFile = new FileProxy();
+        FileProxy managedFile = new FileProxy();
         FntFileData fileData = new FntFileData();
 
         #endregion

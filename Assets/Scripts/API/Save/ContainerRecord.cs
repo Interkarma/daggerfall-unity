@@ -9,7 +9,12 @@
 // Notes:
 //
 
+using System;
+using System.Text;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using DaggerfallConnect.Utility;
 
 namespace DaggerfallConnect.Save
 {
@@ -33,13 +38,13 @@ namespace DaggerfallConnect.Save
             set { parsedData = value; }
         }
 
-        /// <summary>
-        /// Returns true if this is a wagon.
-        /// </summary>
-        public bool IsWagon
-        {
+         /// <summary>
+         /// Returns true if this is a wagon.
+         /// </summary>
+         public bool IsWagon
+         {
             get { return WagonCheck(); }
-        }
+         }
 
         #endregion
 
