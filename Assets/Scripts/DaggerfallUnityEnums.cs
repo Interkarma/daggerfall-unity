@@ -220,7 +220,8 @@ namespace DaggerfallWorkshop
         PrimaryAttack,      // Records 5-9      (Usually a melee attack animation)
         Hurt,               // Records 10-14    (Mob has been struck)
         Idle,               // Records 15-19    (Frost and ice Daedra have animated idle states)
-        RangedAttack1,      // Records 20-24    (Spellcast or bow attack based on mobile type)
+        RangedAttack1,      // Records 20-24    (Bow attack)
+        Spell,              // Records 20-24 or, if absent, copy of PrimaryAttack
         RangedAttack2,      // Records 25-29    (Bow attack on 475, 489, 490 only, absent on other humanoids)
         // TODO: Seducer transform special
     }

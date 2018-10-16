@@ -11,6 +11,8 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -32,6 +34,9 @@ namespace DaggerfallWorkshop.Game
         CharacterController controller;
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
+        EntityEffectManager entityEffectManager;
+        EntityEffectBundle selectedSpell;
+        EnemyAttack attack;
 
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         float giveUpTimer;                          // Timer before enemy gives up
@@ -85,6 +90,8 @@ namespace DaggerfallWorkshop.Game
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            entityEffectManager = GetComponent<EntityEffectManager>();
+            attack = GetComponent<EnemyAttack>();
             isAttackFollowsPlayerSet = false;
         }
 
@@ -323,9 +330,11 @@ namespace DaggerfallWorkshop.Game
                         else if (!mobile.IsPlayingOneShot())
                             mobile.ChangeEnemyState(MobileStates.Idle);
                     }
-                    //else if (spellPoints > 0 && canCastRangeSpells && DFRandom.rand() % 40 == 0) TODO: Ranged spell shooting
-                    //          CastRangedSpell();
-                    //          Spell Cast Animation;
+                    else if (entity.CurrentMagicka > 0 && CanCastRangedSpell(entity) && DFRandom.rand() % 40 == 0
+                        && entityEffectManager.SetReadySpell(selectedSpell) && mobile.Summary.EnemyState != MobileStates.Spell)
+                    {
+                        mobile.ChangeEnemyState(MobileStates.Spell);
+                    }
                     else
                         // If no ranged attack, move towards target
                         PursueTarget(direction, moveSpeed);
@@ -343,17 +352,105 @@ namespace DaggerfallWorkshop.Game
                 PursueTarget(direction, moveSpeed);
             else if (!senses.TargetIsWithinYawAngle(22.5f))
                 TurnToTarget(direction.normalized);
-            //else
-            //{
-            // TODO: Touch spells.
-            //if (hasSpellPoints && attackCoolDownFinished && CanCastTouchSpells)
-            //{
-            //    Cast Touch Spell
-            //    Spell Cast Animation
-            //}
-            //}
+            else if (senses.TargetInSight && entity.CurrentMagicka > 0 && attack.MeleeTimer == 0 && CanCastTouchSpell(entity)
+                && entityEffectManager.SetReadySpell(selectedSpell))
+            {
+                if (mobile.Summary.EnemyState != MobileStates.Spell)
+                        mobile.ChangeEnemyState(MobileStates.Spell);
+
+                attack.MeleeTimer = Random.Range(1500, 3001);
+                attack.MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
+                attack.MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
+
+                if (attack.MeleeTimer < 0)
+                    attack.MeleeTimer = 1500;
+
+                attack.MeleeTimer /= 980; // Approximates classic frame update
+            }
             else if (!senses.DetectedTarget && mobile.Summary.EnemyState == MobileStates.Move)
                 mobile.ChangeEnemyState(MobileStates.Idle);
+        }
+
+        bool CanCastRangedSpell(DaggerfallEntity entity)
+        {
+            EffectBundleSettings[] spells = entity.GetSpells();
+            List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
+            int count = 0;
+            foreach (EffectBundleSettings spell in spells)
+            {
+                if (spell.TargetType == TargetTypes.SingleTargetAtRange
+                    || spell.TargetType == TargetTypes.AreaAtRange)
+                {
+                    rangeSpells.Add(spell);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+                return false;
+
+            EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
+            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+            if (EffectsAlreadyOnTarget(selectedSpell))
+                return false;
+
+            return true;
+        }
+
+        bool CanCastTouchSpell(DaggerfallEntity entity)
+        {
+            EffectBundleSettings[] spells = entity.GetSpells();
+            List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
+            int count = 0;
+            foreach (EffectBundleSettings spell in spells)
+            {
+                if (spell.TargetType == TargetTypes.ByTouch
+                    || spell.TargetType == TargetTypes.AreaAroundCaster)
+                {
+                    rangeSpells.Add(spell);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+                return false;
+
+            EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
+            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+            if (EffectsAlreadyOnTarget(selectedSpell))
+                return false;
+
+            return true;
+        }
+
+        bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
+        {
+            if (entityBehaviour.Target)
+            {
+                EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
+                LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
+
+                for (int i = 0; i < spell.Settings.Effects.Length; i++)
+                {
+                    bool foundEffect = false;
+                    // Get effect template
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(spell.Settings.Effects[i].Key);
+                    for (int j = 0; j < bundles.Length && !foundEffect; j++)
+                    {
+                        for (int k = 0; k < bundles[j].liveEffects.Count && !foundEffect; k++)
+                        {
+
+                            if (bundles[j].liveEffects[k].GetType() == effectTemplate.GetType())
+                                foundEffect = true;
+                        }
+                    }
+
+                    if (!foundEffect)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private void PursueTarget(Vector3 direction, float moveSpeed)
