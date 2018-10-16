@@ -184,13 +184,11 @@ namespace DaggerfallWorkshop.Game.Items
         {
             foreach (DaggerfallUnityItem item in items.Values)
             {
-                if (item.IsQuestItem)
+                if (item.IsQuestItem &&
+                    item.QuestUID == questItem.ParentQuest.UID &&
+                    item.QuestItemSymbol.Equals(questItem.Symbol))
                 {
-                    if (item.QuestUID == questItem.ParentQuest.UID &&
-                        item.QuestItemSymbol.Equals(questItem.Symbol))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -450,7 +448,7 @@ namespace DaggerfallWorkshop.Game.Items
             ItemData_v1[] itemArray = new ItemData_v1[Count];
 
             int index = 0;
-            foreach(DaggerfallUnityItem item in items.Values)
+            foreach (DaggerfallUnityItem item in items.Values)
             {
                 itemArray[index++] = item.GetSaveData();
             }
@@ -473,7 +471,7 @@ namespace DaggerfallWorkshop.Game.Items
                 return;
 
             // Add items to this collection
-            for(int i = 0; i < itemArray.Length; i++)
+            for (int i = 0; i < itemArray.Length; i++)
             {
                 if (itemArray[i].className != null)
                 {
@@ -481,8 +479,7 @@ namespace DaggerfallWorkshop.Game.Items
                     customItems.TryGetValue(itemArray[i].className, out itemClassType);
                     if (itemClassType != null)
                     {
-                        DaggerfallUnityItem modItem = (DaggerfallUnityItem) Activator.CreateInstance(itemClassType);
-                        bool ench = modItem.IsEnchanted;
+                        DaggerfallUnityItem modItem = (DaggerfallUnityItem)Activator.CreateInstance(itemClassType);
                         modItem.FromItemData(itemArray[i]);
                         AddItem(modItem, AddPosition.DontCare, true);
                         continue;
@@ -546,7 +543,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Remove scheduled items
-            foreach(DaggerfallUnityItem item in itemsToRemove)
+            foreach (DaggerfallUnityItem item in itemsToRemove)
             {
                 RemoveItem(item);
             }

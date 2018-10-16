@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         public string GetPaintingFilename() { return dataSource.paintingFilename; }
-        public int GetPaintingFileIdx() { return (int) dataSource.paintingFileIdx; }
+        public int GetPaintingFileIdx() { return (int)dataSource.paintingFileIdx; }
 
         public TextFile.Token[] InitPaintingInfo(int paintingTextId = 250)
         {
@@ -71,8 +71,8 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         private class ItemMacroDataSource : MacroDataSource
         {
-            private string[] conditions = new string[] { HardStrings.Broken, HardStrings.Useless, HardStrings.Battered, HardStrings.Worn, HardStrings.Used, HardStrings.SlightlyUsed, HardStrings.AlmostNew, HardStrings.New };
-            private int[] conditionThresholds = new int[] {1, 5, 15, 40, 60, 75, 91, 101};
+            private readonly string[] conditions = { HardStrings.Broken, HardStrings.Useless, HardStrings.Battered, HardStrings.Worn, HardStrings.Used, HardStrings.SlightlyUsed, HardStrings.AlmostNew, HardStrings.New };
+            private readonly int[] conditionThresholds = { 1, 5, 15, 40, 60, 75, 91, 101 };
 
             private Recipe[] recipeArray;
 
@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Items
             public int paintingPp1;     // for %pp1 macro
             public int paintingPp2;     // for %pp2 macro
 
-            private DaggerfallUnityItem parent;
+            private readonly DaggerfallUnityItem parent;
             public ItemMacroDataSource(DaggerfallUnityItem item)
             {
                 this.parent = item;
@@ -105,9 +105,9 @@ namespace DaggerfallWorkshop.Game.Items
                 switch (parent.itemGroup)
                 {
                     case ItemGroups.Armor:
-                        return DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName((ArmorMaterialTypes) parent.nativeMaterialValue);
+                        return DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName((ArmorMaterialTypes)parent.nativeMaterialValue);
                     case ItemGroups.Weapons:
-                        return DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName((WeaponMaterialTypes) parent.nativeMaterialValue);
+                        return DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName((WeaponMaterialTypes)parent.nativeMaterialValue);
                     default:
                         return base.Material();
                 }
@@ -296,7 +296,7 @@ namespace DaggerfallWorkshop.Game.Items
                         {
                             magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.itemDeteriorateLocations[parent.legacyMagic[i].param]));
                         }
-                        else if(parent.legacyMagic[i].type == EnchantmentTypes.UserTakesDamage)
+                        else if (parent.legacyMagic[i].type == EnchantmentTypes.UserTakesDamage)
                         {
                             magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.userTakesDamageLocations[parent.legacyMagic[i].param]));
                         }
@@ -323,7 +323,7 @@ namespace DaggerfallWorkshop.Game.Items
                                 }
                             }
 
-                            if (found == false)
+                            if (!found)
                                 magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + "ERROR"));
                         }
                         else

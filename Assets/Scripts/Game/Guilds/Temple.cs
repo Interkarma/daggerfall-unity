@@ -269,7 +269,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        string[] rankTitles = new string[] {
+        readonly string[] rankTitles = {
                 "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
         };
 
@@ -311,7 +311,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             // Temple hall:
             if (Enum.IsDefined(typeof(Divines), factionId))
-                return (Divines) factionId;
+                return (Divines)factionId;
 
             // Templar order:
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
@@ -319,7 +319,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (persistentFactionData.GetFactionData(factionId, out factionData))
             {
                 if (Enum.IsDefined(typeof(Divines), factionData.parent))
-                    return (Divines) factionData.parent;
+                    return (Divines)factionData.parent;
             }
             throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: " + factionId);
         }
@@ -371,7 +371,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override int GetFactionId()
         {
-            return (int) deity;
+            return (int)deity;
         }
 
         // Temple guild names are different from affiliation
@@ -527,7 +527,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         internal override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
-            deity = (Divines) data.variant;
+            deity = (Divines)data.variant;
         }
 
         #endregion
@@ -545,7 +545,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// </summary>
         protected class TempleMacroDataSource : GuildMacroDataSource
         {
-            private Temple parent;
+            private readonly Temple parent;
             public TempleMacroDataSource(Temple guild) : base(guild)
             {
                 parent = guild;

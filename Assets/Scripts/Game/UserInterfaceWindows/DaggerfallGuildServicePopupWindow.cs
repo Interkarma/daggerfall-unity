@@ -707,7 +707,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
             KnightlyOrder order = (KnightlyOrder) guild;
-            order.ReceiveHouse(playerEntity);
+            order.ReceiveHouse();
         }
 
         #endregion

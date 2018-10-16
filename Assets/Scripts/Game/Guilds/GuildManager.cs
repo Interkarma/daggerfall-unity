@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 default:
                     Type guildType;
                     if (customGuilds.TryGetValue(guildGroup, out guildType))
-                        return (int) guildType.GetProperty("FactionId").GetValue(null, null);
+                        return (int)guildType.GetProperty("FactionId").GetValue(null, null);
                     else
                         return 0;
             }
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild membership handling
 
-        private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
+        private readonly Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
         public List<Guild> GetMemberships()
         {
@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 default:
                     Type guildType;
                     if (customGuilds.TryGetValue(guildGroup, out guildType))
-                        return (Guild) Activator.CreateInstance(guildType);
+                        return (Guild)Activator.CreateInstance(guildType);
                     else
                         return null;
             }
@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             FactionFile.FactionData factionData;
             if (persistentFactionData.GetFactionData(factionId, out factionData))
             {
-                guildGroup = (FactionFile.GuildGroups) factionData.ggroup;
+                guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
 
                 // Handle temples nested under deity
                 if (factionData.children != null && (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0))
@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     FactionFile.FactionData firstChild;
                     if (persistentFactionData.GetFactionData(factionData.children[0], out firstChild))
                     {
-                        guildGroup = (FactionFile.GuildGroups) firstChild.ggroup;
+                        guildGroup = (FactionFile.GuildGroups)firstChild.ggroup;
                     }
                 }
             }

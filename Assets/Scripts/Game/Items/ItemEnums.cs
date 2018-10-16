@@ -9,8 +9,6 @@
 // Notes:
 //
 
-using System;
-
 namespace DaggerfallWorkshop.Game.Items
 {
     // This data is primarily for backward compatibility with classic items.
@@ -37,7 +35,7 @@ namespace DaggerfallWorkshop.Game.Items
         Artifacts = 5,
         MensClothing = 6,
         Books = 7,
-        Furniture = 8, // According to Daghex
+        Furniture = 8,
         UselessItems2 = 9,
         ReligiousItems = 10,
         Maps = 11,

@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionMap2Id = 5229;
         protected const int BribesJudgeId = 550;
 
-        private const int factionId = (int) FactionFile.FactionIDs.The_Thieves_Guild;
+        private const int factionId = (int)FactionFile.FactionIDs.The_Thieves_Guild;
 
         private DFLocation revealedDungeon;
 
@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = new string[] {
+        static string[] rankTitles = {
                 "Apprentice", "Journeyman", "Filcher", "Crook", "Robber", "Bandit", "Thief", "Ringleader", "Mastermind", "Master Thief"
         };
 
@@ -105,9 +105,9 @@ namespace DaggerfallWorkshop.Game.Guilds
             return DaggerfallUnity.Instance.TextProvider.GetRandomTokens(GetPromotionMsgId(newRank));
         }
 
-        private int GetPromotionMsgId(int rank)
+        private int GetPromotionMsgId(int newRank)
         {
-            switch (rank)
+            switch (newRank)
             {
                 case 2:
                     return PromotionFenceId;
@@ -225,7 +225,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// </summary>
         protected class ThievesGuildMacroDataSource : GuildMacroDataSource
         {
-            private ThievesGuild parent;
+            private readonly ThievesGuild parent;
             public ThievesGuildMacroDataSource(ThievesGuild guild) : base(guild)
             {
                 parent = guild;

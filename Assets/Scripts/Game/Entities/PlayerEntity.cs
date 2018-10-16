@@ -1625,12 +1625,12 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 if (regionID != -1 && faction.type == (int)FactionFile.FactionTypes.Province)
                 {
-                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarBeginning] = false;
-                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarOngoing] = false;
-                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarWon] = false;
-                    regionData[regionID - 1].Flags[(int)RegionDataFlags.WarLost] = false;
-                    regionData[regionID - 1].Flags2[flagsToFlags2Map[(int)RegionDataFlags.WarBeginning]] = false;
-                    regionData[regionID - 1].Values[(int)RegionDataFlags.WarOngoing] = 0;
+                    regionData[regionID].Flags[(int)RegionDataFlags.WarBeginning] = false;
+                    regionData[regionID].Flags[(int)RegionDataFlags.WarOngoing] = false;
+                    regionData[regionID].Flags[(int)RegionDataFlags.WarWon] = false;
+                    regionData[regionID].Flags[(int)RegionDataFlags.WarLost] = false;
+                    regionData[regionID].Flags2[flagsToFlags2Map[(int)RegionDataFlags.WarBeginning]] = false;
+                    regionData[regionID].Values[(int)RegionDataFlags.WarOngoing] = 0;
                 }
             }
         }
