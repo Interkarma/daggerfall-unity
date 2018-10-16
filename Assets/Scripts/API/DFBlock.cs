@@ -12,7 +12,6 @@
 #region Using Statements
 using FullSerializer;
 using System;
-using System.Text;
 #endregion
 
 namespace DaggerfallConnect

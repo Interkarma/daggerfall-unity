@@ -9,13 +9,8 @@
 // Notes:
 //
 
-using System;
-using System.Text;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect.Utility;
-using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallConnect.Save

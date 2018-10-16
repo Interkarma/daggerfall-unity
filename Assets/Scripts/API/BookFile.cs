@@ -11,8 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
-using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -29,7 +27,7 @@ namespace DaggerfallConnect.Arena2
         const string books = "books";
         const string naughty = "naughty";
 
-        FileProxy bookFile = new FileProxy();
+        readonly FileProxy bookFile = new FileProxy();
         BookHeader header = new BookHeader();
 
         #endregion

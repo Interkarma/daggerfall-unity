@@ -9,11 +9,8 @@
 // Notes:
 //
 
-using System;
 using System.IO;
 using System.Collections.Generic;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect;
 
 namespace DaggerfallConnect.Arena2
 {
@@ -36,7 +33,7 @@ namespace DaggerfallConnect.Arena2
             }
             string text = reader.ReadToEnd();
             reader.Close();
-            string[] textLines = text.Split(new char[]{ '\0' });
+            string[] textLines = text.Split(new char[] { '\0' });
             for (int i = 0; i < textLines.Length; i++)
             {
                 Lines.Add(textLines[i]);
@@ -48,4 +45,3 @@ namespace DaggerfallConnect.Arena2
         public List<string> Lines { get; set; }
     }
 }
-

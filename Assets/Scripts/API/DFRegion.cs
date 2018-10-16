@@ -11,7 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.Collections.Generic;
 #endregion
 
@@ -196,7 +195,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// String array of dungeon types for display.
         /// </summary>
-        public static string[] DungeonTypeNames = new string[]
+        public static string[] DungeonTypeNames =
         {
             "Crypt",
             "Orc Stronghold",

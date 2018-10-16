@@ -11,7 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
@@ -50,7 +49,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Name to index lookup dictionary.
         /// </summary>
-        private Dictionary<String, int> blockNameLookup = new Dictionary<String, int>();
+        private readonly Dictionary<String, int> blockNameLookup = new Dictionary<String, int>();
 
         #endregion
 
@@ -645,8 +644,8 @@ namespace DaggerfallConnect.Arena2
                     // Store data
                     blocks[block].DFBlock.RmbBlock.FldHeader.GroundData.GroundTiles[x, y].TileBitfield = bitfield;
                     blocks[block].DFBlock.RmbBlock.FldHeader.GroundData.GroundTiles[x, y].TextureRecord = bitfield & 0x3f;
-                    blocks[block].DFBlock.RmbBlock.FldHeader.GroundData.GroundTiles[x, y].IsRotated = ((bitfield & 0x40) == 0x40) ? true : false;
-                    blocks[block].DFBlock.RmbBlock.FldHeader.GroundData.GroundTiles[x, y].IsFlipped = ((bitfield & 0x80) == 0x80) ? true : false;
+                    blocks[block].DFBlock.RmbBlock.FldHeader.GroundData.GroundTiles[x, y].IsRotated = ((bitfield & 0x40) == 0x40);
+                    blocks[block].DFBlock.RmbBlock.FldHeader.GroundData.GroundTiles[x, y].IsFlipped = ((bitfield & 0x80) == 0x80);
                 }
             }
         }
@@ -706,8 +705,8 @@ namespace DaggerfallConnect.Arena2
                 {
                     blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
                     blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
-                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.BuildingType;
-                    if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64*64)
+                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
+                    if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64 * 64)
                         blocks[block].DFBlock.RmbBlock.FldHeader.AutoMapData = buildingReplacementData.AutoMapData;
                 }
                 else
