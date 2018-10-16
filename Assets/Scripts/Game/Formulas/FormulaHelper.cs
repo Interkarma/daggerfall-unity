@@ -495,7 +495,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                         damage = CalculateBackstabDamage(damage, backstabChance);
                     }
                 }
-                else // attacker is monster
+                else if (AIAttacker != null) // attacker is monster
                 {
                     // Handle multiple attacks by AI
                     int attackNumber = 0;
@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
             }
             // Handle weapon attacks
-            else
+            else if (weapon != null)
             {
                 // Apply weapon material modifier.
                 if (weapon.GetWeaponMaterialModifier() > 0)
@@ -647,8 +647,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
             if (weapon != null && damage > 0)
             {
-                // TODO: Inflict poison
-                // TODO: Inflict weapon magic effects
                 // TODO: If attacker is AI, apply Ring of Namira effect
                 weapon.DamageThroughPhysicalHit(damage, attacker);
 
@@ -750,11 +748,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
                     uint random = DFRandom.rand();
-                    if (random >= 400)
-                    {
-                        if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                            InflictDisease(target, diseaseListA);
-                    }
+                    if (random >= 400 && UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                        InflictDisease(target, diseaseListA);
                     // else
                     //{
                     //    InflictVampirism
@@ -946,16 +941,6 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int SavingThrow(DFCareer.Elements elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
-            // Handle resistances granted by magical effects (classic example)
-            // elementTypes are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magick
-            // int[] SavingThrowResistFlags = { 0x02, 0x10000000, 0x20000000, 0x40000000, 0x80000000 }; These map to classic magicEffects 1 through 4 concatenated together as 4 bytes.
-            // if (target.magicEffects & SavingThrowResistTypes[elementType]
-            //{
-            //      int chance = target.ResistanceTo(elementType);
-            //      if (UnityEngine.Random.Range(1, 100 + 1) <= chance)
-            //          return 0;
-            //}
-
             // Handle resistances granted by magical effects
             if (target.HasResistanceFlag(elementType))
             {
@@ -1301,9 +1286,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (condition == max)
                 return 0;
 
-            int cost = baseItemValue;
-
-            cost = 10 * baseItemValue / 100;
+            int cost = 10 * baseItemValue / 100;
 
             if (cost < 1)
                 cost = 1;
@@ -1620,7 +1603,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             int perLevel,
             int skillValue)
         {
-
             //Calculate effect gold cost, spellpoint cost is calculated from gold cost after adding up for duration, chance and magnitude
             goldCost = trunc(costs.OffsetGold + costs.CostA * starting + costs.CostB * trunc(increase / perLevel));
         }

@@ -9,12 +9,8 @@
 // Notes:
 //
 
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {

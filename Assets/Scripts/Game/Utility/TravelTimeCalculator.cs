@@ -32,6 +32,10 @@ namespace DaggerfallWorkshop.Game.Utility
         // Gives movement modifiers used for different terrain types.
         byte[] terrainMovementModifiers = { 240, 220, 200, 200, 230, 250 };
 
+        // Taverns only accept gold pieces, compute those separately
+        protected int piecesCost = 0;
+        protected int totalCost = 0;
+
         // Used in calculating travel cost
         int pixelsTraveledOnOcean = 0;
 
@@ -148,16 +152,19 @@ namespace DaggerfallWorkshop.Game.Utility
             return minutesTakenTotal;
         }
 
-        public int CalculateTripCost(int travelTimeInMinutes, bool sleepModeInn, bool hasShip, bool travelShip)
+        public void CalculateTripCost(int travelTimeInMinutes, bool sleepModeInn, bool hasShip, bool travelShip)
         {
             int travelTimeInHours = (travelTimeInMinutes + 59) / 60;
-            int cost = 0;
+            piecesCost = 0;
             if (sleepModeInn && !GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.KnightlyOrder).FreeTavernRooms())
-                cost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24) + 5;
+                piecesCost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24) + 5;
+            totalCost = piecesCost;
             if ((pixelsTraveledOnOcean > 0) && !hasShip && travelShip)
-                cost += 25 * (pixelsTraveledOnOcean / 24 + 1);
-            return cost;
+                totalCost += 25 * (pixelsTraveledOnOcean / 24 + 1);
         }
+
+        public int PiecesCost { get { return piecesCost; } }
+        public int TotalCost { get { return totalCost; } }
         #endregion
     }
 }

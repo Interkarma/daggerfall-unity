@@ -10,8 +10,6 @@
 //
 
 #region Using Statements
-using System;
-using System.Text;
 using UnityEngine;
 #endregion
 

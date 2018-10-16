@@ -9,15 +9,8 @@
 // Notes:
 //
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
-#endregion
-
 namespace DaggerfallConnect
 {
-
     /// <summary>
     /// Stores sound data.
     /// </summary>
@@ -45,5 +38,4 @@ namespace DaggerfallConnect
         #endregion
 
     }
-
 }

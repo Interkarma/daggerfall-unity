@@ -11,7 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.Globalization;
 #endregion
 

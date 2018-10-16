@@ -460,6 +460,31 @@ namespace DaggerfallWorkshop.Game
                 return false;
         }
 
+        public bool TargetIsWithinPitchAngle(float targetAngle)
+        {
+            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
+            Plane verticalTransformToLastKnownPos = new Plane(lastKnownTargetPos, transform.position, transform.position + Vector3.up);
+            // first project enemy direction to horizontal plane.
+            Vector3 enemyDirection2D = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+            // next project enemy direction to vertical plane intersecting with last known position
+            enemyDirection2D = Vector3.ProjectOnPlane(enemyDirection2D, verticalTransformToLastKnownPos.normal);
+
+            float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
+
+            if (angle < targetAngle)
+                return true;
+            else
+                return false;
+        }
+
+        public bool TargetIsAbove()
+        {
+            if (lastKnownTargetPos.y > transform.position.y)
+                return true;
+            return false;
+        }
+
         #endregion
 
         #region Private Methods

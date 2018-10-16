@@ -10,9 +10,7 @@
 //
 
 using System;
-using System.Text;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 
@@ -33,7 +31,7 @@ namespace DaggerfallConnect.Save
         public Dictionary<uint, SaveTreeBaseRecord> RecordDictionary = new Dictionary<uint, SaveTreeBaseRecord>();
 
         // Private fields
-        FileProxy saveTreeFile = new FileProxy();
+        readonly FileProxy saveTreeFile = new FileProxy();
         int duplicateKeysFound = 0;
 
         /// <summary>
@@ -150,7 +148,7 @@ namespace DaggerfallConnect.Save
         {
             List<SaveTreeBaseRecord> newList = new List<SaveTreeBaseRecord>();
 
-            foreach(SaveTreeBaseRecord record in source)
+            foreach (SaveTreeBaseRecord record in source)
             {
                 if (record.Parent == null)
                     continue;
