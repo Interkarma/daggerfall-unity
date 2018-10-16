@@ -10,6 +10,7 @@
 //
 
 #region Using Statements
+using System;
 using System.IO;
 using DaggerfallConnect.Utility;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Abstracts rumor file to a managed disk or memory stream.
         /// </summary>
-        private readonly FileProxy managedFile = new FileProxy();
+        private FileProxy managedFile = new FileProxy();
 
         /// <summary>
         /// List of rumors read from file.

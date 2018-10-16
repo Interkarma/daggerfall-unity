@@ -12,7 +12,10 @@
 #region Using Statements
 using UnityEngine;
 using System;
+using System.Text;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 #endregion
 
@@ -27,12 +30,12 @@ namespace DaggerfallConnect.Arena2
     {
         const string VID = "VID";
         const int sampleRate = 11025;
-        //const int delayMultiplier = 185;
+        const int delayMultiplier = 185;
         const int paletteDataLength = 768;
         const int paletteColorCount = 256;
         const int paletteMultiplier = 4;
 
-        readonly FileProxy vidFile = new FileProxy();
+        FileProxy vidFile = new FileProxy();
         VidHeader header = new VidHeader();
         BinaryReader reader;
         Color32[] palette;
@@ -94,8 +97,8 @@ namespace DaggerfallConnect.Arena2
 
             // Read header and palette
             reader = vidFile.GetReader(0);
-            ReadHeader();
-            ReadPalette();
+            ReadHeader(reader);
+            ReadPalette(reader);
 
             // Cache reader position
             streamPosition = reader.BaseStream.Position;
@@ -144,23 +147,23 @@ namespace DaggerfallConnect.Arena2
                         break;
                     case VidBlockTypes.Audio_StartFrame:
                         //Debug.Log("Reading Audio_StartFrame");
-                        ReadAudioStartFrame();
+                        ReadAudioStartFrame(reader);
                         break;
                     case VidBlockTypes.Audio_IncrementalFrame:
                         //Debug.Log("Reading Audio_IncrementalFrame");
-                        ReadAudioIncrementalFrame();
+                        ReadAudioIncrementalFrame(reader);
                         break;
                     case VidBlockTypes.Video_StartFrame:
                         //Debug.Log("Reading Video_StartFrame");
-                        ReadVideoStartFrame();
+                        ReadVideoStartFrame(reader);
                         break;
                     case VidBlockTypes.Video_IncrementalFrame:
                         //Debug.Log("Reading Video_IncrementalFrame");
-                        ReadVideoIncrementalFrame();
+                        ReadVideoIncrementalFrame(reader);
                         break;
                     case VidBlockTypes.Video_IncrementalRowOffsetFrame:
                         //Debug.Log("Reading Video_IncrementalRowOffsetFrame");
-                        ReadVideoRowOffsetFrame();
+                        ReadVideoRowOffsetFrame(reader);
                         break;
                     case VidBlockTypes.EndOfFile:
                         Debug.Log("End of VID file reached");
@@ -191,7 +194,7 @@ namespace DaggerfallConnect.Arena2
 
         #region Readers
 
-        void ReadHeader()
+        void ReadHeader(BinaryReader reader)
         {
             // Verify file starts with VID
             header.VID = FileProxy.ReadCString(reader, 3);
@@ -210,7 +213,7 @@ namespace DaggerfallConnect.Arena2
             frameBuffer = new Color32[header.FrameWidth * header.FrameHeight];
         }
 
-        void ReadPalette()
+        void ReadPalette(BinaryReader reader)
         {
             VidBlockTypes blockType = (VidBlockTypes)reader.ReadByte();
             if (blockType != VidBlockTypes.Palette)
@@ -229,7 +232,7 @@ namespace DaggerfallConnect.Arena2
             }
         }
 
-        VidAudioStartFrame ReadAudioStartFrame()
+        VidAudioStartFrame ReadAudioStartFrame(BinaryReader reader)
         {
             VidAudioStartFrame block = new VidAudioStartFrame();
             block.Unknown1 = reader.ReadUInt16();
@@ -243,7 +246,7 @@ namespace DaggerfallConnect.Arena2
             return block;
         }
 
-        VidAudioIncrementalFrame ReadAudioIncrementalFrame()
+        VidAudioIncrementalFrame ReadAudioIncrementalFrame(BinaryReader reader)
         {
             VidAudioIncrementalFrame block = new VidAudioIncrementalFrame();
             block.DataLength = reader.ReadUInt16();
@@ -252,14 +255,14 @@ namespace DaggerfallConnect.Arena2
             return block;
         }
 
-        void ReadVideoStartFrame()
+        void ReadVideoStartFrame(BinaryReader reader)
         {
             lastDelay = (int)reader.ReadUInt16();
 
             ReadVideoFullFrameData();
         }
 
-        void ReadVideoRowOffsetFrame()
+        void ReadVideoRowOffsetFrame(BinaryReader reader)
         {
             lastDelay = (int)reader.ReadUInt16();
             UInt16 row = reader.ReadUInt16();
@@ -267,7 +270,7 @@ namespace DaggerfallConnect.Arena2
             ReadVideoPartialFrameData(row * FrameWidth);
         }
 
-        void ReadVideoIncrementalFrame()
+        void ReadVideoIncrementalFrame(BinaryReader reader)
         {
             lastDelay = (int)reader.ReadUInt16();
 

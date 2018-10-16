@@ -610,9 +610,6 @@ namespace DaggerfallWorkshop.Game.Player
                 else if (factionData2.ally3 == 0)
                     factionData2.ally3 = factionID1;
 
-                factionDict[factionID1] = factionData1;
-                factionDict[factionID2] = factionData2;
-
                 return true;
             }
 
@@ -642,9 +639,6 @@ namespace DaggerfallWorkshop.Game.Player
                     factionData2.ally2 = 0;
                 if (factionData2.ally3 == factionID1)
                     factionData2.ally3 = 0;
-
-                factionDict[factionID1] = factionData1;
-                factionDict[factionID2] = factionData2;
 
                 return true;
             }
@@ -677,9 +671,6 @@ namespace DaggerfallWorkshop.Game.Player
                 else if (factionData2.enemy3 == 0)
                     factionData2.enemy3 = factionID1;
 
-                factionDict[factionID1] = factionData1;
-                factionDict[factionID2] = factionData2;
-
                 return true;
             }
 
@@ -709,9 +700,6 @@ namespace DaggerfallWorkshop.Game.Player
                     factionData2.enemy2 = 0;
                 if (factionData2.enemy3 == factionID1)
                     factionData2.enemy3 = 0;
-
-                factionDict[factionID1] = factionData1;
-                factionDict[factionID2] = factionData2;
 
                 return true;
             }
@@ -755,7 +743,6 @@ namespace DaggerfallWorkshop.Game.Player
                 faction.rulerPowerBonus = DFRandom.random_range_inclusive(0, 50) + 20;
                 uint random = DFRandom.rand() << 16;
                 faction.rulerNameSeed = DFRandom.rand() | random;
-                factionDict[factionID] = faction;
 
                 return true;
             }

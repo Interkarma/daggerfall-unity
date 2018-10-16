@@ -9,12 +9,14 @@
 // Notes:
 //
 
+using System;
+
 namespace DaggerfallWorkshop.Game.Entity
 {
     public class CivilianEntity : DaggerfallEntity
     {
         public CivilianEntity(DaggerfallEntityBehaviour entityBehaviour)
-            : base(entityBehaviour)
+            :base(entityBehaviour)
         {
         }
 

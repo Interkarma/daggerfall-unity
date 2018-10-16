@@ -12,11 +12,13 @@
 using UnityEngine;
 using System;
 using System.IO;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
@@ -106,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsParalyzed
         {
-            get { return (!IsImmuneToParalysis && isParalyzed); }
+            get { return (!IsImmuneToParalysis) ? isParalyzed : false; }
             set { isParalyzed = value; }
         }
 
@@ -165,7 +167,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public bool IsBlending
         {
-            get { return (HasConcealment(MagicalConcealmentFlags.BlendingNormal) || HasConcealment(MagicalConcealmentFlags.BlendingTrue)); }
+            get { return (HasConcealment(MagicalConcealmentFlags.BlendingNormal) || HasConcealment(MagicalConcealmentFlags.BlendingTrue)); } 
         }
 
         /// <summary>
@@ -218,7 +220,6 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        /// <summary>
         /// Gets or sets world context of this entity for floating origin support.
         /// Not required by all systems but this is a nice central place for mobiles.
         /// </summary>
@@ -233,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Entity Properties
 
         public Genders Gender { get { return gender; } set { gender = value; } }
-        public DFCareer Career { get { return career; } set { career = value; } }
+        public DFCareer Career { get { return career; } set { career = value; } } 
         public string Name { get { return name; } set { name = value; } }
         public int Level { get { return level; } set { level = value; } }
         public DaggerfallStats Stats { get { return stats; } set { stats.Copy(value); } }
@@ -493,9 +494,9 @@ namespace DaggerfallWorkshop.Game.Entity
                     int armorBonus = armor.GetShieldArmorValue();
                     BodyParts[] protectedBodyParts = armor.GetShieldProtectedBodyParts();
 
-                    foreach (var BodyPart in protectedBodyParts)
+                    foreach (var BodyParts in protectedBodyParts)
                     {
-                        values[(int)BodyPart] = armorBonus;
+                        values[(int)BodyParts] = armorBonus;
                     }
 
                     for (int i = 0; i < armorValues.Length; i++)
@@ -520,7 +521,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <returns>True if matching.</returns>
         public bool HasConcealment(MagicalConcealmentFlags flags)
         {
-            return ((MagicalConcealmentFlags & flags) == flags);
+            return ((MagicalConcealmentFlags & flags) == flags) ? true : false;
         }
 
         /// <summary>

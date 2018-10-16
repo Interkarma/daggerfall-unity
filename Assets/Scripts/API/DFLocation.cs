@@ -11,6 +11,8 @@
 
 #region Using Statements
 using System;
+using System.Collections.Generic;
+using System.Text;
 using DaggerfallConnect.Arena2;
 #endregion
 
@@ -565,7 +567,7 @@ namespace DaggerfallConnect
 
             /// <summary>Resolved block names.</summary>
             public string[] BlockNames;
-
+            
             /// <summary>Unknown.</summary>
             public Byte[] Unknown4;
 
@@ -632,7 +634,7 @@ namespace DaggerfallConnect
         {
             /// <summary>X position of block.</summary>
             public SByte X;
-
+            
             /// <summary>Y position of block.</summary>
             public SByte Z;
 
