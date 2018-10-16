@@ -222,10 +222,10 @@ namespace DaggerfallWorkshop.Game.Player
         /// faction exists for the region, Random Ruler (region -1) is returned.
         /// </summary>
         /// <param name="type">Type to match.</param>
-        /// <param name="oneBasedRegionIndex">Region index to match. Must be ONE-BASED region index used by FACTION.TXT.</param>
-        /// <param name="factionDataOut">Receives faction data.</param>
+        /// <param name="regionIndex">Zero-based region index to find in persistent faction data.</param>
+        /// <param name="factionDataOut">Receives faction data out.</param>
         /// <returns>True if successful.</returns>
-        public bool FindFactionByTypeAndRegion(int type, int oneBasedRegionIndex, out FactionFile.FactionData factionDataOut)
+        public bool FindFactionByTypeAndRegion(int type, int regionIndex, out FactionFile.FactionData factionDataOut)
         {
             bool foundPartialMatch = false;
             factionDataOut = new FactionFile.FactionData();
@@ -234,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Player
             // Match faction items
             foreach (FactionFile.FactionData item in factionDict.Values)
             {
-                if (type == item.type && oneBasedRegionIndex == item.region)
+                if (type == item.type && regionIndex == item.region)
                 {
                     factionDataOut = item;
                     return true;

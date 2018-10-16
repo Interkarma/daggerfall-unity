@@ -204,7 +204,8 @@ namespace DaggerfallWorkshop
             if (summary.EnemyState == MobileStates.Hurt ||
                 summary.EnemyState == MobileStates.PrimaryAttack ||
                 summary.EnemyState == MobileStates.RangedAttack1 ||
-                summary.EnemyState == MobileStates.RangedAttack2)
+                summary.EnemyState == MobileStates.RangedAttack2 ||
+                summary.EnemyState == MobileStates.Spell)
             {
                 return true;
             }
@@ -274,6 +275,15 @@ namespace DaggerfallWorkshop
             if (summary.EnemyState == MobileStates.RangedAttack1 || summary.EnemyState == MobileStates.RangedAttack2)
             {
                 summary.StateAnimFrames = summary.Enemy.RangedAttackAnimFrames;
+
+                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
+                currentFrame = summary.StateAnimFrames[0];
+                frameIterator = 1;
+            }
+
+            if (summary.EnemyState == MobileStates.Spell)
+            {
+                summary.StateAnimFrames = summary.Enemy.SpellAnimFrames;
 
                 // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
                 currentFrame = summary.StateAnimFrames[0];
@@ -694,6 +704,9 @@ namespace DaggerfallWorkshop
                     break;
                 case MobileStates.RangedAttack2:
                     anims = (summary.Enemy.HasRangedAttack2) ? (MobileAnimation[])EnemyBasics.RangedAttack2Anims.Clone() : null;
+                    break;
+                case MobileStates.Spell:
+                    anims = (summary.Enemy.HasSpellAnimation) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
                     break;
                 default:
                     return null;

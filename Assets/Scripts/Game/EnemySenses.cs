@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop.Game
         Vector3 directionToTarget;
         float distanceToPlayer;
         float distanceToTarget;
+        float lastDistanceToTarget;
+        float targetRateOfApproach;
         Vector3 lastKnownTargetPos;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
@@ -131,6 +133,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return questBehaviour; }
             set { questBehaviour = value; }
+        }
+
+        public float TargetRateOfApproach
+        {
+            get { return targetRateOfApproach; }
+            set { targetRateOfApproach = value; }
         }
 
         void Start()
@@ -251,6 +259,14 @@ namespace DaggerfallWorkshop.Game
                         entityBehaviour.Target.Target = entityBehaviour;
                     }
                 }
+
+                // Compare change in target position to give AI some ability to read opponent's movements
+                if (lastDistanceToTarget != 0)
+                {
+                    targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
+                }
+
+                lastDistanceToTarget = distanceToTarget;
             }
 
             if (Player != null)

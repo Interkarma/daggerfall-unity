@@ -551,7 +551,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %rt %t
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
-            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex + 1, out regionFaction);
+            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex, out regionFaction);
 
             switch (regionFaction.ruler)
             {
