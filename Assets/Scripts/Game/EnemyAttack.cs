@@ -251,6 +251,8 @@ namespace DaggerfallWorkshop.Game
                 else
                     SendDamageToPlayer();
             }
+            else
+                sounds.PlayMissSound(weapon);
 
             return damage;
         }
