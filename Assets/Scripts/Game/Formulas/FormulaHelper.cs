@@ -1399,7 +1399,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             for (int i = 0; i < regionData.Length; ++i)
             {
                 FactionFile.FactionData regionFaction;
-                if (player.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
+                if (player.FactionData.FindFactionByTypeAndRegion(7, i, out regionFaction))
                 {
                     for (int j = 0; j < times; ++j)
                     {

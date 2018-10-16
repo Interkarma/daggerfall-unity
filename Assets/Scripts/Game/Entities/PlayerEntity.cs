@@ -1721,7 +1721,7 @@ namespace DaggerfallWorkshop.Game.Entity
             regionData[regionIndex].LegalRep -= reputationLossPerCrime[(int)crimeCommitted];
 
             FactionFile.FactionData peopleFaction;
-            FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
+            FactionData.FindFactionByTypeAndRegion(15, regionIndex, out peopleFaction);
 
             FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2), true);
         }
@@ -1732,7 +1732,7 @@ namespace DaggerfallWorkshop.Game.Entity
             regionData[regionIndex].LegalRep += (short)(halfOfLegalRepPlayerLostFromCrime - 1);
 
             FactionFile.FactionData peopleFaction;
-            FactionData.FindFactionByTypeAndRegion(15, regionIndex + 1, out peopleFaction);
+            FactionData.FindFactionByTypeAndRegion(15, regionIndex, out peopleFaction);
 
             // Classic changes reputation here by (1 - halfOfLegalRepPlayerLostFromCrime) / 2). Probably a bug.
             FactionData.ChangeReputation(peopleFaction.id, (halfOfLegalRepPlayerLostFromCrime - 1) / 2, true);
