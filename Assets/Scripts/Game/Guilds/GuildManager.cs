@@ -208,11 +208,17 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// </summary>
         public Guild GetGuild(int factionId)
         {
-            FactionFile.GuildGroups guildGroup = GetGuildGroup(factionId);
-            if (guildGroup == FactionFile.GuildGroups.None)
+            try {
+                FactionFile.GuildGroups guildGroup = GetGuildGroup(factionId);
+                if (guildGroup == FactionFile.GuildGroups.None)
+                    return guildNotMember;
+                else
+                    return GetGuild(guildGroup, factionId);
+            // Catch erroneous faction data entries. (e.g. #91)
+            } catch (ArgumentOutOfRangeException e) {
+                DaggerfallUnity.LogMessage(e.Message, true);
                 return guildNotMember;
-            else
-                return GetGuild(guildGroup, factionId);
+            }
         }
 
         private FactionFile.GuildGroups GetGuildGroup(int factionId)
