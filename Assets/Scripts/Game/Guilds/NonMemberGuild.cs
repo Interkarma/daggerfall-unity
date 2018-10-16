@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             return null;
         }
-        
+
         public override void Join()
         {
             throw new NotImplementedException();

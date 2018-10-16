@@ -280,10 +280,10 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
 
             GuildServices service;
-            if (guildNpcServices.TryGetValue((int) guildNpcService, out service))
+            if (guildNpcServices.TryGetValue((int)guildNpcService, out service))
                 return service;
             else
-                return (GuildServices) guildNpcService;
+                return (GuildServices)guildNpcService;
         }
 
         public static bool GetCustomGuildService(int npcFactionId, out CustomGuildService customGuildService)
