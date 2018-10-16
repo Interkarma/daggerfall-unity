@@ -1623,7 +1623,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 int regionID = faction.region;
 
-                if (regionID != -1 && faction.type == (int)FactionFile.FactionTypes.Province)
+                if (regionID > 0 && faction.type == (int)FactionFile.FactionTypes.Province)
                 {
                     regionData[regionID - 1].Flags[(int)RegionDataFlags.WarBeginning] = false;
                     regionData[regionID - 1].Flags[(int)RegionDataFlags.WarOngoing] = false;
