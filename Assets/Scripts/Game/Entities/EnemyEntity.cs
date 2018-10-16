@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
