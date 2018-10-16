@@ -697,7 +697,32 @@ namespace DaggerfallWorkshop.Game.Formulas
                         InflictDisease(target, diseaseListB);
                     break;
                 case (int)MonsterCareers.Spider:
-                    // if target does not have paralyze (spell id 66), cast it
+                case (int)MonsterCareers.GiantScorpion:
+                    EntityEffectManager targetEffectManager = target.EntityBehaviour.GetComponent<EntityEffectManager>();
+                    LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
+                    bool paralyzeAlreadyActive = false;
+
+                    foreach (LiveEffectBundle bundle in bundles)
+                    {
+                        foreach (IEntityEffect effect in bundle.liveEffects)
+                        {
+                            if (effect is Paralyze)
+                            {
+                                paralyzeAlreadyActive = true;
+                            }
+                        }
+                    }
+
+                    if (!paralyzeAlreadyActive)
+                    {
+                        SpellRecord.SpellRecordData spellData;
+                        GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(66, out spellData);
+                        EffectBundleSettings bundle;
+                        GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle);
+                        EntityEffectBundle spell = new EntityEffectBundle(bundle, attacker.EntityBehaviour);
+                        EntityEffectManager attackerEffectManager = attacker.EntityBehaviour.GetComponent<EntityEffectManager>();
+                        attackerEffectManager.SetReadySpell(spell, true);
+                    }
                     break;
                 case (int)MonsterCareers.Werewolf:
                     //uint random = DFRandom.rand();
@@ -721,9 +746,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Mummy:
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
                         InflictDisease(target, diseaseListC);
-                    break;
-                case (int)MonsterCareers.GiantScorpion:
-                    // if target does not have paralyze (spell id 66), cast it
                     break;
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
