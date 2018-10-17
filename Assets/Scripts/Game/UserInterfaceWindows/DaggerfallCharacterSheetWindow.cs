@@ -122,6 +122,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 panelPos.y += 24f;
             }
 
+            // Name button
+            Button nameButton = DaggerfallUI.AddButton(new Rect(4, 3, 132, 8), NativePanel);
+            nameButton.OnMouseClick += NameButton_OnMouseClick;
+
             // Health button
             Button healthButton = DaggerfallUI.AddButton(new Rect(4, 63, 128, 8), NativePanel);
             healthButton.OnMouseClick += HealthButton_OnMouseClick;
@@ -692,6 +696,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Event Handlers
+
+        private void NameButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            mb.TextBox.Text = nameLabel.Text;
+            mb.SetTextBoxLabel(HardStrings.enterNewName);
+            mb.OnGotUserInput += EnterName_OnGotUserInput;
+            mb.Show();
+        }
+
+        private void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            if (input.Length > 0)
+                PlayerEntity.Name = input;
+            UpdatePlayerValues();
+        }
 
         private void HealthButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
