@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is DrainEffect && (other as DrainEffect).drainStat == drainStat) ? true : false;
+            return (other is DrainEffect && (other as DrainEffect).drainStat == drainStat);
         }
 
         protected override void BecomeIncumbent()
@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             base.HealAttributeDamage(stat, amount);
 
             // Reduce magnitude and cancel effect once reduced to 0
-            if (DecreaseMagnitude((int)amount) == 0)
+            if (DecreaseMagnitude(amount) == 0)
                 forcedRoundsRemaining = 0;
         }
 
@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youFeelDrained"));
         }
 
-        int IncreaseMagnitude(int amount)
+        void IncreaseMagnitude(int amount)
         {
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
 
@@ -115,8 +115,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 magnitude += amount;
 
             SetStatMod(drainStat, -magnitude);
-
-            return magnitude;
         }
 
         int DecreaseMagnitude(int amount)
