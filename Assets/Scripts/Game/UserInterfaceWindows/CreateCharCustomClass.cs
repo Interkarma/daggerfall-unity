@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Are all attribute points distributed?
-            if (statsRollout.BonusPool > 0) 
+            if (statsRollout.BonusPool != 0) 
             {
                 messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(strDistributeStats);
