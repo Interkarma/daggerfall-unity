@@ -22,7 +22,6 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
-        private bool isHanging = false;
         private bool isSlipping = false;
         private bool atOutsideCorner = false;
         private bool atInsideCorner = false;
@@ -70,6 +69,7 @@ namespace DaggerfallWorkshop.Game
         public bool IsClimbing
         {
             get { return isClimbing; }
+            set { isClimbing = value; }
         }
         /// <summary>
         /// true if player is climbing but trying to regain hold of wall
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game
             float startClimbHorizontalTolerance;
             float startClimbSkillCheckFrequency;
             // true if we should try climbing wall and are airborne
-            bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
+            bool airborneGraspWall = (!hangingMotor.IsHanging && !isClimbing && !isSlipping && acrobatMotor.Falling);
             bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
 
@@ -146,31 +146,36 @@ namespace DaggerfallWorkshop.Game
 
             // reset for next use
             WallEject = false;
-            
-            // Should we abort climbing?
+            bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startClimbHorizontalTolerance;
+            bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
+            bool touchingGround = (playerMotor.CollisionFlags & CollisionFlags.Below) != 0;
+            bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
+
+            RaycastHit hit;
+            // Should we reset climbing starter timers?
             if (inputAbortCondition
-                || (playerMotor.CollisionFlags & CollisionFlags.Sides) == 0
+                || !touchingSides
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 // if we slipped and struck the ground
-                || (isSlipping && (playerMotor.CollisionFlags & CollisionFlags.Below) != 0
-                // don't do horizontal position check if already climbing
-                || (!isClimbing && Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) > startClimbHorizontalTolerance))
+                || (isSlipping && touchingGround)
                 // quit climbing if climbing down and ground is really close, prevents teleportation bug
-                || tooCloseToGroundForClimb)
+                || tooCloseToGroundForClimb
+                // don't do horizontal position check if already climbing
+                || (!isClimbing && !horizontallyStationary)
+                // if we're hanging and touching something above us
+                || touchingAbove && hangingMotor.IsHanging
+                // if we're hanging, and touching sides with a wall that isn't mostly vertical
+                || (hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f))
             {
                 if (isClimbing && inputAbortCondition && advancedClimbingOn)
                     WallEject = true;
-
+                
                 isClimbing = false;
-                isSlipping = false;
-                atOutsideCorner = false;
-                atInsideCorner = false;
-                showClimbingModeMessage = true;
-                climbingStartTimer = 0;
 
-                // Reset position for horizontal distance check
+                // Reset position for horizontal distance check and timer to wait for climbing start
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
+                climbingStartTimer = 0;
             }
             else // schedule climbing events
             {
@@ -221,9 +226,15 @@ namespace DaggerfallWorkshop.Game
                 // both variables represent similar situations, but different context
                 acrobatMotor.Falling = isSlipping;
             }
-            else
-                myLedgeDirection = Vector3.zero;
+            else if (!rappelMotor.IsRappelling)
+            {
+                isSlipping = false;
+                atOutsideCorner = false;
+                atInsideCorner = false;
+                showClimbingModeMessage = true;
 
+                myLedgeDirection = Vector3.zero;
+            }
         }
 
         /// <summary>
@@ -238,6 +249,7 @@ namespace DaggerfallWorkshop.Game
                 // Disable further showing of climbing mode message until current climb attempt is stopped
                 // to keep it from filling message log
                 showClimbingModeMessage = false;
+                hangingMotor.IsHanging = false;
                 isClimbing = true;
             }
         }
@@ -299,7 +311,7 @@ namespace DaggerfallWorkshop.Game
                 //if (FindWallLoopCount == 0)
                 //{
                     // The adjacent wall is an inside corner
-                    atInsideCorner = isAtInsideCorner(hit);
+                    atInsideCorner = IsAtInsideCorner(hit);
                 //}
 
                 //FindWallLoopCount = 0;
@@ -329,7 +341,7 @@ namespace DaggerfallWorkshop.Game
                 return false;
             }
         }
-        private bool isAtInsideCorner(RaycastHit hit)
+        private bool IsAtInsideCorner(RaycastHit hit)
         {
             // not sure if there's a better way to do this?
             float myAngle;
