@@ -1,10 +1,10 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -234,8 +234,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Get working stat value
             int workingValue = workingStats.GetPermanentStatValue(selectedStat);
 
-            // Working value cannot rise above maxWorkingValue and bonus cannot fall below zero
-            if (workingValue == maxWorkingValue || bonusPool == 0)
+            // Working value cannot rise above maxWorkingValue and bonus cannot fall below zero if not in free edit mode
+            if (workingValue == maxWorkingValue || (bonusPool == 0 && !freeEdit))
                 return;
 
             // Remove a point from pool stat and assign to working stat
