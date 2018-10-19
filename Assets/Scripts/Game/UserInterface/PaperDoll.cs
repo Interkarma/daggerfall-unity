@@ -232,7 +232,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         char[] regionBackgroundChars =
-            {'3','2','2','2', '2','0','5','1', '5','2','1','1', '2','2','2','0', '2','0','2','2', '3','0','5','6', '2','2','2','2', '0','0','0','0',
+            {'3','1','2','2', '2','0','5','1', '5','2','1','1', '2','2','2','0', '2','0','2','2', '3','0','5','6', '2','2','2','2', '0','0','0','0',
              '0','6','6','6', '0','6','6','0', '6','0','0','3', '3','3','3','3', '3','5','5','5', '5','1','3','3', '3','2','0','0', '2','3' };
 
         string GetPaperDollBackground(PlayerEntity entity)
@@ -247,11 +247,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     return entity.RaceTemplate.PaperDollBackground;
 
                 // Set background based on location.
-                if (playerGPS.IsPlayerInTown())
+                if (playerGPS.IsPlayerInTown(true))
                     return "SCBG04I0.IMG";
                 else if (playerEnterExit.IsPlayerInsideDungeon)
                     return "SCBG07I0.IMG";
-                else if (playerGPS.CurrentLocation.MapTableData.LocationType == DFRegion.LocationTypes.Graveyard)
+                else if (playerGPS.CurrentLocation.MapTableData.LocationType == DFRegion.LocationTypes.Graveyard && playerGPS.IsPlayerInLocationRect)
                     return "SCBG08I0.IMG";
                 else
                     return "SCBG0" + regionBackgroundChars[region] + "I0.IMG";
