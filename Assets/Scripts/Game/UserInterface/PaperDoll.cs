@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        char[] regionBackgroundChars =
+        readonly char[] regionBackgroundIdxChars =
             {'3','1','2','2', '2','0','5','1', '5','2','1','1', '2','2','2','0', '2','0','2','2', '3','0','5','6', '2','2','2','2', '0','0','0','0',
              '0','6','6','6', '0','6','6','0', '6','0','0','3', '3','3','3','3', '3','5','5','5', '5','1','3','3', '3','2','0','0', '2','3' };
 
@@ -245,18 +245,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
                 DFPosition position = playerGPS.CurrentMapPixel;
                 int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
-                if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount || region >= regionBackgroundChars.Length)
+                if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount || region >= regionBackgroundIdxChars.Length)
                     return entity.RaceTemplate.PaperDollBackground;
 
                 // Set background based on location.
                 if (playerGPS.IsPlayerInTown(true))
-                    return "SCBG04I0.IMG";                                      // Town
+                    return "SCBG04I0.IMG";                                          // Town
                 else if (playerEnterExit.IsPlayerInsideDungeon)
-                    return "SCBG07I0.IMG";                                      // Dungeon
+                    return "SCBG07I0.IMG";                                          // Dungeon
                 else if (playerGPS.CurrentLocation.MapTableData.LocationType == DFRegion.LocationTypes.Graveyard && playerGPS.IsPlayerInLocationRect)
-                    return "SCBG08I0.IMG";                                      // Graveyard
+                    return "SCBG08I0.IMG";                                          // Graveyard
                 else                            
-                    return "SCBG0" + regionBackgroundChars[region] + "I0.IMG";  // Region
+                    return "SCBG0" + regionBackgroundIdxChars[region] + "I0.IMG";   // Region
             }
             else
             {
