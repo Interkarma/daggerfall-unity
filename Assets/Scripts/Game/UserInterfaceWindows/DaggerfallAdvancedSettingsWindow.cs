@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox enhancedItemLists;  
         Checkbox enableModernConversationStyleInTalkWindow;
         HorizontalSlider helmAndShieldMaterialDisplay;
-        
+        Checkbox geographicBackgrounds;
 
         // Enhancements
         Checkbox modSystem;
@@ -252,6 +252,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableModernConversationStyleInTalkWindow = AddCheckbox(rightPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
+            geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -352,7 +353,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
             DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
-            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;        
+            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
+            DaggerfallUnity.Settings.EnableGeographicBackgrounds = geographicBackgrounds.IsChecked;
 
             /* Enhancements */
 

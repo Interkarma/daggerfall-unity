@@ -47,6 +47,7 @@ HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
 AccelerateUICopyTexture=False
 SDFFontRendering=True
+EnableGeographicBackgrounds=False
 
 [Spells]
 EnableSpellLighting=True

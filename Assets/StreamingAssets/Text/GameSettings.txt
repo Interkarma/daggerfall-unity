@@ -73,6 +73,8 @@ enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
 enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
 helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
 helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
+geographicBackgrounds,                              Geographic backgrounds
+geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
