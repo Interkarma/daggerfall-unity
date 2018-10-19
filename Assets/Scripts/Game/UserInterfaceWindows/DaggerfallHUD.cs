@@ -150,9 +150,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(questDebugger);
 
-            arrowCountTextLabel.HorizontalAlignment = HorizontalAlignment.Left;
-            arrowCountTextLabel.Position = new Vector2(0, 192);
-            arrowCountTextLabel.TextColor = new Color(0.4f, 0.4f, 0.4f);
+            arrowCountTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            arrowCountTextLabel.Position = new Vector2(0, 194);
+            arrowCountTextLabel.TextColor = new Color(0.6f, 0.6f, 0.6f);
             arrowCountTextLabel.ShadowPosition = Vector2.zero;
             arrowCountTextLabel.TextScale = 0.75f;
             NativePanel.Components.Add(arrowCountTextLabel);
