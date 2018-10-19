@@ -237,6 +237,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         string GetPaperDollBackground(PlayerEntity entity)
         {
+            // TODO: If player is were-creature and has transformed, use entity.RaceTemplate.TransformedPaperDollBackground regardless of geo backgrounds
+
             if (DaggerfallUnity.Settings.EnableGeographicBackgrounds)
             {
                 PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
@@ -248,16 +250,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Set background based on location.
                 if (playerGPS.IsPlayerInTown(true))
-                    return "SCBG04I0.IMG";
+                    return "SCBG04I0.IMG";                                      // Town
                 else if (playerEnterExit.IsPlayerInsideDungeon)
-                    return "SCBG07I0.IMG";
+                    return "SCBG07I0.IMG";                                      // Dungeon
                 else if (playerGPS.CurrentLocation.MapTableData.LocationType == DFRegion.LocationTypes.Graveyard && playerGPS.IsPlayerInLocationRect)
-                    return "SCBG08I0.IMG";
-                else
-                    return "SCBG0" + regionBackgroundChars[region] + "I0.IMG";
+                    return "SCBG08I0.IMG";                                      // Graveyard
+                else                            
+                    return "SCBG0" + regionBackgroundChars[region] + "I0.IMG";  // Region
             }
             else
+            {
                 return entity.RaceTemplate.PaperDollBackground;
+            }
         }
 
         void BlitCloakInterior(PlayerEntity entity)
