@@ -11,7 +11,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private PlayerGroundMotor groundMotor;
         private ClimbingMotor climbingMotor;
-        private PlayerStepDetector stepDetector;
+        private PlayerMoveScanner playerScanner;
         private Transform camTransform;
         private PlayerMotor playerMotor;
         private Entity.PlayerEntity player;
@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game
             speedChanger = GetComponent<PlayerSpeedChanger>();
             groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
-            stepDetector = GetComponent<PlayerStepDetector>();
+            playerScanner = GetComponent<PlayerMoveScanner>();
             camTransform = GameManager.Instance.MainCamera.transform;
         }
 
@@ -119,10 +119,8 @@ namespace DaggerfallWorkshop.Game
             // execute schedule
             if (IsHanging)
             {
-                // evalate the ledge direction
+                // handle movement direction
                 HangMoveDirection();
-
-                //HangMovement();
 
                 // both variables represent similar situations, but different context
                 acrobatMotor.Falling = false;
@@ -131,7 +129,6 @@ namespace DaggerfallWorkshop.Game
 
         private void HangMoveDirection()
         {
-            // Get Ceiling Normal and plane of that normal
             RaycastHit hit;
             if (Physics.Raycast(controller.transform.position, controller.transform.up, out hit, (controller.height / 2) + 1f))
             {
@@ -148,9 +145,7 @@ namespace DaggerfallWorkshop.Game
                     moveVector -= camTransform.right;
 
                 if (moveVector != Vector3.zero)
-                {
-                    // the difference between up vector and the negative hit vector.
-                    //Vector3 UpHitDifference = Vector3.up - -hit.normal;  
+                {  
                     moveVector = (Vector3.ProjectOnPlane(moveVector, hit.normal).normalized * playerspeed) + (-hit.normal * 0.2f * playerspeed);
 
                     moveVector.y = Mathf.Max(moveVector.y, 0.2f);
@@ -167,29 +162,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void HangMovement()
-        {
-            // TODO: Project camera direction against the ceiling normal's plane
-            
-        }
-
         private void StartHanging()
         {
             if (!IsHanging)
             {
                 if (showHangingModeMessage)
-                    // TODO: make this text a string in HardStrings
-                    DaggerfallUI.AddHUDText("Hanging Mode");
+                    DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.hangingMode);
 
                 showHangingModeMessage = false;
                 climbingMotor.IsClimbing = false;
                 IsHanging = true;
             }
-        }
-
-        private Vector3 GetCeilingHangVector(Vector3 origin, Vector3 direction)
-        {
-            return Vector3.zero;
         }
     }
 }

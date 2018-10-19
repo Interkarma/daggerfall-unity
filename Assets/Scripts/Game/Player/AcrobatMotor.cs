@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game
         FrictionMotor frictionMotor;
         ClimbingMotor climbingMotor;
         Transform myTransform;
-        PlayerStepDetector stepDetector;
+        PlayerMoveScanner playerScanner;
         RappelMotor rappelMotor;
 
         private float fallStartLevel;
@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
-            stepDetector = GetComponent<PlayerStepDetector>();
+            playerScanner = GetComponent<PlayerMoveScanner>();
             rappelMotor = GetComponent<RappelMotor>();
             myTransform = playerMotor.transform;
         }
@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game
                 float maxRange = minRange + 1.10f;
 
                 // should we apply anti-bump gravity?
-                if (!climbingMotor.IsClimbing && stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
+                if (!climbingMotor.IsClimbing && playerScanner.HitDistance > minRange && playerScanner.HitDistance < maxRange)
                     moveDirection.y -= antiBumpFactor;
 
                 // apply normal gravity

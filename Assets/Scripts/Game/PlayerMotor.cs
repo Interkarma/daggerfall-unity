@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
         private AcrobatMotor acrobatMotor;
         private PlayerGroundMotor groundMotor;
         private PlayerEnterExit playerEnterExit;
-        private PlayerStepDetector stepDetector;
+        private PlayerMoveScanner playerScanner;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game
             levitateMotor = GetComponent<LevitateMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
-            stepDetector = GetComponent<PlayerStepDetector>();
+            playerScanner = GetComponent<PlayerMoveScanner>();
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
             rappelMotor = GetComponent<RappelMotor>();
             hangingMotor = GetComponent<HangingMotor>();
@@ -290,7 +290,7 @@ namespace DaggerfallWorkshop.Game
                 acrobatMotor.CheckAirControl(ref moveDirection, speed);
             }
 
-            stepDetector.FindStep(moveDirection);
+            playerScanner.FindStep(moveDirection);
             acrobatMotor.ApplyGravity(ref moveDirection);
 
             acrobatMotor.HitHead(ref moveDirection);

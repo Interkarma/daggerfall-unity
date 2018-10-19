@@ -1,4 +1,4 @@
-﻿using DaggerfallConnect;
+using DaggerfallConnect;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +15,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private PlayerGroundMotor groundMotor;
         private ClimbingMotor climbingMotor;
-        private PlayerStepDetector stepDetector;
+        private PlayerMoveScanner playerScanner;
         private Entity.PlayerEntity player;
 
         private void Start()
@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
             speedChanger = GetComponent<PlayerSpeedChanger>();
             groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
-            stepDetector = GetComponent<PlayerStepDetector>();
+            playerScanner = GetComponent<PlayerMoveScanner>();
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game
             float maxRange = minRange + 2.90f;
 
             // are we going to step off something too short for rappel to be worthwhile?
-            bool dropTooShortForRappel = (stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange);
+            bool dropTooShortForRappel = (playerScanner.HitDistance > minRange && playerScanner.HitDistance < maxRange);
 
             if (!IsRappelling && !dropTooShortForRappel)
             {

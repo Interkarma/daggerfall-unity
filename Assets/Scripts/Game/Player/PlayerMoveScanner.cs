@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game
     /// <summary>
     /// Detects information about where the player is going to step
     /// </summary>
-    public class PlayerStepDetector : MonoBehaviour
+    public class PlayerMoveScanner : MonoBehaviour
     {
         CharacterController controller;
         AcrobatMotor acrobatMotor;
