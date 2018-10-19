@@ -45,6 +45,7 @@ EnableVitalsIndicators=True
 EnableModernConversationStyleInTalkWindow=False
 HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
+EnableArrowCounter=True
 AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False

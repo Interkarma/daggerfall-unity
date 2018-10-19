@@ -61,6 +61,8 @@ vitalsIndicators,									Vitals Indicators
 vitalsIndicatorsInfo,								Show indicators on vitals bars that display changes in vitals
 interactionModeIcon,                                Interaction Mode Icon
 interactionModeIconInfo,                            Style of contex icon for interaction mode
+arrowCounter,                                       Arrow counter
+arrowCounterInfo,                                   Enable an arrow counter on the HUD when using bows
 freeScaling,										Free scaling
 freeScalingInfo,									UI is stretched as required to fill entire viewport with no regard to aspect ratio
 showQuestJournalClocksAsCountdown,                  Countdown quest journal clocks

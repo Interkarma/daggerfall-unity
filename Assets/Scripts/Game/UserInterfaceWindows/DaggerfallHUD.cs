@@ -17,6 +17,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -30,6 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         PopupText popupText = new PopupText();
         TextLabel midScreenTextLabel = new TextLabel();
+        TextLabel arrowCountTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
@@ -54,6 +56,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowLocalQuestPlaces { get; set; }
         public bool ShowEscortingFaces { get; set; }
         public bool ShowActiveSpells { get; set; }
+        public bool ShowArrowCount { get; set; }
 
         public PopupText PopupText
         {
@@ -109,6 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowEscortingFaces = true;
             ShowLocalQuestPlaces = true;
             ShowActiveSpells = true;
+            ShowArrowCount = DaggerfallUnity.Settings.EnableArrowCounter;
 
             // Get references
             //player = GameObject.FindGameObjectWithTag("Player");
@@ -145,6 +149,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questDebugger.Size = new Vector2(640, 400);
             questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(questDebugger);
+
+            arrowCountTextLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            arrowCountTextLabel.Position = new Vector2(0, 192);
+            arrowCountTextLabel.TextColor = new Color(0.4f, 0.4f, 0.4f);
+            arrowCountTextLabel.ShadowPosition = Vector2.zero;
+            arrowCountTextLabel.TextScale = 0.75f;
+            NativePanel.Components.Add(arrowCountTextLabel);
         }
 
         public override void Update()
@@ -181,6 +192,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     midScreenTextTimer = -1;
                     midScreenTextLabel.Text = string.Empty;
+                }
+            }
+
+            // Update arrow count if player holding an unsheathed bow
+            arrowCountTextLabel.Enabled = false;
+            if (ShowArrowCount && !GameManager.Instance.WeaponManager.Sheathed)
+            {
+                DaggerfallUnityItem held = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(EquipSlots.RightHand);
+                if (held != null && held.ItemGroup == ItemGroups.Weapons &&
+                    (held.TemplateIndex == (int)Weapons.Long_Bow || held.TemplateIndex == (int)Weapons.Short_Bow))
+                {
+                    DaggerfallUnityItem arrows = GameManager.Instance.PlayerEntity.Items.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                    arrowCountTextLabel.Text = (arrows != null) ? arrows.stackCount.ToString() : "0";
+                    arrowCountTextLabel.Enabled = true;
                 }
             }
 

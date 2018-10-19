@@ -101,6 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox crosshair;
         Checkbox vitalsIndicators;
         Checkbox freeScaling;
+        Checkbox arrowCounter;
         HorizontalSlider interactionModeIcon;
         Checkbox showQuestJournalClocksAsCountdown;
         Checkbox inventoryInfoPanel;
@@ -240,6 +241,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             interactionModeIcon = AddSlider(leftPanel, "interactionModeIcon",
                 Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
                 Enum.GetNames(typeof(InteractionModeIconModes)));
+            arrowCounter = AddCheckbox(leftPanel, "arrowCounter", DaggerfallUnity.Settings.EnableArrowCounter);
 
             y = 0;
 
@@ -347,6 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Crosshair = crosshair.IsChecked;
             DaggerfallUnity.Settings.InteractionModeIcon = ((InteractionModeIconModes)interactionModeIcon.Value).ToString();
             DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
+            DaggerfallUnity.Settings.EnableArrowCounter = arrowCounter.IsChecked;
 
             DaggerfallUnity.Settings.FreeScaling = freeScaling.IsChecked;
             DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown = showQuestJournalClocksAsCountdown.IsChecked;

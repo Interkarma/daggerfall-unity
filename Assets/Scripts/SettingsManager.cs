@@ -109,6 +109,7 @@ namespace DaggerfallWorkshop
         public bool EnableVitalsIndicators { get; set; }
         public bool SDFFontRendering { get; set; }
         public bool EnableGeographicBackgrounds { get; set; }
+        public bool EnableArrowCounter { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -208,6 +209,7 @@ namespace DaggerfallWorkshop
             EnableVitalsIndicators = GetBool(sectionGUI, "EnableVitalsIndicators");
             SDFFontRendering = GetBool(sectionGUI, "SDFFontRendering");
             EnableGeographicBackgrounds = GetBool(sectionGUI, "EnableGeographicBackgrounds");
+            EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -295,6 +297,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableVitalsIndicators", EnableVitalsIndicators);
             SetBool(sectionGUI, "SDFFontRendering", SDFFontRendering);
             SetBool(sectionGUI, "EnableGeographicBackgrounds", EnableGeographicBackgrounds);
+            SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
