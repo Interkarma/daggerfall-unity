@@ -369,6 +369,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public override void CancelWindow()
+        {
+            doFastTravel = false;
+            base.CancelWindow();
+        }
+
         /// <summary>
         /// Button handler for travel-with-incubating-disease confirmation pop up.
         /// </summary>
@@ -402,6 +408,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            doFastTravel = false;
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
         }
 
