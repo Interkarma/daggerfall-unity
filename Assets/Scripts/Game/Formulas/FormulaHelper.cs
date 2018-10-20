@@ -697,21 +697,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Spider:
                 case (int)MonsterCareers.GiantScorpion:
                     EntityEffectManager targetEffectManager = target.EntityBehaviour.GetComponent<EntityEffectManager>();
-                    LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
-                    bool paralyzeAlreadyActive = false;
-
-                    foreach (LiveEffectBundle bundle in bundles)
-                    {
-                        foreach (IEntityEffect effect in bundle.liveEffects)
-                        {
-                            if (effect is Paralyze)
-                            {
-                                paralyzeAlreadyActive = true;
-                            }
-                        }
-                    }
-
-                    if (!paralyzeAlreadyActive)
+                    if (targetEffectManager.FindIncumbentEffect<Paralyze>() == null)
                     {
                         SpellRecord.SpellRecordData spellData;
                         GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(66, out spellData);
