@@ -47,15 +47,16 @@ namespace DaggerfallWorkshop.Game
     {
         CharacterController controller;
         AcrobatMotor acrobatMotor;
+        PlayerMotor playerMotor;
         private int turnCount = 0;
 
-        // could declare other useful properties if more info is needed about the surface hit
-        public float HitDistance { get; private set; }
-
+        public float StepHitDistance { get; private set; }
+        public float HeadHitDistance { get; private set; }
         void Start()
         {
             controller = GetComponent<CharacterController>();
             acrobatMotor = GetComponent<AcrobatMotor>();
+            playerMotor = GetComponent<PlayerMotor>();
         }
 
         /// <summary>
@@ -76,12 +77,25 @@ namespace DaggerfallWorkshop.Game
             RaycastHit hit;
 
             if (!acrobatMotor.Jumping && Physics.SphereCast(checkStepRay, 0.1f, out hit, maxRange))
-                HitDistance = hit.distance;
+                StepHitDistance = hit.distance;
             else
-                HitDistance = 0f;
+                StepHitDistance = 0f;
 
         }
-
+        public bool FindHeadHit(Ray ray)
+        {
+            //Ray ray = new Ray(controller.transform.position, Vector3.up);
+            RaycastHit hit = new RaycastHit();
+            if (Physics.SphereCast(ray, controller.radius * 0.85f, out hit, 2f))
+            {
+                if (hit.collider.GetComponent<MeshCollider>())
+                {
+                    HeadHitDistance = hit.distance;
+                    return true;
+                }
+            }
+            return false;
+        }
         public AdjacentSurface GetAdjacentSurface(Vector3 origin, Vector3 direction, bool searchClockwise)
         {
             RaycastHit hit;

@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game
             float maxRange = minRange + 2.90f;
 
             // are we going to step off something too short for rappel to be worthwhile?
-            bool dropTooShortForRappel = (playerScanner.HitDistance > minRange && playerScanner.HitDistance < maxRange);
+            bool dropTooShortForRappel = (playerScanner.StepHitDistance > minRange && playerScanner.StepHitDistance < maxRange);
 
             if (!IsRappelling && !dropTooShortForRappel)
             {

@@ -150,7 +150,12 @@ namespace DaggerfallWorkshop.Game
         public CollisionFlags CollisionFlags
         {
             get { return collisionFlags; }
-            set { collisionFlags = value; }
+            set {
+                if (value != collisionFlags)
+                    Debug.Log(collisionFlags + " -> " + value + "\n");
+
+
+                collisionFlags = value; }
         }
 
         public bool IsMovingLessThanHalfSpeed

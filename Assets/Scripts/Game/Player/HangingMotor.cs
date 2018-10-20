@@ -53,12 +53,12 @@ namespace DaggerfallWorkshop.Game
 
         public void HangingChecks()
         {
-            bool advancedClimbingOn = DaggerfallUnity.Settings.AdvancedClimbing;
+            if (!DaggerfallUnity.Settings.AdvancedClimbing)
+                return;
+
             float startHangSkillCheckFrequency = 14f;
             float continueHangingSkillCheckFrequency = 14f;
 
-            // true if we should try climbing wall and are airborne
-            //bool airborneGraspCeiling = (!IsHanging && acrobatMotor.Jumping);
             bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
 
@@ -89,9 +89,6 @@ namespace DaggerfallWorkshop.Game
                     hangingStartTimer += Time.deltaTime;
                 else
                 {
-                    // automatic success if not falling
-                    //if (!airborneGraspWall)
-                    //    StartHanging();
                     // skill check to see if we catch the wall 
                     if (climbingMotor.ClimbingSkillCheck(100))
                         StartHanging();
