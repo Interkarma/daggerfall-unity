@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerEnterExit playerEnterExit;
         private AcrobatMotor acrobatMotor;
         private PlayerSpeedChanger speedChanger;
+        private PlayerMoveScanner moveScanner;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
@@ -95,6 +96,7 @@ namespace DaggerfallWorkshop.Game
             speedChanger = GetComponent<PlayerSpeedChanger>();
             rappelMotor = GetComponent<RappelMotor>();
             hangingMotor = GetComponent<HangingMotor>();
+            moveScanner = GetComponent<PlayerMoveScanner>();
         }
 
         /// <summary>
@@ -287,74 +289,33 @@ namespace DaggerfallWorkshop.Game
 
         private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, bool searchClockwise)
         {
-            RaycastHit hit;
-            float distance = direction.magnitude;
+            AdjacentSurface adjSurface = moveScanner.GetAdjacentSurface(origin, direction, searchClockwise);
 
-            // use recursion to raycast vectors to find the adjacent wall
-            Debug.DrawRay(origin, direction, Color.green, Time.deltaTime);
-            if (Physics.Raycast(origin, direction, out hit, distance) 
-                && (hit.collider.gameObject.GetComponent<MeshCollider>() != null))
+            if (adjSurface != null && adjSurface.adjacentTurns == 0)
+                atInsideCorner = IsAtInsideCorner(adjSurface.turnHitDistance);
+
+            if (adjSurface != null)
             {
-                Debug.DrawRay(hit.point, hit.normal);
-
-                // Adjacent ledge has been found
-                adjacentLedgeDirection = -hit.normal;
-
-                if (searchClockwise)
-                    adjacentWallRay = new Ray(hit.point, Vector3.Cross(hit.normal, Vector3.up));
-                else
-                    adjacentWallRay = new Ray(hit.point, Vector3.Cross(Vector3.up, hit.normal));
-
-                Debug.DrawRay(adjacentWallRay.origin, adjacentWallRay.direction, Color.cyan);
-
-                // Commented out for now because it doesn't seem neccessary to do recursion to find the adjacent wall
-                //if (FindWallLoopCount == 0)
-                //{
-                    // The adjacent wall is an inside corner
-                    atInsideCorner = IsAtInsideCorner(hit);
-                //}
-
-                //FindWallLoopCount = 0;
-                return true;
+                adjacentLedgeDirection = adjSurface.adjacentGrabDirection;
+                adjacentWallRay = adjSurface.adjacentSurfaceRay;
             }
-            else
-            {
-                /* Commented out for now because apparently it's not neccessary to perform 
-                 * recursive checks for the adjacent wall.  
-                 * 
-                 * FindWallLoopCount++;
-                if (FindWallLoopCount < 3)
-                {
-                    // find next vector info now
-                    Vector3 lastOrigin = origin;
-                    origin = origin + direction;
-                    Vector3 nextDirection = Vector3.zero; 
 
-                    if (searchClockwise)
-                        nextDirection = Vector3.Cross(lastOrigin - origin, Vector3.up).normalized * distance;
-                    else
-                        nextDirection = Vector3.Cross(Vector3.up, lastOrigin - origin).normalized * distance;
-
-                    return GetAdjacentWallInfo(origin, nextDirection, searchClockwise);
-                }
-                FindWallLoopCount = 0;*/
-                return false;
-            }
+            return (adjSurface != null);
         }
-        private bool IsAtInsideCorner(RaycastHit hit)
+        private bool IsAtInsideCorner(float hitDistance)
         {
             // not sure if there's a better way to do this?
             float myAngle;
             myAngle = Vector3.Angle(cornerNormalRay.direction, -myStrafeRay.direction);
-            if (hit.distance < controller.radius + 0.17f && hit.distance > controller.radius + 0.15f
+            if (hitDistance < controller.radius + 0.17f && hitDistance > controller.radius + 0.15f
                 && myAngle < 68 && myAngle > 66.5f
                 ||
-                hit.distance < controller.radius + 0.07f && hit.distance > controller.radius + 0.045f
+                hitDistance < controller.radius + 0.07f && hitDistance > controller.radius + 0.045f
                 && myAngle < 45.5f && myAngle > 44.5f
                 )
             {
-                //Debug.Log("Adjacent wall distance: " + hit.distance);
-                //Debug.Log("Dist: " + hit.distance + "Angle = " + myAngle);
+                //Debug.Log("Adjacent wall distance: " + hitDistance);
+                //Debug.Log("Dist: " + hitDistance + "Angle = " + myAngle);
 
                 return true;
             }    
