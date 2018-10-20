@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int minValue = 0;
         int maxValue = 0;
         float lastTickTime;
-        float tickTimeInterval = 0.35f;
+        float tickTimeInterval = 0.3f;
         Action action = Action.None;
 
         private enum Action
@@ -249,7 +249,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
         }
-
 
         #region Events
 
