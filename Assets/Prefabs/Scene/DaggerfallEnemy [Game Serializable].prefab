@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeleeAttackSpeed: 1.25
-  MeleeDistance: 2.5
+  MeleeDistance: 2.25
   MeleeTimer: 0
 --- !u!114 &11435454
 MonoBehaviour:

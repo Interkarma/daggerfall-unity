@@ -272,7 +272,8 @@ namespace DaggerfallWorkshop.Game
 
                 if (entityBehaviour.Target != null && entityBehaviour.Target == lastTarget)
                 {
-                    targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
+                    if (DaggerfallUnity.Settings.EnhancedCombatAI)
+                        targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
                 }
                 else
                 {

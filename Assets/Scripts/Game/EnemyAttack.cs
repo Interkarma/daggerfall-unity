@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game
     public class EnemyAttack : MonoBehaviour
     {
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
-        public float MeleeDistance = 2.5f;          // Maximum distance for melee attack
+        public float MeleeDistance = 2.25f;          // Maximum distance for melee attack
         public float MeleeTimer = 0;                // Must be 0 for a melee attack or touch spell to be done
 
         //EnemyMotor motor;
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Game
                 damage = 0;
 
                 // Are we still in range and facing target? Then apply melee damage.
-                if (entityBehaviour.Target != null && senses.DistanceToTarget < MeleeDistance && senses.TargetInSight)
+                if (entityBehaviour.Target != null && senses.DistanceToTarget <= MeleeDistance && senses.TargetInSight)
                 {
                     if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);

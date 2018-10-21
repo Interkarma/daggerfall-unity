@@ -148,6 +148,7 @@ namespace DaggerfallWorkshop
         public float PlayerTorchLightScale { get; set; }
         public bool CombatVoices { get; set; }
         public bool EnemyInfighting { get; set; }
+        public bool EnhancedCombatAI { get; set; }
 
         #endregion
 
@@ -241,6 +242,7 @@ namespace DaggerfallWorkshop
             PlayerTorchLightScale = GetFloat(sectionEnhancements, "PlayerTorchLightScale", 0.0f, 1.0f);
             CombatVoices = GetBool(sectionEnhancements, "CombatVoices");
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
+            EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
         }
 
         /// <summary>
@@ -327,6 +329,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEnhancements, "PlayerTorchLightScale", PlayerTorchLightScale);
             SetBool(sectionEnhancements, "CombatVoices", CombatVoices);
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
+            SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
 
             // Write settings to persistent file
             WriteSettingsFile();
