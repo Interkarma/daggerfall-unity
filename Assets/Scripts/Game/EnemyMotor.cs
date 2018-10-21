@@ -194,8 +194,11 @@ namespace DaggerfallWorkshop.Game
             // Simplest approach: Stop moving.
             plannedMotion *= 0;
 
-            if (mobile.Summary.EnemyState == MobileStates.Move)
+            if (mobile.Summary.EnemyState == MobileStates.Move && DaggerfallUnity.Settings.EnhancedCombatAI)
                 mobile.ChangeEnemyState(MobileStates.Idle);
+            {
+                SetChangeStateTimer();
+            }
 
             // Slightly better approach: Route around.
             // This isn't perfect. In some cases enemies may still stack. It seems to happen when enemies are very close.
@@ -460,7 +463,7 @@ namespace DaggerfallWorkshop.Game
                 TurnToTarget(direction.normalized);
             else
             {
-                if (mobile.Summary.EnemyState == MobileStates.Move && !senses.TargetInSight)
+                if (mobile.Summary.EnemyState == MobileStates.Move)
                     mobile.ChangeEnemyState(MobileStates.Idle);
                 SetChangeStateTimer();
                 pursuing = false;
@@ -590,9 +593,6 @@ namespace DaggerfallWorkshop.Game
             pursuing = true;
             retreating = false;
 
-            if (!mobile.IsPlayingOneShot())
-                mobile.ChangeEnemyState(MobileStates.Move);
-
             if (!senses.TargetIsWithinYawAngle(5.625f))
             {
                 TurnToTarget(direction.normalized);
@@ -642,6 +642,9 @@ namespace DaggerfallWorkshop.Game
 
             // Prevent rat stacks (enemies don't stand on shorter enemies)
             AvoidEnemies(ref motion);
+
+            if (!mobile.IsPlayingOneShot() && motion != Vector3.zero)
+                mobile.ChangeEnemyState(MobileStates.Move);
 
             if (swims)
             {
@@ -695,28 +698,31 @@ namespace DaggerfallWorkshop.Game
             }
 
             // No retreat if enemy is paralyzed
-            EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
-            if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
+            if (entityBehaviour.Target != null)
             {
-                pursueDecision = true;
-                return;
-            }
+                EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
+                if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
+                {
+                    pursueDecision = true;
+                    return;
+                }
 
-            // No retreat if enemy's back is turned
-            if (senses.TargetHasBackTurned())
-            {
-                pursueDecision = true;
-                return;
-            }
+                // No retreat if enemy's back is turned
+                if (senses.TargetHasBackTurned())
+                {
+                    pursueDecision = true;
+                    return;
+                }
 
-            // No retreat if enemy is player with bow or weapon sheathed
-            if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour &&
-                ((GameManager.Instance.WeaponManager.ScreenWeapon &&
-                GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow) ||
-                GameManager.Instance.WeaponManager.Sheathed))
-            {
-                pursueDecision = true;
-                return;
+                // No retreat if enemy is player with bow or weapon not out
+                if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour &&
+                    GameManager.Instance.WeaponManager.ScreenWeapon &&
+                    (GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow ||
+                    !GameManager.Instance.WeaponManager.ScreenWeapon.ShowWeapon))
+                {
+                    pursueDecision = true;
+                    return;
+                }
             }
 
             float retreatDistanceBaseMult = 2.25f;
@@ -775,6 +781,9 @@ namespace DaggerfallWorkshop.Game
         {
             const float turnSpeed = 20f;
             //const float turnSpeed = 11.25f;
+
+            if (!mobile.IsPlayingOneShot())
+                mobile.ChangeEnemyState(MobileStates.Move);
 
             if (classicUpdate)
                 transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, turnSpeed * Mathf.Deg2Rad, 0.0f);
