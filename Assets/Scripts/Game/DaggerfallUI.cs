@@ -530,6 +530,11 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfBookReaderWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestJournalWindow:
+                    dfQuestJournalWindow.DisplayMode = DaggerfallQuestJournalWindow.JournalDisplay.ActiveQuests;
+                    uiManager.PushWindow(dfQuestJournalWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenNotebookWindow:
+                    dfQuestJournalWindow.DisplayMode = DaggerfallQuestJournalWindow.JournalDisplay.Notebook;
                     uiManager.PushWindow(dfQuestJournalWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenPlayerHistoryWindow:

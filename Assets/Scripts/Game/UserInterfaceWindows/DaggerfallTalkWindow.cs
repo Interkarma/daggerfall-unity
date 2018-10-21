@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -186,6 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonConversationDown;
         Button buttonOkay;
         Button buttonGoodbye;
+        Button buttonLogbook;
 
         // checkbox buttons
         Button buttonCheckboxTonePolite;
@@ -664,6 +665,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonGoodbye.Name = "button_goodbye";
             buttonGoodbye.OnMouseClick += ButtonGoodbye_OnMouseClick;
             mainPanel.Components.Add(buttonGoodbye);
+
+            buttonLogbook = new Button {
+                Position = new Vector2(118, 158),
+                Size = new Vector2(67, 18),
+            };
+            buttonLogbook.OnMouseClick += ButtonLogbook_OnMouseClick;
+            mainPanel.Components.Add(buttonLogbook);
         }
 
         void SetupCheckboxes()
@@ -1452,6 +1460,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 SelectTopicFromTopicList(listboxTopic.SelectedIndex);
             }
+        }
+
+        private void ButtonLogbook_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(listboxConversation.SelectedItem);
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)

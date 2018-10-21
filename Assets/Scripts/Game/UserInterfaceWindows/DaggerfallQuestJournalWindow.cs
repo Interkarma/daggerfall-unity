@@ -9,13 +9,9 @@
 // Notes:
 //
 
-
 //#define LAYOUT
 
-
 using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -34,20 +30,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
+        const string textDatabase = "DaggerfallUI";
         const string nativeImgName = "LGBK00I0.IMG";
+
+        readonly static TextFile.Token NewLineToken = new TextFile.Token() {
+            formatting = TextFile.Formatting.NewLine,
+        };
 
         const int maxLines = 19;
         int lastMessageIndex = -1;
         int currentMessageIndex = 0;
 
         List<Message> questMessages;
+        int messageCount = 0;
 
-        KeyCode toggleClosedBinding;
+        KeyCode toggleClosedBinding1;
+        KeyCode toggleClosedBinding2;
 
         #endregion
 
         #region UI Controls
 
+        TextLabel titleLabel;
         MultiFormatTextLabel questLogLabel;
 
         Panel mainPanel;
@@ -56,6 +60,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button upArrowButton;
         Button downArrowButton;
         Button exitButton;
+
+        public JournalDisplay DisplayMode { get; set; }
+
+        public enum JournalDisplay
+        {
+            ActiveQuests,
+            FinshedQuests,
+            Notebook
+        }
 
         #endregion
 
@@ -79,7 +92,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.LogError("failed to load texture: " + nativeImgName);
                 CloseWindow();
             }
-
 
             mainPanel                       = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
             mainPanel.BackgroundTexture     = texture;
@@ -118,15 +130,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(exitButton);
 
             questLogLabel                   = new MultiFormatTextLabel();
-            questLogLabel.Position          = new Vector2(30, 32);
+            questLogLabel.Position          = new Vector2(30, 38);
             questLogLabel.Size              = new Vector2(238, 138);
             mainPanel.Components.Add(questLogLabel);
 
+            Panel titlePanel = new Panel {
+                Position = new Vector2(30, 22),
+                Size = new Vector2(238, 12),
+            };
+            titleLabel = new TextLabel {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = DaggerfallUI.LargeFont,
+                ShadowColor = new Color(0.5f, 0f, 0.2f),
+            };
+            titlePanel.Components.Add(titleLabel);
+            mainPanel.Components.Add(titlePanel);
+
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
-            SetText();
+            messageCount = questMessages.Count;
 
             // Store toggle closed binding for this window
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
+            toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
+            toggleClosedBinding2 = InputManager.Instance.GetBinding(InputManager.Actions.NoteBook);
 
 #if LAYOUT
             SetBackgroundColors();
@@ -157,13 +183,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
-            if (Input.GetKeyUp(toggleClosedBinding))
+            if (Input.GetKeyUp(toggleClosedBinding1) || Input.GetKeyUp(toggleClosedBinding2))
                 CloseWindow();
 
             if (lastMessageIndex != currentMessageIndex)
             {
                 lastMessageIndex = currentMessageIndex;
-                SetText();
+                questLogLabel.Clear();
+
+                switch (DisplayMode)
+                {
+                    case JournalDisplay.ActiveQuests:
+                        SetTextActiveQuests();
+                        break;
+                    case JournalDisplay.FinshedQuests:
+                        SetTextFinshedQuests();
+                        break;
+                    case JournalDisplay.Notebook:
+                        SetTextNotebook();
+                        break;
+                }
             }
         }
 
@@ -173,13 +212,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void dialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Debug.LogError("button clicked: " + sender.Name);
-
+            switch (DisplayMode)
+            {
+                case JournalDisplay.ActiveQuests:
+                    DisplayMode = JournalDisplay.FinshedQuests;
+                    messageCount = GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests().Count;
+                    break;
+                case JournalDisplay.FinshedQuests:
+                    DisplayMode = JournalDisplay.Notebook;
+                    messageCount = GameManager.Instance.PlayerEntity.Notebook.GetNotes().Count;
+                    break;
+                case JournalDisplay.Notebook:
+                    DisplayMode = JournalDisplay.ActiveQuests;
+                    messageCount = questMessages.Count;
+                    break;
+            }
+            lastMessageIndex = -1;
+            currentMessageIndex = 0;
         }
 
         public void upArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Debug.Log("button clicked: " + sender.Name);
             if (currentMessageIndex - 1 >= 0)
                 currentMessageIndex -= 1;
 
@@ -187,10 +240,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void downArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Debug.Log("button clicked: " + sender.Name);
-            if (currentMessageIndex + 1 < questMessages.Count)
+            if (currentMessageIndex + 1 < messageCount)
                 currentMessageIndex += 1;
-
         }
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
@@ -205,7 +256,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Debug.Log("button clicked: " + sender.Name);
             CloseWindow();
         }
 
@@ -213,27 +263,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region region Private Methods
 
-        private void SetText()
+        private void SetTextActiveQuests()
         {
-            questLogLabel.Clear();
-
-            TextFile.Token newLineToken = new TextFile.Token();
-            newLineToken.formatting = TextFile.Formatting.NewLine;
+            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "activeQuests");
 
             int totalLineCount = 0;
-
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
             for (int i = currentMessageIndex; i < questMessages.Count; i++)
             {
-                if (totalLineCount >= 19)
+                if (totalLineCount >= maxLines)
                     break;
 
                 var tokens = questMessages[i].GetTextTokens();
 
                 for (int j = 0; j < tokens.Length; j++)
                 {
-                    if (totalLineCount >= 19)
+                    if (totalLineCount >= maxLines)
                         break;
 
                     var token = tokens[j];
@@ -245,8 +291,50 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     textTokens.Add(token);
                 }
+                textTokens.Add(NewLineToken);
+                totalLineCount++;
+            }
 
-                textTokens.Add(newLineToken);
+            questLogLabel.SetText(textTokens.ToArray());
+        }
+
+        private void SetTextFinshedQuests()
+        {
+            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "finishedQuests");
+            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests());
+        }
+
+        private void SetTextNotebook()
+        {
+            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
+            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetNotes());
+        }
+
+        private void SetTextWithListEntries(List<TextFile.Token[]> finishedQuests)
+        {
+            int totalLineCount = 0;
+            List<TextFile.Token> textTokens = new List<TextFile.Token>();
+
+            for (int i = currentMessageIndex; i < finishedQuests.Count; i++)
+            {
+                if (totalLineCount >= maxLines)
+                    break;
+
+                TextFile.Token[] tokens = finishedQuests[i];
+                for (int j = 0; j < tokens.Length; j++)
+                {
+                    if (totalLineCount >= maxLines)
+                        break;
+
+                    var token = tokens[j];
+                    if (token.formatting == TextFile.Formatting.Text || token.formatting == TextFile.Formatting.NewLine)
+                        totalLineCount++;
+                    else
+                        token.formatting = TextFile.Formatting.JustifyLeft;
+
+                    textTokens.Add(token);
+                }
+                textTokens.Add(NewLineToken);
                 totalLineCount++;
             }
 

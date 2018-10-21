@@ -17,9 +17,9 @@ using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string questDataFilename = "QuestData.txt";
         const string discoveryDataFilename = "DiscoveryData.txt";
         const string conversationDataFilename = "ConversationData.txt";
+        const string notebookDataFilename = "NotebookData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string bioFileName = "bio.txt";
@@ -931,6 +932,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Get conversation data
             TalkManager.SaveDataConversation conversationData = GameManager.Instance.TalkManager.GetConversationSaveData();
 
+            // Get notebook data
+            PlayerNotebook.NotebookData_v1 notebookData = GameManager.Instance.PlayerEntity.Notebook.GetNotebookSaveData();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
@@ -938,6 +942,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string questDataJson = Serialize(questData.GetType(), questData);
             string discoveryDataJson = Serialize(discoveryData.GetType(), discoveryData);
             string conversationDataJson = Serialize(conversationData.GetType(), conversationData);
+            string notebookDataJson = Serialize(notebookData.GetType(), notebookData);
 
             //// Attempt to hide UI for screenshot
             //bool rawImageEnabled = false;
@@ -969,6 +974,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, questDataFilename), questDataJson);
             WriteSaveFile(Path.Combine(path, discoveryDataFilename), discoveryDataJson);
             WriteSaveFile(Path.Combine(path, conversationDataFilename), conversationDataJson);
+            WriteSaveFile(Path.Combine(path, notebookDataFilename), notebookDataJson);
 
             // Save backstory text
             if (!File.Exists(Path.Combine(path, bioFileName)))
@@ -1041,6 +1047,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
             string conversationDataJson = ReadSaveFile(Path.Combine(path, conversationDataFilename));
+            string notebookDataJson = ReadSaveFile(Path.Combine(path, notebookDataFilename));
 
             // Load backstory text
             GameManager.Instance.PlayerEntity.BackStory = new List<string>();
@@ -1071,7 +1078,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore discovery data
             if (!string.IsNullOrEmpty(discoveryDataJson))
             {
-                Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData = Deserialize(typeof(Dictionary<int, PlayerGPS.DiscoveredLocation>), discoveryDataJson) as Dictionary<int, PlayerGPS.DiscoveredLocation>;
+                Dictionary<int, PlayerGPS.DiscoveredLocation> discoveryData =
+                    Deserialize(typeof(Dictionary<int, PlayerGPS.DiscoveredLocation>), discoveryDataJson) as Dictionary<int, PlayerGPS.DiscoveredLocation>;
                 GameManager.Instance.PlayerGPS.RestoreDiscoveryData(discoveryData);
             }
             else
@@ -1124,6 +1132,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
             {
                 GameManager.Instance.TalkManager.RestoreConversationData(null);
+            }
+
+            // Restore notebook data
+            if (!string.IsNullOrEmpty(notebookDataJson))
+            {
+                PlayerNotebook.NotebookData_v1 notebookData = Deserialize(typeof(PlayerNotebook.NotebookData_v1), notebookDataJson) as PlayerNotebook.NotebookData_v1;
+                GameManager.Instance.PlayerEntity.Notebook.RestoreNotebookData(notebookData);
             }
 
             // Restore player position to world

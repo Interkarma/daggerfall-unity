@@ -1,0 +1,7 @@
+- Text database for general daggerfall UI. These text items were previously hardcoded into FALL.EXE.
+
+schema: *key,text
+
+activeQuests,   Active Quests
+finishedQuests, Finished Quests
+notebook,       Notebook
