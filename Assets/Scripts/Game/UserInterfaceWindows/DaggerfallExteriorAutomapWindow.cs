@@ -336,7 +336,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.OnRightMouseUp += PanelAutomap_OnRightMouseUp;
 
             buttonToolTip = defaultToolTip;
-            buttonToolTip.Parent = NativePanel; // attach to native panel - in daggerfall's native resolution (320x200) - whole panel used as reference (buttonToolTip is used for button elements)
+            if (buttonToolTip != null)
+                buttonToolTip.Parent = NativePanel; // attach to native panel - in daggerfall's native resolution (320x200) - whole panel used as reference (buttonToolTip is used for button elements)
 
             // Grid button (toggle 2D <-> 3D view)
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
