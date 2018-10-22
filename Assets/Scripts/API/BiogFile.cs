@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -250,25 +250,25 @@ namespace DaggerfallConnect.Arena2
             else if (effect.StartsWith("IT"))
             {
                 int itemGroup;
-                int templateIndex;
+                int groupIndex;
                 int material;
                 if (!int.TryParse(tokens[1], out itemGroup)
-                    || !int.TryParse(tokens[2], out templateIndex)
+                    || !int.TryParse(tokens[2], out groupIndex)
                     || !int.TryParse(tokens[3], out material))
                 {
                     Debug.LogError("CreateCharBiography: IT - invalid argument(s).");
                     return;
                 }
 
-                DaggerfallUnityItem newItem;
+                DaggerfallUnityItem newItem = null;
                 if ((ItemGroups)itemGroup == ItemGroups.Weapons)
                 {
-                    newItem = ItemBuilder.CreateWeapon((Weapons)Enum.GetValues(typeof(Weapons)).GetValue(templateIndex), (WeaponMaterialTypes)material);
+                    newItem = ItemBuilder.CreateWeapon((Weapons)Enum.GetValues(typeof(Weapons)).GetValue(groupIndex), (WeaponMaterialTypes)material);
                 }
                 else if ((ItemGroups)itemGroup == ItemGroups.Armor)
                 {
                     // Biography commands treat weapon and armor material types the same
-                    newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, (Armor)Enum.GetValues(typeof(Armor)).GetValue(templateIndex), WeaponToArmorMaterialType((WeaponMaterialTypes)material));
+                    newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, (Armor)Enum.GetValues(typeof(Armor)).GetValue(groupIndex), WeaponToArmorMaterialType((WeaponMaterialTypes)material));
                 }
                 else if ((ItemGroups)itemGroup == ItemGroups.Books)
                 {
@@ -276,7 +276,7 @@ namespace DaggerfallConnect.Arena2
                 }
                 else
                 {
-                    newItem = ItemBuilder.CreateItem((ItemGroups)itemGroup, templateIndex);
+                    newItem = new DaggerfallUnityItem((ItemGroups)itemGroup, groupIndex);
                 }
                 playerEntity.Items.AddItem(newItem);
             }
