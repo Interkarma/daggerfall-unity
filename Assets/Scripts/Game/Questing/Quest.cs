@@ -335,7 +335,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     var message = GetMessage(logEntry.messageID);
                     if (message != null)
-                        GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuestMessage(message.GetTextTokens());
+                        GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuest(message.GetTextTokens());
                 }
             }
         }

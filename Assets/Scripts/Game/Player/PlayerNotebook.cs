@@ -21,10 +21,10 @@ namespace DaggerfallWorkshop.Game.Player
     /// </summary>
     public class PlayerNotebook
     {
-        private const int MaxLineLenth = 70;
+        public const int MaxLineLenth = 70;
+        private const int NULLINT = -1;
         private const string PrefixQuestion = "Q:";
         private const string PrefixAnswer = "A:";
-
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
         };
@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Player
 
         List<TextFile.Token[]> finishedQuests = new List<TextFile.Token[]>();
 
+        #region Notes
 
         public List<TextFile.Token[]> GetNotes()
         {
@@ -55,21 +56,21 @@ namespace DaggerfallWorkshop.Game.Player
             notes.RemoveAt(index);
         }
 
-        public void AddNote(string str)
+        public void AddNote(string str, int index = NULLINT)
         {
             if (!string.IsNullOrEmpty(str))
             {
-                List<TextFile.Token> note = CreateNote();
+                List<TextFile.Token> note = CreateNote(index == NULLINT);
                 WrapLinesIntoNote(note, str, TextFile.Formatting.Text);
-                notes.Add(note.ToArray());
+                AddNote(index, note);
             }
         }
 
-        public void AddNote(List<TextFile.Token> texts)
+        public void AddNote(TextFile.Token[] texts, int index = NULLINT)
         {
-            if (texts != null && texts.Count > 0)
+            if (texts != null && texts.Length > 0)
             {
-                List<TextFile.Token> note = CreateNote();
+                List<TextFile.Token> note = CreateNote(index == NULLINT);
                 foreach (TextFile.Token token in texts)
                 {
                     if (string.IsNullOrEmpty(token.text))
@@ -79,22 +80,33 @@ namespace DaggerfallWorkshop.Game.Player
                     
                     if ((note.Count - 2) >= (DaggerfallQuestJournalWindow.maxLinesSmall * 2))
                     {
-                        notes.Add(note.ToArray());
+                        AddNote(index, note);
                         note = CreateNote();
                     }
                 }
-                notes.Add(note.ToArray());
+                AddNote(index, note);
             }
         }
 
-        private static List<TextFile.Token> CreateNote()
+        private void AddNote(int index, List<TextFile.Token> note)
+        {
+            if (index == NULLINT)
+                notes.Add(note.ToArray());
+            else
+                notes.Insert(index, note.ToArray());
+        }
+
+        private static List<TextFile.Token> CreateNote(bool date = true)
         {
             List<TextFile.Token> note = new List<TextFile.Token>();
-            note.Add(new TextFile.Token() {
-                text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
-                formatting = TextFile.Formatting.Text,
-            });
-            note.Add(NothingToken);
+            if (date)
+            {
+                note.Add(new TextFile.Token() {
+                    text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
+                    formatting = TextFile.Formatting.Text,
+                });
+                note.Add(NothingToken);
+            }
             return note;
         }
 
@@ -117,23 +129,43 @@ namespace DaggerfallWorkshop.Game.Player
             note.Add(NothingToken);
         }
 
+        #endregion
+
+        #region Finished Quests
+
         public List<TextFile.Token[]> GetFinishedQuests()
         {
             return new List<TextFile.Token[]>(finishedQuests);
         }
 
-        public void AddFinishedQuestMessage(TextFile.Token[] message)
+        public TextFile.Token[] GetFinishedQuest(int index)
+        {
+            if (index < finishedQuests.Count)
+                return finishedQuests[index];
+            else
+                return null;
+        }
+
+        public void RemoveFinishedQuest(int index)
+        {
+            finishedQuests.RemoveAt(index);
+        }
+
+        public void AddFinishedQuest(TextFile.Token[] message)
         {
             if (message != null && message.Length > 0)
                 finishedQuests.Add(message);
         }
+
+        #endregion
+
+        #region Save, Load & Clear
 
         public void Clear()
         {
             notes.Clear();
             finishedQuests.Clear();
         }
-
 
         public NotebookData_v1 GetNotebookSaveData()
         {
@@ -227,5 +259,6 @@ namespace DaggerfallWorkshop.Game.Player
             public List<List<string>> finishedQuestEntries;
         }
 
+        #endregion
     }
 }

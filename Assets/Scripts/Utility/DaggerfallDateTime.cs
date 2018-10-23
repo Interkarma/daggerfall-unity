@@ -404,11 +404,12 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets a long date time string of HH:MM:SS on Dayname of MonthName, 3EYYY
+        /// Gets a long date time string of "HH:MM:SS on Dayname, xth of MonthName, 3EYYY"
         /// </summary>
         public string LongDateTimeString()
         {
-            return string.Format("{0:00}:{1:00}:{2:00} on {3}, {4:00} of {5:00}, 3E{6}", Hour, Minute, Second, DayName, Day + 1, MonthName, Year);
+            string suffix = GetSuffix(Day + 1);
+            return string.Format("{0:00}:{1:00}:{2:00} on {3}, {4}{5} of {6:00}, 3E{7}", Hour, Minute, Second, DayName, Day + 1, suffix, MonthName, Year);
         }
 
         /// <summary>
