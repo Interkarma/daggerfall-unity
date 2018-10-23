@@ -11,7 +11,6 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Player
@@ -21,13 +20,17 @@ namespace DaggerfallWorkshop.Game.Player
     /// </summary>
     public class PlayerNotebook
     {
-        List<TextFile.Token[]> notes = new List<TextFile.Token[]>();
-
-        List<TextFile.Token[]> finishedQuests = new List<TextFile.Token[]>();
+        private const int MaxLineLenth = 70;
+        private const string PrefixQuestion = "Q:";
+        private const string PrefixAnswer = "A:";
 
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
         };
+
+        List<TextFile.Token[]> notes = new List<TextFile.Token[]>();
+
+        List<TextFile.Token[]> finishedQuests = new List<TextFile.Token[]>();
 
 
         public List<TextFile.Token[]> GetNotes()
@@ -39,32 +42,56 @@ namespace DaggerfallWorkshop.Game.Player
         {
             if (!string.IsNullOrEmpty(str))
             {
-                List<string> lines = new List<string>();
-                while (str.Length > 56)
-                {
-                    int pos = str.LastIndexOf(' ', 56);
-                    lines.Add(' ' + str.Substring(0, pos));
-                    str = str.Substring(pos+1);
-                }
-                lines.Add(' ' + str);
-
-                TextFile.Token[] note = new TextFile.Token[(lines.Count*2)+2];
-                note[0] = new TextFile.Token() {
-                    text = DaggerfallUnity.Instance.WorldTime.Now.DateString() + ':',
-                    formatting = TextFile.Formatting.Text,
-                };
-                note[1] = NothingToken;
-                int i = 2;
-                foreach (string line in lines)
-                {
-                    note[i++] = new TextFile.Token() {
-                        text = line,
-                        formatting = TextFile.Formatting.Text,
-                    };
-                    note[i++] = NothingToken;
-                }
-                notes.Add(note);
+                List<TextFile.Token> note = CreateNote();
+                WrapLinesIntoNote(note, str, TextFile.Formatting.Text);
+                notes.Add(note.ToArray());
             }
+        }
+
+        public void AddNote(List<TextFile.Token> entries)
+        {
+            if (entries != null && entries.Count > 0)
+            {
+                List<TextFile.Token> note = CreateNote();
+                foreach (TextFile.Token token in entries)
+                {
+                    if (string.IsNullOrEmpty(token.text))
+                        note.Add(NothingToken);
+                    else
+                        WrapLinesIntoNote(note, token.text, token.formatting);
+                }
+                notes.Add(note.ToArray());
+            }
+        }
+
+        private static List<TextFile.Token> CreateNote()
+        {
+            List<TextFile.Token> note = new List<TextFile.Token>();
+            note.Add(new TextFile.Token() {
+                text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
+                formatting = TextFile.Formatting.Text,
+            });
+            note.Add(NothingToken);
+            return note;
+        }
+
+        private static void WrapLinesIntoNote(List<TextFile.Token> note, string str, TextFile.Formatting format)
+        {
+            while (str.Length > MaxLineLenth)
+            {
+                int pos = str.LastIndexOf(' ', MaxLineLenth);
+                note.Add(new TextFile.Token() {
+                    text = ' ' + str.Substring(0, pos),
+                    formatting = format,
+                });
+                note.Add(NothingToken);
+                str = str.Substring(pos + 1);
+            }
+            note.Add(new TextFile.Token() {
+                text = ' ' + str,
+                formatting = format,
+            });
+            note.Add(NothingToken);
         }
 
         public List<TextFile.Token[]> GetFinishedQuests()
@@ -80,6 +107,7 @@ namespace DaggerfallWorkshop.Game.Player
 
         public void Clear()
         {
+            notes.Clear();
             finishedQuests.Clear();
         }
 
@@ -103,10 +131,23 @@ namespace DaggerfallWorkshop.Game.Player
             foreach (TextFile.Token[] entry in list)
             {
                 List<string> lines = new List<string>();
+                bool lBreak = false;
                 foreach (TextFile.Token token in entry)
                 {
                     if (token.formatting == TextFile.Formatting.Text)
                         lines.Add(token.text);
+                    else if (token.formatting == TextFile.Formatting.TextQuestion)
+                        lines.Add(PrefixQuestion + token.text);
+                    else if (token.formatting == TextFile.Formatting.TextAnswer)
+                        lines.Add(PrefixAnswer + token.text);
+                    else if (lBreak)
+                        lines.Add("");
+                    else
+                    {   // One newline, if find another its a line break.
+                        lBreak = true;
+                        continue;
+                    }
+                    lBreak = false;
                 }
                 entries.Add(lines);
             }
@@ -126,17 +167,33 @@ namespace DaggerfallWorkshop.Game.Player
         {
             foreach (List<string> entry in listData)
             {
-                int i = 0;
-                TextFile.Token[] lines = new TextFile.Token[entry.Count * 2];
+                List<TextFile.Token> lines = new List<TextFile.Token>(entry.Count * 2);
                 foreach (string line in entry)
                 {
-                    lines[i++] = new TextFile.Token() {
-                        text = line,
-                        formatting = TextFile.Formatting.Text
-                    };
-                    lines[i++] = NothingToken;
+                    if (line.StartsWith(PrefixQuestion))
+                    {
+                        lines.Add(new TextFile.Token() {
+                            text = line.Substring(PrefixQuestion.Length),
+                            formatting = TextFile.Formatting.TextQuestion
+                        });
+                    }
+                    else if (line.StartsWith(PrefixAnswer))
+                    {
+                        lines.Add(new TextFile.Token() {
+                            text = line.Substring(PrefixAnswer.Length),
+                            formatting = TextFile.Formatting.TextAnswer
+                        });
+                    }
+                    else if (!string.IsNullOrEmpty(line))
+                    {
+                        lines.Add(new TextFile.Token() {
+                            text = line,
+                            formatting = TextFile.Formatting.Text
+                        });
+                    }
+                    lines.Add(NothingToken);
                 }
-                list.Add(lines);
+                list.Add(lines.ToArray());
             }
         }
 

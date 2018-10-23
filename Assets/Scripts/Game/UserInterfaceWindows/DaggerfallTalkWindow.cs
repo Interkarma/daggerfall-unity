@@ -23,7 +23,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
-
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -236,6 +236,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // used to guard execution of function SelectTopicFromTopicList - see this function for more detail why this guarding is necessary
         bool inListboxTopicContentUpdate = false;
 
+        // Used to store indexes of copied talk fragments so they can be entered into Notebook in chronological order
+        List<int> copyIndexes;
+
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -245,6 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.OnPush();
 
+            copyIndexes = new List<int>();
             if (listboxTopic != null)
                 listboxTopic.ClearItems();
 
@@ -285,6 +289,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void OnPop()
         {
             base.OnPop();
+
+            copyIndexes.Sort();
+            List<TextFile.Token> copiedEntries = new List<TextFile.Token>(copyIndexes.Count);
+            int prev = -1;
+            foreach (int idx in copyIndexes)
+            {
+                if (idx - prev != 1 && prev > -1)
+                    copiedEntries.Add(new TextFile.Token() { formatting = TextFile.Formatting.NewLine } ); // test if this fixes stuff
+                TextFile.Token entry = new TextFile.Token();
+                ListBox.ListItem item = listboxConversation.GetItem(idx);
+                bool question = (item.textColor == DaggerfallUI.DaggerfallQuestionTextColor || item.textColor == textcolorQuestionBackgroundModernConversationStyle);
+                entry.formatting = question ? TextFile.Formatting.TextQuestion : TextFile.Formatting.TextAnswer;
+                entry.text = item.textLabel.Text;
+                copiedEntries.Add(entry);
+                prev = idx;
+            }
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(copiedEntries);
         }
 
         public override void Update()
@@ -1464,7 +1485,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonLogbook_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            GameManager.Instance.PlayerEntity.Notebook.AddNote(listboxConversation.SelectedItem);
+            if (!copyIndexes.Contains(listboxConversation.SelectedIndex))
+                copyIndexes.Add(listboxConversation.SelectedIndex);
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -37,7 +37,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             formatting = TextFile.Formatting.NewLine,
         };
 
-        const int maxLines = 19;
+        const int maxLinesQuests = 19;
+        const int maxLinesSmall = 25;
+        const float textScaleSmall = 0.8f;
         int lastMessageIndex = -1;
         int currentMessageIndex = 0;
 
@@ -142,13 +144,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Middle,
                 Font = DaggerfallUI.LargeFont,
-                ShadowColor = new Color(0.5f, 0f, 0.2f),
+                ShadowColor = new Color(0f, 0.2f, 0.5f),
             };
             titlePanel.Components.Add(titleLabel);
             mainPanel.Components.Add(titlePanel);
 
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
-            messageCount = questMessages.Count;
 
             // Store toggle closed binding for this window
             toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
@@ -216,15 +217,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 case JournalDisplay.ActiveQuests:
                     DisplayMode = JournalDisplay.FinshedQuests;
-                    messageCount = GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests().Count;
                     break;
                 case JournalDisplay.FinshedQuests:
                     DisplayMode = JournalDisplay.Notebook;
-                    messageCount = GameManager.Instance.PlayerEntity.Notebook.GetNotes().Count;
                     break;
                 case JournalDisplay.Notebook:
                     DisplayMode = JournalDisplay.ActiveQuests;
-                    messageCount = questMessages.Count;
                     break;
             }
             lastMessageIndex = -1;
@@ -235,7 +233,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (currentMessageIndex - 1 >= 0)
                 currentMessageIndex -= 1;
-
         }
 
         public void downArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -265,6 +262,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetTextActiveQuests()
         {
+            messageCount = questMessages.Count;
+            questLogLabel.TextScale = 1;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "activeQuests");
 
             int totalLineCount = 0;
@@ -272,14 +271,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             for (int i = currentMessageIndex; i < questMessages.Count; i++)
             {
-                if (totalLineCount >= maxLines)
+                if (totalLineCount >= maxLinesQuests)
                     break;
 
                 var tokens = questMessages[i].GetTextTokens();
 
                 for (int j = 0; j < tokens.Length; j++)
                 {
-                    if (totalLineCount >= maxLines)
+                    if (totalLineCount >= maxLinesQuests)
                         break;
 
                     var token = tokens[j];
@@ -300,34 +299,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetTextFinshedQuests()
         {
+            messageCount = GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests().Count;
+            questLogLabel.TextScale = 1;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "finishedQuests");
-            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests());
+            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests(), maxLinesQuests);
         }
 
         private void SetTextNotebook()
         {
+            messageCount = GameManager.Instance.PlayerEntity.Notebook.GetNotes().Count;
+            questLogLabel.TextScale = textScaleSmall;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
-            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetNotes());
+            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetNotes(), maxLinesSmall);
         }
 
-        private void SetTextWithListEntries(List<TextFile.Token[]> finishedQuests)
+        private void SetTextWithListEntries(List<TextFile.Token[]> entries, int maxLines)
         {
             int totalLineCount = 0;
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
-            for (int i = currentMessageIndex; i < finishedQuests.Count; i++)
+            for (int i = currentMessageIndex; i < entries.Count; i++)
             {
                 if (totalLineCount >= maxLines)
                     break;
 
-                TextFile.Token[] tokens = finishedQuests[i];
+                TextFile.Token[] tokens = entries[i];
                 for (int j = 0; j < tokens.Length; j++)
                 {
                     if (totalLineCount >= maxLines)
                         break;
 
                     var token = tokens[j];
-                    if (token.formatting == TextFile.Formatting.Text || token.formatting == TextFile.Formatting.NewLine)
+                    if (token.formatting == TextFile.Formatting.Text || token.formatting == TextFile.Formatting.TextAnswer ||
+                        token.formatting == TextFile.Formatting.TextQuestion || token.formatting == TextFile.Formatting.NewLine)
                         totalLineCount++;
                     else
                         token.formatting = TextFile.Formatting.JustifyLeft;

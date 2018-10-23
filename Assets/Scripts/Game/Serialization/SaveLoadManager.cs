@@ -1135,6 +1135,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Restore notebook data
+            GameManager.Instance.PlayerEntity.Notebook.Clear();
             if (!string.IsNullOrEmpty(notebookDataJson))
             {
                 PlayerNotebook.NotebookData_v1 notebookData = Deserialize(typeof(PlayerNotebook.NotebookData_v1), notebookDataJson) as PlayerNotebook.NotebookData_v1;
