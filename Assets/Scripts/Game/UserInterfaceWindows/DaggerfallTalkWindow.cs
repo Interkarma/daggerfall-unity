@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     public class DaggerfallTalkWindow : DaggerfallPopupWindow
     {
+        const string textDatabase = "DaggerfallUI";
+
         const string talkWindowImgName    = "TALK01I0.IMG";
         const string talkCategoriesImgName = "TALK02I0.IMG";
         const string highlightedOptionsImgName = "TALK03I0.IMG";
@@ -290,13 +292,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.OnPop();
 
+            // Send any copied conversation text to notebook
             copyIndexes.Sort();
             List<TextFile.Token> copiedEntries = new List<TextFile.Token>(copyIndexes.Count);
             int prev = -1;
             foreach (int idx in copyIndexes)
             {
                 if (idx - prev != 1 && prev > -1)
-                    copiedEntries.Add(new TextFile.Token() { formatting = TextFile.Formatting.NewLine } ); // test if this fixes stuff
+                    copiedEntries.Add(new TextFile.Token());
                 TextFile.Token entry = new TextFile.Token();
                 ListBox.ListItem item = listboxConversation.GetItem(idx);
                 bool question = (item.textColor == DaggerfallUI.DaggerfallQuestionTextColor || item.textColor == textcolorQuestionBackgroundModernConversationStyle);
@@ -585,7 +588,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.WrapTextItems = true;
             listboxConversation.WrapWords = true;
             listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
-            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;        
+            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
+            listboxConversation.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
             mainPanel.Components.Add(listboxConversation);
 
             SetStartConversation();
@@ -690,8 +694,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonLogbook = new Button {
                 Position = new Vector2(118, 158),
                 Size = new Vector2(67, 18),
+                ToolTip = defaultToolTip,
+                ToolTipText = TextManager.Instance.GetText(textDatabase, "copyLogbookInfo"),
             };
+            if (defaultToolTip != null)
+                buttonLogbook.ToolTip.ToolTipDelay = 1;
             buttonLogbook.OnMouseClick += ButtonLogbook_OnMouseClick;
+            buttonLogbook.OnRightMouseClick += ButtonLogbook_OnRightMouseClick;
             mainPanel.Components.Add(buttonLogbook);
         }
 
@@ -1486,7 +1495,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void ButtonLogbook_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (!copyIndexes.Contains(listboxConversation.SelectedIndex))
+            {
                 copyIndexes.Add(listboxConversation.SelectedIndex);
+                MarkCopiedListItem(listboxConversation.GetItem(listboxConversation.SelectedIndex));
+            }
+            else
+            {
+                copyIndexes.Remove(listboxConversation.SelectedIndex);
+                MarkCopiedListItem(listboxConversation.GetItem(listboxConversation.SelectedIndex), true);
+            }
+        }
+
+        private void ButtonLogbook_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            copyIndexes.Clear();
+            for (int idx = 0; idx < listboxConversation.Count; idx++)
+            {
+                copyIndexes.Add(idx);
+                MarkCopiedListItem(listboxConversation.GetItem(idx));
+            }
+        }
+
+        private void MarkCopiedListItem(ListBox.ListItem item, bool unmark = false)
+        {
+            if (unmark)
+            {
+                item.shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+                item.selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+            }
+            else
+            {
+                item.shadowColor = Color.blue;
+                item.selectedShadowColor = Color.blue;
+            }
         }
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)

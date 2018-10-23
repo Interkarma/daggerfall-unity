@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -27,6 +28,9 @@ namespace DaggerfallWorkshop.Game.Player
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
         };
+        readonly static TextFile.Token NewLineToken = new TextFile.Token() {
+            formatting = TextFile.Formatting.NewLine,
+        };
 
         List<TextFile.Token[]> notes = new List<TextFile.Token[]>();
 
@@ -35,7 +39,20 @@ namespace DaggerfallWorkshop.Game.Player
 
         public List<TextFile.Token[]> GetNotes()
         {
-            return notes;
+            return new List<TextFile.Token[]>(notes);
+        }
+
+        public TextFile.Token[] GetNote(int index)
+        {
+            if (index < notes.Count)
+                return notes[index];
+            else
+                return null;
+        }
+
+        public void RemoveNote(int index)
+        {
+            notes.RemoveAt(index);
         }
 
         public void AddNote(string str)
@@ -48,17 +65,23 @@ namespace DaggerfallWorkshop.Game.Player
             }
         }
 
-        public void AddNote(List<TextFile.Token> entries)
+        public void AddNote(List<TextFile.Token> texts)
         {
-            if (entries != null && entries.Count > 0)
+            if (texts != null && texts.Count > 0)
             {
                 List<TextFile.Token> note = CreateNote();
-                foreach (TextFile.Token token in entries)
+                foreach (TextFile.Token token in texts)
                 {
                     if (string.IsNullOrEmpty(token.text))
-                        note.Add(NothingToken);
+                        note.Add(NewLineToken);
                     else
                         WrapLinesIntoNote(note, token.text, token.formatting);
+                    
+                    if ((note.Count - 2) >= (DaggerfallQuestJournalWindow.maxLinesSmall * 2))
+                    {
+                        notes.Add(note.ToArray());
+                        note = CreateNote();
+                    }
                 }
                 notes.Add(note.ToArray());
             }
@@ -96,7 +119,7 @@ namespace DaggerfallWorkshop.Game.Player
 
         public List<TextFile.Token[]> GetFinishedQuests()
         {
-            return finishedQuests;
+            return new List<TextFile.Token[]>(finishedQuests);
         }
 
         public void AddFinishedQuestMessage(TextFile.Token[] message)
@@ -191,7 +214,7 @@ namespace DaggerfallWorkshop.Game.Player
                             formatting = TextFile.Formatting.Text
                         });
                     }
-                    lines.Add(NothingToken);
+                    lines.Add(!string.IsNullOrEmpty(line) ? NothingToken : NewLineToken);
                 }
                 list.Add(lines.ToArray());
             }

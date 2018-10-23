@@ -232,6 +232,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             cursorY = 0;
         }
 
+        public int LineHeight
+        {
+            get {
+                int lineHeight = lastLabel.TextHeight / lastLabel.NumTextLines + rowLeading;
+                return lineHeight;
+            }
+        }
+
         #region Protected Methods
 
         protected virtual void SetRowLeading(int amount)
@@ -242,14 +250,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Private Methods
-
-        int LineHeight
-        {
-            get {
-                int lineHeight = lastLabel.TextHeight / lastLabel.NumTextLines + rowLeading;
-                return lineHeight;
-            }
-        }
 
         void LayoutTextElements(TextFile.Token[] tokens)
         {

@@ -2,6 +2,8 @@
 
 schema: *key,text
 
-activeQuests,   Active Quests
-finishedQuests, Finished Quests
-notebook,       Notebook
+activeQuests,       Active Quests
+finishedQuests,     Finished Quests
+notebook,           Notebook
+confirmRemove,      Are you sure you want to delete the entry dated
+copyLogbookInfo,    Left-click to toggle copying of selected text entry or right-click to copy the current conversation.

@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Player;
+using System.Runtime.CompilerServices;
 
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -38,10 +40,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         };
 
         const int maxLinesQuests = 19;
-        const int maxLinesSmall = 25;
+        public const int maxLinesSmall = 26;
         const float textScaleSmall = 0.8f;
         int lastMessageIndex = -1;
         int currentMessageIndex = 0;
+        List<int> entryLineMap;
+        int selectedEntry;
 
         List<Message> questMessages;
         int messageCount = 0;
@@ -134,20 +138,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questLogLabel                   = new MultiFormatTextLabel();
             questLogLabel.Position          = new Vector2(30, 38);
             questLogLabel.Size              = new Vector2(238, 138);
+            questLogLabel.OnMouseClick      += QuestLogLabel_OnMouseClick;
             mainPanel.Components.Add(questLogLabel);
 
             Panel titlePanel = new Panel {
                 Position = new Vector2(30, 22),
-                Size = new Vector2(238, 12),
+                Size = new Vector2(238, 16),
             };
             titleLabel = new TextLabel {
                 HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Middle,
                 Font = DaggerfallUI.LargeFont,
                 ShadowColor = new Color(0f, 0.2f, 0.5f),
             };
             titlePanel.Components.Add(titleLabel);
             mainPanel.Components.Add(titlePanel);
+            titlePanel.OnMouseClick += TitlePanel_OnMouseClick;
 
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
 
@@ -229,6 +234,52 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             currentMessageIndex = 0;
         }
 
+        void QuestLogLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            int line = (int) (position.y / questLogLabel.LineHeight);
+            if (DisplayMode != JournalDisplay.ActiveQuests && entryLineMap != null)
+            {
+                if (line < entryLineMap.Count)
+                    selectedEntry = entryLineMap[line];
+                else
+                    selectedEntry = entryLineMap[entryLineMap.Count-1];
+                
+                Debug.LogFormat("line is: {0} entry: {1}", line, selectedEntry);
+                if (selectedEntry < 0)
+                {
+                    AddNote(-selectedEntry);
+                }
+                else
+                {
+                    TextFile.Token[] entry = GameManager.Instance.PlayerEntity.Notebook.GetNote(selectedEntry);
+                    if (entry != null && entry.Length > 0)
+                    {
+                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, this);
+                        messageBox.SetText(new string[] {
+                            TextManager.Instance.GetText(textDatabase, "confirmRemove"),
+                            entry[0].text + "?",
+                        });
+                        messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                        messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                        messageBox.OnButtonClick += RemoveNote_OnButtonClick;
+                        DaggerfallUI.UIManager.PushWindow(messageBox);
+                    }
+                }
+            }
+        }
+
+        void RemoveNote_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                GameManager.Instance.PlayerEntity.Notebook.RemoveNote(selectedEntry);
+                if (currentMessageIndex == selectedEntry)
+                    currentMessageIndex = 0;
+                lastMessageIndex = -1;
+            }
+            sender.CloseWindow();
+        }
+
         public void upArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex - 1 >= 0)
@@ -251,6 +302,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downArrowButton_OnMouseClick(sender, Vector2.zero);
         }
 
+        void TitlePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            AddNote(0);
+        }
+
         public void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
@@ -267,6 +323,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "activeQuests");
 
             int totalLineCount = 0;
+            entryLineMap = null;
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
             for (int i = currentMessageIndex; i < questMessages.Count; i++)
@@ -299,23 +356,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetTextFinshedQuests()
         {
-            messageCount = GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests().Count;
+            List<TextFile.Token[]> finishedQuests = GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests();
+            messageCount = finishedQuests.Count;
             questLogLabel.TextScale = 1;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "finishedQuests");
-            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests(), maxLinesQuests);
+            SetTextWithListEntries(finishedQuests, maxLinesQuests);
         }
 
         private void SetTextNotebook()
         {
-            messageCount = GameManager.Instance.PlayerEntity.Notebook.GetNotes().Count;
+            List<TextFile.Token[]> notes = GameManager.Instance.PlayerEntity.Notebook.GetNotes();
+            messageCount = notes.Count;
             questLogLabel.TextScale = textScaleSmall;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
-            SetTextWithListEntries(GameManager.Instance.PlayerEntity.Notebook.GetNotes(), maxLinesSmall);
+            SetTextWithListEntries(notes, maxLinesSmall);
         }
 
         private void SetTextWithListEntries(List<TextFile.Token[]> entries, int maxLines)
         {
             int totalLineCount = 0;
+            int boundary = 0;
+            entryLineMap = new List<int>(maxLines);
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
             for (int i = currentMessageIndex; i < entries.Count; i++)
@@ -332,7 +393,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     var token = tokens[j];
                     if (token.formatting == TextFile.Formatting.Text || token.formatting == TextFile.Formatting.TextAnswer ||
                         token.formatting == TextFile.Formatting.TextQuestion || token.formatting == TextFile.Formatting.NewLine)
+                    {
                         totalLineCount++;
+                        entryLineMap.Add(i);
+                    }
                     else
                         token.formatting = TextFile.Formatting.JustifyLeft;
 
@@ -340,9 +404,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 textTokens.Add(NewLineToken);
                 totalLineCount++;
+                entryLineMap.Add(--boundary);
             }
 
             questLogLabel.SetText(textTokens.ToArray());
+            questLogLabel.Size = new Vector2(questLogLabel.Size.x, 138);
+        }
+
+        private void AddNote(int pos)
+        {
+            Debug.Log("Add at " + (pos+currentMessageIndex));
         }
 
 
