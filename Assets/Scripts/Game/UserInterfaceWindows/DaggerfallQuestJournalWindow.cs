@@ -304,7 +304,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!string.IsNullOrEmpty(enteredNoteLine))
             {
-                GameManager.Instance.PlayerEntity.Notebook.AddNote(enteredNoteLine, TextFile.Formatting.TextHighlight, selectedEntry);
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(enteredNoteLine, selectedEntry);
                 lastMessageIndex = NULLINT;
             }
             selectedEntry = NULLINT;

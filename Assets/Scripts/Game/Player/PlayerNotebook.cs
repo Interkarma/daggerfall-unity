@@ -68,12 +68,12 @@ namespace DaggerfallWorkshop.Game.Player
             notes.Insert(destIdx, item);
         }
 
-        public void AddNote(string str, TextFile.Formatting format = TextFile.Formatting.Text, int index = -1)
+        public void AddNote(string str, int index = -1)
         {
             if (!string.IsNullOrEmpty(str))
             {
                 List<TextFile.Token> note = CreateNote();
-                WrapLinesIntoNote(note, str, format);
+                WrapLinesIntoNote(note, str, TextFile.Formatting.Text);
                 if (index == -1)
                     notes.Add(note.ToArray());
                 else
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Player
             List<TextFile.Token> note = new List<TextFile.Token>();
             note.Add(new TextFile.Token() {
                 text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
-                formatting = TextFile.Formatting.Text,
+                formatting = TextFile.Formatting.TextHighlight,
             });
             note.Add(NothingToken);
             return note;
@@ -204,9 +204,9 @@ namespace DaggerfallWorkshop.Game.Player
                 foreach (TextFile.Token token in entry)
                 {
                     if (token.formatting == TextFile.Formatting.Text)
-                        lines.Add(PrefixDateHeader + token.text);
-                    else if (token.formatting == TextFile.Formatting.TextHighlight)
                         lines.Add(token.text);
+                    else if (token.formatting == TextFile.Formatting.TextHighlight)
+                        lines.Add(PrefixDateHeader + token.text);
                     else if (token.formatting == TextFile.Formatting.TextQuestion)
                         lines.Add(PrefixQuestion + token.text);
                     else if (token.formatting == TextFile.Formatting.TextAnswer)
@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game.Player
                     {
                         lines.Add(new TextFile.Token() {
                             text = line.Substring(PrefixDateHeader.Length),
-                            formatting = TextFile.Formatting.Text
+                            formatting = TextFile.Formatting.TextHighlight
                         });
                     }
                     else if (line.StartsWith(PrefixQuestion))
@@ -266,7 +266,7 @@ namespace DaggerfallWorkshop.Game.Player
                     {
                         lines.Add(new TextFile.Token() {
                             text = line,
-                            formatting = notes ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text
+                            formatting = TextFile.Formatting.Text
                         });
                     }
                     lines.Add(!string.IsNullOrEmpty(line) ? NothingToken : NewLineToken);
