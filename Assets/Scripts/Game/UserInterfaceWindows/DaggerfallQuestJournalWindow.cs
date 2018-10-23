@@ -139,6 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questLogLabel                   = new MultiFormatTextLabel();
             questLogLabel.Position          = new Vector2(30, 38);
             questLogLabel.Size              = new Vector2(238, 138);
+            questLogLabel.HighlightColor    = Color.white;
             questLogLabel.OnMouseClick      += QuestLogLabel_OnMouseClick;
             questLogLabel.OnRightMouseClick += QuestLogLabel_OnRightMouseClick;
             mainPanel.Components.Add(questLogLabel);
@@ -303,7 +304,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!string.IsNullOrEmpty(enteredNoteLine))
             {
-                GameManager.Instance.PlayerEntity.Notebook.AddNote(enteredNoteLine, selectedEntry);
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(enteredNoteLine, TextFile.Formatting.TextHighlight, selectedEntry);
                 lastMessageIndex = NULLINT;
             }
             selectedEntry = NULLINT;
@@ -512,8 +513,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     var token = tokens[j];
-                    if (token.formatting == TextFile.Formatting.Text || token.formatting == TextFile.Formatting.TextAnswer ||
-                        token.formatting == TextFile.Formatting.TextQuestion || token.formatting == TextFile.Formatting.NewLine)
+                    if (token.formatting == TextFile.Formatting.Text ||
+                        token.formatting == TextFile.Formatting.TextHighlight ||
+                        token.formatting == TextFile.Formatting.TextAnswer ||
+                        token.formatting == TextFile.Formatting.TextQuestion ||
+                        token.formatting == TextFile.Formatting.NewLine)
                     {
                         totalLineCount++;
                         entryLineMap.Add(i);

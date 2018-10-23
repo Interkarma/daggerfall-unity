@@ -23,6 +23,7 @@ namespace DaggerfallWorkshop.Game.Player
     public class PlayerNotebook
     {
         public const int MaxLineLenth = 70;
+        private const string PrefixDateHeader = "D:";
         private const string PrefixQuestion = "Q:";
         private const string PrefixAnswer = "A:";
 
@@ -67,12 +68,12 @@ namespace DaggerfallWorkshop.Game.Player
             notes.Insert(destIdx, item);
         }
 
-        public void AddNote(string str, int index = -1)
+        public void AddNote(string str, TextFile.Formatting format = TextFile.Formatting.Text, int index = -1)
         {
             if (!string.IsNullOrEmpty(str))
             {
                 List<TextFile.Token> note = CreateNote();
-                WrapLinesIntoNote(note, str, TextFile.Formatting.Text);
+                WrapLinesIntoNote(note, str, format);
                 if (index == -1)
                     notes.Add(note.ToArray());
                 else
@@ -203,6 +204,8 @@ namespace DaggerfallWorkshop.Game.Player
                 foreach (TextFile.Token token in entry)
                 {
                     if (token.formatting == TextFile.Formatting.Text)
+                        lines.Add(PrefixDateHeader + token.text);
+                    else if (token.formatting == TextFile.Formatting.TextHighlight)
                         lines.Add(token.text);
                     else if (token.formatting == TextFile.Formatting.TextQuestion)
                         lines.Add(PrefixQuestion + token.text);
@@ -225,20 +228,27 @@ namespace DaggerfallWorkshop.Game.Player
         public void RestoreNotebookData(NotebookData_v1 notebookData)
         {
             notes = new List<TextFile.Token[]>();
-            ConvertData(notebookData.notebookEntries, notes);
+            ConvertData(notebookData.notebookEntries, notes, true);
 
             finishedQuests = new List<TextFile.Token[]>();
-            ConvertData(notebookData.finishedQuestEntries, finishedQuests);
+            ConvertData(notebookData.finishedQuestEntries, finishedQuests, false);
         }
 
-        private void ConvertData(List<List<string>> listData, List<TextFile.Token[]> list)
+        private void ConvertData(List<List<string>> listData, List<TextFile.Token[]> list, bool notes)
         {
             foreach (List<string> entry in listData)
             {
                 List<TextFile.Token> lines = new List<TextFile.Token>(entry.Count * 2);
                 foreach (string line in entry)
                 {
-                    if (line.StartsWith(PrefixQuestion))
+                    if (line.StartsWith(PrefixDateHeader))
+                    {
+                        lines.Add(new TextFile.Token() {
+                            text = line.Substring(PrefixDateHeader.Length),
+                            formatting = TextFile.Formatting.Text
+                        });
+                    }
+                    else if (line.StartsWith(PrefixQuestion))
                     {
                         lines.Add(new TextFile.Token() {
                             text = line.Substring(PrefixQuestion.Length),
@@ -256,7 +266,7 @@ namespace DaggerfallWorkshop.Game.Player
                     {
                         lines.Add(new TextFile.Token() {
                             text = line,
-                            formatting = TextFile.Formatting.Text
+                            formatting = notes ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text
                         });
                     }
                     lines.Add(!string.IsNullOrEmpty(line) ? NothingToken : NewLineToken);

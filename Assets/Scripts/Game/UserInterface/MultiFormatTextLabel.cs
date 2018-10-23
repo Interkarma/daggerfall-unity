@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int rowLeading = 0;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+        Color highlightColor = DaggerfallUI.DaggerfallHighlightTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
         HorizontalAlignment textAlignment = HorizontalAlignment.None;
         List<TextLabel> labels = new List<TextLabel>();
@@ -110,6 +111,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return textColor; }
             set { textColor = value; }
+        }
+
+        public Color HighlightColor
+        {
+            get { return highlightColor; }
+            set { highlightColor = value; }
         }
 
         public Color ShadowColor
@@ -298,7 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         AddTextLabel(token.text, font, TextColor);
                         break;
                     case TextFile.Formatting.TextHighlight:
-                        AddTextLabel(token.text, font, DaggerfallUI.DaggerfallHighlightTextColor);
+                        AddTextLabel(token.text, font, HighlightColor);
                         break;
                     case TextFile.Formatting.TextQuestion:
                         AddTextLabel(token.text, font, DaggerfallUI.DaggerfallQuestionTextColor);
