@@ -308,7 +308,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 copiedEntries.Add(entry);
                 prev = idx;
             }
-            GameManager.Instance.PlayerEntity.Notebook.AddNote(copiedEntries.ToArray());
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(copiedEntries);
         }
 
         public override void Update()

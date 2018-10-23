@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -22,9 +23,9 @@ namespace DaggerfallWorkshop.Game.Player
     public class PlayerNotebook
     {
         public const int MaxLineLenth = 70;
-        private const int NULLINT = -1;
         private const string PrefixQuestion = "Q:";
         private const string PrefixAnswer = "A:";
+
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
         };
@@ -56,21 +57,34 @@ namespace DaggerfallWorkshop.Game.Player
             notes.RemoveAt(index);
         }
 
-        public void AddNote(string str, int index = NULLINT)
+        public void MoveNote(int srcIdx, int destIdx)
+        {
+            Debug.LogFormat("Moving note {0} to {1} ", srcIdx, destIdx);
+            var item = notes[srcIdx];
+            notes.RemoveAt(srcIdx);
+            if (destIdx > srcIdx)
+                destIdx--;
+            notes.Insert(destIdx, item);
+        }
+
+        public void AddNote(string str, int index = -1)
         {
             if (!string.IsNullOrEmpty(str))
             {
-                List<TextFile.Token> note = CreateNote(index == NULLINT);
+                List<TextFile.Token> note = CreateNote();
                 WrapLinesIntoNote(note, str, TextFile.Formatting.Text);
-                AddNote(index, note);
+                if (index == -1)
+                    notes.Add(note.ToArray());
+                else
+                    notes.Insert(index, note.ToArray());
             }
         }
 
-        public void AddNote(TextFile.Token[] texts, int index = NULLINT)
+        public void AddNote(List<TextFile.Token> texts)
         {
-            if (texts != null && texts.Length > 0)
+            if (texts != null && texts.Count > 0)
             {
-                List<TextFile.Token> note = CreateNote(index == NULLINT);
+                List<TextFile.Token> note = CreateNote();
                 foreach (TextFile.Token token in texts)
                 {
                     if (string.IsNullOrEmpty(token.text))
@@ -80,33 +94,22 @@ namespace DaggerfallWorkshop.Game.Player
                     
                     if ((note.Count - 2) >= (DaggerfallQuestJournalWindow.maxLinesSmall * 2))
                     {
-                        AddNote(index, note);
+                        notes.Add(note.ToArray());
                         note = CreateNote();
                     }
                 }
-                AddNote(index, note);
+                notes.Add(note.ToArray());
             }
         }
 
-        private void AddNote(int index, List<TextFile.Token> note)
-        {
-            if (index == NULLINT)
-                notes.Add(note.ToArray());
-            else
-                notes.Insert(index, note.ToArray());
-        }
-
-        private static List<TextFile.Token> CreateNote(bool date = true)
+        private static List<TextFile.Token> CreateNote()
         {
             List<TextFile.Token> note = new List<TextFile.Token>();
-            if (date)
-            {
-                note.Add(new TextFile.Token() {
-                    text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
-                    formatting = TextFile.Formatting.Text,
-                });
-                note.Add(NothingToken);
-            }
+            note.Add(new TextFile.Token() {
+                text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
+                formatting = TextFile.Formatting.Text,
+            });
+            note.Add(NothingToken);
             return note;
         }
 
@@ -149,6 +152,16 @@ namespace DaggerfallWorkshop.Game.Player
         public void RemoveFinishedQuest(int index)
         {
             finishedQuests.RemoveAt(index);
+        }
+
+        public void MoveFinishedQuest(int srcIdx, int destIdx)
+        {
+            Debug.LogFormat("Moving FinishedQuest {0} to {1} ", srcIdx, destIdx);
+            var item = finishedQuests[srcIdx];
+            finishedQuests.RemoveAt(srcIdx);
+            if (destIdx > srcIdx)
+                destIdx--;
+            finishedQuests.Insert(destIdx, item);
         }
 
         public void AddFinishedQuest(TextFile.Token[] message)

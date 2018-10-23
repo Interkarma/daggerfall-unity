@@ -261,7 +261,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void TitlePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            AddNote(0);
+            EnterNote(0);
         }
 
         public void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -294,11 +294,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void MoveEntry_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-                selectedEntry += currentMessageIndex;
-            else
+            if (messageBoxButton != DaggerfallMessageBox.MessageBoxButtons.Yes)
                 selectedEntry = NULLINT;
-
             sender.CloseWindow();
         }
 
@@ -323,7 +320,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HandleClick(Vector2 position, bool remove = false)
         {
-            int moveSrcPos = selectedEntry;    // Will be set if moving an entry
+            int moveSrcIdx = selectedEntry;    // Will be set if moving an entry
             int line = (int)(position.y / questLogLabel.LineHeight);
 
             if (DisplayMode != JournalDisplay.ActiveQuests && entryLineMap != null)
@@ -335,11 +332,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 Debug.LogFormat("line is: {0} entry: {1}", line, selectedEntry);
 
-                if (moveSrcPos == NULLINT)
+                if (moveSrcIdx == NULLINT)
                 {   // Process the click on or between entries
                     if (selectedEntry < 0)
                     {   // Add a note between entries
-                        AddNote(-selectedEntry);
+                        EnterNote(selectedEntry);
                     }
                     else
                     {   // Move or remove when click on entry
@@ -361,13 +358,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                 {   // Move the selected entry to this position
                     if (selectedEntry < 0)
-                        selectedEntry = -selectedEntry;
-                    selectedEntry += currentMessageIndex;
-                    TextFile.Token[] entry = GetEntry(moveSrcPos);
-                    RemoveEntry(moveSrcPos);
-                    if (moveSrcPos < selectedEntry)
-                        selectedEntry--;
-                    GameManager.Instance.PlayerEntity.Notebook.AddNote(entry, selectedEntry);
+                        selectedEntry = -selectedEntry + currentMessageIndex;
+
+                    MoveEntry(moveSrcIdx, selectedEntry);
+
                     lastMessageIndex = NULLINT;
                     selectedEntry = NULLINT;
                 }
@@ -384,11 +378,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
         }
 
-        private void AddNote(int pos)
+        private void EnterNote(int index)
         {
             if (DisplayMode == JournalDisplay.Notebook)
             {
-                selectedEntry = pos + currentMessageIndex;
+                selectedEntry = -index + currentMessageIndex;
                 Debug.Log("Add at " + selectedEntry);
 
                 TextFile.Token prompt = new TextFile.Token() {
@@ -415,6 +409,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return GameManager.Instance.PlayerEntity.Notebook.GetNote(index);
             }
             return null;
+        }
+
+        private void MoveEntry(int srcIdx, int destIdx)
+        {
+            switch (DisplayMode)
+            {
+                case JournalDisplay.FinshedQuests:
+                    GameManager.Instance.PlayerEntity.Notebook.MoveFinishedQuest(srcIdx, destIdx);
+                    break;
+                case JournalDisplay.Notebook:
+                    GameManager.Instance.PlayerEntity.Notebook.MoveNote(srcIdx, destIdx);
+                    break;
+            }
         }
 
         private void RemoveEntry(int index)
