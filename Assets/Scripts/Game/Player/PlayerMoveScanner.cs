@@ -91,6 +91,7 @@ namespace DaggerfallWorkshop.Game
                 if (hit.collider.GetComponent<MeshCollider>())
                 {
                     HeadHitDistance = hit.distance;
+                    //Debug.Log(HeadHitDistance + "\n");
                     return true;
                 }
             }

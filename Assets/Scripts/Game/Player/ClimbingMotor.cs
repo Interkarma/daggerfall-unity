@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Game
         private AcrobatMotor acrobatMotor;
         private PlayerSpeedChanger speedChanger;
         private PlayerMoveScanner moveScanner;
+        private bool fromCeiling = false;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
@@ -56,6 +57,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private Vector3 moveDirection = Vector3.zero;
         #endregion
+        private float startClimbHorizontalTolerance;
+        private float startClimbSkillCheckFrequency;
         // how long it takes before we do another skill check to see if we can continue climbing
         private const int continueClimbingSkillCheckFrequency = 15; 
         // how long it takes before we try to regain hold if slipping
@@ -105,10 +108,9 @@ namespace DaggerfallWorkshop.Game
         public void ClimbingCheck()
         {
             bool advancedClimbingOn = DaggerfallUnity.Settings.AdvancedClimbing;
-            float startClimbHorizontalTolerance;
-            float startClimbSkillCheckFrequency;
+
             // true if we should try climbing wall and are airborne
-            bool airborneGraspWall = (!hangingMotor.IsHanging && !isClimbing && !isSlipping && acrobatMotor.Falling);
+            bool airborneGraspWall = (!isClimbing && !isSlipping && acrobatMotor.Falling);
             bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
 
@@ -117,24 +119,7 @@ namespace DaggerfallWorkshop.Game
                 // short circuit evaluate the raycast, also prevents bug where you could teleport across town
                 && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
 
-            if (advancedClimbingOn && airborneGraspWall)
-            {
-                if (rappelMotor.IsRappelling)
-                {   // very lenient because we're trying to attach to wall with guarunteed success
-                    startClimbHorizontalTolerance = 2f;
-                    startClimbSkillCheckFrequency = 0.0f;
-                }
-                else
-                {   // more lenient because we could not jump really orthogonal onto the wall
-                    startClimbHorizontalTolerance = 0.90f;
-                    startClimbSkillCheckFrequency = 5;
-                }
-            }
-            else
-            {   // least leniency because we want climbing to be very intentional here
-                startClimbHorizontalTolerance = 0.12f;
-                startClimbSkillCheckFrequency = 14;
-            }
+            CalcFrequencyAndToleranceOfWallChecks(airborneGraspWall);
 
             bool inputAbortCondition;
             if (advancedClimbingOn)
@@ -148,76 +133,86 @@ namespace DaggerfallWorkshop.Game
 
             // reset for next use
             WallEject = false;
+
             bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startClimbHorizontalTolerance;
             bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
             bool touchingGround = (playerMotor.CollisionFlags & CollisionFlags.Below) != 0;
             bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
-
+            bool slippedToGround = isSlipping && touchingGround;
+            bool hangToClimb = hangingMotor.IsHanging && inputForward && horizontallyStationary;
+            bool nonOrthogonalStart = !isClimbing && inputForward && !horizontallyStationary;
+            //bool orthogonalStart = !isClimbing && inputForward && horizontallyStationary;
             RaycastHit hit;
+            bool hangTouchNonVertical = hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
+
             // Should we reset climbing starter timers?
             if (inputAbortCondition
-                || !touchingSides
+                || !touchingSides && !hangToClimb
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
-                // if we slipped and struck the ground
-                || (isSlipping && touchingGround)
+                || slippedToGround
                 // quit climbing if climbing down and ground is really close, prevents teleportation bug
                 || tooCloseToGroundForClimb
                 // don't do horizontal position check if already climbing
-                || (!isClimbing && !horizontallyStationary)
-                // if we're hanging and touching something above us
-                || touchingAbove && hangingMotor.IsHanging
+                || nonOrthogonalStart
                 // if we're hanging, and touching sides with a wall that isn't mostly vertical
-                || (hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f))
+                || hangTouchNonVertical)
             {
                 if (isClimbing && inputAbortCondition && advancedClimbingOn)
                     WallEject = true;
-                
+
                 isClimbing = false;
+                showClimbingModeMessage = true;
+                RestartClimbingTimer();
 
                 // Reset position for horizontal distance check and timer to wait for climbing start
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
-                climbingStartTimer = 0;
             }
-            else // schedule climbing events
+            else // countdown climbing events
             {
-                // schedule climbing start
+                // countdown to climbing start
                 if (climbingStartTimer <= (playerMotor.systemTimerUpdatesDivisor * startClimbSkillCheckFrequency))
                     climbingStartTimer += Time.deltaTime;
                 else
-                {
+                {   // Begin Climbing
                     // automatic success if not falling
-                    if (!airborneGraspWall)
+                    if ((!airborneGraspWall && !hangingMotor.IsHanging) || fromCeiling)
+                        StartClimbing();
+                    else if (hangingMotor.IsHanging)
                         StartClimbing();
                     // skill check to see if we catch the wall 
                     else if (ClimbingSkillCheck(graspWallMinChance))
                         StartClimbing();
-                    else
-                        climbingStartTimer = 0;
+                    //else
+                    //    climbingStartTimer = 0;
                 }
 
-                // schedule climbing continues, Faster updates if slipping
-                if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
-                    climbingContinueTimer += Time.deltaTime;
-                else
+                if (isClimbing)
                 {
-                    climbingContinueTimer = 0;
-
-                    // don't allow slipping if not moving.
-                    if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
-                            && !InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)
-                            && !InputManager.Instance.HasAction(InputManager.Actions.MoveLeft)
-                            && !InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
-                        isSlipping = false;
-                    // it's harder to regain hold while slipping than it is to continue climbing with a good hold on wall
-                    else if (isSlipping)
-                        isSlipping = !ClimbingSkillCheck(regainHoldMinChance);
+                    // countdown to climb update, Faster updates if slipping
+                    if (climbingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isSlipping ? regainHoldSkillCheckFrequency : continueClimbingSkillCheckFrequency)))
+                        climbingContinueTimer += Time.deltaTime;
                     else
-                        isSlipping = !ClimbingSkillCheck(continueClimbMinChance);
+                    {
+                        climbingContinueTimer = 0;
+
+                        // don't allow slipping if not moving.
+                        if (!InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
+                                && !InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)
+                                && !InputManager.Instance.HasAction(InputManager.Actions.MoveLeft)
+                                && !InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
+                            isSlipping = false;
+                        // it's harder to regain hold while slipping than it is to continue climbing with a good hold on wall
+                        else if (isSlipping)
+                            isSlipping = !ClimbingSkillCheck(regainHoldMinChance);
+                        else
+                            isSlipping = !ClimbingSkillCheck(continueClimbMinChance);
+                    }
                 }
+
             }
 
-            // execute schedule
+            // Climbing Cycle
             if (isClimbing)
             {
                 // evalate the ledge direction
@@ -239,6 +234,50 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void RestartClimbingTimer(bool forceSuccessfulGrab = false)
+        {
+            if (forceSuccessfulGrab == true)
+            {
+                overrideSkillCheck = true;
+                fromCeiling = true;
+            }
+
+            climbingStartTimer = 0;
+        }
+
+        private void CalcFrequencyAndToleranceOfWallChecks(bool airborneGraspWall)
+        {
+            // TODO: add another condition for immediate grab if switching from hanging to climbing
+            if (DaggerfallUnity.Settings.AdvancedClimbing)
+            {
+                if (rappelMotor.IsRappelling)
+                {   // very lenient because we're trying to attach to wall with guarunteed success
+                    startClimbHorizontalTolerance = 2f;
+                    startClimbSkillCheckFrequency = 0;
+                }
+                else if (airborneGraspWall)
+                {   // more lenient because we could not jump really orthogonal onto the wall
+                    startClimbHorizontalTolerance = 0.90f;
+                    startClimbSkillCheckFrequency = 5;
+                }
+                else if (fromCeiling)
+                {
+                    startClimbHorizontalTolerance = 0.90f;
+                    startClimbSkillCheckFrequency = 0;
+                }
+                else
+                {   // least leniency because we want climbing to be very intentional here
+                    startClimbHorizontalTolerance = 0.12f;
+                    startClimbSkillCheckFrequency = 14;
+                }
+            }
+            else
+            {   // least leniency because we want climbing to be very intentional here
+                startClimbHorizontalTolerance = 0.12f;
+                startClimbSkillCheckFrequency = 14;
+            }
+        }
+
         /// <summary>
         /// Set climbing to true and show climbing mode message once
         /// </summary>
@@ -251,8 +290,10 @@ namespace DaggerfallWorkshop.Game
                 // Disable further showing of climbing mode message until current climb attempt is stopped
                 // to keep it from filling message log
                 showClimbingModeMessage = false;
-                hangingMotor.IsHanging = false;
                 isClimbing = true;
+                hangingMotor.RestartHangingTimer();
+                
+                fromCeiling = false;
             }
         }
 

@@ -35,10 +35,8 @@ namespace DaggerfallWorkshop.Game
                 distance = (controller.height / 2f) - (controller.height * 0.1f);
             else
                 distance = (controller.height / 2f);
-
-            Ray ray = new Ray(controller.transform.position, Vector3.up);
             
-            if (moveScanner.FindHeadHit(ray) && moveScanner.HeadHitDistance < distance)
+            if (moveScanner.HeadHitDistance < distance && moveScanner.HeadHitDistance > 0)
             {
                 // If player is standing, crushing object forces them into a crouch, 
                 if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)

@@ -151,10 +151,8 @@ namespace DaggerfallWorkshop.Game
         {
             get { return collisionFlags; }
             set {
-                if (value != collisionFlags)
-                    Debug.Log(collisionFlags + " -> " + value + "\n");
-
-
+                //if (value != collisionFlags)
+                //    Debug.Log(collisionFlags + " -> " + value + "\n");
                 collisionFlags = value; }
         }
 
@@ -236,7 +234,7 @@ namespace DaggerfallWorkshop.Game
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
-
+      
         void FixedUpdate()
         {
             // Clear movement
@@ -261,6 +259,7 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            playerScanner.FindHeadHit(new Ray(controller.transform.position, Vector3.up));
             // Check if should hang
             hangingMotor.HangingChecks();
             // Handle Rappeling
@@ -296,6 +295,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             playerScanner.FindStep(moveDirection);
+            
             acrobatMotor.ApplyGravity(ref moveDirection);
 
             acrobatMotor.HitHead(ref moveDirection);

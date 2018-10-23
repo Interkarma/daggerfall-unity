@@ -22,6 +22,8 @@ namespace DaggerfallWorkshop.Game
         private Vector3 lastPosition = Vector3.zero;
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private bool showHangingModeMessage = true;
+        private float startHangingHorizontalTolerance = 0.12f;
+
         // how long it takes before we do another skill check to see if we can continue hanging
         private const int continueClimbingSkillCheckFrequency = 15;
         // how long it takes before we try to regain hold if losing grip
@@ -33,9 +35,7 @@ namespace DaggerfallWorkshop.Game
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
         private const int continueHangMinChance = 100;
 
-        public bool IsHanging {
-            get;
-            set; } // for simplicity allowing this to set publicly. Only allow climbingMotor to set
+        public bool IsHanging { get; private set; } 
         public bool EjectToClimbing { get; private set; }
         private void Start()
         {
@@ -62,25 +62,21 @@ namespace DaggerfallWorkshop.Game
             bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
 
-            // boolean that means ground directly below us is too close for climbing or rappelling
-            //bool tooCloseToGroundForClimb = (((isClimbing && (inputBack || isSlipping)) || airborneGraspWall)
-            // short circuit evaluate the raycast, also prevents bug where you could teleport across town
-            //    && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
-
             bool inputAbortCondition = (InputManager.Instance.HasAction(InputManager.Actions.Crouch)
                                         || InputManager.Instance.HasAction(InputManager.Actions.Jump));
 
-            // TODO: toggle from hanging to climbing
+            float halfHeight = (controller.height / 2f);
 
             // Should we abort hanging?
             if (inputAbortCondition
                 || (playerMotor.CollisionFlags & CollisionFlags.Above) == 0
+                || (playerScanner.HeadHitDistance < halfHeight - 0.17f || playerScanner.HeadHitDistance > halfHeight - 0.09f)
                 || levitateMotor.IsLevitating
-                || IsHanging && climbingMotor.IsClimbing)
+                )
             {
-                IsHanging = false;
-                showHangingModeMessage = true;
-                hangingStartTimer = 0;
+                RestartHangingTimer();
+                lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
+
             }
             else // Schedule Hanging events
             {   
@@ -119,7 +115,6 @@ namespace DaggerfallWorkshop.Game
                 // handle movement direction
                 HangMoveDirection();
 
-                // both variables represent similar situations, but different context
                 acrobatMotor.Falling = false;
             }
         }
@@ -132,30 +127,28 @@ namespace DaggerfallWorkshop.Game
                 float playerspeed = speedChanger.GetClimbingSpeed();
                 Vector3 moveVector = Vector3.zero;
                 if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                    moveVector += camTransform.forward;
+                    moveVector += controller.transform.forward;
                 else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                    moveVector -= camTransform.forward;
+                    moveVector -= controller.transform.forward;
 
                 if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
-                    moveVector += camTransform.right;
+                    moveVector += controller.transform.right;
                 else if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
-                    moveVector -= camTransform.right;
+                    moveVector -= controller.transform.right;
 
                 if (moveVector != Vector3.zero)
                 {  
                     moveVector = (Vector3.ProjectOnPlane(moveVector, hit.normal).normalized * playerspeed) + (-hit.normal * 0.2f * playerspeed);
 
                     moveVector.y = Mathf.Max(moveVector.y, 0.2f);
-
-                    //if (moveVector.y < 0.05f)
-                    //{
-                    //    moveVector.y = //= Vector3.Reflect(moveVector, Vector3.up);
-                    //}
-
-                    Debug.DrawRay(controller.transform.position, hit.normal, Color.yellow);
-                    groundMotor.MoveWithMovingPlatform(moveVector);
-                    Debug.DrawRay(controller.transform.position, moveVector, Color.blue);
                 }
+                else
+                {
+                    moveVector = (Vector3.up * 0.001f);
+                }
+                Debug.DrawRay(controller.transform.position, hit.normal, Color.yellow);
+                groundMotor.MoveWithMovingPlatform(moveVector);
+                Debug.DrawRay(controller.transform.position, moveVector, Color.blue);
             }
         }
 
@@ -167,9 +160,16 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.hangingMode);
 
                 showHangingModeMessage = false;
-                climbingMotor.IsClimbing = false;
                 IsHanging = true;
+                climbingMotor.RestartClimbingTimer();
             }
+        }
+
+        public void RestartHangingTimer()
+        {
+            IsHanging = false;
+            showHangingModeMessage = true;
+            hangingStartTimer = 0;
         }
     }
 }
