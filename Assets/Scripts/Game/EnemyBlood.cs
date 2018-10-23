@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Game
     public class EnemyBlood : MonoBehaviour
     {
         const int bloodArchive = 380;
+        const int sparklesIndex = 3;
 
         public void ShowBloodSplash(int bloodIndex, Vector3 bloodPosition)
         {
@@ -32,6 +33,21 @@ namespace DaggerfallWorkshop.Game
                 go.name = "BloodSplash";
                 DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
                 go.transform.position = bloodPosition + transform.forward * 0.02f;
+                c.OneShot = true;
+                c.FramesPerSecond = 10;
+            }
+        }
+
+        public void ShowMagicSparkles(Vector3 sparklesPosition)
+        {
+            // Create oneshot animated billboard for sparkles effect
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (dfUnity)
+            {
+                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(bloodArchive, sparklesIndex, null);
+                go.name = "MagicSparkles";
+                DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
+                go.transform.position = sparklesPosition + transform.forward * 0.02f;
                 c.OneShot = true;
                 c.FramesPerSecond = 10;
             }

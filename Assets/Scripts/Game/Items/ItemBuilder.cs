@@ -72,8 +72,7 @@ namespace DaggerfallWorkshop.Game.Items
             Khajiit = 3,
         }
 
-        static DyeColors[] clothingDyes = new DyeColors[]
-        {
+        static DyeColors[] clothingDyes = {
             DyeColors.Blue,
             DyeColors.Grey,
             DyeColors.Red,
@@ -154,12 +153,17 @@ namespace DaggerfallWorkshop.Game.Items
         /// Creates a generic item from group and template index.
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
-        /// <param name="itemIndex">Template index.</param>
+        /// <param name="templateIndex">Template index.</param>
         /// <returns>DaggerfallUnityItem.</returns>
         public static DaggerfallUnityItem CreateItem(ItemGroups itemGroup, int templateIndex)
         {
             // Create item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, templateIndex);
+            if (groupIndex == -1)
+            {
+                Debug.LogErrorFormat("ItemBuilder.CreateItem() encountered an item with an invalid GroupIndex. Check you're passing 'template index' matching a value in ItemEnums - e.g. (int)Weapons.Dagger NOT a 'group index' (e.g. 0).");
+                return null;
+            }
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(itemGroup, groupIndex);
 
             return newItem;
@@ -258,9 +262,7 @@ namespace DaggerfallWorkshop.Game.Items
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
             DaggerfallUnityItem book = new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book0));
 
-            // TODO: FIXME: I don't know what the higher order bits are for the message field. I just know that message & 0xFF encodes
-            // the ID of the book. Thus the books that are randomly generated are missing information that the actual game provides.
-            // -IC112016
+            // TODO: Change DaggerfallUnityItem.message from int to ushort
             book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
             return book;
         }
@@ -538,7 +540,7 @@ namespace DaggerfallWorkshop.Game.Items
 
                         // Add the enchantments
                         newItem.legacyMagic = new DaggerfallEnchantment[magicItem.enchantments.Length];
-                        for (int i = 0; i < magicItem.enchantments.Length; ++i )
+                        for (int i = 0; i < magicItem.enchantments.Length; ++i)
                             newItem.legacyMagic[i] = magicItem.enchantments[i];
 
                         // Set the condition/magic uses
@@ -555,27 +557,27 @@ namespace DaggerfallWorkshop.Game.Items
                             {
                                 switch (magicItem.enchantments[i].type)
                                 {
-                                    // Enchantments that cast a spell. The parameter is the spell index in SPELLS.STD.
                                     case EnchantmentTypes.CastWhenUsed:
                                     case EnchantmentTypes.CastWhenHeld:
                                     case EnchantmentTypes.CastWhenStrikes:
+                                        // Enchantments that cast a spell. The parameter is the spell index in SPELLS.STD.
                                         value += Formulas.FormulaHelper.GetSpellEnchantPtCost(magicItem.enchantments[i].param);
                                         break;
-                                    // Enchantments that provide an effect that has no parameters
                                     case EnchantmentTypes.RepairsObjects:
                                     case EnchantmentTypes.AbsorbsSpells:
                                     case EnchantmentTypes.EnhancesSkill:
                                     case EnchantmentTypes.FeatherWeight:
                                     case EnchantmentTypes.StrengthensArmor:
+                                        // Enchantments that provide an effect that has no parameters
                                         value += enchantmentPointCostsForNonParamTypes[(int)magicItem.enchantments[i].type];
                                         break;
-                                    // Bound soul
                                     case EnchantmentTypes.SoulBound:
+                                        // Bound soul
                                         MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[magicItem.enchantments[i].param];
                                         value += mobileEnemy.SoulPts; // TODO: Not sure about this. Should be negative? Needs to be tested.
                                         break;
                                     default:
-                                    // Enchantments that provide a non-spell effect with a parameter (when effect applies, what enemies are affected, etc.)
+                                        // Enchantments that provide a non-spell effect with a parameter (parameter = when effect applies, what enemies are affected, etc.)
                                         value += enchantmentPtsForItemPowerArrays[(int)magicItem.enchantments[i].type][magicItem.enchantments[i].param];
                                         break;
                                 }
@@ -625,7 +627,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Creates a random ingredient from any of the ingredient groups.
         /// Passing a non-ingredient group will return null.
         /// </summary>
-        /// <param name="group">Ingedient group.</param>
+        /// <param name="ingredientGroup">Ingredient group.</param>
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomIngredient(ItemGroups ingredientGroup)
         {
@@ -661,7 +663,7 @@ namespace DaggerfallWorkshop.Game.Items
         public static DaggerfallUnityItem CreateRandomIngredient()
         {
             // Randomise ingredient group
-            ItemGroups itemGroup = ItemGroups.None;
+            ItemGroups itemGroup;
             int group = UnityEngine.Random.Range(0, 7);
             Array enumArray;
             switch (group)
@@ -711,7 +713,8 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreatePotion(byte recipe)
         {
-            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) {
+            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1)
+            {
                 typeDependentData = recipe,
                 value = potionValues[recipe],
             };
@@ -723,7 +726,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomPotion()
         {
-            byte recipe = (byte) UnityEngine.Random.Range(0, 20);
+            byte recipe = (byte)UnityEngine.Random.Range(0, 20);
             return CreatePotion(recipe);
         }
 

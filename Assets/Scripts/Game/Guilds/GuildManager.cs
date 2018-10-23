@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 default:
                     Type guildType;
                     if (customGuilds.TryGetValue(guildGroup, out guildType))
-                        return (int) guildType.GetProperty("FactionId").GetValue(null, null);
+                        return (int)guildType.GetProperty("FactionId").GetValue(null, null);
                     else
                         return 0;
             }
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild membership handling
 
-        private Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
+        private readonly Dictionary<FactionFile.GuildGroups, Guild> memberships = new Dictionary<FactionFile.GuildGroups, Guild>();
 
         public List<Guild> GetMemberships()
         {
@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 default:
                     Type guildType;
                     if (customGuilds.TryGetValue(guildGroup, out guildType))
-                        return (Guild) Activator.CreateInstance(guildType);
+                        return (Guild)Activator.CreateInstance(guildType);
                     else
                         return null;
             }
@@ -208,11 +208,17 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// </summary>
         public Guild GetGuild(int factionId)
         {
-            FactionFile.GuildGroups guildGroup = GetGuildGroup(factionId);
-            if (guildGroup == FactionFile.GuildGroups.None)
+            try {
+                FactionFile.GuildGroups guildGroup = GetGuildGroup(factionId);
+                if (guildGroup == FactionFile.GuildGroups.None)
+                    return guildNotMember;
+                else
+                    return GetGuild(guildGroup, factionId);
+            // Catch erroneous faction data entries. (e.g. #91)
+            } catch (ArgumentOutOfRangeException e) {
+                DaggerfallUnity.LogMessage(e.Message, true);
                 return guildNotMember;
-            else
-                return GetGuild(guildGroup, factionId);
+            }
         }
 
         private FactionFile.GuildGroups GetGuildGroup(int factionId)
@@ -222,7 +228,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             FactionFile.FactionData factionData;
             if (persistentFactionData.GetFactionData(factionId, out factionData))
             {
-                guildGroup = (FactionFile.GuildGroups) factionData.ggroup;
+                guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
 
                 // Handle temples nested under deity
                 if (factionData.children != null && (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0))
@@ -230,7 +236,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     FactionFile.FactionData firstChild;
                     if (persistentFactionData.GetFactionData(factionData.children[0], out firstChild))
                     {
-                        guildGroup = (FactionFile.GuildGroups) firstChild.ggroup;
+                        guildGroup = (FactionFile.GuildGroups)firstChild.ggroup;
                     }
                 }
             }

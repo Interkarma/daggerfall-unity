@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             public string displayName;
             public bool expiring;
             public int poolIndex;
+            public bool isItem;
         }
 
         #endregion
@@ -130,7 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             foreach(ActiveSpellIcon spell in icons)
             {
-                if (spell.expiring)
+                if (spell.expiring && !spell.isItem)
                     iconPool[spell.poolIndex].Enabled = state;
             }
         }
@@ -149,12 +150,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return maxRoundsRemaining;
         }
 
-        bool HasEffectWithIcon(LiveEffectBundle bundle)
+        bool ShowIcon(LiveEffectBundle bundle)
         {
-            // At least one effect with remaining rounds must want to show an icon
+            // At least one effect with remaining rounds must want to show an icon, or be from an equipped item
             foreach (IEntityEffect effect in bundle.liveEffects)
             {
-                if (effect.Properties.ShowSpellIcon && effect.RoundsRemaining > 0)
+                if ((effect.Properties.ShowSpellIcon && effect.RoundsRemaining > 0) || bundle.fromEquippedItem != null)
                     return true;
             }
 
@@ -213,14 +214,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             // Sort icons into active spells in self and other icon lists
+            int poolIndex = 0;
             for (int i = 0;  i < effectBundles.Length; i++)
             {
                 LiveEffectBundle bundle = effectBundles[i];
 
-                // Don't add effect icon for instant spells, must have at least 1 round remaining
-                bool showIcon = HasEffectWithIcon(bundle);
-                int maxRoundsRemaining = GetMaxRoundsRemaining(bundle);
-                if (!showIcon || maxRoundsRemaining == 0)
+                // Don't add effect icon for instant spells, must have at least 1 round remaining or be from an equipped item
+                if (!ShowIcon(bundle))
                     continue;
 
                 // Setup icon information and sort into self (player is caster) or other (player not caster)
@@ -230,8 +230,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ActiveSpellIcon item = new ActiveSpellIcon();
                 item.displayName = bundle.name;
                 item.iconIndex = bundle.iconIndex;
-                item.poolIndex = i;
-                item.expiring = (maxRoundsRemaining <= 2) ? true : false;
+                item.poolIndex = poolIndex++;
+                item.expiring = (GetMaxRoundsRemaining(bundle) <= 2) ? true : false;
+                item.isItem = (effectBundles[i].fromEquippedItem != null);
                 if (bundle.caster == null || bundle.caster != GameManager.Instance.PlayerEntityBehaviour)
                     activeOtherList.Add(item);
                 else

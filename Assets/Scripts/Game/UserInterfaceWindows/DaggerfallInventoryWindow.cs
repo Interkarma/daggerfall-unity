@@ -1399,7 +1399,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Moving local and remote Use item clicks to new method
         // This ensures the items are handled the same except when needed
         // This will need more work as more usable items are available
-        void UseItem(DaggerfallUnityItem item, ItemCollection collection)
+        void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
             const int noSpellsTextId = 12;
 
@@ -1448,13 +1448,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (item.TemplateIndex == (int)MiscItems.Spellbook)
             {
-                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
-                DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
-                noSpells.SetTextTokens(textTokens);
-                noSpells.ClickAnywhereToClose = true;
-                noSpells.Show();
+                if (playerEntity.SpellbookCount() == 0)
+                {
+                    // Player has no spells
+                    TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
+                    DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
+                    noSpells.SetTextTokens(textTokens);
+                    noSpells.ClickAnywhereToClose = true;
+                    noSpells.Show();
+                }
+                else
+                {
+                    // Show spellbook
+                    DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
+                }
             }
-            else if (item.ItemGroup == ItemGroups.Drugs)
+            else if (item.ItemGroup == ItemGroups.Drugs && collection != null)
             {
                 // Drug poison IDs are 136 through 139. Template indexes are 78 through 81, so add to that.
                 Formulas.FormulaHelper.InflictPoison(playerEntity, (Poisons)item.TemplateIndex + 66, true);
@@ -1550,6 +1559,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ShowInfoPopup(item);
             }
+            else if (selectedActionMode == ActionModes.Use)
+            {
+                UseItem(item);
+            }
         }
 
         protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -1578,6 +1591,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedActionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
+            }
+            else if (selectedActionMode == ActionModes.Use)
+            {
+                UseItem(item);
             }
         }
 

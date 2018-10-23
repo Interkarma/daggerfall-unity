@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause fatigue damage to entity with additional logic.
         /// </summary>
-        /// <param name="source">Source entity behaviour.</param>
+        /// <param name="sourceEntityBehaviour">Source entity behaviour.</param>
         /// <param name="amount">Amount to damage fatigue.</param>
         /// <param name="assignMultiplier">Optionally assign fatigue multiplier.</param>
         public void DamageFatigueFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour, int amount, bool assignMultiplier = false)
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause damage to entity health with additional logic.
         /// </summary>
-        /// <param name="source">Source entity behaviour.</param>
+        /// <param name="sourceEntityBehaviour">Source entity behaviour.</param>
         /// <param name="amount">Amount to damage health.</param>
         /// <param name="showBlood">Show blood splash.</param>
         /// <param name="bloodPosition">Blood splash position.</param>
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Cause spell point damage to entity with additional logic.
         /// </summary>
-        /// <param name="source">Source entity behaviour.</param>
+        /// <param name="sourceEntityBehaviour">Source entity behaviour.</param>
         /// <param name="amount">Amount to damage spell points.</param>
         public void DamageMagickaFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour, int amount)
         {
@@ -232,7 +232,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         void SetEntityType(EntityTypes type)
         {
-            switch(type)
+            switch (type)
             {
                 case EntityTypes.None:
                     Entity = null;

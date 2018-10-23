@@ -547,11 +547,11 @@ namespace DaggerfallWorkshop.Utility
             return HardStrings.tavern;
         }
 
-        private static string RegentTitle(IMacroContextProvider mcp)
+        public static string RegentTitle(IMacroContextProvider mcp)
         {   // %rt %t
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
-            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex + 1, out regionFaction);
+            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex, out regionFaction);
 
             switch (regionFaction.ruler)
             {

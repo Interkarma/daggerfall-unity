@@ -11,6 +11,8 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -32,12 +34,16 @@ namespace DaggerfallWorkshop.Game
         CharacterController controller;
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
+        EntityEffectManager entityEffectManager;
+        EntityEffectBundle selectedSpell;
+        EnemyAttack attack;
 
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         float giveUpTimer;                          // Timer before enemy gives up
         bool isHostile;                             // Is enemy hostile to player
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
+        bool pausePursuit = true;                // pause to wait for the player to come closer to ground
         int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
 
         bool isLevitating;                          // Allow non-flying enemy to levitate
@@ -85,6 +91,8 @@ namespace DaggerfallWorkshop.Game
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            entityEffectManager = GetComponent<EntityEffectManager>();
+            attack = GetComponent<EnemyAttack>();
             isAttackFollowsPlayerSet = false;
         }
 
@@ -114,8 +122,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (attacker && senses)
             {
-                // Only assign target if don't already have target
-                if (entityBehaviour.Target == null)
+                // Assign target if don't already have target, or original target isn't seen or nearby
+                if (entityBehaviour.Target == null || !senses.TargetInSight || senses.DistanceToTarget > 5f)
                     entityBehaviour.Target = attacker;
                 senses.LastKnownTargetPos = attacker.transform.position;
                 giveUpTimer = 200;
@@ -303,57 +311,177 @@ namespace DaggerfallWorkshop.Game
             if (attackFollowsPlayer)
                 transform.forward = direction.normalized;
 
-            // Bow attack for enemies that have the appropriate animation
+            // Ranged attacks
             if (senses.TargetInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
             {
-                if (senses.TargetIsWithinYawAngle(22.5f))
+                bool evaluateBow = (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132);
+                bool evaluateRangedMagic = false;
+                if (!evaluateBow)
+                    evaluateRangedMagic = (CanCastRangedSpell(entity));
+
+                if (evaluateBow || evaluateRangedMagic)
                 {
-                    if (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132)
+                    if (senses.TargetIsWithinYawAngle(22.5f) && !mobile.IsPlayingOneShot())
                     {
-                        // Random chance to shoot bow
-                        if (classicUpdate && DFRandom.rand() < 1000)
+                        if (evaluateBow)
                         {
-                            if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2
-                                && mobile.Summary.EnemyState != MobileStates.RangedAttack1)
-                                mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                            else if (mobile.Summary.Enemy.HasRangedAttack2 && mobile.Summary.EnemyState != MobileStates.RangedAttack2)
-                                mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                            // Random chance to shoot bow
+                            if (classicUpdate && DFRandom.rand() < 1000)
+                            {
+                                if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
+                                    mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                                else if (mobile.Summary.Enemy.HasRangedAttack2)
+                                    mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                            }
+                        }
+                        // Random chance to shoot spell
+                        else if (classicUpdate && DFRandom.rand() % 40 == 0
+                            && entityEffectManager.SetReadySpell(selectedSpell))
+                        {
+                            mobile.ChangeEnemyState(MobileStates.Spell);
                         }
                         // Otherwise hold ground
-                        else if (!mobile.IsPlayingOneShot())
+                        else
                             mobile.ChangeEnemyState(MobileStates.Idle);
                     }
-                    //else if (spellPoints > 0 && canCastRangeSpells && DFRandom.rand() % 40 == 0) TODO: Ranged spell shooting
-                    //          CastRangedSpell();
-                    //          Spell Cast Animation;
                     else
-                        // If no ranged attack, move towards target
-                        PursueTarget(direction, moveSpeed);
-                }
-                else
-                {
-                    if (!mobile.IsPlayingOneShot())
-                        mobile.ChangeEnemyState(MobileStates.Move);
-                    TurnToTarget(direction.normalized);
+                    {
+                        if (!mobile.IsPlayingOneShot())
+                            mobile.ChangeEnemyState(MobileStates.Move);
+                        TurnToTarget(direction.normalized);
+                    }
+
                     return;
                 }
+            }
+
+            // Cast on-touch spells
+            if (senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget < attack.MeleeDistance +
+                senses.TargetRateOfApproach && CanCastTouchSpell(entity) && entityEffectManager.SetReadySpell(selectedSpell))
+            {
+                if (mobile.Summary.EnemyState != MobileStates.Spell)
+                    mobile.ChangeEnemyState(MobileStates.Spell);
+
+                attack.MeleeTimer = Random.Range(1500, 3001);
+                attack.MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
+                attack.MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
+
+                if (attack.MeleeTimer < 0)
+                    attack.MeleeTimer = 1500;
+
+                attack.MeleeTimer /= 980; // Approximates classic frame update
             }
             // Move towards target
             else if (distance > stopDistance)
                 PursueTarget(direction, moveSpeed);
             else if (!senses.TargetIsWithinYawAngle(22.5f))
                 TurnToTarget(direction.normalized);
-            //else
-            //{
-            // TODO: Touch spells.
-            //if (hasSpellPoints && attackCoolDownFinished && CanCastTouchSpells)
-            //{
-            //    Cast Touch Spell
-            //    Spell Cast Animation
-            //}
-            //}
             else if (!senses.DetectedTarget && mobile.Summary.EnemyState == MobileStates.Move)
                 mobile.ChangeEnemyState(MobileStates.Idle);
+        }
+
+        bool CanCastRangedSpell(DaggerfallEntity entity)
+        {
+            if (entity.CurrentMagicka <= 0)
+                return false;
+
+            EffectBundleSettings[] spells = entity.GetSpells();
+            List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
+            int count = 0;
+            foreach (EffectBundleSettings spell in spells)
+            {
+                if (spell.TargetType == TargetTypes.SingleTargetAtRange
+                    || spell.TargetType == TargetTypes.AreaAtRange)
+                {
+                    rangeSpells.Add(spell);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+                return false;
+
+            EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
+            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+
+            int totalGoldCostUnused;
+            int readySpellCastingCost;
+
+            Formulas.FormulaHelper.CalculateTotalEffectCosts(selectedSpell.Settings.Effects, selectedSpell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
+            if (entity.CurrentMagicka < readySpellCastingCost)
+                return false;
+
+            if (EffectsAlreadyOnTarget(selectedSpell))
+                return false;
+
+            return true;
+        }
+
+        bool CanCastTouchSpell(DaggerfallEntity entity)
+        {
+            if (entity.CurrentMagicka <= 0)
+                return false;
+
+            EffectBundleSettings[] spells = entity.GetSpells();
+            List<EffectBundleSettings> rangeSpells = new List<EffectBundleSettings>();
+            int count = 0;
+            foreach (EffectBundleSettings spell in spells)
+            {
+                if (spell.TargetType == TargetTypes.ByTouch
+                    || spell.TargetType == TargetTypes.AreaAroundCaster)
+                {
+                    rangeSpells.Add(spell);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+                return false;
+
+            EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
+            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+
+            int totalGoldCostUnused;
+            int readySpellCastingCost;
+
+            Formulas.FormulaHelper.CalculateTotalEffectCosts(selectedSpell.Settings.Effects, selectedSpell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
+            if (entity.CurrentMagicka < readySpellCastingCost)
+                return false;
+
+            if (EffectsAlreadyOnTarget(selectedSpell))
+                return false;
+
+            return true;
+        }
+
+        bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
+        {
+            if (entityBehaviour.Target)
+            {
+                EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
+                LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
+
+                for (int i = 0; i < spell.Settings.Effects.Length; i++)
+                {
+                    bool foundEffect = false;
+                    // Get effect template
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(spell.Settings.Effects[i].Key);
+                    for (int j = 0; j < bundles.Length && !foundEffect; j++)
+                    {
+                        for (int k = 0; k < bundles[j].liveEffects.Count && !foundEffect; k++)
+                        {
+
+                            if (bundles[j].liveEffects[k].GetType() == effectTemplate.GetType())
+                                foundEffect = true;
+                        }
+                    }
+
+                    if (!foundEffect)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private void PursueTarget(Vector3 direction, float moveSpeed)
@@ -368,6 +496,25 @@ namespace DaggerfallWorkshop.Game
             }
 
             var motion = transform.forward * moveSpeed;
+            bool withinPitch = senses.TargetIsWithinPitchAngle(45.0f);
+            if (!pausePursuit && !withinPitch)
+            {
+                if (flies || isLevitating || swims)
+                {
+                    if (!senses.TargetIsAbove())
+                        motion = -transform.up * moveSpeed;
+                    else
+                        motion = transform.up * moveSpeed;
+                }
+                // causes a random delay after being out of pitch range. for more realistic movements
+                else if (Random.Range(0f, 1.00f) <= Time.deltaTime)
+                    pausePursuit = true; // maybe change mobile state to stationary too?
+            }
+            else if (pausePursuit && withinPitch)
+                pausePursuit = false;
+
+            if (pausePursuit)
+                return;
 
             // Prevent rat stacks (enemies don't stand on shorter enemies)
             AvoidEnemies(ref motion);

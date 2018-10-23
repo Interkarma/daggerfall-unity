@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = new string[] {
+        static string[] rankTitles = {
                 "Aspirant", "Squire", "Gallant", "Chevalier", "Keeper", "Knight Brother", "Commander", "Marshall", "Seneschal", "Paladin"
         };
 
@@ -121,14 +121,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override int GetFactionId()
         {
-            return (int) order;
+            return (int)order;
         }
 
         public override string GetTitle()
         {
-            if (GameManager.Instance.PlayerEntity.Gender == Genders.Female)
-                if (rank == 5)
-                    return "Knight Sister";        // Not calling female chars 'Brother'!
+            if (GameManager.Instance.PlayerEntity.Gender == Genders.Female && rank == 5)
+                return "Knight Sister";        // Not calling female chars 'Brother'!
 
             return IsMember() ? rankTitles[rank] : "non-member";
         }
@@ -142,13 +141,13 @@ namespace DaggerfallWorkshop.Game.Guilds
             return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(GetPromotionMsgId(newRank));
         }
 
-        private int GetPromotionMsgId(int rank)
+        private int GetPromotionMsgId(int newRank)
         {
-            if (rank == 4)
+            if (newRank == 4)
                 return PromotionFreeRoomsId;
-            if (rank == 6)
+            if (newRank == 6)
                 return PromotionFreeShipsId;
-            if (rank == 9)
+            if (newRank == 9)
                 return DaggerfallBankManager.OwnsHouse ? PromotionNoHouseId : PromotionHouseId;
 
             return PromotionMsgId;
@@ -164,9 +163,9 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return true;
 
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData))
-                if (GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex + 1 == factionData.region)
-                    return true;
+            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData)
+                && GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex == factionData.region)
+                return true;
 
             return false;
         }
@@ -211,7 +210,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 ArmorMaterialTypes material = ArmorMaterialTypes.Iron + rank;
                 for (int i = UnityEngine.Random.Range(3, 7); i >= 0; i--)
                 {
-                    Armor armor = (Armor) UnityEngine.Random.Range(102, 109);
+                    Armor armor = (Armor)UnityEngine.Random.Range(102, 109);
                     rewardArmor.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
                 }
                 flags = flags | ArmorFlagMask;
@@ -221,7 +220,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
         }
 
-        public void ReceiveHouse(PlayerEntity playerEntity)
+        public void ReceiveHouse()
         {
             if (rank < 9)
             {
@@ -234,7 +233,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             else
             {   // Give a house if one availiable
                 if (DaggerfallBankManager.OwnsHouse)
-                    DaggerfallUI.MessageBox((int) TransactionResult.ALREADY_OWN_HOUSE);
+                    DaggerfallUI.MessageBox((int)TransactionResult.ALREADY_OWN_HOUSE);
                 else
                 {
                     BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
@@ -279,13 +278,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         internal override GuildMembership_v1 GetGuildData()
         {
-            return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int) order, flags = flags };
+            return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int)order, flags = flags };
         }
 
         internal override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
-            order = (Orders) data.variant;
+            order = (Orders)data.variant;
             flags = data.flags;
         }
 
@@ -304,7 +303,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// </summary>
         protected class OrderMacroDataSource : GuildMacroDataSource
         {
-            private KnightlyOrder parent;
+            private readonly KnightlyOrder parent;
             public OrderMacroDataSource(KnightlyOrder guild) : base(guild)
             {
                 parent = guild;

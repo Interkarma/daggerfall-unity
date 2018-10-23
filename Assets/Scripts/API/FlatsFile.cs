@@ -15,7 +15,6 @@ using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
-using DaggerfallConnect.Save;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -27,9 +26,9 @@ namespace DaggerfallConnect.Arena2
     {
         #region Fields
 
-        FileProxy flatsFile = new FileProxy();
+        readonly FileProxy flatsFile = new FileProxy();
 
-        Dictionary<int, FlatData> flatsDict = new Dictionary<int, FlatData>();
+        readonly Dictionary<int, FlatData> flatsDict = new Dictionary<int, FlatData>();
 
         #endregion
 
@@ -87,7 +86,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Load from FLATS.CFG file.
         /// </summary>
-        /// <param name="path">Absolute path to FLATS.CFG file.</param>
+        /// <param name="filePath">Absolute path to FLATS.CFG file.</param>
         /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
         /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
         public void Load(string filePath, FileUsage usage, bool readOnly)
@@ -103,7 +102,7 @@ namespace DaggerfallConnect.Arena2
             // Parse faction file
             byte[] buffer = flatsFile.Buffer;
             string txt = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            ParseFlats(txt);            
+            ParseFlats(txt);
         }
 
         /// <summary>

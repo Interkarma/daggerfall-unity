@@ -158,9 +158,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Moving cursor left and right
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
+            {
                 MoveCursorLeft();
+                return;
+            }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.RightArrow)
+            {
                 MoveCursorRight();
+                return;
+            }
 
             // Delete and Backspace
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Delete)
@@ -170,6 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     text = text.Remove(cursorPosition, 1);
                     RaiseOnTypeHandler();
                 }
+                return;
             }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Backspace)
             {
@@ -179,13 +186,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     MoveCursorLeft();
                     RaiseOnTypeHandler();
                 }
+                return;
             }
 
             // Home and End
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Home)
+            {
                 SetCursorPosition(0);
+                return;
+            }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.End)
+            {
                 SetCursorPosition(text.Length);
+                return;
+            }
 
             // Return/enter
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return ||

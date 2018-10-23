@@ -27,13 +27,13 @@ namespace DaggerfallWorkshop.Game
     {
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
         public float MeleeDistance = 3.2f;          // Maximum distance for melee attack
+        public float MeleeTimer = 0;                // Must be 0 for a melee attack or touch spell to be done
 
         //EnemyMotor motor;
         EnemySenses senses;
         EnemySounds sounds;
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
-        float meleeTimer = 0;
         int damage = 0;
         float classicUpdateTimer = 0f;
         bool classicUpdate = false;
@@ -79,22 +79,22 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Countdown to next melee attack
-            meleeTimer -= Time.deltaTime;
+            MeleeTimer -= Time.deltaTime;
 
-            if (meleeTimer < 0)
-                meleeTimer = 0;
+            if (MeleeTimer < 0)
+                MeleeTimer = 0;
 
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             int speed = entity.Stats.LiveSpeed;
 
             // Note: Speed comparison here is reversed from classic. Classic's way makes fewer attack
             // attempts at higher speeds, so it seems backwards.
-            if (classicUpdate && (DFRandom.rand() % speed >= (speed >> 3) + 6 && meleeTimer == 0))
+            if (classicUpdate && (DFRandom.rand() % speed >= (speed >> 3) + 6 && MeleeTimer == 0))
             {
                 MeleeAnimation();
 
-                meleeTimer = Random.Range(1500, 3001);
-                meleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
+                MeleeTimer = Random.Range(1500, 3001);
+                MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
 
                 // Note: In classic, what happens here is
                 // meleeTimer += 450 * (enemydata[130] - 2);
@@ -103,12 +103,12 @@ namespace DaggerfallWorkshop.Game
                 // Instead enemydata[130] seems to instead always be 0, the equivalent of
                 // "very high" reflexes, regardless of what the game reflexes are.
                 // Here, we use the reflexes data as was intended.
-                meleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
+                MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
 
-                if (meleeTimer > 100000 || meleeTimer < 0)
-                    meleeTimer = 1500;
+                if (MeleeTimer > 100000 || MeleeTimer < 0)
+                    MeleeTimer = 1500;
 
-                meleeTimer /= 980; // Approximates classic frame update
+                MeleeTimer /= 980; // Approximates classic frame update
             }
         }
 
@@ -119,11 +119,8 @@ namespace DaggerfallWorkshop.Game
             // Are we in range and facing target? Then start attack.
             if (senses.TargetInSight)
             {
-                // Take the speed of movement during the attack animation into account when deciding if to attack
-                EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-                float attackSpeed = ((entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) / PlayerSpeedChanger.classicToUnitySpeedUnitRatio) / EnemyMotor.AttackSpeedDivisor;
-
-                if (senses.DistanceToTarget >= MeleeDistance + attackSpeed)
+                // Take the rate of target approach into account when deciding if to attack
+                if (senses.DistanceToTarget >= MeleeDistance + senses.TargetRateOfApproach)
                     return;
 
                 // Set melee animation state
@@ -254,6 +251,8 @@ namespace DaggerfallWorkshop.Game
                 else
                     SendDamageToPlayer();
             }
+            else
+                sounds.PlayMissSound(weapon);
 
             return damage;
         }

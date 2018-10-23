@@ -10,13 +10,11 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -102,7 +100,7 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             if (entityType == EntityTypes.EnemyMonster)
             {
-                careerIndex = (int)mobileEnemy.ID;
+                careerIndex = mobileEnemy.ID;
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
                 stats.SetPermanentFromCareer(career);
 
@@ -117,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Entity
             }
             else if (entityType == EntityTypes.EnemyClass)
             {
-                careerIndex = (int)mobileEnemy.ID - 128;
+                careerIndex = mobileEnemy.ID - 128;
                 career = GetClassCareerTemplate((ClassCareers)careerIndex);
                 stats.SetPermanentFromCareer(career);
 
@@ -226,7 +224,7 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             int itemLevel = player.Level;
-            Genders gender = player.Gender;
+            Genders playerGender = player.Gender;
             Races race = player.Race;
             int chance = 0;
             if (variant == 0)
@@ -243,7 +241,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 item = UnityEngine.Random.Range((int)Game.Items.Armor.Buckler, (int)(Game.Items.Armor.Round_Shield) + 1);
                 if (UnityEngine.Random.Range(1, 101) <= chance)
                 {
-                    Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, (Items.Armor)item, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                    Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, (Items.Armor)item, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                     ItemEquipTable.EquipItem(armor, true, false);
                     items.AddItem(armor);
                 }
@@ -272,42 +270,42 @@ namespace DaggerfallWorkshop.Game.Entity
             // helm
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Helm, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Helm, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // right pauldron
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Right_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Right_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // left pauldron
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Left_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Left_Pauldron, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // cuirass
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Cuirass, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Cuirass, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // greaves
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Greaves, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Greaves, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
             // boots
             if (UnityEngine.Random.Range(1, 101) <= chance)
             {
-                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(gender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
+                Items.DaggerfallUnityItem armor = Game.Items.ItemBuilder.CreateArmor(playerGender, race, Game.Items.Armor.Boots, Game.Items.ItemBuilder.RandomArmorMaterial(itemLevel));
                 ItemEquipTable.EquipItem(armor, true, false);
                 items.AddItem(armor);
             }
@@ -377,7 +375,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void SetEnemySpells(byte[] spellList)
         {
-            //MaxMagicka = 10 * level + 100; TODO: Enemies should be able to set maximum spell points independent of the rules used by the player.
+            // Enemies don't follow same rule as player for maximum spell points
+            MaxMagicka = 10 * level + 100;
             currentMagicka = MaxMagicka;
             skills.SetPermanentSkillValue(DFCareer.Skills.Destruction, 80);
             skills.SetPermanentSkillValue(DFCareer.Skills.Restoration, 80);
@@ -386,9 +385,25 @@ namespace DaggerfallWorkshop.Game.Entity
             skills.SetPermanentSkillValue(DFCareer.Skills.Thaumaturgy, 80);
             skills.SetPermanentSkillValue(DFCareer.Skills.Mysticism, 80);
 
-            // Iterate over spellList and assign data from SPELLS.STD
+            // Add spells to enemy from standard list
+            foreach (byte spellID in spellList)
+            {
+                SpellRecord.SpellRecordData spellData;
+                GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellID, out spellData);
+                if (spellData.index == -1)
+                {
+                    Debug.LogError("Failed to locate enemy spell in standard spells list.");
+                    continue;
+                }
 
-            return;
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
+                {
+                    Debug.LogError("Failed to create effect bundle for enemy spell: " + spellData.spellName);
+                    continue;
+                }
+                AddSpell(bundle);
+            }
         }
 
         public DFCareer.EnemyGroups GetEnemyGroup()

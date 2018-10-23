@@ -27,6 +27,13 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        // Hack fix to provide a non-zero building key when packed building indices result in 0
+        // Fixes an oversight where a building key of 0 can be disregarded by multiple systems
+        // This value is 1 higher than any other possible building key
+        // MakeBuildingKey() will return this value when packed building key is 0
+        // ReverseBuildingKey() will unpack indices to 0 when reversing this value
+        const int buildingKey0 = 1 << 24;
+
         uint locationId;
         int mapId;
         DFLocation locationData;
@@ -171,7 +178,8 @@ namespace DaggerfallWorkshop.Game
         /// <returns>Building key.</returns>
         public static int MakeBuildingKey(byte layoutX, byte layoutY, byte recordIndex)
         {
-            return (layoutX << 16) + (layoutY << 8) + recordIndex;
+            int buildingKey = (layoutX << 16) + (layoutY << 8) + recordIndex;
+            return (buildingKey == 0) ? buildingKey0 : buildingKey;
         }
 
         /// <summary>
@@ -183,9 +191,18 @@ namespace DaggerfallWorkshop.Game
         /// <param name="recordIndexOut">Record index of building inside parent block.</param>
         public static void ReverseBuildingKey(int key, out int layoutXOut, out int layoutYOut, out int recordIndexOut)
         {
-            layoutXOut = key >> 16;
-            layoutYOut = (key >> 8) & 0xff;
-            recordIndexOut = key & 0xff;
+            if (key == buildingKey0)
+            {
+                layoutXOut = 0;
+                layoutYOut = 0;
+                recordIndexOut = 0;
+            }
+            else
+            {
+                layoutXOut = key >> 16;
+                layoutYOut = (key >> 8) & 0xff;
+                recordIndexOut = key & 0xff;
+            }
         }
 
         #endregion

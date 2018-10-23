@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop.Game
         Vector3 directionToTarget;
         float distanceToPlayer;
         float distanceToTarget;
+        float lastDistanceToTarget;
+        float targetRateOfApproach;
         Vector3 lastKnownTargetPos;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
@@ -131,6 +133,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return questBehaviour; }
             set { questBehaviour = value; }
+        }
+
+        public float TargetRateOfApproach
+        {
+            get { return targetRateOfApproach; }
+            set { targetRateOfApproach = value; }
         }
 
         void Start()
@@ -251,6 +259,14 @@ namespace DaggerfallWorkshop.Game
                         entityBehaviour.Target.Target = entityBehaviour;
                     }
                 }
+
+                // Compare change in target position to give AI some ability to read opponent's movements
+                if (lastDistanceToTarget != 0)
+                {
+                    targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
+                }
+
+                lastDistanceToTarget = distanceToTarget;
             }
 
             if (Player != null)
@@ -442,6 +458,31 @@ namespace DaggerfallWorkshop.Game
                 return true;
             else
                 return false;
+        }
+
+        public bool TargetIsWithinPitchAngle(float targetAngle)
+        {
+            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
+            Plane verticalTransformToLastKnownPos = new Plane(lastKnownTargetPos, transform.position, transform.position + Vector3.up);
+            // first project enemy direction to horizontal plane.
+            Vector3 enemyDirection2D = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+            // next project enemy direction to vertical plane intersecting with last known position
+            enemyDirection2D = Vector3.ProjectOnPlane(enemyDirection2D, verticalTransformToLastKnownPos.normal);
+
+            float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
+
+            if (angle < targetAngle)
+                return true;
+            else
+                return false;
+        }
+
+        public bool TargetIsAbove()
+        {
+            if (lastKnownTargetPos.y > transform.position.y)
+                return true;
+            return false;
         }
 
         #endregion

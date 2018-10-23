@@ -9,9 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-
 namespace DaggerfallWorkshop
 {
     /// <summary>

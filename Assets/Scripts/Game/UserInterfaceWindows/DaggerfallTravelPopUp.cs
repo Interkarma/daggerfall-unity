@@ -83,8 +83,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool hasCart = false;
         bool hasShip = false;
 
-        int tripCost = 0;
-
         #endregion
 
         #region Properties
@@ -247,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if ((travelTimeMinutes % 1440) > 0)
                 travelTimeDaysTotal += 1;
 
-            tripCost = travelTimeCalculator.CalculateTripCost(
+            travelTimeCalculator.CalculateTripCost(
                 travelTimeMinutes,
                 sleepModeInn,
                 hasShip,
@@ -255,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 );
 
             travelTimeLabel.Text = string.Format("{0}", travelTimeDaysTotal);
-            tripCostLabel.Text = tripCost.ToString();
+            tripCostLabel.Text = travelTimeCalculator.TotalCost.ToString();
 
             countdownValueTravelTimeDays = travelTimeDaysTotal;
         }
@@ -324,9 +322,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Return whether player has enough gold for the selected travel options
+        // Taverns only accept gold pieces
         bool enoughGoldCheck()
         {
-            return (GameManager.Instance.PlayerEntity.GoldPieces >= tripCost);
+            return (GameManager.Instance.PlayerEntity.GetGoldAmount() >= travelTimeCalculator.TotalCost) &&
+                   (GameManager.Instance.PlayerEntity.GoldPieces >= travelTimeCalculator.PiecesCost);
         }
 
         void showNotEnoughGoldPopup()
@@ -392,7 +392,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
             else
-                GameManager.Instance.PlayerEntity.GoldPieces -= tripCost;
+            {
+                GameManager.Instance.PlayerEntity.GoldPieces -= travelTimeCalculator.PiecesCost;
+                GameManager.Instance.PlayerEntity.DeductGoldAmount(travelTimeCalculator.TotalCost - travelTimeCalculator.PiecesCost);
+            }
 
             doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
         }

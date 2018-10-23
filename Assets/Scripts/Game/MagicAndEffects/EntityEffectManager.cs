@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Fields
 
         const string textDatabase = "ClassicEffects";
+        const string youDontHaveTheSpellPointsMessageKey = "youDontHaveTheSpellPoints";
         const int minAcceptedSpellVersion = 1;
 
         const int magicCastSoundID = 349;
@@ -55,10 +56,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EntityEffectBundle lastSpell = null;
         bool instantCast = false;
         bool castInProgress = false;
-        bool readySpellIsMagicItem = false;
+        bool readySpellDoesNotCostSpellPoints = false;
+        int readySpellCastingCost;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
-        bool isPlayerEntity = false;
+        EntityTypes entityType;
 
         List<LiveEffectBundle> instancedBundles = new List<LiveEffectBundle>();
         List<LiveEffectBundle> bundlesToRemove = new List<LiveEffectBundle>();
@@ -84,6 +86,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EntityEffectBundle ReadySpell
         {
             get { return readySpell; }
+            set { readySpell = value; }
         }
 
         public EntityEffectBundle LastSpell
@@ -98,7 +101,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public bool IsPlayerEntity
         {
-            get { return isPlayerEntity; }
+            get { return (entityType == EntityTypes.Player); }
         }
 
         public LiveEffectBundle[] EffectBundles
@@ -142,11 +145,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             if (entityBehaviour)
             {
-                isPlayerEntity = (entityBehaviour.EntityType == EntityTypes.Player);
+                entityType = entityBehaviour.EntityType;
             }
 
             // Only player listens for release frame
-            if (isPlayerEntity)
+            if (IsPlayerEntity)
                 GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
 
             // Wire up events
@@ -196,17 +199,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 wipeAllBundles = false;
             }
 
-            // Fire instant cast spells
-            if (readySpell != null && instantCast)
-            {
-                CastReadySpell();
-                return;
-            }
-
             // Player can cast a spell, recast last spell, or abort current spell
             // Handling input here is similar to handling weapon input in WeaponManager
-            if (isPlayerEntity)
+            if (IsPlayerEntity)
             {
+                // Fire instant cast spells
+                if (readySpell != null && instantCast)
+                {
+                    CastReadySpell();
+                    return;
+                }
+
                 // Cast spell
                 if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject) && readySpell != null)
                 {
@@ -229,8 +232,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     return;
                 }
             }
-
-            // TODO: Allow enemies to cast their spells
+            // Enemies always cast ready spell instantly once queued
+            else
+            {
+                CastReadySpell();
+            }
         }
 
         #endregion
@@ -241,32 +247,53 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
-        public void SetReadySpell(EntityEffectBundle spell, bool isMagicItem = false)
+        public bool SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
             // Do nothing if silenced
-            if (SilenceCheck())
-                return;
+            if (SilenceCheck() && !noSpellPointCost)
+                return false;
 
             // Spell must appear valid
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
-                return;
+                return false;
+
+            // Get spellpoint costs of this spell
+            int totalGoldCostUnused;
+            FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
+
+            // Allow casting spells of any cost if entity is player and godmode enabled
+            bool godModeCast = (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode);
+
+            // Enforce spell point costs - Daggerfall does this when setting ready spell
+            if (entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
+            {
+                // Output message only for player
+                if (IsPlayerEntity)
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
+
+                readySpell = null;
+                readySpellCastingCost = 0;
+                return false;
+            }
 
             // Assign spell - caster only spells are cast instantly
             readySpell = spell;
-            readySpellIsMagicItem = isMagicItem;
+            readySpellDoesNotCostSpellPoints = noSpellPointCost;
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
                 instantCast = true;
 
-            if (isPlayerEntity && ! instantCast)
+            if (IsPlayerEntity && !instantCast)
             {
                 DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell, 0.4f);
             }
+
+            return true;
         }
 
         public void AbortReadySpell()
         {
             readySpell = null;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
 
         public void CastReadySpell()
@@ -279,24 +306,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
-            // Get spellpoint costs of this spell
-            int totalGoldCost, totalSpellPointCost;
-            FormulaHelper.CalculateTotalEffectCosts(readySpell.Settings.Effects, readySpell.Settings.TargetType, out totalGoldCost, out totalSpellPointCost);
-
-            // TODO: Enforce spellpoint costs - all spells are free to cast right now, even at 0 mana
-            // This is to allow for easier testing during build-out stages
-
-            // Deduct spellpoint cost from entity if not using a magic item
-            if (!readySpellIsMagicItem)
-                entityBehaviour.Entity.DecreaseMagicka(totalSpellPointCost);
+            // Deduct spellpoint cost from entity if not free (magic item, innate ability)
+            if (!readySpellDoesNotCostSpellPoints)
+                entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
 
             // Play casting animation based on element type
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
             // TODO: Do not need to show spellcasting animations for certain spell effects
-            GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
-
-            // Block further casting attempts until previous cast is complete
-            castInProgress = true;
+            if (IsPlayerEntity)
+            {
+                // Play casting animation and block further casting attempts until previous cast is complete
+                GameManager.Instance.PlayerSpellCasting.PlayOneShot(readySpell.Settings.ElementType);
+                castInProgress = true;
+            }
+            else
+            {
+                EnemyCastReadySpell();
+            }
         }
 
         public void AssignBundle(EntityEffectBundle sourceBundle, bool showNonPlayerFailures = false)
@@ -364,12 +390,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     !effect.ChanceSuccess)
                 {
                     // Output failure messages
-                    if (isPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
+                    if (IsPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
                     {
                         // Output "Spell effect failed." for caster only spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
                     }
-                    else if (isPlayerEntity || showNonPlayerFailures)
+                    else if (IsPlayerEntity || showNonPlayerFailures)
                     {
                         // Output "Save versus spell made." for external contact spells
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
@@ -567,7 +593,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         AssignBundle(bundle);
 
                         // Play cast sound on equip for player only
-                        if (isPlayerEntity)
+                        if (IsPlayerEntity)
                             PlayCastSound(entityBehaviour, GetCastSoundID(bundle.Settings.ElementType));
 
                         // TODO: Use correct icon - the index in spell record data is the not the icon displayed by classic
@@ -1068,7 +1094,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             lastSpell = null;
             readySpell = null;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
         
         int GetCastSoundID(ElementTypes elementType)
@@ -1223,18 +1249,91 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        void TallyPlayerReadySpellEffectSkills()
+        {
+            // Validate ready spell
+            if (readySpell == null || readySpell.Settings.Effects == null)
+                return;
+
+            // Loop through effects in spell bundle and tally related magic skill
+            // Normally spells will have no more than 3 effects
+            for (int i = 0; i < readySpell.Settings.Effects.Length; i++)
+            {
+                IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(readySpell.Settings.Effects[i].Key);
+                if (effect != null)
+                    GameManager.Instance.PlayerEntity.TallySkill((DFCareer.Skills)effect.Properties.MagicSkill, 1);
+            }
+        }
+
         #endregion
+
+        #region EnemyCasting
+
+        // For enemies this is equivalent to PlayerSpellCasting_OnReleaseFrame()
+        // Might need to time cast to enemy release - whatever looks best
+        void EnemyCastReadySpell()
+        {
+            // Must have a ready spell
+            if (readySpell == null)
+                return;
+
+            // Play cast sound from caster audio source
+            if (readySpell.CasterEntityBehaviour)
+            {
+                PlayCastSound(readySpell.CasterEntityBehaviour, GetCastSoundID(readySpell.Settings.ElementType));
+            }
+
+            // Create magic sparkles effect
+            if (readySpell.Settings.TargetType != TargetTypes.SingleTargetAtRange &&
+                readySpell.Settings.TargetType != TargetTypes.AreaAtRange)
+            {
+                EnemyBlood sparkles = readySpell.CasterEntityBehaviour.GetComponent<EnemyBlood>();
+
+                Vector3 sparklesPos = entityBehaviour.transform.position;
+                CharacterController targetController = entityBehaviour.transform.GetComponent<CharacterController>();
+                sparklesPos.y += targetController.height / 8;
+
+                if (sparkles)
+                {
+                    sparkles.ShowMagicSparkles(sparklesPos);
+                }
+            }
+
+            // Assign bundle directly to self if target is caster
+            // Otherwise instatiate missile prefab based on element type
+            if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
+            {
+                AssignBundle(readySpell);
+            }
+            else
+            {
+                DaggerfallMissile missile = InstantiateMissile(readySpell.Settings.ElementType);
+                if (missile)
+                    missile.Payload = readySpell;
+            }
+
+            // Clear ready spell and reset casting - do not store last spell if casting from item
+            lastSpell = readySpell;
+            readySpell = null;
+            readySpellCastingCost = 0;
+            instantCast = false;
+            castInProgress = false;
+            readySpellDoesNotCostSpellPoints = false;
+        }
+
+        #endregion  
 
         #region Event Handling
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
-            // TODO: Split missile generation from player spell casting so monsters can also cast spells
-            // Using player as sole testing platform for now
-
             // Must have a ready spell
             if (readySpell == null)
                 return;
+
+            // Always tally magic skills when player physically casts a spell
+            // Cancelled spells do not reach this point
+            TallyPlayerReadySpellEffectSkills();
 
             // Play cast sound from caster audio source
             if (readySpell.CasterEntityBehaviour)
@@ -1256,11 +1355,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Clear ready spell and reset casting - do not store last spell if casting from item
-            lastSpell = (readySpellIsMagicItem) ? null : readySpell;
+            lastSpell = (readySpellDoesNotCostSpellPoints) ? null : readySpell;
             readySpell = null;
+            readySpellCastingCost = 0;
             instantCast = false;
             castInProgress = false;
-            readySpellIsMagicItem = false;
+            readySpellDoesNotCostSpellPoints = false;
         }
 
         private void EntityEffectBroker_OnNewMagicRound()

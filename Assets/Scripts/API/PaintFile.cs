@@ -27,7 +27,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Abstracts PAINT.DAT file to a managed disk or memory stream.
         /// </summary>
-        private FileProxy managedFile = new FileProxy();
+        private readonly FileProxy managedFile = new FileProxy();
 
         #endregion
 

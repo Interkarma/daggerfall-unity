@@ -34,9 +34,9 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Static Data
 
-        public static int[] rankReqReputation = new int[] {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
-        public static int[] rankReqSkillHigh = new int[]  { 22, 23, 31, 39, 47, 55, 63, 71, 79, 87 };
-        public static int[] rankReqSkillLow = new int[]   {  4,  5,  9, 13, 17, 21, 25, 29, 33, 37 };
+        public static int[] rankReqReputation = {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+        public static int[] rankReqSkillHigh =  { 22, 23, 31, 39, 47, 55, 63, 71, 79, 87 };
+        public static int[] rankReqSkillLow =   {  4,  5,  9, 13, 17, 21, 25, 29, 33, 37 };
 
         #endregion
 
@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 if (rep < rankReqReputation[r] || high < 1 || low + high < 2)
                     break;
             }
-            Debug.LogFormat("rep: {0} high#: {1} low#: {2} new rank: {3}", rep, high, low, r-1);
+            Debug.LogFormat("rep: {0} high#: {1} low#: {2} new rank: {3}", rep, high, low, r - 1);
             return --r;
         }
 
@@ -345,7 +345,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         /// </summary>
         protected class GuildMacroDataSource : MacroDataSource
         {
-            private Guild parent;
+            private readonly Guild parent;
             public GuildMacroDataSource(Guild guild)
             {
                 parent = guild;

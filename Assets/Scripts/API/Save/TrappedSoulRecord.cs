@@ -9,13 +9,7 @@
 // Notes:
 //
 
-using System;
-using System.Text;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallConnect.Utility;
-using UnityEngine;
 
 namespace DaggerfallConnect.Save
 {
@@ -81,7 +75,7 @@ namespace DaggerfallConnect.Save
 
             // Read container data - seems always is a single byte value = 150, use unknown
             parsedData = new TrappedSoulRecordData();
-            parsedData.unknown = reader.ReadBytes(RecordLength);    
+            parsedData.unknown = reader.ReadBytes(RecordLength);
 
             // Close stream
             reader.Close();

@@ -11,10 +11,7 @@
 
 #region Using Statements
 using System;
-using System.Text;
-using System.Collections.Generic;
 using System.IO;
-using DaggerfallConnect.Utility;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -30,7 +27,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// The BsaFile representing MONSTER.BSA.
         /// </summary>
-        private BsaFile bsaFile = new BsaFile();
+        private readonly BsaFile bsaFile = new BsaFile();
 
         #endregion
 

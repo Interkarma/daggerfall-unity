@@ -495,7 +495,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                         damage = CalculateBackstabDamage(damage, backstabChance);
                     }
                 }
-                else // attacker is monster
+                else if (AIAttacker != null) // attacker is monster
                 {
                     // Handle multiple attacks by AI
                     int attackNumber = 0;
@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
             }
             // Handle weapon attacks
-            else
+            else if (weapon != null)
             {
                 // Apply weapon material modifier.
                 if (weapon.GetWeaponMaterialModifier() > 0)
@@ -647,8 +647,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
             if (weapon != null && damage > 0)
             {
-                // TODO: Inflict poison
-                // TODO: Inflict weapon magic effects
                 // TODO: If attacker is AI, apply Ring of Namira effect
                 weapon.DamageThroughPhysicalHit(damage, attacker);
 
@@ -697,7 +695,32 @@ namespace DaggerfallWorkshop.Game.Formulas
                         InflictDisease(target, diseaseListB);
                     break;
                 case (int)MonsterCareers.Spider:
-                    // if target does not have paralyze (spell id 66), cast it
+                case (int)MonsterCareers.GiantScorpion:
+                    EntityEffectManager targetEffectManager = target.EntityBehaviour.GetComponent<EntityEffectManager>();
+                    LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
+                    bool paralyzeAlreadyActive = false;
+
+                    foreach (LiveEffectBundle bundle in bundles)
+                    {
+                        foreach (IEntityEffect effect in bundle.liveEffects)
+                        {
+                            if (effect is Paralyze)
+                            {
+                                paralyzeAlreadyActive = true;
+                            }
+                        }
+                    }
+
+                    if (!paralyzeAlreadyActive)
+                    {
+                        SpellRecord.SpellRecordData spellData;
+                        GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(66, out spellData);
+                        EffectBundleSettings bundle;
+                        GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle);
+                        EntityEffectBundle spell = new EntityEffectBundle(bundle, attacker.EntityBehaviour);
+                        EntityEffectManager attackerEffectManager = attacker.EntityBehaviour.GetComponent<EntityEffectManager>();
+                        attackerEffectManager.SetReadySpell(spell, true);
+                    }
                     break;
                 case (int)MonsterCareers.Werewolf:
                     //uint random = DFRandom.rand();
@@ -722,17 +745,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                     if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
                         InflictDisease(target, diseaseListC);
                     break;
-                case (int)MonsterCareers.GiantScorpion:
-                    // if target does not have paralyze (spell id 66), cast it
-                    break;
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
                     uint random = DFRandom.rand();
-                    if (random >= 400)
-                    {
-                        if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
-                            InflictDisease(target, diseaseListA);
-                    }
+                    if (random >= 400 && UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                        InflictDisease(target, diseaseListA);
                     // else
                     //{
                     //    InflictVampirism
@@ -924,16 +941,6 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int SavingThrow(DFCareer.Elements elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
-            // Handle resistances granted by magical effects (classic example)
-            // elementTypes are 0 = fire, 1 = frost, 2 = disease/poison, 3 = shock, 4 = magick
-            // int[] SavingThrowResistFlags = { 0x02, 0x10000000, 0x20000000, 0x40000000, 0x80000000 }; These map to classic magicEffects 1 through 4 concatenated together as 4 bytes.
-            // if (target.magicEffects & SavingThrowResistTypes[elementType]
-            //{
-            //      int chance = target.ResistanceTo(elementType);
-            //      if (UnityEngine.Random.Range(1, 100 + 1) <= chance)
-            //          return 0;
-            //}
-
             // Handle resistances granted by magical effects
             if (target.HasResistanceFlag(elementType))
             {
@@ -1279,9 +1286,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (condition == max)
                 return 0;
 
-            int cost = baseItemValue;
-
-            cost = 10 * baseItemValue / 100;
+            int cost = 10 * baseItemValue / 100;
 
             if (cost < 1)
                 cost = 1;
@@ -1399,7 +1404,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             for (int i = 0; i < regionData.Length; ++i)
             {
                 FactionFile.FactionData regionFaction;
-                if (player.FactionData.FindFactionByTypeAndRegion(7, i + 1, out regionFaction))
+                if (player.FactionData.FindFactionByTypeAndRegion(7, i, out regionFaction))
                 {
                     for (int j = 0; j < times; ++j)
                     {
@@ -1598,7 +1603,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             int perLevel,
             int skillValue)
         {
-
             //Calculate effect gold cost, spellpoint cost is calculated from gold cost after adding up for duration, chance and magnitude
             goldCost = trunc(costs.OffsetGold + costs.CostA * starting + costs.CostB * trunc(increase / perLevel));
         }
