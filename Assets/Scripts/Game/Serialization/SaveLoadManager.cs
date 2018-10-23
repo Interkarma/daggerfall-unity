@@ -1163,7 +1163,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Clear any orphaned quest items
-            RemoveAllOrphanedQuestItems();
+            RemoveAllOrphanedItems();
 
             // Check mod manager is available
             if (ModManager.Instance != null)
@@ -1192,18 +1192,18 @@ namespace DaggerfallWorkshop.Game.Serialization
         }
 
         /// <summary>
-        /// Looks for orphaned quest items (quest no longer active) remaining in player item collections.
+        /// Looks for orphaned items (e.g. quest no longer active or invalid template) remaining in player item collections.
         /// </summary>
-        void RemoveAllOrphanedQuestItems()
+        void RemoveAllOrphanedItems()
         {
             int count = 0;
             Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            count += playerEntity.Items.RemoveOrphanedQuestItems();
-            count += playerEntity.WagonItems.RemoveOrphanedQuestItems();
-            count += playerEntity.OtherItems.RemoveOrphanedQuestItems();
+            count += playerEntity.Items.RemoveOrphanedItems();
+            count += playerEntity.WagonItems.RemoveOrphanedItems();
+            count += playerEntity.OtherItems.RemoveOrphanedItems();
             if (count > 0)
             {
-                Debug.LogFormat("Removed {0} orphaned quest items.", count);
+                Debug.LogFormat("Removed {0} orphaned items.", count);
             }
         }
 
