@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         List<Message> questMessages;
         int messageCount = 0;
+        int findPlaceRegion;
         string findPlaceName;
 
         KeyCode toggleClosedBinding1;
@@ -113,21 +114,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dialogButton                    = new Button();
             dialogButton.Position           = new Vector2(32, 187);
             dialogButton.Size               = new Vector2(68, 10);
-            dialogButton.OnMouseClick       += dialogButton_OnMouseClick;
+            dialogButton.OnMouseClick       += DialogButton_OnMouseClick;
             dialogButton.Name               = "dialog_button";
             mainPanel.Components.Add(dialogButton);
 
             upArrowButton                   = new Button();
             upArrowButton.Position          = new Vector2(181, 188);
             upArrowButton.Size              = new Vector2(13, 7);
-            upArrowButton.OnMouseClick      += upArrowButton_OnMouseClick;
+            upArrowButton.OnMouseClick      += UpArrowButton_OnMouseClick;
             upArrowButton.Name              = "uparrow_button";
             mainPanel.Components.Add(upArrowButton);
 
             downArrowButton                 = new Button();
             downArrowButton.Position        = new Vector2(209, 188);
             downArrowButton.Size            = new Vector2(13, 7);
-            downArrowButton.OnMouseClick    += downArrowButton_OnMouseClick;
+            downArrowButton.OnMouseClick    += DownArrowButton_OnMouseClick;
             downArrowButton.Name            = "downarrow_button";
             mainPanel.Components.Add(downArrowButton);
 
@@ -161,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
 
-            // Store toggle closed binding for this window
+            // Store toggle closed bindings for this window
             toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
             toggleClosedBinding2 = InputManager.Instance.GetBinding(InputManager.Actions.NoteBook);
 
@@ -222,7 +223,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region events
 
-        public void dialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             switch (DisplayMode)
             {
@@ -241,13 +242,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedEntry = NULLINT;
         }
 
-        public void upArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex - 1 >= 0)
                 currentMessageIndex -= 1;
         }
 
-        public void downArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex + 1 < messageCount)
                 currentMessageIndex += 1;
@@ -255,12 +256,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
-            upArrowButton_OnMouseClick(sender, Vector2.zero);
+            UpArrowButton_OnMouseClick(sender, Vector2.zero);
         }
 
         void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
-            downArrowButton_OnMouseClick(sender, Vector2.zero);
+            DownArrowButton_OnMouseClick(sender, Vector2.zero);
         }
 
         void TitlePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -308,10 +309,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                Debug.Log("Find " + findPlaceName);
+                Debug.Log("Find " + findPlaceName + findPlaceRegion);
                 this.CloseWindow();
-                DaggerfallUI.Instance.DfTravelMapWindow.PrePopulateFind(findPlaceName);
+                DaggerfallUI.Instance.DfTravelMapWindow.GotoLocation(findPlaceName, findPlaceRegion);
                 //uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
+                //DaggerfallUI.Instance.DfTravelMapWindow.OnPush;
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
         }
@@ -357,8 +359,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Place place = questMessage.ParentQuest.LastPlaceReferenced;
                 if (place != null && (place.SiteDetails.siteType == SiteTypes.Dungeon || place.SiteDetails.siteType == SiteTypes.Town))
                 {
+                    findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
                     findPlaceName = place.SiteDetails.locationName;
-                    DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(findPlaceName, "selectedPlace", "confirmFind"));
+                    string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
+                    DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(entryStr, "selectedPlace", "confirmFind"));
                     dialogBox.OnButtonClick += FindPlace_OnButtonClick;
                     DaggerfallUI.UIManager.PushWindow(dialogBox);
                 }

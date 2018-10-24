@@ -11,7 +11,7 @@ confirmMove2,       (If you select 'Yes' then it will be moved to before the nex
 confirmRemove,      Are you sure you want to remove this entry?
 confirmRemove2,     (It will be deleted permanently and cannot be restored)
 selectedPlace,      Selected location:
-confirmFind,        Do you want to open the travel map and find this place?
-confirmFind2,       (This will only find the location if you're already in the correct region)
+confirmFind,        Do you want to open the world map and prepare to travel to this place?
+confirmFind2,       (Note: you can still cancel the travel from the map)
 enterNote,          Enter your note below:
 copyLogbookInfo,    Left-click to toggle copying of selected text entry or right-click to copy the current conversation.
