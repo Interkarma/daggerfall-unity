@@ -539,6 +539,14 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Determines if item is a stack.
+        /// </summary>
+        /// <returns><c>true</c> if item is a stack, <c>false</c> otherwise.</returns>
+        public bool IsAStack() 
+        {
+            return stackCount > 1;
+        }
+        /// <summary>
         /// Allow use of item to be implemented by item object and overridden
         /// </summary>
         /// <returns><c>true</c>, if item use was handled, <c>false</c> otherwise.</returns>

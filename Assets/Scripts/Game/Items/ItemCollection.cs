@@ -253,6 +253,24 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Remove some number of items from a stack, return the removed items or null if not possible.
+        /// Remark: returned items do not belong to any container.
+        /// </summary>
+        /// <returns>The items picked from stack.</returns>
+        /// <param name="stack">Source stack of items</param>
+        /// <param name="numberToPick">Number of items to pick</param>
+        public DaggerfallUnityItem SplitStack(DaggerfallUnityItem stack, int numberToPick) 
+        {
+            // Only handle stack splitting
+            if (!stack.IsAStack() || numberToPick < 1 || numberToPick >= stack.stackCount)
+                return null;
+            DaggerfallUnityItem pickedItems = new DaggerfallUnityItem(stack);
+            pickedItems.stackCount = numberToPick;
+            stack.stackCount -= numberToPick;
+            return pickedItems;
+        }
+
+        /// <summary>
         /// Removes an item from this collection.
         /// </summary>
         /// <param name="item">Item to remove. Must exist inside this collection.</param>
