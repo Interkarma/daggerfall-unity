@@ -292,7 +292,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="position">Position to reorder to.</param>
         public void ReorderItem(DaggerfallUnityItem item, AddPosition position)
         {
-            if (!items.Contains(item.UID) || position == AddPosition.DontCare)
+            if (!items.Contains(item.UID))
+                return;
+            bool couldBeStacked = FindExistingStack(item) != null;
+            if (position == AddPosition.DontCare && !couldBeStacked)
                 return;
 
             RemoveItem(item);
@@ -590,7 +593,9 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = item.GroupIndex;
             foreach (DaggerfallUnityItem checkItem in items.Values)
             {
-                if (checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && checkItem.IsStackable())
+                if (checkItem != item && 
+                    checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && 
+                    checkItem.IsStackable())
                     return checkItem;
             }
 

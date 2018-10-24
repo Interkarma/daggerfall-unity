@@ -1217,7 +1217,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Shouldn't happen
                 if (oneItem == null)
                     return;
-                playerEntity.Items.AddItem(oneItem, noStack: true);
+                playerEntity.Items.AddItem(oneItem, preferredOrder, true);
                 item = oneItem;
             }
             // Try to equip the item, and update armour values accordingly
