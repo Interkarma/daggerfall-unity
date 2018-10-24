@@ -566,13 +566,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
             BackStory = character.backStory;
 
-            SetCurrentLevelUpSkillSum();
-
-            if (startingLevelUpSkillSum <= 0) // new character
-            {
-                startingLevelUpSkillSum = currentLevelUpSkillSum;
-            }
-
             if (maxHealth <= 0)
                 this.maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevel);
             else
