@@ -102,6 +102,17 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
+        /// Open a book file from binary data.
+        /// </summary>
+        /// <param name="data">Byte array to parse as a book file.</param>
+        /// <param name="name">Name to describe book.</param>
+        public void OpenBook(byte[] data, string name)
+        {
+            bookFile.Load(data, name);
+            ReadHeader();
+        }
+
+        /// <summary>
         /// Reads the TextResource tokens for this page record.
         /// </summary>
         /// <param name="page">Page index.</param>

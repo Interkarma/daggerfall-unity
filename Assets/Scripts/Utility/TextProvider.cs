@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -184,7 +185,8 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual bool OpenBook(string name)
         {
-            if (!bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
+            if (!BookReplacement.TryImportBook(name, bookFile) &&
+                !bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
                 return false;
 
             isBookOpen = true;
