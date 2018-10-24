@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxLinesQuests = 19;
         public const int maxLinesSmall = 26;
         const float textScaleSmall = 0.8f;
+
         int lastMessageIndex = NULLINT;
         int currentMessageIndex = 0;
         List<int> entryLineMap;
@@ -50,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         List<Message> questMessages;
         int messageCount = 0;
+        string findPlaceName;
 
         KeyCode toggleClosedBinding1;
         KeyCode toggleClosedBinding2;
@@ -236,6 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             lastMessageIndex = NULLINT;
             currentMessageIndex = 0;
+            selectedEntry = NULLINT;
         }
 
         public void upArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -300,6 +303,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sender.CloseWindow();
         }
 
+        void FindPlace_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                Debug.Log("Find " + findPlaceName);
+                this.CloseWindow();
+                DaggerfallUI.Instance.DfTravelMapWindow.PrePopulateFind(findPlaceName);
+                //uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
+            }
+        }
+
         void EnterNote_OnGotUserInput(DaggerfallInputMessageBox sender, string enteredNoteLine)
         {
             if (!string.IsNullOrEmpty(enteredNoteLine))
@@ -321,18 +337,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HandleClick(Vector2 position, bool remove = false)
         {
+            if (entryLineMap == null)
+                return;
+            
             int moveSrcIdx = selectedEntry;    // Will be set if moving an entry
             int line = (int)(position.y / questLogLabel.LineHeight);
 
-            if (DisplayMode != JournalDisplay.ActiveQuests && entryLineMap != null)
+            if (line < entryLineMap.Count)
+                selectedEntry = entryLineMap[line];
+            else
+                selectedEntry = entryLineMap[entryLineMap.Count - 1];
+            Debug.LogFormat("line is: {0} entry: {1}", line, selectedEntry);
+
+            if (DisplayMode == JournalDisplay.ActiveQuests)
             {
-                if (line < entryLineMap.Count)
-                    selectedEntry = entryLineMap[line];
-                else
-                    selectedEntry = entryLineMap[entryLineMap.Count - 1];
-
-                Debug.LogFormat("line is: {0} entry: {1}", line, selectedEntry);
-
+                // Handle current quest clicks - ask if want to travel to last location for quest.
+                Message questMessage = questMessages[selectedEntry];
+                Debug.Log(questMessage.ParentQuest.QuestName);
+                Place place = questMessage.ParentQuest.LastPlaceReferenced;
+                if (place != null && (place.SiteDetails.siteType == SiteTypes.Dungeon || place.SiteDetails.siteType == SiteTypes.Town))
+                {
+                    findPlaceName = place.SiteDetails.locationName;
+                    DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(findPlaceName, "selectedPlace", "confirmFind"));
+                    dialogBox.OnButtonClick += FindPlace_OnButtonClick;
+                    DaggerfallUI.UIManager.PushWindow(dialogBox);
+                }
+            }
+            else
+            {
+                // Handle finished quest or notebook clicks - move, remove or add note.
                 if (moveSrcIdx == NULLINT)
                 {   // Process the click on or between entries
                     if (selectedEntry < 0)
@@ -344,15 +377,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         TextFile.Token[] entry = GetEntry(selectedEntry);
                         if (entry != null && entry.Length > 0)
                         {
-                            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                            messageBox.SetText(GetDialogText(entry[0].text, remove ? "confirmRemove" : "confirmMove"));
-                            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                            DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(entry[0].text, "selectedEntry", remove ? "confirmRemove" : "confirmMove"));
                             if (remove)
-                                messageBox.OnButtonClick += RemoveEntry_OnButtonClick;
+                                dialogBox.OnButtonClick += RemoveEntry_OnButtonClick;
                             else
-                                messageBox.OnButtonClick += MoveEntry_OnButtonClick;
-                            DaggerfallUI.UIManager.PushWindow(messageBox);
+                                dialogBox.OnButtonClick += MoveEntry_OnButtonClick;
+                            DaggerfallUI.UIManager.PushWindow(dialogBox);
                         }
                     }
                 }
@@ -360,23 +390,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {   // Move the selected entry to this position
                     if (selectedEntry < 0)
                         selectedEntry = -selectedEntry + currentMessageIndex;
-
                     MoveEntry(moveSrcIdx, selectedEntry);
-
                     lastMessageIndex = NULLINT;
                     selectedEntry = NULLINT;
                 }
             }
         }
 
-        private static string[] GetDialogText(string entryStr, string key)
+        private static string[] GetDialogText(string entryStr, string preKey, string postKey)
         {
             return new string[] {
-                TextManager.Instance.GetText(textDatabase, "selectedEntry"),
+                TextManager.Instance.GetText(textDatabase, preKey),
                 "", "    " + entryStr, "",
-                TextManager.Instance.GetText(textDatabase, key), "",
-                TextManager.Instance.GetText(textDatabase, key + "2"),
+                TextManager.Instance.GetText(textDatabase, postKey), "",
+                TextManager.Instance.GetText(textDatabase, postKey + "2"),
             };
+        }
+
+        private DaggerfallMessageBox CreateDialogBox(string[] dialogText)
+        {
+            DaggerfallMessageBox dialogBox = new DaggerfallMessageBox(uiManager, this);
+            dialogBox.SetText(dialogText);
+            dialogBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            dialogBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+            return dialogBox;
         }
 
         private void EnterNote(int index)
@@ -445,7 +482,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "activeQuests");
 
             int totalLineCount = 0;
-            entryLineMap = null;
+            entryLineMap = new List<int>(maxLinesQuests);;
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
             for (int i = currentMessageIndex; i < questMessages.Count; i++)
@@ -463,7 +500,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     var token = tokens[j];
 
                     if (token.formatting == TextFile.Formatting.Text || token.formatting == TextFile.Formatting.NewLine)
+                    {
                         totalLineCount++;
+                        entryLineMap.Add(i);
+                    }
                     else
                         token.formatting = TextFile.Formatting.JustifyLeft;
 
@@ -471,6 +511,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 textTokens.Add(NewLineToken);
                 totalLineCount++;
+                entryLineMap.Add(i);
             }
 
             questLogLabel.SetText(textTokens.ToArray());

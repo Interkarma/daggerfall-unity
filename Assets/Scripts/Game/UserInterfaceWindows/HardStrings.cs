@@ -257,6 +257,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string cannotChangeTransportationIndoors = "You cannot change transportation indoors.";
         public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";
+        public const string cannotTravelIndoors = "You cannot travel while indoors.";
 
         public const string powersUnknown = "Powers unknown.";
 

@@ -56,6 +56,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Dictionary<string, Vector2> offsetLookup    = new Dictionary<string, Vector2>();
         string[] selectedRegionMapNames;    //different maps for selected region
 
+        string prePopulateFind = null;
+
         DFBitmap regionPickerBitmap;
         ImgFile loadedImg;
         DFRegion currentDFRegion;
@@ -179,6 +181,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             teleportationTravel = true;
         }
 
+        public void PrePopulateFind(string placeName)
+        {
+            prePopulateFind = placeName;
+        }
+
         #endregion
 
 
@@ -283,6 +290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPop();
             teleportationTravel = false;
+            prePopulateFind = null;
         }
 
         public override void Update()
@@ -822,6 +830,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 findPopUp.TextPanelDistanceY = 5;
                 findPopUp.TextBox.WidthOverride = 308;
                 findPopUp.TextBox.MaxCharacters = 32;
+                if (!string.IsNullOrEmpty(prePopulateFind))
+                    findPopUp.TextBox.Text = prePopulateFind;
                 findPopUp.OnGotUserInput += HandleLocationFindEvent;
                 findPopUp.Show();
             }
