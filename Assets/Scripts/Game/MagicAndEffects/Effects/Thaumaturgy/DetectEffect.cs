@@ -10,9 +10,6 @@
 //
 
 using System.Collections.Generic;
-using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Entity;
-using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -22,7 +19,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public abstract class DetectEffect : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
+        //const string textDatabase = "ClassicEffects";
 
         public List<PlayerGPS.NearbyObject> DetectedObjects { get; protected set; }
 

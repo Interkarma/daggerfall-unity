@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -23,7 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const int groupIndex = 3;
         const int totalVariants = 11;
         const ClassicEffectFamily family = ClassicEffectFamily.PowersAndSideEffects;
-        EffectProperties[] variantProperties = new EffectProperties[totalVariants];
+        readonly EffectProperties[] variantProperties = new EffectProperties[totalVariants];
 
         public override EffectProperties Properties
         {

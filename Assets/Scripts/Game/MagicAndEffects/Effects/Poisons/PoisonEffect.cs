@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public const int startValue = 128;
         const int totalVariants = 12;
 
-        VariantProperties[] variantProperties = new VariantProperties[totalVariants];
+        readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
         uint lastMinute;
         int minutesToStart;
@@ -301,9 +301,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (host.Entity == GameManager.Instance.PlayerEntity)
                 DaggerfallUI.AddHUDText(HardStrings.youFeelSomewhatBad);
 
-            if (--minutesRemaining > 0)
-                return;
-            else
+            if (--minutesRemaining <= 0)
                 currentState = PoisonStates.Complete;
         }
 
