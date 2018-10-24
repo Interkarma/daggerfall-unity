@@ -105,11 +105,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
-            vp.effectProperties.Key = string.Format("ElementalResistance-{0}", name);
+            vp.effectProperties.Key = string.Format("Pacify-{0}", name);
             vp.effectProperties.ClassicKey = MakeClassicKey(33, (byte)variantIndex);
             vp.effectProperties.SubGroupName = name;
-            vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1527 + variantIndex);
-            vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1227 + variantIndex);
+            vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1585 + variantIndex);
+            vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1285 + variantIndex);
             vp.targetAffinity = affinity;
 
             if (affinity == MobileAffinity.Animal)
