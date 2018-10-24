@@ -131,6 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string skillImprove = "Your %s skill has improved.";
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
+        public const string enterNewName = "Enter new name : ";
         public const string affiliation = "Affiliation";
         public const string rank = "Rank";
 
