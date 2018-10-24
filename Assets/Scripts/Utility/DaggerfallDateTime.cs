@@ -413,6 +413,15 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Gets a date time string of "HH:MM:SS on xth of MonthName, 3EYYY"
+        /// </summary>
+        public string DateTimeString()
+        {
+            string suffix = GetSuffix(Day + 1);
+            return string.Format("{0:00}:{1:00}:{2:00} on {3}{4} of {5:00}, 3E{6}", Hour, Minute, Second, Day + 1, suffix, MonthName, Year);
+        }
+
+        /// <summary>
         /// Get date string in format of Day Name the xth of Month Name
         /// </summary>
         public string DateString()

@@ -14,6 +14,7 @@ using DaggerfallConnect.Arena2;
 using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -107,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Player
         {
             List<TextFile.Token> note = new List<TextFile.Token>();
             note.Add(new TextFile.Token() {
-                text = DaggerfallUnity.Instance.WorldTime.Now.LongDateTimeString() + ':',
+                text = string.Format("{0} in {1}:", DaggerfallUnity.Instance.WorldTime.Now.DateTimeString(), MacroHelper.CityName(null)),
                 formatting = TextFile.Formatting.TextHighlight,
             });
             note.Add(NothingToken);
