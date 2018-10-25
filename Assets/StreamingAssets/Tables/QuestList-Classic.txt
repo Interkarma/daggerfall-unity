@@ -235,10 +235,10 @@ R0C11Y27, Nobility, N, 11,
 R0C11Y28, Nobility, N, 11,
 R0C20Y07, Nobility, N, 20,
 R0C20Y22, Nobility, N, 20,
-R0C30Y25, Nobility, N, 30,
+-R0C30Y25, Nobility, N, 30, Needs support for: reveal totambuCoven in province 46 at 423290
 -R0C40Y23, Nobility, N, 40, BROKEN. QRC file is missing in DF+DFQFIX
--R0C4XY23, Nobility, N, 4X, Needs support for until _thing_ performed:
-R0C60Y24, Nobility, N, 60,
+-R0C4XY23, Nobility, N, 4X, Needs support for: until _thing_ performed: & reveal _skeffingcoven_ in province 38 at 5531
+-R0C60Y24, Nobility, N, 60, Needs support for: reveal kykosCoven in province 11 at 484567
 
 -- Daedra Princes
 -10C00Y00

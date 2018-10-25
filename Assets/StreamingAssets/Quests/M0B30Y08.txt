@@ -127,8 +127,8 @@ _S.02_ task:
 _mapvict_ task:
 	when _qgclicked_ and _mondead_ and _map_
 	give pc _gold_ 
-	reveal _newdung_
-                say 1080
+	reveal _newdung_ readmap
+    say 1080
 	end quest 
 
 _clearclick_ task:

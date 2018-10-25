@@ -205,7 +205,7 @@ _traveltime_ task:
 _questdone_ task:
 	toting _clothing_ and _thiefmember_ clicked 
 	give pc _gold_ 
-	reveal _dungeon_ 
+	reveal _dungeon_ readmap
 	end quest 
 
 _S.02_ task:

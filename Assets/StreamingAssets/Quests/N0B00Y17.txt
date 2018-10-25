@@ -410,7 +410,7 @@ _S.14_ task:
 	prompt 1041 yes _S.10_ no _S.11_ 
 
 _S.15_ task:
-	reveal _itemdung_ 
+	reveal _itemdung_ readmap
 	log 1023 step 2 
 
 _S.16_ task:

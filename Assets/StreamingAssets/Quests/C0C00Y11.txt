@@ -176,5 +176,5 @@ variable _map_
 variable _nomap_
 _S.13_ task:
 	when _map_ and _questdone_ 
-                say 1080 
-	reveal _newdung_
+    say 1080 
+	reveal _newdung_ readmap
