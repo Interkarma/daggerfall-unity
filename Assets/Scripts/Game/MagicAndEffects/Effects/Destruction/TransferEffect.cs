@@ -9,11 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
-using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Entity;
-using FullSerializer;
-
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
@@ -24,7 +19,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is TransferEffect && (other as TransferEffect).drainStat == drainStat) ? true : false;
+            return (other is TransferEffect && (other as TransferEffect).drainStat == drainStat);
         }
 
         protected override void BecomeIncumbent()

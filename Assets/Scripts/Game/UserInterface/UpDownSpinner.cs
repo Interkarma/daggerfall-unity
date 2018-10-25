@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,13 +10,9 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -35,6 +31,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int value = 0;
         int minValue = 0;
         int maxValue = 0;
+        float lastTickTime;
+        float tickTimeInterval = 0.3f;
+        Action action = Action.None;
+
+        private enum Action
+        {
+            None,
+            Up,
+            Down
+        }
 
         /// <summary>
         /// Gets or sets current value directly.
@@ -65,6 +71,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { SetRange(MinValue, value); }
         }
 
+        /// <summary>
+        /// TickTimeInterval is the length of time in seconds between inc/dec when holding mouse button on up or down buttons. (must be > 0.1)
+        /// </summary>
+        public float TickTimeInterval
+        {
+            get { return tickTimeInterval; }
+            set { if (value > 0.1f) tickTimeInterval = value; }
+        }
+
         public UpDownSpinner()
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -87,9 +102,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             upButton.Position = new Vector2(0, 0);
             upButton.Size = new Vector2(15, 7);
             upButton.OnMouseClick += UpButton_OnMouseClick;
+            upButton.OnMouseDown += UpButton_OnMouseDown;
+            upButton.OnMouseUp += UpDownButtons_OnMouseUp;
             downButton.Position = new Vector2(0, 13);
             downButton.Size = new Vector2(15, 7);
             downButton.OnMouseClick += DownButton_OnMouseClick;
+            downButton.OnMouseDown += DownButton_OnMouseDown;
+            downButton.OnMouseUp += UpDownButtons_OnMouseUp;
 
             // Add value label
             Components.Add(valueLabel);
@@ -121,9 +140,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             upButton.Position = new Vector2(upButtonRect.xMin, upButtonRect.yMin);
             upButton.Size = new Vector2(upButtonRect.width, upButtonRect.height);
             upButton.OnMouseClick += UpButton_OnMouseClick;
+            upButton.OnMouseDown += UpButton_OnMouseDown;
+            upButton.OnMouseUp += UpDownButtons_OnMouseUp;
             downButton.Position = new Vector2(downButtonRect.xMin, downButtonRect.yMin);
             downButton.Size = new Vector2(downButtonRect.width, downButtonRect.height);
             downButton.OnMouseClick += DownButton_OnMouseClick;
+            downButton.OnMouseDown += DownButton_OnMouseDown;
+            downButton.OnMouseUp += UpDownButtons_OnMouseUp;
 
             // Add value label
             Components.Add(valueLabel);
@@ -173,6 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (minValue != 0 && maxValue != 0)
                 SetValue(value + 1);
 
+            lastTickTime = Time.realtimeSinceStartup;
             RaiseOnUpButtonClicked();
         }
 
@@ -182,7 +206,48 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (minValue != 0 && maxValue != 0)
                 SetValue(value - 1);
 
+            lastTickTime = Time.realtimeSinceStartup;
             RaiseOnDownButtonClicked();
+        }
+
+        void UpButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            action = Action.Up;
+        }
+        void DownButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            action = Action.Down;
+        }
+        void UpDownButtons_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            action = Action.None;
+        }
+
+        public override void Update()
+        {
+            if (!Enabled)
+                return;
+
+            base.Update();
+
+            if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval)
+            {
+                lastTickTime = Time.realtimeSinceStartup;
+
+                // Handle any currently active mouse action.
+                if (action == Action.Up)
+                {   // Auto +1 if ranges set
+                    if (minValue != 0 && maxValue != 0)
+                        SetValue(value + 1);
+                    RaiseOnUpButtonClicked();
+                }
+                else if (action == Action.Down)
+                {   // Auto -1 if ranges set
+                    if (minValue != 0 && maxValue != 0)
+                        SetValue(value - 1);
+                    RaiseOnDownButtonClicked();
+                }
+            }
         }
 
         #region Events

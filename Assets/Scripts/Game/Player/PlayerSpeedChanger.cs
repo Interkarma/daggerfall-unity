@@ -47,9 +47,9 @@ namespace DaggerfallWorkshop.Game
         /// <param name="speed"></param>
         public void HandleInputSpeedAdjustment(ref float speed)
         {
-            if (!playerMotor.IsRiding && playerMotor.IsGrounded)
+            if (playerMotor.IsGrounded)
             {
-                if (InputManager.Instance.HasAction(InputManager.Actions.Run))
+                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && !playerMotor.IsRiding)
                 {
                     try
                     {

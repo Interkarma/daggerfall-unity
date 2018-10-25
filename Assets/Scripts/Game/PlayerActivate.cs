@@ -1019,20 +1019,25 @@ namespace DaggerfallWorkshop.Game
                     !GameManager.Instance.PlayerEntity.FactionData.GetFactionData(playerEnterExit.BuildingDiscoveryData.factionID, out buildingFactionData))
                     buildingFactionData.ggroup = (int) FactionFile.GuildGroups.None;
 
-                Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}, building guild: {3}", 
-                    npc.Data.factionID, (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup, (FactionFile.GuildGroups)buildingFactionData.ggroup);
+                Debug.LogFormat("faction id: {0}, social group: {1}, guild: {2}, building faction: {3}, building guild: {4}", npc.Data.factionID,
+                    (FactionFile.SocialGroups)factionData.sgroup, (FactionFile.GuildGroups)factionData.ggroup, buildingFactionData.id, (FactionFile.GuildGroups)buildingFactionData.ggroup);
 
                 // Check if the NPC offers a guild service.
                 if (Services.HasGuildService(npc.Data.factionID))
                 {
                     FactionFile.GuildGroups guildGroup = (FactionFile.GuildGroups) buildingFactionData.ggroup;
                     if (guildGroup == FactionFile.GuildGroups.None)
-                        guildGroup = (FactionFile.GuildGroups) factionData.ggroup;
-                    // Popup guild service menu, except when holy order NPC isn't in a divine faction building. (bug t=1248)
-                    if (guildGroup != FactionFile.GuildGroups.HolyOrder || Temple.IsDivine(playerEnterExit.BuildingDiscoveryData.factionID))
-                        uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID));
-                    else
-                        talkManager.TalkToStaticNPC(npc, false);
+                    {   // Use NPC guild group if building has none (e.g. Temple buildings of divine faction)
+                        guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
+                        // Don't popup guild service menu when holy order NPC isn't in a divine faction building. (bug t=1238)
+                        if (guildGroup == FactionFile.GuildGroups.HolyOrder && !Temple.IsDivine(buildingFactionData.id))
+                        {
+                            talkManager.TalkToStaticNPC(npc, false);
+                            return;
+                        }
+                    }
+                    // Popup guild service menu.
+                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID));
                 }
                 // Check if this NPC is a merchant.
                 else if ((FactionFile.SocialGroups) factionData.sgroup == FactionFile.SocialGroups.Merchants)

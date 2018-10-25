@@ -397,6 +397,10 @@ namespace DaggerfallWorkshop.Game.Utility
             // Apply biography effects to player entity
             BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
 
+            // Assign starting level up skill sum
+            playerEntity.SetCurrentLevelUpSkillSum();
+            playerEntity.StartingLevelUpSkillSum = playerEntity.CurrentLevelUpSkillSum;
+
             // Setup bank accounts and houses
             Banking.DaggerfallBankManager.SetupAccounts();
             Banking.DaggerfallBankManager.SetupHouses();
@@ -531,6 +535,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign data to player entity
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
+            playerEntity.SetCurrentLevelUpSkillSum();
 
             // Assign biography modifiers
             playerEntity.BiographyResistDiseaseMod = saveVars.BiographyResistDiseaseMod;

@@ -33,11 +33,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         const int minPrimarySkill = 28;
         const int minMajorSkill = 18;
-        const int minMinorSkill = 12;
+        const int minMinorSkill = 13;
         const int minPrimaryBonusRoll = 0;
         const int maxPrimaryBonusRoll = 3;
         const int minMajorBonusRoll = 0;
-        const int maxMajorBonusRoll = 4;
+        const int maxMajorBonusRoll = 3;
         const int minMinorBonusRoll = 0;
         const int maxMinorBonusRoll = 3;
 

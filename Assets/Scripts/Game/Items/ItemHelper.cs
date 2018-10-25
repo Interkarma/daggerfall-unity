@@ -154,7 +154,10 @@ namespace DaggerfallWorkshop.Game.Items
             string result = item.shortName;
 
             // Resolve %it parameter
-            result = result.Replace("%it", template.name);
+            if (!string.IsNullOrEmpty(template.name))
+                result = result.Replace("%it", template.name);
+            else
+                Debug.LogErrorFormat("Item template index {0} has a null template.name", template.index);
 
             return result;
         }

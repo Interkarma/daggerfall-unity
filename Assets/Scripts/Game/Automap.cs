@@ -146,6 +146,7 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap        
 
         int layerAutomap; // layer used for level geometry of automap
+        int layerPlayer; // player layer
 
         GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
         Camera cameraAutomap = null; // camera for automap camera
@@ -471,6 +472,13 @@ namespace DaggerfallWorkshop.Game
                 layerAutomap = 10;
             }
 
+            layerPlayer = LayerMask.NameToLayer("Player");
+            if (layerPlayer == -1)
+            {
+                DaggerfallUnity.LogMessage("Did not find Layer with name \"Player\"! entrance/exit marker discovery will not work", true);
+            }
+
+
             Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera
         }
 
@@ -773,12 +781,14 @@ namespace DaggerfallWorkshop.Game
                 RaycastHit[] hitsTrueLevelGeometry;
                 float nearestDistance;
 
+                int layerMask = (1 << layerPlayer) + 1; // test against player and level geometry (+1... == 1 << 1 == "Default" layer == level geometry)
+
                 Vector3 entranceMarkerPos = gameObjectEntrancePositionCubeMarker.transform.position;
                 Vector3 playerColliderPos = playerCollider.transform.position; //GameManager.Instance.PlayerGPS.transform.position; //Camera.main.transform.position;
                 // raycast 1
                 Vector3 rayStartPos = entranceMarkerPos;
                 Vector3 rayToPlayer = playerColliderPos - rayStartPos;                
-                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);                
+                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, layerMask);                
                 nearestDistance = float.MaxValue;
                 foreach (RaycastHit hit in hitsTrueLevelGeometry)
                 {
@@ -792,7 +802,7 @@ namespace DaggerfallWorkshop.Game
                 // raycast 2
                 rayStartPos = entranceMarkerPos + Vector3.left * 0.1f;
                 rayToPlayer = playerColliderPos - rayStartPos;                
-                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);                
+                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, layerMask);                
                 nearestDistance = float.MaxValue;
                 foreach (RaycastHit hit in hitsTrueLevelGeometry)
                 {
@@ -801,12 +811,12 @@ namespace DaggerfallWorkshop.Game
                         hitTrueLevelGeometry2 = hit;
                         nearestDistance = hit.distance;
                     }
-                }
+                }                
 
                 // raycast 3
                 rayStartPos = entranceMarkerPos + Vector3.forward * 0.1f + Vector3.up * 0.1f;
                 rayToPlayer = playerColliderPos - rayStartPos;                
-                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);
+                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, layerMask);
                 nearestDistance = float.MaxValue;
                 foreach (RaycastHit hit in hitsTrueLevelGeometry)
                 {
