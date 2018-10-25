@@ -20,10 +20,13 @@ namespace DaggerfallWorkshop.Game.Questing
     public class RevealLocation : ActionTemplate
     {
         Symbol placeSymbol;
+        bool readMap;
+
+        // TODO some quests have a saying part to this action
 
         public override string Pattern
         {
-            get { return @"reveal (?<aPlace>\w+)"; }
+            get { return @"reveal (?<aPlace>\w+)|reveal (?<aPlace>\w+) (?<readMap>readmap)"; }
         }
 
         public RevealLocation(Quest parentQuest)
@@ -42,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RevealLocation action = new RevealLocation(parentQuest);
 
             action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            action.readMap = !string.IsNullOrEmpty(match.Groups["readMap"].Value);
 
             return action;
         }
@@ -55,6 +59,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Discover location
             GameManager.Instance.PlayerGPS.DiscoverLocation(place.SiteDetails.regionName, place.SiteDetails.locationName);
+
+            if (readMap)
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                    TextManager.Instance.GetText("DaggerfallUI", "readMap").Replace("%map", place.SiteDetails.locationName));
 
             SetComplete();
         }
