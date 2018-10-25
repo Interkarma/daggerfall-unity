@@ -2,6 +2,7 @@
 
 schema: *key,text
 
+copyLogbookInfo,                Left-click: toggle copy of selected text. Right-click: copy whole current conversation.
 east,                           east
 northeast,                      northeast
 north,                          north

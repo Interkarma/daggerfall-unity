@@ -29,8 +29,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     public class DaggerfallTalkWindow : DaggerfallPopupWindow
     {
-        const string textDatabase = "DaggerfallUI";
-
         const string talkWindowImgName    = "TALK01I0.IMG";
         const string talkCategoriesImgName = "TALK02I0.IMG";
         const string highlightedOptionsImgName = "TALK03I0.IMG";
@@ -48,7 +46,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Color textcolorPlayerSays = new Color(0.698f, 0.812f, 1.0f);
 
-        Color textcolorQuestion = new Color(0.698f, 0.812f, 1.0f);
         //Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         Color textcolorHighlighted = Color.white;
 
@@ -695,7 +692,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Position = new Vector2(118, 158),
                 Size = new Vector2(67, 18),
                 ToolTip = defaultToolTip,
-                ToolTipText = TextManager.Instance.GetText(textDatabase, "copyLogbookInfo"),
+                ToolTipText = TextManager.Instance.GetText(TalkManager.TextDatabase, "copyLogbookInfo"),
             };
             if (defaultToolTip != null)
                 buttonLogbook.ToolTip.ToolTipDelay = 1;
@@ -1217,7 +1214,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ListBox.ListItem textLabelQuestion;
             ListBox.ListItem textLabelAnswer;
             listboxConversation.AddItem(question, out textLabelQuestion);
-            textLabelQuestion.textColor = textcolorQuestion;
+            textLabelQuestion.textColor = DaggerfallUI.DaggerfallQuestionTextColor;
             textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted            
             textLabelQuestion.textLabel.HorizontalAlignment = HorizontalAlignment.Right;
             textLabelQuestion.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;

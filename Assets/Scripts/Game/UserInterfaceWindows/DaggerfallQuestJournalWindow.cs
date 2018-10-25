@@ -102,6 +102,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.LogError("failed to load texture: " + nativeImgName);
                 CloseWindow();
             }
+            if (defaultToolTip != null)
+                defaultToolTip.ToolTipDelay = 1;
 
             mainPanel                       = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
             mainPanel.BackgroundTexture     = texture;
@@ -116,6 +118,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dialogButton.Size               = new Vector2(68, 10);
             dialogButton.OnMouseClick       += DialogButton_OnMouseClick;
             dialogButton.Name               = "dialog_button";
+            dialogButton.ToolTip            = defaultToolTip;
+            dialogButton.ToolTipText        = TextManager.Instance.GetText(textDatabase, "dialogButtonInfo");
             mainPanel.Components.Add(dialogButton);
 
             upArrowButton                   = new Button();
@@ -155,6 +159,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Font = DaggerfallUI.LargeFont,
                 ShadowColor = new Color(0f, 0.2f, 0.5f),
+                ToolTip = defaultToolTip,
+                ToolTipText = TextManager.Instance.GetText(textDatabase, "activeQuestsInfo"),
             };
             titlePanel.Components.Add(titleLabel);
             mainPanel.Components.Add(titlePanel);
@@ -486,6 +492,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageCount = questMessages.Count;
             questLogLabel.TextScale = 1;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "activeQuests");
+            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "activeQuestsInfo");
 
             int totalLineCount = 0;
             entryLineMap = new List<int>(maxLinesQuests);;
@@ -529,6 +536,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageCount = finishedQuests.Count;
             questLogLabel.TextScale = 1;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "finishedQuests");
+            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "finishedQuestsInfo");
             SetTextWithListEntries(finishedQuests, maxLinesQuests);
         }
 
@@ -538,6 +546,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageCount = notes.Count;
             questLogLabel.TextScale = textScaleSmall;
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
+            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "notebookInfo");
             SetTextWithListEntries(notes, maxLinesSmall);
         }
 
