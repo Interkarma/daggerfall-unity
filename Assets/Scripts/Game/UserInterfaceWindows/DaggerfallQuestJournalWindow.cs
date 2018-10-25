@@ -357,7 +357,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Message questMessage = questMessages[selectedEntry];
                 Debug.Log(questMessage.ParentQuest.QuestName);
                 Place place = questMessage.ParentQuest.LastPlaceReferenced;
-                if (place != null && (place.SiteDetails.siteType == SiteTypes.Dungeon || place.SiteDetails.siteType == SiteTypes.Town))
+                if (place != null &&
+                    !string.IsNullOrEmpty(place.SiteDetails.locationName) &&
+                    place.SiteDetails.locationName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
                 {
                     findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
                     findPlaceName = place.SiteDetails.locationName;

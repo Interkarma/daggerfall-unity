@@ -15,6 +15,6 @@ confirmFind,        Do you want to open the world map and prepare to travel to t
 confirmFind2,       (Note: you can still cancel the travel from the map)
 enterNote,          Enter your note below:
 copyLogbookInfo,    Left-click to toggle copying of selected text entry or right-click to copy the current conversation.
-readMap,            Discovered the location of %map after studying a map I found.
+readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
