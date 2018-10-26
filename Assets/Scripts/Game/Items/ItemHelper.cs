@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -192,6 +193,35 @@ namespace DaggerfallWorkshop.Game.Items
             // Resolve potion names
             if (item.ItemGroup == ItemGroups.UselessItems1 && item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
                 return MacroHelper.GetValue("%po", item);
+
+            // Resolve quest letters, get last 2 lines which should be the signoff
+            if (item.ItemGroup == ItemGroups.UselessItems2 && item.TemplateIndex == (int)UselessItems2.Parchment && item.IsQuestItem)
+            {
+                // Get the Item resource from quest
+                Quest quest = QuestMachine.Instance.GetQuest(item.QuestUID);
+                if (quest != null)
+                {
+                    Item questItem = quest.GetItem(item.QuestItemSymbol);
+                    if (questItem.UsedMessageID != 0)
+                    {
+                        Message msg = quest.GetMessage(questItem.UsedMessageID);
+                        TextFile.Token[] tokens = msg.GetTextTokens();
+                        string signoff = "";
+                        int lines = 0;
+                        for (int i = tokens.Length-1; i >= 0; i--)
+                        {
+                            TextFile.Token token = tokens[i];
+                            if (!string.IsNullOrEmpty(token.text))
+                            {
+                                signoff = token.text.Trim() + " " + signoff;
+                                lines++;
+                            }
+                            if (lines >= 2)
+                                return "Letter from " + signoff;
+                        }
+                    }
+                }
+            }
 
             return result;
         }

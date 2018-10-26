@@ -17,7 +17,6 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
-using System.Runtime.CompilerServices;
 
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
