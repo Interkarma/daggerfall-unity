@@ -835,7 +835,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         /// <param name="amount">Amount to deduct</param>
         /// <returns>Amount remaining to be paid if not enough funds.</returns>
-                public int DeductGoldAmount(int amount)
+        public int DeductGoldAmount(int amount)
         {
             if (amount <= goldPieces) {
                 goldPieces -= amount;
