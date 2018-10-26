@@ -34,10 +34,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string textDatabase = "DaggerfallUI";
         const string nativeImgName = "LGBK00I0.IMG";
 
-        readonly static TextFile.Token NewLineToken = new TextFile.Token() {
-            formatting = TextFile.Formatting.NewLine,
-        };
-
         const int NULLINT = -1;
         const int maxLinesQuests = 19;
         public const int maxLinesSmall = 26;
@@ -521,7 +517,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     textTokens.Add(token);
                 }
-                textTokens.Add(NewLineToken);
+                textTokens.Add(TextFile.NewLineToken);
                 totalLineCount++;
                 entryLineMap.Add(i);
             }
@@ -582,7 +578,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     textTokens.Add(token);
                 }
-                textTokens.Add(NewLineToken);
+                textTokens.Add(TextFile.NewLineToken);
                 totalLineCount++;
                 entryLineMap.Add(--boundary);
             }

@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string potionRecipeFor = "Recipe for Potion of %po";
         public const string potionOf = "Potion of %po";
         public const string cannotUseThis = "You cannot use this.";
+        public const string letterPrefix = "Letter: ";
         public const string multipleAssignments = "You have multiple assignments...";
 
         public const string youAreEntering = "You are entering %s";

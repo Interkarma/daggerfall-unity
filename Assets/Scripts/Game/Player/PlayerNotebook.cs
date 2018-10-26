@@ -31,9 +31,6 @@ namespace DaggerfallWorkshop.Game.Player
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
         };
-        readonly static TextFile.Token NewLineToken = new TextFile.Token() {
-            formatting = TextFile.Formatting.NewLine,
-        };
 
         List<TextFile.Token[]> notes = new List<TextFile.Token[]>();
 
@@ -90,7 +87,7 @@ namespace DaggerfallWorkshop.Game.Player
                 foreach (TextFile.Token token in texts)
                 {
                     if (string.IsNullOrEmpty(token.text))
-                        note.Add(NewLineToken);
+                        note.Add(TextFile.NewLineToken);
                     else
                         WrapLinesIntoNote(note, token.text, token.formatting);
                     
@@ -270,7 +267,7 @@ namespace DaggerfallWorkshop.Game.Player
                             formatting = TextFile.Formatting.Text
                         });
                     }
-                    lines.Add(!string.IsNullOrEmpty(line) ? NothingToken : NewLineToken);
+                    lines.Add(!string.IsNullOrEmpty(line) ? NothingToken : TextFile.NewLineToken);
                 }
                 list.Add(lines.ToArray());
             }

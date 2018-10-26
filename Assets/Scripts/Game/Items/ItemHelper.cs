@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game.Items
                                 lines++;
                             }
                             if (lines >= 2)
-                                return "Letter from " + signoff;
+                                return HardStrings.letterPrefix + signoff;
                         }
                     }
                 }
