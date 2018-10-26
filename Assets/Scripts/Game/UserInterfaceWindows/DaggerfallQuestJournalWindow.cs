@@ -21,12 +21,6 @@ using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    /* ##TODO:
-     * dialogue text
-     * implement sorting / filtering
-     * option to show letters recieved
-     */ 
-
     public class DaggerfallQuestJournalWindow : DaggerfallPopupWindow
     {
         #region Fields
