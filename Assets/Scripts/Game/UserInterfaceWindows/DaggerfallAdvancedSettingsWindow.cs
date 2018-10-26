@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // Enhancements
         Checkbox modSystem;
-        Checkbox assetImport;
+        Checkbox assetInjection;
         Checkbox compressModdedTextures;
         Checkbox gameConsole;
         Checkbox nearDeathWarning;
@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Mod System
             AddSectionTitle(leftPanel, "modSystem");
             modSystem = AddCheckbox(leftPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
-            assetImport = AddCheckbox(leftPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
+            assetInjection = AddCheckbox(leftPanel, "assetInjection", DaggerfallUnity.Settings.AssetInjection);
             compressModdedTextures = AddCheckbox(leftPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
 
             // Game
@@ -358,7 +358,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.LypyL_GameConsole = gameConsole.IsChecked;
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
-            DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
+            DaggerfallUnity.Settings.AssetInjection = assetInjection.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
 
             DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;

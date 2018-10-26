@@ -77,7 +77,7 @@ TerrainDistance=3
 [Enhancements]
 LypyL_GameConsole=True
 LypyL_ModSystem=True
-MeshAndTextureReplacement=False
+AssetInjection=True
 CompressModdedTextures=True
 NearDeathWarning=True
 AdvancedClimbing=True

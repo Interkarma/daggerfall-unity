@@ -138,7 +138,7 @@ namespace DaggerfallWorkshop
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
         public bool LypyL_ModSystem { get; set; }
-        public bool MeshAndTextureReplacement { get; set; }
+        public bool AssetInjection { get; set; }
         public bool CompressModdedTextures { get; set; }
         public bool NearDeathWarning { get; set; }
         public bool AlternateRandomEnemySelection { get; set; }
@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
-            MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
+            AssetInjection = GetBool(sectionEnhancements, "AssetInjection");
             CompressModdedTextures = GetBool(sectionEnhancements, "CompressModdedTextures");
             NearDeathWarning = GetBool(sectionEnhancements, "NearDeathWarning");
             AlternateRandomEnemySelection = GetBool(sectionEnhancements, "AlternateRandomEnemySelection");
@@ -317,7 +317,7 @@ namespace DaggerfallWorkshop
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
-            SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
+            SetBool(sectionEnhancements, "MeshAndTextureReplacement", AssetInjection);
             SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);

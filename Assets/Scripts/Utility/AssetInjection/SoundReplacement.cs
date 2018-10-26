@@ -80,7 +80,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         private static bool TryImportAudioClip(string name, string extension, out AudioClip audioClip)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
                 string path = Path.Combine(soundPath, name + extension);
@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         private static bool TryGetAudioBytes(string name, out byte[] songBytes)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
                 string path = Path.Combine(soundPath, name);
