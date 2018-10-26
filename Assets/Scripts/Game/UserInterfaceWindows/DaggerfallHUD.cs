@@ -150,12 +150,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(questDebugger);
 
-            arrowCountTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            arrowCountTextLabel.Position = new Vector2(0, 194);
             arrowCountTextLabel.TextColor = new Color(0.6f, 0.6f, 0.6f);
             arrowCountTextLabel.ShadowPosition = Vector2.zero;
-            arrowCountTextLabel.TextScale = 0.75f;
-            NativePanel.Components.Add(arrowCountTextLabel);
+            ParentPanel.Components.Add(arrowCountTextLabel);
         }
 
         public override void Update()
@@ -203,8 +200,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (held != null && held.ItemGroup == ItemGroups.Weapons &&
                     (held.TemplateIndex == (int)Weapons.Long_Bow || held.TemplateIndex == (int)Weapons.Short_Bow))
                 {
+                    // Arrow count label position is offset to left of compass and centred relative to compass height
+                    // This is done every frame to handle adaptive resolutions
+                    Vector2 arrowLabelPos = compass.Position;
+                    arrowLabelPos.x -= arrowCountTextLabel.TextWidth;
+                    arrowLabelPos.y += compass.Size.y / 2 - arrowCountTextLabel.TextHeight / 2;
+
                     DaggerfallUnityItem arrows = GameManager.Instance.PlayerEntity.Items.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow);
                     arrowCountTextLabel.Text = (arrows != null) ? arrows.stackCount.ToString() : "0";
+                    arrowCountTextLabel.TextScale = NativePanel.LocalScale.x;
+                    arrowCountTextLabel.Position = arrowLabelPos;
                     arrowCountTextLabel.Enabled = true;
                 }
             }
