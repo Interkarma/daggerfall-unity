@@ -5515,7 +5515,7 @@
         "isOneHanded": false,
         "isIngredient": false,
         "worldTextureArchive": 209,
-        "worldTextureRecord": 8,
+        "worldTextureRecord": 7,
         "playerTextureArchive": 0,
         "playerTextureRecord": 0
     },
@@ -5548,7 +5548,7 @@
         "basePrice": 2500,
         "enchantmentPoints": 0,
         "rarity": 9,
-        "variants": 3,
+        "variants": 2,
         "drawOrderOrEffect": 0,
         "isBluntWeapon": false,
         "isLiquid": false,
@@ -5556,8 +5556,8 @@
         "isIngredient": false,
         "worldTextureArchive": 209,
         "worldTextureRecord": 2,
-        "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureArchive": 209,
+        "playerTextureRecord": 2
     },
     {
         "index": 278,
