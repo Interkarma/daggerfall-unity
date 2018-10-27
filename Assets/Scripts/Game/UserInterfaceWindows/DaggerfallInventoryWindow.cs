@@ -1331,12 +1331,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 controlPressed = false;
 
                 // Show message box
-                const int goldToDropTextId = 25;
                 DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-                mb.SetTextTokens(goldToDropTextId);
+                mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText("InventoryUI", "HowManyItems"), item.stackCount));
                 mb.TextPanelDistanceY = 0;
                 mb.InputDistanceX = 15;
-                mb.InputDistanceY = -6;
                 mb.TextBox.Numeric = true;
                 mb.TextBox.MaxCharacters = 8;
                 mb.TextBox.Text = "0";
