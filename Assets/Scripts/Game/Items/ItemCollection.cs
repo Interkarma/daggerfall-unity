@@ -254,7 +254,6 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Remove some number of items from a stack, return the removed items or null if not possible.
-        /// Remark: returned items do not belong to any container.
         /// </summary>
         /// <returns>The items picked from stack.</returns>
         /// <param name="stack">Source stack of items</param>
@@ -266,6 +265,7 @@ namespace DaggerfallWorkshop.Game.Items
                 return null;
             DaggerfallUnityItem pickedItems = new DaggerfallUnityItem(stack);
             pickedItems.stackCount = numberToPick;
+            AddItem(pickedItems, noStack: true);
             stack.stackCount -= numberToPick;
             return pickedItems;
         }
