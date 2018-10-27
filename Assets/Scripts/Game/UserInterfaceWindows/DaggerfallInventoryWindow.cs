@@ -1291,7 +1291,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return canCarry;
         }
 
-        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int maxAmount, 
+        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null, 
                                     bool blockTransport = false, bool equip = false, bool allowSplitting = true)
         {
             // Block transfer of horse or cart (don't allow putting either in wagon)
@@ -1330,6 +1330,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     questItem.PlayerDropped = false;
             }
 
+            if (maxAmount == null)
+                maxAmount = item.stackCount;
             if (maxAmount <= 0)
                 return;
 
@@ -1696,7 +1698,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to remote items
                 if (remoteItems != null && !chooseOne)
                 {
-                    int canHold = item.stackCount;
+                    int? canHold = null;
                     if (usingWagon)
                         canHold = WagonCanHoldAmount(item);
                     TransferItem(item, localItems, remoteItems, canHold, true);

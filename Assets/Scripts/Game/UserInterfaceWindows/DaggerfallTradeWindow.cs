@@ -556,7 +556,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems, item.stackCount);
+                            TransferItem(item, localItems, remoteItems);
                         break;
 
                     case WindowModes.Buy:
@@ -571,7 +571,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Repair:
                         // Check if item is damaged & transfer
                         if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
-                            TransferItem(item, localItems, remoteItems, item.stackCount);
+                            TransferItem(item, localItems, remoteItems);
                         else
                             DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
                         break;
@@ -579,7 +579,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Identify:
                         // Check if item is unidentified & transfer
                         if (!item.IsIdentified)
-                            TransferItem(item, localItems, remoteItems, item.stackCount);
+                            TransferItem(item, localItems, remoteItems);
                         else
                             DaggerfallUI.MessageBox(HardStrings.doesntNeedIdentifying);
                         break;
