@@ -160,6 +160,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool shopShelfStealing = false;
         int lootTargetStartCount = 0;
 
+        private DaggerfallUnityItem stackItem;
+        private ItemCollection stackFrom;
+        private ItemCollection stackTo;
+
         ItemCollection lastRemoteItems = null;
         RemoteTargetTypes lastRemoteTargetType;
 
@@ -1320,13 +1324,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (allowStackSplitting && item.IsAStack() && controlPressed)
             {
-                // FIXME query user?
-                int count = 1;
-                item = from.SplitStack(item, count);
-                if (item == null)
-                    return;
+                stackItem = item;
+                stackFrom = from;
+                stackTo = to;
+
+                controlPressed = false;
+
+                // Show message box
+                const int goldToDropTextId = 25;
+                DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+                mb.SetTextTokens(goldToDropTextId);
+                mb.TextPanelDistanceY = 0;
+                mb.InputDistanceX = 15;
+                mb.InputDistanceY = -6;
+                mb.TextBox.Numeric = true;
+                mb.TextBox.MaxCharacters = 8;
+                mb.TextBox.Text = "0";
+                mb.OnGotUserInput += SplitStackPopup_OnGotUserInput;
+                mb.Show();
+                return;
             }
 
+            DoTransferItem(item, from, to);
+        }
+
+        private void SplitStackPopup_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            // Determine how many items to split
+            int count = 0;
+            bool result = int.TryParse(input, out count);
+            if (!result)
+                return;
+
+            DaggerfallUnityItem item = stackFrom.SplitStack(stackItem, count);
+            if (item != null)
+                DoTransferItem(item, stackFrom, stackTo);
+
+            Refresh(false);
+        }
+
+        protected void DoTransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to)
+        {
             // When transferring gold to player simply add to player's gold count
             if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) && PlayerEntity.Items == to)
             {
