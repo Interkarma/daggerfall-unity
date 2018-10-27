@@ -1259,8 +1259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Check weight limit
             int canCarry = item.stackCount;
-            //  item.TemplateIndex != (int)Weapons.Arrow must have been there for lack of stack splitting
-            if (item.ItemGroup != ItemGroups.Transportation && item.weightInKg != 0)
+            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
             {
                 canCarry = Math.Min(canCarry, (int)((playerEntity.MaxEncumbrance - GetCarriedWeight()) / item.weightInKg));
             }

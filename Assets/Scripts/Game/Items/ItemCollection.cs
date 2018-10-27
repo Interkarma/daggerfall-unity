@@ -96,9 +96,8 @@ namespace DaggerfallWorkshop.Game.Items
             float weight = 0;
             foreach (DaggerfallUnityItem item in items.Values)
             {
-                // Horses and carts are not counted against encumbrance.
-                // item.TemplateIndex != (int)Weapons.Arrow must have been there for lack of stack splitting
-                if (item.ItemGroup != ItemGroups.Transportation)
+                // Horses, carts and arrows are not counted against encumbrance.
+                if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow)
                     weight += item.weightInKg * item.stackCount;
 
                 // Enemies carry around gold as an item, unlike the player
