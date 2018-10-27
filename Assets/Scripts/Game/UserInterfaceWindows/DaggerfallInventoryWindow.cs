@@ -1684,10 +1684,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     Refresh(false);
                 }
             }
-            else if (selectedActionMode == ActionModes.Remove)
+            else if (selectedActionMode == ActionModes.Remove && CanCarry(item))
             {
-                if (CanCarry(item))
-                    TransferItem(item, remoteItems, localItems, false, true);
+                TransferItem(item, remoteItems, localItems, false, true);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
