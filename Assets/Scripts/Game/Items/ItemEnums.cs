@@ -593,7 +593,7 @@ namespace DaggerfallWorkshop.Game.Items
         Spellbook = 132,
         Soul_trap = 274,
         Letter_of_credit = 275,
-        Ruby = 0,
+        Unused,
         Potion_recipe = 278,
         Dead_Body = 281,
         House_Deed = 285,
