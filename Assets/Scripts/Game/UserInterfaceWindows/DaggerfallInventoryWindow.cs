@@ -170,6 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
         KeyCode toggleClosedBinding;
+        bool controlPressed = false;
 
         #endregion
 
@@ -304,6 +305,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
+            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+                controlPressed = true;
+            else if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
+                controlPressed = false;
 
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
@@ -1212,14 +1217,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             // If more than one item selected, equip only one
             if (item.IsAStack())
-            {
-                DaggerfallUnityItem oneItem = playerEntity.Items.SplitStack(item, 1);
-                // Shouldn't happen
-                if (oneItem == null)
-                    return;
-                playerEntity.Items.AddItem(oneItem, preferredOrder, true);
-                item = oneItem;
-            }
+                item = playerEntity.Items.SplitStack(item, 1);
+
             // Try to equip the item, and update armour values accordingly
             List<DaggerfallUnityItem> unequippedList = playerEntity.ItemEquipTable.EquipItem(item);
             if (unequippedList != null)
@@ -1281,7 +1280,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return true;
         }
 
-        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, bool blockTransport = false)
+        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, bool blockTransport = false, bool allowStackSplitting = false)
         {
             // Block transfer of horse or cart (don't allow putting either in wagon)
             if (blockTransport && item.ItemGroup == ItemGroups.Transportation)
@@ -1317,6 +1316,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     questItem.PlayerDropped = true;
                 else if (questItem.AllowDrop && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
                     questItem.PlayerDropped = false;
+            }
+
+            if (allowStackSplitting && item.IsAStack() && controlPressed)
+            {
+                // FIXME query user?
+                int count = 1;
+                item = from.SplitStack(item, count);
+                if (item == null)
+                    return;
             }
 
             // When transferring gold to player simply add to player's gold count
@@ -1633,7 +1641,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Check wagon weight limit
                     if (!usingWagon || WagonCanHold(item))
-                        TransferItem(item, localItems, remoteItems, true);
+                        TransferItem(item, localItems, remoteItems, true, true);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
@@ -1676,9 +1684,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     Refresh(false);
                 }
             }
-            else if (selectedActionMode == ActionModes.Remove && CanCarry(item))
+            else if (selectedActionMode == ActionModes.Remove)
             {
-                TransferItem(item, remoteItems, localItems);
+                if (CanCarry(item))
+                    TransferItem(item, remoteItems, localItems, false, true);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
