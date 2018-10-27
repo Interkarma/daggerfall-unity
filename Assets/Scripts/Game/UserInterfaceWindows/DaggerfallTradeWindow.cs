@@ -556,13 +556,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems, item.stackCount, allowSplitting: true);
+                            TransferItem(item, localItems, remoteItems, item.stackCount);
                         break;
 
                     case WindowModes.Buy:
                         if (usingWagon)
                         {
-                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), allowSplitting: true, equip: true);
+                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: true);
                         }
                         else
                             EquipItem(item);
@@ -599,16 +599,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int canCarry = CanCarryAmount(item);
                 if (usingWagon)
                 {
-                    canCarry = WagonCanHoldAmount(item);
+                    canCarry = Math.Max(canCarry, WagonCanHoldAmount(item));
                 }
-                if (canCarry > 0)
+                if (windowMode == WindowModes.Buy)
                 {
-                    if (windowMode == WindowModes.Buy)
-                    {
-                        TransferItem(item, remoteItems, basketItems, canCarry, allowSplitting: true, equip: true);
-                    } else {
-                        TransferItem(item, remoteItems, localItems, canCarry, allowSplitting: true);
-                    }
+                    TransferItem(item, remoteItems, basketItems, canCarry, equip: true);
+                } else {
+                    TransferItem(item, remoteItems, localItems, canCarry);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
