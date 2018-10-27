@@ -2,4 +2,4 @@
 
 schema: *key,text
 
-HowManyItems,                   Pick how many items (less than {0})?
+HowManyItems,                   Pick how many items (max {0})?

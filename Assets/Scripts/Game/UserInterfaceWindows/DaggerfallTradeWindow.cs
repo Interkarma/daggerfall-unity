@@ -556,22 +556,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems);
+                            TransferItem(item, localItems, remoteItems, item.stackCount, allowSplitting: true);
                         break;
 
                     case WindowModes.Buy:
                         if (usingWagon)
-                            if (CanCarry(item))
-                                TransferItem(item, localItems, PlayerEntity.Items);
-                            else
-                                break;
-                        EquipItem(item);
+                        {
+                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), allowSplitting: true, equip: true);
+                        }
+                        else
+                            EquipItem(item);
                         break;
 
                     case WindowModes.Repair:
                         // Check if item is damaged & transfer
                         if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
-                            TransferItem(item, localItems, remoteItems);
+                            TransferItem(item, localItems, remoteItems, item.stackCount);
                         else
                             DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
                         break;
@@ -579,7 +579,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Identify:
                         // Check if item is unidentified & transfer
                         if (!item.IsIdentified)
-                            TransferItem(item, localItems, remoteItems);
+                            TransferItem(item, localItems, remoteItems, item.stackCount);
                         else
                             DaggerfallUI.MessageBox(HardStrings.doesntNeedIdentifying);
                         break;
@@ -596,14 +596,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Select)
             {
-                if (CanCarry(item) || (usingWagon && WagonCanHold(item)))
+                int canCarry = CanCarryAmount(item);
+                if (usingWagon)
+                {
+                    canCarry = WagonCanHoldAmount(item);
+                }
+                if (canCarry > 0)
                 {
                     if (windowMode == WindowModes.Buy)
                     {
-                        TransferItem(item, remoteItems, basketItems);
-                        EquipItem(item);
+                        TransferItem(item, remoteItems, basketItems, canCarry, allowSplitting: true, equip: true);
                     } else {
-                        TransferItem(item, remoteItems, localItems);
+                        TransferItem(item, remoteItems, localItems, canCarry, allowSplitting: true);
                     }
                 }
             }

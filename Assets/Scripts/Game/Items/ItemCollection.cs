@@ -96,8 +96,9 @@ namespace DaggerfallWorkshop.Game.Items
             float weight = 0;
             foreach (DaggerfallUnityItem item in items.Values)
             {
-                // Horses, carts and arrows are not counted against encumbrance.
-                if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow)
+                // Horses and carts are not counted against encumbrance.
+                // item.TemplateIndex != (int)Weapons.Arrow must have been there for lack of stack splitting
+                if (item.ItemGroup != ItemGroups.Transportation)
                     weight += item.weightInKg * item.stackCount;
 
                 // Enemies carry around gold as an item, unlike the player
@@ -260,9 +261,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="numberToPick">Number of items to pick</param>
         public DaggerfallUnityItem SplitStack(DaggerfallUnityItem stack, int numberToPick) 
         {
-            // Only handle stack splitting
-            if (!stack.IsAStack() || numberToPick < 1 || numberToPick >= stack.stackCount)
+            if (!stack.IsAStack() || numberToPick < 1 || numberToPick > stack.stackCount)
                 return null;
+            if (numberToPick == stack.stackCount)
+                return stack;
             DaggerfallUnityItem pickedItems = new DaggerfallUnityItem(stack);
             pickedItems.stackCount = numberToPick;
             AddItem(pickedItems, noStack: true);

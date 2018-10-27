@@ -163,6 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private DaggerfallUnityItem stackItem;
         private ItemCollection stackFrom;
         private ItemCollection stackTo;
+        private bool stackEquip;
 
         ItemCollection lastRemoteItems = null;
         RemoteTargetTypes lastRemoteTargetType;
@@ -1254,37 +1255,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Refresh(false);
         }
 
-        protected bool CanCarry(DaggerfallUnityItem item)
+        protected int CanCarryAmount(DaggerfallUnityItem item)
         {
             // Check weight limit
-            if (GetCarriedWeight() + (item.weightInKg * item.stackCount) > playerEntity.MaxEncumbrance &&
-                item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow)
+            int canCarry = item.stackCount;
+            //  item.TemplateIndex != (int)Weapons.Arrow must have been there for lack of stack splitting
+            if (item.ItemGroup != ItemGroups.Transportation && item.weightInKg != 0)
+            {
+                canCarry = Math.Min(canCarry, (int)((playerEntity.MaxEncumbrance - GetCarriedWeight()) / item.weightInKg));
+            }
+            if (canCarry == 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotCarryAnymore);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
-                return false;
             }
-            return true;
+            return canCarry;
         }
 
-        protected bool WagonCanHold(DaggerfallUnityItem item)
+        protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            if (remoteItems.GetWeight() + (item.weightInKg * item.stackCount) > ItemHelper.wagonKgLimit &&
-                item.ItemGroup != ItemGroups.Transportation)
+            int canCarry = item.stackCount;
+            if (item.ItemGroup != ItemGroups.Transportation && item.weightInKg != 0)
+            {
+                canCarry = Math.Min(canCarry, (int)((ItemHelper.wagonKgLimit - remoteItems.GetWeight()) / item.weightInKg));
+            }
+            if (canCarry == 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetText(HardStrings.cannotHoldAnymore);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
-                return false;
             }
-            return true;
+            return canCarry;
         }
 
-        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, bool blockTransport = false, bool allowStackSplitting = false)
+        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int maxAmount, 
+                                    bool blockTransport = false, bool allowSplitting = false, bool equip = false)
         {
             // Block transfer of horse or cart (don't allow putting either in wagon)
             if (blockTransport && item.ItemGroup == ItemGroups.Transportation)
@@ -1322,28 +1331,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     questItem.PlayerDropped = false;
             }
 
-            if (allowStackSplitting && item.IsAStack() && controlPressed)
-            {
-                stackItem = item;
-                stackFrom = from;
-                stackTo = to;
-
-                controlPressed = false;
-
-                // Show message box
-                DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-                mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText("InventoryUI", "HowManyItems"), item.stackCount));
-                mb.TextPanelDistanceY = 0;
-                mb.InputDistanceX = 15;
-                mb.TextBox.Numeric = true;
-                mb.TextBox.MaxCharacters = 8;
-                mb.TextBox.Text = "0";
-                mb.OnGotUserInput += SplitStackPopup_OnGotUserInput;
-                mb.Show();
+            if (maxAmount == 0)
                 return;
+
+            bool splitRequired = maxAmount < item.stackCount;
+            if (splitRequired || controlPressed)
+            {
+                if (allowSplitting && item.IsAStack())
+                {
+                    stackItem = item;
+                    stackFrom = from;
+                    stackTo = to;
+                    stackEquip = equip;
+
+                    // Key will probably be released while messagebox is open
+                    controlPressed = false;
+
+                    // Show message box
+                    DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText("InventoryUI", "HowManyItems"), maxAmount));
+                    mb.TextPanelDistanceY = 0;
+                    mb.InputDistanceX = 15;
+                    mb.TextBox.Numeric = true;
+                    mb.TextBox.MaxCharacters = 8;
+                    mb.TextBox.Text = "0";
+                    mb.OnGotUserInput += SplitStackPopup_OnGotUserInput;
+                    mb.Show();
+                    return;
+                }
+                if (splitRequired)
+                    return;
             }
 
-            DoTransferItem(item, from, to);
+            DoTransferItem(item, from, to, equip);
         }
 
         private void SplitStackPopup_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
@@ -1356,12 +1376,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnityItem item = stackFrom.SplitStack(stackItem, count);
             if (item != null)
-                DoTransferItem(item, stackFrom, stackTo);
-
-            Refresh(false);
+                DoTransferItem(item, stackFrom, stackTo, stackEquip);
+            else
+                Refresh(false);
         }
 
-        protected void DoTransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to)
+        protected void DoTransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, bool tryEquipping)
         {
             // When transferring gold to player simply add to player's gold count
             if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) && PlayerEntity.Items == to)
@@ -1380,6 +1400,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 order = ItemCollection.AddPosition.Front;
 
             to.Transfer(item, from, order);
+            if (tryEquipping)
+                EquipItem(item);
             Refresh(false);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
@@ -1675,9 +1697,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to remote items
                 if (remoteItems != null && !chooseOne)
                 {
-                    // Check wagon weight limit
-                    if (!usingWagon || WagonCanHold(item))
-                        TransferItem(item, localItems, remoteItems, true, true);
+                    int canHold = item.stackCount;
+                    if (usingWagon)
+                        canHold = WagonCanHoldAmount(item);
+                    TransferItem(item, localItems, remoteItems, canHold, true, true);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
@@ -1701,13 +1724,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip && CanCarry(item))
+            if (selectedActionMode == ActionModes.Equip)
             {
                 // Transfer to local items
                 if (localItems != null)
-                    TransferItem(item, remoteItems, localItems);
-
-                EquipItem(item);
+                    TransferItem(item, remoteItems, localItems, CanCarryAmount(item), equip: true);
             }
             else if (selectedActionMode == ActionModes.Use)
             {
@@ -1720,9 +1741,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     Refresh(false);
                 }
             }
-            else if (selectedActionMode == ActionModes.Remove && CanCarry(item))
+            else if (selectedActionMode == ActionModes.Remove)
             {
-                TransferItem(item, remoteItems, localItems, false, true);
+                TransferItem(item, remoteItems, localItems, CanCarryAmount(item), allowSplitting: true);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
