@@ -101,17 +101,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox crosshair;
         Checkbox vitalsIndicators;
         Checkbox freeScaling;
+        Checkbox arrowCounter;
         HorizontalSlider interactionModeIcon;
         Checkbox showQuestJournalClocksAsCountdown;
         Checkbox inventoryInfoPanel;
         Checkbox enhancedItemLists;  
         Checkbox enableModernConversationStyleInTalkWindow;
         HorizontalSlider helmAndShieldMaterialDisplay;
-        
+        Checkbox geographicBackgrounds;
 
         // Enhancements
         Checkbox modSystem;
-        Checkbox assetImport;
+        Checkbox assetInjection;
         Checkbox compressModdedTextures;
         Checkbox gameConsole;
         Checkbox nearDeathWarning;
@@ -240,6 +241,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             interactionModeIcon = AddSlider(leftPanel, "interactionModeIcon",
                 Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
                 Enum.GetNames(typeof(InteractionModeIconModes)));
+            arrowCounter = AddCheckbox(leftPanel, "arrowCounter", DaggerfallUnity.Settings.EnableArrowCounter);
 
             y = 0;
 
@@ -252,6 +254,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableModernConversationStyleInTalkWindow = AddCheckbox(rightPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
+            geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -259,7 +262,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Mod System
             AddSectionTitle(leftPanel, "modSystem");
             modSystem = AddCheckbox(leftPanel, "modSystem", DaggerfallUnity.Settings.LypyL_ModSystem);
-            assetImport = AddCheckbox(leftPanel, "assetImport", DaggerfallUnity.Settings.MeshAndTextureReplacement);
+            assetInjection = AddCheckbox(leftPanel, "assetInjection", DaggerfallUnity.Settings.AssetInjection);
             compressModdedTextures = AddCheckbox(leftPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
 
             // Game
@@ -346,19 +349,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Crosshair = crosshair.IsChecked;
             DaggerfallUnity.Settings.InteractionModeIcon = ((InteractionModeIconModes)interactionModeIcon.Value).ToString();
             DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
+            DaggerfallUnity.Settings.EnableArrowCounter = arrowCounter.IsChecked;
 
             DaggerfallUnity.Settings.FreeScaling = freeScaling.IsChecked;
             DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown = showQuestJournalClocksAsCountdown.IsChecked;
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
             DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
-            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;        
+            DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
+            DaggerfallUnity.Settings.EnableGeographicBackgrounds = geographicBackgrounds.IsChecked;
 
             /* Enhancements */
 
             DaggerfallUnity.Settings.LypyL_GameConsole = gameConsole.IsChecked;
             DaggerfallUnity.Settings.LypyL_ModSystem = modSystem.IsChecked;
-            DaggerfallUnity.Settings.MeshAndTextureReplacement = assetImport.IsChecked;
+            DaggerfallUnity.Settings.AssetInjection = assetInjection.IsChecked;
             DaggerfallUnity.Settings.CompressModdedTextures = compressModdedTextures.IsChecked;
 
             DaggerfallUnity.Settings.NearDeathWarning = nearDeathWarning.IsChecked;

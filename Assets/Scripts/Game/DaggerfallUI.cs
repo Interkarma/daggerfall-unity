@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
         public static Color DaggerfallHighlightTextColor = new Color32(219, 130, 40, 255);
         public static Color DaggerfallAlternateHighlightTextColor = new Color32(255, 130, 40, 255);
+        public static Color DaggerfallQuestionTextColor = new Color(0.698f, 0.812f, 1.0f);
+        public static Color DaggerfallAnswerTextColor = DaggerfallDefaultInputTextColor;
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
@@ -466,7 +468,11 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfSpellMakerWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
-                    if (!GameManager.Instance.IsPlayerInside)
+                    if (GameManager.Instance.IsPlayerInside)
+                    {
+                        AddHUDText(HardStrings.cannotTravelIndoors);
+                    }
+                    else
                     {
                         if (GameManager.Instance.AreEnemiesNearby())
                         {
@@ -480,7 +486,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInside) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations
+                    if (GameManager.Instance.IsPlayerInside) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations
                     {
                         GameManager.Instance.PauseGame(true);
                         uiManager.PushWindow(dfAutomapWindow);
@@ -516,7 +522,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenTransportWindow:
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                    if (GameManager.Instance.IsPlayerInside)
                     {
                         AddHUDText(HardStrings.cannotChangeTransportationIndoors);
                     }
@@ -530,6 +536,11 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfBookReaderWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestJournalWindow:
+                    dfQuestJournalWindow.DisplayMode = DaggerfallQuestJournalWindow.JournalDisplay.ActiveQuests;
+                    uiManager.PushWindow(dfQuestJournalWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenNotebookWindow:
+                    dfQuestJournalWindow.DisplayMode = DaggerfallQuestJournalWindow.JournalDisplay.Notebook;
                     uiManager.PushWindow(dfQuestJournalWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenPlayerHistoryWindow:
@@ -709,7 +720,7 @@ namespace DaggerfallWorkshop.Game
         public void PlayOneShot(AudioClip clip)
         {
             if (audioSource)
-                audioSource.PlayOneShot(clip);
+                audioSource.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
         }
 
         public void PlayOneShot(SoundClips clip)

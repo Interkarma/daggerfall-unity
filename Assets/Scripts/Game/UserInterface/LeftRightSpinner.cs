@@ -34,11 +34,30 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button rightButton = new Button();
         TextLabel valueLabel = new TextLabel();
         int value = 0;
+        float lastTickTime;
+        float tickTimeInterval = 0.3f;
+        Action action = Action.None;
+
+        private enum Action
+        {
+            None,
+            Left,
+            Right
+        }
 
         public int Value
         {
             get { return value; }
             set { SetValue(value); }
+        }
+
+        /// <summary>
+        /// TickTimeInterval is the length of time in seconds between inc/dec when holding mouse button on left or right buttons. (must be > 0.1)
+        /// </summary>
+        public float TickTimeInterval
+        {
+            get { return tickTimeInterval; }
+            set { if (value > 0.1f) tickTimeInterval = value; }
         }
 
         public LeftRightSpinner()
@@ -63,9 +82,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             leftButton.Position = new Vector2(0, 0);
             leftButton.Size = new Vector2(11, 9);
             leftButton.OnMouseClick += LeftButton_OnMouseClick;
+            leftButton.OnMouseDown += LeftButton_OnMouseDown;
+            leftButton.OnMouseUp += LeftRightButtons_OnMouseUp;
             rightButton.Position = new Vector2(26, 0);
             rightButton.Size = new Vector2(11, 9);
             rightButton.OnMouseClick += RightButton_OnMouseClick;
+            rightButton.OnMouseDown += RightButton_OnMouseDown;
+            rightButton.OnMouseUp += LeftRightButtons_OnMouseUp;
 
             // Add value label
             Components.Add(valueLabel);
@@ -84,12 +107,46 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            lastTickTime = Time.realtimeSinceStartup;
             RaiseOnLeftButtonClicked();
         }
 
         void RightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            lastTickTime = Time.realtimeSinceStartup;
             RaiseOnRightButtonClicked();
+        }
+
+        void LeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            action = Action.Left;
+        }
+        void RightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            action = Action.Right;
+        }
+        void LeftRightButtons_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            action = Action.None;
+        }
+
+        public override void Update()
+        {
+            if (!Enabled)
+                return;
+
+            base.Update();
+
+            if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval)
+            {
+                lastTickTime = Time.realtimeSinceStartup;
+
+                // Handle any currently active mouse action.
+                if (action == Action.Left)
+                    RaiseOnLeftButtonClicked();
+                else if (action == Action.Right)
+                    RaiseOnRightButtonClicked();
+            }
         }
 
         #region Events

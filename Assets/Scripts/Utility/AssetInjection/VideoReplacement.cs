@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if movie is found.</returns>
         public static bool TryImportMovie(string name, out VideoPlayerDrawer videoPlayerDrawer)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Remove VID extension
                 int index = name.LastIndexOf(".VID");

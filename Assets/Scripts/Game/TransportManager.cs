@@ -146,7 +146,10 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     if (!ridingAudioSource.isPlaying)
+                    {
+                        ridingAudioSource.volume = DaggerfallUnity.Settings.SoundVolume;
                         ridingAudioSource.Play();
+                    }
                 }
                 // Time for a whinney?
                 if (neighTime < Time.time)

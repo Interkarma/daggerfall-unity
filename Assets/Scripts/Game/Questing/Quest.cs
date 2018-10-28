@@ -327,6 +327,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 int repChange = QuestSuccess ? QuestSuccessRep : QuestFailureRep;
                 GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(factionId, repChange, true);
             }
+            // Add the active quest messages to player notebook.
+            LogEntry[] logEntries = GetLogMessages();
+            if (logEntries != null && logEntries.Length > 0)
+            {
+                foreach (var logEntry in logEntries)
+                {
+                    var message = GetMessage(logEntry.messageID);
+                    if (message != null)
+                        GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuest(message.GetTextTokens());
+                }
+            }
         }
 
         public void StartTask(Symbol symbol)

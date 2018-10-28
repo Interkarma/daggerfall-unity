@@ -298,7 +298,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     break;
             }
 
-            DaggerfallUI.AddHUDText(HardStrings.youFeelSomewhatBad);
+            if (host.Entity == GameManager.Instance.PlayerEntity)
+                DaggerfallUI.AddHUDText(HardStrings.youFeelSomewhatBad);
+
             if (--minutesRemaining > 0)
                 return;
             else

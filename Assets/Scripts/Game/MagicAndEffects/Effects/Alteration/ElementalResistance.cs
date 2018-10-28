@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 
@@ -23,11 +22,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #region Fields
 
         const int totalVariants = 5;
-        const int savingThrowModifier = 75;
-        const string textDatabase = "ClassicEffects";
-        readonly string[] subGroupTextKeys = new string[] { "fire", "frost", "poison", "shock", "magicka" };
-
-        VariantProperties[] variantProperties = new VariantProperties[totalVariants];
+        //const int savingThrowModifier = 75;
+        //const string textDatabase = "ClassicEffects";
+        readonly string[] subGroupTextKeys = { "fire", "frost", "poison", "shock", "magicka" };
+        readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
         #endregion
 

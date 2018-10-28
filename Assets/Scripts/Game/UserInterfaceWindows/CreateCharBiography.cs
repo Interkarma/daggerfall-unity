@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int buttonsTop = 71;
         const int buttonWidth = 149;
         const int buttonHeight = 24;
-        const int reputationToken = 35;
+        public const int reputationToken = 35;
 
         int questionIndex = 0;
         Texture2D nativeTexture;
@@ -151,10 +151,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(reputationToken, biogFile);
                 messageBox.ClickAnywhereToClose = true;
+                messageBox.OnClose += MessageBox_OnClose;
                 messageBox.Show();
-
-                CloseWindow();
             }
+        }
+
+        void MessageBox_OnClose()
+        {
+            CloseWindow();
         }
 
         public override void Update()

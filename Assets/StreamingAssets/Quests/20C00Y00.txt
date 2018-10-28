@@ -186,4 +186,4 @@ _S.10_ task:
 	place foe _monster_ at _hideout_ saying 1040 
 
 _readmap_ task:
-	reveal _hideout_ 
+	reveal _hideout_ readmap

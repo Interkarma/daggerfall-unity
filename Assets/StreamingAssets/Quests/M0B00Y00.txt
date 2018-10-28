@@ -152,4 +152,5 @@ variable _map_
 variable _nomap_
 _S.11_ task:
 	when _map_ and _pcgetsgold_ 
-	reveal _newdung_ saying 1080 
+	reveal _newdung_ readmap
+    say 1080 

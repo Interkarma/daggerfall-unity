@@ -221,12 +221,46 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Update player background panel
         void RefreshBackground(PlayerEntity entity)
         {
-            if (lastBackgroundName != entity.RaceTemplate.PaperDollBackground)
+            string backgroundName = GetPaperDollBackground(entity);
+            if (lastBackgroundName != backgroundName)
             {
-                Texture2D texture = ImageReader.GetTexture(entity.RaceTemplate.PaperDollBackground, 0, 0, false);
+                Texture2D texture = ImageReader.GetTexture(backgroundName, 0, 0, false);
                 backgroundPanel.BackgroundTexture = ImageReader.GetSubTexture(texture, backgroundSubRect, backgroundFullSize);
                 backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
-                lastBackgroundName = entity.RaceTemplate.PaperDollBackground;
+                lastBackgroundName = backgroundName;
+            }
+        }
+
+        readonly char[] regionBackgroundIdxChars =
+            {'3','1','2','2', '2','0','5','1', '5','2','1','1', '2','2','2','0', '2','0','2','2', '3','0','5','6', '2','2','2','2', '0','0','0','0',
+             '0','6','6','6', '0','6','6','0', '6','0','0','3', '3','3','3','3', '3','5','5','5', '5','1','3','3', '3','2','0','0', '2','3' };
+
+        string GetPaperDollBackground(PlayerEntity entity)
+        {
+            // TODO: If player is were-creature and has transformed, use entity.RaceTemplate.TransformedPaperDollBackground regardless of geo backgrounds
+
+            if (DaggerfallUnity.Settings.EnableGeographicBackgrounds)
+            {
+                PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+                DFPosition position = playerGPS.CurrentMapPixel;
+                int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
+                if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount || region >= regionBackgroundIdxChars.Length)
+                    return entity.RaceTemplate.PaperDollBackground;
+
+                // Set background based on location.
+                if (playerGPS.IsPlayerInTown(true))
+                    return "SCBG04I0.IMG";                                          // Town
+                else if (playerEnterExit.IsPlayerInsideDungeon)
+                    return "SCBG07I0.IMG";                                          // Dungeon
+                else if (playerGPS.CurrentLocation.MapTableData.LocationType == DFRegion.LocationTypes.Graveyard && playerGPS.IsPlayerInLocationRect)
+                    return "SCBG08I0.IMG";                                          // Graveyard
+                else                            
+                    return "SCBG0" + regionBackgroundIdxChars[region] + "I0.IMG";   // Region
+            }
+            else
+            {
+                return entity.RaceTemplate.PaperDollBackground;
             }
         }
 

@@ -159,6 +159,11 @@ namespace DaggerfallWorkshop.Game.Items
         {
             // Create item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, templateIndex);
+            if (groupIndex == -1)
+            {
+                Debug.LogErrorFormat("ItemBuilder.CreateItem() encountered an item with an invalid GroupIndex. Check you're passing 'template index' matching a value in ItemEnums - e.g. (int)Weapons.Dagger NOT a 'group index' (e.g. 0).");
+                return null;
+            }
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(itemGroup, groupIndex);
 
             return newItem;

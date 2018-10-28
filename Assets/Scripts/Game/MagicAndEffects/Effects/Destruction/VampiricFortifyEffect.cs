@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public abstract class VampiricFortifyEffect : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
+        //const string textDatabase = "ClassicEffects";
         const float maxLinkDistance = 25f;
 
         protected DFCareer.Stats fortifyStat = DFCareer.Stats.None;
@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is VampiricFortifyEffect && (other as VampiricFortifyEffect).fortifyStat == fortifyStat) ? true : false;
+            return (other is VampiricFortifyEffect && (other as VampiricFortifyEffect).fortifyStat == fortifyStat);
         }
 
         protected override void BecomeIncumbent()

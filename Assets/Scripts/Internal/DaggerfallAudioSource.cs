@@ -317,7 +317,10 @@ namespace DaggerfallWorkshop
             // Manually start sound if playOnAwake true.
             // This is necessary as sound is procedurally created after awake.
             if (audioSource.playOnAwake)
+            {
+                audioSource.volume = DaggerfallUnity.Settings.SoundVolume;
                 audioSource.Play();
+            }
         }
 
         private bool ReadyCheck()

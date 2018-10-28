@@ -157,7 +157,12 @@ namespace DaggerfallWorkshop.Game.Utility
             int travelTimeInHours = (travelTimeInMinutes + 59) / 60;
             piecesCost = 0;
             if (sleepModeInn && !GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.KnightlyOrder).FreeTavernRooms())
-                piecesCost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24) + 5;
+            {
+                piecesCost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24);
+                if (piecesCost < 0)     // This check is absent from classic. Without it travel cost can become negative.
+                    piecesCost = 0;
+                piecesCost += 5;        // Always at least one stay at an inn
+            }
             totalCost = piecesCost;
             if ((pixelsTraveledOnOcean > 0) && !hasShip && travelShip)
                 totalCost += 25 * (pixelsTraveledOnOcean / 24 + 1);

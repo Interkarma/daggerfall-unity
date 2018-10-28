@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static void ClearNatureGameObjects(Terrain terrain)
         {
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (!DaggerfallUnity.Settings.AssetInjection)
                 return;
 
             setTreesSettingsCallback(terrain);
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         ///</summary>
         private static bool TryImportGameObject(uint modelID, bool clone, out GameObject go)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 if (ModManager.Instance != null)
                     return ModManager.Instance.TryGetAsset(GetName(modelID), clone, out go);
@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         ///</summary>
         private static bool TryImportGameObject(int archive, int record, bool clone, out GameObject go)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 if (ModManager.Instance != null)
                     return ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go);

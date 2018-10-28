@@ -282,7 +282,7 @@ _artifact4_ task:
 
 _readmap_ task:
 	start timer _S.30_ 
-	reveal _dungeon2_ 
+	reveal _dungeon2_ readmap
 	place npc _wizard_ at _dungeon2_ 
 
 _S.13_ task:

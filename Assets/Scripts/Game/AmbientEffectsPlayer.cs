@@ -95,6 +95,9 @@ namespace DaggerfallWorkshop.Game
                 StartWaiting();
             }
 
+            // Update sound volume
+            dfAudioSource.AudioSource.volume = DaggerfallUnity.Settings.SoundVolume;
+
             // Start rain loop if not running
             if ((Presets == AmbientSoundPresets.Rain || Presets == AmbientSoundPresets.Storm) && rainLoop == null)
             {

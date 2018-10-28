@@ -188,7 +188,7 @@ _success_ task:
 variable _qtime_
 _duelist_ task:
 	when _success_ and _map_ 
-	reveal _newdung_ 
+	reveal _newdung_ readmap
 	say 1080 
 
 _victim_ task:

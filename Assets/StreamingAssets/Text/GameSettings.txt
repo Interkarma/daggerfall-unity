@@ -61,6 +61,8 @@ vitalsIndicators,									Vitals Indicators
 vitalsIndicatorsInfo,								Show indicators on vitals bars that display changes in vitals
 interactionModeIcon,                                Interaction Mode Icon
 interactionModeIconInfo,                            Style of contex icon for interaction mode
+arrowCounter,                                       Arrow counter
+arrowCounterInfo,                                   Enable an arrow counter on the HUD when using bows
 freeScaling,										Free scaling
 freeScalingInfo,									UI is stretched as required to fill entire viewport with no regard to aspect ratio
 showQuestJournalClocksAsCountdown,                  Countdown quest journal clocks
@@ -73,11 +75,13 @@ enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
 enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
 helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
 helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
+geographicBackgrounds,                              Geographic backgrounds
+geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
-assetImport,                                        Allow Custom Assets
-assetImportInfo,                                    Import assets from enabled mods and loose files.
+assetInjection,                                     Asset Injection
+assetInjectionInfo,                                 Import asset overrides from enabled mods and loose files.
 compressModdedTextures,                             Compress Modded Textures
 compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
 gameConsole,                                        Game Console

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -20,10 +20,11 @@ namespace DaggerfallWorkshop.Game.Questing
     public class RevealLocation : ActionTemplate
     {
         Symbol placeSymbol;
+        bool readMap;
 
         public override string Pattern
         {
-            get { return @"reveal (?<aPlace>\w+)"; }
+            get { return @"reveal (?<aPlace>\w+) (?<readMap>readmap)|reveal (?<aPlace>\w+)"; }
         }
 
         public RevealLocation(Quest parentQuest)
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RevealLocation action = new RevealLocation(parentQuest);
 
             action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            action.readMap = !string.IsNullOrEmpty(match.Groups["readMap"].Value);
 
             return action;
         }
@@ -56,6 +58,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Discover location
             GameManager.Instance.PlayerGPS.DiscoverLocation(place.SiteDetails.regionName, place.SiteDetails.locationName);
 
+            if (readMap)
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                    TextManager.Instance.GetText("DaggerfallUI", "readMap").Replace("%map", place.SiteDetails.locationName));
+
             SetComplete();
         }
 
@@ -65,13 +71,14 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public Symbol placeSymbol;
+            public bool readMap;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.placeSymbol = placeSymbol;
-
+            data.readMap = readMap;
             return data;
         }
 
@@ -82,6 +89,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             SaveData_v1 data = (SaveData_v1)dataIn;
             placeSymbol = data.placeSymbol;
+            readMap = data.readMap;
         }
 
         #endregion

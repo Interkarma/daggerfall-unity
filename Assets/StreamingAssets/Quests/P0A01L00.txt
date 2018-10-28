@@ -164,7 +164,7 @@ _clearclick_ task:
 	clear _qgclicked_ _clearclick_ 
 
 _readletter_ task:
-	reveal _mondung_ 
+	reveal _mondung_ readmap
 	log 1015 step 0 
 
 _S.06_ task:

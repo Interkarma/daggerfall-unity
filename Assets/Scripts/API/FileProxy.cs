@@ -103,9 +103,7 @@ namespace DaggerfallConnect.Utility
         /// <param name="name">Name, filename, or path  to describe memory buffer.</param>
         public FileProxy(byte[] data, string name)
         {
-            fileBuffer = data;
-            managedFilePath = name;
-            fileUsage = FileUsage.UseMemory;
+            Load(data, name);
         }
 
         #endregion
@@ -233,6 +231,18 @@ namespace DaggerfallConnect.Utility
                 default:
                     return LoadDisk(filePath, fileAccess, fileShare);
             }
+        }
+
+        /// <summary>
+        /// Load a binary array.
+        /// </summary>
+        /// <param name="data">Byte array to assign (usage will be set to FileUsage.useMemory).</param>
+        /// <param name="name">Name, filename, or path  to describe memory buffer.</param>
+        public void Load(byte[] data, string name)
+        {
+            fileBuffer = data;
+            managedFilePath = name;
+            fileUsage = FileUsage.UseMemory;
         }
 
         /// <summary>

@@ -113,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                         // Schedule clip
                         audioSources[flip].clip = clips[flip];
+                        audioSources[flip].volume = DaggerfallUnity.Settings.SoundVolume;
                         audioSources[flip].PlayScheduled(nextEventTime);
                         nextEventTime += vidFile.FrameDelay;
                         flip = (clipQueueLength - 1) - flip;

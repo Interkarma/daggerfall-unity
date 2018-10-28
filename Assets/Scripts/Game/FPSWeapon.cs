@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -243,50 +243,57 @@ namespace DaggerfallWorkshop.Game
             else
                 weaponAnimRecordIndex = (int)weaponState;
 
-            if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
+            try
             {
-                // Mirror weapon rect
-                Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
-                curAnimRect = new Rect(rect.xMax, rect.yMin, -rect.width, rect.height);
+                if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
+                {
+                    // Mirror weapon rect
+                    Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
+                    curAnimRect = new Rect(rect.xMax, rect.yMin, -rect.width, rect.height);
+                }
+                else
+                {
+                    curAnimRect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
+                }
+                WeaponAnimation anim = weaponAnims[(int)weaponState];
+
+                // Get weapon dimensions
+                int width = weaponIndices[weaponAnimRecordIndex].width;
+                int height = weaponIndices[weaponAnimRecordIndex].height;
+
+                // Get weapon scale
+                weaponScaleX = (float)Screen.width / (float)nativeScreenWidth;
+                weaponScaleY = (float)Screen.height / (float)nativeScreenHeight;
+
+                // Adjust scale to be slightly larger when not using point filtering
+                // This reduces the effect of filter shrink at edge of display
+                if (dfUnity.MaterialReader.MainFilterMode != FilterMode.Point)
+                {
+                    weaponScaleX *= 1.01f;
+                    weaponScaleY *= 1.01f;
+                }
+
+                // Source weapon images are designed to overlay a fixed 320x200 display.
+                // Some weapons need to align with both top, bottom, and right of display.
+                // This means they might be a little stretched on widescreen displays.
+                switch (anim.Alignment)
+                {
+                    case WeaponAlignment.Left:
+                        AlignLeft(anim, width, height);
+                        break;
+
+                    case WeaponAlignment.Center:
+                        AlignCenter(anim, width, height);
+                        break;
+
+                    case WeaponAlignment.Right:
+                        AlignRight(anim, width, height);
+                        break;
+                }
             }
-            else
+            catch (IndexOutOfRangeException)
             {
-                curAnimRect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
-            }
-            WeaponAnimation anim = weaponAnims[(int)weaponState];
-
-            // Get weapon dimensions
-            int width = weaponIndices[weaponAnimRecordIndex].width;
-            int height = weaponIndices[weaponAnimRecordIndex].height;
-
-            // Get weapon scale
-            weaponScaleX = (float)Screen.width / (float)nativeScreenWidth;
-            weaponScaleY = (float)Screen.height / (float)nativeScreenHeight;
-
-            // Adjust scale to be slightly larger when not using point filtering
-            // This reduces the effect of filter shrink at edge of display
-            if (dfUnity.MaterialReader.MainFilterMode != FilterMode.Point)
-            {
-                weaponScaleX *= 1.01f;
-                weaponScaleY *= 1.01f;
-            }
-
-            // Source weapon images are designed to overlay a fixed 320x200 display.
-            // Some weapons need to align with both top, bottom, and right of display.
-            // This means they might be a little stretched on widescreen displays.
-            switch (anim.Alignment)
-            {
-                case WeaponAlignment.Left:
-                    AlignLeft(anim, width, height);
-                    break;
-
-                case WeaponAlignment.Center:
-                    AlignCenter(anim, width, height);
-                    break;
-
-                case WeaponAlignment.Right:
-                    AlignRight(anim, width, height);
-                    break;
+                DaggerfallUnity.LogMessage("Index out of range exception for weapon animation. Probably due to weapon breaking + being unequipped during animation.");
             }
         }
 

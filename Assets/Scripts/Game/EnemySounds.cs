@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Play attack sound only about half the time
                 if (Random.value > 0.5f)
-                    dfAudioSource.AudioSource.PlayOneShot(attackClip);
+                    dfAudioSource.AudioSource.PlayOneShot(attackClip, volumeScale * DaggerfallUnity.Settings.SoundVolume);
             }
         }
 
