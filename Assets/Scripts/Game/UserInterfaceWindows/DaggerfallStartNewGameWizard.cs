@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -382,15 +382,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         autoBiog.AddEffect(answers[index].Effects[j], i);
                     }
                 }
+                // Show reputation changes
+                autoBiog.DigestRepChanges();
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, createCharChooseBioWindow);
+                messageBox.SetTextTokens(CreateCharBiography.reputationToken, autoBiog);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                messageBox.OnClose += ReputationBox_OnClose;
 
                 characterDocument.biographyEffects = autoBiog.AnswerEffects;
                 characterDocument.backStory = autoBiog.GenerateBackstory(characterDocument.classIndex);
-                SetNameSelectWindow();
             } 
             else
             {
                 SetBiographyWindow();
             }
+        }
+
+        private void ReputationBox_OnClose()
+        {
+            SetNameSelectWindow();
         }
 
         void CreateCharBiographyWindow_OnClose()
