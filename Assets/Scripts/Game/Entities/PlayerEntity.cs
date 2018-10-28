@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int goldPieces = 0;
         protected PersistentFactionData factionData = new PersistentFactionData();
         protected PersistentGlobalVars globalVars = new PersistentGlobalVars();
+        protected PlayerNotebook notebook = new PlayerNotebook();
 
         protected short[] skillUses;
         protected uint skillsRaisedThisLevel1 = 0;
@@ -128,6 +129,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
         public PersistentFactionData FactionData { get { return factionData; } }
         public PersistentGlobalVars GlobalVars { get { return globalVars; } }
+        public PlayerNotebook Notebook { get { return notebook; } }
         public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
         public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
         public uint TimeOfLastSkillTraining { get { return timeOfLastSkillTraining; } set { timeOfLastSkillTraining = value; } }
@@ -510,6 +512,7 @@ namespace DaggerfallWorkshop.Game.Entity
             otherItems.Clear();
             factionData.Reset();
             globalVars.Reset();
+            notebook.Clear();
             SetEntityDefaults();
             startingLevelUpSkillSum = 0;
             currentLevelUpSkillSum = 0;
@@ -835,7 +838,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         /// <param name="amount">Amount to deduct</param>
         /// <returns>Amount remaining to be paid if not enough funds.</returns>
-                public int DeductGoldAmount(int amount)
+        public int DeductGoldAmount(int amount)
         {
             if (amount <= goldPieces) {
                 goldPieces -= amount;

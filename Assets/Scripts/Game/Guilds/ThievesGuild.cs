@@ -115,9 +115,13 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return PromotionSpymasterId;
                 case 6:
                     revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
+                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                        TextManager.Instance.GetText("DaggerfallUI", "readMapTG").Replace("%map", revealedDungeon.Name));
                     return PromotionMap1Id;
                 case 8:
                     revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
+                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                        TextManager.Instance.GetText("DaggerfallUI", "readMapTG").Replace("%map", revealedDungeon.Name));
                     return PromotionMap2Id;
                 default:
                     return PromotionMsgId;

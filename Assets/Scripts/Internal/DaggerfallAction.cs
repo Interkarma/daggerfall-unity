@@ -248,7 +248,10 @@ namespace DaggerfallWorkshop
                 ActivateNext();
 
             if (PlaySound && Index > 0 && audioSource)
+            {
+                audioSource.volume = DaggerfallUnity.Settings.SoundVolume;
                 audioSource.Play();
+            }
 
             //stop if failed to get valid delegate from lookup - ideally this check should be done before playing
             //sound & activating next, but for testing purposes is done after

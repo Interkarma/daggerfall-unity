@@ -605,12 +605,12 @@ _S.25_ task:
 	start timer _S.26_ 
 
 _S.26_ task:
-	reveal _mondung_ 
+	reveal _mondung_ readmap
 	get item letter32 
 	say 1032 
 
 _S.27_ task:
-	reveal _mondung_ 
+	reveal _mondung_ readmap
 	get item letter15 
 	get item bothdorjii 
 	say 1032 
@@ -624,8 +624,8 @@ _S.29_ task:
 	repute with _gaffer_ exceeds 10 do _S.30_ 
 
 _S.30_ task:
-	reveal _mondung_ 
-	reveal _mondung2_ 
+	reveal _mondung_ readmap
+	reveal _mondung2_ readmap
 	log 1042 step 4 
 	get item letter33 
 	say 1034 
@@ -649,7 +649,7 @@ _S.34_ task:
 	say 1055 
 
 _S.35_ task:
-	reveal _mondung2_ 
+	reveal _mondung2_ readmap
 
 _2letter_ task:
 	get item letter28 

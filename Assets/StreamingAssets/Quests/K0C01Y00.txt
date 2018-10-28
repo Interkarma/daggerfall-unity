@@ -227,7 +227,7 @@ _S.05_ task:
 	say 1015 
 
 _S.06_ task:
-	reveal _mondung_ 
+	reveal _mondung_ readmap
 	log 1017 step 2 
 
 variable _S.07_

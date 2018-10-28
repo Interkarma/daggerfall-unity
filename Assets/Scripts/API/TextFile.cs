@@ -100,6 +100,8 @@ namespace DaggerfallConnect.Arena2
             Text = -1,
 
             TextHighlight = -2,
+            TextQuestion = -3,
+            TextAnswer = -4,
 
             NewLineOffset = 0x00,
             SameLineOffset = 0x01,

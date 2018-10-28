@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -43,6 +43,19 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Public Methods
 
+        /// <summary>Gets current player position in map pixels for purposes of travel</summary>
+        public static DFPosition GetPlayerTravelPosition()
+        {
+            DFPosition position = new DFPosition();
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+            TransportManager transportManager = GameManager.Instance.TransportManager;
+            if (playerGPS && !transportManager.IsOnShip())
+                position = playerGPS.CurrentMapPixel;
+            else
+                position = MapsFile.WorldCoordToMapPixel(transportManager.BoardShipPosition.worldPosX, transportManager.BoardShipPosition.worldPosZ);
+            return position;
+        }
+
         /// <summary>
         /// Creates a path from player's current location to destination and
         /// returns minutes taken to travel.
@@ -63,8 +76,9 @@ namespace DaggerfallWorkshop.Game.Utility
             else
                 transportModifier = 256;
 
-            int playerXMapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel.X;
-            int playerYMapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel.Y;
+            DFPosition position = GetPlayerTravelPosition();
+            int playerXMapPixel = position.X;
+            int playerYMapPixel = position.Y;
             int distanceXMapPixels = endPos.X - playerXMapPixel;
             int distanceYMapPixels = endPos.Y - playerYMapPixel;
             int distanceXMapPixelsAbs = Mathf.Abs(distanceXMapPixels);
@@ -76,18 +90,8 @@ namespace DaggerfallWorkshop.Game.Utility
             else
                 furthestOfXandYDistance = distanceXMapPixelsAbs;
 
-            int xPixelMovementDirection;
-            int yPixelMovementDirection;
-
-            if (distanceXMapPixels >= 0)
-                xPixelMovementDirection = 1;
-            else
-                xPixelMovementDirection = -1;
-
-            if (distanceYMapPixels >= 0)
-                yPixelMovementDirection = 1;
-            else
-                yPixelMovementDirection = -1;
+            int xPixelMovementDirection = (distanceXMapPixels >= 0) ? 1 : -1;
+            int yPixelMovementDirection = (distanceYMapPixels >= 0) ? 1 : -1;
 
             int numberOfMovements = 0;
             int shorterOfXandYDistanceIncrementer = 0;
@@ -157,7 +161,12 @@ namespace DaggerfallWorkshop.Game.Utility
             int travelTimeInHours = (travelTimeInMinutes + 59) / 60;
             piecesCost = 0;
             if (sleepModeInn && !GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.KnightlyOrder).FreeTavernRooms())
-                piecesCost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24) + 5;
+            {
+                piecesCost = 5 * ((travelTimeInHours - pixelsTraveledOnOcean) / 24);
+                if (piecesCost < 0)     // This check is absent from classic. Without it travel cost can become negative.
+                    piecesCost = 0;
+                piecesCost += 5;        // Always at least one stay at an inn
+            }
             totalCost = piecesCost;
             if ((pixelsTraveledOnOcean > 0) && !hasShip && travelShip)
                 totalCost += 25 * (pixelsTraveledOnOcean / 24 + 1);

@@ -471,6 +471,10 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
             }
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.NoteBook))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenNotebookWindow);
+            }
             else if (InputManager.Instance.ActionComplete(InputManager.Actions.CastSpell))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);

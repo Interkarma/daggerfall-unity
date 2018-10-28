@@ -153,7 +153,8 @@ variable _map_
 variable _nomap_
 _S.10_ task:
 	when _map_ and _S.02_ 
-	reveal _newdung_ saying 1080 
+	reveal _newdung_ readmap
+    say 1080 
 
 _S.11_ task:
 	when _nomap_ and _S.02_ 

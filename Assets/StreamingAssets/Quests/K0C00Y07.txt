@@ -289,7 +289,7 @@ _S.07_ task:
 	say 1018 
 
 _S.08_ task:
-	reveal _mondung_ 
+	reveal _mondung_ readmap
 
 _S.09_ task:
 	clicked npc _victim_ 

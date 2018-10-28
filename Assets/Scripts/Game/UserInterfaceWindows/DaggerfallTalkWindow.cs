@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -23,7 +23,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
-
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -46,7 +46,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Color textcolorPlayerSays = new Color(0.698f, 0.812f, 1.0f);
 
-        Color textcolorQuestion = new Color(0.698f, 0.812f, 1.0f);
         //Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         Color textcolorHighlighted = Color.white;
 
@@ -186,6 +185,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button buttonConversationDown;
         Button buttonOkay;
         Button buttonGoodbye;
+        Button buttonLogbook;
 
         // checkbox buttons
         Button buttonCheckboxTonePolite;
@@ -235,6 +235,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // used to guard execution of function SelectTopicFromTopicList - see this function for more detail why this guarding is necessary
         bool inListboxTopicContentUpdate = false;
 
+        // Used to store indexes of copied talk fragments so they can be entered into Notebook in chronological order
+        List<int> copyIndexes;
+
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -244,6 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.OnPush();
 
+            copyIndexes = new List<int>();
             if (listboxTopic != null)
                 listboxTopic.ClearItems();
 
@@ -284,6 +288,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void OnPop()
         {
             base.OnPop();
+
+            // Send any copied conversation text to notebook
+            copyIndexes.Sort();
+            List<TextFile.Token> copiedEntries = new List<TextFile.Token>(copyIndexes.Count);
+            int prev = -1;
+            foreach (int idx in copyIndexes)
+            {
+                if (idx - prev != 1 && prev > -1)
+                    copiedEntries.Add(new TextFile.Token());
+                TextFile.Token entry = new TextFile.Token();
+                ListBox.ListItem item = listboxConversation.GetItem(idx);
+                bool question = (item.textColor == DaggerfallUI.DaggerfallQuestionTextColor || item.textColor == textcolorQuestionBackgroundModernConversationStyle);
+                entry.formatting = question ? TextFile.Formatting.TextQuestion : TextFile.Formatting.TextAnswer;
+                entry.text = item.textLabel.Text;
+                copiedEntries.Add(entry);
+                prev = idx;
+            }
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(copiedEntries);
         }
 
         public override void Update()
@@ -563,7 +585,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.WrapTextItems = true;
             listboxConversation.WrapWords = true;
             listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
-            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;        
+            listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
+            listboxConversation.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
             mainPanel.Components.Add(listboxConversation);
 
             SetStartConversation();
@@ -664,6 +687,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonGoodbye.Name = "button_goodbye";
             buttonGoodbye.OnMouseClick += ButtonGoodbye_OnMouseClick;
             mainPanel.Components.Add(buttonGoodbye);
+
+            buttonLogbook = new Button {
+                Position = new Vector2(118, 158),
+                Size = new Vector2(67, 18),
+                ToolTip = defaultToolTip,
+                ToolTipText = TextManager.Instance.GetText(TalkManager.TextDatabase, "copyLogbookInfo"),
+            };
+            if (defaultToolTip != null)
+                buttonLogbook.ToolTip.ToolTipDelay = 1;
+            buttonLogbook.OnMouseClick += ButtonLogbook_OnMouseClick;
+            buttonLogbook.OnRightMouseClick += ButtonLogbook_OnRightMouseClick;
+            mainPanel.Components.Add(buttonLogbook);
         }
 
         void SetupCheckboxes()
@@ -1179,7 +1214,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ListBox.ListItem textLabelQuestion;
             ListBox.ListItem textLabelAnswer;
             listboxConversation.AddItem(question, out textLabelQuestion);
-            textLabelQuestion.textColor = textcolorQuestion;
+            textLabelQuestion.textColor = DaggerfallUI.DaggerfallQuestionTextColor;
             textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted            
             textLabelQuestion.textLabel.HorizontalAlignment = HorizontalAlignment.Right;
             textLabelQuestion.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
@@ -1451,6 +1486,44 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 SelectTopicFromTopicList(listboxTopic.SelectedIndex);
+            }
+        }
+
+        private void ButtonLogbook_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!copyIndexes.Contains(listboxConversation.SelectedIndex))
+            {
+                copyIndexes.Add(listboxConversation.SelectedIndex);
+                MarkCopiedListItem(listboxConversation.GetItem(listboxConversation.SelectedIndex));
+            }
+            else
+            {
+                copyIndexes.Remove(listboxConversation.SelectedIndex);
+                MarkCopiedListItem(listboxConversation.GetItem(listboxConversation.SelectedIndex), true);
+            }
+        }
+
+        private void ButtonLogbook_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            copyIndexes.Clear();
+            for (int idx = 0; idx < listboxConversation.Count; idx++)
+            {
+                copyIndexes.Add(idx);
+                MarkCopiedListItem(listboxConversation.GetItem(idx));
+            }
+        }
+
+        private void MarkCopiedListItem(ListBox.ListItem item, bool unmark = false)
+        {
+            if (unmark)
+            {
+                item.shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+                item.selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+            }
+            else
+            {
+                item.shadowColor = Color.blue;
+                item.selectedShadowColor = Color.blue;
             }
         }
 

@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int rowLeading = 0;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+        Color highlightColor = DaggerfallUI.DaggerfallHighlightTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
         HorizontalAlignment textAlignment = HorizontalAlignment.None;
         List<TextLabel> labels = new List<TextLabel>();
@@ -112,6 +113,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { textColor = value; }
         }
 
+        public Color HighlightColor
+        {
+            get { return highlightColor; }
+            set { highlightColor = value; }
+        }
+
         public Color ShadowColor
         {
             get { return shadowColor; }
@@ -165,7 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             string line;
             while ((line = reader.ReadLine()) != null)
             {
-                AddTextLabel(line);
+                AddTextLabel(line, GetFont(), DaggerfallUI.DaggerfallDefaultTextColor);
                 NewLine();
             }
         }
@@ -177,13 +184,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         /// <param name="text">Text for this label.</param>
         /// <param name="font">Font for this label.</param>
-        /// <param name="highlight">True to use DF highlight text color for this label.</param>
+        /// <param name="color">Text color for this label.</param>
         /// <returns>TextLabel.</returns>
-        public TextLabel AddTextLabel(string text, DaggerfallFont font = null, bool highlight = false)
+        public TextLabel AddTextLabel(string text, DaggerfallFont font, Color color)
         {
-            if (font == null)
-                font = GetFont();
-
             TextLabel textLabel = new TextLabel();
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.MinTextureDim = minTextureDimTextLabel;
@@ -198,7 +202,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabel.MaxWidth = maxTextWidth;
             textLabel.Text = text;
             textLabel.Parent = this;
-            textLabel.TextColor = highlight ? DaggerfallUI.DaggerfallHighlightTextColor : TextColor;
+            textLabel.TextColor = color;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;
 
@@ -235,6 +239,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             cursorY = 0;
         }
 
+        public int LineHeight
+        {
+            get {
+                int lineHeight = lastLabel.TextHeight / lastLabel.NumTextLines + rowLeading;
+                return lineHeight;
+            }
+        }
+
         #region Protected Methods
 
         protected virtual void SetRowLeading(int amount)
@@ -245,14 +257,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Private Methods
-
-        int LineHeight
-        {
-            get {
-                int lineHeight = lastLabel.TextHeight / lastLabel.NumTextLines + rowLeading;
-                return lineHeight;
-            }
-        }
 
         void LayoutTextElements(TextFile.Token[] tokens)
         {
@@ -298,10 +302,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         }
                         break;
                     case TextFile.Formatting.Text:
-                        AddTextLabel(token.text, font);
+                        AddTextLabel(token.text, font, TextColor);
                         break;
                     case TextFile.Formatting.TextHighlight:
-                        AddTextLabel(token.text, font, true);
+                        AddTextLabel(token.text, font, HighlightColor);
+                        break;
+                    case TextFile.Formatting.TextQuestion:
+                        AddTextLabel(token.text, font, DaggerfallUI.DaggerfallQuestionTextColor);
+                        break;
+                    case TextFile.Formatting.TextAnswer:
+                        AddTextLabel(token.text, font, DaggerfallUI.DaggerfallAnswerTextColor);
                         break;
                     case TextFile.Formatting.InputCursorPositioner:
                         break;

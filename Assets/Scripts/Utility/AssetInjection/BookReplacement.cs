@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if book is found.</returns>
         public static bool TryImportBook(string name, BookFile book)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
                 string path = Path.Combine(booksPath, name);

@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 uiManager.PushWindow(messageBox);
 
                 AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip((uint)selectedRace.ClipID);
-                DaggerfallUI.Instance.AudioSource.PlayOneShot(clip);
+                DaggerfallUI.Instance.AudioSource.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
             }
         }
 

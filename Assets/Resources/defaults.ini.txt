@@ -45,8 +45,10 @@ EnableVitalsIndicators=True
 EnableModernConversationStyleInTalkWindow=False
 HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
+EnableArrowCounter=True
 AccelerateUICopyTexture=False
 SDFFontRendering=True
+EnableGeographicBackgrounds=False
 
 [Spells]
 EnableSpellLighting=True
@@ -77,7 +79,7 @@ TerrainDistance=3
 [Enhancements]
 LypyL_GameConsole=True
 LypyL_ModSystem=True
-MeshAndTextureReplacement=False
+AssetInjection=True
 CompressModdedTextures=True
 NearDeathWarning=True
 AdvancedClimbing=True

@@ -142,5 +142,6 @@ _clearclick_ task:
 variable _map_
 variable _nomap_
 _S.07_ task:
-	when _map_ and _pcgetsgold_ 
-	reveal _newdung_ saying 1080 
+	when _map_ and _pcgetsgold_
+    say 1080
+	reveal _newdung_ readmap
