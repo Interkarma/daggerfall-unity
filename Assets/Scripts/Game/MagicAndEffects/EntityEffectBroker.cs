@@ -48,10 +48,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int magicRoundsSinceStartup = 0;
         float roundTimer = 0f;
 
-        Dictionary<int, string> classicEffectMapping = new Dictionary<int, string>();
-        Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
-        Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
-        Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
+        readonly Dictionary<int, string> classicEffectMapping = new Dictionary<int, string>();
+        readonly Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
+        readonly Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
+        readonly Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // TODO: Provide an external method for mods to register custom effects without reflections
             magicEffectTemplates.Clear();
             IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
-            foreach(BaseEntityEffect effect in effectTemplates)
+            foreach (BaseEntityEffect effect in effectTemplates)
             {
                 // Effect must present a key
                 if (string.IsNullOrEmpty(effect.Key))
@@ -218,7 +218,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             List<string> groupNames = new List<string>();
 
             // Get group list
-            foreach(BaseEntityEffect effect in magicEffectTemplates.Values)
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Values)
             {
                 // Skip effects not fitting at least one station requirement
                 if ((craftingStations & effect.Properties.AllowedCraftingStations) == 0)

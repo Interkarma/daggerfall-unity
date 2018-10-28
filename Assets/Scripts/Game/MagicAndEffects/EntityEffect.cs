@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -27,7 +26,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets effect properties.
         /// </summary>
         EffectProperties Properties { get; }
-        
+
         /// <summary>
         /// Gets or sets current effect settings.
         /// </summary>
@@ -198,7 +197,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public BaseEntityEffect()
+        protected BaseEntityEffect()
         {
             // Set default properties
             properties.GroupName = string.Empty;
