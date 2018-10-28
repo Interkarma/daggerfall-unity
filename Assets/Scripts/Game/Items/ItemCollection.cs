@@ -253,6 +253,24 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Remove some number of items from a stack, return the removed items or null if not possible.
+        /// </summary>
+        /// <returns>The items picked from stack.</returns>
+        /// <param name="stack">Source stack of items</param>
+        /// <param name="numberToPick">Number of items to pick</param>
+        public DaggerfallUnityItem SplitStack(DaggerfallUnityItem stack, int numberToPick) 
+        {
+            // Only handle stack splitting
+            if (!stack.IsAStack() || numberToPick < 1 || numberToPick >= stack.stackCount)
+                return null;
+            DaggerfallUnityItem pickedItems = new DaggerfallUnityItem(stack);
+            pickedItems.stackCount = numberToPick;
+            AddItem(pickedItems, noStack: true);
+            stack.stackCount -= numberToPick;
+            return pickedItems;
+        }
+
+        /// <summary>
         /// Removes an item from this collection.
         /// </summary>
         /// <param name="item">Item to remove. Must exist inside this collection.</param>
@@ -274,7 +292,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="position">Position to reorder to.</param>
         public void ReorderItem(DaggerfallUnityItem item, AddPosition position)
         {
-            if (!items.Contains(item.UID) || position == AddPosition.DontCare)
+            if (!items.Contains(item.UID))
+                return;
+            bool couldBeStacked = FindExistingStack(item) != null;
+            if (position == AddPosition.DontCare && !couldBeStacked)
                 return;
 
             RemoveItem(item);
@@ -572,7 +593,9 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = item.GroupIndex;
             foreach (DaggerfallUnityItem checkItem in items.Values)
             {
-                if (checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && checkItem.IsStackable())
+                if (checkItem != item && 
+                    checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && 
+                    checkItem.IsStackable())
                     return checkItem;
             }
 
