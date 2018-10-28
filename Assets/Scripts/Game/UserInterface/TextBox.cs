@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         NumericMode numericMode = NumericMode.Natural;
         bool upperOnly = false;
         bool fixedSize = false;
+        bool overwrite = true;
 
         public int MaxCharacters
         {
@@ -118,6 +119,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { numeric = value; }
         }
 
+        public bool Overwrite
+        {
+            get { return overwrite; }
+            set { overwrite = value; }
+        }
+
         public NumericMode NumericMode
         {
             get { return numericMode; }
@@ -159,11 +166,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Moving cursor left and right
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
             {
+                overwrite = false;
                 MoveCursorLeft();
                 return;
             }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.RightArrow)
             {
+                overwrite = false;
                 MoveCursorRight();
                 return;
             }
@@ -171,6 +180,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Delete and Backspace
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Delete)
             {
+                overwrite = false;
                 if (cursorPosition != text.Length)
                 {
                     text = text.Remove(cursorPosition, 1);
@@ -180,6 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Backspace)
             {
+                overwrite = false;
                 if (cursorPosition != 0)
                 {
                     text = text.Remove(cursorPosition - 1, 1);
@@ -192,11 +203,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Home and End
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Home)
             {
+                overwrite = false;
                 SetCursorPosition(0);
                 return;
             }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.End)
             {
+                overwrite = false;
                 SetCursorPosition(text.Length);
                 return;
             }
@@ -210,6 +223,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Typing characters
             char character = DaggerfallUI.Instance.LastCharacterTyped;
+            if (character != 0 && overwrite)
+            {
+                // Typing right away when overwrite is on => reset text
+                overwrite = false;
+                text = String.Empty;
+                SetCursorPosition(0);
+            }
             if (character != 0 && text.Length < maxCharacters)
             {
                 if (numeric)
