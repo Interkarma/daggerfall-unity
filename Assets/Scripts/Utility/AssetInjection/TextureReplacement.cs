@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTextureFromLooseFiles(int archive, int record, int frame, TextureMap textureMap, out Texture2D tex)
         { 
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
                 return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, out tex);
@@ -340,7 +340,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static void SetBillboardImportedTextures(GameObject go, ref DaggerfallBillboard.BillboardSummary summary)
         {
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (!DaggerfallUnity.Settings.AssetInjection)
                 return;
 
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static void SetEnemyImportedTextures(int archive, MeshFilter meshFilter, ref EnemyImportedTextures importedTextures)
         {
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (!DaggerfallUnity.Settings.AssetInjection)
                 return;
 
             // Check first texture.
@@ -444,7 +444,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static void SetBillboardScale(int archive, int record, ref Vector2 size)
         {
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (!DaggerfallUnity.Settings.AssetInjection)
                 return;
 
             XMLManager xml;
@@ -629,7 +629,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture is found.</returns>
         public static bool TextureExistsAmongLooseFiles(int archive, int record, int frame = 0, TextureMap textureMap = TextureMap.Albedo)
         {
-            return DaggerfallUnity.Settings.MeshAndTextureReplacement
+            return DaggerfallUnity.Settings.AssetInjection
                 && File.Exists(Path.Combine(texturesPath, GetName(archive, record, frame, textureMap) + extension));
         }
 
@@ -638,7 +638,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static Vector2 GetSize(Texture2D texture, string textureName, bool allowXml = false)
         {
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (!DaggerfallUnity.Settings.AssetInjection)
                 return new Vector2(texture.width, texture.height);
 
             if (allowXml)
@@ -663,7 +663,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static Vector2 GetSize(Texture2D texture, string textureName, int record, int frame = 0)
         {
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (!DaggerfallUnity.Settings.AssetInjection)
                 return new Vector2(texture.width, texture.height);
 
             // Get size from Daggerfall image
@@ -676,7 +676,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static bool TryGetSize(string textureName, out Vector2 size)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, textureName);
                 if (XMLManager.XmlFileExists(path))
@@ -708,7 +708,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if material imported.</returns>
         private static bool TryImportMaterial(string name, out Material material)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from mods
                 if (ModManager.Instance != null)
@@ -728,7 +728,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         private static bool TryImportTexture(string path, string name, out Texture2D tex)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
                 if (TryImportTextureFromDisk(Path.Combine(path, name), false, false, out tex))

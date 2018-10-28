@@ -177,7 +177,7 @@ namespace DaggerfallWorkshop
                 return;
 
             // Get atlas size
-            int size = DaggerfallUnity.Settings.MeshAndTextureReplacement ? 4096 : 2048;
+            int size = DaggerfallUnity.Settings.AssetInjection ? 4096 : 2048;
 
             // Get standard atlas material
             // Just going to steal texture and settings

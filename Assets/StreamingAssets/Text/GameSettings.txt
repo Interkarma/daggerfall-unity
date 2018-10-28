@@ -80,8 +80,8 @@ geographicBackgroundsInfo,                          Contextual character backgro
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
-assetImport,                                        Allow Custom Assets
-assetImportInfo,                                    Import assets from enabled mods and loose files.
+assetInjection,                                     Asset Injection
+assetInjectionInfo,                                 Import asset overrides from enabled mods and loose files.
 compressModdedTextures,                             Compress Modded Textures
 compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
 gameConsole,                                        Game Console
