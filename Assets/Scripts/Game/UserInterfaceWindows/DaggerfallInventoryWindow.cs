@@ -1523,6 +1523,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cannotUse.ClickAnywhereToClose = true;
                 cannotUse.Show();
             }
+            else if (item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map) && collection != null)
+            {   // Handle map items
+                RecordLocationFromMap(item);
+                collection.RemoveItem(item);
+                Refresh(false);
+            }
             else if (item.TemplateIndex == (int)MiscItems.Spellbook)
             {
                 if (playerEntity.SpellbookCount() == 0)
@@ -1603,6 +1609,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Discover the location
                     gps.DiscoverLocation(gps.CurrentRegionName, location.Name);
                     gps.LocationRevealedByMapItem = location.Name;
+                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                        TextManager.Instance.GetText("DaggerfallUI", "readMap").Replace("%map", location.Name));
                     break;
                 }
             }

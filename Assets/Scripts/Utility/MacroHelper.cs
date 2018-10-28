@@ -471,7 +471,7 @@ namespace DaggerfallWorkshop.Utility
         //
         #region Global macro handlers
 
-        private static string CityName(IMacroContextProvider mcp)
+        public static string CityName(IMacroContextProvider mcp)
         {   // %cn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)

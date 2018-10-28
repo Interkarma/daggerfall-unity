@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public static DaedraData[] daedraData = new DaedraData[] {
+        public static DaedraData[] daedraData = {
             new DaedraData((int) FactionFile.FactionIDs.Hircine, "X0C00Y00", 155, "HIRCINE.FLC", Weather.WeatherType.None),  // Restrict to only glenmoril witches?
             new DaedraData((int) FactionFile.FactionIDs.Clavicus_Vile, "V0C00Y00", 1, "CLAVICUS.FLC", Weather.WeatherType.None),
             new DaedraData((int) FactionFile.FactionIDs.Mehrunes_Dagon, "Y0C00Y00", 320, "MEHRUNES.FLC", Weather.WeatherType.None),

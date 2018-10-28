@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string potionRecipeFor = "Recipe for Potion of %po";
         public const string potionOf = "Potion of %po";
         public const string cannotUseThis = "You cannot use this.";
+        public const string letterPrefix = "Letter: ";
         public const string multipleAssignments = "You have multiple assignments...";
 
         public const string youAreEntering = "You are entering %s";
@@ -257,6 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string cannotChangeTransportationIndoors = "You cannot change transportation indoors.";
         public const string cannotTravelWithEnemiesNearby = "You cannot travel with enemies nearby.";
+        public const string cannotTravelIndoors = "You cannot travel while indoors.";
 
         public const string powersUnknown = "Powers unknown.";
 

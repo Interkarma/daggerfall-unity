@@ -180,7 +180,7 @@ _S.04_ task:
 	say 1014 
 
 _S.05_ task:
-	reveal _stronghold_ 
+	reveal _stronghold_ readmap
 	log 1012 step 1 
 
 _S.06_ task:
