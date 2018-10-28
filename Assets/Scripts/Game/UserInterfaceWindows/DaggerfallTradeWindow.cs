@@ -561,11 +561,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     case WindowModes.Buy:
                         if (usingWagon)
-                            if (CanCarry(item))
-                                TransferItem(item, localItems, PlayerEntity.Items);
-                            else
-                                break;
-                        EquipItem(item);
+                        {
+                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: true);
+                        }
+                        else
+                            EquipItem(item);
                         break;
 
                     case WindowModes.Repair:
@@ -596,15 +596,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Select)
             {
-                if (CanCarry(item) || (usingWagon && WagonCanHold(item)))
+                int canCarry = CanCarryAmount(item);
+                if (usingWagon)
                 {
-                    if (windowMode == WindowModes.Buy)
-                    {
-                        TransferItem(item, remoteItems, basketItems);
-                        EquipItem(item);
-                    } else {
-                        TransferItem(item, remoteItems, localItems);
-                    }
+                    canCarry = Math.Max(canCarry, WagonCanHoldAmount(item));
+                }
+                if (windowMode == WindowModes.Buy)
+                {
+                    TransferItem(item, remoteItems, basketItems, canCarry, equip: true);
+                } else {
+                    TransferItem(item, remoteItems, localItems, canCarry);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
