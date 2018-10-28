@@ -709,7 +709,7 @@ namespace DaggerfallWorkshop.Game
         public void PlayOneShot(AudioClip clip)
         {
             if (audioSource)
-                audioSource.PlayOneShot(clip);
+                audioSource.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
         }
 
         public void PlayOneShot(SoundClips clip)
