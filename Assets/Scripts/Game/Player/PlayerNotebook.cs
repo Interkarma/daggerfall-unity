@@ -184,6 +184,15 @@ namespace DaggerfallWorkshop.Game.Player
                     foreach (TextFile.Token token in msg.GetTextTokens())
                         entry.Add(token);
                     entry.Add(TextFile.NewLineToken);
+
+                    if ((entry.Count - 2) >= (DaggerfallQuestJournalWindow.maxLinesQuests * 2))
+                    {
+                        finishedQuests.Add(entry.ToArray());
+                        entry.Clear();
+                        foreach (TextFile.Token token in msg.GetTextTokens())
+                            entry.Add(token);
+                        entry.Add(TextFile.NewLineToken);
+                    }
                 }
                 finishedQuests.Add(entry.ToArray());
             }
