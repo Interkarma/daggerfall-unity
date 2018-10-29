@@ -21,3 +21,8 @@ enterNote,          Enter your note below:
 readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
+completedQuest,     completed
+failedQuest,        failed
+finishQuestHeader,  {0} {1} at {2}:
+quest,              Quest
+noteHeader,        {0} in {1}:
