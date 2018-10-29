@@ -29,8 +29,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "LGBK00I0.IMG";
 
         const int NULLINT = -1;
-        public const int maxLinesQuests = 19;
-        public const int maxLinesSmall = 26;
+        public const int maxLinesQuests = 20;
+        public const int maxLinesSmall = 28;
         const float textScaleSmall = 0.8f;
 
         int lastMessageIndex = NULLINT;
