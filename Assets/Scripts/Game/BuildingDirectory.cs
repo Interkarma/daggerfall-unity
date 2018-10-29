@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game
         // This value is 1 higher than any other possible building key
         // MakeBuildingKey() will return this value when packed building key is 0
         // ReverseBuildingKey() will unpack indices to 0 when reversing this value
-        const int buildingKey0 = 1 << 24;
+        public const int buildingKey0 = 1 << 24;
 
         uint locationId;
         int mapId;

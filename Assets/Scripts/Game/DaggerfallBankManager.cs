@@ -79,15 +79,15 @@ namespace DaggerfallWorkshop.Game.Banking
 
         #region Ships:
 
-        private static int[] shipPrices = new int[] { 100000, 200000 };
-        private static uint[] shipModelIds = new uint[] { 910, 909 };
-        private static float[] shipCameraDist = new float[] { -30, -50 };
-        private static DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
-        private static string[] shipInteriorSceneNames = new string[] {
-            DaggerfallInterior.GetSceneName(1050578, 0),
-            DaggerfallInterior.GetSceneName(2102157, 0),
+        private static readonly int[] shipPrices = new int[] { 100000, 200000 };
+        private static readonly uint[] shipModelIds = new uint[] { 910, 909 };
+        private static readonly float[] shipCameraDist = new float[] { -30, -50 };
+        private static readonly DFPosition[] shipCoords = new DFPosition[] { new DFPosition(2, 2), new DFPosition(5, 5) };
+        private static readonly string[] shipInteriorSceneNames = new string[] {
+            DaggerfallInterior.GetSceneName(1050578, BuildingDirectory.buildingKey0),
+            DaggerfallInterior.GetSceneName(2102157, BuildingDirectory.buildingKey0),
         };
-        private static string[] shipExteriorSceneNames = new string[] {
+        private static readonly string[] shipExteriorSceneNames = new string[] {
             StreamingWorld.GetSceneName(shipCoords[0].X, shipCoords[0].Y),
             StreamingWorld.GetSceneName(shipCoords[1].X, shipCoords[1].Y),
         };
