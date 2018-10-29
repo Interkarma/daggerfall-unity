@@ -15,6 +15,7 @@ using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -167,6 +168,35 @@ namespace DaggerfallWorkshop.Game.Player
         {
             if (message != null && message.Length > 0)
                 finishedQuests.Add(message);
+        }
+
+        public void AddFinishedQuest(List<Message> messages)
+        {
+            if (messages != null && messages.Count > 0)
+            {
+                Quest quest = messages[0].ParentQuest;
+                string questName = string.IsNullOrEmpty(quest.DisplayName) ? "Quest" : quest.DisplayName;
+                List<TextFile.Token> entry = CreateFinishedQuest(questName, quest.QuestSuccess);
+                foreach (Message msg in messages)
+                {
+                    foreach (TextFile.Token token in msg.GetTextTokens())
+                        entry.Add(token);
+                    entry.Add(TextFile.NewLineToken);
+                }
+                finishedQuests.Add(entry.ToArray());
+            }
+        }
+
+        private static List<TextFile.Token> CreateFinishedQuest(string questName, bool success)
+        {
+            string status = success ? "completed" : "failed";
+            List<TextFile.Token> entry = new List<TextFile.Token>();
+            entry.Add(new TextFile.Token() {
+                text = string.Format("{0} {1} at {2}:", questName, status, DaggerfallUnity.Instance.WorldTime.Now.MidDateTimeString()),
+                formatting = TextFile.Formatting.TextHighlight,
+            });
+            entry.Add(NothingToken);
+            return entry;
         }
 
         #endregion

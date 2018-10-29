@@ -331,12 +331,14 @@ namespace DaggerfallWorkshop.Game.Questing
             LogEntry[] logEntries = GetLogMessages();
             if (logEntries != null && logEntries.Length > 0)
             {
+                List<Message> questMessages = new List<Message>();
                 foreach (var logEntry in logEntries)
                 {
                     var message = GetMessage(logEntry.messageID);
                     if (message != null)
-                        GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuest(message.GetTextTokens());
+                        questMessages.Add(message);
                 }
+                GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuest(questMessages);
             }
         }
 
