@@ -740,6 +740,10 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             resources.Add(resource.Symbol.Name, resource);
+
+            // Track incoming Questor if resource is a Person with IsQuestor flag
+            if (resource is Person && (resource as Person).IsQuestor)
+                AddQuestor(resource.Symbol);
         }
 
         public void AddTask(Task task)
