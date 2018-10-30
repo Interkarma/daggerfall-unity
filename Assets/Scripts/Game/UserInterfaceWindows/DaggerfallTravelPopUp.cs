@@ -17,7 +17,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility;
-
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -279,6 +279,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // perform fast travel actions
         private void performFastTravel()
         {
+            // Cache scene first, if fast travelling while on ship.
+            if (GameManager.Instance.TransportManager.IsOnShip())
+                SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);
             GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
 
             if (speedCautious)
