@@ -74,6 +74,7 @@ namespace DaggerfallWorkshop.Game
         SpellIconCollection spellIconCollection;
 
         Texture2D[] daggerfallParchmentTextures;
+        Vector2Int daggerfallParchmentTexturesSize;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
@@ -691,7 +692,8 @@ namespace DaggerfallWorkshop.Game
                     daggerfallParchmentTextures[6],
                     daggerfallParchmentTextures[7],
                     daggerfallParchmentTextures[8],
-                    globalFilterMode);
+                    globalFilterMode,
+                    new Border<Vector2Int>(daggerfallParchmentTexturesSize));
             }
 
             panel.SetMargins(Margins.All, 10);
@@ -704,6 +706,8 @@ namespace DaggerfallWorkshop.Game
                 CifRciFile cif = new CifRciFile(Path.Combine(dfUnity.Arena2Path, parchmentBorderRCIFile), FileUsage.UseMemory, true);
                 cif.LoadPalette(Path.Combine(dfUnity.Arena2Path, cif.PaletteName));
 
+                DFSize recordSize = cif.GetSize(0);
+                daggerfallParchmentTexturesSize = new Vector2Int(recordSize.Width, recordSize.Height);
                 daggerfallParchmentTextures = new Texture2D[cif.RecordCount];
                 for (int i = 0; i < cif.RecordCount; i++)
                 {
