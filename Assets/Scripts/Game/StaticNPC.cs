@@ -108,6 +108,9 @@ namespace DaggerfallWorkshop.Game
         {
             // Get runtime-available data on start
             SetRuntimeData();
+
+            // Assign QuestResourceBehaviour if this NPC matches a known Questor for an active quest
+            AssignQuestResourceBehaviour();
         }
 
         #endregion
@@ -196,6 +199,30 @@ namespace DaggerfallWorkshop.Game
             npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;
             npcData.gender = gender;
             npcData.context = Context.Custom;
+        }
+
+        /// <summary>
+        /// Assigns a new QuestResourceBehaviour component if this is a Questor NPC.
+        /// Can happen either at runtime or during scene layout.
+        /// </summary>
+        public void AssignQuestResourceBehaviour()
+        {
+            // Static NPC data must match a known questor Person resource
+            Person questorPerson = QuestMachine.Instance.ActiveQuestor(Data);
+            if (questorPerson == null)
+                return;
+
+            // Can only have a single QuestResourceBehaviour
+            if (GetComponent<QuestResourceBehaviour>())
+                return;
+
+            // Assign new QuestResourceBehaviour and link to Person resource in quest system
+            QuestResourceBehaviour resourceBehaviour = gameObject.AddComponent<QuestResourceBehaviour>();
+            if (resourceBehaviour)
+            {
+                resourceBehaviour.AssignResource(questorPerson);
+                Debug.LogFormat("Added new QuestResourceBehaviour to object {0} and assigned Questor Person resource {1}", gameObject.name, questorPerson.DisplayName);
+            }
         }
 
         #endregion
