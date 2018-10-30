@@ -172,6 +172,7 @@ namespace DaggerfallWorkshop.Game
             data.billboardRecordIndex = record;
             data.nameSeed = (int)position ^ buildingKey;
             data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
+            data.buildingKey = buildingKey;
         }
 
         /// <summary>
