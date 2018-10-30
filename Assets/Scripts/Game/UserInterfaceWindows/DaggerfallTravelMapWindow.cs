@@ -22,7 +22,6 @@ using DaggerfallWorkshop.Game.UserInterface;
 using System.Collections.Generic;
 using Wenzil.Console;
 using Wenzil.Console.Commands;
-using System.Threading;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
