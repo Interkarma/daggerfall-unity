@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect;
@@ -110,7 +109,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void AddState(IncumbentEffect incumbent)
         {
-            // Host cannot catch same disease twice so do nothing further here
+            // The player can catch multiple instances of the same disease in classic, but
+            // in Daggerfall Unity host cannot catch same disease twice so do nothing further here.
             // Specific diseases can override and do something else if they require
         }
 
@@ -159,13 +159,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             lastDay = currentDay;
 
             // Count down days remaining
-            if (!IsDiseasePermanent())
+            if (!IsDiseasePermanent() && (daysOfSymptomsLeft -= daysPast) <= 0)
             {
-                if ((daysOfSymptomsLeft -= daysPast) <= 0)
-                {
-                    daysOfSymptomsLeft = 0;
-                    EndDisease();
-                }
+                daysOfSymptomsLeft = 0;
+                EndDisease();
             }
 
             // Output alert text
@@ -221,7 +218,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return new DiseaseData();
 
             // Disease data. Found in FALL.EXE (1.07.213) from offset 0x1C0053.
-            DiseaseData[] diseaseDataSources = new DiseaseData[]
+            DiseaseData[] diseaseDataSources =
             {              //  STR  INT  WIL  AGI  END  PER  SPD  LUC  HEA  FAT  SPL MIND  MAXD  MINS  MAXS
                 new DiseaseData( 1,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   2,   10, 0xFF, 0xFF), // Witches' Pox
                 new DiseaseData( 1,   0,   1,   1,   1,   1,   1,   1,   1,   1,   1,   3,   30, 0xFF, 0xFF), // Plague
