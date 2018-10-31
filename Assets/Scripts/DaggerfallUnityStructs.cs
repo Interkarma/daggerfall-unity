@@ -527,4 +527,23 @@ namespace DaggerfallWorkshop
         public int SpellID;                     // ID of spell inside SPELLS.STD - used to reference spell itself
         public string SpellName;                // Display name of spell - only used to make file more human readable
     }
+
+    public struct Border<T>
+    {
+        public Border(T common)
+        {
+            Fill = Top = Bottom = Left = Right = TopLeft =
+                TopRight = BottomLeft = BottomRight = common;
+        }
+
+        public T Fill;
+        public T Top;
+        public T Bottom;
+        public T Left;
+        public T Right;
+        public T TopLeft;
+        public T TopRight;
+        public T BottomLeft;
+        public T BottomRight;
+    }
 }
