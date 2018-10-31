@@ -10,7 +10,6 @@
 //
 
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Entity;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -21,7 +20,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public abstract class FortifyEffect : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
+        //const string textDatabase = "ClassicEffects";
 
         protected DFCareer.Stats fortifyStat = DFCareer.Stats.None;
 

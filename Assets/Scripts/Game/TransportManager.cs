@@ -38,6 +38,14 @@ namespace DaggerfallWorkshop.Game
             get { return mode == TransportModes.Foot; }
         }
 
+        /// <summary>True when there's a recorded position before boarding and player is on the ship</summary>
+        public bool IsOnShip()
+        {
+            StreamingWorld world = GameManager.Instance.StreamingWorld;
+            DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
+            return boardShipPosition != null && world.MapPixelX == shipCoords.X && world.MapPixelY == shipCoords.Y;
+        }
+
         public PlayerPositionData_v1 BoardShipPosition
         {
             get { return boardShipPosition; }
@@ -155,7 +163,7 @@ namespace DaggerfallWorkshop.Game
                 if (neighTime < Time.time)
                 {
                     dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume);
-                    neighTime = Time.time + Random.Range(2, 30);
+                    neighTime = Time.time + Random.Range(2, 40);
                 }
             }
         }
@@ -221,7 +229,7 @@ namespace DaggerfallWorkshop.Game
                 DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
 
                 // Is there recorded position before boarding and is player on the ship?
-                if (boardShipPosition != null && world.MapPixelX == shipCoords.X && world.MapPixelY == shipCoords.Y)
+                if (IsOnShip())
                 {
                     // Check for terrain sampler changes. (so don't fall through floor)
                     StreamingWorld.RepositionMethods reposition = StreamingWorld.RepositionMethods.None;

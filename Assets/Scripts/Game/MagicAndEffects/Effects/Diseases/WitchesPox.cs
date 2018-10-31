@@ -9,10 +9,6 @@
 // Notes:
 //
 
-using System;
-using DaggerfallWorkshop.Game.Entity;
-using FullSerializer;
-
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     public class WitchesPox : DiseaseEffect

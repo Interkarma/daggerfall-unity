@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using System.Collections.Generic;
 using Wenzil.Console;
 using Wenzil.Console.Commands;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -375,7 +376,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         if (FindingLocation)
                             CreateCrossHair(MapsFile.GetPixelFromPixelID(locationSummary.ID), locationSummary.RegionIndex);
                         else
-                            CreateCrossHair(GetPlayerMapPosition(), selectedRegion);
+                            CreateCrossHair(TravelTimeCalculator.GetPlayerTravelPosition(), selectedRegion);
                     }
 
                     Draw(regionTextureOverlayPanel);
@@ -1411,21 +1412,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HandleLocationFindEvent(null, locationName);
         }
 
-        // Gets current player position in map pixels
-        DFPosition GetPlayerMapPosition()
-        {
-            DFPosition position = new DFPosition();
-            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
-            if (playerGPS)
-                position = playerGPS.CurrentMapPixel;
-
-            return position;
-        }
-
         // Gets current player region or -1 if player not in any region (e.g. in ocean)
         int GetPlayerRegion()
         {
-            DFPosition position = GetPlayerMapPosition();
+            DFPosition position = TravelTimeCalculator.GetPlayerTravelPosition();
             int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
             if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
                 return -1;
