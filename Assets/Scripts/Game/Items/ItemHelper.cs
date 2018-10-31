@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Items
     public class ItemHelper
     {
         public const int wagonKgLimit = 750;
+        const string textDatabase = "DaggerfallUI";
 
         #region Fields
 
@@ -173,6 +174,12 @@ namespace DaggerfallWorkshop.Game.Items
             // Return result without material prefix if item is unidentified or an Artifact.
             if (!item.IsIdentified || item.IsArtifact)
                 return result;
+
+            // Differentiate plant ingredients with 2 variants
+            if (item.ItemGroup == ItemGroups.PlantIngredients1 && item.TemplateIndex < 18)
+                return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "northern"));
+            if (item.ItemGroup == ItemGroups.PlantIngredients2 && item.TemplateIndex < 18)
+                return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "southern"));
 
             // Resolve weapon material
             if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex != (int)Weapons.Arrow)
