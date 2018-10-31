@@ -44,3 +44,5 @@ damSrc,             points of damage
 damRep,             damage
 arSrc,              armor rating
 arRep,              armor
+northern,           (northern)
+southern,           (southern)
