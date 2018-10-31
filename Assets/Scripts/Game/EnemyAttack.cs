@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game
     public class EnemyAttack : MonoBehaviour
     {
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
-        public float MeleeDistance = 3.2f;          // Maximum distance for melee attack
+        public float MeleeDistance = 2.25f;          // Maximum distance for melee attack
         public float MeleeTimer = 0;                // Must be 0 for a melee attack or touch spell to be done
 
         //EnemyMotor motor;
@@ -91,7 +91,8 @@ namespace DaggerfallWorkshop.Game
             // attempts at higher speeds, so it seems backwards.
             if (classicUpdate && (DFRandom.rand() % speed >= (speed >> 3) + 6 && MeleeTimer == 0))
             {
-                MeleeAnimation();
+                if (!MeleeAnimation())
+                    return;
 
                 MeleeTimer = Random.Range(1500, 3001);
                 MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
@@ -114,14 +115,14 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        private void MeleeAnimation()
+        private bool MeleeAnimation()
         {
             // Are we in range and facing target? Then start attack.
             if (senses.TargetInSight)
             {
                 // Take the rate of target approach into account when deciding if to attack
                 if (senses.DistanceToTarget >= MeleeDistance + senses.TargetRateOfApproach)
-                    return;
+                    return false;
 
                 // Set melee animation state
                 mobile.ChangeEnemyState(MobileStates.PrimaryAttack);
@@ -131,7 +132,11 @@ namespace DaggerfallWorkshop.Game
                 {
                     sounds.PlayAttackSound();
                 }
+
+                return true;
             }
+
+            return false;
         }
 
         private void MeleeDamage()
@@ -155,7 +160,7 @@ namespace DaggerfallWorkshop.Game
                 damage = 0;
 
                 // Are we still in range and facing target? Then apply melee damage.
-                if (entityBehaviour.Target != null && senses.DistanceToTarget < MeleeDistance && senses.TargetInSight)
+                if (entityBehaviour.Target != null && senses.DistanceToTarget <= MeleeDistance && senses.TargetInSight)
                 {
                     if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);
