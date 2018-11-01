@@ -148,6 +148,7 @@ namespace DaggerfallWorkshop
         public float DungeonAmbientLightScale { get; set; }
         public float NightAmbientLightScale { get; set; }
         public float PlayerTorchLightScale { get; set; }
+        public bool PlayerTorchFromItems { get; set; }
         public bool CombatVoices { get; set; }
         public bool EnemyInfighting { get; set; }
         public bool EnhancedCombatAI { get; set; }
@@ -244,6 +245,7 @@ namespace DaggerfallWorkshop
             DungeonAmbientLightScale = GetFloat(sectionEnhancements, "DungeonAmbientLightScale", 0.0f, 1.0f);
             NightAmbientLightScale = GetFloat(sectionEnhancements, "NightAmbientLightScale", 0.0f, 1.0f);
             PlayerTorchLightScale = GetFloat(sectionEnhancements, "PlayerTorchLightScale", 0.0f, 1.0f);
+            PlayerTorchFromItems = GetBool(sectionEnhancements, "PlayerTorchFromItems");
             CombatVoices = GetBool(sectionEnhancements, "CombatVoices");
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
@@ -333,6 +335,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEnhancements, "DungeonAmbientLightScale", DungeonAmbientLightScale);
             SetFloat(sectionEnhancements, "NightAmbientLightScale", NightAmbientLightScale);
             SetFloat(sectionEnhancements, "PlayerTorchLightScale", PlayerTorchLightScale);
+            SetBool(sectionEnhancements, "PlayerTorchFromItems", PlayerTorchFromItems);
             SetBool(sectionEnhancements, "CombatVoices", CombatVoices);
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
