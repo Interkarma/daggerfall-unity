@@ -28,6 +28,8 @@ noteHeader,         {0} in {1}:
 
 - Inventory window:
 
+northern,           (northern)
+southern,           (southern)
 readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
@@ -44,5 +46,3 @@ damSrc,             points of damage
 damRep,             damage
 arSrc,              armor rating
 arRep,              armor
-northern,           (northern)
-southern,           (southern)
