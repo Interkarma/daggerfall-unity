@@ -210,8 +210,11 @@ namespace DaggerfallWorkshop
                                         item.dyeColor = ItemBuilder.RandomClothingDye();
                                     }
                                     else
+                                    {
                                         item = new DaggerfallUnityItem(itemGroup, j);
-
+                                        if (DaggerfallUnity.Settings.PlayerTorchFromItems && item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
+                                            item.stackCount = Random.Range(5, 21);  // Shops stock 5-20 bottles
+                                    }
                                     items.AddItem(item);
                                 }
                             }
