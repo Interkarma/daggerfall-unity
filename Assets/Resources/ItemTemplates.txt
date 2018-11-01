@@ -4965,7 +4965,7 @@
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
-        "basePrice": 4,
+        "basePrice": 40,
         "enchantmentPoints": 600,
         "rarity": 3,
         "variants": 0,

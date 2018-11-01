@@ -87,6 +87,7 @@ AlternateRandomEnemySelection=False
 DungeonAmbientLightScale=1.0
 NightAmbientLightScale=1.0
 PlayerTorchLightScale=1.0
+PlayerTorchFromItems=False
 CombatVoices=True
 EnemyInfighting=True
 EnhancedCombatAI=True
