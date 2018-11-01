@@ -180,11 +180,20 @@ namespace DaggerfallWorkshop
             if (freezeAnims)
                 return 0;
 
+            // Don't reset frame to 0 for idle/move switches for enemies without idle animations
+            bool resetFrame = true;
+
+            if (!summary.Enemy.HasIdle &&
+                ((summary.EnemyState == MobileStates.Idle && state == MobileStates.Move) ||
+                (summary.EnemyState == MobileStates.Move && state == MobileStates.Idle)))
+                resetFrame = false;
+
             // Only change if in a different state
             if (summary.EnemyState != state)
             {
                 summary.EnemyState = state;
-                currentFrame = 0;
+                if (resetFrame)
+                    currentFrame = 0;
                 ApplyEnemyState();
             }
 

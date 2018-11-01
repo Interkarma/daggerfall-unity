@@ -331,12 +331,14 @@ namespace DaggerfallWorkshop.Game.Questing
             LogEntry[] logEntries = GetLogMessages();
             if (logEntries != null && logEntries.Length > 0)
             {
+                List<Message> questMessages = new List<Message>();
                 foreach (var logEntry in logEntries)
                 {
                     var message = GetMessage(logEntry.messageID);
                     if (message != null)
-                        GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuest(message.GetTextTokens());
+                        questMessages.Add(message);
                 }
+                GameManager.Instance.PlayerEntity.Notebook.AddFinishedQuest(questMessages);
             }
         }
 
@@ -447,6 +449,26 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 questors.Remove(key);
             }
+
+            // Destroy QuestResourceBehaviour from target object if present in scene and not an individual NPC
+            // If target object not present in scene then QuestResourceBehaviour simply wont be added next time as Person is no longer a questor
+            // Individual NPCs have a permanent QuestResourceBehaviour attached as they have special usage in long-running quests - it must not be removed
+            Person personResource = GetPerson(personSymbol);
+            if (personResource != null && personResource.QuestResourceBehaviour != null && !personResource.IsIndividualNPC)
+                MonoBehaviour.Destroy(personResource.QuestResourceBehaviour);
+        }
+
+        /// <summary>
+        /// Remove all questors from quest at end of lifetime.
+        /// </summary>
+        void DropAllQuestors()
+        {
+            string[] keys = new string[questors.Keys.Count];
+            questors.Keys.CopyTo(keys, 0);
+            foreach(string key in keys)
+            {
+                DropQuestor(new Symbol(key));
+            }
         }
 
         #endregion
@@ -543,6 +565,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // remove all quest topics for this quest from talk manager
             GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
+
+            // Remove all questors for this quest
+            DropAllQuestors();
         }
 
         #endregion
@@ -740,6 +765,10 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             resources.Add(resource.Symbol.Name, resource);
+
+            // Track incoming Questor if resource is a Person with IsQuestor flag
+            if (resource is Person && (resource as Person).IsQuestor)
+                AddQuestor(resource.Symbol);
         }
 
         public void AddTask(Task task)

@@ -45,11 +45,15 @@ namespace DaggerfallConnect.Arena2
 
             // Parse text into questions
             StringReader reader = new StringReader(questionsStr);
+            string curLine = reader.ReadLine();
             for (int i = 0; i < questionCount; i++)
             {
                 questions[i] = new Question();
 
-                string curLine = reader.ReadLine();
+                // Skip through any blank lines
+                while (curLine.Length <= 1)
+                    curLine = reader.ReadLine();
+
                 // Parse question text
                 for (int j = 0; j < Question.lines; j++)
                 {
@@ -69,15 +73,13 @@ namespace DaggerfallConnect.Arena2
                     curLine = reader.ReadLine();
                 }
                 // Parse answers to the current question
-                while (curLine.Length > 1) // Line without 2-char preamble = Empty line = end of answers
+                while (curLine.IndexOf(".") == 1 && char.IsLetter(curLine[0])) // Line without 2-char preamble including letter = end of answers
                 {
                     Answer ans = new Answer();
                     // Get Answer text
-                    if (curLine.IndexOf(".") == 1)
-                    {
-                        ans.Text = curLine.Split('.')[1].Trim();
-                        curLine = reader.ReadLine();
-                    }
+                    ans.Text = curLine.Split('.')[1].Trim();
+                    curLine = reader.ReadLine();
+
                     // Add answer effects
                     while (curLine.IndexOf(".") != 1 && curLine.Length > 1)
                     {

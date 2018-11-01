@@ -978,6 +978,36 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Finds an active questor given a specific static NPC.
+        /// NPCData passed must be populated with runtime data such as map id and building key.
+        /// </summary>
+        public Person ActiveQuestor(StaticNPC.NPCData npcData)
+        {
+            Person found = null;
+            foreach (Quest quest in quests.Values)
+            {
+                Symbol[] questorSymbols = quest.GetQuestors();
+                if (questorSymbols == null || questorSymbols.Length == 0)
+                    continue;
+
+                foreach (Symbol symbol in questorSymbols)
+                {
+                    Person person = quest.GetPerson(symbol);
+                    if (person == null)
+                        continue;
+
+                    if (IsNPCDataEqual(npcData, person.QuestorData))
+                    {
+                        found = person;
+                        break;
+                    }
+                }
+            }
+
+            return found;
+        }
+
+        /// <summary>
         /// Check if a faction listener is active for the individual faction ID.
         /// </summary>
         public bool HasFactionListener(int factionID)

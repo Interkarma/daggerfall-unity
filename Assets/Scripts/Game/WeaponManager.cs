@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
     public class WeaponManager : MonoBehaviour
     {
         const float defaultBowReach = 50f;
-        const float defaultWeaponReach = 2.5f;
+        const float defaultWeaponReach = 2.25f;
 
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
