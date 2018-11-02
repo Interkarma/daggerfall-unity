@@ -47,10 +47,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     torchIntensity = torchLight.intensity;
                     if (DaggerfallUnity.Settings.PlayerTorchFromItems)
-                    {
                         torchLight.shadows = LightShadows.Soft;
-                        torchLight.range = 12;
-                    }
                 }
             }
         }
@@ -67,6 +64,7 @@ namespace DaggerfallWorkshop.Game
                 if (lightSource != null)
                 {
                     enableTorch = true;
+                    torchLight.range = lightSource.ItemTemplate.capacityOrTarget;
                     // Consume durability / fuel
                     if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval)
                     {
@@ -86,7 +84,7 @@ namespace DaggerfallWorkshop.Game
                     // Give warning signs if running out of fuel
                     intensityMod = 1f;
                     if (lightSource.currentCondition < 2)
-                        intensityMod = Random.Range(0.5f, 0.65f);
+                        intensityMod = Random.Range(0.45f, 0.75f);
                 }
             }
             else
