@@ -1581,9 +1581,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (item.ItemGroup == ItemGroups.UselessItems2 && item.TemplateIndex == (int)UselessItems2.Oil && collection != null)
             {
                 DaggerfallUnityItem lantern = localItems.GetItem(ItemGroups.UselessItems2, (int)UselessItems2.Lantern);
-                if (lantern != null && lantern.currentCondition < lantern.maxCondition)
+                if (lantern != null && lantern.currentCondition <= lantern.maxCondition - item.currentCondition)
                 {   // Re-fuel lantern with the oil.
-                    lantern.currentCondition += Mathf.Min(item.currentCondition, lantern.maxCondition - lantern.currentCondition);
+                    lantern.currentCondition += item.currentCondition;
                     collection.RemoveItem(item.IsAStack() ? collection.SplitStack(item, 1) : item);
                     DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightRefuel"), false, lantern);
                     Refresh(false);
