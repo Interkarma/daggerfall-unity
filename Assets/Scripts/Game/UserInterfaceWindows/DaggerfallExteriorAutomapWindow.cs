@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //const float locationSizeBasedStartZoomMultiplier = 10.0f; // the zoom multiplier based on location size used as starting zoom
         const float startZoomMultiplier = 8.0f;
 
-        const bool resetZoomLevelOnNewLocation = false;        
+        const bool resetZoomLevelOnNewLocation = true;        
 
         // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
         // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Camera cameraExteriorAutomap = null; // camera for exterior automap camera
 
-        float zoomLevel = 0.0f; // the camera zoom level
+        float zoomLevel = -1.0f; // the camera zoom level, -1.0 indicates uninitialized
 
         Panel dummyPanelAutomap = null; // used to determine correct render panel position
         Panel panelRenderAutomap = null; // level geometry is rendered into this panel
@@ -488,11 +488,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.CompassCamera = cameraExteriorAutomap;
             }
 
-            if (zoomLevel == 0.0f)
-            {
-                zoomLevel = ComputeZoom();                
-            }
-
             if (exteriorAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
                 // reset values to default whenever player enters building or dungeon
@@ -501,7 +496,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
 
-            // now set camera zoom level (important: after (optional) zoomLevel init and resetCameraPosition() call - since it might have changed zoomLevel)
+            // compute the zoom level if required
+            if (zoomLevel == -1.0f || resetZoomLevelOnNewLocation)
+            {
+                zoomLevel = ComputeZoom();
+            }
+
+            // now set camera zoom level (either set the newly computed value or the old value (stored from last map close))
             cameraExteriorAutomap.orthographicSize = zoomLevel;
 
             // focus player position on exterior automap
@@ -982,11 +983,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// resets the camera transform of the 2D view mode
         /// </summary>
         private void resetCameraTransform()
-        {
-            if (resetZoomLevelOnNewLocation)
-            {
-                zoomLevel = ComputeZoom();
-            }
+        {            
             cameraExteriorAutomap.transform.position = exteriorAutomap.GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f); //Vector3.zero + Vector3.up * cameraHeight;
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
@@ -1269,6 +1266,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // reset values to default
             resetCameraPosition();
+            zoomLevel = ComputeZoom();
+            cameraExteriorAutomap.orthographicSize = zoomLevel;
             exteriorAutomap.resetRotationBuildingNameplates();            
             updateAutomapView();
         }
