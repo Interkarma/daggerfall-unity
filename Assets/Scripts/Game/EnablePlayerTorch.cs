@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -23,6 +23,8 @@ namespace DaggerfallWorkshop.Game
     {
         public GameObject PlayerTorch;
 
+        const string textDatabase = "DaggerfallUI";
+
         DaggerfallUnity dfUnity;
         PlayerEnterExit playerEnterExit;
         PlayerEntity playerEntity;
@@ -30,7 +32,7 @@ namespace DaggerfallWorkshop.Game
         float torchIntensity;
         float intensityMod = 1f;
         float lastTickTime;
-        float tickTimeInterval = 10f;
+        float tickTimeInterval = 20f;
 
         void Start()
         {
@@ -71,9 +73,10 @@ namespace DaggerfallWorkshop.Game
                         lastTickTime = Time.realtimeSinceStartup;
                         if (lightSource.currentCondition > 0)
                             lightSource.currentCondition--;
-                        else
+
+                        if (lightSource.currentCondition == 0)
                         {
-                            DaggerfallUI.MessageBox("Your %it flickers and dies.", false, lightSource);
+                            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightDies"), false, lightSource);
                             enableTorch = false;
                             playerEntity.LightSource = null;
                             if (!lightSource.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Lantern))

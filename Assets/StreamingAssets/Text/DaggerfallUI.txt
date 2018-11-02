@@ -35,6 +35,7 @@ readMapFail,        You have already recorded all locations in this region!
 howManyItems,       Pick how many items (max {0})?
 lightDouse,         You douse the %it.
 lightLight,         You light the %it.
+lightDies,          Your %it flickers and dies.
 lightEmpty,         Your %it has no fuel left.
 lightRefuel,        You refuel your %it with a bottle of oil.
 lightFull,          Your %it is full.

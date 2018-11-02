@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.spellbook = entity.SerializeSpellbook();
             data.playerEntity.crimeCommitted = entity.CrimeCommitted;
             data.playerEntity.haveShownSurrenderToGuardsDialogue = entity.HaveShownSurrenderToGuardsDialogue;
-            data.playerEntity.lightSourceUID = entity.LightSource.UID;
+            data.playerEntity.lightSourceUID = (entity.LightSource == null) ? 0 : entity.LightSource.UID;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();

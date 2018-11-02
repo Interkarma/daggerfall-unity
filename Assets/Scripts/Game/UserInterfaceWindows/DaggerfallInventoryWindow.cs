@@ -1232,10 +1232,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
-            // If more than one item selected, equip only one
-            if (item.IsAStack())
-                item = playerEntity.Items.SplitStack(item, 1);
-
             // Try to equip the item, and update armour values accordingly
             List<DaggerfallUnityItem> unequippedList = playerEntity.ItemEquipTable.EquipItem(item);
             if (unequippedList != null)
@@ -1587,7 +1583,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem lantern = localItems.GetItem(ItemGroups.UselessItems2, (int)UselessItems2.Lantern);
                 if (lantern != null && lantern.currentCondition < lantern.maxCondition)
                 {   // Re-fuel lantern with the oil.
-                    lantern.currentCondition += item.currentCondition;
+                    lantern.currentCondition += Mathf.Min(item.currentCondition, lantern.maxCondition - lantern.currentCondition);
                     collection.RemoveItem(item.IsAStack() ? collection.SplitStack(item, 1) : item);
                     DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightRefuel"), false, lantern);
                     Refresh(false);

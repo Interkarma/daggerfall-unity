@@ -603,7 +603,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 if (windowMode == WindowModes.Buy)
                 {
-                    TransferItem(item, remoteItems, basketItems, canCarry, equip: true);
+                    TransferItem(item, remoteItems, basketItems, canCarry, equip: !item.IsAStack());
                 } else {
                     TransferItem(item, remoteItems, localItems, canCarry);
                 }
