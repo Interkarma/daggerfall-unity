@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop
         const string sectionGUI = "GUI";
         const string sectionSpells = "Spells";
         const string sectionControls = "Controls";
+        const string sectionMap = "Map";
         const string sectionStartup = "Startup";
         const string sectionExperimental = "Experimental";
         const string sectionEnhancements = "Enhancements";
@@ -97,7 +98,6 @@ namespace DaggerfallWorkshop
         public float ToolTipDelayInSeconds { get; set; }
         public Color32 ToolTipBackgroundColor { get; set; }
         public Color32 ToolTipTextColor { get; set; }
-        public int AutomapNumberOfDungeons { get; set; }
         public int ShopQualityPresentation { get; set; }
         public int ShopQualityHUDDelay { get; set; }
         public bool ShowQuestJournalClocksAsCountdown { get; set; }
@@ -128,6 +128,11 @@ namespace DaggerfallWorkshop
         public int CameraRecoilStrength { get; set; }
         public float MusicVolume { get; set; }
         public float SoundVolume { get; set; }
+
+        // [Map]
+        public int AutomapNumberOfDungeons { get; set; }
+        public float ExteriorMapDefaultZoomLevel { get; set; }
+        public bool ExteriorMapResetZoomLevelOnNewLocation { get; set; }
 
         // [Startup]
         public int StartCellX { get; set; }
@@ -201,8 +206,7 @@ namespace DaggerfallWorkshop
             EnableInventoryInfoPanel = GetBool(sectionGUI, "EnableInventoryInfoPanel");
             EnableEnhancedItemLists = GetBool(sectionGUI, "EnableEnhancedItemLists");
             EnableModernConversationStyleInTalkWindow = GetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow");
-            HelmAndShieldMaterialDisplay = GetInt(sectionGUI, "HelmAndShieldMaterialDisplay", 0, 3);
-            AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
+            HelmAndShieldMaterialDisplay = GetInt(sectionGUI, "HelmAndShieldMaterialDisplay", 0, 3);            
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
             ShowQuestJournalClocksAsCountdown = GetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown");
@@ -227,6 +231,10 @@ namespace DaggerfallWorkshop
             CameraRecoilStrength = GetInt(sectionControls, "CameraRecoilStrength", 0, 4);
             SoundVolume = GetFloat(sectionControls, "SoundVolume", 0f, 1.0f);
             MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
+
+            AutomapNumberOfDungeons = GetInt(sectionMap, "AutomapNumberOfDungeons", 0, 100);
+            ExteriorMapDefaultZoomLevel = GetFloat(sectionMap, "ExteriorMapDefaultZoomLevel", 4, 31);
+            ExteriorMapResetZoomLevelOnNewLocation = GetBool(sectionMap, "ExteriorMapResetZoomLevelOnNewLocation");
 
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);

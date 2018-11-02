@@ -48,11 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float maxZoom = 25.0f; // the minimum external automap camera height
         const float minZoom = 250.0f; // the maximum external automap camera height
 
-        //const float locationSizeBasedStartZoomMultiplier = 10.0f; // the zoom multiplier based on location size used as starting zoom
-        const float startZoomMultiplier = 8.0f;
-
-        const bool resetZoomLevelOnNewLocation = true;        
-
         // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
         // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
         class HotkeySequence
@@ -161,6 +156,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         GameObject gameobjectExteriorAutomap = null; // used to hold reference to instance of GameObject "ExteriorAutomap" (which has script Game/ExteriorAutomap.cs attached)
 
         Camera cameraExteriorAutomap = null; // camera for exterior automap camera
+
+        //float locationSizeBasedStartZoomMultiplier = 10.0f; // the zoom multiplier based on location size used as starting zoom
+        float startZoomMultiplier; // the default zoom level multiplier
+        bool resetZoomLevelOnNewLocation; // flag to indicate if zoom level should be reset on changing location/when a new location is loaded
 
         float zoomLevel = -1.0f; // the camera zoom level, -1.0 indicates uninitialized
 
@@ -461,6 +460,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
 
+            startZoomMultiplier = DaggerfallUnity.Settings.ExteriorMapDefaultZoomLevel;
+            resetZoomLevelOnNewLocation = DaggerfallUnity.Settings.ExteriorMapResetZoomLevelOnNewLocation;
+
             isSetup = true;
         }
 
@@ -490,14 +492,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (exteriorAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
-                // reset values to default whenever player enters building or dungeon
+                // reset values to default whenever player enters new location
                 resetCameraPosition();
+
+                if (resetZoomLevelOnNewLocation)
+                {
+                    zoomLevel = ComputeZoom();
+                }
 
                 exteriorAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
 
             // compute the zoom level if required
-            if (zoomLevel == -1.0f || resetZoomLevelOnNewLocation)
+            if (zoomLevel == -1.0f)
             {
                 zoomLevel = ComputeZoom();
             }
