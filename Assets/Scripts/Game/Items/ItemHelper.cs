@@ -1082,6 +1082,15 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Add some starting gold
             playerEntity.GoldPieces += 100;
+
+            // Add some torches and candles if player torch is from items setting enabled
+            if (DaggerfallUnity.Settings.PlayerTorchFromItems)
+            {
+                for (int i=0; i < 5; i++)
+                    items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch));
+                for (int i=0; i < 2; i++)
+                    items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Candle));
+            }
         }
 
         #endregion

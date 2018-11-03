@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             bool enableTorch = false;
-            if (DaggerfallUnity.Settings.PlayerTorchFromItems && !GameManager.IsGamePaused)
+            if (DaggerfallUnity.Settings.PlayerTorchFromItems)
             {
                 DaggerfallUnityItem lightSource = playerEntity.LightSource;
                 if (lightSource != null)
@@ -66,13 +66,13 @@ namespace DaggerfallWorkshop.Game
                     enableTorch = true;
                     torchLight.range = lightSource.ItemTemplate.capacityOrTarget;
                     // Consume durability / fuel
-                    if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval)
+                    if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval && !GameManager.IsGamePaused)
                     {
                         lastTickTime = Time.realtimeSinceStartup;
                         if (lightSource.currentCondition > 0)
                             lightSource.currentCondition--;
 
-                        if (lightSource.currentCondition == 0)
+                        if (lightSource.currentCondition == 0 && DaggerfallUnityItem.CompareItems(playerEntity.LightSource, lightSource))
                         {
                             DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightDies"), false, lightSource);
                             enableTorch = false;
