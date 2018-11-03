@@ -11,18 +11,24 @@
 
 using System.Text.RegularExpressions;
 using FullSerializer;
+using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Condition that fires when player casts a specific spell.
+    /// Executes target task when player readies a spell containing specific effects.
     /// Classic only accepts standard versions of spell, not custom spells created by player.
-    /// Daggerfall Unity makes no distinction between standard or custom spells and will instead match by effect.
+    /// Daggerfall Unity makes no distinction between standard or custom spells and will instead match by effects.
     /// </summary>
     public class CastSpellDo : ActionTemplate
     {
-        int spellID;
+        int spellID = -1;
+        SpellRecord.EffectRecordData[] classicEffects;
         Symbol taskSymbol;
+
+        EntityEffectBundle lastReadySpell;
 
         public override string Pattern
         {
@@ -35,6 +41,8 @@ namespace DaggerfallWorkshop.Game.Questing
         public CastSpellDo(Quest parentQuest)
             : base(parentQuest)
         {
+            GameManager.Instance.PlayerEffectManager.OnNewReadySpell += PlayerEffectManager_OnNewReadySpell;
+            GameManager.Instance.PlayerEffectManager.OnCastReadySpell += PlayerEffectManager_OnCastReadySpell;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -49,10 +57,82 @@ namespace DaggerfallWorkshop.Game.Questing
             string sourceSpellName = match.Groups["aSpell"].Value;
             action.taskSymbol = new Symbol(match.Groups["aTask"].Value);
 
-            // TODO: Attempt to get spellID from table using source name
+            // Cache classic effects to match
+            Table spellsTable = QuestMachine.Instance.SpellsTable;
+            if (spellsTable.HasValue(sourceSpellName))
+            {
+                action.spellID = int.Parse(spellsTable.GetValue("id", sourceSpellName));
+                SpellRecord.SpellRecordData spellRecord;
+                if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(action.spellID, out spellRecord))
+                {
+                    action.classicEffects = spellRecord.effects;
+                }
+                else
+                {
+                    QuestMachine.LogFormat("CastSpellDo could not find spell matching spellID '{0}' from spell '{1}'", spellID, sourceSpellName);
+                    SetComplete();
+                }
+            }
+            else
+            {
+                QuestMachine.LogFormat("CastSpellDo could not resolve spell '{0}' in Quests-Spells data table", sourceSpellName);
+                SetComplete();
+            }
 
             return action;
         }
+
+        public override void Update(Task caller)
+        {
+            // Validate
+            if (spellID == -1 || classicEffects == null || classicEffects.Length == 0 || taskSymbol == null || lastReadySpell == null)
+            {
+                lastReadySpell = null;
+                return;
+            }
+
+            // Compare readied effect properties to spell record
+            for (int i = 0; i < classicEffects.Length; i++)
+            {
+                // Effect slot must be populated
+                if (classicEffects[i].type == -1 || classicEffects[i].subType == -1)
+                    continue;
+
+                // Bundle must have contain native effects matching this classic effect
+                if (!lastReadySpell.HasMatchForClassicEffect(classicEffects[i]))
+                {
+                    lastReadySpell = null;
+                    return;
+                }
+            }
+
+            // Only reached here if action is running and matching spell is cast
+            ParentQuest.StartTask(taskSymbol);
+            SetComplete();
+        }
+
+        public override void SetComplete()
+        {
+            base.SetComplete();
+            GameManager.Instance.PlayerEffectManager.OnNewReadySpell -= PlayerEffectManager_OnNewReadySpell;
+            GameManager.Instance.PlayerEffectManager.OnCastReadySpell -= PlayerEffectManager_OnCastReadySpell;
+        }
+
+        #region Event Handlers
+
+        private void PlayerEffectManager_OnNewReadySpell(EntityEffectBundle spell)
+        {
+            // Store last ready spell to evaluate on next tick
+            lastReadySpell = spell;
+        }
+
+        private void PlayerEffectManager_OnCastReadySpell(EntityEffectBundle spell)
+        {
+            // Clear last ready spell so player can't queue it up before entering location
+            lastReadySpell = null;
+        }
+
+        #endregion
 
         #region Serialization
 
@@ -60,6 +140,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public int spellID;
+            public SpellRecord.EffectRecordData[] classicEffects;
             public Symbol taskSymbol;
         }
 
@@ -67,6 +148,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             SaveData_v1 data = new SaveData_v1();
             data.spellID = spellID;
+            data.classicEffects = classicEffects;
             data.taskSymbol = taskSymbol;
 
             return data;
@@ -79,6 +161,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             SaveData_v1 data = (SaveData_v1)dataIn;
             spellID = data.spellID;
+            classicEffects = data.classicEffects;
             taskSymbol = data.taskSymbol;
         }
 
