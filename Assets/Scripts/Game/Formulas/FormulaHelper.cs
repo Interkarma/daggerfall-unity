@@ -941,41 +941,53 @@ namespace DaggerfallWorkshop.Game.Formulas
             int biographyMod = 0;
 
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (effectFlags == DFCareer.EffectFlags.Paralysis)
-                toleranceFlags = target.Career.Paralysis;
-            if (effectFlags == DFCareer.EffectFlags.Magic)
+            if ((effectFlags & DFCareer.EffectFlags.Paralysis) != 0)
             {
-                toleranceFlags = target.Career.Magic;
-                if (target == playerEntity)
-                    biographyMod = playerEntity.BiographyResistMagicMod;
+                toleranceFlags |= target.Career.Paralysis;
+                // Innate immunity if high elf. Start with 100 saving throw, but can be modified by
+                // tolerance flags. Note this differs from classic, where high elves have 100% immunity
+                // regardless of tolerance flags.
+                if (target == playerEntity && playerEntity.Race == Races.HighElf)
+                    savingThrow = 100;
             }
-            else if (effectFlags == DFCareer.EffectFlags.Poison)
+            if ((effectFlags & DFCareer.EffectFlags.Magic) != 0)
             {
-                toleranceFlags = target.Career.Poison;
+                toleranceFlags |= target.Career.Magic;
                 if (target == playerEntity)
-                    biographyMod = playerEntity.BiographyResistPoisonMod;
+                    biographyMod += playerEntity.BiographyResistMagicMod;
             }
-            else if (effectFlags == DFCareer.EffectFlags.Fire)
-                toleranceFlags = target.Career.Fire;
-            else if (effectFlags == DFCareer.EffectFlags.Frost)
-                toleranceFlags = target.Career.Frost;
-            else if (effectFlags == DFCareer.EffectFlags.Shock)
-                toleranceFlags = target.Career.Shock;
-            else if (effectFlags == DFCareer.EffectFlags.Disease)
+            if ((effectFlags & DFCareer.EffectFlags.Poison) != 0)
             {
-                toleranceFlags = target.Career.Disease;
+                toleranceFlags |= target.Career.Poison;
                 if (target == playerEntity)
-                    biographyMod = playerEntity.BiographyResistDiseaseMod;
+                    biographyMod += playerEntity.BiographyResistPoisonMod;
+            }
+            if ((effectFlags & DFCareer.EffectFlags.Fire) != 0)
+                toleranceFlags |= target.Career.Fire;
+            if ((effectFlags & DFCareer.EffectFlags.Frost) != 0)
+                toleranceFlags |= target.Career.Frost;
+            if ((effectFlags & DFCareer.EffectFlags.Shock) != 0)
+                toleranceFlags |= target.Career.Shock;
+            if ((effectFlags & DFCareer.EffectFlags.Disease) != 0)
+            {
+                toleranceFlags |= target.Career.Disease;
+                if (target == playerEntity)
+                    biographyMod += playerEntity.BiographyResistDiseaseMod;
             }
 
-            if (toleranceFlags == DFCareer.Tolerance.Immune)
-                return 0;
-            if (toleranceFlags == DFCareer.Tolerance.CriticalWeakness)
-                return 100;
-            if (toleranceFlags == DFCareer.Tolerance.LowTolerance)
-                savingThrow = 25;
-            if (toleranceFlags == DFCareer.Tolerance.Resistant)
-                savingThrow = 75;
+            // Note: Differing from classic implementation here. In classic
+            // immune grants always 100% resistance and critical weakness is
+            // always 0% resistance if there is no immunity. Here we are using
+            // a method that allows mixing different tolerance flags, getting
+            // rid of related exploits when creating a character class.
+            if ((toleranceFlags & DFCareer.Tolerance.Immune) != 0)
+                savingThrow += 50;
+            if ((toleranceFlags & DFCareer.Tolerance.CriticalWeakness) != 0)
+                savingThrow -= 50;
+            if ((toleranceFlags & DFCareer.Tolerance.LowTolerance) != 0)
+                savingThrow -= 25;
+            if ((toleranceFlags & DFCareer.Tolerance.Resistant) != 0)
+                savingThrow += 25;
 
             savingThrow += biographyMod + modifier;
             if (elementType == DFCareer.Elements.Frost && target == playerEntity && playerEntity.Race == Races.Nord)

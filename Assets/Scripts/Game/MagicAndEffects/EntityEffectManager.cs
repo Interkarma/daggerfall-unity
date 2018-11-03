@@ -413,6 +413,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
+                // Special handling for paralysis
+                if (effect is Paralyze)
+                {
+                    // Immune if saving throw made
+                    if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
+                    {
+                        if (IsPlayerEntity || showNonPlayerFailures)
+                        {
+                            // Output "Save versus spell made." for external contact spells
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                        }
+                        continue;
+                    }
+
+                    // Immune in god mode
+                    if (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode)
+                        continue;
+                }
+
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
 

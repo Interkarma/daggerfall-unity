@@ -609,7 +609,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             int roll = UnityEngine.Random.Range(1, 100);
             bool outcome = (roll <= ChanceValue());
 
-            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (outcome) ? "success" : "fail");
+            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, ChanceValue(), roll, (outcome) ? "success" : "fail");
 
             return outcome;
         }
