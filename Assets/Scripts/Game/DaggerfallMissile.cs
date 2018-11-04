@@ -199,9 +199,13 @@ namespace DaggerfallWorkshop.Game
                 goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
 
                 Vector3 adjust;
-                // Offset up so it comes from where it looks like it should from on the enemy sprites
+                // Offset up so it comes from same place LOS check is done from
                 if (caster != GameManager.Instance.PlayerEntityBehaviour)
-                    adjust = new Vector3(0, 0.6f, 0);
+                {
+                    CharacterController controller = caster.transform.GetComponent<CharacterController>();
+                    adjust = caster.transform.forward * 0.6f;
+                    adjust.y = controller.height / 4;
+                }
                 else
                 {
                     // Offset forward to avoid collision with player
@@ -279,7 +283,9 @@ namespace DaggerfallWorkshop.Game
 
                         if (caster != GameManager.Instance.PlayerEntityBehaviour)
                         {
-                            DaggerfallEntityBehaviour entityBehaviour = arrowHit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                            DaggerfallEntityBehaviour entityBehaviour = null;
+                            if (arrowHit.transform)
+                                entityBehaviour = arrowHit.transform.GetComponent<DaggerfallEntityBehaviour>();
                             if (entityBehaviour == caster.Target)
                             {
                                 EnemyAttack attack = caster.GetComponent<EnemyAttack>();
@@ -312,7 +318,7 @@ namespace DaggerfallWorkshop.Game
 
         private void FixedUpdate()
         {
-            if (isArrow && missileReleased && goModel && Physics.SphereCast(transform.position, 0.3f, goModel.transform.forward, out arrowHit, 1f))
+            if (isArrow && missileReleased && goModel && Physics.SphereCast(goModel.transform.position, 0.05f, goModel.transform.forward, out arrowHit, 1f))
             {
                 impactDetected = true;
             }

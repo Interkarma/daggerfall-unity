@@ -116,6 +116,9 @@ namespace DaggerfallWorkshop.Game
 
         public void BowDamage(Vector3 direction)
         {
+            if (entityBehaviour.Target == null)
+                return;
+
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
                 damage = ApplyDamageToPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand));
@@ -265,6 +268,8 @@ namespace DaggerfallWorkshop.Game
 
         private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
         {
+            if (entityBehaviour.Target == null)
+                return 0;
             // TODO: Merge with hit code in WeaponManager to eliminate duplicate code
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             EnemyEntity targetEntity = entityBehaviour.Target.Entity as EnemyEntity;
