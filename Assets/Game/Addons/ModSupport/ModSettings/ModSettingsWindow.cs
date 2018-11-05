@@ -443,7 +443,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (!settings.HasLoadedPresets)
                 settings.LoadPresets();
 
-            presetPicker = new PresetPicker(uiManager, this, mod, settings);
+            presetPicker = new PresetPicker(uiManager, mod, settings);
             presetPicker.ApplyChangesCallback = RefreshControls;
             uiManager.PushWindow(presetPicker);
         }
