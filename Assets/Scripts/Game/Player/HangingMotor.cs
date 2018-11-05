@@ -11,12 +11,20 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private PlayerGroundMotor groundMotor;
         private ClimbingMotor climbingMotor;
-        private PlayerMoveScanner playerScanner;
+        private PlayerMoveScanner scanner;
         private Transform camTransform;
         private PlayerMotor playerMotor;
         private Entity.PlayerEntity player;
-        private float hangingStartTimer = 0;
+        private enum HangingTransitionState
+        {
+            None,
+            ExitImmediately,
+            //ExitAfterTimer,
+            BeginAfterTimer
+        }
+        private float startTimer = 0;
         private float hangingContinueTimer = 0;
+        private float exitTimer = 0;
         private float rappelTimer;
         private bool isLosingGrip = false;
         private Vector3 lastPosition = Vector3.zero;
@@ -35,8 +43,8 @@ namespace DaggerfallWorkshop.Game
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
         private const int continueHangMinChance = 100;
 
-        public bool IsHanging { get; private set; } 
-        public bool EjectToClimbing { get; private set; }
+        public bool IsHanging { get; private set; }
+        public bool IsWithinHangingDistance { get; private set; }
         private void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -47,7 +55,7 @@ namespace DaggerfallWorkshop.Game
             speedChanger = GetComponent<PlayerSpeedChanger>();
             groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
-            playerScanner = GetComponent<PlayerMoveScanner>();
+            scanner = GetComponent<PlayerMoveScanner>();
             camTransform = GameManager.Instance.MainCamera.transform;
         }
 
@@ -55,58 +63,82 @@ namespace DaggerfallWorkshop.Game
         {
             if (!DaggerfallUnity.Settings.AdvancedClimbing)
                 return;
+            if (levitateMotor.IsLevitating)
+                return;
 
-            float startHangSkillCheckFrequency = 14f;
             float continueHangingSkillCheckFrequency = 14f;
-
+            float halfHeight = (controller.height / 2f);
             bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
+            //inputForward = true;
+            bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
+            bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
+            IsWithinHangingDistance = (scanner.HeadHitDistance > halfHeight - 0.17f && scanner.HeadHitDistance < halfHeight - 0.09f);
 
             bool inputAbortCondition = (InputManager.Instance.HasAction(InputManager.Actions.Crouch)
                                         || InputManager.Instance.HasAction(InputManager.Actions.Jump));
+            
+            bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startHangingHorizontalTolerance;
+            bool forwardStationaryNearCeiling = inputForward && IsWithinHangingDistance && horizontallyStationary;
+            //bool pushingFaceAgainstWallNearCeiling = IsHanging && !climbingMotor.IsClimbing && touchingSides && forwardStationaryNearCeiling;
+            bool pushingHeadAgainstCeilingWhileClimbing = climbingMotor.IsClimbing && !IsHanging && touchingAbove && forwardStationaryNearCeiling;
+            bool doHanging;
+            // TODO: maybe this variable should be in climbing motor.  
+            /*if (pushingFaceAgainstWallNearCeiling)
+                doHanging = HangingTransition(HangingTransitionState.ExitAfterTimer);
+            else */if (pushingHeadAgainstCeilingWhileClimbing)
+                doHanging = HangingTransition(HangingTransitionState.BeginAfterTimer);
+            else if (IsHanging)
+                doHanging = true;
+            else
+                doHanging = HangingTransition(HangingTransitionState.ExitImmediately);
 
-            float halfHeight = (controller.height / 2f);
-
-            // Should we abort hanging?
+            /*
             if (inputAbortCondition
-                || (playerMotor.CollisionFlags & CollisionFlags.Above) == 0
-                || (playerScanner.HeadHitDistance < halfHeight - 0.17f || playerScanner.HeadHitDistance > halfHeight - 0.09f)
+                || touchingSides
+                || touchingSides && inputForward && horizontallyStationary
+                || !withinHangingDistance
                 || levitateMotor.IsLevitating
                 )
             {
-                RestartHangingTimer();
-                lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
-
+                HangingTransition(HangingTransitionState.ExitImmediately);
             }
-            else // Schedule Hanging events
-            {   
-                // schedule hanging start
-                if (hangingStartTimer <= (playerMotor.systemTimerUpdatesDivisor * startHangSkillCheckFrequency))
-                    hangingStartTimer += Time.deltaTime;
-                else
+            else */// Schedule Hanging events
+            if (doHanging)
+            {
+                /*if (!IsHanging)
                 {
-                    // skill check to see if we catch the wall 
-                    if (climbingMotor.ClimbingSkillCheck(100))
-                        StartHanging();
+                    // schedule hanging start
+                    if (hangingStartTimer <= (playerMotor.systemTimerUpdatesDivisor * startHangSkillCheckFrequency))
+                        hangingStartTimer += Time.deltaTime;
                     else
-                        hangingStartTimer = 0;
+                    {
+                        // skill check to see if we catch the ceiling 
+                        //if (climbingMotor.ClimbingSkillCheck(100))
+                            StartHanging();
+                        //else
+                        //    hangingStartTimer = 0;
+                    }
                 }
-
-                // schedule climbing continues, Faster updates if slipping
-                if (hangingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isLosingGrip ? regainHoldSkillCheckFrequency : continueHangingSkillCheckFrequency)))
-                    hangingContinueTimer += Time.deltaTime;
                 else
-                {
-                    hangingContinueTimer = 0;
-
-                    // TODO: Disable weapon while hanging.
-
-                    // it's harder to regain hold while losing grip than it is to continue climbing with a good hold on wall
-                    if (isLosingGrip)
-                        isLosingGrip = !climbingMotor.ClimbingSkillCheck(regainHoldMinChance);
+                {*/
+                    // schedule climbing continues, Faster updates if slipping
+                    if (hangingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isLosingGrip ? regainHoldSkillCheckFrequency : continueHangingSkillCheckFrequency)))
+                        hangingContinueTimer += Time.deltaTime;
                     else
-                        isLosingGrip = !climbingMotor.ClimbingSkillCheck(continueHangMinChance);
-                }
+                    {
+                        hangingContinueTimer = 0;
+
+                        // TODO: Disable weapon while hanging.
+
+                        // it's harder to regain hold while losing grip than it is to continue hanging with a good hold on ceiling
+                        if (isLosingGrip)
+                            isLosingGrip = !climbingMotor.ClimbingSkillCheck(regainHoldMinChance);
+                        else
+                            isLosingGrip = !climbingMotor.ClimbingSkillCheck(continueHangMinChance);
+                    }
+                //}
+
             }
 
             // execute schedule
@@ -117,6 +149,51 @@ namespace DaggerfallWorkshop.Game
 
                 acrobatMotor.Falling = false;
             }
+        }
+
+        private bool HangingTransition(HangingTransitionState transState)
+        {
+            float startTimerMax = 14f;
+            float exitTimerMax = 14f;
+            bool shouldHang = false;
+            switch (transState)
+            { 
+                case HangingTransitionState.BeginAfterTimer:
+                    if (startTimer <= (playerMotor.systemTimerUpdatesDivisor * startTimerMax))
+                    {
+                        startTimer += Time.deltaTime;
+                        shouldHang = false;
+                    }
+                    else
+                    {
+                        StartHanging();
+                        startTimer = 0;
+                        shouldHang = true;
+                    }
+                    break;
+                // TODO: make this exit begin climbing.
+                /*case HangingTransitionState.ExitAfterTimer:
+                    if (exitTimer <= (playerMotor.systemTimerUpdatesDivisor * exitTimerMax))
+                    {
+                        exitTimer += Time.deltaTime;
+                        shouldHang = true;
+                    }
+                    else
+                    {
+                        // Exit Hanging, basically exit immediately
+                        CancelHanging();
+                        shouldHang = false;
+                    }
+                    break;*/
+                case HangingTransitionState.ExitImmediately:
+                    CancelHanging();
+                    GetLastHorizontalPositon();
+                    shouldHang = false;
+                    break;
+            }
+            //lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
+
+            return shouldHang;
         }
 
         private void HangMoveDirection()
@@ -161,15 +238,20 @@ namespace DaggerfallWorkshop.Game
 
                 showHangingModeMessage = false;
                 IsHanging = true;
-                climbingMotor.RestartClimbingTimer();
+                climbingMotor.StopClimbing(IsHanging);
             }
         }
 
-        public void RestartHangingTimer()
+        public void CancelHanging()
         {
             IsHanging = false;
             showHangingModeMessage = true;
-            hangingStartTimer = 0;
+            startTimer = 0;
+        }
+
+        private void GetLastHorizontalPositon()
+        {
+            lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
         }
     }
 }
