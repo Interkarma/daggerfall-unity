@@ -9,10 +9,7 @@
 // Notes:
 //
 
-using UnityEngine;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Entity;
-using System;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {

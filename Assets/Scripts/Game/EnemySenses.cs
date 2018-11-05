@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 directionToTarget;
         float distanceToPlayer;
         float distanceToTarget;
+        DaggerfallEntityBehaviour lastTarget;
         float lastDistanceToTarget;
         float targetRateOfApproach;
         Vector3 lastKnownTargetPos;
@@ -240,8 +241,15 @@ namespace DaggerfallWorkshop.Game
                 if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && entityBehaviour.Target == Player)
                     entityBehaviour.Target = null;
 
+                // Reset these values if no target
                 if (entityBehaviour.Target == null)
+                {
                     lastKnownTargetPos = ResetPlayerPos;
+                    directionToTarget = ResetPlayerPos;
+                    lastDistanceToTarget = 0;
+                    targetRateOfApproach = 0;
+                    distanceToTarget = 0;
+                }
 
                 if ((motor.IsHostile && entityBehaviour.Target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
                 {
@@ -261,12 +269,23 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Compare change in target position to give AI some ability to read opponent's movements
-                if (lastDistanceToTarget != 0)
+
+                if (entityBehaviour.Target != null && entityBehaviour.Target == lastTarget)
                 {
-                    targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
+                    if (DaggerfallUnity.Settings.EnhancedCombatAI)
+                        targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
+                }
+                else
+                {
+                    lastDistanceToTarget = 0;
+                    targetRateOfApproach = 0;
                 }
 
-                lastDistanceToTarget = distanceToTarget;
+                if (entityBehaviour.Target != null)
+                {
+                    lastDistanceToTarget = distanceToTarget;
+                    lastTarget = entityBehaviour.Target;
+                }
             }
 
             if (Player != null)
@@ -460,6 +479,30 @@ namespace DaggerfallWorkshop.Game
                 return false;
         }
 
+        public bool TargetHasBackTurned()
+        {
+            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
+            directionToLastKnownTarget2D.y = 0;
+
+            Vector3 targetDirection2D;
+
+            if (entityBehaviour.Target == Player)
+            {
+                Camera mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+                targetDirection2D = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
+            }
+            else
+                targetDirection2D = new Vector3(entityBehaviour.Target.transform.forward.x, 0, entityBehaviour.Target.transform.forward.z);
+
+            float angle = Vector3.Angle(directionToLastKnownTarget2D, targetDirection2D);
+
+            if (angle > 157.5f)
+                return true;
+            else
+                return false;
+        }
+
         public bool TargetIsWithinPitchAngle(float targetAngle)
         {
             Vector3 toTarget = lastKnownTargetPos - transform.position;
@@ -561,7 +604,7 @@ namespace DaggerfallWorkshop.Game
                         priority += 5;
 
                     if (see)
-                        priority += 20;
+                        priority += 10;
 
                     // Add distance priority
                     float distancePriority = 30 - distanceToTarget;
@@ -574,6 +617,8 @@ namespace DaggerfallWorkshop.Game
                         highestPriority = priority;
                         highestPriorityTarget = targetBehaviour;
                         sawSelectedTarget = see;
+                        directionToTargetHolder = directionToTarget;
+                        distanceToTargetHolder = distanceToTarget;
                     }
                 }
             }

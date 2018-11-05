@@ -278,6 +278,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Assign spell - caster only spells are cast instantly
             readySpell = spell;
+            RaiseOnNewReadySpell(spell);
             readySpellDoesNotCostSpellPoints = noSpellPointCost;
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
                 instantCast = true;
@@ -1313,6 +1314,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Clear ready spell and reset casting - do not store last spell if casting from item
+            RaiseOnCastReadySpell(readySpell);
             lastSpell = readySpell;
             readySpell = null;
             readySpellCastingCost = 0;
@@ -1355,6 +1357,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Clear ready spell and reset casting - do not store last spell if casting from item
+            RaiseOnCastReadySpell(readySpell);
             lastSpell = (readySpellDoesNotCostSpellPoints) ? null : readySpell;
             readySpell = null;
             readySpellCastingCost = 0;
@@ -1604,6 +1607,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (OnAddIncumbentState != null)
                 OnAddIncumbentState();
+        }
+
+        // OnNewReadySpell
+        public delegate void OnNewReadySpellEventHandler(EntityEffectBundle spell);
+        public event OnNewReadySpellEventHandler OnNewReadySpell;
+        protected virtual void RaiseOnNewReadySpell(EntityEffectBundle spell)
+        {
+            if (OnNewReadySpell != null)
+                OnNewReadySpell(spell);
+        }
+
+        // OnCastReadySpell
+        public delegate void OnCastReadySpellEventHandler(EntityEffectBundle spell);
+        public event OnCastReadySpellEventHandler OnCastReadySpell;
+        protected virtual void RaiseOnCastReadySpell(EntityEffectBundle spell)
+        {
+            if (OnCastReadySpell != null)
+                OnCastReadySpell(spell);
         }
 
         #endregion

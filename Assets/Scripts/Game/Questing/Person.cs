@@ -503,8 +503,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignGender(string genderName)
         {
-            // Set gender
-            npcGender = GetGender(genderName);
+            // Set gender if not already assigned by questor injection
+            if (!isQuestor)
+                npcGender = GetGender(genderName);
         }
 
         void AssignHUDFace(int faceIndex = -1)
@@ -897,6 +898,7 @@ namespace DaggerfallWorkshop.Game.Questing
             FactionFile.FactionData factionData = GetFactionData(questorData.factionID);
             this.factionData = factionData;
             nameSeed = questorData.nameSeed;
+            npcGender = questorData.gender;
 
             return true;
         }

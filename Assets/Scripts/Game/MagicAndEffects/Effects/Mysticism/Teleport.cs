@@ -14,7 +14,6 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -96,11 +95,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             (incumbent as Teleport).PromptPlayer();
         }
 
-        public override void End()
-        {
-            base.End();
-        }
-
         #endregion
 
         #region Private Methods
@@ -146,8 +140,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Is player in same interior as anchor?
-            bool sameInterior = IsSameInterior();
-            if (sameInterior)
+            if (IsSameInterior())
             {
                 // Just need to move player
                 serializablePlayer.RestorePosition(anchorPosition);
@@ -164,11 +157,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 // Need to load some other part of the world again - player could be anywhere
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
                 playerEnterExit.RestorePositionHelper(anchorPosition, false);
-            }
 
-            // When moving anywhere other than same interior trigger a fade so transition appears smoother
-            if (!sameInterior)
+                // When moving anywhere other than same interior trigger a fade so transition appears smoother
                 DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
+            }
 
             // End and resign
             // Player will need to create a new teleport with a new anchor from here
@@ -182,17 +174,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Helpers
 
-        // Cache required references in Start() or Resume() (only one or the other is called)
-        void CacheReferences()
+        // Cache required references
+        bool CacheReferences()
         {
             // Get peered SerializablePlayer and PlayerEnterExit
-            serializablePlayer = caster.GetComponent<SerializablePlayer>();
-            playerEnterExit = caster.GetComponent<PlayerEnterExit>();
+            if (!serializablePlayer)
+                serializablePlayer = caster.GetComponent<SerializablePlayer>();
+
+            if (!playerEnterExit)
+                playerEnterExit = caster.GetComponent<PlayerEnterExit>();
+
             if (!serializablePlayer || !playerEnterExit)
             {
                 Debug.LogError("Teleport effect could not find both SerializablePlayer and PlayerEnterExit components.");
-                return;
+                return false;
             }
+
+            return true;
         }
 
         // Checks if player is in same building or dungeon interior as anchor
@@ -231,14 +229,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (caster == null || caster != GameManager.Instance.PlayerEntityBehaviour)
                 return;
 
-            // Get peered SerializablePlayer and PlayerEnterExit
-            SerializablePlayer serializablePlayer = caster.GetComponent<SerializablePlayer>();
-            PlayerEnterExit playerEnterExit = caster.GetComponent<PlayerEnterExit>();
-            if (!serializablePlayer || !playerEnterExit)
-            {
-                Debug.LogError("Teleport effect OnRespawnerComplete() could not find both SerializablePlayer and PlayerEnterExit components.");
+            // Get peered SerializablePlayer and PlayerEnterExit if they haven't been cached yet
+            if (!CacheReferences())
                 return;
-            }
 
             // Restore final position and unwire event
             serializablePlayer.RestorePosition(anchorPosition);

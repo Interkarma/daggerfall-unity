@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeleeAttackSpeed: 1.25
-  MeleeDistance: 3.2
+  MeleeDistance: 2.25
   MeleeTimer: 0
   ArrowMissilePrefab: {fileID: 114624404217668130, guid: 0fdc5fb41ee669e49b44322b7db26e9e,
     type: 2}
