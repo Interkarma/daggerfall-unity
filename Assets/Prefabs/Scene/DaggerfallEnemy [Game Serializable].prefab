@@ -241,6 +241,8 @@ MonoBehaviour:
   MeleeAttackSpeed: 1.25
   MeleeDistance: 2.25
   MeleeTimer: 0
+  ArrowMissilePrefab: {fileID: 114624404217668130, guid: 0fdc5fb41ee669e49b44322b7db26e9e,
+    type: 2}
 --- !u!114 &11435454
 MonoBehaviour:
   m_ObjectHideFlags: 1

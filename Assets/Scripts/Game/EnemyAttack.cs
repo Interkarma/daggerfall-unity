@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game
         public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
         public float MeleeDistance = 2.25f;          // Maximum distance for melee attack
         public float MeleeTimer = 0;                // Must be 0 for a melee attack or touch spell to be done
+        public DaggerfallMissile ArrowMissilePrefab;
 
         //EnemyMotor motor;
         EnemySenses senses;
@@ -70,7 +71,7 @@ namespace DaggerfallWorkshop.Game
             // If a bow attack has reached the shoot frame we can shoot an arrow
             else if (mobile.ShootArrow)
             {
-                BowDamage(); // TODO: Shoot 3D projectile instead of doing an instant hit
+                ShootBow();
                 mobile.ShootArrow = false;
 
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
@@ -111,6 +112,18 @@ namespace DaggerfallWorkshop.Game
 
                 MeleeTimer /= 980; // Approximates classic frame update
             }
+        }
+
+        public void BowDamage(Vector3 direction)
+        {
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
+                damage = ApplyDamageToPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand));
+            else
+                damage = ApplyDamageToNonPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand), direction, true);
+
+            Items.DaggerfallUnityItem arrow = Items.ItemBuilder.CreateItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow);
+            entityBehaviour.Target.Entity.Items.AddItem(arrow);
         }
 
         #region Private Methods
@@ -165,7 +178,7 @@ namespace DaggerfallWorkshop.Game
                     if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);
                     else
-                        damage = ApplyDamageToNonPlayer(weapon);
+                        damage = ApplyDamageToNonPlayer(weapon, transform.forward);
                 }
                 else
                 {
@@ -185,29 +198,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void BowDamage()
+        private void ShootBow()
         {
             if (entityBehaviour)
             {
-                // Can we see target? Then apply damage.
-                if (senses.TargetInSight)
+                DaggerfallMissile missile = Instantiate(ArrowMissilePrefab);
+                if (missile)
                 {
-                    EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-                    if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
-                        damage = ApplyDamageToPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand));
-                    else
-                        damage = ApplyDamageToNonPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand), true);
-
-                    // Play arrow sound and add arrow to target inventory
-                    if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
-                        GameManager.Instance.PlayerObject.SendMessage("PlayArrowSound");
-                    else
-                    {
-                        EnemySounds targetSounds = entityBehaviour.Target.GetComponent<EnemySounds>();
-                        targetSounds.PlayArrowSound();
-                    }
-                    Items.DaggerfallUnityItem arrow = Items.ItemBuilder.CreateItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow);
-                    entityBehaviour.Target.Entity.Items.AddItem(arrow);
+                    missile.Caster = entityBehaviour;
+                    missile.TargetType = TargetTypes.SingleTargetAtRange;
+                    missile.ElementType = ElementTypes.None;
+                    missile.IsArrow = true;
                 }
             }
         }
@@ -262,7 +263,7 @@ namespace DaggerfallWorkshop.Game
             return damage;
         }
 
-        private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, bool bowAttack = false)
+        private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
         {
             // TODO: Merge with hit code in WeaponManager to eliminate duplicate code
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
@@ -311,7 +312,7 @@ namespace DaggerfallWorkshop.Game
                         if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
                             knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
                         targetMotor.KnockBackSpeed = knockBackSpeed;
-                        targetMotor.KnockBackDirection = transform.forward;
+                        targetMotor.KnockBackDirection = direction;
                     }
                 }
 
