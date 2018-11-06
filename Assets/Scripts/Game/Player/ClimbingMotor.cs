@@ -297,7 +297,8 @@ namespace DaggerfallWorkshop.Game
                 showClimbingModeMessage = false;
                 isClimbing = true;
                 hangingMotor.CancelHanging();
-                
+                // reset jumping in case we jumped onto the wall
+                acrobatMotor.Jumping = false;
                 fromCeiling = false;
             }
         }
@@ -471,7 +472,7 @@ namespace DaggerfallWorkshop.Game
             }
             else // do slipping down wall
             {
-                acrobatMotor.CheckInitFall();
+                acrobatMotor.CheckInitFall(ref moveDirection);
                 acrobatMotor.ApplyGravity(ref moveDirection);
             }
             // finalize climbing movement

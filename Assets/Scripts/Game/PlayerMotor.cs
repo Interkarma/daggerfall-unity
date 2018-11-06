@@ -289,7 +289,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                acrobatMotor.CheckInitFall();
+                acrobatMotor.CheckInitFall(ref moveDirection);
 
                 acrobatMotor.CheckAirControl(ref moveDirection, speed);
             }

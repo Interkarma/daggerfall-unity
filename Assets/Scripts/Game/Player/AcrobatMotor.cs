@@ -133,12 +133,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// If we stepped over a cliff or something, set the height at which we started falling
         /// </summary>
-        public void CheckInitFall()
+        public void CheckInitFall(ref Vector3 moveDirection)
         {
             if (!falling)
             {
                 falling = true;
                 fallStartLevel = myTransform.position.y;
+                // begin y movement at 0
+                if (!jumping)
+                    moveDirection.y = 0;
             }
         }
 
