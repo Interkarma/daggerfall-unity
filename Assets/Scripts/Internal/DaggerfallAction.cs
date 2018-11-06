@@ -447,23 +447,11 @@ namespace DaggerfallWorkshop
         /// <param name="thisAction"></param>
         public static void CastSpell(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            SpellRecord.SpellRecordData spell;
-            if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(thisAction.Index, out spell))
+            // Spell is readied on player for free and action state set to end
+            if (thisAction.CurrentState != ActionState.End)
             {
-                // Create effect bundle settings from classic spell
-                EffectBundleSettings bundleSettings = new EffectBundleSettings();
-                if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
-                {
-                    // Directly assign bundle to player - are there any spell actions this isn't appropriate for?
-                    // Could need some refinement later, but this is suitable for the majority of "utility" spell activators like levitate
-                    EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, GameManager.Instance.PlayerEntityBehaviour);
-                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
-                    Debug.LogFormat("Action Type 9: CastSpell {0} ({1})", thisAction.Index, bundleSettings.Name);
-                }
-            }
-            else
-            {
-                Debug.LogFormat("Action Type 9: CastSpell {0} - failed to GetClassicSpellRecord() for this index/id", thisAction.Index);
+                GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, false);
+                thisAction.CurrentState = ActionState.End;
             }
         }
 

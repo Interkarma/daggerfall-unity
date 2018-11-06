@@ -244,6 +244,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Public Methods
 
         /// <summary>
+        /// Sets ready spell directly from a classic spell index.
+        /// </summary>
+        public bool SetReadySpell(int classicSpellIndex, bool noSpellPointCost = false)
+        {
+            SpellRecord.SpellRecordData spell;
+            if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(classicSpellIndex, out spell))
+            {
+                // Create effect bundle settings from classic spell
+                EffectBundleSettings bundleSettings = new EffectBundleSettings();
+                if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
+                {
+                    EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, GameManager.Instance.PlayerEntityBehaviour);
+                    return SetReadySpell(bundle, noSpellPointCost);
+                }
+            }
+            else
+            {
+                Debug.LogFormat("SetReadySpell() failed to GetClassicSpellRecord() for classic spell index {0}", classicSpellIndex);
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
