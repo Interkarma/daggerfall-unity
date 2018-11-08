@@ -143,13 +143,14 @@ namespace DaggerfallWorkshop.Game
             bool nonOrthogonalStart = !isClimbing && inputForward && !horizontallyStationary;
             bool forwardStationaryNearCeiling = inputForward && hangingMotor.IsWithinHangingDistance && horizontallyStationary;
             bool pushingFaceAgainstWallNearCeiling = hangingMotor.IsHanging && !isClimbing && touchingSides && forwardStationaryNearCeiling;
-
+            bool climbingOrForward = (isClimbing || inputForward);
             RaycastHit hit;
             bool hangTouchNonVertical = hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
 
             // Should we reset climbing starter timers?
             if (!pushingFaceAgainstWallNearCeiling &&
                 (inputAbortCondition
+                || !climbingOrForward 
                 || !touchingSides && !fromCeiling
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
