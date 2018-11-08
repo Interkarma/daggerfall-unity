@@ -140,7 +140,6 @@ namespace DaggerfallWorkshop.Game
             bool touchingGround = (playerMotor.CollisionFlags & CollisionFlags.Below) != 0;
             bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
             bool slippedToGround = isSlipping && touchingGround;
-            bool hangTransToClimb = hangingMotor.IsHanging && inputForward && horizontallyStationary;
             bool nonOrthogonalStart = !isClimbing && inputForward && !horizontallyStationary;
             bool forwardStationaryNearCeiling = inputForward && hangingMotor.IsWithinHangingDistance && horizontallyStationary;
             bool pushingFaceAgainstWallNearCeiling = hangingMotor.IsHanging && !isClimbing && touchingSides && forwardStationaryNearCeiling;
@@ -151,7 +150,7 @@ namespace DaggerfallWorkshop.Game
             // Should we reset climbing starter timers?
             if (!pushingFaceAgainstWallNearCeiling &&
                 (inputAbortCondition
-                || !touchingSides //&& !hangTransToClimb
+                || !touchingSides && !fromCeiling
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 || slippedToGround
@@ -290,7 +289,10 @@ namespace DaggerfallWorkshop.Game
         {
             if (!isClimbing)
             {
-                if (showClimbingModeMessage)
+                // !fromCeiling is a hack here, it skips the first showing of climbing mode message
+                // of two showings.  It shows twice because when the player pushes against a wall from hanging
+                // it loses contact with wall briefly, cancelling climbing.
+                if (showClimbingModeMessage && !fromCeiling)
                     DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
                 // Disable further showing of climbing mode message until current climb attempt is stopped
                 // to keep it from filling message log
