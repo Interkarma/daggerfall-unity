@@ -596,11 +596,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Select)
             {
-                int canCarry = CanCarryAmount(item);
+                int canCarry;
                 if (usingWagon)
-                {
-                    canCarry = Math.Max(canCarry, WagonCanHoldAmount(item));
-                }
+                    canCarry = WagonCanHoldAmount(item);
+                else 
+                    canCarry = CanCarryAmount(item);
                 if (windowMode == WindowModes.Buy)
                 {
                     TransferItem(item, remoteItems, basketItems, canCarry, equip: true);
