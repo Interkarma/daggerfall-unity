@@ -11,7 +11,7 @@ notebook,           Notebook
 notebookInfo,       Click a note to move. Right click to delete. Click in-between to add a new note.
 selectedEntry,      Selected entry:
 confirmMove,        Do you want to change the position of this entry?
-confirmMove2,       (If you select 'Yes' then it will be moved to before the next entry clicked)
+confirmMove2,       (It will be moved to before the next entry clicked)
 confirmRemove,      Are you sure you want to remove this entry?
 confirmRemove2,     (It will be deleted permanently and cannot be restored)
 selectedPlace,      Selected location:
@@ -21,3 +21,10 @@ enterNote,          Enter your note below:
 readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
+completedQuest,     completed
+failedQuest,        failed
+finishQuestHeader,  {0} {1} at {2}:
+quest,              Quest
+noteHeader,         {0} in {1}:
+northern,           (northern)
+southern,           (southern)

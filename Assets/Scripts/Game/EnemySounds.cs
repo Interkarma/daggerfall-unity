@@ -138,14 +138,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public void PlayArrowSound()
-        {
-            if (IsReady())
-            {
-                dfAudioSource.PlayOneShot(SoundClips.ArrowHit, 1, 1.1f);
-            }
-        }
-
         public void PlayMissSound(Items.DaggerfallUnityItem weapon)
         {
             if (IsReady())

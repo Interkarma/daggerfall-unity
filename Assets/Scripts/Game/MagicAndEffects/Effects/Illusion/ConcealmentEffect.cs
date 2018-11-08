@@ -9,9 +9,7 @@
 // Notes:
 //
 
-using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {

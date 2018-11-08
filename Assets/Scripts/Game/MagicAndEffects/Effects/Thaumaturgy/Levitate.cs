@@ -9,8 +9,6 @@
 // Notes:
 //
 
-using System;
-using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 

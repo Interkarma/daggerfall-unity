@@ -501,7 +501,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
                 playerMotor.transform.position = allocatedBed;
-                playerMotor.FixStanding();
+                playerMotor.FixStanding(0.4f, 0.4f);
             }
         }
 

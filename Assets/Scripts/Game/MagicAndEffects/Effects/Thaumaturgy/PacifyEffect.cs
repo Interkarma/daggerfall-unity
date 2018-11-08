@@ -23,10 +23,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #region Fields
 
         const int totalVariants = 4;
-        const string textDatabase = "ClassicEffects";
-        readonly string[] subGroupTextKeys = new string[] { "animal", "undead", "humanoid", "daedra" };
+        //const string textDatabase = "ClassicEffects";
+        readonly string[] subGroupTextKeys = { "animal", "undead", "humanoid", "daedra" };
 
-        VariantProperties[] variantProperties = new VariantProperties[totalVariants];
+        readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
         #endregion
 

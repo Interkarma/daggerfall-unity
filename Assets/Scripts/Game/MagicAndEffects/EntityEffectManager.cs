@@ -244,6 +244,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Public Methods
 
         /// <summary>
+        /// Sets ready spell directly from a classic spell index.
+        /// </summary>
+        public bool SetReadySpell(int classicSpellIndex, bool noSpellPointCost = false)
+        {
+            SpellRecord.SpellRecordData spell;
+            if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(classicSpellIndex, out spell))
+            {
+                // Create effect bundle settings from classic spell
+                EffectBundleSettings bundleSettings = new EffectBundleSettings();
+                if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
+                {
+                    EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, GameManager.Instance.PlayerEntityBehaviour);
+                    return SetReadySpell(bundle, noSpellPointCost);
+                }
+            }
+            else
+            {
+                Debug.LogFormat("SetReadySpell() failed to GetClassicSpellRecord() for classic spell index {0}", classicSpellIndex);
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Assigns a new spell to be cast.
         /// For player entity, this will display "press button to fire spell" message.
         /// </summary>
@@ -278,6 +302,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Assign spell - caster only spells are cast instantly
             readySpell = spell;
+            RaiseOnNewReadySpell(spell);
             readySpellDoesNotCostSpellPoints = noSpellPointCost;
             if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
                 instantCast = true;
@@ -1313,6 +1338,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Clear ready spell and reset casting - do not store last spell if casting from item
+            RaiseOnCastReadySpell(readySpell);
             lastSpell = readySpell;
             readySpell = null;
             readySpellCastingCost = 0;
@@ -1355,6 +1381,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Clear ready spell and reset casting - do not store last spell if casting from item
+            RaiseOnCastReadySpell(readySpell);
             lastSpell = (readySpellDoesNotCostSpellPoints) ? null : readySpell;
             readySpell = null;
             readySpellCastingCost = 0;
@@ -1521,6 +1548,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         continue;
                     }
 
+                    if (instancedBundle.caster == null)
+                    {
+                        Debug.LogWarning("RestoreInstancedBundleSaveData() could not restore effect as caster was not found.");
+                        continue;
+                    }
+
                     // Resume effect
                     effect.ParentBundle = instancedBundle;
                     effect.Resume(effectData, this, instancedBundle.caster);
@@ -1556,7 +1589,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(loadID);
                 if (!serializableEnemy)
-                    throw new Exception(string.Format("EntityEffect.RestoreEffectSaveData() could not find SerializableEnemy for LoadID {0} in StateManager.", loadID));
+                {
+                    Debug.LogError(string.Format("EntityEffect.RestoreEffectSaveData() could not find SerializableEnemy for LoadID {0} in StateManager.", loadID));
+                    return null;
+                }
 
                 caster = serializableEnemy.GetComponent<DaggerfallEntityBehaviour>();
                 if (!caster)
@@ -1595,6 +1631,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (OnAddIncumbentState != null)
                 OnAddIncumbentState();
+        }
+
+        // OnNewReadySpell
+        public delegate void OnNewReadySpellEventHandler(EntityEffectBundle spell);
+        public event OnNewReadySpellEventHandler OnNewReadySpell;
+        protected virtual void RaiseOnNewReadySpell(EntityEffectBundle spell)
+        {
+            if (OnNewReadySpell != null)
+                OnNewReadySpell(spell);
+        }
+
+        // OnCastReadySpell
+        public delegate void OnCastReadySpellEventHandler(EntityEffectBundle spell);
+        public event OnCastReadySpellEventHandler OnCastReadySpell;
+        protected virtual void RaiseOnCastReadySpell(EntityEffectBundle spell)
+        {
+            if (OnCastReadySpell != null)
+                OnCastReadySpell(spell);
         }
 
         #endregion

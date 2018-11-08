@@ -15,6 +15,7 @@ using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -27,6 +28,7 @@ namespace DaggerfallWorkshop.Game.Player
         private const string PrefixDateHeader = "D:";
         private const string PrefixQuestion = "Q:";
         private const string PrefixAnswer = "A:";
+        const string textDatabase = "DaggerfallUI";
 
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
@@ -105,7 +107,8 @@ namespace DaggerfallWorkshop.Game.Player
         {
             List<TextFile.Token> note = new List<TextFile.Token>();
             note.Add(new TextFile.Token() {
-                text = string.Format("{0} in {1}:", DaggerfallUnity.Instance.WorldTime.Now.DateTimeString(), MacroHelper.CityName(null)),
+                text = string.Format(TextManager.Instance.GetText(textDatabase, "noteHeader"),
+                    DaggerfallUnity.Instance.WorldTime.Now.DateTimeString(), MacroHelper.CityName(null)),
                 formatting = TextFile.Formatting.TextHighlight,
             });
             note.Add(NothingToken);
@@ -167,6 +170,43 @@ namespace DaggerfallWorkshop.Game.Player
         {
             if (message != null && message.Length > 0)
                 finishedQuests.Add(message);
+        }
+
+        public void AddFinishedQuest(List<Message> messages)
+        {
+            if (messages != null && messages.Count > 0)
+            {
+                Quest quest = messages[0].ParentQuest;
+                string questName = string.IsNullOrEmpty(quest.DisplayName) ? TextManager.Instance.GetText(textDatabase, "quest") : quest.DisplayName;
+                List<TextFile.Token> entry = CreateFinishedQuest(questName, quest.QuestSuccess);
+                foreach (Message msg in messages)
+                {
+                    foreach (TextFile.Token token in msg.GetTextTokens())
+                        entry.Add(token);
+                    entry.Add(TextFile.NewLineToken);
+
+                    if ((entry.Count - 2) >= (DaggerfallQuestJournalWindow.maxLinesQuests * 2))
+                    {
+                        finishedQuests.Add(entry.ToArray());
+                        AddFinishedQuest(msg.GetTextTokens());
+                        entry.Clear();
+                    }
+                }
+                finishedQuests.Add(entry.ToArray());
+            }
+        }
+
+        private static List<TextFile.Token> CreateFinishedQuest(string questName, bool success)
+        {
+            string status = TextManager.Instance.GetText(textDatabase, success ? "completedQuest" : "failedQuest");
+            List<TextFile.Token> entry = new List<TextFile.Token>();
+            entry.Add(new TextFile.Token() {
+                text = string.Format(TextManager.Instance.GetText(textDatabase, "finishQuestHeader"),
+                    questName, status, DaggerfallUnity.Instance.WorldTime.Now.MidDateTimeString()),
+                formatting = TextFile.Formatting.TextHighlight,
+            });
+            entry.Add(NothingToken);
+            return entry;
         }
 
         #endregion

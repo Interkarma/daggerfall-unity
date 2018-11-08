@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedElements = ElementTypes.Magic;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            properties.DurationCosts = MakeEffectCosts(20,8);
+            properties.DurationCosts = MakeEffectCosts(20, 8);
         }
 
         public override void ConstantEffect()

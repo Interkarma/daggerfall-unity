@@ -29,8 +29,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "LGBK00I0.IMG";
 
         const int NULLINT = -1;
-        const int maxLinesQuests = 19;
-        public const int maxLinesSmall = 26;
+        public const int maxLinesQuests = 20;
+        public const int maxLinesSmall = 28;
         const float textScaleSmall = 0.8f;
 
         int lastMessageIndex = NULLINT;
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton                      = new Button();
             exitButton.Position             = new Vector2(278, 187);
             exitButton.Size                 = new Vector2(30, 9);
-            exitButton.OnMouseClick         += exitButton_OnMouseClick;
+            exitButton.OnMouseClick         += ExitButton_OnMouseClick;
             exitButton.Name                 = "exit_button";
             mainPanel.Components.Add(exitButton);
 
@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EnterNote(0);
         }
 
-        public void exitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        public void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }
@@ -307,8 +307,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.Log("Find " + findPlaceName + findPlaceRegion);
                 this.CloseWindow();
                 DaggerfallUI.Instance.DfTravelMapWindow.GotoLocation(findPlaceName, findPlaceRegion);
-                //uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
-                //DaggerfallUI.Instance.DfTravelMapWindow.OnPush;
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
         }

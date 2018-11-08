@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -12,12 +12,13 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop
 {
@@ -119,7 +120,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.NegativeZ,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.PositiveY,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.NegativeY,  new ActionDelegate(Move)},
-        {DFBlock.RdbActionFlags.CastSpell,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.CastSpell,  new ActionDelegate(CastSpell)},
         {DFBlock.RdbActionFlags.ShowText,   new ActionDelegate(ShowText)},
         {DFBlock.RdbActionFlags.ShowTextWithInput,   new ActionDelegate(ShowTextWithInput)},
         {DFBlock.RdbActionFlags.Teleport,   new ActionDelegate(Teleport)},
@@ -446,7 +447,12 @@ namespace DaggerfallWorkshop
         /// <param name="thisAction"></param>
         public static void CastSpell(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            //Debug.Log("Action Type 9: CastSpell");
+            // Spell is readied on player for free and action state set to end
+            if (thisAction.CurrentState != ActionState.End)
+            {
+                GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, false);
+                thisAction.CurrentState = ActionState.End;
+            }
         }
 
         /// <summary>
