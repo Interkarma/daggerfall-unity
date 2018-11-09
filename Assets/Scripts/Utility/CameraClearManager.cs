@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game;
-using UnityStandardAssets.ImageEffects;
 
 /// <summary>
 /// Changes camera clear setting if player is in interior or exterior.
@@ -23,9 +22,7 @@ public class CameraClearManager : MonoBehaviour
     public CameraClearFlags cameraClearExterior = CameraClearFlags.Depth;
     public CameraClearFlags cameraClearInterior = CameraClearFlags.Color;
     public Color cameraClearColor = Color.black;
-    //public bool toggleGlobalFog = true;
 
-    //GlobalFog globalFog;
     bool lastInside = false;
 
     void Start()
@@ -34,11 +31,6 @@ public class CameraClearManager : MonoBehaviour
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
         if (mainCamera == null)
             mainCamera = GameManager.Instance.MainCamera;
-
-        //if (mainCamera != null)
-        //{
-        //    globalFog = mainCamera.GetComponent<GlobalFog>();
-        //}
     }
 
     void Update()
@@ -51,30 +43,12 @@ public class CameraClearManager : MonoBehaviour
                 // Now inside
                 mainCamera.clearFlags = cameraClearInterior;
                 mainCamera.backgroundColor = cameraClearColor;
-                //Debug.Log("Camera clear set to inside");
-
-                // Comment this out, We're not Unity 5.5 anymore - MeteoricDragon
-                // Disable global fog inside
-                // This fixes an issue with solid camera clear not working in Unity 5.5
-                //if (toggleGlobalFog && globalFog)
-                //{
-                //    globalFog.enabled = false;
-                //}
-
                 lastInside = isInside;
             }
             else if (!isInside && lastInside)
             {
                 // Now outside
                 mainCamera.clearFlags = cameraClearExterior;
-                //Debug.Log("Camera clear set to outside");
-
-                // Enable global fog outside
-                //if (toggleGlobalFog && globalFog)
-                //{
-                //    globalFog.enabled = true;
-                //}
-
                 lastInside = isInside;
             }   
         }
