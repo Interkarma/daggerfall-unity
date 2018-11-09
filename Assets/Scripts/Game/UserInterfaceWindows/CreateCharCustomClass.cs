@@ -357,13 +357,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void specialAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, advantages, createdClass, this);
+            createCharSpecialAdvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, advantages, disadvantages, createdClass, this);
             uiManager.PushWindow(createCharSpecialAdvantageWindow);
         }
 
         public void specialDisadvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            createCharSpecialDisadvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, createdClass, this, true);
+            createCharSpecialDisadvantageWindow = new CreateCharSpecialAdvantageWindow(uiManager, disadvantages, advantages, createdClass, this, true);
             uiManager.PushWindow(createCharSpecialDisadvantageWindow);
         }
 
