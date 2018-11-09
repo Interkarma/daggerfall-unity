@@ -995,7 +995,7 @@ namespace DaggerfallWorkshop.Utility
             go.transform.localPosition = position;
 
             // Parent to scene marker (if any)
-            // This ensures mobile ques objects parented to action marker translates correctly
+            // This ensures mobile quest objects parented to action marker translates correctly
             DaggerfallMarker sceneMarker = GetDaggerfallMarker(marker.markerID);
             if (sceneMarker)
                 go.transform.parent = sceneMarker.transform;
@@ -1017,14 +1017,27 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         static DaggerfallMarker GetDaggerfallMarker(ulong markerID)
         {
+            DaggerfallMarker result = null;
             DaggerfallMarker[] markers = GameObject.FindObjectsOfType<DaggerfallMarker>();
             foreach(DaggerfallMarker marker in markers)
             {
                 if (marker.MarkerID == markerID)
-                    return marker;
+                {
+                    // Workaround for edge case of duplicate markerIDs in existing saves
+                    // When same block used more than once in dungeon it becomes possible to have duplicate marker IDs for quest placement
+                    // The below ensures marker is always unique or null to prevent bad parenting behaviour
+                    // Only real impact of this change is that quest items will not translate with parent marker object if action record present on marker
+                    // This is a very rare situation and mainly used when raising treasure room cage for totem in Daggerfall castle (a unique block)
+                    // In vast majority of cases parenting is not even required, so minimal harm just filtering duplicates here
+                    // The way marker IDs are generated should still be improved in future
+                    if (result == null)
+                        result = marker;
+                    else
+                        return null;
+                }
             }
 
-            return null;
+            return result;
         }
 
         #endregion
