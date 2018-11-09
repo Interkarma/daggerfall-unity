@@ -31,6 +31,7 @@ namespace DaggerfallConnect.Arena2
         const int paletteDataLength = 768;
         const int paletteColorCount = 256;
         const int paletteMultiplier = 4;
+        const float minFrameDelay = (740f / sampleRate);
 
         readonly FileProxy vidFile = new FileProxy();
         VidHeader header = new VidHeader();
@@ -78,7 +79,7 @@ namespace DaggerfallConnect.Arena2
         /// Open a VID file.
         /// Always uses a memory stream for performance.
         /// </summary>
-        /// <param name="filename">Filname of VID to open.</param>
+        /// <param name="filename">Filename of VID to open.</param>
         public bool Open(string filename)
         {
             // Open file proxy
@@ -181,6 +182,15 @@ namespace DaggerfallConnect.Arena2
             // Seems to differ mainly at beginning and end of video
             //frameDelay = ((float)(header.GlobalDelay + (float)lastDelay) * (float)delayMultiplier) / (float)sampleRate;
             frameDelay = (double)audioBuffer.Length / (double)sampleRate;
+
+            // Daggerfall .VID files always have at least an audioBuffer.Length of 740 while in the middle of audio portions.
+            // As the audio portion ends, this length can be much shorter, causing frameDelay to become very short
+            // and making playback speed up. Enforcing a minimum based on a length of 740 to fix this.
+            // This fixes the ends of ANIM0000.VID and ANIM0005.VID.
+            if (frameDelay < minFrameDelay)
+            {
+                frameDelay = minFrameDelay;
+            }
 
             long bytesRead = reader.BaseStream.Position - streamPosition;
             streamPosition = reader.BaseStream.Position;
