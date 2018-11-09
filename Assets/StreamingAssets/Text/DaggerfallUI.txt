@@ -2,6 +2,8 @@
 
 schema: *key,text
 
+- Journal window:
+
 dialogButtonInfo,   Switch between: Active Quests :: Finished Quests :: Notebook
 activeQuests,       Active Quests
 activeQuestsInfo,   Click on an active quest that has a target location to initiate travel.
@@ -18,13 +20,30 @@ selectedPlace,      Selected location:
 confirmFind,        Do you want to open the world map and prepare to travel to this place?
 confirmFind2,       (Note: you can still cancel the travel from the map)
 enterNote,          Enter your note below:
-readMap,            Discovered the location of %map after studying a map.
-readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
-readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
 completedQuest,     completed
 failedQuest,        failed
 finishQuestHeader,  {0} {1} at {2}:
 quest,              Quest
 noteHeader,         {0} in {1}:
+
+- Inventory window:
+
+readMap,            Discovered the location of %map after studying a map.
+readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
+readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
+readMapFail,        You have already recorded all locations in this region!
+howManyItems,       Pick how many items (max {0})?
+lightDouse,         You douse the %it.
+lightLight,         You light the %it.
+lightDies,          Your %it flickers and dies.
+lightEmpty,         Your %it has no fuel left.
+lightRefuel,        You refuel your %it with a bottle of oil.
+lightFull,          Your %it is full.
+kgSrc,              kilograms
+kgRep,              kg
+damSrc,             points of damage
+damRep,             damage
+arSrc,              armor rating
+arRep,              armor
 northern,           (northern)
 southern,           (southern)

@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using System.Linq;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -144,6 +145,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.spellbook = entity.SerializeSpellbook();
             data.playerEntity.crimeCommitted = entity.CrimeCommitted;
             data.playerEntity.haveShownSurrenderToGuardsDialogue = entity.HaveShownSurrenderToGuardsDialogue;
+            data.playerEntity.lightSourceUID = (entity.LightSource == null) ? 0 : entity.LightSource.UID;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -284,6 +286,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CrimeCommitted = data.playerEntity.crimeCommitted;
             entity.HaveShownSurrenderToGuardsDialogue = data.playerEntity.haveShownSurrenderToGuardsDialogue;
             entity.SetCurrentLevelUpSkillSum();
+            entity.LightSource = entity.Items.GetItem(data.playerEntity.lightSourceUID);
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 
