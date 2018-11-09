@@ -20,10 +20,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         const int candleArchive = 210;
         const int candleRecord = 3;
-        const int candleFramesPerSecond = 5;
         const float moveSpeed = 8.0f;
 
-        DaggerfallBillboard myBillboard;
         Vector3 startLocalPosition;
         Vector3 lastOffsetPosition = Vector3.zero;
         Vector3 nextOffsetPosition = Vector3.zero;
@@ -33,11 +31,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(candleArchive, candleRecord, transform);
             go.transform.localPosition = Vector3.zero;
-            myBillboard = go.GetComponent<DaggerfallBillboard>();
-            myBillboard.FramesPerSecond = candleFramesPerSecond;
-            myBillboard.FaceY = true;
-            myBillboard.OneShot = false;
-            myBillboard.GetComponent<MeshRenderer>().receiveShadows = false;
 
             startLocalPosition = transform.localPosition;
             lastOffsetPosition = startLocalPosition;
