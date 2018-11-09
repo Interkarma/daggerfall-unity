@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game
         GameObject gameObjectCameraExteriorAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
         Camera cameraExteriorAutomap = null; // camera for exterior automap camera        
         Quaternion cameraTransformRotationSaved; // camera rotation is saved so that after closing and reopening exterior automap the camera transform settings can be restored
-        float cameraOrthographicSizeSaved; // camera's orthographic size is saved so that after closing and reopening exterior automap the camera settings can be restored
+        //float cameraOrthographicSizeSaved; // camera's orthographic size is saved so that after closing and reopening exterior automap the camera settings can be restored
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
@@ -261,7 +261,7 @@ namespace DaggerfallWorkshop.Game
 
             // restore camera rotation and zoom
             gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
-            cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
+            //cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
 
             // recreate building nameplates (since a discovery could have happened since exterior automap has been opened last time)
             createBuildingNameplates(location);
@@ -279,7 +279,7 @@ namespace DaggerfallWorkshop.Game
         public void updateAutomapStateOnWindowPop()
         {
             cameraTransformRotationSaved = gameObjectCameraExteriorAutomap.transform.rotation;
-            cameraOrthographicSizeSaved = cameraExteriorAutomap.orthographicSize;
+            //cameraOrthographicSizeSaved = cameraExteriorAutomap.orthographicSize;
 
             // destroy the camera so it does not use system resources
             if (gameObjectCameraExteriorAutomap != null)
@@ -449,7 +449,7 @@ namespace DaggerfallWorkshop.Game
             Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera
 
             cameraTransformRotationSaved = Quaternion.identity;
-            cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
+            //cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
 
             // important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
             PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
