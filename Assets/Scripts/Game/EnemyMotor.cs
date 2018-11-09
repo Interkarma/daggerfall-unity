@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         float changeStateTimer;                     // Time until next change in behavior. Padding to prevent instant reflexes.
         bool pursuing;                              // Is pursuing
         bool retreating;                            // Is retreating
+        bool fallDetected;                          // Detected a fall in front of us, so don't move there
 
         public bool IsLevitating
         {
@@ -354,17 +355,32 @@ namespace DaggerfallWorkshop.Game
 
                 if (evaluateBow || evaluateRangedMagic)
                 {
-                    if (senses.TargetIsWithinYawAngle(22.5f) && !mobile.IsPlayingOneShot())
+                    if (senses.TargetIsWithinYawAngle(22.5f))
                     {
-                        if (evaluateBow)
+                        if (!mobile.IsPlayingOneShot())
                         {
-                            // Random chance to shoot bow
-                            if (classicUpdate && DFRandom.rand() < 1000)
+                            if (evaluateBow)
                             {
-                                if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
-                                    mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                                else if (mobile.Summary.Enemy.HasRangedAttack2)
-                                    mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                                // Random chance to shoot bow
+                                if (classicUpdate && DFRandom.rand() < 1000)
+                                {
+                                    if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
+                                        mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                                    else if (mobile.Summary.Enemy.HasRangedAttack2)
+                                        mobile.ChangeEnemyState(MobileStates.RangedAttack2);
+                                }
+                                // Otherwise hold ground
+                                else
+                                {
+                                    if (mobile.Summary.EnemyState == MobileStates.Move)
+                                        mobile.ChangeEnemyState(MobileStates.Idle);
+                                }
+                            }
+                            // Random chance to shoot spell
+                            else if (classicUpdate && DFRandom.rand() % 40 == 0
+                                && entityEffectManager.SetReadySpell(selectedSpell))
+                            {
+                                mobile.ChangeEnemyState(MobileStates.Spell);
                             }
                             // Otherwise hold ground
                             else
@@ -372,18 +388,6 @@ namespace DaggerfallWorkshop.Game
                                 if (mobile.Summary.EnemyState == MobileStates.Move)
                                     mobile.ChangeEnemyState(MobileStates.Idle);
                             }
-                        }
-                        // Random chance to shoot spell
-                        else if (classicUpdate && DFRandom.rand() % 40 == 0
-                            && entityEffectManager.SetReadySpell(selectedSpell))
-                        {
-                            mobile.ChangeEnemyState(MobileStates.Spell);
-                        }
-                        // Otherwise hold ground
-                        else
-                        {
-                            if (mobile.Summary.EnemyState == MobileStates.Move)
-                                mobile.ChangeEnemyState(MobileStates.Idle);
                         }
                     }
                     else
@@ -653,7 +657,7 @@ namespace DaggerfallWorkshop.Game
             else if (flies || isLevitating)
                 controller.Move(motion * Time.deltaTime);
             else
-                controller.SimpleMove(motion);
+                MoveIfNoFallDetected(motion);
         }
 
         private void BackAwayFromTarget(Vector3 direction, float moveSpeed)
@@ -684,7 +688,45 @@ namespace DaggerfallWorkshop.Game
                 else if (flies || isLevitating)
                     controller.Move(motion * Time.deltaTime);
                 else
-                    controller.SimpleMove(motion);
+                    MoveIfNoFallDetected(motion);
+            }
+        }
+
+        private void MoveIfNoFallDetected(Vector3 motion)
+        {
+            // Check that we aren't walking off a ledge
+            if (classicUpdate)
+            {
+                // First check if there is something to collide with directly in movement direction, such as upward sloping ground.
+                // If there is, we assume we won't fall.
+                RaycastHit hit;
+                Vector3 rayOrigin = transform.position;
+                Vector3 rayDirection = targetPos - transform.position;
+                rayDirection.y = 0;
+                Ray ray = new Ray(rayOrigin, rayDirection);
+                if (Physics.Raycast(ray, out hit, 1))
+                    fallDetected = false;
+                // Nothing to collide with. Check for a reasonably short fall.
+                else
+                {
+                    Vector3 motion2d = motion.normalized;
+                    motion2d.y = 0;
+                    motion2d *= 2;
+
+                    ray = new Ray(transform.position + motion2d, Vector3.down);
+                    if (Physics.Raycast(ray, out hit, 5))
+                        fallDetected = false;
+                    else
+                        fallDetected = true;
+                }
+            }
+
+            if (!fallDetected)
+                controller.SimpleMove(motion);
+            else if (mobile.Summary.EnemyState == MobileStates.Move && DaggerfallUnity.Settings.EnhancedCombatAI)
+            {
+                mobile.ChangeEnemyState(MobileStates.Idle);
+                SetChangeStateTimer();
             }
         }
 

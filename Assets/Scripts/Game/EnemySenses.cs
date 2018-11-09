@@ -556,29 +556,8 @@ namespace DaggerfallWorkshop.Game
                 if (targetBehaviour.EntityType == EntityTypes.EnemyMonster || targetBehaviour.EntityType == EntityTypes.EnemyClass
                     || targetBehaviour.EntityType == EntityTypes.Player)
                 {
-                    Vector3 toTarget = targetBehaviour.transform.position - transform.position;
-                    directionToTarget = toTarget.normalized;
-                    distanceToTarget = toTarget.magnitude;
-
-                    EnemySenses targetSenses = null;
-                    if (targetBehaviour.EntityType == EntityTypes.EnemyMonster || targetBehaviour.EntityType == EntityTypes.EnemyClass)
-                        targetSenses = targetBehaviour.GetComponent<EnemySenses>();
-
-                    bool see = CanSeeTarget(targetBehaviour);
-
-                    if (targetSenses)
-                    {
-                        // Is potential target neither visible nor in area around player? If so, reject as target.
-                        if (!targetSenses.WouldBeSpawnedInClassic && !see)
-                            continue;
-                    }
-
-                    // For now, quest AI only targets player
-                    if (questBehaviour && targetBehaviour != Player)
-                        continue;
-
-                    // For now, quest AI can't be targeted
-                    if (targetSenses && targetSenses.QuestBehaviour)
+                    // NoTarget mode
+                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && targetBehaviour == Player)
                         continue;
 
                     // Can't target ally
@@ -593,9 +572,30 @@ namespace DaggerfallWorkshop.Game
                             continue;
                     }
 
-                    // NoTarget mode
-                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && targetBehaviour == Player)
+                    // For now, quest AI only targets player
+                    if (questBehaviour && targetBehaviour != Player)
                         continue;
+
+                    EnemySenses targetSenses = null;
+                    if (targetBehaviour.EntityType == EntityTypes.EnemyMonster || targetBehaviour.EntityType == EntityTypes.EnemyClass)
+                        targetSenses = targetBehaviour.GetComponent<EnemySenses>();
+
+                    // For now, quest AI can't be targeted
+                    if (targetSenses && targetSenses.QuestBehaviour)
+                        continue;
+
+                    Vector3 toTarget = targetBehaviour.transform.position - transform.position;
+                    directionToTarget = toTarget.normalized;
+                    distanceToTarget = toTarget.magnitude;
+
+                    bool see = CanSeeTarget(targetBehaviour);
+
+                    if (targetSenses)
+                    {
+                        // Is potential target neither visible nor in area around player? If so, reject as target.
+                        if (!targetSenses.WouldBeSpawnedInClassic && !see)
+                            continue;
+                    }
 
                     float priority = 0;
 
@@ -645,7 +645,22 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Check if line of sight to target
                     RaycastHit hit;
-                    Ray ray = new Ray(transform.position, directionToTarget);
+
+                    // Set origin of ray to approximate eye position
+                    CharacterController controller = entityBehaviour.transform.GetComponent<CharacterController>();
+                    Vector3 eyePos = transform.position;
+                    eyePos.y += controller.height / 4;
+
+                    // Set destination to the target's approximate eye position
+                    controller = target.transform.GetComponent<CharacterController>();
+                    Vector3 targetEyePos = target.transform.position;
+                    targetEyePos.y += controller.height / 4;
+
+                    // Check if can see.
+                    Vector3 eyeToTarget = targetEyePos - eyePos;
+                    Vector3 eyeDirectionToTarget = eyeToTarget.normalized;
+                    Ray ray = new Ray(eyePos, eyeDirectionToTarget);
+
                     if (Physics.Raycast(ray, out hit, SightRadius))
                     {
                         // Check if hit was target
