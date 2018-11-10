@@ -214,7 +214,8 @@ namespace DaggerfallWorkshop
 
         private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip clip, float volume)
         {
-            while (clip.loadState == AudioDataLoadState.Loading)
+            while (clip.loadState == AudioDataLoadState.Unloaded ||
+                   clip.loadState == AudioDataLoadState.Loading)
             {
                 yield return null;
             }

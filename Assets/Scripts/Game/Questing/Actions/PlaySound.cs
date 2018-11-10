@@ -127,7 +127,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip clip)
         {
-            while (clip.loadState == AudioDataLoadState.Loading)
+            while (clip.loadState == AudioDataLoadState.Unloaded ||
+                   clip.loadState == AudioDataLoadState.Loading)
             {
                 yield return null;
             }
