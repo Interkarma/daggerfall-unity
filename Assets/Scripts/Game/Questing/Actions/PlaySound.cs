@@ -13,6 +13,7 @@ using System.Collections;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using FullSerializer;
+using System;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -118,11 +119,20 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 var source = QuestMachine.Instance.GetComponent<AudioSource>();
                 if (source != null && !source.isPlaying)
                 {
-                    source.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
+                    DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(source, clip));
                     lastTimePlayed = gameSeconds;
                 }
             }
             // Unlike message posts, the play sound command performs until task is cleared
+        }
+
+        private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip clip)
+        {
+            while (clip.loadState == AudioDataLoadState.Loading)
+            {
+                yield return null;
+            }
+            source.PlayOneShot(clip);
         }
 
         #region Serialization

@@ -126,7 +126,8 @@ namespace DaggerfallWorkshop
             {
                 PreviewID = (int)dfUnity.SoundReader.GetSoundID(PreviewIndex);
                 PreviewClip = (SoundClips)PreviewIndex;
-                audioSource.PlayOneShot(dfUnity.SoundReader.GetAudioClip(PreviewIndex));
+                AudioClip clip = dfUnity.SoundReader.GetAudioClip(PreviewIndex);
+                DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(AudioSource, clip, 1.0f));
             }
         }
 
@@ -206,9 +207,18 @@ namespace DaggerfallWorkshop
                 if (clip)
                 {
                     audioSource.spatialBlend = spatialBlend;
-                    audioSource.PlayOneShot(clip, volumeScale * DaggerfallUnity.Settings.SoundVolume);
+                    DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(audioSource, clip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
                 }
             }
+        }
+
+        private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip clip, float volume)
+        {
+            while (clip.loadState == AudioDataLoadState.Loading)
+            {
+                yield return null;
+            }
+            source.PlayOneShot(clip, volume);
         }
 
         /// <summary>
