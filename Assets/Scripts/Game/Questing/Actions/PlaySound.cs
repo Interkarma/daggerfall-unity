@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             {
                 yield return null;
             }
-            source.PlayOneShot(clip);
+            source.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
         }
 
         #region Serialization
