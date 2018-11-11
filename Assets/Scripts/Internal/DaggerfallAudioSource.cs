@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(AudioSource))]
     public class DaggerfallAudioSource : MonoBehaviour
     {
+        const float audioClipMaxDelay = 0.150f; //give up if sound takes longer to load
+
         const int minIndex = 0;
         const int maxIndex = 458;
 
@@ -47,6 +49,7 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
         AudioClip audioClip;
+
 
         // Will enable/disable AudioSource based on player proximity.
         // This works around having too many point audio sources in scene by
@@ -212,14 +215,18 @@ namespace DaggerfallWorkshop
             }
         }
 
-        private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip clip, float volume)
+        private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip audioClip, float volume)
         {
-            while (clip.loadState == AudioDataLoadState.Unloaded ||
-                   clip.loadState == AudioDataLoadState.Loading)
+            float loadWaitTimer = 0f;
+            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
+                   audioClip.loadState == AudioDataLoadState.Loading)
             {
+                loadWaitTimer += Time.deltaTime;
+                if (loadWaitTimer > audioClipMaxDelay)
+                    yield break;
                 yield return null;
             }
-            source.PlayOneShot(clip, volume);
+            source.PlayOneShot(audioClip, volume);
         }
 
         /// <summary>

@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         /// or play sound (soundname) x y
         /// the second number is not currently used for anything - purpose is unkown.
 
+        const float audioClipMaxDelay = 0.150f; //give up if sound takes longer to load
 
         public string   soundName;              //used to lookup sound index in sound table
         public int      soundIndex;
@@ -125,14 +126,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Unlike message posts, the play sound command performs until task is cleared
         }
 
-        private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip clip)
+        private IEnumerator PlayOneShotWhenReady(AudioSource source, AudioClip audioClip)
         {
-            while (clip.loadState == AudioDataLoadState.Unloaded ||
-                   clip.loadState == AudioDataLoadState.Loading)
+            float loadWaitTimer = 0f;
+            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
+                   audioClip.loadState == AudioDataLoadState.Loading)
             {
+                loadWaitTimer += Time.deltaTime;
+                if (loadWaitTimer > audioClipMaxDelay)
+                    yield break;
                 yield return null;
             }
-            source.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
+            source.PlayOneShot(audioClip, DaggerfallUnity.Settings.SoundVolume);
         }
 
         #region Serialization
