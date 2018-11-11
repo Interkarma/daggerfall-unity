@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Determines if item is stackable.
-        /// Only ingredients, gold pieces, oil and arrows are stackable,
+        /// Only ingredients, gold pieces, potions, oil and arrows are stackable,
         /// but equipped items, enchanted ingredients and quest items are never stackable.
         /// </summary>
         /// <returns>True if item stackable.</returns>
@@ -545,6 +545,7 @@ namespace DaggerfallWorkshop.Game.Items
             if (IsIngredient ||
                 IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) ||
                 IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow) ||
+                IsOfTemplate(ItemGroups.UselessItems1, (int)UselessItems1.Glass_Bottle) ||
                 IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
                 return true;
             else

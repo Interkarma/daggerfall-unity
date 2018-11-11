@@ -597,7 +597,14 @@ namespace DaggerfallWorkshop.Game.Items
                 if (checkItem != item && 
                     checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && 
                     checkItem.IsStackable())
+                {
+                    // Checks inside item groups:
+                    // Potions
+                    if (item.IsOfTemplate(ItemGroups.UselessItems1, (int)UselessItems1.Glass_Bottle) && 
+                        checkItem.typeDependentData != item.typeDependentData)
+                        continue;
                     return checkItem;
+                }
             }
 
             return null;
