@@ -50,7 +50,6 @@ namespace DaggerfallWorkshop
         AudioSource audioSource;
         AudioClip audioClip;
 
-
         // Will enable/disable AudioSource based on player proximity.
         // This works around having too many point audio sources in scene by
         // turning off audio sources the player cannot possibly hear.
