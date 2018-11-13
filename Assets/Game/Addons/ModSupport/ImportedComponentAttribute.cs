@@ -29,13 +29,77 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [AttributeUsage(AttributeTargets.Class)]
     public class ImportedComponentAttribute : Attribute
     {
+        #region Types
+
         private struct ImportedComponentsData
         {
             public List<Component> Components;
             public Dictionary<string, ImportedComponentsData> Children;
         }
 
+        /// <summary>
+        /// A converter to store references to assets from the mod assetbundle.
+        /// </summary>
+        private class AssetConverter : fsConverter
+        {
+            public override bool CanProcess(Type type)
+            {
+                return typeof(UnityEngine.Object).IsAssignableFrom(type) && !typeof(Component).IsAssignableFrom(type);
+            }
+
+            public override fsResult TrySerialize(object instance, out fsData serialized, Type storageType)
+            {
+                var asset = instance as UnityEngine.Object;
+                serialized = asset ? new fsData(asset.name) : fsData.Null;
+                return fsResult.Success;
+            }
+
+            public override fsResult TryDeserialize(fsData data, ref object instance, Type storageType)
+            {
+                fsResult fsResult = fsResult.Success;
+                if (data.IsNull) return fsResult;
+                if ((fsResult += CheckType(data, fsDataType.String)).Failed) return fsResult;
+                return (fsResult += RetrieveAssetReference(data.AsString, ref instance));
+            }
+
+            public override object CreateInstance(fsData data, Type storageType)
+            {
+                return null;
+            }
+
+            public override bool RequestCycleSupport(Type storageType)
+            {
+                return false;
+            }
+
+            private fsResult RetrieveAssetReference(string name, ref object instance)
+            {
+                var asset = Serializer.Context.Get<Mod>().GetAsset<UnityEngine.Object>(name);
+                if (!asset)
+                    return fsResult.Fail(string.Format("Failed to restore reference to {0}; ensure that the the asset is bundled with the mod.", name));
+
+                instance = asset;
+                return fsResult.Success;
+            }
+        }
+
+        #endregion
+
+        #region Fields
+
+        readonly static fsSerializer fsSerializer = new fsSerializer();
         readonly static Dictionary<string, Type> types = new Dictionary<string, Type>();
+
+        #endregion
+
+        #region Constructors
+
+        static ImportedComponentAttribute()
+        {
+            fsSerializer.AddConverter(new AssetConverter());
+        }
+
+        #endregion
 
         #region Public Methods
 
@@ -64,7 +128,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             // Serialize imported components data
             fsData fsData;
-            ModManager._serializer.TrySerialize(importedComponentsData, out fsData);
+            fsSerializer.TrySerialize(importedComponentsData, out fsData);
             string path = Path.Combine(directory, MakeFileName(gameObject.name));
             File.WriteAllText(path, fsJsonPrinter.PrettyJson(fsData));
             return path;
@@ -79,6 +143,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="gameObject">A gameobject instance.</param>
         public static void Restore(Mod mod, GameObject gameObject)
         {
+            fsSerializer.Context.Set(mod);
             RestoreImportedComponents(mod, gameObject, fsJsonParser.Parse(LoadSerializedFile(mod, gameObject.name)));
         }
 
@@ -145,7 +210,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (type != null)
                 {
                     object instance = gameObject.AddComponent(type);
-                    ModManager._serializer.TryDeserialize(componentData, type, ref instance);
+                    fsResult fsResult = fsSerializer.TryDeserialize(componentData, type, ref instance);
+                    if (fsResult.HasWarnings)
+                        Debug.LogWarning(fsResult.FormattedMessages);
                 }
             }
 
