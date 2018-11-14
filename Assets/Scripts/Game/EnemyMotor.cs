@@ -766,6 +766,10 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
             }
+            else
+            {
+                return;
+            }
 
             float retreatDistanceBaseMult = 2.25f;
 
