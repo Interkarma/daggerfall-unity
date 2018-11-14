@@ -346,9 +346,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         public ModSettings.ModSettings GetSettings()
         {
-#pragma warning disable 618
             return new ModSettings.ModSettings(this);
-#pragma warning restore 618
         }
 
         /// <summary>

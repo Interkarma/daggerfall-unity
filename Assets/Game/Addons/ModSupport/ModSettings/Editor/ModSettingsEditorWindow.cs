@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     GUILayout.FlexibleSpace();
 
                     DrawHeader("Tools");
-                    if (GUILayout.Button("Import INI"))
+                    if (GUILayout.Button("Import Legacy INI"))
                     {
                         string iniPath;
                         if (!string.IsNullOrEmpty(iniPath = EditorUtility.OpenFilePanel("Select ini file", rootPath, "ini")))
