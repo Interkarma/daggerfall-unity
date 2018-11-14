@@ -50,7 +50,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Button saveButton               = new Button();
         Button deleteButton             = new Button();
 
-        Color titleBackgroundColor      = new Color(0, 0, 0, 0.7f);
         Color mainBackgroundColor       = new Color(0, 0, 0, 0.7f);
         Color infoBackgroundColor       = new Color(0.0f, 0.5f, 0.0f, 0.4f);
         Color creatorBackgroundColor    = new Color(0, 0, 1, 0.1f);
