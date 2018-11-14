@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -24,10 +24,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     public class GetItem : ActionTemplate
     {
         Symbol itemSymbol;
+        int textId;
 
         public override string Pattern
         {
-            get { return @"get item (?<anItem>[a-zA-Z0-9_.]+)"; }
+            get { return @"get item (?<anItem>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
+                         @"get item (?<anItem>[a-zA-Z0-9_.]+)"; }
         }
 
         public GetItem(Quest parentQuest)
@@ -45,6 +47,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             GetItem action = new GetItem(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
+            action.textId = Parser.ParseInt(match.Groups["id"].Value);
 
             return action;
         }
@@ -80,6 +83,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, ItemCollection.AddPosition.Front);
             }
 
+            // "saying" popup
+            if (textId != 0)
+            {
+                ParentQuest.ShowMessagePopup(textId);
+            }
+
             SetComplete();
         }
 
@@ -89,12 +98,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public struct SaveData_v1
         {
             public Symbol itemSymbol;
+            public int textId;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.itemSymbol = itemSymbol;
+            data.textId = textId;
 
             return data;
         }
@@ -106,6 +117,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             SaveData_v1 data = (SaveData_v1)dataIn;
             itemSymbol = data.itemSymbol;
+            textId = data.textId;
         }
 
         #endregion
