@@ -1,7 +1,14 @@
-﻿using DaggerfallConnect;
-using DaggerfallWorkshop.Game;
-using System.Collections;
-using System.Collections.Generic;
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Meteoric Dragon
+// Contributors:    
+// 
+// Notes:
+//
+
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
@@ -38,8 +45,6 @@ namespace DaggerfallWorkshop.Game
         {
             activePlatform = null;
         }
-
-        private void Update() { }
 
         /// <summary>
         /// Moves the player on solid ground & floating platforms.

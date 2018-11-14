@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Game.Player
                         note.Add(TextFile.NewLineToken);
                     else
                         WrapLinesIntoNote(note, token.text, token.formatting);
-                    
+
                     if ((note.Count - 2) >= (DaggerfallQuestJournalWindow.maxLinesSmall * 2))
                     {
                         notes.Add(note.ToArray());

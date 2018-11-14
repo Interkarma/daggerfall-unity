@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,15 +10,12 @@
 //
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
-
     public enum CameraRecoilSetting
     {
         Off,
@@ -27,6 +24,7 @@ namespace DaggerfallWorkshop.Game
         High,
         VeryHigh
     }
+
     public class CameraRecoiler : MonoBehaviour
     {
         private CameraRecoilSetting cameraRecoilSetting;
@@ -158,9 +156,7 @@ namespace DaggerfallWorkshop.Game
             float healthLostFactor = Mathf.Clamp((healthLost * 0.015f), 0.015f, 1f);
 
             // sway severity is a percentage of the timer remaining, and percentage of health lost factor
-            float rotationScalar = maxRotationScalar * (timer / timerStart) * healthLostFactor;
-
-            return rotationScalar;
+            return maxRotationScalar * (timer / timerStart) * healthLostFactor;
         }
 
         protected virtual Vector3 GetRotationVector(int healthLost, float rotationScalar)
@@ -170,10 +166,8 @@ namespace DaggerfallWorkshop.Game
             float xAngle = Mathf.Sin(timer) * rotationScalar * swayAxis.x;
             float yAngle = Mathf.Sin(timer) * rotationScalar * swayAxis.y;
 
-            Vector3 newViewPositon = new Vector3(xAngle, yAngle);
-
             // return vector for euler angles
-            return newViewPositon;
+            return new Vector3(xAngle, yAngle);
         }
 
         public void ResetRecoil()
