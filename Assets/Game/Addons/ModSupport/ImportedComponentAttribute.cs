@@ -29,12 +29,134 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [AttributeUsage(AttributeTargets.Class)]
     public class ImportedComponentAttribute : Attribute
     {
-        #region Types
+        #region Converters
 
-        private struct ImportedComponentsData
+        /// <summary>
+        /// A converter to store imported components on a gameobject.
+        /// This is only used on the actual prefab, not field references.
+        /// </summary>
+        private class ImportedComponentsConverter : fsDirectConverter
         {
-            public List<Component> Components;
-            public Dictionary<string, ImportedComponentsData> Children;
+            public override Type ModelType
+            {
+                get { return typeof(GameObject); }
+            }
+
+            public override fsResult TrySerialize(object instance, out fsData serialized, Type storageType)
+            {
+                var gameObject = instance as GameObject;
+                if (gameObject)
+                    return SerializeImportedComponents(gameObject, out serialized);
+
+                serialized = fsData.Null;
+                return fsResult.Fail("GameObject is not instantiated.");
+            }
+
+            public override fsResult TryDeserialize(fsData data, ref object instance, Type storageType)
+            {
+                fsResult fsResult = fsResult.Success;
+                var gameObject = instance as GameObject;
+                if (!gameObject) return fsResult += fsResult.Fail("GameObject is not instantiated.");
+                if ((fsResult += CheckType(data, fsDataType.Object)).Failed) return fsResult;
+                return fsResult += DeserializeImportedComponents(data, gameObject, Serializer.Context.Get<Mod>());
+            }
+
+            public override object CreateInstance(fsData data, Type storageType)
+            {
+                return null;
+            }
+
+            public override bool RequestCycleSupport(Type storageType)
+            {
+                return false;
+            }
+
+            private fsResult SerializeImportedComponents(GameObject gameObject, out fsData fsData)
+            {
+                fsData = fsData.Null;
+                fsResult fsResult = fsResult.Success;
+
+                // Get and destroy only imported components
+                List<fsData> components = null;
+                foreach (var component in gameObject.GetComponents(typeof(Component)))
+                {
+                    if (GetCustomAttribute(component.GetType(), typeof(ImportedComponentAttribute)) != null)
+                    {
+                        fsData componentData;
+                        if ((fsResult += Serializer.TrySerialize(component, out componentData)).Failed) return fsResult;
+                        (components ?? (components = new List<fsData>())).Add(componentData);
+                        UnityEngine.Object.DestroyImmediate(component, true);
+                    }
+                }
+
+                // Iterate children
+                Dictionary<string, fsData> children = null;
+                if (gameObject.transform.childCount > 0)
+                {
+                    children = new Dictionary<string, fsData>();
+                    for (int i = 0; i < gameObject.transform.childCount; i++)
+                    {
+                        Transform transform = gameObject.transform.GetChild(i);
+                        fsData childData;
+                        if ((fsResult += SerializeImportedComponents(transform.gameObject, out childData)).Failed) return fsResult;
+                        if (!childData.IsNull)
+                            children.Add(transform.gameObject.name, childData);
+                    }
+                }
+
+                // Make fsData only if there are imported components
+                if (components != null || children != null)
+                {
+                    fsData = new fsData(new Dictionary<string, fsData>
+                    {
+                        { "Components", new fsData(components) },
+                        { "Children", new fsData(children) }
+                    });
+                }
+
+                return fsResult;
+            }
+
+            private fsResult DeserializeImportedComponents(fsData fsData, GameObject gameObject, Mod mod)
+            {
+                fsResult fsResult = fsResult.Success;
+
+                if ((fsResult += CheckType(fsData, fsDataType.Object)).Failed) return fsResult;
+                Dictionary<string, fsData> dict = fsData.AsDictionary;
+
+                // Restore components on this gameobject
+                fsData components;
+                if ((fsResult += CheckKey(dict, "Components", out components)).Failed) return fsResult;
+                if ((fsResult += CheckType(components, fsDataType.Array)).Failed) return fsResult;
+                foreach (fsData componentData in components.AsList)
+                {
+                    // Get type name
+                    string typeName;
+                    if ((fsResult += DeserializeMember(componentData.AsDictionary, null, "$type", out typeName)).Failed) return fsResult;
+
+                    // Add component and deserialize
+                    Type type = FindType(mod, typeName);
+                    if (type == null) return fsResult += fsResult.Fail(string.Format("Failed to find type {0}.", typeName));
+                    object instance = gameObject.AddComponent(type);
+                    if ((fsResult += fsSerializer.TryDeserialize(componentData, type, ref instance)).Failed) return fsResult;
+                }
+
+                // Restore components on children
+                fsData children;
+                if ((fsResult += CheckKey(dict, "Children", out children)).Failed) return fsResult;
+                if (!children.IsNull)
+                {
+                    if ((fsResult += CheckType(children, fsDataType.Object)).Failed) return fsResult;
+                    foreach (KeyValuePair<string, fsData> childData in children.AsDictionary)
+                    {
+                        Transform child = gameObject.transform.Find(childData.Key);
+                        if (child == null) return fsResult += fsResult.Fail(string.Format("{0} not found on {1}", childData.Key, gameObject.name));
+                        if ((fsResult += DeserializeImportedComponents(childData.Value, child.gameObject, mod)).Failed) return fsResult;
+                    }
+                }
+
+                return fsResult;
+            }
         }
 
         /// <summary>
@@ -115,20 +237,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         /// <summary>
         /// Saves data for the imported components, if found.
+        /// Imported components are REMOVED from the prefab.
         /// </summary>
         /// <param name="gameObject">A gameobject instance.</param>
         /// <param name="directory">Where the json file will be created.</param>
         /// <returns>Full path of json file or null.</returns>
         public static string Save(GameObject gameObject, string directory)
         {
-            // Get all imported components
-            var importedComponentsData = new ImportedComponentsData();
-            if (!SaveImportedComponents(gameObject, ref importedComponentsData))
+            fsData fsData;
+            fsResult fsResult = fsSerializer.TrySerialize(typeof(GameObject), typeof(ImportedComponentsConverter), gameObject, out fsData);
+            if (fsResult.Failed || fsResult.HasWarnings)
+                throw new Exception(string.Format("Serialization of {0} {1} with messages:\n{2}",
+                    gameObject.name, fsResult.Succeeded ? "succeeded" : "failed", fsResult.FormattedMessages));
+
+            if (fsData.IsNull)
                 return null;
 
-            // Serialize imported components data
-            fsData fsData;
-            fsSerializer.TrySerialize(importedComponentsData, out fsData);
             string path = Path.Combine(directory, MakeFileName(gameObject.name));
             File.WriteAllText(path, fsJsonPrinter.PrettyJson(fsData));
             return path;
@@ -144,109 +268,28 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public static void Restore(Mod mod, GameObject gameObject)
         {
             fsSerializer.Context.Set(mod);
-            RestoreImportedComponents(mod, gameObject, fsJsonParser.Parse(LoadSerializedFile(mod, gameObject.name)));
+            object instance = gameObject;
+            fsData fsData = fsJsonParser.Parse(LoadSerializedFile(mod, gameObject.name));
+            fsResult fsResult = fsSerializer.TryDeserialize(fsData, typeof(GameObject), typeof(ImportedComponentsConverter), ref instance);
+            if (fsResult.Failed || fsResult.HasWarnings)
+                Debug.LogErrorFormat("Deserialization of {0} from {1} {2} with messages:\n{3}",
+                    gameObject.name, mod.Title, fsResult.Succeeded ? "succeeded" : "failed", fsResult.FormattedMessages);
         }
 
         #endregion
 
         #region Private Methods
 
-#if UNITY_EDITOR
-
-        /// <summary>
-        /// Seeks all imported components on a gameobject and its children.
-        /// Imported components are REMOVED from the prefab.
-        /// </summary>
-        /// <param name="gameObject">A gameobject instance.</param>
-        /// <param name="importedComponentsData">Instance to fill with components data.</param>
-        private static bool SaveImportedComponents(GameObject gameObject, ref ImportedComponentsData importedComponentsData)
-        {
-            bool saveNeeded = false;
-
-            // Get and destroy only imported components
-            importedComponentsData.Components = new List<Component>();
-            foreach (var component in gameObject.GetComponents(typeof(Component)))
-            {
-                if (GetCustomAttribute(component.GetType(), typeof(ImportedComponentAttribute)) != null)
-                {
-                    importedComponentsData.Components.Add(component);
-                    UnityEngine.Object.DestroyImmediate(component, true);
-                    if (!saveNeeded)
-                        saveNeeded = true;
-                }
-            }
-
-            // Iterate children
-            if (gameObject.transform.childCount > 0)
-            {
-                importedComponentsData.Children = new Dictionary<string, ImportedComponentsData>();
-                for (int i = 0; i < gameObject.transform.childCount; i++)
-                {
-                    Transform transform = gameObject.transform.GetChild(i);
-                    var childImportedComponentsData = new ImportedComponentsData();
-                    if (SaveImportedComponents(transform.gameObject, ref childImportedComponentsData) && !saveNeeded)
-                        saveNeeded = true;
-                    importedComponentsData.Children.Add(transform.gameObject.name, childImportedComponentsData);
-                }
-            }
-
-            return saveNeeded;
-        }
-
-#endif
-
-        /// <summary>
-        /// Restores and deserializes imported components on a gameobject and its children.
-        /// </summary>
-        /// <param name="gameObject">A gameobject instance.</param>
-        /// <param name="fsData">Serialized ImportedComponentsData for the gameobject.</param>
-        private static void RestoreImportedComponents(Mod mod, GameObject gameObject, fsData fsData)
-        {
-            Dictionary<string, fsData> dict = fsData.AsDictionary;
-            foreach (fsData componentData in dict["Components"].AsList)
-            {
-                // Add component and deserialize
-                Type type = FindType(mod, componentData.AsDictionary["$type"].AsString);
-                if (type != null)
-                {
-                    object instance = gameObject.AddComponent(type);
-                    fsResult fsResult = fsSerializer.TryDeserialize(componentData, type, ref instance);
-                    if (fsResult.HasWarnings)
-                        Debug.LogWarning(fsResult.FormattedMessages);
-                }
-            }
-
-            // Restore children
-            fsData children = dict["Children"];
-            if (children != null && !children.IsNull)
-            {
-                foreach (KeyValuePair<string, fsData> childData in children.AsDictionary)
-                {
-                    Transform child = gameObject.transform.Find(childData.Key);
-                    if (child != null)
-                        RestoreImportedComponents(mod, child.gameObject, childData.Value);
-                }
-            }
-        }
-
         private static Type FindType(Mod mod, string typeName)
         {
-            if (!string.IsNullOrEmpty(typeName))
-            {
-                Type type;
-                if (types.TryGetValue(typeName, out type))
-                    return type;
+            if (string.IsNullOrEmpty(typeName))
+                return null;
 
-                type = mod.GetCompiledType(typeName);
-                if (type != null)
-                {
-                    types.Add(typeName, type);
-                    return type;
-                }
-            }
+            Type type;
+            if (types.TryGetValue(typeName, out type))
+                return type;
 
-            Debug.LogErrorFormat("Failed to find type {0}.", typeName);
-            return null;
+            return types[typeName] = mod.GetCompiledType(typeName);
         }
 
         private static string LoadSerializedFile(Mod mod, string name)
