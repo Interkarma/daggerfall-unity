@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -274,42 +274,25 @@ namespace DaggerfallWorkshop.Game.Questing
             if (itemClass == -1)
                 throw new Exception(string.Format("Tried to create Item with class {0}", itemClass));
 
-            // Handle random magic item by redirecting itemClass to one of several supported types
-            // Currently unknown how many types this supports - will expand later
-            // May also need to account for gender if offering clothing
-            // Item should have a world texture as may be placed in world by quest
-            // Only goal currently to have more variety than "ruby" for everything
-            bool isMagicItem = false;
+            DaggerfallUnityItem result;
+
+            // Handle random magic items
             if (itemClass == (int)ItemGroups.MagicItems && itemSubClass == -1)
             {
-                ItemGroups[] randomMagicGroups = new ItemGroups[]
+                Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                result = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+            }
+            else
+            {
+                // Handle random subclass
+                if (itemSubClass == -1)
                 {
-                    ItemGroups.Armor,
-                    ItemGroups.Weapons,
-                    ItemGroups.ReligiousItems,
-                    ItemGroups.Gems,
-                };
-                itemClass = UnityEngine.Random.Range(0, randomMagicGroups.Length);
-                isMagicItem = true;
-            }
+                    Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray((ItemGroups)itemClass);
+                    itemSubClass = UnityEngine.Random.Range(0, enumArray.Length);
+                }
 
-            // Handle random subclass
-            if (itemSubClass == -1)
-            {
-                Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray((ItemGroups)itemClass);
-                itemSubClass = UnityEngine.Random.Range(0, enumArray.Length);
-            }
-
-            // Create item
-            DaggerfallUnityItem result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
-
-            // Assign dummy magic effects so item becomes enchanted
-            // This will need to be ported to real magic system in future
-            if (isMagicItem)
-            {
-                result.legacyMagic = new DaggerfallEnchantment[1];
-                result.legacyMagic[0].type = EnchantmentTypes.CastWhenHeld;
-                result.legacyMagic[0].param = 87;
+                // Create item
+                result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
             }
 
             // Link item to quest
