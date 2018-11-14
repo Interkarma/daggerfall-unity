@@ -81,12 +81,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             this.settings = settings;
             if (ids != null && ids.Length > 0)
             {
-                Ingredient[] ingredients = new Ingredient[ids.Length];
+                ingredients = new Ingredient[ids.Length];
                 for (int i = 0; i < ids.Length; i++)
                 {
                     ingredients[i].id = ids[i];
                 }
-                this.ingredients = ingredients;
             }
         }
 
@@ -172,7 +171,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Compare a recipe with this one.
         /// </summary>
-        /// <param name="recipe">Other recipe.</param>
+        /// <param name="ingredients">Other recipe.</param>
         /// <returns>True if other recipe equal with this one.</returns>
         public bool Equals(Ingredient[] ingredients)
         {
@@ -204,7 +203,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Note: Using hash code calculation from:
         /// https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
         /// </summary>
-        /// <param name="recipe">Ingredients.</param>
+        /// <param name="ingredients">Ingredients.</param>
         /// <returns>Hash code.</returns>
         public int GetHashCode(Ingredient[] ingredients)
         {

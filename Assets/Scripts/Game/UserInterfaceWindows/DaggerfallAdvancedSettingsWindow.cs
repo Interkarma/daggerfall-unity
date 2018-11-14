@@ -121,6 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox combatVoices;
         Checkbox enemyInfighting;
         Checkbox enhancedCombatAI;
+        Checkbox playerTorchFromItems;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
@@ -283,6 +284,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dungeonAmbientLightScale = AddSlider(rightPanel, "dungeonAmbientLightScale", 0, 1, DaggerfallUnity.Settings.DungeonAmbientLightScale);
             nightAmbientLightScale = AddSlider(rightPanel, "nightAmbientLightScale", 0, 1, DaggerfallUnity.Settings.NightAmbientLightScale);
             playerTorchLightScale = AddSlider(rightPanel, "playerTorchLightScale", 0, 1, DaggerfallUnity.Settings.PlayerTorchLightScale);
+            playerTorchFromItems = AddCheckbox(rightPanel, "playerTorchFromItems", DaggerfallUnity.Settings.PlayerTorchFromItems);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -379,6 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.PlayerTorchLightScale = playerTorchLightScale.GetValue();
+            DaggerfallUnity.Settings.PlayerTorchFromItems = playerTorchFromItems.IsChecked;
 
             /* Video */
 

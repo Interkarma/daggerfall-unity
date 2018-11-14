@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game
         const string keyBindsFilename = "KeyBinds.txt";
 
         const float deadZone = 0.05f;
-        const float frameSkipTotal = 5;
+        const float inputWaitTotal = 0.0833f;
 
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game
         List<Actions> previousActions = new List<Actions>();
         bool isPaused;
         bool wasPaused;
-        int frameSkipCount;
+        float inputWaitTimer;
         float horizontal;
         float vertical;
         float lookX;
@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if paused
             if (isPaused)
             {
-                frameSkipCount = 0;
+                inputWaitTimer = 0f;
                 wasPaused = true;
 
                 // Allow quickload during death
@@ -292,13 +292,14 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Skip some frame post-pause
+            // Skip some time post-pause
             // This ensures GUI actions do not "fall-through" to main world
             // as closing GUI and picking up next input all happen same-frame
             // This also helps prevent fall-through of GUI mouse movements to
             // same-frame mouse-look actions
-            if (wasPaused && frameSkipCount++ < frameSkipTotal)
+            if (wasPaused && inputWaitTimer < inputWaitTotal)
             {
+                inputWaitTimer += Time.deltaTime;
                 return;
             }
 

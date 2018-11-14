@@ -11,7 +11,6 @@
 
 using System;
 using System.Linq;
-using System.Globalization;
 using System.Reflection;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
@@ -19,20 +18,24 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
     /// <summary>
-    /// Read mod settings.
+    /// Provides a read-only access to mod settings.
     /// </summary>
     public class ModSettings
     {
-        // Fields
+        #region Fields
+
         readonly Mod mod;
         readonly ModSettingsData data;
+
+        #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// Import settings for Mod.
+        /// Import settings for a mod.
         /// </summary>
         /// <param name="mod">Mod to load settings for.</param>
+        [Obsolete("Use Mod.GetSettings() to get an instance for the mod; the constructor won't be publicy accessible anymore in 0.6.")]
         public ModSettings(Mod mod)
         {
             if (!mod.HasSettings)
@@ -157,7 +160,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         /// <param name="section">Name of section.</param>
         /// <param name="name">Name of key.</param>
-        public Color GetColor(string section, string name)
+        public Color32 GetColor(string section, string name)
         {
             return GetValue<Color32>(section, name);
         }

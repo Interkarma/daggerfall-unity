@@ -511,12 +511,13 @@ namespace DaggerfallWorkshop.Game
                         const int enemiesNearby = 354;
                         MessageBox(enemiesNearby);
                     }
-                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
+                    else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming ||
+                             !GameManager.Instance.PlayerController.isGrounded)
                     {
                         const int cannotRestNow = 355;
                         MessageBox(cannotRestNow);
                     }
-                    else if (GameManager.Instance.PlayerController.isGrounded)
+                    else
                     {
                         if (!GiveOffer())
                             uiManager.PushWindow(new DaggerfallRestWindow(uiManager));

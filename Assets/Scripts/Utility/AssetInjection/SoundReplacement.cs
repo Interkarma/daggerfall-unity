@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if sound is found.</returns>
         public static bool TryImportSound(SoundClips sound, out AudioClip audioClip)
         {
-            return TryImportAudioClip(sound.ToString(), ".wav", out audioClip);
+            return TryImportAudioClip(sound.ToString(), ".wav", false, out audioClip);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if song is found.</returns>
         public static bool TryImportSong(SongFiles song, out AudioClip audioClip)
         {
-            return TryImportAudioClip(song.ToString(), ".ogg", out audioClip);
+            return TryImportAudioClip(song.ToString(), ".ogg", true, out audioClip);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import sound data from modding locations as an audio clip.
         /// </summary>
-        private static bool TryImportAudioClip(string name, string extension, out AudioClip audioClip)
+        private static bool TryImportAudioClip(string name, string extension, bool streaming, out AudioClip audioClip)
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
@@ -87,8 +87,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (File.Exists(path))
                 {
                     WWW www = new WWW("file://" + path);
-                    audioClip = www.GetAudioClip();
-                    DaggerfallUnity.Instance.StartCoroutine(LoadAudioData(www, audioClip));
+                    if (streaming) {
+                        audioClip = www.GetAudioClip(true, true);
+                    }
+                    else
+                    {
+                        audioClip = www.GetAudioClip();
+                        DaggerfallUnity.Instance.StartCoroutine(LoadAudioData(www, audioClip));
+                    }
                     return true;
                 }
 

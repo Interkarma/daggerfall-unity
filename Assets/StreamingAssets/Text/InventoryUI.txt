@@ -1,5 +1,0 @@
-- Text database for inventory screen
-
-schema: *key,text
-
-HowManyItems,                   Pick how many items (max {0})?

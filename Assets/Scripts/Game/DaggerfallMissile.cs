@@ -79,8 +79,11 @@ namespace DaggerfallWorkshop.Game
         float initialRange;
         float initialIntensity;
         EntityEffectBundle payload;
+        bool isArrow = false;
+        GameObject goModel = null;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
+        RaycastHit arrowHit;
 
         #endregion
 
@@ -126,6 +129,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return caster; }
             set { caster = value; }
+        }
+
+        public bool IsArrow
+        {
+            get { return isArrow; }
+            set { isArrow = value; }
         }
 
         /// <summary>
@@ -183,6 +192,37 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Setup arrow
+            if (isArrow)
+            {
+                // Create and orient 3d arrow
+                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
+
+                Vector3 adjust;
+                // Offset up so it comes from same place LOS check is done from
+                if (caster != GameManager.Instance.PlayerEntityBehaviour)
+                {
+                    CharacterController controller = caster.transform.GetComponent<CharacterController>();
+                    adjust = caster.transform.forward * 0.6f;
+                    adjust.y = controller.height / 4;
+                }
+                else
+                {
+                    // Offset forward to avoid collision with player
+                    adjust = caster.transform.forward * 0.6f;
+                    // Adjust slightly downward to match bow animation
+                    adjust.y -= 0.1f;
+                    // Adjust to the right or left to match bow animation
+                    if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
+                        adjust += caster.transform.right * 0.15f;
+                    else
+                        adjust -= caster.transform.right * 0.15f;
+                }
+
+                goModel.transform.localPosition = adjust;
+                goModel.transform.rotation = Quaternion.LookRotation(GetAimDirection());
+            }
+
             // Ignore missile collision with caster (this is a different check to AOE targets)
             if (caster)
                 Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
@@ -234,6 +274,32 @@ namespace DaggerfallWorkshop.Game
                     RaiseOnCompleteEvent();
                     AssignPayloadToTargets();
                     impactAssigned = true;
+
+                    // Handle arrow
+                    if (isArrow)
+                    {
+                        // Disable 3d arrow
+                        goModel.gameObject.SetActive(false);
+
+                        if (caster != GameManager.Instance.PlayerEntityBehaviour)
+                        {
+                            DaggerfallEntityBehaviour entityBehaviour = null;
+                            if (arrowHit.transform)
+                                entityBehaviour = arrowHit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                            if (entityBehaviour == caster.Target)
+                            {
+                                EnemyAttack attack = caster.GetComponent<EnemyAttack>();
+                                if (attack)
+                                {
+                                    attack.BowDamage(goModel.transform.forward);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            GameManager.Instance.WeaponManager.WeaponDamage(arrowHit, goModel.transform.forward, true);
+                        }
+                    }
                 }
 
                 // Track post impact lifespan and allow impact clip to finish playing
@@ -248,6 +314,14 @@ namespace DaggerfallWorkshop.Game
 
             // Update light
             UpdateLight();
+        }
+
+        private void FixedUpdate()
+        {
+            if (isArrow && missileReleased && goModel && Physics.SphereCast(goModel.transform.position, 0.05f, goModel.transform.forward, out arrowHit, 1f))
+            {
+                impactDetected = true;
+            }
         }
 
         #endregion
@@ -454,7 +528,10 @@ namespace DaggerfallWorkshop.Game
             if (audioSource && ImpactSound != SoundClips.None)
             {
                 // Using doppler of zero as classic does not appear to use 3D sound for spell impact
-                audioSource.PlayOneShot(ImpactSound, 0);
+                if (!isArrow)
+                    audioSource.PlayOneShot(ImpactSound, 0);
+                else
+                    audioSource.PlayOneShot(ImpactSound);
             }
         }
 

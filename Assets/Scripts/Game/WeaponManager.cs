@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game
         [Range(0, 1)]
         public float AttackThreshold = 0.05f;       // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
+        public DaggerfallMissile ArrowMissilePrefab;
 
         float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
@@ -60,6 +61,7 @@ namespace DaggerfallWorkshop.Game
         bool holdingShield = false;
         DaggerfallUnityItem currentRightHandWeapon = null;
         DaggerfallUnityItem currentLeftHandWeapon = null;
+        DaggerfallUnityItem lastBowUsed = null;
 
         public float EquipCountdownRightHand;
         public float EquipCountdownLeftHand;
@@ -340,7 +342,24 @@ namespace DaggerfallWorkshop.Game
 
                 // Transfer damage.
                 bool hitEnemy = false;
-                WeaponDamage(ScreenWeapon, out hitEnemy);
+
+                // Non-bow weapons
+                if (ScreenWeapon.WeaponType != WeaponTypes.Bow)
+                    MeleeDamage(ScreenWeapon, out hitEnemy);
+                // Bow weapons
+                else
+                {
+                    DaggerfallMissile missile = Instantiate(ArrowMissilePrefab);
+                    if (missile)
+                    {
+                        missile.Caster = GameManager.Instance.PlayerEntityBehaviour;
+                        missile.TargetType = TargetTypes.SingleTargetAtRange;
+                        missile.ElementType = ElementTypes.None;
+                        missile.IsArrow = true;
+
+                        lastBowUsed = currentRightHandWeapon;
+                    }
+                }
 
                 // Fatigue loss
                 playerEntity.DecreaseFatigue(swingWeaponFatigueLoss);
@@ -377,6 +396,172 @@ namespace DaggerfallWorkshop.Game
             currentRightHandWeapon = null;
             currentLeftHandWeapon = null;
             SheathWeapons();
+        }
+
+        // Returns true if hit an enemy entity
+        public bool WeaponDamage(RaycastHit hit, Vector3 direction, bool arrowHit = false)
+        {
+            DaggerfallUnityItem strikingWeapon = null;
+
+            // Check if hit has an DaggerfallAction component
+            DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
+            if (action)
+            {
+                action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
+            }
+
+            // Check if hit has an DaggerfallActionDoor component
+            DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
+            if (actionDoor)
+            {
+                actionDoor.AttemptBash();
+                return false;
+            }
+
+            // Check if hit an entity and remove health
+            DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+            DaggerfallMobileUnit entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
+            if (entityBehaviour)
+            {
+                if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+                {
+                    EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
+
+                    // Calculate damage
+                    int damage;
+                    if (!arrowHit)
+                    {
+                        if (usingRightHand)
+                        {
+                            strikingWeapon = currentRightHandWeapon;
+                        }
+                        else
+                        {
+                            strikingWeapon = currentLeftHandWeapon;
+                        }
+                    }
+                    else
+                    {
+                        strikingWeapon = lastBowUsed;
+                    }
+
+                    damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
+
+                    // Break any "normal power" concealment effects on player
+                    if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
+                        EntityEffectManager.BreakNormalPowerConcealmentEffects(GameManager.Instance.PlayerEntityBehaviour);
+
+                    EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+                    EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();
+
+                    // Play arrow sound and add arrow to target's inventory
+                    if (arrowHit)
+                    {
+                        DaggerfallUnityItem arrow = ItemBuilder.CreateItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                        enemyEntity.Items.AddItem(arrow);
+                    }
+
+                    // Play hit sound and trigger blood splash at hit point
+                    if (damage > 0)
+                    {
+                        if (usingRightHand)
+                            enemySounds.PlayHitSound(currentRightHandWeapon);
+                        else
+                            enemySounds.PlayHitSound(currentLeftHandWeapon);
+
+                        EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                        if (blood)
+                        {
+                            blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
+                        }
+
+                        // Knock back enemy based on damage and enemy weight
+                        if (enemyMotor)
+                        {
+                            if (enemyMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
+                                entityBehaviour.EntityType == EntityTypes.EnemyClass ||
+                                enemyEntity.MobileEnemy.Weight > 0)
+                            {
+                                float enemyWeight = enemyEntity.GetWeightInClassicUnits();
+                                float tenTimesDamage = damage * 10;
+                                float twoTimesDamage = damage * 2;
+
+                                float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
+                                float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
+                                knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
+
+                                if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                                    knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                                enemyMotor.KnockBackSpeed = knockBackSpeed;
+                                enemyMotor.KnockBackDirection = direction;
+                            }
+                        }
+
+                        if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && UnityEngine.Random.Range(1, 101) <= 40)
+                        {
+                            Genders gender;
+                            if (entityMobileUnit.Summary.Enemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                                gender = Genders.Male;
+                            else
+                                gender = Genders.Female;
+
+                            bool heavyDamage = damage >= enemyEntity.MaxHealth / 4;
+                            enemySounds.PlayCombatVoice(gender, false, heavyDamage);
+                        }
+                    }
+                    else
+                    {
+                        if ((!arrowHit && !enemyEntity.MobileEnemy.ParrySounds) || strikingWeapon == null)
+                            ScreenWeapon.PlaySwingSound();
+                        else if (enemyEntity.MobileEnemy.ParrySounds)
+                            enemySounds.PlayParrySound();
+                    }
+
+                    // Remove health
+                    enemyEntity.DecreaseHealth(damage);
+
+                    // Assign "cast when strikes" to target entity
+                    if (strikingWeapon != null && strikingWeapon.IsEnchanted)
+                    {
+                        EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
+                        if (enemyEffectManager)
+                            enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
+                    }
+
+                    // Make foe attack their aggressor
+                    // Currently this is just player, but should be expanded later
+                    // for a wider variety of behaviours
+                    if (enemyMotor)
+                    {
+                        // Make enemies in an area aggressive if player attacked a non-hostile one.
+                        if (!enemyMotor.IsHostile)
+                        {
+                            GameManager.Instance.MakeEnemiesHostile();
+                        }
+                        enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
+                    }
+
+                    return true;
+                }
+            }
+
+            // Check if hit a mobile NPC
+            MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
+            if (mobileNpc)
+            {
+                EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                if (blood)
+                {
+                    blood.ShowBloodSplash(0, hit.point);
+                }
+                mobileNpc.Motor.gameObject.SetActive(false);
+                playerEntity.TallyCrimeGuildRequirements(false, 5);
+                // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                playerEntity.SpawnCityGuards(true);
+            }
+
+            return false;
         }
 
         #region Weapon Setup Methods
@@ -463,11 +648,7 @@ namespace DaggerfallWorkshop.Game
                     SetWeapon(ScreenWeapon, currentLeftHandWeapon);
             }
 
-            // Adjust reach attributes by weapon type
-            if (ScreenWeapon.WeaponType == WeaponTypes.Bow)
-                ScreenWeapon.Reach = defaultBowReach;
-            else
-                ScreenWeapon.Reach = defaultWeaponReach;
+            ScreenWeapon.Reach = defaultWeaponReach;
         }
 
         void SetMelee(FPSWeapon target)
@@ -588,10 +769,9 @@ namespace DaggerfallWorkshop.Game
                 ScreenWeapon.ShowWeapon = show;
         }
 
-        private void WeaponDamage(FPSWeapon weapon, out bool hitEnemy)
+        private void MeleeDamage(FPSWeapon weapon, out bool hitEnemy)
         {
             hitEnemy = false;
-            DaggerfallUnityItem strikingWeapon = null;
 
             if (!mainCamera || !weapon)
                 return;
@@ -602,156 +782,7 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(mainCamera.transform.position + -mainCamera.transform.forward * 0.1f, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach - SphereCastRadius))
             {
-                // Check if hit has an DaggerfallAction component
-                DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
-                if (action)
-                {
-                    action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
-                }
-
-                // Check if hit has an DaggerfallActionDoor component
-                DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-                if (actionDoor)
-                {
-                    actionDoor.AttemptBash();
-                    return;
-                }
-
-                // Check if hit an entity and remove health
-                DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                DaggerfallMobileUnit entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
-                if (entityBehaviour)
-                {
-                    if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
-                    {
-                        EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
-
-                        // Calculate damage
-                        int damage;
-                        if (usingRightHand)
-                        {
-                            strikingWeapon = currentRightHandWeapon;
-                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
-                        }
-                        else
-                        {
-                            strikingWeapon = currentLeftHandWeapon;
-                            damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
-                        }
-
-                        // Break any "normal power" concealment effects on player
-                        if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
-                            EntityEffectManager.BreakNormalPowerConcealmentEffects(GameManager.Instance.PlayerEntityBehaviour);
-
-                        EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
-                        EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();
-
-                        // Play arrow sound and add arrow to target's inventory
-                        if (weapon.WeaponType == WeaponTypes.Bow)
-                        {
-                            enemySounds.PlayArrowSound();
-                            DaggerfallUnityItem arrow = ItemBuilder.CreateItem(ItemGroups.Weapons, (int)Weapons.Arrow);
-                            enemyEntity.Items.AddItem(arrow);
-                        }
-
-                        // Play hit sound and trigger blood splash at hit point
-                        if (damage > 0)
-                        {
-                            if (usingRightHand)
-                                enemySounds.PlayHitSound(currentRightHandWeapon);
-                            else
-                                enemySounds.PlayHitSound(currentLeftHandWeapon);
-
-                            EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
-                            if (blood)
-                            {
-                                blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
-                            }
-
-                            // Knock back enemy based on damage and enemy weight
-                            if (enemyMotor)
-                            {
-                                if (enemyMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
-                                    entityBehaviour.EntityType == EntityTypes.EnemyClass ||
-                                    enemyEntity.MobileEnemy.Weight > 0)
-                                {
-                                    float enemyWeight = enemyEntity.GetWeightInClassicUnits();
-                                    float tenTimesDamage = damage * 10;
-                                    float twoTimesDamage = damage * 2;
-
-                                    float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
-                                    float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
-                                    knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
-
-                                    if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                                        knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                                    enemyMotor.KnockBackSpeed = knockBackSpeed;
-                                    enemyMotor.KnockBackDirection = mainCamera.transform.forward;
-                                }
-                            }
-
-                            if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && UnityEngine.Random.Range(1, 101) <= 40)
-                            {
-                                Genders gender;
-                                if (entityMobileUnit.Summary.Enemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
-                                    gender = Genders.Male;
-                                else
-                                    gender = Genders.Female;
-
-                                bool heavyDamage = damage >= enemyEntity.MaxHealth / 4;
-                                enemySounds.PlayCombatVoice(gender, false, heavyDamage);
-                            }
-                        }
-                        else
-                        {
-                            if ((weapon.WeaponType != WeaponTypes.Bow && !enemyEntity.MobileEnemy.ParrySounds) || weapon.WeaponType == WeaponTypes.Melee)
-                                weapon.PlaySwingSound();
-                            else if (enemyEntity.MobileEnemy.ParrySounds)
-                                enemySounds.PlayParrySound();
-                        }
-
-                        // Remove health
-                        enemyEntity.DecreaseHealth(damage);
-                        hitEnemy = true;
-
-                        // Assign "cast when strikes" to target entity
-                        if (strikingWeapon != null && strikingWeapon.IsEnchanted)
-                        {
-                            EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                            if (enemyEffectManager)
-                                enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
-                        }
-
-                        // Make foe attack their aggressor
-                        // Currently this is just player, but should be expanded later
-                        // for a wider variety of behaviours
-                        if (enemyMotor)
-                        {
-                            // Make enemies in an area aggressive if player attacked a non-hostile one.
-                            if (!enemyMotor.IsHostile)
-                            {
-                                GameManager.Instance.MakeEnemiesHostile();
-                            }
-                            enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
-                        }
-                    }
-                }
-
-                // Check if hit a mobile NPC
-                MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
-                if (mobileNpc)
-                {
-                    EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
-                    if (blood)
-                    {
-                        blood.ShowBloodSplash(0, hit.point);
-                    }
-                    mobileNpc.Motor.gameObject.SetActive(false);
-                    playerEntity.TallyCrimeGuildRequirements(false, 5);
-                    // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
-                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                    playerEntity.SpawnCityGuards(true);
-                }
+                hitEnemy = WeaponDamage(hit, mainCamera.transform.forward);
             }
         }
 

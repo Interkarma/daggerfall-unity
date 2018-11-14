@@ -50,9 +50,9 @@ N0C00Y12, MagesGuild, N, 0, Passed
 N0C00Y13, MagesGuild, N, 0, Passed
 N0B00Y04, MagesGuild, M, 0, Passed
 N0B00Y06, MagesGuild, M, 0, Passed
--N0B00Y08, MagesGuild, M, 0, FAILED. Needs sleep spell
+N0B00Y08, MagesGuild, M, 0, Passed
 -N0B00Y09, MagesGuild, M, 0, FAILED. Repute exceeds task not yet functional so invitation always arrives.
--N0B00Y16, MagesGuild, M, 0, FAILED. Needs open spell
+N0B00Y16, MagesGuild, M, 0, IN-TESTING
 -N0B00Y17, MagesGuild, M, 0, more testing needed
 N0B10Y01, MagesGuild, M, 10, Passed
 N0B10Y03, MagesGuild, M, 10, Passed. Repute tasks not yet existent. Corpses do not disappear at quest end.
@@ -61,7 +61,7 @@ N0B20Y02, MagesGuild, M, 20, Passed. Corpses don't disappear at the end of the q
 N0B20Y05, MagesGuild, M, 20, Passed. Lacks text variables in intro
 -N0B21Y14, MagesGuild, M, 21, FAILED. GetCurrentRegionFaction() needed
 N0B30Y15, MagesGuild, M, 30, Passed. Lacks spells on imp
--N0B40Y07, MagesGuild, M, 40, FAILED Banish Daedra
+N0B40Y07, MagesGuild, M, 40, IN-TESTING
 
 -- Classic: Temples (general)
 -C0C00Y10, HolyOrder, N, 0, FAILED. Player log says "Exception during quest compile: An element with the same key already exists in the dictionary."

@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                  sponsored the Guild in many of our
 <ce>                   enterprises, and as we have made
 <ce>                   enemies, so has %g. We have word
-<ce>                   from %g3 courier that a witch has
+<ce>                   from %g2 courier that a witch has
 <ce>                  cursed %g2 with unending insomnia.
 <ce>                    A simple Sleep spell would cure
 <ce>                    %g2 -- perhaps you are willing
@@ -39,7 +39,7 @@ AcceptQuest:  [1002]
 <ce>                  Very good. Now, I told the courier
 <ce>                  that we wouldn't use any spell but
 <ce>                          Sleep on _warrior_.
-<ce>                  Given %g3 previous experience with
+<ce>                  Given %g2 previous experience with
 <ce>                  cursed spells, you can hardly blame
 <ce>                   %g2 for this anxiety. You'll find
 <ce>                         _warrior_ in _castle_
@@ -51,14 +51,14 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                         I hear that _warrior_
 <ce>                   dropped into sublime torpescence
-<ce>                    right on %g3 feet. I do hope %g
+<ce>                    right on %g2 feet. I do hope %g
 <ce>                  wakes before next New Life. As for
 <ce>                         you, my fine %ra, you
 <ce>                   have certainly earned your _gold_
 <ce>                             gold pieces.
 
 RumorsDuringQuest:  [1005]
-Poor _warrior_ has been awake for days. I think %g3 sanity is going.
+Poor _warrior_ has been awake for days. I think %g2 sanity is going.
 <--->
 The witch who cursed _warrior_ with sleeplessness really did a job on %g2.
 
@@ -97,7 +97,7 @@ QuestLogEntry:  [1010]
 Message:  1011
 <ce>                            _warrior_ falls
 <ce>                     into a profound sleep, still
-<ce>                             on %g3 feet.
+<ce>                             on %g2 feet.
 
 
 -- Symbols used in the QRC file:

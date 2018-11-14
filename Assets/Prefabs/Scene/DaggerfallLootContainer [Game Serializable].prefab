@@ -3,18 +3,18 @@
 --- !u!1 &101432
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 6
   m_Component:
-  - 4: {fileID: 421668}
-  - 114: {fileID: 11486862}
-  - 114: {fileID: 11492902}
-  - 135: {fileID: 13547454}
-  - 33: {fileID: 3369766}
-  - 23: {fileID: 2315524}
-  - 114: {fileID: 11493726}
-  m_Layer: 0
+  - component: {fileID: 421668}
+  - component: {fileID: 11486862}
+  - component: {fileID: 11492902}
+  - component: {fileID: 13547454}
+  - component: {fileID: 3369766}
+  - component: {fileID: 2315524}
+  - component: {fileID: 11493726}
+  m_Layer: 2
   m_Name: DaggerfallLootContainer [Game Serializable]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24,53 +24,62 @@ GameObject:
 --- !u!4 &421668
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2315524
 MeshRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 0}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!33 &3369766
 MeshFilter:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_Mesh: {fileID: 0}
 --- !u!114 &11486862
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_Enabled: 1
@@ -78,16 +87,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fddbf54ec4bad1842b78ae95ca0dca29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WorldContext: 0
   ContainerType: 1
   ContainerImage: 5
-  LootTableKey: O
+  entityName: 
   TextureArchive: 216
   TextureRecord: 0
   playerOwned: 0
+  customDrop: 0
+  isEnemyClass: 0
+  stockedDate: 0
 --- !u!114 &11492902
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_Enabled: 1
@@ -98,7 +111,7 @@ MonoBehaviour:
 --- !u!114 &11493726
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_Enabled: 1
@@ -108,6 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FramesPerSecond: 5
   OneShot: 0
+  FaceY: 0
   summary:
     Size: {x: 0, y: 0}
     Rect:
@@ -126,13 +140,18 @@ MonoBehaviour:
     IsMobile: 0
     Archive: 0
     Record: 0
-    Gender: 0
-    FactionMobileID: 0
+    Flags: 0
+    FactionOrMobileID: 0
+    NameSeed: 0
     FixedEnemyType: 0
+    WaterLevel: 0
+    CastleBlock: 0
+  customArchive: 210
+  customRecord: 0
 --- !u!135 &13547454
 SphereCollider:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101432}
   m_Material: {fileID: 0}
@@ -157,6 +176,6 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 101432}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1

@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -93,7 +94,26 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <param name="assignMultiplier">Optionally assign fatigue multiplier.</param>
         public void DamageFatigueFromSource(IEntityEffect sourceEffect, int amount, bool assignMultiplier = false)
         {
+            // Skip fatigue damage from effects if this is a non-hostile enemy
+            // This is a hack to support N0B00Y08 otherwise warrior will aggro if player casts Sleep on them
+            // Warrior does not aggro in classic and it seems impossible to cast this class of spell on non-hostiles in classic
+            // Would prefer a better system such as a quest action to whitelist certain spells on a Foe resource
+            // But this will get job done in this case and we can expand/improve later
+            if (!IsHostileEnemy())
+                return;
+
             DamageFatigueFromSource(sourceEffect.Caster, amount, assignMultiplier);
+        }
+
+        /// <summary>
+        /// Check if this entity is a hostile enemy.
+        /// Currently only used to block damage and aggro from Sleep spell in N0B00Y08.
+        /// </summary>
+        /// <returns>True if this entity is a hostile enemy.</returns>
+        bool IsHostileEnemy()
+        {
+            EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
+            return enemyMotor && enemyMotor.IsHostile;
         }
 
         /// <summary>

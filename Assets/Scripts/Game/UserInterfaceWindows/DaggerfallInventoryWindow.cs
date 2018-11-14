@@ -126,6 +126,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
+        const string textDatabase = "DaggerfallUI";
+
+        readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
+        readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
+        readonly string damSrc = TextManager.Instance.GetText(textDatabase, "damSrc");
+        readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
+        readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
+        readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
+
         const string baseTextureName = "INVE00I0.IMG";
         const string goldTextureName = "INVE01I0.IMG";
         const string infoTextureName = "ITEM00I0.IMG";
@@ -140,6 +149,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
 
         Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
+        Color lightSourceBackgroundColor = new Color(0.6f, 0.5f, 0f, 0.5f);
 
         PlayerEntity playerEntity;
 
@@ -359,6 +369,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TEST: Set green background for remote quest items
             if (item.IsQuestItem)
                 return questItemBackgroundColor;
+            else if (playerEntity.LightSource == item)
+                return lightSourceBackgroundColor;
             else
                 return Color.clear;
         }
@@ -1006,7 +1018,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
                     tokens[tokenIdx].formatting = TextFile.Formatting.NewLine;
                 if (tokens[tokenIdx].text != null)
-                    tokens[tokenIdx].text = tokens[tokenIdx].text.Replace("kilograms", "kg").Replace("points of damage", "damage").Replace("armor rating", "armor");
+                    tokens[tokenIdx].text = tokens[tokenIdx].text.Replace(kgSrc, kgRep).Replace(damSrc, damRep).Replace(arSrc, arRep);
             }
             itemInfoPanelLabel.SetText(tokens);
         }
@@ -1220,10 +1232,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
-            // If more than one item selected, equip only one
-            if (item.IsAStack())
-                item = playerEntity.Items.SplitStack(item, 1);
-
             // Try to equip the item, and update armour values accordingly
             List<DaggerfallUnityItem> unequippedList = playerEntity.ItemEquipTable.EquipItem(item);
             if (unequippedList != null)
@@ -1350,7 +1358,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     // Show message box
                     DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText("InventoryUI", "HowManyItems"), maxAmount));
+                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText(textDatabase, "howManyItems"), maxAmount));
                     mb.TextPanelDistanceY = 0;
                     mb.InputDistanceX = 15;
                     mb.TextBox.Numeric = true;
@@ -1552,6 +1560,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Formulas.FormulaHelper.InflictPoison(playerEntity, (Poisons)item.TemplateIndex + 66, true);
                 collection.RemoveItem(item);
             }
+            else if (item.IsLightSource)
+            {
+                if (item.currentCondition > 0)
+                {
+                    if (playerEntity.LightSource == item)
+                    {
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightDouse"), false, item);
+                        playerEntity.LightSource = null;
+                    }
+                    else
+                    {
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightLight"), false, item);
+                        playerEntity.LightSource = item;
+                    }
+                }
+                else
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightEmpty"), false, item);
+            }
+            else if (item.ItemGroup == ItemGroups.UselessItems2 && item.TemplateIndex == (int)UselessItems2.Oil && collection != null)
+            {
+                DaggerfallUnityItem lantern = localItems.GetItem(ItemGroups.UselessItems2, (int)UselessItems2.Lantern);
+                if (lantern != null && lantern.currentCondition <= lantern.maxCondition - item.currentCondition)
+                {   // Re-fuel lantern with the oil.
+                    lantern.currentCondition += item.currentCondition;
+                    collection.RemoveItem(item.IsAStack() ? collection.SplitStack(item, 1) : item);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightRefuel"), false, lantern);
+                    Refresh(false);
+                }
+                else
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightFull"), false, lantern);
+            }
             else
             {
                 NextVariant(item);
@@ -1586,7 +1625,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // If there aren't any left, there's nothing to find. Classic will just keep returning a particular location over and over if this happens.
             if (numberOfUndiscoveredLocationsInRegion == 0)
             {
-                DaggerfallMessageBox nothingLeft = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.Nothing, "You have already recorded all locations in this region!", this);
+                DaggerfallMessageBox nothingLeft = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.Nothing, TextManager.Instance.GetText(textDatabase, "readMapFail"), this);
                 nothingLeft.ClickAnywhereToClose = true;
                 nothingLeft.Show();
                 return;
@@ -1610,7 +1649,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     gps.DiscoverLocation(gps.CurrentRegionName, location.Name);
                     gps.LocationRevealedByMapItem = location.Name;
                     GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                        TextManager.Instance.GetText("DaggerfallUI", "readMap").Replace("%map", location.Name));
+                        TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", location.Name));
                     break;
                 }
             }

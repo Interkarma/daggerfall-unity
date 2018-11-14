@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -27,7 +26,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets effect properties.
         /// </summary>
         EffectProperties Properties { get; }
-        
+
         /// <summary>
         /// Gets or sets current effect settings.
         /// </summary>
@@ -198,7 +197,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public BaseEntityEffect()
+        protected BaseEntityEffect()
         {
             // Set default properties
             properties.GroupName = string.Empty;
@@ -609,7 +608,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             int roll = UnityEngine.Random.Range(1, 100);
             bool outcome = (roll <= ChanceValue());
 
-            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, chance, roll, (outcome) ? "success" : "fail");
+            //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, ChanceValue(), roll, (outcome) ? "success" : "fail");
 
             return outcome;
         }

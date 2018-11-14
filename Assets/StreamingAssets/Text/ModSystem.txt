@@ -14,8 +14,6 @@ emptyTitle,                 <title>
 missingTitle,               <Unknown>
 emptyDescription,           <description>
 missingDescription,         <Missing description>
-newPreset,                  <New Preset>
-newPresetInfo,              Create a new preset from current values.
 author,                     Author
 versionMismatch,            Version mismatch!
 
@@ -32,9 +30,11 @@ refreshInfo,                Check for changes in mod directory
 saveClose,                  Save and Close
 saveCloseInfo,              Save changes and return to options menu
 extractText,                Extract Text
-extractTextInfo,            Extract Text Assets 
+extractTextInfo,            Extract Text Assets
+new,                        New
 load,                       Load
 save,                       Save
+delete,                     Delete
 cancel,                     Cancel
 reset,                      Reset
 resetConfirmation,          Revert all settings to default values?
@@ -45,4 +45,3 @@ modsFound,                  Mods Found
 settings,                   Settings
 settingsInfo,               Change mod settings
 presets,                    Presets
-presetsInfo,                Load/Save settings values for this mod.

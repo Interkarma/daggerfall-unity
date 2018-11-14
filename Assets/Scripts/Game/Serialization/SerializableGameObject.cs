@@ -193,6 +193,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
         public PlayerEntity.Crimes crimeCommitted;
         public bool haveShownSurrenderToGuardsDialogue;
+        public ulong lightSourceUID;
     }
 
     [fsObject("v1")]

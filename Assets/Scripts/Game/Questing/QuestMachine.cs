@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop.Game.Questing
         const string factionsTableFileName = "Quests-Factions";
         const string foesTableFileName = "Quests-Foes";
         const string diseasesTableFileName = "Quests-Diseases";
+        const string spellsTableFileName = "Quests-Spells";
 
         // Data tables
         Table globalVarsTable;
@@ -72,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Table factionsTable;
         Table foesTable;
         Table diseasesTable;
+        Table spellsTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
@@ -189,6 +191,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets the spells data table.
+        /// </summary>
+        public Table SpellsTable
+        {
+            get { return spellsTable; }
+        }
+
+        /// <summary>
         /// Gets or sets StaticNPC last clicked by player.
         /// </summary>
         public StaticNPC LastNPCClicked
@@ -252,6 +262,7 @@ namespace DaggerfallWorkshop.Game.Questing
             factionsTable = new Table(Instance.GetTableSourceText(factionsTableFileName));
             foesTable = new Table(Instance.GetTableSourceText(foesTableFileName));
             diseasesTable = new Table(Instance.GetTableSourceText(diseasesTableFileName));
+            spellsTable = new Table(Instance.GetTableSourceText(spellsTableFileName));
         }
 
         void Start()
@@ -364,6 +375,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new RumorMill(null));
             RegisterAction(new MakePcDiseased(null));
             RegisterAction(new CurePcDisease(null));
+            RegisterAction(new CastSpellDo(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now

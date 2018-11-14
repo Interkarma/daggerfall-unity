@@ -101,6 +101,10 @@ namespace DaggerfallWorkshop.Game.Items
             if (slot == EquipSlots.None)
                 return null;
 
+            // If more than one item selected, equip only one
+            if (item.IsAStack())
+                item = GameManager.Instance.PlayerEntity.Items.SplitStack(item, 1);
+            
             List<DaggerfallUnityItem> unequippedList = new List<DaggerfallUnityItem>();
 
             // Special weapon handling

@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private class EntityEffectMacroDataSource : MacroDataSource
         {
-            BaseEntityEffect parent;
+            readonly BaseEntityEffect parent;
             public EntityEffectMacroDataSource(BaseEntityEffect parent)
             {
                 this.parent = parent;

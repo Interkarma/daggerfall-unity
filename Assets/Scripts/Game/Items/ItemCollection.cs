@@ -260,7 +260,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="numberToPick">Number of items to pick</param>
         public DaggerfallUnityItem SplitStack(DaggerfallUnityItem stack, int numberToPick) 
         {
-            if (!stack.IsAStack() || numberToPick < 1 || numberToPick > stack.stackCount)
+            if (!stack.IsAStack() || numberToPick < 1 || numberToPick > stack.stackCount || !Contains(stack))
                 return null;
             if (numberToPick == stack.stackCount)
                 return stack;

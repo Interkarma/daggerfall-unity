@@ -264,6 +264,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // TODO: Change DaggerfallUnityItem.message from int to ushort
             book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
+            book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
             return book;
         }
 

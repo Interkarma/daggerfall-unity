@@ -27,13 +27,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         /// or play sound (soundname) x y
         /// the second number is not currently used for anything - purpose is unkown.
 
-
         public string   soundName;              //used to lookup sound index in sound table
         public int      soundIndex;
         public uint     interval;               //how often to play; measured in game minutes
         public int      unknown;                //according to Tipton's documentation, doesn't do anything
         public ulong    lastTimePlayed = 0;     //last time sound was played
-        public AudioClip clip;
+        public AudioClip clip;                  //preloading
 
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 playSoundAction.lastTimePlayed  = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
                 var soundID                     = (uint)QuestMachine.Instance.SoundsTable.GetInt("id", match.Groups["sound"].Value);
                 playSoundAction.soundIndex      = (int)DaggerfallUnity.Instance.SoundReader.GetSoundIndex(soundID);
-                playSoundAction.clip            = DaggerfallUnity.Instance.SoundReader.GetAudioClip(playSoundAction.soundIndex);
+                playSoundAction.clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(playSoundAction.soundIndex);
             }
             catch (System.Exception ex)
             {
@@ -115,10 +114,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             if (lastTimePlayed + interval <= gameSeconds)
             {
-                var source = QuestMachine.Instance.GetComponent<AudioSource>();
-                if (source != null && !source.isPlaying)
+                DaggerfallAudioSource source = QuestMachine.Instance.GetComponent<DaggerfallAudioSource>();
+                if (source != null && !source.IsPlaying())
                 {
-                    source.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
+                    source.PlayOneShot(soundIndex, DaggerfallUnity.Settings.SoundVolume);
                     lastTimePlayed = gameSeconds;
                 }
             }

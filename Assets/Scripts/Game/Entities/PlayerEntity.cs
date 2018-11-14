@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected PlayerReflexes reflexes;
         protected ItemCollection wagonItems = new ItemCollection();
         protected ItemCollection otherItems = new ItemCollection();
+        protected DaggerfallUnityItem lightSource;
         protected int goldPieces = 0;
         protected PersistentFactionData factionData = new PersistentFactionData();
         protected PersistentGlobalVars globalVars = new PersistentGlobalVars();
@@ -126,6 +127,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
         public ItemCollection WagonItems { get { return wagonItems; } set { wagonItems.ReplaceAll(value); } }
         public ItemCollection OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
+        public DaggerfallUnityItem LightSource { get { return lightSource; } set { lightSource = value; } }
         public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
         public PersistentFactionData FactionData { get { return factionData; } }
         public PersistentGlobalVars GlobalVars { get { return globalVars; } }

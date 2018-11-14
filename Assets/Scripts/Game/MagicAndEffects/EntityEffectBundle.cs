@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 
@@ -86,6 +87,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             this.settings = settings;
             this.casterEntityBehaviour = casterEntityBehaviour;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Checks if effect bundle contains an effect matching a classic effect record.
+        /// </summary>
+        /// <param name="effectRecord">Effect record to compare with native bundle effects.</param>
+        /// <returns>True if bundle contains effect matching classic effect record.</returns>
+        public bool HasMatchForClassicEffect(SpellRecord.EffectRecordData effectRecord)
+        {
+            int classicKey = BaseEntityEffect.MakeClassicKey((byte)effectRecord.type, (byte)effectRecord.subType);
+            foreach(EffectEntry entry in settings.Effects)
+            {
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(entry.Key);
+                if (effectTemplate.Properties.ClassicKey == classicKey)
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion

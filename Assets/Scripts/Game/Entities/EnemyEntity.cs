@@ -172,33 +172,36 @@ namespace DaggerfallWorkshop.Game.Entity
             }
 
             // Assign spell lists
-            if (careerIndex == (int)MonsterCareers.Imp)
-                SetEnemySpells(ImpSpells);
-            else if (careerIndex == (int)MonsterCareers.Ghost)
-                SetEnemySpells(GhostSpells);
-            else if (careerIndex == (int)MonsterCareers.OrcShaman)
-                SetEnemySpells(OrcShamanSpells);
-            else if (careerIndex == (int)MonsterCareers.Wraith)
-                SetEnemySpells(WraithSpells);
-            else if (careerIndex == (int)MonsterCareers.FrostDaedra)
-                SetEnemySpells(FrostDaedraSpells);
-            else if (careerIndex == (int)MonsterCareers.FireDaedra)
-                SetEnemySpells(FireDaedraSpells);
-            else if (careerIndex == (int)MonsterCareers.Daedroth)
-                SetEnemySpells(DaedrothSpells);
-            else if (careerIndex == (int)MonsterCareers.Vampire)
-                SetEnemySpells(VampireSpells);
-            else if (careerIndex == (int)MonsterCareers.DaedraSeducer)
-                SetEnemySpells(SeducerSpells);
-            else if (careerIndex == (int)MonsterCareers.VampireAncient)
-                SetEnemySpells(VampireAncientSpells);
-            else if (careerIndex == (int)MonsterCareers.DaedraLord)
-                SetEnemySpells(DaedraLordSpells);
-            else if (careerIndex == (int)MonsterCareers.Lich)
-                SetEnemySpells(LichSpells);
-            else if (careerIndex == (int)MonsterCareers.AncientLich)
-                SetEnemySpells(AncientLichSpells);
-            else if (entityType == EntityTypes.EnemyClass && mobileEnemy.CastsMagic)
+            if (entityType == EntityTypes.EnemyMonster)
+            {
+                if (careerIndex == (int)MonsterCareers.Imp)
+                    SetEnemySpells(ImpSpells);
+                else if (careerIndex == (int)MonsterCareers.Ghost)
+                    SetEnemySpells(GhostSpells);
+                else if (careerIndex == (int)MonsterCareers.OrcShaman)
+                    SetEnemySpells(OrcShamanSpells);
+                else if (careerIndex == (int)MonsterCareers.Wraith)
+                    SetEnemySpells(WraithSpells);
+                else if (careerIndex == (int)MonsterCareers.FrostDaedra)
+                    SetEnemySpells(FrostDaedraSpells);
+                else if (careerIndex == (int)MonsterCareers.FireDaedra)
+                    SetEnemySpells(FireDaedraSpells);
+                else if (careerIndex == (int)MonsterCareers.Daedroth)
+                    SetEnemySpells(DaedrothSpells);
+                else if (careerIndex == (int)MonsterCareers.Vampire)
+                    SetEnemySpells(VampireSpells);
+                else if (careerIndex == (int)MonsterCareers.DaedraSeducer)
+                    SetEnemySpells(SeducerSpells);
+                else if (careerIndex == (int)MonsterCareers.VampireAncient)
+                    SetEnemySpells(VampireAncientSpells);
+                else if (careerIndex == (int)MonsterCareers.DaedraLord)
+                    SetEnemySpells(DaedraLordSpells);
+                else if (careerIndex == (int)MonsterCareers.Lich)
+                    SetEnemySpells(LichSpells);
+                else if (careerIndex == (int)MonsterCareers.AncientLich)
+                    SetEnemySpells(AncientLichSpells);
+            }
+            else if (entityType == EntityTypes.EnemyClass && (mobileEnemy.CastsMagic))
             {
                 int spellListLevel = level / 3;
                 if (spellListLevel > 6)

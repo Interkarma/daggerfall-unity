@@ -261,6 +261,18 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if this item is light source.
+        /// </summary>
+        public bool IsLightSource
+        {   // Torch, Lantern, Candle, Holy Candle.
+            get { return (itemGroup == ItemGroups.UselessItems2 && 
+                   (TemplateIndex == (int)UselessItems2.Torch ||
+                    TemplateIndex == (int)UselessItems2.Lantern ||
+                    TemplateIndex == (int)UselessItems2.Candle)) ||
+                   IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle); }
+        }
+
+        /// <summary>
         /// Checks if this item is of any shield type.
         /// </summary>
         public bool IsShield
@@ -522,7 +534,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Determines if item is stackable.
-        /// Only ingredients, gold pieces and arrows are stackable,
+        /// Only ingredients, gold pieces, oil and arrows are stackable,
         /// but equipped items, enchanted ingredients and quest items are never stackable.
         /// </summary>
         /// <returns>True if item stackable.</returns>
@@ -532,7 +544,8 @@ namespace DaggerfallWorkshop.Game.Items
                 return false;
             if (IsIngredient ||
                 IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) ||
-                IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
+                IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow) ||
+                IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
                 return true;
             else
                 return false;

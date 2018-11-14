@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop
         const string sectionGUI = "GUI";
         const string sectionSpells = "Spells";
         const string sectionControls = "Controls";
+        const string sectionMap = "Map";
         const string sectionStartup = "Startup";
         const string sectionExperimental = "Experimental";
         const string sectionEnhancements = "Enhancements";
@@ -97,7 +98,6 @@ namespace DaggerfallWorkshop
         public float ToolTipDelayInSeconds { get; set; }
         public Color32 ToolTipBackgroundColor { get; set; }
         public Color32 ToolTipTextColor { get; set; }
-        public int AutomapNumberOfDungeons { get; set; }
         public int ShopQualityPresentation { get; set; }
         public int ShopQualityHUDDelay { get; set; }
         public bool ShowQuestJournalClocksAsCountdown { get; set; }
@@ -129,6 +129,11 @@ namespace DaggerfallWorkshop
         public float MusicVolume { get; set; }
         public float SoundVolume { get; set; }
 
+        // [Map]
+        public int AutomapNumberOfDungeons { get; set; }
+        public float ExteriorMapDefaultZoomLevel { get; set; }
+        public bool ExteriorMapResetZoomLevelOnNewLocation { get; set; }
+
         // [Startup]
         public int StartCellX { get; set; }
         public int StartCellY { get; set; }
@@ -148,6 +153,7 @@ namespace DaggerfallWorkshop
         public float DungeonAmbientLightScale { get; set; }
         public float NightAmbientLightScale { get; set; }
         public float PlayerTorchLightScale { get; set; }
+        public bool PlayerTorchFromItems { get; set; }
         public bool CombatVoices { get; set; }
         public bool EnemyInfighting { get; set; }
         public bool EnhancedCombatAI { get; set; }
@@ -201,8 +207,7 @@ namespace DaggerfallWorkshop
             EnableInventoryInfoPanel = GetBool(sectionGUI, "EnableInventoryInfoPanel");
             EnableEnhancedItemLists = GetBool(sectionGUI, "EnableEnhancedItemLists");
             EnableModernConversationStyleInTalkWindow = GetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow");
-            HelmAndShieldMaterialDisplay = GetInt(sectionGUI, "HelmAndShieldMaterialDisplay", 0, 3);
-            AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
+            HelmAndShieldMaterialDisplay = GetInt(sectionGUI, "HelmAndShieldMaterialDisplay", 0, 3);            
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
             ShowQuestJournalClocksAsCountdown = GetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown");
@@ -228,6 +233,10 @@ namespace DaggerfallWorkshop
             SoundVolume = GetFloat(sectionControls, "SoundVolume", 0f, 1.0f);
             MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
 
+            AutomapNumberOfDungeons = GetInt(sectionMap, "AutomapNumberOfDungeons", 0, 100);
+            ExteriorMapDefaultZoomLevel = GetFloat(sectionMap, "ExteriorMapDefaultZoomLevel", 4, 31);
+            ExteriorMapResetZoomLevelOnNewLocation = GetBool(sectionMap, "ExteriorMapResetZoomLevelOnNewLocation");
+
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
@@ -244,6 +253,7 @@ namespace DaggerfallWorkshop
             DungeonAmbientLightScale = GetFloat(sectionEnhancements, "DungeonAmbientLightScale", 0.0f, 1.0f);
             NightAmbientLightScale = GetFloat(sectionEnhancements, "NightAmbientLightScale", 0.0f, 1.0f);
             PlayerTorchLightScale = GetFloat(sectionEnhancements, "PlayerTorchLightScale", 0.0f, 1.0f);
+            PlayerTorchFromItems = GetBool(sectionEnhancements, "PlayerTorchFromItems");
             CombatVoices = GetBool(sectionEnhancements, "CombatVoices");
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
@@ -333,6 +343,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEnhancements, "DungeonAmbientLightScale", DungeonAmbientLightScale);
             SetFloat(sectionEnhancements, "NightAmbientLightScale", NightAmbientLightScale);
             SetFloat(sectionEnhancements, "PlayerTorchLightScale", PlayerTorchLightScale);
+            SetBool(sectionEnhancements, "PlayerTorchFromItems", PlayerTorchFromItems);
             SetBool(sectionEnhancements, "CombatVoices", CombatVoices);
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
