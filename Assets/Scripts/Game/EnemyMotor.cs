@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich
 // 
 // Notes:
 //
@@ -17,7 +17,7 @@ using System.Collections.Generic;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Example enemy motor.
+    /// Enemy motor and AI combat decision-making logic.
     /// </summary>
     [RequireComponent(typeof(EnemySenses))]
     [RequireComponent(typeof(EnemyAttack))]
@@ -26,8 +26,31 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class EnemyMotor : MonoBehaviour
     {
-        public float OpenDoorDistance = 2f;             // Maximum distance to open door
-        public const float AttackSpeedDivisor = 3f;     // How much to slow down during attack animations
+        public float OpenDoorDistance = 2f;         // Maximum distance to open door
+
+        public const float AttackSpeedDivisor = 3f; // How much to slow down during attack animations
+        float stopDistance = 1.7f;                  // Used to prevent orbiting
+        int giveUpTimer;                            // Timer before enemy gives up
+        bool isHostile;                             // Is enemy hostile to player
+        bool flies;                                 // The enemy can fly
+        bool swims;                                 // The enemy can swim
+        bool pausePursuit;                          // pause to wait for the player to come closer to ground
+        int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
+        bool isLevitating;                          // Allow non-flying enemy to levitate
+        float classicUpdateTimer;                   // Timer for matching classic's update loop
+        bool classicUpdate;                         // True when reached a classic update
+        float knockBackSpeed;                       // While non-zero, this enemy will be knocked backwards at this speed
+        Vector3 knockBackDirection;                 // Direction to travel while being knocked back
+        float moveInForAttackTimer;                 // Time until next pursue/retreat decision
+        bool moveInForAttack;                       // False = retreat. True = pursue.
+        float retreatDistanceMultiplier;            // How far to back off while retreating
+        float changeStateTimer;                     // Time until next change in behavior. Padding to prevent instant reflexes.
+        bool pursuing;                              // Is pursuing
+        bool retreating;                            // Is retreating
+        bool fallDetected;                          // Detected a fall in front of us, so don't move there
+        Vector3 lastPosition;                       // Used to track whether we have moved or not
+        Vector3 lastDirection;                      // Used to track whether we have rotated or not
+        bool rotating;                              // Used to track whether we have rotated or not
 
         EnemySenses senses;
         Vector3 targetPos;
@@ -38,32 +61,6 @@ namespace DaggerfallWorkshop.Game
         EntityEffectBundle selectedSpell;
         EnemyAttack attack;
         EnemyEntity entity;
-
-        float stopDistance = 1.7f;                  // Used to prevent orbiting
-        float giveUpTimer;                          // Timer before enemy gives up
-        bool isHostile;                             // Is enemy hostile to player
-        bool flies;                                 // The enemy can fly
-        bool swims;                                 // The enemy can swim
-        bool pausePursuit;                          // pause to wait for the player to come closer to ground
-        int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
-
-        bool isLevitating;                          // Allow non-flying enemy to levitate
-
-        bool isAttackFollowsPlayerSet;              // For setting if the enemy will follow the player or not during an attack
-        bool attackFollowsPlayer;                   // For setting if the enemy will follow the player or not during an attack
-
-        float classicUpdateTimer;
-        bool classicUpdate;
-        float knockBackSpeed;                       // While non-zero, this enemy will be knocked backwards at this speed
-        Vector3 knockBackDirection;                 // Direction to travel while being knocked back
-
-        float pursueDecisionTimer;                   // Time until next pursue/retreat decision
-        bool pursueDecision;                         // False = retreat. True = pursue.
-        float retreatDistanceMultiplier;            // How far to back off while retreating
-        float changeStateTimer;                     // Time until next change in behavior. Padding to prevent instant reflexes.
-        bool pursuing;                              // Is pursuing
-        bool retreating;                            // Is retreating
-        bool fallDetected;                          // Detected a fall in front of us, so don't move there
 
         public bool IsLevitating
         {
@@ -103,15 +100,10 @@ namespace DaggerfallWorkshop.Game
             entityEffectManager = GetComponent<EntityEffectManager>();
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
-            isAttackFollowsPlayerSet = false;
 
             // Classic AI moves only as close as melee range
             if (!DaggerfallUnity.Settings.EnhancedCombatAI)
                 stopDistance = attack.MeleeDistance;
-        }
-
-        void Update()
-        {
         }
 
         void FixedUpdate()
@@ -129,6 +121,8 @@ namespace DaggerfallWorkshop.Game
             OpenDoors();
         }
 
+        #region Public Methods
+
         /// <summary>
         /// Immediately become hostile towards attacker and know attacker's location.
         /// </summary>
@@ -142,6 +136,7 @@ namespace DaggerfallWorkshop.Game
                 senses.LastKnownTargetPos = attacker.transform.position;
                 giveUpTimer = 200;
             }
+
             if (attacker == GameManager.Instance.PlayerEntityBehaviour)
                 isHostile = true;
         }
@@ -160,18 +155,12 @@ namespace DaggerfallWorkshop.Game
 
             return transform.position;
         }
+        #endregion
 
         #region Private Methods
 
         /// <summary>
-        /// Prevent Rat Stacks by checking for collisions with other enemies along the planned motion path.
-        ///
-        /// Since enemies are moving capsule bodies, if one collides with a shorter enemy (like a rat), it will "roll"
-        /// over the shorter enemy, causing stacks of enemies.
-        ///
-        /// This is a very simple path planning approach. One might use NavMeshes and NavMeshAgents to compute this
-        /// automatically, but I didn't want to introduce that level of complexity early on during development, when
-        /// things can easily change.
+        /// Avoid other AI characters by checking for collisions with them along the planned motion vector.
         /// </summary>
         /// <param name="plannedMotion">Path to check for collisions. This will be updated if a collision is found.</param>
         void AvoidEnemies(ref Vector3 plannedMotion)
@@ -179,8 +168,8 @@ namespace DaggerfallWorkshop.Game
             // Compute the capsule start/end points for the casting operation
             var capsuleStart = transform.position;
             var capsuleEnd = transform.position;
-            capsuleStart.y += controller.height / 2 - controller.radius;
-            capsuleEnd.y -= controller.height / 2 + controller.radius;
+            capsuleStart.y += (controller.height / 2) - controller.radius;
+            capsuleEnd.y -= (controller.height / 2) + controller.radius;
 
             // We capsule cast because a ray might grace the edge of an enemy and allow it to move across & over
             // We use cast all to detect a collision at the start of the cast as well
@@ -195,10 +184,11 @@ namespace DaggerfallWorkshop.Game
             // Simplest approach: Stop moving.
             plannedMotion *= 0;
 
-            if (mobile.Summary.EnemyState == MobileStates.Move && DaggerfallUnity.Settings.EnhancedCombatAI)
-                mobile.ChangeEnemyState(MobileStates.Idle);
+            if (DaggerfallUnity.Settings.EnhancedCombatAI)
             {
                 SetChangeStateTimer();
+                pursuing = false;
+                retreating = false;
             }
 
             // Slightly better approach: Route around.
@@ -208,7 +198,10 @@ namespace DaggerfallWorkshop.Game
             // plannedMotion = Quaternion.Euler(0, 90, 0) * plannedMotion;
         }
 
-        private void Move()
+        /// <summary>
+        /// Make decision about what movement action to take.
+        /// </summary>
+        void Move()
         {
             // Cancel movement and animations if paralyzed, but still allow gravity to take effect
             // This will have the (intentional for now) side-effect of making paralyzed flying enemies fall out of the air
@@ -218,21 +211,18 @@ namespace DaggerfallWorkshop.Game
             {
                 mobile.FreezeAnims = true;
 
-                if (swims)
+                if ((swims || flies) && !isLevitating)
                     controller.Move(Vector3.zero);
                 else
                     controller.SimpleMove(Vector3.zero);
 
                 return;
             }
-            else
-            {
-                mobile.FreezeAnims = false;
-            }
+            mobile.FreezeAnims = false;
 
             // Apply gravity to non-moving AI if active (has a combat target)
-            if (entityBehaviour.Target != null && !flies && !swims && mobile.Summary.EnemyState != MobileStates.Move &&
-                mobile.Summary.EnemyState != MobileStates.Hurt)
+            if (entityBehaviour.Target != null && !flies && !swims && mobile.Summary.EnemyState != MobileStates.Move
+                && mobile.Summary.EnemyState != MobileStates.Hurt)
             {
                 controller.SimpleMove(Vector3.zero);
             }
@@ -241,13 +231,15 @@ namespace DaggerfallWorkshop.Game
             if (knockBackSpeed > 0)
             {
                 // Limit knockBackSpeed. This can be higher than what is actually used for the speed of motion,
-                // making it last longer and do more damage if the enemy collides with something.
+                // making it last longer and do more damage if the enemy collides with something (TODO).
                 if (knockBackSpeed > (40 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
                     knockBackSpeed = (40 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
 
                 if (knockBackSpeed > (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
                     mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                {
                     mobile.ChangeEnemyState(MobileStates.Hurt);
+                }
 
                 // Actual speed of motion is limited
                 Vector3 motion;
@@ -256,34 +248,36 @@ namespace DaggerfallWorkshop.Game
                 else
                     motion = knockBackDirection * (25 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
 
+                // Move in direction of knockback
                 if (swims)
-                {
                     WaterMove(motion);
-                }
                 else if (flies || isLevitating)
                     controller.Move(motion * Time.deltaTime);
                 else
                     controller.SimpleMove(motion);
 
+                // Remove remaining knockback and restore animation
                 if (classicUpdate)
                 {
                     knockBackSpeed -= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                    if (knockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
-                        mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                    if (knockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
+                        && mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                    {
                         mobile.ChangeEnemyState(MobileStates.Move);
+                    }
                 }
 
                 // If a decent hit got in, reconsider whether to continue current tactic
                 if (knockBackSpeed > (10 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
                 {
-                    EvaluatepursueDecision();
+                    EvaluateMoveInForAttack();
                 }
 
                 return;
             }
 
             // Monster speed of movement follows the same formula as for when the player walks
-            float moveSpeed = ((entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) / PlayerSpeedChanger.classicToUnitySpeedUnitRatio);
+            float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
             // Reduced speed if playing a one-shot animation with enhanced AI
             if (mobile.IsPlayingOneShot() && DaggerfallUnity.Settings.EnhancedCombatAI)
@@ -297,20 +291,48 @@ namespace DaggerfallWorkshop.Game
             // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
             if (!senses.DetectedTarget
                 && giveUpTimer > 0 && classicUpdate)
-                giveUpTimer--;
-
-            // Enemy will keep moving towards last known target position
-            targetPos = senses.LastKnownTargetPos;
-
-            // Remain idle after finishing any attacks if no target or after giving up finding the target
-            if (entityBehaviour.Target == null || giveUpTimer == 0 || targetPos == EnemySenses.ResetPlayerPos)
             {
-                if (mobile.Summary.EnemyState == MobileStates.Move)
+                giveUpTimer--;
+            }
+
+            // Change to idle animation if haven't moved or rotated
+            if (!mobile.IsPlayingOneShot())
+            {
+                // Rotation is done at classic update rate, so check at classic update rate
+                if (classicUpdate)
+                {
+                    Vector3 currentDirection = transform.forward;
+                    currentDirection.y = 0;
+
+                    if (lastPosition == transform.position && lastDirection == currentDirection)
+                    {
+                        mobile.ChangeEnemyState(MobileStates.Idle);
+                        rotating = false;
+                    }
+                    else
+                        mobile.ChangeEnemyState(MobileStates.Move);
+
+                    lastDirection = currentDirection;
+                }
+                // Movement is done at regular update rate, so check at regular update rate
+                else if (!rotating && lastPosition == transform.position)
                     mobile.ChangeEnemyState(MobileStates.Idle);
+                else
+                    mobile.ChangeEnemyState(MobileStates.Move);
+
+                lastPosition = transform.position;
+            }
+
+            // Do nothing if no target or after giving up finding the target
+            if (entityBehaviour.Target == null || giveUpTimer == 0)
+            {
                 SetChangeStateTimer();
 
                 return;
             }
+
+            // Get last known target position
+            targetPos = senses.LastKnownTargetPos;
 
             // Flying enemies and slaughterfish aim for target face
             if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
@@ -329,29 +351,13 @@ namespace DaggerfallWorkshop.Game
             var direction = targetPos - transform.position;
             float distance = direction.magnitude;
 
-            // If attacking, randomly follow target with attack.
-            if (mobile.Summary.EnemyState == MobileStates.PrimaryAttack)
-            {
-                if (!isAttackFollowsPlayerSet)
-                {
-                    attackFollowsPlayer = (Random.Range(0f, 1f) > 0.5f);
-                    isAttackFollowsPlayerSet = true;
-                }
-            }
-            else
-                isAttackFollowsPlayerSet = false;
-
-            // Classic AI attack always follows player
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI || attackFollowsPlayer)
-                transform.forward = direction.normalized;
-
             // Ranged attacks
             if (senses.TargetInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
             {
-                bool evaluateBow = (mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132);
+                bool evaluateBow = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
                 bool evaluateRangedMagic = false;
                 if (!evaluateBow)
-                    evaluateRangedMagic = (CanCastRangedSpell(entity));
+                    evaluateRangedMagic = CanCastRangedSpell();
 
                 if (evaluateBow || evaluateRangedMagic)
                 {
@@ -369,12 +375,6 @@ namespace DaggerfallWorkshop.Game
                                     else if (mobile.Summary.Enemy.HasRangedAttack2)
                                         mobile.ChangeEnemyState(MobileStates.RangedAttack2);
                                 }
-                                // Otherwise hold ground
-                                else
-                                {
-                                    if (mobile.Summary.EnemyState == MobileStates.Move)
-                                        mobile.ChangeEnemyState(MobileStates.Idle);
-                                }
                             }
                             // Random chance to shoot spell
                             else if (classicUpdate && DFRandom.rand() % 40 == 0
@@ -382,100 +382,71 @@ namespace DaggerfallWorkshop.Game
                             {
                                 mobile.ChangeEnemyState(MobileStates.Spell);
                             }
-                            // Otherwise hold ground
-                            else
-                            {
-                                if (mobile.Summary.EnemyState == MobileStates.Move)
-                                    mobile.ChangeEnemyState(MobileStates.Idle);
-                            }
                         }
                     }
                     else
-                    {
-                        if (!mobile.IsPlayingOneShot())
-                            mobile.ChangeEnemyState(MobileStates.Move);
                         TurnToTarget(direction.normalized);
-                    }
 
                     return;
                 }
             }
 
             if (senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
-                senses.TargetRateOfApproach && CanCastTouchSpell(entity) && entityEffectManager.SetReadySpell(selectedSpell))
+                senses.TargetRateOfApproach && CanCastTouchSpell() && entityEffectManager.SetReadySpell(selectedSpell))
             {
                 if (mobile.Summary.EnemyState != MobileStates.Spell)
                     mobile.ChangeEnemyState(MobileStates.Spell);
 
-                attack.MeleeTimer = Random.Range(1500, 3001);
-                attack.MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
-                attack.MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
-
-                if (attack.MeleeTimer < 0)
-                    attack.MeleeTimer = 1500;
-
-                attack.MeleeTimer /= 980; // Approximates classic frame update
-
+                attack.ResetMeleeTimer();
                 return;
             }
 
             // Update melee decision
-            if (pursueDecisionTimer == 0 && senses.TargetInSight)
-            {
-                EvaluatepursueDecision();
-            }
-            if (pursueDecisionTimer > 0)
-                pursueDecisionTimer -= Time.deltaTime;
-            if (pursueDecisionTimer < 0)
-                pursueDecisionTimer = 0;
+            if (moveInForAttackTimer <= 0)
+                EvaluateMoveInForAttack();
+            if (moveInForAttackTimer > 0)
+                moveInForAttackTimer -= Time.deltaTime;
 
             if (changeStateTimer > 0)
                 changeStateTimer -= Time.deltaTime;
 
             // Approach target until we are close enough to be on-guard, or continue to melee range if attacking
-            if ((!retreating && distance >= (stopDistance * 2.75)) ||
-                    (distance > stopDistance && pursueDecision))
+            if ((!retreating && distance >= (stopDistance * 2.75))
+                    || (distance > stopDistance && moveInForAttack))
             {
                 // If state change timer is done, or we are already pursuing, we can move
                 if (changeStateTimer <= 0 || pursuing)
-                    PursueTarget(direction, moveSpeed);
-                else // Otherwise, just keep an eye on target until timer finishes
-                {
-                    if (mobile.Summary.EnemyState == MobileStates.Move)
-                        mobile.ChangeEnemyState(MobileStates.Idle);
-                    if (!senses.TargetIsWithinYawAngle(22.5f))
-                        TurnToTarget(direction.normalized);
-                }
+                    CombatMove(direction, moveSpeed);
+                // Otherwise, just keep an eye on target until timer finishes
+                else if (!senses.TargetIsWithinYawAngle(22.5f))
+                    TurnToTarget(direction.normalized);
             }
             // Back away if right next to target, if retreating, or if cooling down from attack
             // Classic AI never backs away
             else if (DaggerfallUnity.Settings.EnhancedCombatAI && (senses.TargetInSight && (distance < stopDistance * .50 ||
-                (!pursueDecision && distance < (stopDistance * retreatDistanceMultiplier)))))
+                (!moveInForAttack && distance < (stopDistance * retreatDistanceMultiplier)))))
             {
                 // If state change timer is done, or we are already retreating, we can move
                 if (changeStateTimer <= 0 || retreating)
-                    BackAwayFromTarget(direction, moveSpeed / 2);
-                else // Otherwise, just keep an eye on target until timer finishes
-                {
-                    if (mobile.Summary.EnemyState == MobileStates.Move)
-                        mobile.ChangeEnemyState(MobileStates.Idle);
-                    if (!senses.TargetIsWithinYawAngle(22.5f))
-                        TurnToTarget(direction.normalized);
-                }
+                    CombatMove(direction, moveSpeed / 2, true);
+                // Otherwise, just keep an eye on target until timer finishes
+                else if (!senses.TargetIsWithinYawAngle(22.5f))
+                    TurnToTarget(direction.normalized);
             }
             else if (!senses.TargetIsWithinYawAngle(22.5f))
                 TurnToTarget(direction.normalized);
-            else
+            else // Next to target
             {
-                if (mobile.Summary.EnemyState == MobileStates.Move)
-                    mobile.ChangeEnemyState(MobileStates.Idle);
                 SetChangeStateTimer();
                 pursuing = false;
                 retreating = false;
             }
         }
 
-        bool CanCastRangedSpell(DaggerfallEntity entity)
+        /// <summary>
+        /// Selects a ranged spell from this enemy's list and returns true if it can be cast.
+        /// </summary>
+        bool CanCastRangedSpell()
         {
             if (entity.CurrentMagicka <= 0)
                 return false;
@@ -512,7 +483,10 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        bool CanCastTouchSpell(DaggerfallEntity entity)
+        /// <summary>
+        /// Selects a touch spell from this enemy's list and returns true if it can be cast.
+        /// </summary>
+        bool CanCastTouchSpell()
         {
             if (entity.CurrentMagicka <= 0)
                 return false;
@@ -562,6 +536,9 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
+        /// <summary>
+        /// Checks whether the target already is affected by all of the effects of the given spell.
+        /// </summary>
         bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
         {
             if (entityBehaviour.Target)
@@ -578,7 +555,6 @@ namespace DaggerfallWorkshop.Game
                     {
                         for (int k = 0; k < bundles[j].liveEffects.Count && !foundEffect; k++)
                         {
-
                             if (bundles[j].liveEffects[k].GetType() == effectTemplate.GetType())
                                 foundEffect = true;
                         }
@@ -592,21 +568,36 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        private void PursueTarget(Vector3 direction, float moveSpeed)
+        /// <summary>
+        /// Maneuver in combat with target
+        /// </summary>
+        void CombatMove(Vector3 direction, float moveSpeed, bool backAway = false)
         {
-            pursuing = true;
-            retreating = false;
+            if (!backAway)
+            {
+                pursuing = true;
+                retreating = false;
+            }
+            else
+            {
+                retreating = true;
+                pursuing = false;
+            }
 
             if (!senses.TargetIsWithinYawAngle(5.625f))
             {
                 TurnToTarget(direction.normalized);
-                return;
+                // Classic always turns in place. Enhanced only does so if enemy is not in sight.
+                if (!DaggerfallUnity.Settings.EnhancedCombatAI || !senses.TargetInSight)
+                    return;
             }
 
-            var motion = transform.forward * moveSpeed;
+            Vector3 motion = transform.forward * moveSpeed;
+            if (backAway)
+                motion *= -1;
 
             // If using enhanced combat, avoid moving directly below targets
-            if (DaggerfallUnity.Settings.EnhancedCombatAI)
+            if (!backAway && DaggerfallUnity.Settings.EnhancedCombatAI)
             {
                 bool withinPitch = senses.TargetIsWithinPitchAngle(45.0f);
                 if (!pausePursuit && !withinPitch)
@@ -618,7 +609,7 @@ namespace DaggerfallWorkshop.Game
                         else
                             motion = transform.up * moveSpeed;
                     }
-                    // causes a random delay after being out of pitch range. for more realistic movements
+                    // Causes a random delay after being out of pitch range
                     else if (senses.TargetIsAbove() && changeStateTimer <= 0)
                     {
                         SetChangeStateTimer();
@@ -631,70 +622,40 @@ namespace DaggerfallWorkshop.Game
                 if (pausePursuit)
                 {
                     if (senses.TargetIsAbove() && !senses.TargetIsWithinPitchAngle(55.0f) && changeStateTimer <= 0)
+                    {
+                        // Back away from target
                         motion = -transform.forward * moveSpeed * 0.75f;
+                    }
                     else
                     {
-                        if (mobile.Summary.EnemyState == MobileStates.Move)
-                            mobile.ChangeEnemyState(MobileStates.Idle);
+                        // Stop moving
                         return;
                     }
                 }
-
-                if (!pausePursuit)
-                    SetChangeStateTimer();
             }
 
-            // Prevent rat stacks (enemies don't stand on shorter enemies)
+            // Avoid other enemies, and stop enemies from moving on top of shorter enemies
             AvoidEnemies(ref motion);
 
-            if (!mobile.IsPlayingOneShot() && motion != Vector3.zero)
-                mobile.ChangeEnemyState(MobileStates.Move);
+            // Return if AvoidEnemies set change timer
+            if (changeStateTimer > 0 && !pursuing && !retreating)
+                return;
 
+            SetChangeStateTimer();
             if (swims)
-            {
                 WaterMove(motion);
-            }
             else if (flies || isLevitating)
                 controller.Move(motion * Time.deltaTime);
             else
                 MoveIfNoFallDetected(motion);
         }
 
-        private void BackAwayFromTarget(Vector3 direction, float moveSpeed)
+        /// <summary>
+        /// Check for a large fall, and proceed with move if none found.
+        /// </summary>
+        void MoveIfNoFallDetected(Vector3 motion)
         {
-            retreating = true;
-            pursuing = false;
-            SetChangeStateTimer();
-
-            if (!mobile.IsPlayingOneShot())
-            {
-                mobile.ChangeEnemyState(MobileStates.Move);
-
-                if (!senses.TargetIsWithinYawAngle(5.625f))
-                {
-                    TurnToTarget(direction.normalized);
-                    return;
-                }
-
-                var motion = -transform.forward * moveSpeed;
-
-                // Prevent rat stacks (enemies don't stand on shorter enemies)
-                AvoidEnemies(ref motion);
-
-                if (swims)
-                {
-                    WaterMove(motion);
-                }
-                else if (flies || isLevitating)
-                    controller.Move(motion * Time.deltaTime);
-                else
-                    MoveIfNoFallDetected(motion);
-            }
-        }
-
-        private void MoveIfNoFallDetected(Vector3 motion)
-        {
-            // Check that we aren't walking off a ledge
+            // Check at classic rate to limit ray casts
             if (classicUpdate)
             {
                 // First check if there is something to collide with directly in movement direction, such as upward sloping ground.
@@ -706,7 +667,7 @@ namespace DaggerfallWorkshop.Game
                 Ray ray = new Ray(rayOrigin, rayDirection);
                 if (Physics.Raycast(ray, out hit, 1))
                     fallDetected = false;
-                // Nothing to collide with. Check for a reasonably short fall.
+                // Nothing to collide with. Check for a long fall.
                 else
                 {
                     Vector3 motion2d = motion.normalized;
@@ -714,28 +675,32 @@ namespace DaggerfallWorkshop.Game
                     motion2d *= 2;
 
                     ray = new Ray(transform.position + motion2d, Vector3.down);
-                    if (Physics.Raycast(ray, out hit, 5))
-                        fallDetected = false;
-                    else
-                        fallDetected = true;
+                    fallDetected = !Physics.Raycast(ray, out hit, 5);
                 }
             }
 
             if (!fallDetected)
                 controller.SimpleMove(motion);
             else if (mobile.Summary.EnemyState == MobileStates.Move && DaggerfallUnity.Settings.EnhancedCombatAI)
-            {
-                mobile.ChangeEnemyState(MobileStates.Idle);
                 SetChangeStateTimer();
-            }
         }
 
-        private void EvaluatepursueDecision()
+        /// <summary>
+        /// Decide whether or not to pursue enemy, based on perceived combat odds.
+        /// </summary>
+        void EvaluateMoveInForAttack()
         {
-            // No retreat without enhanced AI
+            // Classic always attacks
             if (!DaggerfallUnity.Settings.EnhancedCombatAI)
             {
-                pursueDecision = true;
+                moveInForAttack = true;
+                return;
+            }
+
+            // No retreat from unseen opponent
+            if (!senses.TargetInSight)
+            {
+                moveInForAttack = true;
                 return;
             }
 
@@ -745,24 +710,24 @@ namespace DaggerfallWorkshop.Game
                 EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
                 if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
                 {
-                    pursueDecision = true;
+                    moveInForAttack = true;
                     return;
                 }
 
                 // No retreat if enemy's back is turned
                 if (senses.TargetHasBackTurned())
                 {
-                    pursueDecision = true;
+                    moveInForAttack = true;
                     return;
                 }
 
                 // No retreat if enemy is player with bow or weapon not out
-                if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour &&
-                    GameManager.Instance.WeaponManager.ScreenWeapon &&
-                    (GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow ||
-                    !GameManager.Instance.WeaponManager.ScreenWeapon.ShowWeapon))
+                if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour
+                    && GameManager.Instance.WeaponManager.ScreenWeapon
+                    && (GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow
+                    || !GameManager.Instance.WeaponManager.ScreenWeapon.ShowWeapon))
                 {
-                    pursueDecision = true;
+                    moveInForAttack = true;
                     return;
                 }
             }
@@ -771,10 +736,10 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            float retreatDistanceBaseMult = 2.25f;
+            const float retreatDistanceBaseMult = 2.25f;
 
             // Level difference affects likelihood of backing away.
-            pursueDecisionTimer = Random.Range(1, 3);
+            moveInForAttackTimer = Random.Range(1, 3);
             int levelMod = (entity.Level - entityBehaviour.Target.Entity.Level) / 2;
             if (levelMod > 4)
                 levelMod = 4;
@@ -783,70 +748,70 @@ namespace DaggerfallWorkshop.Game
 
             int roll = Random.Range(0 + levelMod, 10 + levelMod);
 
-            pursueDecision = roll > 4;
+            moveInForAttack = roll > 4;
 
             // Chose to retreat
-            if (!pursueDecision)
-            {
+            if (!moveInForAttack)
                 retreatDistanceMultiplier = (float)(retreatDistanceBaseMult + (retreatDistanceBaseMult * (0.25 * (2 - roll))));
-            }
         }
 
-        private void SetChangeStateTimer()
+        /// <summary>
+        /// Set timer for padding between state changes, for non-perfect reflexes.
+        /// </summary>
+        void SetChangeStateTimer()
         {
             // No timer without enhanced AI
             if (!DaggerfallUnity.Settings.EnhancedCombatAI)
-            {
                 return;
-            }
 
-            // Set a delay between state changes so AI doesn't seem to instantly react to things
             if (changeStateTimer <= 0)
-            {
                 changeStateTimer = Random.Range(0.2f, .8f);
-            }
         }
 
-        private void WaterMove(Vector3 motion)
-		{
+        /// <summary>
+        /// Movement for water enemies.
+        /// </summary>
+        void WaterMove(Vector3 motion)
+        {
             // Don't allow aquatic enemies to go above the water level of a dungeon block
             if (GameManager.Instance.PlayerEnterExit.blockWaterLevel != 10000
-					&& controller.transform.position.y <
-					GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)
-			{
-				if (motion.y > 0 && controller.transform.position.y + (100 * MeshReader.GlobalScale) >=
-						GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)
-				{
-					motion.y = 0;
-				}
+                    && controller.transform.position.y
+                    < GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)
+            {
+                if (motion.y > 0 && controller.transform.position.y + (100 * MeshReader.GlobalScale)
+                        >= GameManager.Instance.PlayerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale)
+                {
+                    motion.y = 0;
+                }
                 controller.Move(motion * Time.deltaTime);
-			}
-		}
-
-        private void TurnToTarget(Vector3 targetDirection)
-        {
-            const float turnSpeed = 20f;
-            //const float turnSpeed = 11.25f;
-
-            if (!mobile.IsPlayingOneShot())
-                mobile.ChangeEnemyState(MobileStates.Move);
-
-            if (classicUpdate)
-                transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, turnSpeed * Mathf.Deg2Rad, 0.0f);
+            }
         }
 
-        private void OpenDoors()
+        /// <summary>
+        /// Rotate toward target.
+        /// </summary>
+        void TurnToTarget(Vector3 targetDirection)
         {
-            // Can we open doors?
-            if (mobile.Summary.Enemy.CanOpenDoors)
+            const float turnSpeed = 20f;
+            //Classic speed is 11.25f, too slow for Daggerfall Unity's agile player movement
+
+            if (classicUpdate)
             {
-                // Is there a door blocking path to target?
-                if (senses.LastKnownDoor != null && senses.DistanceToDoor < OpenDoorDistance)
-                {
-                    // Is the door closed? Try to open it!
-                    if (!senses.LastKnownDoor.IsOpen)
-                        senses.LastKnownDoor.ToggleDoor();
-                }
+                transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, turnSpeed * Mathf.Deg2Rad, 0.0f);
+                    rotating = true;
+            }
+        }
+
+        /// <summary>
+        /// Open doors that are in the way.
+        /// </summary>
+        void OpenDoors()
+        {
+            // Try to open doors blocking way
+            if (mobile.Summary.Enemy.CanOpenDoors && senses.LastKnownDoor != null
+                && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen)
+            {
+                senses.LastKnownDoor.ToggleDoor();
             }
         }
 
