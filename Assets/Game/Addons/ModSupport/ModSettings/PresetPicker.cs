@@ -204,7 +204,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             creatorDescription.OnMouseLeave += CreatorDescription_OnMouseLeave;
             creatorPanel.Components.Add(creatorDescription);
 
-            ListBox_OnSelectItem();
+            ToggleButtons(true, newPresetButton);
+            ToggleButtons(false, loadButton, saveButton, deleteButton);
+            if (listBox.Count > 0)
+                ListBox_OnSelectItem();
         }
 
         public override void OnPush()
@@ -376,6 +379,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             scrollBar.TotalUnits--;
             settings.Presets.RemoveAt(listBox.SelectedIndex);
             writeToDiskFlag = true;
+
+            if (listBox.Count == 0)
+            {
+                ToggleButtons(true, newPresetButton);
+                ToggleButtons(false, loadButton, saveButton, deleteButton);
+            }
         }
 
         private void CreatorTitle_OnMouseLeave(BaseScreenComponent sender)
