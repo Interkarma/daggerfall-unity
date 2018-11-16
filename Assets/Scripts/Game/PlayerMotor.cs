@@ -230,6 +230,9 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            // Check if on a solid surface
+            grounded = (collisionFlags & CollisionFlags.Below) != 0;
+
             // Clear movement
             if (cancelMovement)
             {
@@ -288,7 +291,6 @@ namespace DaggerfallWorkshop.Game
             acrobatMotor.HitHead(ref moveDirection);
 
             groundMotor.MoveWithMovingPlatform(moveDirection);
-            grounded = (collisionFlags & CollisionFlags.Below) != 0;
         }
 
         void Update()
