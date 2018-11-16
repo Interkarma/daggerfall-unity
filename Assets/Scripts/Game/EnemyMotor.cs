@@ -134,6 +134,8 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour.Target == null || !senses.TargetInSight || senses.DistanceToTarget > 2f)
                     entityBehaviour.Target = attacker;
                 senses.LastKnownTargetPos = attacker.transform.position;
+                senses.OldLastKnownTargetPos = attacker.transform.position;
+                senses.PredictedTargetPos = attacker.transform.position;
                 giveUpTimer = 200;
             }
 
@@ -331,8 +333,8 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Get last known target position
-            targetPos = senses.LastKnownTargetPos;
+            // Get predicted target position
+            targetPos = senses.PredictedTargetPos;
 
             // Flying enemies and slaughterfish aim for target face
             if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
@@ -349,7 +351,7 @@ namespace DaggerfallWorkshop.Game
 
             // Get direction & distance.
             var direction = targetPos - transform.position;
-            float distance = direction.magnitude;
+            float distance = (senses.LastKnownTargetPos - transform.position).magnitude;
 
             // Ranged attacks
             if (senses.TargetInSight && 360 * MeshReader.GlobalScale < distance && distance < 2048 * MeshReader.GlobalScale)
