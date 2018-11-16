@@ -84,6 +84,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     {
                         fsData componentData;
                         if ((fsResult += Serializer.TrySerialize(component, out componentData)).Failed) return fsResult;
+                        if ((fsResult += ValidateComponentData(componentData)).Failed) return fsResult;
                         (components ?? (components = new List<fsData>())).Add(componentData);
                         UnityEngine.Object.DestroyImmediate(component, true);
                     }
@@ -156,6 +157,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 }
 
                 return fsResult;
+            }
+
+            private static fsResult ValidateComponentData(fsData fsData)
+            {
+                // FullSerializer handles cyclic references but wants to create the instance on the first reference met.
+                // Objects derived from Component must use AddComponent() so this is only possible if the first reference is this one.
+                // For example a component can't reference another component on a child gameobject, while the opposite should be fine.
+                // In practice, if we have a $ref it means the serialized data has already been stored somewhere else...
+                return !fsData.AsDictionary.ContainsKey("$ref") ? fsResult.Success :
+                    fsResult.Fail("Unable to preserve field reference to component met before the component itself" +
+                        " because a component instance can't exist without a gameobject; use GetComponent() in Start() instead.");
             }
         }
 
