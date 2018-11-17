@@ -9,9 +9,6 @@
 // Notes:
 //
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -22,7 +19,7 @@ namespace DaggerfallWorkshop.Game
     public class VitalsChangeDetector : MonoBehaviour
     {
         protected int previousMaxHealth;
-        protected int previousMaxFatigue;        
+        protected int previousMaxFatigue;
         protected int previousMaxMagicka;
         protected int previousHealth;
         protected int previousFatigue;
