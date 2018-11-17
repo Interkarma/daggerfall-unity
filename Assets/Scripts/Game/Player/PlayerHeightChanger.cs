@@ -128,8 +128,8 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!riding && !onWater)
             {
-                // if we crouch out of water
-                if (!swimming && pressedCrouch)
+                // if we crouch out of water or while on solid ground
+                if ((!swimming || playerMotor.IsGrounded) && pressedCrouch)
                 {
                     timerMax = timerFast;
                     // Toggle crouching
@@ -137,6 +137,7 @@ namespace DaggerfallWorkshop.Game
                         heightAction = HeightChangeAction.DoStanding;
                     else
                         heightAction = HeightChangeAction.DoCrouching;
+                    forcedSwimCrouch = false;
                 }
                 // if climbing, force into standing
                 else if (climbing)
@@ -147,7 +148,7 @@ namespace DaggerfallWorkshop.Game
                     forcedSwimCrouch = false;
                 }
                 // if swimming but not crouching, crouch.
-                else if (swimming && !forcedSwimCrouch)
+                else if (swimming && !forcedSwimCrouch && !playerMotor.IsGrounded)
                 {
                     timerMax = timerMedium;
                     if (!crouching)
