@@ -700,19 +700,16 @@ namespace DaggerfallWorkshop.Game
                 // First check if there is something to collide with directly in movement direction, such as upward sloping ground.
                 // If there is, we assume we won't fall.
                 RaycastHit hit;
-                Vector3 rayOrigin = transform.position;
-                Vector3 rayDirection = targetPos - transform.position;
-                rayDirection.y = 0;
-                Ray ray = new Ray(rayOrigin, rayDirection);
-                if (Physics.Raycast(ray, out hit, 1))
+                Vector3 motion2d = motion.normalized;
+                motion2d.y = 0;
+                int checkDistance = 2;
+                Ray ray = new Ray(transform.position, motion2d);
+                if (Physics.Raycast(ray, out hit, checkDistance))
                     fallDetected = false;
                 // Nothing to collide with. Check for a reasonably short fall.
                 else
                 {
-                    Vector3 motion2d = motion.normalized;
-                    motion2d.y = 0;
-                    motion2d *= 2;
-
+                    motion2d *= checkDistance;
                     ray = new Ray(transform.position + motion2d, Vector3.down);
                     if (Physics.Raycast(ray, out hit, 5))
                         fallDetected = false;
