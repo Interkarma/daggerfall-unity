@@ -143,14 +143,14 @@ namespace DaggerfallWorkshop.Game
             bool nonOrthogonalStart = !isClimbing && inputForward && !horizontallyStationary;
             bool forwardStationaryNearCeiling = inputForward && hangingMotor.IsWithinHangingDistance && horizontallyStationary;
             bool pushingFaceAgainstWallNearCeiling = hangingMotor.IsHanging && !isClimbing && touchingSides && forwardStationaryNearCeiling;
-            bool climbingOrForward = (isClimbing || inputForward);
+            bool climbingOrForwardOrGrasping = (isClimbing || inputForward || airborneGraspWall);
             RaycastHit hit;
             bool hangTouchNonVertical = hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
 
             // Should we reset climbing starter timers?
             if (!pushingFaceAgainstWallNearCeiling &&
                 (inputAbortCondition
-                || !climbingOrForward 
+                || !climbingOrForwardOrGrasping 
                 || !touchingSides && !fromCeiling
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
@@ -337,9 +337,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, bool searchClockwise)
+        private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, PlayerMoveScanner.RotationDirection turnDirection)
         {
-            AdjacentSurface adjSurface = moveScanner.GetAdjacentSurface(origin, direction, searchClockwise);
+            AdjacentSurface adjSurface = moveScanner.GetAdjacentSurface(origin, direction, turnDirection);
 
             if (adjSurface != null && adjSurface.adjacentTurns == 0)
                 atInsideCorner = IsAtInsideCorner(adjSurface.turnHitDistance);
@@ -405,6 +405,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (movedBackward)
                         moveDirection.y = Vector3.down.y * climbScalar;
+
                     #endregion
                     #region Horizontal Climbing
                     if (movedRight || movedLeft)
@@ -420,7 +421,7 @@ namespace DaggerfallWorkshop.Game
                         Debug.DrawRay(myStrafeRay.origin, myStrafeRay.direction, Color.red);
 
                         // perform check for adjacent wall
-                        GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft);
+                        GetAdjacentWallInfo(controller.transform.position, checkDirection * checkScalar, movedLeft ? PlayerMoveScanner.RotationDirection.XZClockwise : PlayerMoveScanner.RotationDirection.XZCounterClockwise);
 
                         Vector3 intersection;
                         Vector3 intersectionOrthogonal;

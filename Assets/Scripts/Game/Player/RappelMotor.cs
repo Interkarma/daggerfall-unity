@@ -10,12 +10,14 @@ namespace DaggerfallWorkshop.Game
         private float rappelTimer;
         private Vector3 lastPosition = Vector3.zero;
         public bool IsRappelling { get; private set; }
+        public bool RappelUp { get; private set; }
         private AcrobatMotor acrobatMotor;
         private CharacterController controller;
         private PlayerSpeedChanger speedChanger;
         private PlayerGroundMotor groundMotor;
         private ClimbingMotor climbingMotor;
         private PlayerMoveScanner playerScanner;
+        private HangingMotor hangingMotor;
         private Entity.PlayerEntity player;
 
         private void Start()
@@ -28,6 +30,7 @@ namespace DaggerfallWorkshop.Game
             groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             playerScanner = GetComponent<PlayerMoveScanner>();
+            hangingMotor = GetComponent<HangingMotor>();
         }
 
         /// <summary>
@@ -42,6 +45,15 @@ namespace DaggerfallWorkshop.Game
 
             bool rappelAllowed = (DaggerfallUnity.Settings.AdvancedClimbing && 
                 !climbingMotor.IsClimbing && !climbingMotor.IsSlipping && acrobatMotor.Falling);
+
+            // TODO: find out why rappel up/down isn't chosen correctly
+            // if an adjacent overhead wall was found using 2 turns
+            if (rappelAllowed &&
+                hangingMotor.AdjacentOverheadWall != null &&
+                hangingMotor.AdjacentOverheadWall.adjacentTurns >= 2)
+            {
+                RappelUp = true;
+            }
 
             if (!rappelAllowed)
                 return;
@@ -78,25 +90,43 @@ namespace DaggerfallWorkshop.Game
                     Vector3 rappelPosition = Vector3.zero;
                     // create C-shaped movement to plant self against wall beneath
                     Vector3 pos = lastPosition;
-                    float yDist = 1.60f;
-                    float xzDist = 0.17f;
-                    rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
-                    rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
-                    rappelPosition.y = Mathf.Lerp(pos.y, pos.y - yDist, rappelTimer / firstTimerMax);
+                    float yDist;
+                    float xzDist;
+
+                    if (!RappelUp)
+                    {
+                        yDist = 1.60f;
+                        xzDist = 0.17f;
+                        rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
+                        rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
+                        rappelPosition.y = Mathf.Lerp(pos.y, pos.y - yDist, rappelTimer / firstTimerMax);
+                    }
+                    else
+                    {
+                        yDist = 1.60f;
+                        xzDist = 0.19f;
+                        rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
+                        rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
+                        rappelPosition.y = Mathf.Lerp(pos.y, pos.y + yDist, rappelTimer / firstTimerMax);
+                    }
 
                     controller.transform.position = rappelPosition;
                 }
                 else
                 {
-                    Vector3 rappelDirection = Vector3.zero;
+                    // clear rappel information
+                    RappelUp = false;
+                    hangingMotor.PurgeOverheadWall();
+
+                    Vector3 grappleDirection = Vector3.zero;
                     // Auto forward to grab wall
                     float speed = speedChanger.GetBaseSpeed();
                     if (climbingMotor.LedgeDirection != Vector3.zero)
-                        rappelDirection = climbingMotor.LedgeDirection;
+                        grappleDirection = climbingMotor.LedgeDirection;
                     else
-                        rappelDirection = controller.transform.forward;
-                    rappelDirection *= speed * 1.25f;
-                    groundMotor.MoveWithMovingPlatform(rappelDirection);
+                        grappleDirection = controller.transform.forward;
+                    grappleDirection *= speed * 1.25f;
+                    groundMotor.MoveWithMovingPlatform(grappleDirection);
                 }
             }
         }

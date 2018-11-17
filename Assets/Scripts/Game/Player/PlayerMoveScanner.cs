@@ -45,11 +45,19 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerMoveScanner : MonoBehaviour
     {
+        public enum RotationDirection
+        {
+            XZClockwise,
+            XZCounterClockwise,
+            YZClockwise,
+            YZCounterClockWise
+        }
         CharacterController controller;
         AcrobatMotor acrobatMotor;
         PlayerMotor playerMotor;
         private int turnCount = 0;
-
+        
+        public float HeadHitRadius { get; private set; }
         public float StepHitDistance { get; private set; }
         public float HeadHitDistance { get; private set; }
         void Start()
@@ -57,6 +65,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             playerMotor = GetComponent<PlayerMotor>();
+            HeadHitRadius = controller.radius * 0.85f;
         }
 
         /// <summary>
@@ -86,7 +95,7 @@ namespace DaggerfallWorkshop.Game
         {
             //Ray ray = new Ray(controller.transform.position, Vector3.up);
             RaycastHit hit = new RaycastHit();
-            if (Physics.SphereCast(ray, controller.radius * 0.85f, out hit, 2f))
+            if (Physics.SphereCast(ray, HeadHitRadius, out hit, 2f))
             {
                 if (hit.collider.GetComponent<MeshCollider>())
                 {
@@ -97,7 +106,7 @@ namespace DaggerfallWorkshop.Game
             }
             return false;
         }
-        public AdjacentSurface GetAdjacentSurface(Vector3 origin, Vector3 direction, bool searchClockwise)
+        public AdjacentSurface GetAdjacentSurface(Vector3 origin, Vector3 direction, RotationDirection turnDirection)
         {
             RaycastHit hit;
             
@@ -112,10 +121,24 @@ namespace DaggerfallWorkshop.Game
                 Debug.DrawRay(hit.point, hit.normal);
                 Ray adjSurfaceRay;
 
-                if (searchClockwise)
-                    adjSurfaceRay = new Ray(hit.point, Vector3.Cross(hit.normal, Vector3.up));
-                else
-                    adjSurfaceRay = new Ray(hit.point, Vector3.Cross(Vector3.up, hit.normal));
+                switch(turnDirection)
+                {
+                    case RotationDirection.XZClockwise:
+                        adjSurfaceRay = new Ray(hit.point, Vector3.Cross(hit.normal, Vector3.up));
+                        break;
+                    case RotationDirection.XZCounterClockwise:
+                        adjSurfaceRay = new Ray(hit.point, Vector3.Cross(Vector3.up, hit.normal));
+                        break;
+                    case RotationDirection.YZClockwise:
+                        adjSurfaceRay = new Ray(hit.point, Vector3.Cross(-hit.normal, transform.right));
+                        break;
+                    case RotationDirection.YZCounterClockWise:
+                        adjSurfaceRay = new Ray(hit.point, Vector3.Cross(transform.right, -hit.normal));
+                        break;
+                    default:
+                        adjSurfaceRay = new Ray();
+                        break;
+                }
 
                 Debug.DrawRay(adjSurfaceRay.origin, adjSurfaceRay.direction, Color.cyan);
 
@@ -133,12 +156,25 @@ namespace DaggerfallWorkshop.Game
                     origin = origin + direction;
                     Vector3 nextDirection = Vector3.zero; 
 
-                    if (searchClockwise)
-                        nextDirection = Vector3.Cross(lastOrigin - origin, Vector3.up).normalized * distance;
-                    else
-                        nextDirection = Vector3.Cross(Vector3.up, lastOrigin - origin).normalized * distance;
-
-                    return GetAdjacentSurface(origin, nextDirection, searchClockwise);
+                    switch(turnDirection)
+                    {
+                        case RotationDirection.XZClockwise:
+                            nextDirection = Vector3.Cross(lastOrigin - origin, Vector3.up).normalized * distance;
+                            break;
+                        case RotationDirection.XZCounterClockwise:
+                            nextDirection = Vector3.Cross(Vector3.up, lastOrigin - origin).normalized * distance;
+                            break;
+                        case RotationDirection.YZClockwise:
+                            nextDirection = Vector3.Cross(lastOrigin - origin, transform.right).normalized * distance;
+                            break;
+                        case RotationDirection.YZCounterClockWise:
+                            nextDirection = Vector3.Cross(transform.right, lastOrigin - origin).normalized * distance;
+                            break;
+                        default:
+                            nextDirection = Vector3.zero;
+                            break;
+                    }
+                    return GetAdjacentSurface(origin, nextDirection, turnDirection);
                 }
                 turnCount = 0;
                 return null;
