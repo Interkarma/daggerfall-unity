@@ -629,11 +629,12 @@ namespace DaggerfallWorkshop.Game
             ResetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
         }
 
-        public int GetReactionToPlayer()
+        public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
         {
             int reactionToPlayer = 0;
 
             // Get NPC faction
+            // TODO: Factor in adjustments for children of regional factions
             FactionFile.FactionData NPCfaction;
             int currentRegionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
@@ -654,7 +655,7 @@ namespace DaggerfallWorkshop.Game
             reactionToPlayer += player.BiographyReactionMod;
 
             if (NPCfaction.sgroup < player.SGroupReputations.Length) // one of the five general social groups
-                reactionToPlayer += player.SGroupReputations[NPCfaction.sgroup];
+                reactionToPlayer += player.SGroupReputations[(int)socialGroup];
 
             return (reactionToPlayer);
         }
@@ -665,7 +666,7 @@ namespace DaggerfallWorkshop.Game
             currentNPCType = NPCType.Mobile;
 
             // Get reaction to player
-            int reactionToPlayer = GetReactionToPlayer();
+            int reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners); // All mobile NPCs are commoners
 
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
@@ -678,22 +679,25 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
         public void TalkToStaticNPC(StaticNPC targetNPC, bool menu = true, bool isSpyMaster = false)
         {
+            // Populate NPC faction data
+            FactionFile.FactionData targetFactionData;
+            PersistentFactionData factionsData;
+            factionsData = GameManager.Instance.PlayerEntity.FactionData;
+            factionsData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
+
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed)) {
                 DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu));
                 return;
             }
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                FactionFile.FactionData targetFactionData;
-                PersistentFactionData factionsData = GameManager.Instance.PlayerEntity.FactionData;
-                factionsData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
                 DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu));
                 return;
             }
             currentNPCType = NPCType.Static;
 
             // Get reaction to player
-            int reactionToPlayer = GetReactionToPlayer();
+            int reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup);
 
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
