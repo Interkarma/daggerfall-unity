@@ -1258,8 +1258,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             inListboxTopicContentUpdate = true;
 
-            if (index < 0 || index >= listboxTopic.Count) 
+            if (index < 0 || index >= listboxTopic.Count)
+            {
+                inListboxTopicContentUpdate = false;
                 return;
+            }
 
             listboxTopic.SelectedIndex = index;
             TalkManager.ListItem listItem = listCurrentTopics[index];
