@@ -546,9 +546,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public bool TargetIsWithinYawAngle(float targetAngle)
+        public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)
         {
-            Vector3 toTarget = predictedTargetPos - transform.position;
+            Vector3 toTarget = targetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
             directionToLastKnownTarget2D.y = 0;
 
