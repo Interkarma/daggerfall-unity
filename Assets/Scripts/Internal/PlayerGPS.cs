@@ -846,6 +846,9 @@ namespace DaggerfallWorkshop
         /// <param name="overrideName">If provided, ignore previous discovery and override the name</param>
         public void DiscoverBuilding(int buildingKey, string overrideName = null)
         {
+            // Ensure current location also discovered before processing building
+            DiscoverCurrentLocation();
+
             // Must have a location loaded
             if (!CurrentLocation.Loaded)
                 return;
