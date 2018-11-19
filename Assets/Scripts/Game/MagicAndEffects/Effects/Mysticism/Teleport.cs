@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -158,6 +158,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
                 playerEnterExit.RestorePositionHelper(anchorPosition, false);
 
+                // Restore building summary
+                if (anchorPosition.insideBuilding)
+                {
+                    playerEnterExit.BuildingDiscoveryData = anchorPosition.buildingDiscoveryData;
+                    playerEnterExit.IsPlayerInsideOpenShop = anchorPosition.insideOpenShop;
+                }
                 // When moving anywhere other than same interior trigger a fade so transition appears smoother
                 DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
             }
