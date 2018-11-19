@@ -512,6 +512,8 @@ namespace DaggerfallWorkshop.Game.Entity
             items.Clear();
             wagonItems.Clear();
             otherItems.Clear();
+            lightSource = null;
+            spellbook.Clear();
             factionData.Reset();
             globalVars.Reset();
             notebook.Clear();
