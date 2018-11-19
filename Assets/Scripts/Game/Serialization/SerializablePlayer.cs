@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using System.Linq;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -146,6 +147,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.crimeCommitted = entity.CrimeCommitted;
             data.playerEntity.haveShownSurrenderToGuardsDialogue = entity.HaveShownSurrenderToGuardsDialogue;
             data.playerEntity.lightSourceUID = (entity.LightSource == null) ? 0 : entity.LightSource.UID;
+            data.playerEntity.reputationCommoners = entity.SGroupReputations[(int)FactionFile.SocialGroups.Commoners];
+            data.playerEntity.reputationMerchants = entity.SGroupReputations[(int)FactionFile.SocialGroups.Merchants];
+            data.playerEntity.reputationScholars = entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars];
+            data.playerEntity.reputationNobility = entity.SGroupReputations[(int)FactionFile.SocialGroups.Nobility];
+            data.playerEntity.reputationUnderworld = entity.SGroupReputations[(int)FactionFile.SocialGroups.Underworld];
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -287,6 +293,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.HaveShownSurrenderToGuardsDialogue = data.playerEntity.haveShownSurrenderToGuardsDialogue;
             entity.SetCurrentLevelUpSkillSum();
             entity.LightSource = entity.Items.GetItem(data.playerEntity.lightSourceUID);
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.Commoners] = data.playerEntity.reputationCommoners;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.Merchants] = data.playerEntity.reputationMerchants;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars] = data.playerEntity.reputationScholars;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.Nobility] = data.playerEntity.reputationNobility;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.Underworld] = data.playerEntity.reputationUnderworld;
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 

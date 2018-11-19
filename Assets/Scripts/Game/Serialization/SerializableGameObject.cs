@@ -194,6 +194,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerEntity.Crimes crimeCommitted;
         public bool haveShownSurrenderToGuardsDialogue;
         public ulong lightSourceUID;
+        public short reputationCommoners;
+        public short reputationMerchants;
+        public short reputationNobility;
+        public short reputationScholars;
+        public short reputationUnderworld;
     }
 
     [fsObject("v1")]
