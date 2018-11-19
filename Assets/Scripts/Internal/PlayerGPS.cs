@@ -251,6 +251,16 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Constructors
+
+        public PlayerGPS()
+        {
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+        }
+
+        #endregion
+
         #region Unity
 
         void Awake()
@@ -301,6 +311,27 @@ namespace DaggerfallWorkshop
                 UpdateNearbyObjects();
                 nearbyObjectsUpdateTimer = 0;
             }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            // Reset state when loading a new game
+            ResetState();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            // Reset state when starting a new load process
+            ResetState();
+        }
+
+        void ResetState()
+        {
+            isPlayerInLocationRect = false;
         }
 
         #endregion
