@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Banking;
 using System.Linq;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -1611,53 +1612,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void RecordLocationFromMap(DaggerfallUnityItem item)
         {
             const int mapTextId = 499;
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+            DFLocation revealedLocation = playerGPS.DiscoverRandomLocation();
 
-            uint numberOfUndiscoveredLocationsInRegion = 0;
-            PlayerGPS gps = GameManager.Instance.PlayerGPS;
-
-            // Get how many undiscovered locations exist in the current region
-            for (int i = 0; i < gps.CurrentRegion.LocationCount; i++)
+            if (string.IsNullOrEmpty(revealedLocation.Name))
             {
-                if (gps.CurrentRegion.MapTable[i].Discovered == false &&
-                        !gps.HasDiscoveredLocation(gps.CurrentRegion.MapTable[i].MapId & 0x000fffff))
-                numberOfUndiscoveredLocationsInRegion++;
-            }
-
-            // If there aren't any left, there's nothing to find. Classic will just keep returning a particular location over and over if this happens.
-            if (numberOfUndiscoveredLocationsInRegion == 0)
-            {
-                DaggerfallMessageBox nothingLeft = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.Nothing, TextManager.Instance.GetText(textDatabase, "readMapFail"), this);
-                nothingLeft.ClickAnywhereToClose = true;
-                nothingLeft.Show();
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "readMapFail"));
                 return;
             }
 
-            int locationToDiscover = (int)UnityEngine.Random.Range(0, numberOfUndiscoveredLocationsInRegion + 1);
-
-            // Get the location
-            DaggerfallConnect.DFLocation location;
-            for (int i = 0; i < gps.CurrentRegion.LocationCount; i++)
-            {
-                if (gps.CurrentRegion.MapTable[i].Discovered == false &&
-                        !gps.HasDiscoveredLocation(gps.CurrentRegion.MapTable[i].MapId & 0x000fffff))
-                    locationToDiscover--;
-
-                if (locationToDiscover <= 0)
-                {
-                    location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(gps.CurrentRegionIndex, i);
-
-                    // Discover the location
-                    gps.DiscoverLocation(gps.CurrentRegionName, location.Name);
-                    gps.LocationRevealedByMapItem = location.Name;
-                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                        TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", location.Name));
-                    break;
-                }
-            }
+            playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
 
             TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
             DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
-            mapText.SetTextTokens(textTokens);
+            mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
             mapText.ClickAnywhereToClose = true;
             mapText.Show();
         }
