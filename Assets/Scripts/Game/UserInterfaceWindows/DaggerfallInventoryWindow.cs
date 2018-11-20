@@ -1182,6 +1182,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex == (int)Weapons.Arrow)
                 return;
 
+            if (item.IsLightSource) {
+                UseItem(item);
+                Refresh(false);
+                return;
+            }
+
             if (item.currentCondition < 1)
             {
                 TextFile.Token[] tokens = DaggerfallUnity.TextProvider.GetRSCTokens(itemBrokenTextId);
