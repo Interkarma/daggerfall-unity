@@ -158,12 +158,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
                 playerEnterExit.RestorePositionHelper(anchorPosition, false);
 
-                // Restore building summary
+                // Restore building summary data
                 if (anchorPosition.insideBuilding)
-                {
                     playerEnterExit.BuildingDiscoveryData = anchorPosition.buildingDiscoveryData;
-                    playerEnterExit.IsPlayerInsideOpenShop = anchorPosition.insideOpenShop;
-                }
+
                 // When moving anywhere other than same interior trigger a fade so transition appears smoother
                 DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
             }
