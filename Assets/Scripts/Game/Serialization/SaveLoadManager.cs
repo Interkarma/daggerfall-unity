@@ -340,6 +340,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
+            // Do nothing if load in progress
+            if (LoadInProgress)
+                return;
+
             // Look for existing save with this character and name
             int key = FindSaveFolderByNames(characterName, saveName);
 
@@ -356,7 +360,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public void QuickSave(bool instantReload = false)
         {
-            Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
+            if (!LoadInProgress)
+                Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
         }
 
         public void Load(int key)
