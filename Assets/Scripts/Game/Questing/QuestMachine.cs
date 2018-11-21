@@ -376,6 +376,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new MakePcDiseased(null));
             RegisterAction(new CurePcDisease(null));
             RegisterAction(new CastSpellDo(null));
+            RegisterAction(new CastEffectDo(null));
 
             // Stubs - these actions are not complete yet
             // Just setting up so certain quests compile for now
