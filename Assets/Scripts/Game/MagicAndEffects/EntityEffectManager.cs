@@ -272,8 +272,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public bool SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
-            // Do nothing if silenced
-            if (SilenceCheck() && !noSpellPointCost)
+            // Do nothing if silenced or cast already in progress
+            if ((SilenceCheck() && !noSpellPointCost) || castInProgress)
                 return false;
 
             // Spell must appear valid
