@@ -840,6 +840,9 @@ namespace DaggerfallWorkshop.Game
             if (!ReferenceComponents())
                 return;
 
+            // Raise event
+            RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior);
+
             // Layout dungeon
             GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, importEnemies);
             newDungeon.hideFlags = defaultHideFlags;

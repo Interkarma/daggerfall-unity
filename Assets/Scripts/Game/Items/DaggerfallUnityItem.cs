@@ -266,10 +266,10 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsLightSource
         {   // Torch, Lantern, Candle, Holy Candle.
             get { return (itemGroup == ItemGroups.UselessItems2 && 
-                   (TemplateIndex == (int)UselessItems2.Torch ||
-                    TemplateIndex == (int)UselessItems2.Lantern ||
-                    TemplateIndex == (int)UselessItems2.Candle)) ||
-                   IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle); }
+                          (TemplateIndex == (int)UselessItems2.Torch ||
+                           TemplateIndex == (int)UselessItems2.Lantern ||
+                           TemplateIndex == (int)UselessItems2.Candle)) ||
+                          IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle); }
         }
 
         /// <summary>

@@ -114,18 +114,24 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case 4:
                     return PromotionSpymasterId;
                 case 6:
-                    revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
-                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                        TextManager.Instance.GetText("DaggerfallUI", "readMapTG").Replace("%map", revealedDungeon.Name));
-                    return PromotionMap1Id;
+                    return RevealLocation() ? PromotionMap1Id : PromotionMsgId;
                 case 8:
-                    revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
-                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                        TextManager.Instance.GetText("DaggerfallUI", "readMapTG").Replace("%map", revealedDungeon.Name));
-                    return PromotionMap2Id;
+                    return RevealLocation() ? PromotionMap2Id : PromotionMsgId;
                 default:
                     return PromotionMsgId;
             }
+        }
+
+        private bool RevealLocation()
+        {
+            revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
+            if (!string.IsNullOrEmpty(revealedDungeon.Name))
+            {
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                    TextManager.Instance.GetText("DaggerfallUI", "readMapTG").Replace("%map", revealedDungeon.Name));
+                return true;
+            }
+            return false;
         }
 
         protected override int CalculateNewRank(PlayerEntity playerEntity)

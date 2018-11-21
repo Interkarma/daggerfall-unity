@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected const int PromotionMagicItemsId = 5231;
         protected const int PromotionEnchantId = 5232;
         protected const int PromotionSummonId = 5233;
-        protected const int PromotionTeleportId = 5233;
+        protected const int PromotionTeleportId = 5234;
 
         private const int factionId = (int)FactionFile.FactionIDs.The_Mages_Guild;
 

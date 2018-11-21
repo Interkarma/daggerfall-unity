@@ -549,7 +549,7 @@ namespace DaggerfallWorkshop
             currentClimateIndex = dfUnity.ContentReader.MapFileReader.GetClimateIndex(x, y);
             currentPoliticIndex = dfUnity.ContentReader.MapFileReader.GetPoliticIndex(x, y);
             climateSettings = MapsFile.GetWorldClimateSettings(currentClimateIndex);
-            if (currentPoliticIndex > 128)
+            if (currentPoliticIndex >= 128)
                 regionName = dfUnity.ContentReader.MapFileReader.GetRegionName(currentPoliticIndex - 128);
             else if (currentPoliticIndex == 64)
                 regionName = "Ocean";

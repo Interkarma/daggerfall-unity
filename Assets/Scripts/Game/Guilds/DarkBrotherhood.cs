@@ -119,8 +119,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         private int GetPromotionMsgId(int newRank)
         {
             revealedDungeon = GameManager.Instance.PlayerGPS.DiscoverRandomLocation();
-            GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                TextManager.Instance.GetText("DaggerfallUI", "readMapDB").Replace("%map", revealedDungeon.Name));
+            if (!string.IsNullOrEmpty(revealedDungeon.Name))
+            {
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                   TextManager.Instance.GetText("DaggerfallUI", "readMapDB").Replace("%map", revealedDungeon.Name));
+            }
             switch (newRank)
             {
                 case 1:
