@@ -300,7 +300,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (TryGetKey(sectionName, keyName, out key))
                 return key.Value;
 
-            throw new KeyNotFoundException(string.Format("The key ({0},{1}) was not present in {2} settings.", sectionName, keyName, mod.Title));
+            throw new KeyNotFoundException(string.Format("The key <{0}>({1},{2}) was not present in {3} settings.", typeof(T), sectionName, keyName, mod.Title));
         }
 
 #if UNITY_EDITOR
