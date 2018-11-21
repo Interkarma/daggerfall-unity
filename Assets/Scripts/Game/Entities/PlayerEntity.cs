@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -551,8 +551,8 @@ namespace DaggerfallWorkshop.Game.Entity
             this.currentMagicka = character.currentSpellPoints;
             this.sGroupReputations[0] = character.reputationCommoners;
             this.sGroupReputations[1] = character.reputationMerchants;
-            this.sGroupReputations[2] = character.reputationNobility;
-            this.sGroupReputations[3] = character.reputationScholars;
+            this.sGroupReputations[2] = character.reputationScholars;
+            this.sGroupReputations[3] = character.reputationNobility;
             this.sGroupReputations[4] = character.reputationUnderworld;
             this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
