@@ -45,6 +45,8 @@ namespace DaggerfallWorkshop.Game
         float lastDistanceToTarget;
         float targetRateOfApproach;
         Vector3 lastKnownTargetPos;
+        Vector3 oldLastKnownTargetPos;
+        Vector3 predictedTargetPos;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
@@ -56,6 +58,9 @@ namespace DaggerfallWorkshop.Game
 
         float classicUpdateTimer = 0f;
         bool classicUpdate = false;
+        float targetPosPredictTimer = 0f;
+        bool targetPosPredict = false;
+
         float classicTargetUpdateTimer = 0f;
         float systemTimerUpdatesDivisor = .0549254f;  // Divisor for updates per second by the system timer at memory location 0x46C.
 
@@ -108,6 +113,18 @@ namespace DaggerfallWorkshop.Game
             set { lastKnownTargetPos = value; }
         }
 
+        public Vector3 OldLastKnownTargetPos
+        {
+            get { return oldLastKnownTargetPos; }
+            set { oldLastKnownTargetPos = value; }
+        }
+
+        public Vector3 PredictedTargetPos
+        {
+            get { return predictedTargetPos; }
+            set { predictedTargetPos = value; }
+        }
+
         public DaggerfallActionDoor LastKnownDoor
         {
             get { return actionDoor; }
@@ -150,6 +167,7 @@ namespace DaggerfallWorkshop.Game
             motor = GetComponent<EnemyMotor>();
             questBehaviour = GetComponent<QuestResourceBehaviour>();
             lastKnownTargetPos = ResetPlayerPos;
+            predictedTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
             short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
@@ -176,6 +194,15 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 classicUpdate = false;
+
+            targetPosPredictTimer += Time.deltaTime;
+            if (targetPosPredictTimer >= 0.25f)
+            {
+                targetPosPredict = true;
+                targetPosPredictTimer = 0.25f;
+            }
+            else
+                targetPosPredict = false;
 
             // Reset whether enemy would be spawned or not in classic.
             if (classicUpdate)
@@ -245,6 +272,7 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour.Target == null)
                 {
                     lastKnownTargetPos = ResetPlayerPos;
+                    predictedTargetPos = ResetPlayerPos;
                     directionToTarget = ResetPlayerPos;
                     lastDistanceToTarget = 0;
                     targetRateOfApproach = 0;
@@ -361,6 +389,19 @@ namespace DaggerfallWorkshop.Game
                 else
                     detectedTarget = false;
 
+                if (oldLastKnownTargetPos == ResetPlayerPos)
+                    oldLastKnownTargetPos = lastKnownTargetPos;
+
+                if (predictedTargetPos == ResetPlayerPos)
+                    predictedTargetPos = lastKnownTargetPos;
+
+                // Predict target's next position
+                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && predictedTargetPos != ResetPlayerPos)
+                {
+                    float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
+                    predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                }
+
                 if (detectedTarget && !hasEncounteredPlayer && entityBehaviour.Target == Player)
                 {
                     hasEncounteredPlayer = true;
@@ -390,13 +431,55 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
+        public Vector3 PredictNextTargetPos(float interceptSpeed)
+        {
+            Vector3 lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
+
+            Vector3 assumedCurrentPosition;
+            if (targetInSight || targetInEarshot)
+                assumedCurrentPosition = lastKnownTargetPos;
+            else
+                assumedCurrentPosition = predictedTargetPos;
+
+            float secondsToCurrentTargetPos = (assumedCurrentPosition - transform.position).magnitude / interceptSpeed;
+
+            if (targetPosPredictTimer == 0)
+                targetPosPredictTimer = 0.25f;
+
+            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff * (4 / (targetPosPredictTimer / .25f)) * secondsToCurrentTargetPos);
+
+            // Don't predict target will move right past us (prevents AI from turning around
+            // when target is approaching)
+            float a = assumedCurrentPosition.z * transform.position.x - assumedCurrentPosition.x * transform.position.z;
+            float b = assumedCurrentPosition.z * prediction.x - assumedCurrentPosition.x * prediction.z;
+            float c = prediction.z * transform.position.x - prediction.x * transform.position.z;
+            float d = prediction.z * assumedCurrentPosition.x - prediction.x * assumedCurrentPosition.z;
+
+            if (a * b >= 0 && c * d >= 0)
+                prediction = assumedCurrentPosition;
+
+            // Don't predict target will move through obstacles (prevent predicting movement through walls)
+            RaycastHit hit;
+            Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
+            if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
+                prediction = assumedCurrentPosition;
+
+            // Store current last known target position for predicting next position
+            if (targetInSight || targetInEarshot)
+                oldLastKnownTargetPos = lastKnownTargetPos;
+
+            targetPosPredictTimer = 0;
+
+            return prediction;
+        }
+
         public bool StealthCheck()
         {
             if (!wouldBeSpawnedInClassic)
                 return false;
 
             if (distanceToTarget > 1024 * MeshReader.GlobalScale)
-                    return false;
+                return false;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (gameMinutes == timeOfLastStealthCheck)
@@ -463,9 +546,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public bool TargetIsWithinYawAngle(float targetAngle)
+        public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)
         {
-            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 toTarget = targetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
             directionToLastKnownTarget2D.y = 0;
 
@@ -481,7 +564,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool TargetHasBackTurned()
         {
-            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 toTarget = predictedTargetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
             directionToLastKnownTarget2D.y = 0;
 
@@ -493,7 +576,7 @@ namespace DaggerfallWorkshop.Game
                 targetDirection2D = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
             }
             else
-                targetDirection2D = new Vector3(entityBehaviour.Target.transform.forward.x, 0, entityBehaviour.Target.transform.forward.z);
+                targetDirection2D = -new Vector3(entityBehaviour.Target.transform.forward.x, 0, entityBehaviour.Target.transform.forward.z);
 
             float angle = Vector3.Angle(directionToLastKnownTarget2D, targetDirection2D);
 
@@ -505,9 +588,9 @@ namespace DaggerfallWorkshop.Game
 
         public bool TargetIsWithinPitchAngle(float targetAngle)
         {
-            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 toTarget = predictedTargetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
-            Plane verticalTransformToLastKnownPos = new Plane(lastKnownTargetPos, transform.position, transform.position + Vector3.up);
+            Plane verticalTransformToLastKnownPos = new Plane(predictedTargetPos, transform.position, transform.position + Vector3.up);
             // first project enemy direction to horizontal plane.
             Vector3 enemyDirection2D = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
             // next project enemy direction to vertical plane intersecting with last known position
@@ -523,7 +606,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool TargetIsAbove()
         {
-            if (lastKnownTargetPos.y > transform.position.y)
+            if (predictedTargetPos.y > transform.position.y)
                 return true;
             return false;
         }
