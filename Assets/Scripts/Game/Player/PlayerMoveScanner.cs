@@ -149,26 +149,34 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 turnCount++;
-                if (turnCount < 3)
+                if (turnCount < 4)
                 {
                     // find next vector info now
                     Vector3 lastOrigin = origin;
                     origin = origin + direction;
-                    Vector3 nextDirection = Vector3.zero; 
-
+                    Vector3 lastDirection = lastOrigin - origin;
+                    Vector3 nextDirection = Vector3.zero;
                     switch(turnDirection)
                     {
                         case RotationDirection.XZClockwise:
-                            nextDirection = Vector3.Cross(lastOrigin - origin, Vector3.up).normalized * distance;
+                            nextDirection = Vector3.Cross(lastDirection, Vector3.up).normalized * distance;
                             break;
                         case RotationDirection.XZCounterClockwise:
-                            nextDirection = Vector3.Cross(Vector3.up, lastOrigin - origin).normalized * distance;
+                            nextDirection = Vector3.Cross(Vector3.up, lastDirection).normalized * distance;
                             break;
                         case RotationDirection.YZClockwise:
-                            nextDirection = Vector3.Cross(lastOrigin - origin, transform.right).normalized * distance;
+                            nextDirection = Vector3.Cross(lastDirection, transform.right).normalized * distance;
+
+                            if (turnCount == 3)
+                                // special Case: at top tip of a C-shaped scan looking for wall to climb onto,
+                                // Need to check if there is a slanted-eaved roof to climb onto the edge of.
+                                // upward rappel movement places the player on side of eave and triggers climbing
+                                // need to scan diagonally forward down
+                                nextDirection = Vector3.Reflect((lastDirection + nextDirection).normalized, lastDirection);
+
                             break;
                         case RotationDirection.YZCounterClockWise:
-                            nextDirection = Vector3.Cross(transform.right, lastOrigin - origin).normalized * distance;
+                            nextDirection = Vector3.Cross(transform.right, lastDirection).normalized * distance;
                             break;
                         default:
                             nextDirection = Vector3.zero;

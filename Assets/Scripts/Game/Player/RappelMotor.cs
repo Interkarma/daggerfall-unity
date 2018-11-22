@@ -46,7 +46,8 @@ namespace DaggerfallWorkshop.Game
             bool rappelAllowed = (DaggerfallUnity.Settings.AdvancedClimbing && 
                 !climbingMotor.IsClimbing && !climbingMotor.IsSlipping && acrobatMotor.Falling);
 
-            // TODO: find out why rappel up/down isn't chosen correctly
+            // TODO: find out why rappel up/down isn't triggering for eaves
+            // Maybe because of dropTooShortForRappel?
             // if an adjacent overhead wall was found using 2 turns
             if (rappelAllowed &&
                 hangingMotor.AdjacentOverheadWall != null &&
@@ -63,9 +64,11 @@ namespace DaggerfallWorkshop.Game
             float maxRange = minRange + 2.90f;
 
             // are we going to step off something too short for rappel to be worthwhile?
-            bool dropTooShortForRappel = (playerScanner.StepHitDistance > minRange && playerScanner.StepHitDistance < maxRange);
+            bool dropTooShortForRappelDown = (playerScanner.StepHitDistance > minRange && playerScanner.StepHitDistance < maxRange);
+            bool cancelRappelStart = dropTooShortForRappelDown && !RappelUp;
 
-            if (!IsRappelling && !dropTooShortForRappel)
+            // TODO: somehow cancelrappelStart is stopping rappelDown
+            if (!IsRappelling && !cancelRappelStart)
             {
                 // should rappelling start?
                 bool inputBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
@@ -103,7 +106,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        yDist = 1.60f;
+                        yDist = 1.00f;
                         xzDist = 0.19f;
                         rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
                         rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
