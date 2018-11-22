@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
         HUDActiveSpells activeSpells = new HUDActiveSpells();
+        bool renderHUD = true;
         //GameObject player;
         //DaggerfallEntityBehaviour playerEntity;
 
@@ -220,9 +221,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 questDebugger.NextState();
             }
 
+            // Toggle HUD rendering
+            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F10))
+            {
+                renderHUD = !renderHUD;
+            }
+
             flickerController.NextCycle();
 
             base.Update();
+        }
+
+        public override void Draw()
+        {
+            if (renderHUD)
+                base.Draw();
         }
 
         public void SetMidScreenText(string message, float delay = 1.5f)
