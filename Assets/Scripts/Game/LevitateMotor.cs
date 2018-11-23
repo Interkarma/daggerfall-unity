@@ -77,11 +77,14 @@ namespace DaggerfallWorkshop.Game
 
             // Up/down
             Vector3 upDownVector = new Vector3 (0, 0, 0);
-            if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
-                upDownVector = upDownVector + Vector3.up;
-            if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown) ||
-                !climbingMotor.IsClimbing && GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && (GameManager.Instance.PlayerEntity.CarriedWeight * 4) > 250)
-                upDownVector = upDownVector + Vector3.down;
+
+            if (playerSwimming && GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250 && !climbingMotor.IsClimbing && !GameManager.Instance.PlayerEntity.GodMode)
+                upDownVector += Vector3.down;
+            else if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
+                upDownVector += Vector3.up;
+            else if (InputManager.Instance.HasAction(InputManager.Actions.Crouch) || InputManager.Instance.HasAction(InputManager.Actions.FloatDown))
+                upDownVector += Vector3.down;
+
             AddMovement(upDownVector, true);
 
             // Execute movement
@@ -103,6 +106,10 @@ namespace DaggerfallWorkshop.Game
 
         void AddMovement(Vector3 direction, bool upOrDown = false)
         {
+            // No up or down movement without using a float up/float down key or sinking from encumbrance
+            if (!upOrDown)
+                direction.y = 0;
+
             if (playerSwimming && GameManager.Instance.PlayerEntity.IsWaterWalking)
             {
                 // Swimming with water walking on makes player move at normal speed in water
@@ -118,14 +125,10 @@ namespace DaggerfallWorkshop.Game
                 !playerLevitating)
                     direction.y = 0;
 
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                // There's a fixed speed for up/down movement in classic (use moveSpeed = 2 here to replicate)
                 float baseSpeed = speedChanger.GetBaseSpeed();
                 moveSpeed = speedChanger.GetSwimSpeed(baseSpeed);
             }
-
-            // There's a fixed speed for up/down movement
-            if (upOrDown)
-                moveSpeed = 80f / PlayerSpeedChanger.classicToUnitySpeedUnitRatio;
 
             moveDirection += direction * moveSpeed;
 
