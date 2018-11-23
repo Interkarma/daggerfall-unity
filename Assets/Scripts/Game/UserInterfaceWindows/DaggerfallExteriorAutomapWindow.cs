@@ -470,7 +470,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.ToolTipText = String.Format("left click: rotate map to the right (hotkey: Control+{0})\rright click: rotate map around the player position\rto the right (hotkey: Alt+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateAroundPlayerPosRight.ToString());
             upstairsButton.ToolTipText = String.Format("left click: zoom in (hotkey: {0})\rright click: apply maximum zoom", currentKeyCode_ZoomIn.ToString());
             downstairsButton.ToolTipText = String.Format("left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)", currentKeyCode_ZoomOut.ToString());
-            dummyPanelCompass.ToolTipText = String.Format("left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: backspace)", currentKeyCode_FocusPlayerPosition.ToString());
+            dummyPanelCompass.ToolTipText = String.Format("left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})", currentKeyCode_FocusPlayerPosition.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
