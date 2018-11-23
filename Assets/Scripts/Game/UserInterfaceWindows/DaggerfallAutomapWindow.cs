@@ -131,41 +131,79 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // definitions of hotkey sequences
         UnityEngine.KeyCode fallbackKey = KeyCode.Home;
 
-        UnityEngine.KeyCode keyCode_SwitchAutomapGridMode = KeyCode.Space;
-        UnityEngine.KeyCode keyCode_ResetView = KeyCode.Backspace;
-        UnityEngine.KeyCode keyCode_ResetRotationPivotAxisView = KeyCode.Backspace;
-        UnityEngine.KeyCode keyCode_SwitchFocusToNextBeaconObject = KeyCode.Tab;
-        UnityEngine.KeyCode keyCode_SwitchToNextAutomapRenderMode = KeyCode.Return;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeCutout = KeyCode.F2;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeWireframe = KeyCode.F3;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeTransparent = KeyCode.F4;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundOriginal = KeyCode.F5;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative1 = KeyCode.F6;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative2 = KeyCode.F7;
-        UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative3 = KeyCode.F8;
-        UnityEngine.KeyCode keyCode_MoveLeft = KeyCode.LeftArrow;
-        UnityEngine.KeyCode keyCode_MoveRight = KeyCode.RightArrow;
-        UnityEngine.KeyCode keyCode_MoveForward = KeyCode.UpArrow;
-        UnityEngine.KeyCode keyCode_MoveBackward = KeyCode.DownArrow;
-        UnityEngine.KeyCode keyCode_MoveRotationPivotAxisLeft = KeyCode.LeftArrow;
-        UnityEngine.KeyCode keyCode_MoveRotationPivotAxisRight = KeyCode.RightArrow;
-        UnityEngine.KeyCode keyCode_MoveRotationPivotAxisForward = KeyCode.UpArrow;
-        UnityEngine.KeyCode keyCode_MoveRotationPivotAxisBackward = KeyCode.DownArrow;
-        UnityEngine.KeyCode keyCode_RotateLeft = KeyCode.LeftArrow;
-        UnityEngine.KeyCode keyCode_RotateRight = KeyCode.RightArrow;
-        UnityEngine.KeyCode keyCode_RotateCameraLeft = KeyCode.LeftArrow;
-        UnityEngine.KeyCode keyCode_RotateCameraRight = KeyCode.RightArrow;
-        UnityEngine.KeyCode keyCode_RotateCameraOnCameraYZplaneAroundObjectUp = KeyCode.UpArrow;
-        UnityEngine.KeyCode keyCode_RotateCameraOnCameraYZplaneAroundObjectDown = KeyCode.DownArrow;
-        UnityEngine.KeyCode keyCode_Upstairs = KeyCode.PageUp;
-        UnityEngine.KeyCode keyCode_Downstairs = KeyCode.PageDown;
-        UnityEngine.KeyCode keyCode_IncreaseSliceLevel = KeyCode.PageUp;
-        UnityEngine.KeyCode keyCode_DecreaseSliceLevel = KeyCode.PageDown;
-        UnityEngine.KeyCode keyCode_ZoomIn = KeyCode.KeypadPlus;
-        UnityEngine.KeyCode keyCode_ZoomOut = KeyCode.KeypadMinus;
-        UnityEngine.KeyCode keyCode_IncreaseCameraFieldOfFiew = KeyCode.KeypadMultiply;
-        UnityEngine.KeyCode keyCode_DecreaseCameraFieldOfFiew = KeyCode.KeypadDivide;
+        // the default hotkey keycodes
+        static UnityEngine.KeyCode keyCode_SwitchAutomapGridMode = KeyCode.Space;
+        static UnityEngine.KeyCode keyCode_ResetView = KeyCode.Backspace;
+        static UnityEngine.KeyCode keyCode_ResetRotationPivotAxisView = KeyCode.Backspace;
+        static UnityEngine.KeyCode keyCode_SwitchFocusToNextBeaconObject = KeyCode.Tab;
+        static UnityEngine.KeyCode keyCode_SwitchToNextAutomapRenderMode = KeyCode.Return;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeCutout = KeyCode.F2;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeWireframe = KeyCode.F3;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeTransparent = KeyCode.F4;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundOriginal = KeyCode.F5;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative1 = KeyCode.F6;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative2 = KeyCode.F7;
+        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative3 = KeyCode.F8;
+        static UnityEngine.KeyCode keyCode_MoveLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_MoveRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_MoveForward = KeyCode.UpArrow;
+        static UnityEngine.KeyCode keyCode_MoveBackward = KeyCode.DownArrow;
+        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisForward = KeyCode.UpArrow;
+        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisBackward = KeyCode.DownArrow;
+        static UnityEngine.KeyCode keyCode_RotateLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_RotateRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_RotateCameraLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_RotateCameraRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_RotateCameraOnCameraYZplaneAroundObjectUp = KeyCode.UpArrow;
+        static UnityEngine.KeyCode keyCode_RotateCameraOnCameraYZplaneAroundObjectDown = KeyCode.DownArrow;
+        static UnityEngine.KeyCode keyCode_Upstairs = KeyCode.PageUp;
+        static UnityEngine.KeyCode keyCode_Downstairs = KeyCode.PageDown;
+        static UnityEngine.KeyCode keyCode_IncreaseSliceLevel = KeyCode.PageUp;
+        static UnityEngine.KeyCode keyCode_DecreaseSliceLevel = KeyCode.PageDown;
+        static UnityEngine.KeyCode keyCode_ZoomIn = KeyCode.KeypadPlus;
+        static UnityEngine.KeyCode keyCode_ZoomOut = KeyCode.KeypadMinus;
+        static UnityEngine.KeyCode keyCode_IncreaseCameraFieldOfFiew = KeyCode.KeypadMultiply;
+        static UnityEngine.KeyCode keyCode_DecreaseCameraFieldOfFiew = KeyCode.KeypadDivide;
 
+        // the currently used keycodes (fallback keycode mechanism)
+        UnityEngine.KeyCode currentKeyCode_SwitchAutomapGridMode = keyCode_SwitchAutomapGridMode;
+        UnityEngine.KeyCode currentKeyCode_ResetView = keyCode_ResetView;
+        UnityEngine.KeyCode currentKeyCode_ResetRotationPivotAxisView = keyCode_ResetRotationPivotAxisView;
+        UnityEngine.KeyCode currentKeyCode_SwitchFocusToNextBeaconObject = keyCode_SwitchFocusToNextBeaconObject;
+        UnityEngine.KeyCode currentKeyCode_SwitchToNextAutomapRenderMode = keyCode_SwitchToNextAutomapRenderMode;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeCutout = keyCode_SwitchToAutomapRenderModeCutout;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeWireframe = keyCode_SwitchToAutomapRenderModeWireframe;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeTransparent = keyCode_SwitchToAutomapRenderModeTransparent;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundOriginal = keyCode_SwitchToAutomapBackgroundOriginal;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative1 = keyCode_SwitchToAutomapBackgroundAlternative1;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative2 = keyCode_SwitchToAutomapBackgroundAlternative2;
+        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative3 = keyCode_SwitchToAutomapBackgroundAlternative3;
+        UnityEngine.KeyCode currentKeyCode_MoveLeft = keyCode_MoveLeft;
+        UnityEngine.KeyCode currentKeyCode_MoveRight = keyCode_MoveRight;
+        UnityEngine.KeyCode currentKeyCode_MoveForward = keyCode_MoveForward;
+        UnityEngine.KeyCode currentKeyCode_MoveBackward = keyCode_MoveBackward;
+        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisLeft = keyCode_MoveRotationPivotAxisLeft;
+        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisRight = keyCode_MoveRotationPivotAxisRight;
+        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisForward = keyCode_MoveRotationPivotAxisForward;
+        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisBackward = keyCode_MoveRotationPivotAxisBackward;
+        UnityEngine.KeyCode currentKeyCode_RotateLeft = keyCode_RotateLeft;
+        UnityEngine.KeyCode currentKeyCode_RotateRight = keyCode_RotateRight;
+        UnityEngine.KeyCode currentKeyCode_RotateCameraLeft = keyCode_RotateCameraLeft;
+        UnityEngine.KeyCode currentKeyCode_RotateCameraRight = keyCode_RotateCameraRight;
+        UnityEngine.KeyCode currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = keyCode_RotateCameraOnCameraYZplaneAroundObjectUp;
+        UnityEngine.KeyCode currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = keyCode_RotateCameraOnCameraYZplaneAroundObjectDown;
+        UnityEngine.KeyCode currentKeyCode_Upstairs = keyCode_Upstairs;
+        UnityEngine.KeyCode currentKeyCode_Downstairs = keyCode_Downstairs;
+        UnityEngine.KeyCode currentKeyCode_IncreaseSliceLevel = keyCode_IncreaseSliceLevel;
+        UnityEngine.KeyCode currentKeyCode_DecreaseSliceLevel = keyCode_DecreaseSliceLevel;
+        UnityEngine.KeyCode currentKeyCode_ZoomIn = keyCode_ZoomIn;
+        UnityEngine.KeyCode currentKeyCode_ZoomOut = keyCode_ZoomOut;
+        UnityEngine.KeyCode currentKeyCode_IncreaseCameraFieldOfFiew = keyCode_IncreaseCameraFieldOfFiew;
+        UnityEngine.KeyCode currentKeyCode_DecreaseCameraFieldOfFiew = keyCode_DecreaseCameraFieldOfFiew;
+
+        // sequence of modifier keys for each hotkey sequence
         HotkeySequence HotkeySequence_SwitchAutomapGridMode;
         HotkeySequence HotkeySequence_ResetView;
         HotkeySequence HotkeySequence_ResetRotationPivotAxisView;
@@ -294,6 +332,202 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
+        /// sets up hotkey sequences (tests for automap open key and uses fallback key for actions that are assigned to the same key)
+        /// </summary>
+        private void SetupHotkeySequences()
+        {
+            currentKeyCode_SwitchAutomapGridMode = keyCode_SwitchAutomapGridMode;
+            currentKeyCode_ResetView = keyCode_ResetView;
+            currentKeyCode_ResetRotationPivotAxisView = keyCode_ResetRotationPivotAxisView;
+            currentKeyCode_SwitchFocusToNextBeaconObject = keyCode_SwitchFocusToNextBeaconObject;
+            currentKeyCode_SwitchToNextAutomapRenderMode = keyCode_SwitchToNextAutomapRenderMode;
+            currentKeyCode_SwitchToAutomapRenderModeCutout = keyCode_SwitchToAutomapRenderModeCutout;
+            currentKeyCode_SwitchToAutomapRenderModeWireframe = keyCode_SwitchToAutomapRenderModeWireframe;
+            currentKeyCode_SwitchToAutomapRenderModeTransparent = keyCode_SwitchToAutomapRenderModeTransparent;
+            currentKeyCode_SwitchToAutomapBackgroundOriginal = keyCode_SwitchToAutomapBackgroundOriginal;
+            currentKeyCode_SwitchToAutomapBackgroundAlternative1 = keyCode_SwitchToAutomapBackgroundAlternative1;
+            currentKeyCode_SwitchToAutomapBackgroundAlternative2 = keyCode_SwitchToAutomapBackgroundAlternative2;
+            currentKeyCode_SwitchToAutomapBackgroundAlternative3 = keyCode_SwitchToAutomapBackgroundAlternative3;
+            currentKeyCode_MoveLeft = keyCode_MoveLeft;
+            currentKeyCode_MoveRight = keyCode_MoveRight;
+            currentKeyCode_MoveForward = keyCode_MoveForward;
+            currentKeyCode_MoveBackward = keyCode_MoveBackward;
+            currentKeyCode_MoveRotationPivotAxisLeft = keyCode_MoveRotationPivotAxisLeft;
+            currentKeyCode_MoveRotationPivotAxisRight = keyCode_MoveRotationPivotAxisRight;
+            currentKeyCode_MoveRotationPivotAxisForward = keyCode_MoveRotationPivotAxisForward;
+            currentKeyCode_MoveRotationPivotAxisBackward = keyCode_MoveRotationPivotAxisBackward;
+            currentKeyCode_RotateLeft = keyCode_RotateLeft;
+            currentKeyCode_RotateRight = keyCode_RotateRight;
+            currentKeyCode_RotateCameraLeft = keyCode_RotateCameraLeft;
+            currentKeyCode_RotateCameraRight = keyCode_RotateCameraRight;
+            currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = keyCode_RotateCameraOnCameraYZplaneAroundObjectUp;
+            currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = keyCode_RotateCameraOnCameraYZplaneAroundObjectDown;
+            currentKeyCode_Upstairs = keyCode_Upstairs;
+            currentKeyCode_Downstairs = keyCode_Downstairs;
+            currentKeyCode_IncreaseSliceLevel = keyCode_IncreaseSliceLevel;
+            currentKeyCode_DecreaseSliceLevel = keyCode_DecreaseSliceLevel;
+            currentKeyCode_ZoomIn = keyCode_ZoomIn;
+            currentKeyCode_ZoomOut = keyCode_ZoomOut;
+            currentKeyCode_IncreaseCameraFieldOfFiew = keyCode_IncreaseCameraFieldOfFiew;
+            currentKeyCode_DecreaseCameraFieldOfFiew = keyCode_DecreaseCameraFieldOfFiew;
+
+            if (toggleClosedBinding == keyCode_SwitchAutomapGridMode)
+                currentKeyCode_SwitchAutomapGridMode = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ResetView)
+                currentKeyCode_ResetView = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ResetRotationPivotAxisView)
+                currentKeyCode_ResetRotationPivotAxisView = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchFocusToNextBeaconObject)
+                currentKeyCode_SwitchFocusToNextBeaconObject = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToNextAutomapRenderMode)
+                currentKeyCode_SwitchToNextAutomapRenderMode = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeCutout)
+                currentKeyCode_SwitchToAutomapRenderModeCutout = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeWireframe)
+                currentKeyCode_SwitchToAutomapRenderModeWireframe = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeTransparent)
+                currentKeyCode_SwitchToAutomapRenderModeTransparent = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundOriginal)
+                currentKeyCode_SwitchToAutomapBackgroundOriginal = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative1)
+                currentKeyCode_SwitchToAutomapBackgroundAlternative1 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative2)
+                currentKeyCode_SwitchToAutomapBackgroundAlternative2 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative3)
+                currentKeyCode_SwitchToAutomapBackgroundAlternative3 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveLeft)
+                currentKeyCode_MoveLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveRight)
+                currentKeyCode_MoveRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveForward)
+                currentKeyCode_MoveForward = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveBackward)
+                currentKeyCode_MoveBackward = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisLeft)
+                currentKeyCode_MoveRotationPivotAxisLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisRight)
+                currentKeyCode_MoveRotationPivotAxisRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisForward)
+                currentKeyCode_MoveRotationPivotAxisForward = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisBackward)
+                currentKeyCode_MoveRotationPivotAxisBackward = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateLeft)
+                currentKeyCode_RotateLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateRight)
+                currentKeyCode_RotateRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateCameraLeft)
+                currentKeyCode_RotateCameraLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateCameraRight)
+                currentKeyCode_RotateCameraRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateCameraOnCameraYZplaneAroundObjectUp)
+                currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateCameraOnCameraYZplaneAroundObjectDown)
+                currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_Upstairs)
+                currentKeyCode_Upstairs = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_Downstairs)
+                currentKeyCode_Downstairs = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_IncreaseSliceLevel)
+                currentKeyCode_IncreaseSliceLevel = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_DecreaseSliceLevel)
+                currentKeyCode_DecreaseSliceLevel = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ZoomIn)
+                currentKeyCode_ZoomIn = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ZoomOut)
+                currentKeyCode_ZoomOut = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_IncreaseCameraFieldOfFiew)
+                currentKeyCode_IncreaseCameraFieldOfFiew = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_DecreaseCameraFieldOfFiew)
+                currentKeyCode_DecreaseCameraFieldOfFiew = fallbackKey;
+
+
+            HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(currentKeyCode_SwitchAutomapGridMode, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_ResetView = new HotkeySequence(currentKeyCode_ResetView, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(currentKeyCode_ResetRotationPivotAxisView, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_SwitchFocusToNextBeaconObject = new HotkeySequence(currentKeyCode_SwitchFocusToNextBeaconObject, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(currentKeyCode_SwitchToNextAutomapRenderMode, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeCutout, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeWireframe, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeTransparent, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapBackgroundOriginal = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundOriginal, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapBackgroundAlternative1 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative1, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapBackgroundAlternative2 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative2, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToAutomapBackgroundAlternative3 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative3, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveLeft = new HotkeySequence(currentKeyCode_MoveLeft, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveRight = new HotkeySequence(currentKeyCode_MoveRight, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveForward = new HotkeySequence(currentKeyCode_MoveForward, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveBackward = new HotkeySequence(currentKeyCode_MoveBackward, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveRotationPivotAxisLeft = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisLeft, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_MoveRotationPivotAxisRight = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisRight, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_MoveRotationPivotAxisForward = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisForward, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_MoveRotationPivotAxisBackward = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisBackward, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_RotateLeft = new HotkeySequence(currentKeyCode_RotateLeft, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+            HotkeySequence_RotateRight = new HotkeySequence(currentKeyCode_RotateRight, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+            HotkeySequence_RotateCameraLeft = new HotkeySequence(currentKeyCode_RotateCameraLeft, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_RotateCameraRight = new HotkeySequence(currentKeyCode_RotateCameraRight, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = new HotkeySequence(currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = new HotkeySequence(currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_Upstairs = new HotkeySequence(currentKeyCode_Upstairs, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_Downstairs = new HotkeySequence(currentKeyCode_Downstairs, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_IncreaseSliceLevel = new HotkeySequence(currentKeyCode_IncreaseSliceLevel, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_DecreaseSliceLevel = new HotkeySequence(currentKeyCode_DecreaseSliceLevel, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_ZoomIn = new HotkeySequence(currentKeyCode_ZoomIn, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_ZoomOut = new HotkeySequence(currentKeyCode_ZoomOut, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(currentKeyCode_IncreaseCameraFieldOfFiew, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(currentKeyCode_DecreaseCameraFieldOfFiew, HotkeySequence.KeyModifiers.None);
+        }
+
+        /// <summary>
+        /// updates button tool tip texts (with dynamic hotkey mappings)
+        /// </summary>
+        private void UpdateButtonToolTipsText()
+        {
+            gridButton.ToolTipText = String.Format("left click: switch between 2D top view and 3D view (hotkey: {0})\rright click: reset rotation center to player position (hotkey: Control+{1})\rmouse wheel up while over this button: increase perspective (only 3D mode)\rmouse wheel down while over this button: decrease perspective (only 3D mode)", currentKeyCode_SwitchAutomapGridMode.ToString(), currentKeyCode_ResetRotationPivotAxisView.ToString());
+            forwardButton.ToolTipText = String.Format("left click: move viewpoint forward (hotkey: {0})\rright click: move rotation center axis forward (hotkey: Control+{1})", currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveRotationPivotAxisForward.ToString());
+            backwardButton.ToolTipText = String.Format("left click: move viewpoint backwards (hotkey: {0})\rright click: move rotation center axis backwards (hotkey: Control+{1})", currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveRotationPivotAxisBackward.ToString());
+            leftButton.ToolTipText = String.Format("left click: move viewpoint to the left (hotkey: {0})\rright click: move rotation center axis to the left (hotkey: Control+{1})", currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveRotationPivotAxisLeft.ToString());
+            rightButton.ToolTipText = String.Format("left click: move viewpoint to the right (hotkey: {0})\rright click: move rotation center axis to the right (hotkey: Control+{1})", currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveRotationPivotAxisRight.ToString());
+            rotateLeftButton.ToolTipText = String.Format("left click: rotate dungeon model to the left (hotkey: Alt+{0})\rright click: rotate camera view to the left (hotkey: Shift+{1})", currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateCameraLeft.ToString());
+            rotateRightButton.ToolTipText = String.Format("left click: rotate dungeon model to the right (hotkey: Alt+{0})\rright click: rotate camera view to the right (hotkey: Shift+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
+            upstairsButton.ToolTipText = String.Format("left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)", currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
+            downstairsButton.ToolTipText = String.Format("left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)", currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
+            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0},\ralternative: double-click left mouse button)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: {1},\ralternative: double-click right mouse button)", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
+        }
+
+        /// <summary>
         /// initial window setup of the automap window
         /// </summary>
         protected override void Setup()
@@ -408,7 +642,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
             gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
             gridButton.ToolTip = defaultToolTip;
-            gridButton.ToolTipText = "left click: switch between 2D top view and 3D view (hotkey: space key)\rright click: reset rotation center to player position (hotkey: control+backspace)\rmouse wheel up while over this button: increase perspective (only 3D mode)\rmouse wheel down while over this button: decrease perspective (only 3D mode)";
+            
 
             // forward button
             forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -417,7 +651,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = defaultToolTip;
-            forwardButton.ToolTipText = "left click: move viewpoint forward (hotkey: up arrow)\rright click: move rotation center axis forward (hotkey: control+up arrow)";
 
             // backward button
             backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
@@ -426,7 +659,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = defaultToolTip;
-            backwardButton.ToolTipText = "left click: move viewpoint backwards (hotkey: down arrow)\rright click: move rotation center axis backwards (hotkey: control+down arrow)";
 
             // left button
             leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
@@ -435,7 +667,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
             leftButton.ToolTip = defaultToolTip;
-            leftButton.ToolTipText = "left click: move viewpoint to the left (hotkey: left arrow)\rright click: move rotation center axis to the left (hotkey: control+left arrow)";
 
             // right button
             rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
@@ -444,7 +675,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = defaultToolTip;
-            rightButton.ToolTipText = "left click: move viewpoint to the right (hotkey: right arrow)\rright click: move rotation center axis to the right (hotkey: control+right arrow)";
 
             // rotate left button
             rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
@@ -453,7 +683,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = defaultToolTip;
-            rotateLeftButton.ToolTipText = "left click: rotate dungeon model to the left (hotkey: alt+right arrow)\rright click: rotate camera view to the left (hotkey: shift+right arrow)";
 
             // rotate right button
             rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
@@ -462,7 +691,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = defaultToolTip;
-            rotateRightButton.ToolTipText = "left click: rotate dungeon model to the right (hotkey: alt+right arrow)\rright click: rotate camera view to the right (hotkey: shift+right arrow)";
 
             // upstairs button
             upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
@@ -471,7 +699,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = defaultToolTip;
-            upstairsButton.ToolTipText = "left click: increase viewpoint (hotkey: page up)\rright click: increase slice level (hotkey: control+page up)\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)";
 
             // downstairs button
             downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
@@ -480,7 +707,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = defaultToolTip;
-            downstairsButton.ToolTipText = "left click: decrease viewpoint (hotkey: page down)\rright click: decrease slice level (hotkey: control+page down)\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)";
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -494,7 +720,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = defaultToolTip;
-            dummyPanelCompass.ToolTipText = "left click: toggle focus (hotkey: tab,\ralternative: double-click left mouse button)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: backspace,\ralternative: double-click right mouse button)";
+
+            // update button tool tip texts
+            UpdateButtonToolTipsText();
 
             if (defaultToolTip != null)
             {
@@ -543,6 +771,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
                 // update hotkey sequences taking current toggleClosedBinding into account
                 SetupHotkeySequences();
+                // update button tool tip texts - since hotkeys changed
+                UpdateButtonToolTipsText();
             }
 
             automap.IsOpenAutomap = true; // signal Automap script that automap is open and it should do its stuff in its Update() function            
@@ -1018,324 +1248,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     Application.Quit();
             }
-        }
-
-        /// <summary>
-        /// sets up hotkey sequences (tests for automap open key and uses fallback key for actions that are assigned to the same key)
-        /// </summary>
-        private void SetupHotkeySequences()
-        {
-            UnityEngine.KeyCode currentKeyCode_SwitchAutomapGridMode = keyCode_SwitchAutomapGridMode;
-            UnityEngine.KeyCode currentKeyCode_ResetView = keyCode_ResetView;
-            UnityEngine.KeyCode currentKeyCode_ResetRotationPivotAxisView = keyCode_ResetRotationPivotAxisView;
-            UnityEngine.KeyCode currentKeyCode_SwitchFocusToNextBeaconObject = keyCode_SwitchFocusToNextBeaconObject;
-            UnityEngine.KeyCode currentKeyCode_SwitchToNextAutomapRenderMode = keyCode_SwitchToNextAutomapRenderMode;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeCutout = keyCode_SwitchToAutomapRenderModeCutout;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeWireframe = keyCode_SwitchToAutomapRenderModeWireframe;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeTransparent = keyCode_SwitchToAutomapRenderModeTransparent;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundOriginal = keyCode_SwitchToAutomapBackgroundOriginal;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative1 = keyCode_SwitchToAutomapBackgroundAlternative1;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative2 = keyCode_SwitchToAutomapBackgroundAlternative2;
-            UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative3 = keyCode_SwitchToAutomapBackgroundAlternative3;
-            UnityEngine.KeyCode currentKeyCode_MoveLeft = keyCode_MoveLeft;
-            UnityEngine.KeyCode currentKeyCode_MoveRight = keyCode_MoveRight;
-            UnityEngine.KeyCode currentKeyCode_MoveForward = keyCode_MoveForward;
-            UnityEngine.KeyCode currentKeyCode_MoveBackward = keyCode_MoveBackward;
-            UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisLeft = keyCode_MoveRotationPivotAxisLeft;
-            UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisRight = keyCode_MoveRotationPivotAxisRight;
-            UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisForward = keyCode_MoveRotationPivotAxisForward;
-            UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisBackward = keyCode_MoveRotationPivotAxisBackward;
-            UnityEngine.KeyCode currentKeyCode_RotateLeft = keyCode_RotateLeft;
-            UnityEngine.KeyCode currentKeyCode_RotateRight = keyCode_RotateRight;
-            UnityEngine.KeyCode currentKeyCode_RotateCameraLeft = keyCode_RotateCameraLeft;
-            UnityEngine.KeyCode currentKeyCode_RotateCameraRight = keyCode_RotateCameraRight;
-            UnityEngine.KeyCode currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = keyCode_RotateCameraOnCameraYZplaneAroundObjectUp;
-            UnityEngine.KeyCode currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = keyCode_RotateCameraOnCameraYZplaneAroundObjectDown;
-            UnityEngine.KeyCode currentKeyCode_Upstairs = keyCode_Upstairs;
-            UnityEngine.KeyCode currentKeyCode_Downstairs = keyCode_Downstairs;
-            UnityEngine.KeyCode currentKeyCode_IncreaseSliceLevel = keyCode_IncreaseSliceLevel;
-            UnityEngine.KeyCode currentKeyCode_DecreaseSliceLevel = keyCode_DecreaseSliceLevel;
-            UnityEngine.KeyCode currentKeyCode_ZoomIn = keyCode_ZoomIn;
-            UnityEngine.KeyCode currentKeyCode_ZoomOut = keyCode_ZoomOut;
-            UnityEngine.KeyCode currentKeyCode_IncreaseCameraFieldOfFiew = keyCode_IncreaseCameraFieldOfFiew;
-            UnityEngine.KeyCode currentKeyCode_DecreaseCameraFieldOfFiew = keyCode_DecreaseCameraFieldOfFiew;
-
-            if (toggleClosedBinding == keyCode_SwitchAutomapGridMode)
-                currentKeyCode_SwitchAutomapGridMode = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ResetView)
-                currentKeyCode_ResetView = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ResetRotationPivotAxisView)
-                currentKeyCode_ResetRotationPivotAxisView = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchFocusToNextBeaconObject)
-                currentKeyCode_SwitchFocusToNextBeaconObject = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToNextAutomapRenderMode)
-                currentKeyCode_SwitchToNextAutomapRenderMode = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeCutout)
-                currentKeyCode_SwitchToAutomapRenderModeCutout = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeWireframe)
-                currentKeyCode_SwitchToAutomapRenderModeWireframe = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeTransparent)
-                currentKeyCode_SwitchToAutomapRenderModeTransparent = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundOriginal)
-                currentKeyCode_SwitchToAutomapBackgroundOriginal = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative1)
-                currentKeyCode_SwitchToAutomapBackgroundAlternative1 = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative2)
-                currentKeyCode_SwitchToAutomapBackgroundAlternative2 = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative3)
-                currentKeyCode_SwitchToAutomapBackgroundAlternative3 = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveLeft)
-                currentKeyCode_MoveLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRight)
-                currentKeyCode_MoveRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveForward)
-                currentKeyCode_MoveForward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveBackward)
-                currentKeyCode_MoveBackward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisLeft)
-                currentKeyCode_MoveRotationPivotAxisLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisRight)
-                currentKeyCode_MoveRotationPivotAxisRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisForward)
-                currentKeyCode_MoveRotationPivotAxisForward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisBackward)
-                currentKeyCode_MoveRotationPivotAxisBackward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateLeft)
-                currentKeyCode_RotateLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateRight)
-                currentKeyCode_RotateRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraLeft)
-                currentKeyCode_RotateCameraLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraRight)
-                currentKeyCode_RotateCameraRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraOnCameraYZplaneAroundObjectUp)
-                currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraOnCameraYZplaneAroundObjectDown)
-                currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_Upstairs)
-                currentKeyCode_Upstairs = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_Downstairs)
-                currentKeyCode_Downstairs = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_IncreaseSliceLevel)
-                currentKeyCode_IncreaseSliceLevel = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_DecreaseSliceLevel)
-                currentKeyCode_DecreaseSliceLevel = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ZoomIn)
-                currentKeyCode_ZoomIn = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ZoomOut)
-                currentKeyCode_ZoomOut = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_IncreaseCameraFieldOfFiew)
-                currentKeyCode_IncreaseCameraFieldOfFiew = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_DecreaseCameraFieldOfFiew)
-                currentKeyCode_DecreaseCameraFieldOfFiew = fallbackKey;       
-
-
-            HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(currentKeyCode_SwitchAutomapGridMode, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_ResetView = new HotkeySequence(currentKeyCode_ResetView, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(currentKeyCode_ResetRotationPivotAxisView, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_SwitchFocusToNextBeaconObject = new HotkeySequence(currentKeyCode_SwitchFocusToNextBeaconObject, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(currentKeyCode_SwitchToNextAutomapRenderMode, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeCutout, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeWireframe, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeTransparent, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundOriginal = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundOriginal, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundAlternative1 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative1, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundAlternative2 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative2, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundAlternative3 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative3, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveLeft = new HotkeySequence(currentKeyCode_MoveLeft, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveRight = new HotkeySequence(currentKeyCode_MoveRight, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveForward = new HotkeySequence(currentKeyCode_MoveForward, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveBackward = new HotkeySequence(currentKeyCode_MoveBackward, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveRotationPivotAxisLeft = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisLeft, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_MoveRotationPivotAxisRight = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisRight, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_MoveRotationPivotAxisForward = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisForward, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_MoveRotationPivotAxisBackward = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisBackward, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_RotateLeft = new HotkeySequence(currentKeyCode_RotateLeft, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-            HotkeySequence_RotateRight = new HotkeySequence(currentKeyCode_RotateRight, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-            HotkeySequence_RotateCameraLeft = new HotkeySequence(currentKeyCode_RotateCameraLeft, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            HotkeySequence_RotateCameraRight = new HotkeySequence(currentKeyCode_RotateCameraRight, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = new HotkeySequence(currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = new HotkeySequence(currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            HotkeySequence_Upstairs = new HotkeySequence(currentKeyCode_Upstairs, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_Downstairs = new HotkeySequence(currentKeyCode_Downstairs, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_IncreaseSliceLevel = new HotkeySequence(currentKeyCode_IncreaseSliceLevel, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_DecreaseSliceLevel = new HotkeySequence(currentKeyCode_DecreaseSliceLevel, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            HotkeySequence_ZoomIn = new HotkeySequence(currentKeyCode_ZoomIn, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_ZoomOut = new HotkeySequence(currentKeyCode_ZoomOut, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(currentKeyCode_IncreaseCameraFieldOfFiew, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(currentKeyCode_DecreaseCameraFieldOfFiew, HotkeySequence.KeyModifiers.None);
-
-
-            //if (toggleClosedBinding != KeyCode.Return)
-            //    HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F2)
-            //    HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F3)
-            //    HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F4)
-            //    HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(KeyCode.F4, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F5)
-            //    HotkeySequence_SwitchToAutomapBackgroundOriginal = new HotkeySequence(KeyCode.F5, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapBackgroundOriginal = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F6)
-            //    HotkeySequence_SwitchToAutomapBackgroundAlternative1 = new HotkeySequence(KeyCode.F6, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapBackgroundAlternative1 = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F7)
-            //    HotkeySequence_SwitchToAutomapBackgroundAlternative2 = new HotkeySequence(KeyCode.F7, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapBackgroundAlternative2 = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.F8)
-            //    HotkeySequence_SwitchToAutomapBackgroundAlternative3 = new HotkeySequence(KeyCode.F8, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_SwitchToAutomapBackgroundAlternative3 = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.LeftArrow)
-            //{
-            //    HotkeySequence_MoveLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-            //    HotkeySequence_RotateCameraLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-            //else
-            //{
-            //    HotkeySequence_MoveLeft = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisLeft = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateLeft = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-            //    HotkeySequence_RotateCameraLeft = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-
-            //if (toggleClosedBinding != KeyCode.RightArrow)
-            //{
-            //    HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-            //    HotkeySequence_RotateCameraRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-            //else
-            //{
-            //    HotkeySequence_MoveRight = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisRight = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateRight = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-            //    HotkeySequence_RotateCameraRight = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-
-            //if (toggleClosedBinding != KeyCode.UpArrow)
-            //{
-            //    HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-            //else
-            //{
-            //    HotkeySequence_MoveForward = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisForward = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-
-            //if (toggleClosedBinding != KeyCode.DownArrow)
-            //{
-            //    HotkeySequence_MoveBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-            //else
-            //{
-            //    HotkeySequence_MoveBackward = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_MoveRotationPivotAxisBackward = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //    HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-            //}
-
-            //if (toggleClosedBinding != KeyCode.PageUp)
-            //{
-            //    HotkeySequence_Upstairs = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_IncreaseSliceLevel = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //}
-            //else
-            //{
-            //    HotkeySequence_Upstairs = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_IncreaseSliceLevel = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //}
-
-            //if (toggleClosedBinding != KeyCode.PageDown)
-            //{
-            //    HotkeySequence_Downstairs = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_DecreaseSliceLevel = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //}
-            //else
-            //{
-            //    HotkeySequence_Downstairs = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-            //    HotkeySequence_DecreaseSliceLevel = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-            //}
-
-            //if (toggleClosedBinding != KeyCode.KeypadPlus)
-            //    HotkeySequence_ZoomIn = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_ZoomIn = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.KeypadMinus)
-            //    HotkeySequence_ZoomOut = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_ZoomOut = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.KeypadMultiply)
-            //    HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(KeyCode.KeypadMultiply, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
-
-            //if (toggleClosedBinding != KeyCode.KeypadDivide)
-            //    HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(KeyCode.KeypadDivide, HotkeySequence.KeyModifiers.None);
-            //else
-            //    HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(fallbackKey, HotkeySequence.KeyModifiers.None);
         }
 
         /// <summary>
