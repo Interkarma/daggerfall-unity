@@ -331,7 +331,7 @@ namespace DaggerfallWorkshop.Game
                 // Otherwise it is easy for the target to ride on top of the arrow if it doesn't hit exactly head-on.
                 // Using a collider would probably be better.
                 Vector3 sphereCastDir;
-                if (enemySenses)
+                if (enemySenses && enemySenses.LastKnownTargetPos != EnemySenses.ResetPlayerPos)
                     sphereCastDir = (enemySenses.LastKnownTargetPos - goModel.transform.position).normalized;
                 else
                     sphereCastDir = goModel.transform.forward;
@@ -467,7 +467,11 @@ namespace DaggerfallWorkshop.Game
                     predictedPosition = enemySenses.PredictNextTargetPos(MovementSpeed);
                 else
                     predictedPosition = enemySenses.LastKnownTargetPos;
-                aimDirection = (predictedPosition - caster.transform.position).normalized;
+
+                if (predictedPosition == EnemySenses.ResetPlayerPos)
+                    aimDirection = caster.transform.forward;
+                else
+                    aimDirection = (predictedPosition - caster.transform.position).normalized;
             }
 
             return aimDirection;
