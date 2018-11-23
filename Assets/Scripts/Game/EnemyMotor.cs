@@ -513,6 +513,29 @@ namespace DaggerfallWorkshop.Game
             if (EffectsAlreadyOnTarget(selectedSpell))
                 return false;
 
+            // Check that there is a clear path to shoot a spell
+            float spellMovementSpeed = 15; // All range spells are currently 15 speed
+            Vector3 sphereCastDir = senses.PredictNextTargetPos(spellMovementSpeed);
+            if (sphereCastDir == EnemySenses.ResetPlayerPos)
+                return false;
+
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
+
+            RaycastHit hit;
+            if (Physics.SphereCast(transform.position, 0.45f, sphereCastDir, out hit, sphereCastDist))
+            {
+                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+
+                // Clear path to target
+                if (hitTarget == entityBehaviour.Target)
+                    return true;
+
+                // Something in the way
+                return false;
+            }
+
+            // Clear path to predicted target position
             return true;
         }
 
@@ -675,18 +698,13 @@ namespace DaggerfallWorkshop.Game
                 //return;
 
             SetChangeStateTimer();
-            if (swims)
-                WaterMove(motion);
-            else if (flies || isLevitating)
-                controller.Move(motion * Time.deltaTime);
-            else
-                MoveIfNoFallDetected(motion);
+            MoveIfWayIsClear(motion);
         }
 
         /// <summary>
-        /// Check for a large fall, and proceed with move if none found.
+        /// Check for a clear path and either proceed or look for a way around
         /// </summary>
-        void MoveIfNoFallDetected(Vector3 motion)
+        void MoveIfWayIsClear(Vector3 motion)
         {
             // Check at classic rate to limit ray casts
             if (classicUpdate)
@@ -731,8 +749,8 @@ namespace DaggerfallWorkshop.Game
                     if (loot)
                         obstacleDetected = false;
                 }
-                // Nothing to collide with. Check for a long fall.
-                else
+                // Nothing to collide with. Check for a long fall if not flying or swimming
+                else if (!flies && !isLevitating && !swims)
                 {
                     motion2d *= checkDistance;
                     ray = new Ray(rayOrigin + motion2d, Vector3.down);
@@ -747,7 +765,12 @@ namespace DaggerfallWorkshop.Game
 
             if (!fallDetected && !obstacleDetected)
             {
-                controller.SimpleMove(motion);
+                if (swims)
+                    WaterMove(motion);
+                else if (flies || isLevitating)
+                    controller.Move(motion * Time.deltaTime);
+                else
+                    controller.SimpleMove(motion);
 
                 if (lookingForDetour)
                 {
