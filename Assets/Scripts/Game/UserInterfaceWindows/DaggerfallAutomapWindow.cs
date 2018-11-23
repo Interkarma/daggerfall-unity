@@ -521,7 +521,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
 
             // update hotkey sequences taking current toggleClosedBinding into account
-            setupHotkeySequences();
+            SetupHotkeySequences();
 
             isSetup = true;
         }
@@ -535,6 +535,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
+
+            // check if global automap open/close hotkey has changed
+            if (toggleClosedBinding != InputManager.Instance.GetBinding(InputManager.Actions.AutoMap))
+            {
+                // Store toggle closed binding for this window
+                toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
+                // update hotkey sequences taking current toggleClosedBinding into account
+                SetupHotkeySequences();
+            }
 
             automap.IsOpenAutomap = true; // signal Automap script that automap is open and it should do its stuff in its Update() function            
 
@@ -674,7 +683,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
-                CloseWindow();
+            CloseWindow();
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
 
@@ -1014,7 +1023,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// sets up hotkey sequences (tests for automap open key and uses fallback key for actions that are assigned to the same key)
         /// </summary>
-        private void setupHotkeySequences()
+        private void SetupHotkeySequences()
         {
             UnityEngine.KeyCode currentKeyCode_SwitchAutomapGridMode = keyCode_SwitchAutomapGridMode;
             UnityEngine.KeyCode currentKeyCode_ResetView = keyCode_ResetView;
