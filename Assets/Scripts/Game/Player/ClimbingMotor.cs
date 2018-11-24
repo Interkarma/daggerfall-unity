@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game
         private AcrobatMotor acrobatMotor;
         private PlayerSpeedChanger speedChanger;
         private PlayerMoveScanner moveScanner;
-        private bool fromCeiling = false;
+        private bool releasedFromCeiling = false;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
         private bool isSlipping = false;
@@ -68,7 +68,6 @@ namespace DaggerfallWorkshop.Game
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
         private const int continueClimbMinChance = 70;
         private const int graspWallMinChance = 50;
-        //private int FindWallLoopCount;
 
         public bool IsClimbing
         {
@@ -135,6 +134,15 @@ namespace DaggerfallWorkshop.Game
             // reset for next use
             WallEject = false;
 
+            if (releasedFromCeiling)
+            {
+                MoveForwardIfNotClimbing();
+            }
+            if ((playerMotor.CollisionFlags & CollisionFlags.Sides) != 0)
+            {
+                releasedFromCeiling = false;
+            }
+
             bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startClimbHorizontalTolerance;
             bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
             bool touchingGround = (playerMotor.CollisionFlags & CollisionFlags.Below) != 0;
@@ -148,10 +156,12 @@ namespace DaggerfallWorkshop.Game
             bool hangTouchNonVertical = hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
 
             // Should we reset climbing starter timers?
-            if (!pushingFaceAgainstWallNearCeiling &&
+            if ((!pushingFaceAgainstWallNearCeiling)
+                //|| !releasedFromCeiling
+                &&
                 (inputAbortCondition
                 || !climbingOrForwardOrGrasping 
-                || !touchingSides && !fromCeiling
+                || !touchingSides && !releasedFromCeiling
                 || levitateMotor.IsLevitating
                 || playerMotor.IsRiding
                 || slippedToGround
@@ -168,7 +178,7 @@ namespace DaggerfallWorkshop.Game
                 isClimbing = false;
                 showClimbingModeMessage = true;
                 StopClimbing();
-
+                releasedFromCeiling = false;
                 // Reset position for horizontal distance check and timer to wait for climbing start
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
             }
@@ -183,14 +193,12 @@ namespace DaggerfallWorkshop.Game
                     if (hangingMotor.IsHanging)
                     {   // grab wall from ceiling
                         overrideSkillCheck = true;
-                        fromCeiling = true;
+                        releasedFromCeiling = true;
                     }
 
                     // automatic success if not falling
-                    if ((!airborneGraspWall && !hangingMotor.IsHanging) || fromCeiling)
+                    if ((!airborneGraspWall && !hangingMotor.IsHanging) || releasedFromCeiling)
                         StartClimbing();
-                    //else if (hangingMotor.IsHanging)
-                    //    StartClimbing();
                     // skill check to see if we catch the wall 
                     else if (ClimbingSkillCheck(graspWallMinChance))
                         StartClimbing();
@@ -240,7 +248,7 @@ namespace DaggerfallWorkshop.Game
                 atOutsideCorner = false;
                 atInsideCorner = false;
                 showClimbingModeMessage = true;
-
+                moveDirection = Vector3.zero;
                 myLedgeDirection = Vector3.zero;
             }
         }
@@ -252,7 +260,6 @@ namespace DaggerfallWorkshop.Game
 
         private void CalcFrequencyAndToleranceOfWallChecks(bool airborneGraspWall)
         {
-            // TODO: add another condition for immediate grab if switching from hanging to climbing
             if (DaggerfallUnity.Settings.AdvancedClimbing)
             {
                 if (rappelMotor.IsRappelling)
@@ -265,7 +272,7 @@ namespace DaggerfallWorkshop.Game
                     startClimbHorizontalTolerance = 0.90f;
                     startClimbSkillCheckFrequency = 5;
                 }
-                else if (fromCeiling)
+                else if (releasedFromCeiling)
                 {
                     startClimbHorizontalTolerance = 0.90f;
                     startClimbSkillCheckFrequency = 0;
@@ -290,10 +297,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (!isClimbing)
             {
-                // !fromCeiling is a hack here, it skips the first showing of climbing mode message
-                // of two showings.  It shows twice because when the player pushes against a wall from hanging
-                // it loses contact with wall briefly, cancelling climbing.
-                if (showClimbingModeMessage && !fromCeiling)
+                if (showClimbingModeMessage)
                     DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
                 // Disable further showing of climbing mode message until current climb attempt is stopped
                 // to keep it from filling message log
@@ -302,7 +306,6 @@ namespace DaggerfallWorkshop.Game
                 hangingMotor.CancelHanging();
                 // reset jumping in case we jumped onto the wall
                 acrobatMotor.Jumping = false;
-                fromCeiling = false;
             }
         }
 
@@ -325,7 +328,7 @@ namespace DaggerfallWorkshop.Game
             else
                 wallDirection = -cornerNormalRay.direction;
             // Cast character controller shape forward to see if it is about to hit anything.
-            Debug.DrawRay(controller.transform.position, wallDirection, Color.black);
+            Debug.DrawRay(controller.transform.position, wallDirection, Color.gray);
             if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, 0.20f))
             {
                 // Get the negative horizontal component of the hitnormal, so gabled roofs don't mess it up
@@ -334,6 +337,15 @@ namespace DaggerfallWorkshop.Game
                 // set origin of strafe ray to y level of controller
                 // direction is set to hitnormal until it can be adjusted when we have a side movement direction
                 myStrafeRay = new Ray(new Vector3(hit.point.x, controller.transform.position.y, hit.point.z), hit.normal);
+            }
+            else // TODO: change this so that it doesn't overwrite a legitimate ledgeDirection when reaching the
+                // top of the wall after changing to a different wall
+            {
+                if (hangingMotor.AdjacentUnderWall != null &&
+                    hangingMotor.AdjacentUnderWall.adjacentTurns == 1)
+                    myLedgeDirection = hangingMotor.AdjacentUnderWall.adjacentGrabDirection;
+
+                hangingMotor.PurgeUnderWall();
             }
         }
 
@@ -482,6 +494,17 @@ namespace DaggerfallWorkshop.Game
             // finalize climbing movement
             controller.Move(moveDirection * Time.deltaTime);
             playerMotor.CollisionFlags = controller.collisionFlags;
+        }
+        private void MoveForwardIfNotClimbing()
+        {
+            if (!isClimbing)
+            {
+                overrideSkillCheck = true;
+                controller.Move(controller.transform.forward * Time.deltaTime);
+                playerMotor.CollisionFlags = controller.collisionFlags;
+            }
+
+
         }
         #region Helpers
         /// <summary>

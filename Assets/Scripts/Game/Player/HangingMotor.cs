@@ -16,16 +16,15 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private Entity.PlayerEntity player;
         public AdjacentSurface AdjacentOverheadWall { get; private set; }
+        public AdjacentSurface AdjacentUnderWall { get; private set; }
         private enum HangingTransitionState
         {
             None,
             ExitImmediately,
-            //ExitAfterTimer,
             BeginAfterTimer
         }
         private float startTimer = 0;
         private float hangingContinueTimer = 0;
-        private float exitTimer = 0;
         private float rappelTimer;
         private bool isLosingGrip = false;
         private Vector3 lastPosition = Vector3.zero;
@@ -71,7 +70,7 @@ namespace DaggerfallWorkshop.Game
             float halfHeight = (controller.height / 2f);
             bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
-            //inputForward = true;
+
             bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
             bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
             IsWithinHangingDistance = (scanner.HeadHitDistance > halfHeight - 0.17f && scanner.HeadHitDistance < halfHeight - 0.09f);
@@ -81,13 +80,9 @@ namespace DaggerfallWorkshop.Game
             
             bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startHangingHorizontalTolerance;
             bool forwardStationaryNearCeiling = inputForward && IsWithinHangingDistance && horizontallyStationary;
-            //bool pushingFaceAgainstWallNearCeiling = IsHanging && !climbingMotor.IsClimbing && touchingSides && forwardStationaryNearCeiling;
             bool pushingHeadAgainstCeilingWhileClimbing = climbingMotor.IsClimbing && !IsHanging && touchingAbove && forwardStationaryNearCeiling;
             bool doHanging;
-            // TODO: maybe this variable should be in climbing motor.  
-            /*if (pushingFaceAgainstWallNearCeiling)
-                doHanging = HangingTransition(HangingTransitionState.ExitAfterTimer);
-            else */if (pushingHeadAgainstCeilingWhileClimbing)
+            if (pushingHeadAgainstCeilingWhileClimbing)
                 doHanging = HangingTransition(HangingTransitionState.BeginAfterTimer);
             else if (IsHanging)
                 doHanging = true;
@@ -103,39 +98,21 @@ namespace DaggerfallWorkshop.Game
             }
             else if (doHanging)// Schedule Hanging events
             {
-                /*if (!IsHanging)
-                {
-                    // schedule hanging start
-                    if (hangingStartTimer <= (playerMotor.systemTimerUpdatesDivisor * startHangSkillCheckFrequency))
-                        hangingStartTimer += Time.deltaTime;
-                    else
-                    {
-                        // skill check to see if we catch the ceiling 
-                        //if (climbingMotor.ClimbingSkillCheck(100))
-                            StartHanging();
-                        //else
-                        //    hangingStartTimer = 0;
-                    }
-                }
+                // schedule climbing continues, Faster updates if slipping
+                if (hangingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isLosingGrip ? regainHoldSkillCheckFrequency : continueHangingSkillCheckFrequency)))
+                    hangingContinueTimer += Time.deltaTime;
                 else
-                {*/
-                    // schedule climbing continues, Faster updates if slipping
+                {
+                    hangingContinueTimer = 0;
+
+                    // TODO: Disable weapon while hanging.
                     // TODO: finish implementing skill based checks
-                    if (hangingContinueTimer <= (playerMotor.systemTimerUpdatesDivisor * (isLosingGrip ? regainHoldSkillCheckFrequency : continueHangingSkillCheckFrequency)))
-                        hangingContinueTimer += Time.deltaTime;
+                    // it's harder to regain hold while losing grip than it is to continue hanging with a good hold on ceiling
+                    if (isLosingGrip)
+                        isLosingGrip = !climbingMotor.ClimbingSkillCheck(regainHoldMinChance);
                     else
-                    {
-                        hangingContinueTimer = 0;
-
-                        // TODO: Disable weapon while hanging.
-
-                        // it's harder to regain hold while losing grip than it is to continue hanging with a good hold on ceiling
-                        if (isLosingGrip)
-                            isLosingGrip = !climbingMotor.ClimbingSkillCheck(regainHoldMinChance);
-                        else
-                            isLosingGrip = !climbingMotor.ClimbingSkillCheck(continueHangMinChance);
-                    }
-                //}
+                        isLosingGrip = !climbingMotor.ClimbingSkillCheck(continueHangMinChance);
+                }
 
             }
 
@@ -146,6 +123,8 @@ namespace DaggerfallWorkshop.Game
                 HangMoveDirection();
                 if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
                     AdjacentOverheadWall = FindAdjacentOverheadWall();
+                if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                    AdjacentUnderWall = FindAdjacentUnderWall();
 
                 acrobatMotor.Falling = false;
             }
@@ -153,7 +132,6 @@ namespace DaggerfallWorkshop.Game
 
         private AdjacentSurface FindAdjacentOverheadWall()
         {
-            // TODO: experiment with this until right position achieved
             Vector3 pos = controller.transform.position;
             Vector3 startPos = pos + (controller.transform.forward * 0.4f) + (Vector3.up * 0.5f);
             AdjacentSurface surface;
@@ -164,10 +142,21 @@ namespace DaggerfallWorkshop.Game
             return surface;
         }
 
+        private AdjacentSurface FindAdjacentUnderWall()
+        {
+            Vector3 pos = controller.transform.position;
+            Vector3 startPos = pos + (-controller.transform.forward * 0.2f) + (Vector3.down * 0.2f);
+            AdjacentSurface surface;
+            if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                surface = scanner.GetAdjacentSurface(startPos, Vector3.down, PlayerMoveScanner.RotationDirection.YZCounterClockwise);
+            else
+                surface = null;
+            return surface;
+        }
+
         private bool HangingTransition(HangingTransitionState transState)
         {
-            float startTimerMax = 7f;
-            float exitTimerMax = 14f;
+            const float startTimerMax = 10f;
             bool shouldHang = false;
             switch (transState)
             { 
@@ -184,27 +173,12 @@ namespace DaggerfallWorkshop.Game
                         shouldHang = true;
                     }
                     break;
-                // TODO: make this exit begin climbing.
-                /*case HangingTransitionState.ExitAfterTimer:
-                    if (exitTimer <= (playerMotor.systemTimerUpdatesDivisor * exitTimerMax))
-                    {
-                        exitTimer += Time.deltaTime;
-                        shouldHang = true;
-                    }
-                    else
-                    {
-                        // Exit Hanging, basically exit immediately
-                        CancelHanging();
-                        shouldHang = false;
-                    }
-                    break;*/
                 case HangingTransitionState.ExitImmediately:
                     CancelHanging();
                     GetLastHorizontalPositon();
                     shouldHang = false;
                     break;
             }
-            //lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
 
             return shouldHang;
         }
@@ -212,7 +186,6 @@ namespace DaggerfallWorkshop.Game
         private void HangMoveDirection()
         {
             RaycastHit hit;
-            //if (Physics.Raycast(controller.transform.position, controller.transform.up, out hit, (controller.height / 2) + 1f))
             if (Physics.SphereCast(controller.transform.position, scanner.HeadHitRadius, controller.transform.up,  out hit, 2f))
             {
                 float playerspeed = speedChanger.GetClimbingSpeed();
@@ -246,6 +219,10 @@ namespace DaggerfallWorkshop.Game
         public void PurgeOverheadWall()
         {
             AdjacentOverheadWall = null;
+        }
+        public void PurgeUnderWall()
+        {
+            AdjacentUnderWall = null;
         }
 
         private void StartHanging()

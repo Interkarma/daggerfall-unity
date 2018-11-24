@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game
             XZClockwise,
             XZCounterClockwise,
             YZClockwise,
-            YZCounterClockWise
+            YZCounterClockwise
         }
         CharacterController controller;
         AcrobatMotor acrobatMotor;
@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game
                     case RotationDirection.YZClockwise:
                         adjSurfaceRay = new Ray(hit.point, Vector3.Cross(-hit.normal, transform.right));
                         break;
-                    case RotationDirection.YZCounterClockWise:
+                    case RotationDirection.YZCounterClockwise:
                         adjSurfaceRay = new Ray(hit.point, Vector3.Cross(transform.right, -hit.normal));
                         break;
                     default:
@@ -175,7 +175,7 @@ namespace DaggerfallWorkshop.Game
                                 nextDirection = Vector3.Reflect((lastDirection + nextDirection).normalized, lastDirection);
 
                             break;
-                        case RotationDirection.YZCounterClockWise:
+                        case RotationDirection.YZCounterClockwise:
                             nextDirection = Vector3.Cross(transform.right, lastDirection).normalized * distance;
                             break;
                         default:

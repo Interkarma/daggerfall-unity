@@ -269,7 +269,11 @@ namespace DaggerfallWorkshop.Game
 
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing || hangingMotor.IsHanging)
+            {
+                moveDirection = Vector3.zero;
                 return;
+            }
+
 
             if (climbingMotor.WallEject)
             {   // True in terms of the player having their feet on solid surface.
