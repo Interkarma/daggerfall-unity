@@ -106,8 +106,8 @@ namespace DaggerfallWorkshop.Game
 
         void AddMovement(Vector3 direction, bool upOrDown = false)
         {
-            // No up or down movement without using a float up/float down key or sinking from encumbrance
-            if (!upOrDown)
+            // No up or down movement while swimming without using a float up/float down key or sinking from encumbrance
+            if (!upOrDown && playerSwimming)
                 direction.y = 0;
 
             if (playerSwimming && GameManager.Instance.PlayerEntity.IsWaterWalking)
