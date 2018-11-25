@@ -397,7 +397,7 @@ namespace DaggerfallWorkshop.Game
                 if (oldLastKnownTargetPos == ResetPlayerPos)
                     oldLastKnownTargetPos = lastKnownTargetPos;
 
-                if (predictedTargetPos == ResetPlayerPos)
+                if (predictedTargetPos == ResetPlayerPos || !DaggerfallUnity.Settings.EnhancedCombatAI)
                     predictedTargetPos = lastKnownTargetPos;
 
                 // Predict target's next position

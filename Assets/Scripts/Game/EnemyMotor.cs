@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Game
                 RayCheckForObstacle(motion2d);
                 RayCheckForFall(motion2d);
 
-                if ((fallDetected || obstacleDetected) && DaggerfallUnity.Settings.EnhancedCombatAI)
+                if (fallDetected || obstacleDetected)
                     FindDetour(motion2d);
             }
 
