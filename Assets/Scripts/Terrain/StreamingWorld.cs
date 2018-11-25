@@ -104,6 +104,7 @@ namespace DaggerfallWorkshop
 
         DaggerfallLocation currentPlayerLocationObject;
         int playerTilemapIndex = -1;
+        private DFPosition previousMapPixel;
 
         #endregion
 
@@ -1007,6 +1008,7 @@ namespace DaggerfallWorkshop
         // Teleports to map pixel with an optional reset or autoreposition
         void TeleportToMapPixel(int mapPixelX, int mapPixelY, Vector3 repositionOffset, RepositionMethods autoReposition)
         {
+            previousMapPixel = LocalPlayerGPS.CurrentMapPixel;
             DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixelX, mapPixelY);
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
@@ -1363,7 +1365,17 @@ namespace DaggerfallWorkshop
             // A better implementation would base on previous coordinates
             // e.g. if new location is east of old location then player starts at west edge of new location
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
-            int side = UnityEngine.Random.Range(0, 4);
+
+            int mapDeltaX = mapPixelX - previousMapPixel.X;
+            int mapDeltaY = mapPixelY - previousMapPixel.Y;
+
+            int side;
+            if (mapDeltaX == 0 && mapDeltaY == 0)
+                side = UnityEngine.Random.Range(0, 4);
+            else if (Math.Abs(mapDeltaX) > Math.Abs(mapDeltaY))
+                side = mapDeltaX > 0 ? 3 : 2;
+            else
+                side = mapDeltaY > 0 ? 0 : 1;
 
             // Get half width and height
             float halfWidth = (float)mapWidth * 0.5f * RMBLayout.RMBSide;
