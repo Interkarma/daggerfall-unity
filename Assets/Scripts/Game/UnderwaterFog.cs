@@ -15,7 +15,6 @@ namespace DaggerfallWorkshop.Game
         private float fogDensityMax;
 
         // store fog values to reset fog after leaving water
-        //private bool fogSettingsChanged = false;
         private FogMode originalFogMode;               
         private float originalFogDensity;
         private float originalFogStartDistance;
@@ -23,15 +22,6 @@ namespace DaggerfallWorkshop.Game
 
         // used to identify player transition from out of water to entering water
         private float oldFogT = 0.0f;
-
-        //public bool HaveFogSettingsChanged()
-        //{
-        //    //if (originalFogMode != RenderSettings.fogMode || originalFogDensity != RenderSettings.fogDensity || originalFogDensity != RenderSettings.fogStartDistance || originalFogDensity != RenderSettings.fogEndDistance)
-        //    if (fogSettingsChanged == true)
-        //        return true;
-        //    else
-        //        return false;
-        //}
 
         public UnderwaterFog()
         {
@@ -64,22 +54,9 @@ namespace DaggerfallWorkshop.Game
             else
                 fogT = 0.0f;
 
-            //// on player transition from out of water to entering water
-            //// (this is important: only backup fog values from before entering water
-            //// (otherwise water fog values will be backed up unintentionally))
-            //if (oldFogT == 0.0f && fogT > 0.0f)
-            //{
-            //    fogSettingsChanged = true;
-            //    originalFogMode = RenderSettings.fogMode;
-            //    originalFogDensity = RenderSettings.fogDensity;
-            //    originalFogStartDistance = RenderSettings.fogStartDistance;
-            //    originalFogEndDistance = RenderSettings.fogEndDistance;
-            //}
-            //oldFogT = fogT;
-
+            // backup fog settings when player is out of water or just entering water (oldFogT is in both cases zero)
             if (oldFogT == 0.0f)
             {
-                //fogSettingsChanged = true;
                 originalFogMode = RenderSettings.fogMode;
                 originalFogDensity = RenderSettings.fogDensity;
                 originalFogStartDistance = RenderSettings.fogStartDistance;
@@ -87,18 +64,14 @@ namespace DaggerfallWorkshop.Game
             }
             oldFogT = fogT;
 
-            //RenderSettings.fogMode = FogMode.Exponential;
-            //RenderSettings.fogDensity = Mathf.Lerp(fogDensityMin, fogDensityMax, fogT);
-            //RenderSettings.fogColor = waterFogColor;
-
-            // if player is entering water or submerged
+            // if player is submerged or entering water apply underwater fog
             if (fogT > 0.0f)
             {
                 RenderSettings.fogMode = FogMode.Exponential;
                 RenderSettings.fogDensity = Mathf.Lerp(fogDensityMin, fogDensityMax, fogT);
                 RenderSettings.fogColor = waterFogColor;
             }
-            else
+            else // otherwise restore old fog settings
             {
                 RenderSettings.fogMode = originalFogMode;
                 RenderSettings.fogDensity = originalFogDensity;
@@ -106,18 +79,5 @@ namespace DaggerfallWorkshop.Game
                 RenderSettings.fogEndDistance = originalFogEndDistance;
             }
         }
-
-        //public void ResetFog()
-        //{ 
-        //    sky.SetSkyFogColor(sky.skyColors);
-        //    if (fogSettingsChanged == true)
-        //    {
-        //        RenderSettings.fogMode = originalFogMode;
-        //        RenderSettings.fogDensity = originalFogDensity;
-        //        RenderSettings.fogStartDistance = originalFogStartDistance;
-        //        RenderSettings.fogEndDistance = originalFogEndDistance;
-        //        fogSettingsChanged = false;
-        //    }
-        //}
     }
 }
