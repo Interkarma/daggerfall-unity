@@ -1293,7 +1293,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Check cart weight limit
             int canCarry = item.stackCount;
-            if (item.ItemGroup != ItemGroups.Transportation && item.weightInKg != 0)
+            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
             {
                 canCarry = Math.Min(canCarry, (int)((ItemHelper.wagonKgLimit - remoteItems.GetWeight()) / item.weightInKg));
             }

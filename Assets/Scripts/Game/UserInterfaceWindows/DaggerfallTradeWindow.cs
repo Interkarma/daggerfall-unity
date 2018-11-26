@@ -560,11 +560,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Buy:
-                        if (usingWagon)
-                        {
-                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: true);
-                        }
-                        else
+                        if (usingWagon)     // Allows player to get & equip stuff from cart while purchasing.
+                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: !item.IsAStack());
+                        else                // Allows player to equip and unequip while purchasing.
                             EquipItem(item);
                         break;
 
@@ -596,17 +594,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Select)
             {
-                int canCarry = CanCarryAmount(item);
-                if (usingWagon)
-                {
-                    canCarry = Math.Max(canCarry, WagonCanHoldAmount(item));
-                }
                 if (windowMode == WindowModes.Buy)
-                {
-                    TransferItem(item, remoteItems, basketItems, canCarry, equip: !item.IsAStack());
-                } else {
-                    TransferItem(item, remoteItems, localItems, canCarry);
-                }
+                    TransferItem(item, remoteItems, basketItems, CanCarryAmount(item), equip: !item.IsAStack());
+                else
+                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -667,7 +658,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
                     remoteItems.GetItem(i).IdentifyItem();
-                DaggerfallUI.MessageBox("Items identified.");
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "itemsIdentified"));
             }
             else if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
                 ShowTradePopup();
