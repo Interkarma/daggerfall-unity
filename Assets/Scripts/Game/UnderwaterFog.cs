@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop.Game
         private float originalFogDensity;
         private float originalFogStartDistance;
         private float originalFogEndDistance;
+        private Color originalFogColor;
 
         // used to identify player transition from out of water to entering water
         private float oldFogT = 0.0f;
@@ -32,10 +33,12 @@ namespace DaggerfallWorkshop.Game
             waterFogColor = new Color(0.25f, 0.55f, 0.79f, 1);
             fogDensityMin = 0f;
             fogDensityMax = 0.23f;
+            // get initial (backup) values - will be overwritten (this is just a safety net mechanism so we start out with some values)
             originalFogMode = RenderSettings.fogMode;
             originalFogDensity = RenderSettings.fogDensity;
             originalFogStartDistance = RenderSettings.fogStartDistance;
             originalFogEndDistance = RenderSettings.fogEndDistance;
+            originalFogColor = RenderSettings.fogColor;
         }
 
         public void UpdateFog(float waterLevel)
@@ -61,6 +64,7 @@ namespace DaggerfallWorkshop.Game
                 originalFogDensity = RenderSettings.fogDensity;
                 originalFogStartDistance = RenderSettings.fogStartDistance;
                 originalFogEndDistance = RenderSettings.fogEndDistance;
+                originalFogColor = RenderSettings.fogColor;
             }
             oldFogT = fogT;
 
@@ -77,6 +81,7 @@ namespace DaggerfallWorkshop.Game
                 RenderSettings.fogDensity = originalFogDensity;
                 RenderSettings.fogStartDistance = originalFogStartDistance;
                 RenderSettings.fogEndDistance = originalFogEndDistance;
+                RenderSettings.fogColor = originalFogColor;
             }
         }
     }
