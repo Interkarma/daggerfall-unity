@@ -411,6 +411,8 @@ namespace DaggerfallWorkshop.Game
                     #region Vertical Climbing
                     if (!atOutsideCorner && (movedForward || !hitSomethingInFront))
                     {
+                        // TODO: devise horizontal distance-based solution to terminate forward movement
+                        // It may fix the problem of climbing to the top of gabled roofs.
                         if (!overrideSkillCheck)
                             overrideSkillCheck = !hitSomethingInFront;
                         moveDirection.y = Vector3.up.y * climbScalar;

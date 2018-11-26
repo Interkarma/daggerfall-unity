@@ -8,6 +8,7 @@ namespace DaggerfallWorkshop.Game
     public class RappelMotor : MonoBehaviour
     {
         private float rappelTimer;
+        private float forwardTimer;
         private Vector3 lastPosition = Vector3.zero;
         public bool IsRappelling { get; private set; }
         public bool RappelUp { get; private set; }
@@ -81,6 +82,7 @@ namespace DaggerfallWorkshop.Game
             if (IsRappelling)
             {
                 const float firstTimerMax = 0.7f;
+                const float secondTimerMax = firstTimerMax + 0.35f;
                 player.TallySkill(DFCareer.Skills.Climbing, 1);
 
                 rappelTimer += Time.deltaTime;
@@ -112,7 +114,9 @@ namespace DaggerfallWorkshop.Game
 
                     controller.transform.position = rappelPosition;
                 }
-                else
+                // TODO: Timer for forward works ok, but horizontal distance quit might work better
+                // because if the player is really fast, he won't overshoot
+                else if (rappelTimer <= secondTimerMax)
                 {
                     // clear rappel information
                     RappelUp = false;
@@ -128,6 +132,8 @@ namespace DaggerfallWorkshop.Game
                     grappleDirection *= speed * 1.25f;
                     groundMotor.MoveWithMovingPlatform(grappleDirection);
                 }
+                else
+                    IsRappelling = false;
             }
         }
     }

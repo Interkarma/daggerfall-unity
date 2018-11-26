@@ -170,13 +170,16 @@ namespace DaggerfallWorkshop.Game
                             if (turnCount == 3)
                                 // special Case: at top tip of a C-shaped scan looking for wall to climb onto,
                                 // Need to check if there is a slanted-eaved roof to climb onto the edge of.
-                                // upward rappel movement places the player on side of eave and triggers climbing
+                                // upward rappel movement puts the player on side of eave and triggers climbing
                                 // need to scan diagonally forward down
                                 nextDirection = Vector3.Reflect((lastDirection + nextDirection).normalized, lastDirection);
 
                             break;
                         case RotationDirection.YZCounterClockwise:
                             nextDirection = Vector3.Cross(transform.right, lastDirection).normalized * distance;
+                            // TODO: write code to make a diagonal upwards forward check for turncount 3 to find
+                            // a ceiling under the wall the player is climbing on.  Could possibly be another wall
+                            // to rappel onto?
                             break;
                         default:
                             nextDirection = Vector3.zero;
