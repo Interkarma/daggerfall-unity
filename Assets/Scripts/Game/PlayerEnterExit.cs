@@ -276,10 +276,10 @@ namespace DaggerfallWorkshop.Game
                     underwaterFog.UpdateFog(blockWaterLevel);
                 }
             }
-            else if(underwaterFog != null && underwaterFog.originalFog != RenderSettings.fogMode)
-            {
-                underwaterFog.ResetFog();
-            }
+            //else if(underwaterFog != null && underwaterFog.HaveFogSettingsChanged())
+            //{
+            //    underwaterFog.ResetFog();
+            //}
 
 
             // Count down holiday text display
