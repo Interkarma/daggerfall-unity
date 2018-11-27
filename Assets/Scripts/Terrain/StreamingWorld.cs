@@ -220,6 +220,7 @@ namespace DaggerfallWorkshop
             Offset,
             DungeonEntrance,
             RandomStartMarker,
+            DirectionFromStartMarker,
         }
 
         #endregion
@@ -269,6 +270,7 @@ namespace DaggerfallWorkshop
             {
                 switch (autoRepositionMethod)
                 {
+                    case RepositionMethods.DirectionFromStartMarker:
                     case RepositionMethods.RandomStartMarker:
                         PositionPlayerToLocation();
                         break;
@@ -1010,8 +1012,12 @@ namespace DaggerfallWorkshop
         // Teleports to map pixel with an optional reset or autoreposition
         void TeleportToMapPixel(int mapPixelX, int mapPixelY, Vector3 repositionOffset, RepositionMethods autoReposition)
         {
-            travelStartX = LocalPlayerGPS.WorldX;
-            travelStartZ = LocalPlayerGPS.WorldZ;
+            if (autoReposition == RepositionMethods.DirectionFromStartMarker)
+            {
+                // Save travel origin
+                travelStartX = LocalPlayerGPS.WorldX;
+                travelStartZ = LocalPlayerGPS.WorldZ;
+            }
             DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixelX, mapPixelY);
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
@@ -1372,11 +1378,11 @@ namespace DaggerfallWorkshop
             int side;
             if (travelStartX == null || travelStartZ == null)
             {
-                Debug.Log("Travel from an unknown location, picking a random direction");
                 side = UnityEngine.Random.Range(0, 4);
             }
             else
             {
+                // use travel origin as a facing hint
                 int worldDeltaX = LocalPlayerGPS.WorldX - (int)travelStartX;
                 int worldDeltaZ = LocalPlayerGPS.WorldZ - (int)travelStartZ;
 
@@ -1385,8 +1391,8 @@ namespace DaggerfallWorkshop
                 else if (Math.Abs(worldDeltaX) > Math.Abs(worldDeltaZ))
                     side = worldDeltaX > 0 ? 3 : 2;
                 else
-                    side = worldDeltaZ > 0 ? 0 : 1;
-                Debug.Log(String.Format("{0},{1} => {2},{3}: facing {4}", (int)travelStartX, (int)travelStartZ, LocalPlayerGPS.WorldX, LocalPlayerGPS.WorldZ, side));
+                    side = worldDeltaZ > 0 ? 1 : 0;
+                // Debug.Log(String.Format("{0},{1} => {2},{3}: facing {4}", (int)travelStartX, (int)travelStartZ, LocalPlayerGPS.WorldX, LocalPlayerGPS.WorldZ, side));
                 travelStartX = null;
                 travelStartZ = null;
             }
