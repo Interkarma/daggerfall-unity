@@ -19,6 +19,22 @@ using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
+    public class VectorMeasurement
+    {
+        private Vector3 InitialPosition;
+        /// <summary>
+        /// Initialize with a vector3, and call distance to measure horizontal distance.
+        /// </summary>
+        public VectorMeasurement(Vector3 pos)
+        {
+            InitialPosition = pos;
+        }
+        public float Distance(Vector3 newPos)
+        {
+            return Vector2.Distance(new Vector2(InitialPosition.x, InitialPosition.z), new Vector2(newPos.x, newPos.z));
+        }
+    }
+
     public class AdjacentSurface
     {
         public readonly float turnHitDistance;

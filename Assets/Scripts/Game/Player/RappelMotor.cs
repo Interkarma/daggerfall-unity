@@ -11,7 +11,7 @@ namespace DaggerfallWorkshop.Game
         private float forwardTimer;
         private Vector3 lastPosition = Vector3.zero;
         public bool IsRappelling { get; private set; }
-        public bool RappelUp { get; private set; }
+        private bool RappelUp;
         private AcrobatMotor acrobatMotor;
         private CharacterController controller;
         private PlayerSpeedChanger speedChanger;
@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerMoveScanner playerScanner;
         private HangingMotor hangingMotor;
         private Entity.PlayerEntity player;
+        private VectorMeasurement measure;
 
         private void Start()
         {
@@ -82,7 +83,6 @@ namespace DaggerfallWorkshop.Game
             if (IsRappelling)
             {
                 const float firstTimerMax = 0.7f;
-                const float secondTimerMax = firstTimerMax + 0.35f;
                 player.TallySkill(DFCareer.Skills.Climbing, 1);
 
                 rappelTimer += Time.deltaTime;
@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        yDist = 1.30f;
+                        yDist = 1.60f;
                         xzDist = 0.19f;
                         rappelPosition.x = Mathf.Lerp(pos.x, pos.x - (controller.transform.forward.x * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
                         rappelPosition.z = Mathf.Lerp(pos.z, pos.z - (controller.transform.forward.z * xzDist), Mathf.Sin(Mathf.PI * (rappelTimer / firstTimerMax)));
@@ -114,26 +114,34 @@ namespace DaggerfallWorkshop.Game
 
                     controller.transform.position = rappelPosition;
                 }
-                // TODO: Timer for forward works ok, but horizontal distance quit might work better
-                // because if the player is really fast, he won't overshoot
-                else if (rappelTimer <= secondTimerMax)
+                else // perform horizontal measurement-based forward movement of the character
                 {
-                    // clear rappel information
-                    RappelUp = false;
-                    hangingMotor.PurgeOverheadWall();
+                    if (measure == null)
+                        measure = new VectorMeasurement(controller.transform.position);
 
-                    Vector3 grappleDirection = Vector3.zero;
-                    // Auto forward to grab wall
-                    float speed = speedChanger.GetBaseSpeed();
-                    if (climbingMotor.LedgeDirection != Vector3.zero)
-                        grappleDirection = climbingMotor.LedgeDirection;
+                    if (measure.Distance(controller.transform.position) < 1f)
+                    {
+                        // clear rappel information
+                        RappelUp = false;
+                        hangingMotor.PurgeOverheadWall();
+
+                        Vector3 grappleDirection = Vector3.zero;
+                        // Auto forward to grab wall
+                        float speed = speedChanger.GetBaseSpeed();
+                        if (climbingMotor.LedgeDirection != Vector3.zero)
+                            grappleDirection = climbingMotor.LedgeDirection;
+                        else
+                            grappleDirection = controller.transform.forward;
+                        grappleDirection *= speed * 1.25f;
+                        groundMotor.MoveWithMovingPlatform(grappleDirection);
+                    }
                     else
-                        grappleDirection = controller.transform.forward;
-                    grappleDirection *= speed * 1.25f;
-                    groundMotor.MoveWithMovingPlatform(grappleDirection);
+                    {
+                        IsRappelling = false;
+                        measure = null;
+                    }
+                        
                 }
-                else
-                    IsRappelling = false;
             }
         }
     }
