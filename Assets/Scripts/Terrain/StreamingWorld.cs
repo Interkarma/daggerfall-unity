@@ -104,7 +104,9 @@ namespace DaggerfallWorkshop
 
         DaggerfallLocation currentPlayerLocationObject;
         int playerTilemapIndex = -1;
-        private DFPosition previousMapPixel;
+
+        private int? travelStartX = null;
+        private int? travelStartZ = null;
 
         #endregion
 
@@ -1008,7 +1010,8 @@ namespace DaggerfallWorkshop
         // Teleports to map pixel with an optional reset or autoreposition
         void TeleportToMapPixel(int mapPixelX, int mapPixelY, Vector3 repositionOffset, RepositionMethods autoReposition)
         {
-            previousMapPixel = LocalPlayerGPS.CurrentMapPixel;
+            travelStartX = LocalPlayerGPS.WorldX;
+            travelStartZ = LocalPlayerGPS.WorldZ;
             DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixelX, mapPixelY);
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
@@ -1366,16 +1369,27 @@ namespace DaggerfallWorkshop
             // e.g. if new location is east of old location then player starts at west edge of new location
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
 
-            int mapDeltaX = mapPixelX - previousMapPixel.X;
-            int mapDeltaY = mapPixelY - previousMapPixel.Y;
-
             int side;
-            if (mapDeltaX == 0 && mapDeltaY == 0)
+            if (travelStartX == null || travelStartZ == null)
+            {
+                Debug.Log("Travel from an unknown location, picking a random direction");
                 side = UnityEngine.Random.Range(0, 4);
-            else if (Math.Abs(mapDeltaX) > Math.Abs(mapDeltaY))
-                side = mapDeltaX > 0 ? 3 : 2;
+            }
             else
-                side = mapDeltaY > 0 ? 0 : 1;
+            {
+                int worldDeltaX = LocalPlayerGPS.WorldX - (int)travelStartX;
+                int worldDeltaZ = LocalPlayerGPS.WorldZ - (int)travelStartZ;
+
+                if (worldDeltaX == 0 && worldDeltaZ == 0)
+                    side = UnityEngine.Random.Range(0, 4);
+                else if (Math.Abs(worldDeltaX) > Math.Abs(worldDeltaZ))
+                    side = worldDeltaX > 0 ? 3 : 2;
+                else
+                    side = worldDeltaZ > 0 ? 0 : 1;
+                Debug.Log(String.Format("{0},{1} => {2},{3}: facing {4}", (int)travelStartX, (int)travelStartZ, LocalPlayerGPS.WorldX, LocalPlayerGPS.WorldZ, side));
+                travelStartX = null;
+                travelStartZ = null;
+            }
 
             // Get half width and height
             float halfWidth = (float)mapWidth * 0.5f * RMBLayout.RMBSide;
