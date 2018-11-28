@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich
 // 
 // Notes:
 //
@@ -67,7 +67,6 @@ namespace DaggerfallWorkshop.Game
         Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
         bool forceDisableSpellLighting;
-        bool forceDisableSpellShadows;
         float lifespan = 0f;
         float postImpactLifespan = 0f;
         TargetTypes targetType = TargetTypes.None;
@@ -163,9 +162,8 @@ namespace DaggerfallWorkshop.Game
             myLight = GetComponent<Light>();
             myLight.enabled = EnableLight;
             forceDisableSpellLighting = !DaggerfallUnity.Settings.EnableSpellLighting;
-            forceDisableSpellShadows = !DaggerfallUnity.Settings.EnableSpellShadows;
             if (forceDisableSpellLighting) myLight.enabled = false;
-            if (forceDisableSpellShadows) myLight.shadows = LightShadows.None;
+            if (!DaggerfallUnity.Settings.EnableSpellShadows) myLight.shadows = LightShadows.None;
             initialRange = myLight.range;
             initialIntensity = myLight.intensity;
 
@@ -189,7 +187,7 @@ namespace DaggerfallWorkshop.Game
                 if (targetType == TargetTypes.SingleTargetAtRange ||
                     targetType == TargetTypes.AreaAtRange)
                 {
-                    UseSpellBillboardAnims(elementType);
+                    UseSpellBillboardAnims();
                 }
             }
 
@@ -211,19 +209,19 @@ namespace DaggerfallWorkshop.Game
                 {
                     CharacterController controller = caster.transform.GetComponent<CharacterController>();
                     adjust = caster.transform.forward * 0.6f;
-                    adjust.y = controller.height / 4;
+                    adjust.y += controller.height / 3;
                 }
                 else
                 {
                     // Offset forward to avoid collision with player
-                    adjust = caster.transform.forward * 0.6f;
+                    adjust = GameManager.Instance.MainCamera.transform.forward * 0.6f;
                     // Adjust slightly downward to match bow animation
-                    adjust.y -= 0.1f;
+                    adjust.y -= 0.11f;
                     // Adjust to the right or left to match bow animation
                     if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
-                        adjust += caster.transform.right * 0.15f;
+                        adjust += GameManager.Instance.MainCamera.transform.right * 0.15f;
                     else
-                        adjust -= caster.transform.right * 0.15f;
+                        adjust -= GameManager.Instance.MainCamera.transform.right * 0.15f;
                 }
 
                 goModel.transform.localPosition = adjust;
@@ -350,7 +348,7 @@ namespace DaggerfallWorkshop.Game
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
             {
-                UseSpellBillboardAnims(elementType, 1, true);
+                UseSpellBillboardAnims(1, true);
                 myBillboard.FramesPerSecond = ImpactBillboardFramesPerSecond;
                 impactDetected = true;
             }
@@ -421,7 +419,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (ignoreCaster && aoeEntity == caster)
                     continue;
-                
+
                 if (aoeEntity && !targetEntities.Contains(aoeEntity))
                 {
                     entities.Add(aoeEntity);
@@ -473,7 +471,7 @@ namespace DaggerfallWorkshop.Game
             return aimDirection;
         }
 
-        void UseSpellBillboardAnims(ElementTypes elementType, int record = 0, bool oneShot = false)
+        void UseSpellBillboardAnims(int record = 0, bool oneShot = false)
         {
             // Destroy any existing billboard game object
             if (myBillboard)
@@ -483,7 +481,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Add new billboard parented to this missile
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(elementType), record, transform);
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(), record, transform);
             go.transform.localPosition = Vector3.zero;
             myBillboard = go.GetComponent<DaggerfallBillboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
@@ -506,7 +504,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        int GetMissileTextureArchive(ElementTypes elementType)
+        int GetMissileTextureArchive()
         {
             switch (elementType)
             {
