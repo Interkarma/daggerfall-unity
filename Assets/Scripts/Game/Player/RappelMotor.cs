@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.rappelMode);
                 lastPosition = controller.transform.position;
                 rappelTimer = 0f;
+                measure = null;
             }
 
             // Rappel Schedule
