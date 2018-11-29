@@ -1073,9 +1073,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoMagicRound()
         {
-            // Do nothing further if entity has perished or object disabled
-            if (entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
+            // Do nothing further if no bundles, entity has perished, or object disabled
+            if (instancedBundles.Count == 0 || entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
                 return;
+
+            // Clear direct mods
+            Array.Clear(directStatMods, 0, DaggerfallStats.Count);
+            Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
 
             // Run all bundles
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -1410,10 +1414,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void EntityEffectBroker_OnNewMagicRound()
         {
-            // Clear direct mods
-            Array.Clear(directStatMods, 0, DaggerfallStats.Count);
-            Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
-
             DoMagicRound();
         }
 
