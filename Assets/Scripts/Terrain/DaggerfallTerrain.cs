@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -234,8 +234,15 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Promote data to live terrain.
         /// This must be called after other processing complete.
+        /// 
         /// </summary>
-        public void PromoteTerrainData()
+        /// <param name="raisePromoteTerrainEvent"> optional parameter to specify if PromoteTerrainEvent should be raised
+        /// (introduced to prevent some problems related to mods that use this function
+        /// problem would be: first mod would call this function causing the event to fire, second mod would react to it,
+        /// first mod further code execution stops
+        /// (see https://forums.dfworkshop.net/viewtopic.php?f=20&t=1554&p=17765#p17765))
+        /// </param>
+        public void PromoteTerrainData(bool raisePromoteTerrainEvent = true)
         {
             // Basemap not used and is just pushed far away
             const float basemapDistance = 10000f;
@@ -278,8 +285,11 @@ namespace DaggerfallWorkshop
             terrain.terrainData.size = new Vector3(size.x, dfUnity.TerrainSampler.MaxTerrainHeight * TerrainScale, size.z);
             terrain.terrainData.SetHeights(0, 0, MapData.heightmapSamples);
 
-            // Raise event
-            RaiseOnPromoteTerrainDataEvent(terrain.terrainData);
+            if (raisePromoteTerrainEvent == true)
+            {
+                // Raise event
+                RaiseOnPromoteTerrainDataEvent(terrain.terrainData);
+            }
         }
 
         /// <summary>
