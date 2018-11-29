@@ -1370,14 +1370,12 @@ namespace DaggerfallWorkshop
             int mapHeight,
             bool useNearestStartMarker = false)
         {
-            // Randomly pick one side of location to spawn
-            // A better implementation would base on previous coordinates
-            // e.g. if new location is east of old location then player starts at west edge of new location
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
 
             int side;
             if (travelStartX == null || travelStartZ == null)
             {
+                // Randomly pick one side of location to spawn
                 side = UnityEngine.Random.Range(0, 4);
             }
             else
@@ -1388,10 +1386,30 @@ namespace DaggerfallWorkshop
 
                 if (worldDeltaX == 0 && worldDeltaZ == 0)
                     side = UnityEngine.Random.Range(0, 4);
-                else if (Math.Abs(worldDeltaX) > Math.Abs(worldDeltaZ))
-                    side = worldDeltaX > 0 ? 3 : 2;
                 else
-                    side = worldDeltaZ > 0 ? 1 : 0;
+                {
+                    int px = Math.Abs(worldDeltaX);
+                    int pz = Math.Abs(worldDeltaZ);
+                    // if travel start is distant enough, chances of hitting square faces are
+                    // approximatively px/(px+pz) and pz/(px+pz)
+                    int random = UnityEngine.Random.Range(0, px + pz);
+                    if (px > pz)
+                    {
+                        // direction is mainly E-W, do we hit square front face?
+                        if (random < px)
+                            side = worldDeltaX > 0 ? 3 : 2;
+                        else
+                            side = worldDeltaZ > 0 ? 1 : 0;
+                    }
+                    else
+                    {
+                        // direction is mainly N-S, do we hit square front face?
+                        if (random < pz)
+                            side = worldDeltaZ > 0 ? 1 : 0;
+                        else
+                            side = worldDeltaX > 0 ? 3 : 2;
+                    }
+                }
                 // Debug.Log(String.Format("{0},{1} => {2},{3}: facing {4}", (int)travelStartX, (int)travelStartZ, LocalPlayerGPS.WorldX, LocalPlayerGPS.WorldZ, side));
                 travelStartX = null;
                 travelStartZ = null;
