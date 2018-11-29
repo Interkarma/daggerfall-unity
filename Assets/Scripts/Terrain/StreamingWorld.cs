@@ -1390,12 +1390,12 @@ namespace DaggerfallWorkshop
                 {
                     int px = Math.Abs(worldDeltaX);
                     int pz = Math.Abs(worldDeltaZ);
-                    // if travel start is distant enough, chances of hitting square faces are
+                    // if travel start is distant enough, chances of hitting square sides are
                     // approximatively px/(px+pz) and pz/(px+pz)
                     int random = UnityEngine.Random.Range(0, px + pz);
                     if (px > pz)
                     {
-                        // direction is mainly E-W, do we hit square front face?
+                        // direction is mainly E-W, do we hit square front side?
                         if (random < px)
                             side = worldDeltaX > 0 ? 3 : 2;
                         else
@@ -1403,7 +1403,7 @@ namespace DaggerfallWorkshop
                     }
                     else
                     {
-                        // direction is mainly N-S, do we hit square front face?
+                        // direction is mainly N-S, do we hit square front side?
                         if (random < pz)
                             side = worldDeltaZ > 0 ? 1 : 0;
                         else
