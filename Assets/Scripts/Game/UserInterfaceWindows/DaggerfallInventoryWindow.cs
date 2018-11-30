@@ -1182,12 +1182,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex == (int)Weapons.Arrow)
                 return;
 
-            if (item.IsLightSource) {
-                UseItem(item);
-                Refresh(false);
-                return;
-            }
-
             if (item.currentCondition < 1)
             {
                 TextFile.Token[] tokens = DaggerfallUnity.TextProvider.GetRSCTokens(itemBrokenTextId);
@@ -1345,7 +1339,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (questItem.AllowDrop && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
                     questItem.PlayerDropped = false;
             }
+            // Extinguish light sources when transferring out of player inventory
+            if (item.IsLightSource && playerEntity.LightSource == item && from == localItems)
+                playerEntity.LightSource = null;
 
+            // Handle stacks & splitting if needed
             this.maxAmount = maxAmount ?? item.stackCount;
             if (this.maxAmount <= 0)
                 return;
@@ -1704,7 +1702,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                EquipItem(item);
+                if (item.IsLightSource)
+                {
+                    UseItem(item);
+                    Refresh(false);
+                }
+                else
+                    EquipItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
             {

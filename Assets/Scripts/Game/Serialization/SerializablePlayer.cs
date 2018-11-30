@@ -292,7 +292,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CrimeCommitted = data.playerEntity.crimeCommitted;
             entity.HaveShownSurrenderToGuardsDialogue = data.playerEntity.haveShownSurrenderToGuardsDialogue;
             entity.SetCurrentLevelUpSkillSum();
-            entity.LightSource = entity.Items.GetItem(data.playerEntity.lightSourceUID);
+            if (DaggerfallUnity.Settings.PlayerTorchFromItems)
+                entity.LightSource = entity.Items.GetItem(data.playerEntity.lightSourceUID);
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Commoners] = data.playerEntity.reputationCommoners;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Merchants] = data.playerEntity.reputationMerchants;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars] = data.playerEntity.reputationScholars;
