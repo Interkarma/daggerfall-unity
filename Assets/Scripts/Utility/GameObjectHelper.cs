@@ -1153,7 +1153,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="maxDistance">Maximum distance from player.</param>
         /// <param name="parent">Parent GameObject. If none specified the most suitable parent will be selected automatically.</param>
         /// <returns>FoeSpawner GameObject.</returns>
-        public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, int minDistance = 4, int maxDistance = 20, Transform parent = null)
+        public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, float minDistance = 4, float maxDistance = 20, Transform parent = null)
         {
             // Create new foe spawner
             GameObject go = new GameObject();
