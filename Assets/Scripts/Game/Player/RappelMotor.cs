@@ -10,6 +10,7 @@ namespace DaggerfallWorkshop.Game
         private float rappelTimer;
         private float forwardTimer;
         private Vector3 lastPosition = Vector3.zero;
+        private Vector3 grappleDirection = Vector3.zero;
         public bool IsRappelling { get; private set; }
         private bool RappelUp;
         private AcrobatMotor acrobatMotor;
@@ -42,19 +43,26 @@ namespace DaggerfallWorkshop.Game
         {
             // "rappelling" only happens while moving the player into climbing position 
             // from the ledge he backstepped off and doesn't happen while climbing
+
+            // TODO: change this possibly to allow rappelling under to FrontUnderCeiling
             if (climbingMotor.IsClimbing)
                 IsRappelling = false;
 
             bool rappelAllowed = (DaggerfallUnity.Settings.AdvancedClimbing && 
                 !climbingMotor.IsClimbing && !climbingMotor.IsSlipping && acrobatMotor.Falling);
 
+            // should rappelling start?
+            bool inputBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
+
             // if an adjacent overhead wall was found using 2 turns
             if (rappelAllowed &&
-                hangingMotor.AdjacentOverheadWall != null &&
-                hangingMotor.AdjacentOverheadWall.adjacentTurns >= 2)
+                playerScanner.AboveBehindWall != null)// &&
+                //playerScanner.AboveBehindWall.adjacentTurns >= 2)
             {
                 RappelUp = true;
             }
+            else if (inputBackward)
+                playerScanner.FindAdjacentSurface(controller.transform.position + Vector3.down * (0.25f * controller.height) + controller.transform.forward * (0.8f * controller.radius), -controller.transform.forward, PlayerMoveScanner.RotationDirection.YZCounterClockwise);
 
             if (!rappelAllowed)
                 return;
@@ -70,7 +78,7 @@ namespace DaggerfallWorkshop.Game
             if (!IsRappelling && !cancelRappelStart)
             {
                 // should rappelling start?
-                bool inputBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
+                //bool inputBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
 
                 IsRappelling = (inputBackward && !acrobatMotor.Jumping);
                 if (IsRappelling)
@@ -124,15 +132,22 @@ namespace DaggerfallWorkshop.Game
                     {
                         // clear rappel information
                         RappelUp = false;
-                        hangingMotor.PurgeOverheadWall();
 
-                        Vector3 grappleDirection = Vector3.zero;
+                        if (playerScanner.AboveBehindWall != null)
+                            playerScanner.CutAndPasteAboveBehindWallTo(ref grappleDirection);
+                        else if (playerScanner.BelowBehindWall != null)
+                            playerScanner.CutAndPasteBelowBehindWallTo(ref grappleDirection);
+
+                        // failsafe
+                        if (grappleDirection == Vector3.zero)
+                            grappleDirection = controller.transform.forward;
+
                         // Auto forward to grab wall
                         float speed = speedChanger.GetBaseSpeed();
-                        if (climbingMotor.LedgeDirection != Vector3.zero)
-                            grappleDirection = climbingMotor.LedgeDirection;
-                        else
-                            grappleDirection = controller.transform.forward;
+                        //if (climbingMotor.LedgeDirection != Vector3.zero)
+                        //    grappleDirection = climbingMotor.LedgeDirection;
+                        //else
+                        //    grappleDirection = controller.transform.forward;
                         grappleDirection *= speed * 1.25f;
                         groundMotor.MoveWithMovingPlatform(grappleDirection);
                     }

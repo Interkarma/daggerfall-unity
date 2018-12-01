@@ -15,8 +15,7 @@ namespace DaggerfallWorkshop.Game
         private Transform camTransform;
         private PlayerMotor playerMotor;
         private Entity.PlayerEntity player;
-        public AdjacentSurface AdjacentOverheadWall { get; private set; }
-        public AdjacentSurface AdjacentUnderWall { get; private set; }
+
         private enum HangingTransitionState
         {
             None,
@@ -121,37 +120,31 @@ namespace DaggerfallWorkshop.Game
             {
                 // handle movement direction
                 HangMoveDirection();
-                if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                    AdjacentOverheadWall = FindAdjacentOverheadWall();
-                if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                    AdjacentUnderWall = FindAdjacentUnderWall();
+                //if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
+                    FindAboveBehindWall();
+                //if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                    FindFrontWall();
 
                 acrobatMotor.Falling = false;
             }
         }
 
-        private AdjacentSurface FindAdjacentOverheadWall()
+        private void FindAboveBehindWall()
         {
             Vector3 pos = controller.transform.position;
             Vector3 startPos = pos + (controller.transform.forward * 0.4f) + (Vector3.up * 0.5f);
-            AdjacentSurface surface;
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                surface = scanner.GetAdjacentSurface(startPos, -controller.transform.forward, PlayerMoveScanner.RotationDirection.YZClockwise);
-            else
-                surface = null;
-            return surface;
+            {
+                scanner.FindAdjacentSurface(startPos, -controller.transform.forward, PlayerMoveScanner.RotationDirection.YZClockwise);
+            }
         }
 
-        private AdjacentSurface FindAdjacentUnderWall()
+        private void FindFrontWall()
         {
             Vector3 pos = controller.transform.position;
             Vector3 startPos = pos + (-controller.transform.forward * 0.2f) + (Vector3.down * 0.2f);
-            AdjacentSurface surface;
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                surface = scanner.GetAdjacentSurface(startPos, Vector3.down, PlayerMoveScanner.RotationDirection.YZCounterClockwise);
-            else
-                surface = null;
-            return surface;
+                scanner.FindAdjacentSurface(startPos, Vector3.down, PlayerMoveScanner.RotationDirection.YZCounterClockwise);
         }
 
         private bool HangingTransition(HangingTransitionState transState)
@@ -214,15 +207,6 @@ namespace DaggerfallWorkshop.Game
                 groundMotor.MoveWithMovingPlatform(moveVector);
                 Debug.DrawRay(controller.transform.position, moveVector, Color.blue);
             }
-        }
-
-        public void PurgeOverheadWall()
-        {
-            AdjacentOverheadWall = null;
-        }
-        public void PurgeUnderWall()
-        {
-            AdjacentUnderWall = null;
         }
 
         private void StartHanging()

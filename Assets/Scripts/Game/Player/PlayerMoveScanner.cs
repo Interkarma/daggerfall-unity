@@ -69,6 +69,8 @@ namespace DaggerfallWorkshop.Game
             YZCounterClockwise
         }
         CharacterController controller;
+        HangingMotor hangingMotor;
+        ClimbingMotor climbingMotor;
         AcrobatMotor acrobatMotor;
         PlayerMotor playerMotor;
         private int turnCount = 0;
@@ -76,12 +78,54 @@ namespace DaggerfallWorkshop.Game
         public float HeadHitRadius { get; private set; }
         public float StepHitDistance { get; private set; }
         public float HeadHitDistance { get; private set; }
+        /// <summary>
+        /// The wall above and behind the hanging player
+        /// </summary>
+        public AdjacentSurface AboveBehindWall { get; private set; }
+        /// <summary>
+        /// The wall directly in front of the player if he's hanging
+        /// </summary>
+        public AdjacentSurface FrontWall { get; private set; }
+        /// <summary>
+        /// The wall on a side wrapped around an inside corner or outside corner while climbing.
+        /// </summary>
+        public AdjacentSurface SideWall { get; private set; }
+        /// <summary>
+        /// The wall behind a player that he can rappel down to while walking backwards
+        /// </summary>
+        public AdjacentSurface BelowBehindWall { get; private set; }
+        /// <summary>
+        /// The ceiling which is underneath the player in front of him while climbing
+        /// </summary>
+        public AdjacentSurface FrontUnderCeiling { get; private set; }
         void Start()
         {
             controller = GetComponent<CharacterController>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             playerMotor = GetComponent<PlayerMotor>();
+            hangingMotor = GetComponent<HangingMotor>();
+            climbingMotor = GetComponent<ClimbingMotor>();
             HeadHitRadius = controller.radius * 0.85f;
+        }
+
+        /// <summary>
+        /// Delete Scanner's AboveBehindWall after copying the direction of the wall to it
+        /// </summary>
+        /// <param name="WallDirection">The vector to be copied to</param>
+        public void CutAndPasteAboveBehindWallTo(ref Vector3 WallDirection)
+        {
+            WallDirection = AboveBehindWall.adjacentGrabDirection;
+            AboveBehindWall = null;
+        }
+        public void CutAndPasteFrontWallTo(ref Vector3 WallDirection)
+        {
+            WallDirection = FrontWall.adjacentGrabDirection;
+            FrontWall = null;
+        }
+        public void CutAndPasteBelowBehindWallTo(ref Vector3 WallDirection)
+        {
+            WallDirection = BelowBehindWall.adjacentGrabDirection;
+            BelowBehindWall = null;
         }
 
         /// <summary>
@@ -122,7 +166,36 @@ namespace DaggerfallWorkshop.Game
             }
             return false;
         }
-        public AdjacentSurface GetAdjacentSurface(Vector3 origin, Vector3 direction, RotationDirection turnDirection)
+        
+        private void AssignAdjacentSurface(AdjacentSurface surf, RotationDirection turnDirection)
+        {
+            /// using info about the surface found, and the turn direction used to find it, determine
+            /// the type of surface to surface transition and assign to appropriate surface variable
+            /// if surf is null, we didn't find an adjacent surface.
+            /// if the number of turns to find the surface is the wrong number, we didn't find the desired surface
+            int turns = 0;
+            if (surf != null)
+                turns = surf.adjacentTurns;
+
+            if (turnDirection == RotationDirection.XZClockwise || turnDirection == RotationDirection.XZCounterClockwise)
+                SideWall = surf;
+            else if (turnDirection == RotationDirection.YZClockwise && turns >= 2)
+                AboveBehindWall = surf;
+            else if (turnDirection == RotationDirection.YZCounterClockwise)
+            {
+                if (hangingMotor.IsHanging && turns == 1)
+                    FrontWall = surf;
+                else if (turns == 2)
+                {
+                    if (climbingMotor.IsClimbing)
+                        FrontUnderCeiling = surf;
+                    else
+                        BelowBehindWall = surf;
+                }
+            } 
+        }
+
+        public void FindAdjacentSurface(Vector3 origin, Vector3 direction, RotationDirection turnDirection)
         {
             RaycastHit hit;
             
@@ -160,7 +233,7 @@ namespace DaggerfallWorkshop.Game
 
                 int turns = turnCount;
                 turnCount = 0;
-                return new AdjacentSurface(adjSurfaceRay, -hit.normal, turns, hit.distance);
+                AssignAdjacentSurface(new AdjacentSurface(adjSurfaceRay, -hit.normal, turns, hit.distance), turnDirection);
             }
             else
             {
@@ -201,10 +274,10 @@ namespace DaggerfallWorkshop.Game
                             nextDirection = Vector3.zero;
                             break;
                     }
-                    return GetAdjacentSurface(origin, nextDirection, turnDirection);
+                    FindAdjacentSurface(origin, nextDirection, turnDirection);
                 }
                 turnCount = 0;
-                return null;
+                AssignAdjacentSurface(null, turnDirection);
             }
         }
     }

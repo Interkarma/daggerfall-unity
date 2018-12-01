@@ -157,7 +157,6 @@ namespace DaggerfallWorkshop.Game
 
             // Should we reset climbing starter timers?
             if ((!pushingFaceAgainstWallNearCeiling)
-                //|| !releasedFromCeiling
                 &&
                 (inputAbortCondition
                 || !climbingOrForwardOrGrasping 
@@ -338,20 +337,17 @@ namespace DaggerfallWorkshop.Game
                 // direction is set to hitnormal until it can be adjusted when we have a side movement direction
                 myStrafeRay = new Ray(new Vector3(hit.point.x, controller.transform.position.y, hit.point.z), hit.normal);
             }
-            else // TODO: change this so that it doesn't overwrite a legitimate ledgeDirection when reaching the
-                // top of the wall after changing to a different wall
+            else 
             {
-                if (hangingMotor.AdjacentUnderWall != null &&
-                    hangingMotor.AdjacentUnderWall.adjacentTurns == 1)
-                    myLedgeDirection = hangingMotor.AdjacentUnderWall.adjacentGrabDirection;
-
-                hangingMotor.PurgeUnderWall();
+                if (myLedgeDirection == Vector3.zero && moveScanner.FrontWall != null)
+                    moveScanner.CutAndPasteFrontWallTo(ref myLedgeDirection);
             }
         }
 
         private bool GetAdjacentWallInfo(Vector3 origin, Vector3 direction, PlayerMoveScanner.RotationDirection turnDirection)
         {
-            AdjacentSurface adjSurface = moveScanner.GetAdjacentSurface(origin, direction, turnDirection);
+            moveScanner.FindAdjacentSurface(origin, direction, turnDirection);
+            AdjacentSurface adjSurface = moveScanner.SideWall;
 
             if (adjSurface != null && adjSurface.adjacentTurns == 0)
                 atInsideCorner = IsAtInsideCorner(adjSurface.turnHitDistance);
