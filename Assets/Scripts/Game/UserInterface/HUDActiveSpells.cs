@@ -246,18 +246,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void AlignIcons(List<ActiveSpellIcon> icons, float xpos, float ypos, float width, float height, float xspacing, float yspacing = 0)
         {
-            int count = 0;
             foreach (ActiveSpellIcon spell in icons)
             {
-                iconPool[count].Enabled = true;
-                iconPool[count].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.iconIndex);
-                iconPool[count].Position = new Vector2(xpos, ypos);
-                iconPool[count].Size = new Vector2(width, height);
-                iconPool[count].ToolTipText = spell.displayName;
-                xpos += xspacing;
-                ypos += yspacing;
-                if (++count > maxIconPool - 1)
-                    break;
+                if(spell.poolIndex < maxIconPool)
+                {
+                    iconPool[spell.poolIndex].Enabled = true;
+                    iconPool[spell.poolIndex].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.iconIndex);
+                    iconPool[spell.poolIndex].Position = new Vector2(xpos, ypos);
+                    iconPool[spell.poolIndex].Size = new Vector2(width, height);
+                    iconPool[spell.poolIndex].ToolTipText = spell.displayName;
+                    xpos += xspacing;
+                    ypos += yspacing;
+
+                }
             }
         }
 
