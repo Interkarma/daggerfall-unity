@@ -743,15 +743,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Add to player entity spellbook
                 GameManager.Instance.PlayerEntity.AddSpell(offeredSpells[spellsListBox.SelectedIndex]);
-
-                // Drop back to HUD like classic
-                DaggerfallUI.Instance.PopToHUD();
             }
-            else
-            {
-                // Only close trade popup when user cancels trade
-                CloseWindow();
-            }
+            CloseWindow();
         }
 
         #endregion
