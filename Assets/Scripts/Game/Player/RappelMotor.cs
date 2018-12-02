@@ -77,12 +77,21 @@ namespace DaggerfallWorkshop.Game
 
             if (!IsRappelling && !cancelRappelStart)
             {
-                // should rappelling start?
-                //bool inputBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
-
                 IsRappelling = (inputBackward && !acrobatMotor.Jumping);
                 if (IsRappelling)
+                {
                     DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.rappelMode);
+
+                    if (playerScanner.AboveBehindWall != null)
+                        grappleDirection = Vector3.ProjectOnPlane(playerScanner.AboveBehindWall.adjacentGrabDirection, Vector3.up);
+                    else if (playerScanner.BelowBehindWall != null)
+                        grappleDirection = Vector3.ProjectOnPlane(playerScanner.BelowBehindWall.adjacentGrabDirection, Vector3.up);
+
+                    // failsafe
+                    if (grappleDirection == Vector3.zero)
+                        grappleDirection = controller.transform.forward;
+                }
+
                 lastPosition = controller.transform.position;
                 rappelTimer = 0f;
                 measure = null;
@@ -132,15 +141,6 @@ namespace DaggerfallWorkshop.Game
                     {
                         // clear rappel information
                         RappelUp = false;
-
-                        if (playerScanner.AboveBehindWall != null)
-                            playerScanner.CutAndPasteAboveBehindWallTo(ref grappleDirection);
-                        else if (playerScanner.BelowBehindWall != null)
-                            playerScanner.CutAndPasteBelowBehindWallTo(ref grappleDirection);
-
-                        // failsafe
-                        if (grappleDirection == Vector3.zero)
-                            grappleDirection = controller.transform.forward;
 
                         // Auto forward to grab wall
                         float speed = speedChanger.GetBaseSpeed();

@@ -320,6 +320,12 @@ namespace DaggerfallWorkshop.Game
 
             // decide what direction to look towards to get the ledge direction vector
             Vector3 wallDirection;
+
+            if (moveScanner.AboveBehindWall != null)
+                moveScanner.CutAndPasteAboveBehindWallTo(ref myLedgeDirection);
+            else if (moveScanner.BelowBehindWall != null)
+                moveScanner.CutAndPasteBelowBehindWallTo(ref myLedgeDirection);
+
             if (myLedgeDirection == Vector3.zero)
                 wallDirection = controller.transform.forward;
             else if (!atOutsideCorner)
