@@ -89,9 +89,13 @@ namespace DaggerfallWorkshop.Game
 
         private void ResetVitals()
         {
-            previousMaxHealth = previousHealth = playerEntity.MaxHealth;
-            previousMaxFatigue = previousFatigue = playerEntity.MaxFatigue;
-            previousMaxMagicka = previousMagicka = playerEntity.MaxMagicka;
+            previousMaxHealth = playerEntity.MaxHealth;
+            previousMaxFatigue = playerEntity.MaxFatigue;
+            previousMaxMagicka = playerEntity.MaxMagicka;
+
+            previousHealth = playerEntity.CurrentHealth;
+            previousFatigue = playerEntity.CurrentFatigue;
+            previousMagicka = playerEntity.CurrentMagicka;
         }
 
         private void StreamingWorld_OnInitWorld()
