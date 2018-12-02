@@ -369,6 +369,8 @@ namespace DaggerfallWorkshop.Game.Entity
             // but this seems counterintuitive so it's not implemented in DF Unity for now
             if (!preventEnemySpawns)
             {
+                bool updatedGuards = false;
+
                 for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
                 {
                     // Catch up time and break if something spawns
@@ -393,6 +395,12 @@ namespace DaggerfallWorkshop.Game.Entity
                         crimeCommitted = Crimes.Criminal_Conspiracy;
                         SpawnCityGuards(false);
                     }
+
+                    // If enemy guards have been spawned, any new NPC guards should be made into enemyMobiles
+                    if (!updatedGuards)
+                        MakeNPCGuardsIntoEnemiesIfGuardsSpawned();
+
+                    updatedGuards = true;
                 }
             }
 
@@ -512,19 +520,26 @@ namespace DaggerfallWorkshop.Game.Entity
                     // Note: Classic disables the NPC that the guard is spawned from. Classic guards do not spawn looking at the player.
                     for (int i = 0; i < populationManager.PopulationPool.Count; i++)
                     {
+                        if (!populationManager.PopulationPool[i].npc.isActiveAndEnabled)
+                            continue;
+
                         Vector3 directionToMobile = populationManager.PopulationPool[i].npc.Motor.transform.position - GameManager.Instance.PlayerMotor.transform.position;
                         float distance = directionToMobile.magnitude;
-                        if (distance <= 77.5f
-                            && Vector3.Angle(directionToMobile, GameManager.Instance.PlayerMotor.transform.forward) >= 105.469
+
+                        // Spawn from guard mobile NPCs first
+                        if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                        {
+                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                            populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
+                            // Count those within classic npc range as spawned from NPCs, to mimic classic behavior
+                            if (distance <= 77.5f)
+                                ++guardsSpawnedFromNPCs;
+                        }
+                        // Next try non-guards
+                        else if (distance <= 77.5f && Vector3.Angle(directionToMobile, GameManager.Instance.PlayerMotor.transform.forward) >= 105.469
                             && UnityEngine.Random.Range(0, 4) == 0)
                         {
-                            GameObject[] cityWatch = GameObjectHelper.CreateFoeGameObjects(populationManager.PopulationPool[i].npc.transform.position, MobileTypes.Knight_CityWatch, 1);
-                            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
-                                cityWatch[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
-                            else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
-                                cityWatch[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
-                            cityWatch[0].transform.LookAt(GameManager.Instance.PlayerObject.transform.position);
-                            cityWatch[0].SetActive(true);
+                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
                             ++guardsSpawnedFromNPCs;
                         }
                     }
@@ -536,11 +551,15 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
                 }
                 else
-                // Spawn guards with countdown if player seen by an NPC
+                // Spawn guards if player seen by an NPC
                 {
                     bool seen = false;
-                    for (int i = 0; i < populationManager.PopulationPool.Count && !seen; i++)
+                    bool seenByGuard = false;
+                    for (int i = 0; i < populationManager.PopulationPool.Count; i++)
                     {
+                        if (!populationManager.PopulationPool[i].npc.isActiveAndEnabled)
+                            continue;
+
                         Vector3 toPlayer = GameManager.Instance.PlayerMotor.transform.position - populationManager.PopulationPool[i].npc.Motor.transform.position;
                         if (toPlayer.magnitude <= 77.5f && Vector3.Angle(toPlayer, populationManager.PopulationPool[i].npc.Motor.transform.forward) <= 95)
                         {
@@ -565,18 +584,63 @@ namespace DaggerfallWorkshop.Game.Entity
                                 DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
                                 if (entity == GameManager.Instance.PlayerEntityBehaviour)
                                     seen = true;
+                                if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                                    seenByGuard = true;
                             }
+                        }
+
+                        if (seenByGuard)
+                        {
+                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                            populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
                         }
                     }
 
-                    if (seen)
+                    // Player seen by a non-guard NPC but not by any guard NPCs. Start a countdown until guards arrive.
+                    if (!seenByGuard && seen)
                     {
                         guardsArriveCountdown = UnityEngine.Random.Range(5, 11);
                         // Also track location so guards don't appear if player leaves during countdown
                         guardsArriveCountdownLocation = dfLocation;
                     }
                 }
-                // TODO: Spawn guard mobile enemies from guard mobileNPCs
+            }
+        }
+
+        void SpawnCityGuard(Vector3 position, Vector3 direction)
+        {
+            GameObject[] cityWatch = GameObjectHelper.CreateFoeGameObjects(position, MobileTypes.Knight_CityWatch, 1);
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                cityWatch[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
+            else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                cityWatch[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
+            cityWatch[0].transform.LookAt(direction);
+            EnemyMotor enemyMotor = cityWatch[0].GetComponent<EnemyMotor>();
+            enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
+            cityWatch[0].SetActive(true);
+        }
+
+        void MakeNPCGuardsIntoEnemiesIfGuardsSpawned()
+        {
+            if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) > 0)
+            {
+                DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
+                PopulationManager populationManager = dfLocation.GetComponent<PopulationManager>();
+                if (populationManager == null)
+                    return;
+
+                for (int i = 0; i < populationManager.PopulationPool.Count; i++)
+                {
+                    if (!populationManager.PopulationPool[i].npc.isActiveAndEnabled)
+                        continue;
+
+                    // Spawn from guard mobile NPCs
+                    if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                    {
+                        SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                        populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
+                    }
+                }
             }
         }
 
