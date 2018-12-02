@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game
 
             // Use events to capture a couple of edge cases
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
-            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             DaggerfallCourtWindow.OnCourtScreen += DaggerfallCourtWindow_OnCourtScreen;
         }
 
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game
             ResetVitals();
         }
 
-        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
             // Loading a character with same MaxHealth but lower current health
             // would also trigger a sway on load
