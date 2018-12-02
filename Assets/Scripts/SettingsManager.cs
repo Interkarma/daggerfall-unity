@@ -300,6 +300,7 @@ namespace DaggerfallWorkshop
             SetColor(sectionGUI, "ToolTipTextColor", ToolTipTextColor);
             SetBool(sectionGUI, "EnableInventoryInfoPanel", EnableInventoryInfoPanel);
             SetBool(sectionGUI, "EnableEnhancedItemLists", EnableEnhancedItemLists);
+            SetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow", EnableModernConversationStyleInTalkWindow);
             SetInt(sectionGUI, "HelmAndShieldMaterialDisplay", HelmAndShieldMaterialDisplay);
             SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
