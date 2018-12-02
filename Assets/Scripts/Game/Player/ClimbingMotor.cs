@@ -208,7 +208,9 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 inputAbortCondition = !InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
-            
+
+            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+                inputAbortCondition = true;
 
             // reset for next use
             WallEject = false;
