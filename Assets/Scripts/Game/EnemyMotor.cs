@@ -807,7 +807,12 @@ namespace DaggerfallWorkshop.Game
                     if (!obstacleDetected && !fallDetected)
                     {
                         // First direction was clear, use that way
-                        checkingClockwise = true;
+                        if (angle > 0)
+                        {
+                            checkingClockwise = true;
+                        }
+                        else
+                            checkingClockwise = false;
                     }
                     else
                     {
@@ -819,7 +824,7 @@ namespace DaggerfallWorkshop.Game
                         RayCheckForFall(testMove);
 
                         if (!obstacleDetected && !fallDetected)
-                            checkingClockwise = false;
+                            checkingClockwise = !checkingClockwise;
                         else
                         {
                             // Both 45 degrees checks failed, pick clockwise/counterclockwise based on angle to target
