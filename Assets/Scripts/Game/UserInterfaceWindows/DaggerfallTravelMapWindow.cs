@@ -287,6 +287,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetPlayerRegionOverlay();
                 CloseRegionPanel();
             }
+            else
+            {
+                //clear travel settings pop up on load event
+                Serialization.SaveLoadManager.OnLoad += (saveData) =>
+                {
+                    popUp = null;
+                };
+            }
+
         }
 
         public override void OnPop()
