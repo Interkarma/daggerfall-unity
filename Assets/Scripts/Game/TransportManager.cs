@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Game
 
                     if (!ridingAudioSource.isPlaying)
                     {
-                        ridingAudioSource.volume = DaggerfallUnity.Settings.SoundVolume;
+                        ridingAudioSource.volume = RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume;
                         ridingAudioSource.Play();
                     }
                 }
