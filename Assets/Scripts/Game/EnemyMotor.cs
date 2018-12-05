@@ -61,6 +61,7 @@ namespace DaggerfallWorkshop.Game
         bool didClockwiseCheck;
         int detourNumber;
         float lastTimeWasStuck;
+        bool targetPosIsEnemyPos;
 
         EnemySenses senses;
         Vector3 targetPos;
@@ -343,6 +344,8 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            targetPosIsEnemyPos = false;
+
             // Get predicted target position
             if ((senses.PredictedTargetPos.y > transform.position.y || ClearPathToTarget())
                 && avoidObstaclesTimer == 0 && !lookingForDetour)
@@ -361,6 +364,7 @@ namespace DaggerfallWorkshop.Game
                     targetPos.y -= deltaHeight;
                 }
                 tempMovePos = targetPos;
+                targetPosIsEnemyPos = true;
             }
             else if (avoidObstaclesTimer > 0)
             {
@@ -377,7 +381,7 @@ namespace DaggerfallWorkshop.Game
             float distance = (targetPos - transform.position).magnitude;
 
             // Ranged attacks
-            if (targetPos == senses.PredictedTargetPos && senses.TargetInSight && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if (targetPosIsEnemyPos && senses.TargetInSight && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 bool evaluateBow = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
                 bool evaluateRangedMagic = false;
@@ -416,7 +420,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            if (targetPos == senses.PredictedTargetPos && senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
+            if (targetPosIsEnemyPos && senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
                 senses.TargetRateOfApproach && CanCastTouchSpell() && entityEffectManager.SetReadySpell(selectedSpell))
             {
                 if (mobile.Summary.EnemyState != MobileStates.Spell)
