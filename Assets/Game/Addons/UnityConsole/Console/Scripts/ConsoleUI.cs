@@ -21,10 +21,10 @@ namespace Wenzil.Console
         public Text outputText;
         public ScrollRect outputArea;
         public InputField inputField;
-        
-        //##
+
         bool previousPauseState = false;
         CanvasGroup cg;
+        int maxOutputLength = 12000;
 
         /// <summary>
         /// Indicates whether the console is currently open or close.
@@ -58,7 +58,6 @@ namespace Wenzil.Console
             }
             else
                 DaggerfallWorkshop.Game.GameManager.Instance.PauseGame(previousPauseState);
-                
 
             if (!cg)
                 cg = this.GetComponent<CanvasGroup>();
@@ -144,7 +143,18 @@ namespace Wenzil.Console
         /// </summary>
         public void AddNewOutputLine(string line)
         {
-            outputText.text += Environment.NewLine + line;
+            string newOutput = outputText.text += Environment.NewLine + line;
+
+            //if output length gets too high Unity's Text Mesh will throw errors
+            if(newOutput != null && newOutput.Length > maxOutputLength)
+            {
+                newOutput = newOutput.Substring(newOutput.Length-maxOutputLength);
+                //start at first line break to try and avoid breaking rich text formatting
+                int newStartPosition = line.IndexOf("\n");
+                if(newStartPosition > 0)
+                    newOutput = newOutput.Substring(newStartPosition);
+            }
+            outputText.text = newOutput;
         }
 
         /// <summary>
