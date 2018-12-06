@@ -347,8 +347,7 @@ namespace DaggerfallWorkshop.Game
             targetPosIsEnemyPos = false;
 
             // Get predicted target position
-            if ((senses.PredictedTargetPos.y > transform.position.y || ClearPathToTarget())
-                && avoidObstaclesTimer == 0 && !lookingForDetour)
+            if (!lookingForDetour && avoidObstaclesTimer == 0 && (senses.PredictedTargetPos.y > transform.position.y || ClearPathToTarget()))
             {
                 targetPos = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
