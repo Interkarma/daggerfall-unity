@@ -105,6 +105,9 @@ namespace DaggerfallWorkshop
         DaggerfallLocation currentPlayerLocationObject;
         int playerTilemapIndex = -1;
 
+        private int? travelStartX = null;
+        private int? travelStartZ = null;
+
         #endregion
 
         #region Properties
@@ -217,6 +220,7 @@ namespace DaggerfallWorkshop
             Offset,
             DungeonEntrance,
             RandomStartMarker,
+            DirectionFromStartMarker,
         }
 
         #endregion
@@ -266,6 +270,7 @@ namespace DaggerfallWorkshop
             {
                 switch (autoRepositionMethod)
                 {
+                    case RepositionMethods.DirectionFromStartMarker:
                     case RepositionMethods.RandomStartMarker:
                         PositionPlayerToLocation();
                         break;
@@ -1007,6 +1012,12 @@ namespace DaggerfallWorkshop
         // Teleports to map pixel with an optional reset or autoreposition
         void TeleportToMapPixel(int mapPixelX, int mapPixelY, Vector3 repositionOffset, RepositionMethods autoReposition)
         {
+            if (autoReposition == RepositionMethods.DirectionFromStartMarker)
+            {
+                // Save travel origin
+                travelStartX = LocalPlayerGPS.WorldX;
+                travelStartZ = LocalPlayerGPS.WorldZ;
+            }
             DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixelX, mapPixelY);
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
@@ -1359,11 +1370,50 @@ namespace DaggerfallWorkshop
             int mapHeight,
             bool useNearestStartMarker = false)
         {
-            // Randomly pick one side of location to spawn
-            // A better implementation would base on previous coordinates
-            // e.g. if new location is east of old location then player starts at west edge of new location
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
-            int side = UnityEngine.Random.Range(0, 4);
+
+            int side;
+            if (travelStartX == null || travelStartZ == null)
+            {
+                // Randomly pick one side of location to spawn
+                side = UnityEngine.Random.Range(0, 4);
+            }
+            else
+            {
+                // use travel origin as a facing hint
+                int worldDeltaX = LocalPlayerGPS.WorldX - (int)travelStartX;
+                int worldDeltaZ = LocalPlayerGPS.WorldZ - (int)travelStartZ;
+
+                if (worldDeltaX == 0 && worldDeltaZ == 0)
+                    side = UnityEngine.Random.Range(0, 4);
+                else
+                {
+                    int px = Math.Abs(worldDeltaX);
+                    int pz = Math.Abs(worldDeltaZ);
+                    // if travel start is distant enough, chances of hitting square sides are
+                    // approximatively px/(px+pz) and pz/(px+pz)
+                    int random = UnityEngine.Random.Range(0, px + pz);
+                    if (px > pz)
+                    {
+                        // direction is mainly E-W, do we hit square front side?
+                        if (random < px)
+                            side = worldDeltaX > 0 ? 3 : 2;
+                        else
+                            side = worldDeltaZ > 0 ? 1 : 0;
+                    }
+                    else
+                    {
+                        // direction is mainly N-S, do we hit square front side?
+                        if (random < pz)
+                            side = worldDeltaZ > 0 ? 1 : 0;
+                        else
+                            side = worldDeltaX > 0 ? 3 : 2;
+                    }
+                }
+                // Debug.Log(String.Format("{0},{1} => {2},{3}: facing {4}", (int)travelStartX, (int)travelStartZ, LocalPlayerGPS.WorldX, LocalPlayerGPS.WorldZ, side));
+                travelStartX = null;
+                travelStartZ = null;
+            }
 
             // Get half width and height
             float halfWidth = (float)mapWidth * 0.5f * RMBLayout.RMBSide;
