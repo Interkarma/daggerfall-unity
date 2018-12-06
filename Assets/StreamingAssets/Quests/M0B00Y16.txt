@@ -167,7 +167,7 @@ variable _map_
 variable _nomap_
 _S.02_ task:
 	injured _giant_ 
-	create foe _F.01_ every 2 minutes 6 times with 100% success 
+	start task giantWaveWhileInDungeon
 	say 1030 
 
 _S.03_ task:
@@ -238,3 +238,11 @@ _S.18_ task:
 _S.19_ task:
 	when not _victim_ and _success_
 	end quest
+
+giantWaveWhileInDungeon task:
+	pc at _mondung_ set spawnGiants
+
+spawnGiants task:
+	create foe _F.01_ every 4 minutes 6 times with 50% success 
+
+
