@@ -332,14 +332,14 @@ namespace DaggerfallWorkshop
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
                  "amount", new Vector3(ActionRotation.x / 360f, ActionRotation.y / 360f, ActionRotation.z / 360f),
                 "space", ActionSpace,
-                "time", Duration,
+                "time", duration,
                  "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.End);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
                 "position", StartingPosition + ActionTranslation,
-                "time", Duration,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.End);
@@ -355,14 +355,14 @@ namespace DaggerfallWorkshop
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
                  "amount", new Vector3(-ActionRotation.x / 360f, -ActionRotation.y / 360f, -ActionRotation.z / 360f),
                 "space", ActionSpace,
-                "time", Duration,
+                "time", duration,
                  "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.Start);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
                 "position", startingPosition,
-                "time", Duration,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.Start);
