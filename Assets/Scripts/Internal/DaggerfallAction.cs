@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop
 
         AudioSource audioSource;
         ActionState currentState;
+        float cooldown;
 
         //lookup for action type12, temp. storing them here
         static Dictionary<int, string[]> actionTypeTwelveLookup = new Dictionary<int, string[]>()
@@ -90,6 +91,12 @@ namespace DaggerfallWorkshop
         {
             get { return currentState; }
             set { SetState(value); }
+        }
+
+        public float Cooldown
+        {
+            get { return cooldown; }
+            set { cooldown = value; }
         }
 
         public bool IsMoving
@@ -443,15 +450,30 @@ namespace DaggerfallWorkshop
         /// 9
         /// Creates spell. Use Action's index to get the spell by index from Spells.STD
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="triggerObj"></param>
         /// <param name="thisAction"></param>
         public static void CastSpell(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            // Spell is readied on player for free and action state set to end
-            if (thisAction.CurrentState != ActionState.End)
+            thisAction.Cooldown -= 45.454546f; // Approximates classic based on observation
+            if (thisAction.Cooldown <= 0)
             {
-                GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, false);
-                thisAction.CurrentState = ActionState.End;
+                SpellRecord.SpellRecordData spell;
+                if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(thisAction.Index, out spell))
+                {
+                    // Create effect bundle settings from classic spell
+                    EffectBundleSettings bundleSettings;
+                    if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
+                    {
+                        if (bundleSettings.TargetType == TargetTypes.CasterOnly)
+                            // Spell is readied on player for free
+                            GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, false);
+                        // else
+                        // Spell is fired at player, at strength of player level, from triggering object
+                    }
+                }
+
+                //Reset cooldown
+                thisAction.Cooldown = 1000;
             }
         }
 
