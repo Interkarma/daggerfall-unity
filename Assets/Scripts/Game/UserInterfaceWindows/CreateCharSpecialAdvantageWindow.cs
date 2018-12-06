@@ -607,21 +607,87 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 case HardStrings.axe:
                     advantageData.Axes = mod;
+                    switch (mod)
+                    {
+                        case DFCareer.Proficiency.Expert:
+                            advantageData.ExpertProficiencies |= DFCareer.ProficiencyFlags.Axes;
+                            break;
+                        case DFCareer.Proficiency.Forbidden:
+                            advantageData.ForbiddenProficiencies |= DFCareer.ProficiencyFlags.Axes;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case HardStrings.bluntWeapon:
                     advantageData.BluntWeapons = mod;
+                    switch (mod)
+                    {
+                        case DFCareer.Proficiency.Expert:
+                            advantageData.ExpertProficiencies |= DFCareer.ProficiencyFlags.BluntWeapons;
+                            break;
+                        case DFCareer.Proficiency.Forbidden:
+                            advantageData.ForbiddenProficiencies |= DFCareer.ProficiencyFlags.BluntWeapons;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case HardStrings.handToHand:
                     advantageData.HandToHand = mod;
+                    switch (mod)
+                    {
+                        case DFCareer.Proficiency.Expert:
+                            advantageData.ExpertProficiencies |= DFCareer.ProficiencyFlags.HandToHand;
+                            break;
+                        case DFCareer.Proficiency.Forbidden:
+                            advantageData.ForbiddenProficiencies |= DFCareer.ProficiencyFlags.HandToHand;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case HardStrings.longBlade:
                     advantageData.LongBlades = mod;
+                    switch (mod)
+                    {
+                        case DFCareer.Proficiency.Expert:
+                            advantageData.ExpertProficiencies |= DFCareer.ProficiencyFlags.LongBlades;
+                            break;
+                        case DFCareer.Proficiency.Forbidden:
+                            advantageData.ForbiddenProficiencies |= DFCareer.ProficiencyFlags.LongBlades;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case HardStrings.missileWeapon:
                     advantageData.MissileWeapons = mod;
+                    switch (mod)
+                    {
+                        case DFCareer.Proficiency.Expert:
+                            advantageData.ExpertProficiencies |= DFCareer.ProficiencyFlags.MissileWeapons;
+                            break;
+                        case DFCareer.Proficiency.Forbidden:
+                            advantageData.ForbiddenProficiencies |= DFCareer.ProficiencyFlags.MissileWeapons;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case HardStrings.shortBlade:
                     advantageData.ShortBlades = mod;
+                    switch (mod)
+                    {
+                        case DFCareer.Proficiency.Expert:
+                            advantageData.ExpertProficiencies |= DFCareer.ProficiencyFlags.ShortBlades;
+                            break;
+                        case DFCareer.Proficiency.Forbidden:
+                            advantageData.ForbiddenProficiencies |= DFCareer.ProficiencyFlags.ShortBlades;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
