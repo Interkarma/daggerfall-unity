@@ -366,13 +366,13 @@ namespace DaggerfallWorkshop.Game
                 tempMovePos = targetPos;
                 targetPosIsEnemyPos = true;
             }
-            else if (avoidObstaclesTimer > 0)
+            else if (avoidObstaclesTimer > 0 || lookingForDetour)
             {
                 targetPos = tempMovePos;
             }
             else
             {
-                tempMovePos += lastDirection * 2;
+                tempMovePos = transform.position + lastDirection * 2;
                 targetPos = tempMovePos;
             }
 
@@ -747,22 +747,19 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void MoveIfWayIsClear(Vector3 motion)
         {
-            // Check at classic rate to limit ray casts
-            if (classicUpdate)
+            // First check if there is something to collide with directly in movement direction, such as upward sloping ground.
+            // If there is, we assume we won't fall.
+            Vector3 motion2d = motion.normalized;
+            motion2d.y = 0;
+
+            RayCheckForObstacle(motion2d);
+            RayCheckForFall(motion2d);
+
+            if (fallDetected || obstacleDetected)
             {
-                // First check if there is something to collide with directly in movement direction, such as upward sloping ground.
-                // If there is, we assume we won't fall.
-                Vector3 motion2d = motion.normalized;
-                motion2d.y = 0;
-
-                RayCheckForObstacle(motion2d);
-                RayCheckForFall(motion2d);
-
-                if (fallDetected || obstacleDetected)
-                    FindDetour(motion2d);
+                FindDetour(motion2d);
             }
-
-            if (!fallDetected && !obstacleDetected)
+            else
             {
                 if (swims)
                     WaterMove(motion);
@@ -778,6 +775,7 @@ namespace DaggerfallWorkshop.Game
                     lastTimeWasStuck = Time.time;
                 }
             }
+
             if (Time.time - lastTimeWasStuck > 2f)
             {
                 checkingClockwiseTimer = 0;
@@ -860,13 +858,13 @@ namespace DaggerfallWorkshop.Game
             else
                 angle = -10;
 
-            float firstAngle = angle;
-            bool backToFirstAngle = false;
             int count = 0;
-            testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
+            testMove = Vector3.zero;
 
-            while (!backToFirstAngle && (obstacleDetected || fallDetected))
+            while (obstacleDetected || fallDetected)
             {
+                testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
+
                 RayCheckForObstacle(testMove);
                 RayCheckForFall(testMove);
 
@@ -874,11 +872,6 @@ namespace DaggerfallWorkshop.Game
                     angle += 10;
                 else
                     angle -= 10;
-
-                testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
-
-                if (angle == firstAngle)
-                    backToFirstAngle = true;
 
                 // Break out of loop if can't find anywhere to go
                 count++;
