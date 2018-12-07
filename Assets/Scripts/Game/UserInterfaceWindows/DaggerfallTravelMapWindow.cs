@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Wenzil.Console;
 using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -287,6 +288,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetPlayerRegionOverlay();
                 CloseRegionPanel();
             }
+
         }
 
         public override void OnPop()
@@ -1216,6 +1218,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 townsFilterButton.BackgroundTexture = townsFilterButtonDisabled;
         }
 
+        public TravelMapSaveData GetTravelMapSaveData()
+        {
+            TravelMapSaveData data = new TravelMapSaveData();
+            data.filterDungeons = filterDungeons;
+            data.filterHomes = filterHomes;
+            data.filterTemples = filterTemples;
+            data.filterTowns = filterTowns;
+
+            if(popUp != null)
+            {
+                data.sleepInn = popUp.SleepModeInn;
+                data.speedCautious = popUp.SpeedCautious;
+                data.travelShip = popUp.TravelShip;
+            }
+
+            return data;
+        }
+
+        public void SetTravelMapFromSaveData(TravelMapSaveData data)
+        {
+            //if doesn't have save data, use defaults
+            if(data == null)
+                data = new TravelMapSaveData();
+
+            filterDungeons = data.filterDungeons;
+            filterHomes = data.filterHomes;
+            filterTemples = data.filterTemples;
+            filterTowns = data.filterTowns;
+
+            if(popUp == null)
+            {
+                popUp = new DaggerfallTravelPopUp(DaggerfallUI.UIManager, this, this);
+            }
+
+            popUp.SleepModeInn = data.sleepInn;
+            popUp.SpeedCautious = data.speedCautious;
+            popUp.TravelShip = data.travelShip;
+
+            UpdateSearchButtons();
+        }
         #endregion
 
         #region Helper Methods
@@ -1550,6 +1592,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
         }
+
 
         #endregion
 

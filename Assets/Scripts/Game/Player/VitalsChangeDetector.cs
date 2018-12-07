@@ -9,9 +9,6 @@
 // Notes:
 //
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -22,7 +19,7 @@ namespace DaggerfallWorkshop.Game
     public class VitalsChangeDetector : MonoBehaviour
     {
         protected int previousMaxHealth;
-        protected int previousMaxFatigue;        
+        protected int previousMaxFatigue;
         protected int previousMaxMagicka;
         protected int previousHealth;
         protected int previousFatigue;
@@ -41,6 +38,15 @@ namespace DaggerfallWorkshop.Game
         public int MagickaGain { get { return -1 * MagickaLost; } }
         PlayerEntity playerEntity;
 
+        // OnReset
+        public delegate void OnResetEventHandler();
+        public static event OnResetEventHandler OnReset;
+        protected virtual void RaiseResetEvent()
+        {
+            if (OnReset != null)
+                OnReset();
+        }
+
         void Start()
         {
             playerEntity = GameManager.Instance.PlayerEntity;
@@ -50,7 +56,7 @@ namespace DaggerfallWorkshop.Game
 
             // Use events to capture a couple of edge cases
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
-            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             DaggerfallCourtWindow.OnCourtScreen += DaggerfallCourtWindow_OnCourtScreen;
         }
 
@@ -62,17 +68,23 @@ namespace DaggerfallWorkshop.Game
             // Check max vitals hasn't changed - this can indicate user has loaded a different character
             // or current character has levelled up or changed in some way and the cached vital values need to be refreshed.
             // Just reset values and exit for this frame as the current relative vital lost calculation is not valid when Max Vital changes.
+            if (playerEntity.MaxHealth != previousMaxHealth || playerEntity.MaxFatigue != previousMaxFatigue || playerEntity.MaxMagicka != previousMaxMagicka)
+            {
+                ResetVitals();
+                return;
+            }
+
+            UpdateDeltas();
+        }
+
+        private void UpdateDeltas()
+        {
             int maxHealth = playerEntity.MaxHealth;
             int maxFatigue = playerEntity.MaxFatigue;
             int maxMagicka = playerEntity.MaxMagicka;
             int currentHealth = playerEntity.CurrentHealth;
             int currentFatigue = playerEntity.CurrentFatigue;
             int currentMagicka = playerEntity.CurrentMagicka;
-            if (maxHealth != previousMaxHealth || maxFatigue != previousMaxFatigue || maxMagicka != previousMaxMagicka)
-            {
-                ResetVitals();
-                return;
-            }
 
             // Detect Health loss
             HealthLost = previousHealth - currentHealth;
@@ -92,9 +104,16 @@ namespace DaggerfallWorkshop.Game
 
         private void ResetVitals()
         {
-            previousMaxHealth = previousHealth = playerEntity.MaxHealth;
-            previousMaxFatigue = previousFatigue = playerEntity.MaxFatigue;
-            previousMaxMagicka = previousMagicka = playerEntity.MaxMagicka;
+            previousMaxHealth = playerEntity.MaxHealth;
+            previousMaxFatigue = playerEntity.MaxFatigue;
+            previousMaxMagicka = playerEntity.MaxMagicka;
+
+            previousHealth = playerEntity.CurrentHealth;
+            previousFatigue = playerEntity.CurrentFatigue;
+            previousMagicka = playerEntity.CurrentMagicka;
+
+            UpdateDeltas();
+            RaiseResetEvent();
         }
 
         private void StreamingWorld_OnInitWorld()
@@ -104,7 +123,7 @@ namespace DaggerfallWorkshop.Game
             ResetVitals();
         }
 
-        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
             // Loading a character with same MaxHealth but lower current health
             // would also trigger a sway on load

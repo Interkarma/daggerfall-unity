@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich
 // 
 // Notes:
 //
@@ -67,7 +67,6 @@ namespace DaggerfallWorkshop.Game
         Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
         bool forceDisableSpellLighting;
-        bool forceDisableSpellShadows;
         float lifespan = 0f;
         float postImpactLifespan = 0f;
         TargetTypes targetType = TargetTypes.None;
@@ -81,6 +80,7 @@ namespace DaggerfallWorkshop.Game
         EntityEffectBundle payload;
         bool isArrow = false;
         GameObject goModel = null;
+        EnemySenses enemySenses;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
         RaycastHit arrowHit;
@@ -162,9 +162,8 @@ namespace DaggerfallWorkshop.Game
             myLight = GetComponent<Light>();
             myLight.enabled = EnableLight;
             forceDisableSpellLighting = !DaggerfallUnity.Settings.EnableSpellLighting;
-            forceDisableSpellShadows = !DaggerfallUnity.Settings.EnableSpellShadows;
             if (forceDisableSpellLighting) myLight.enabled = false;
-            if (forceDisableSpellShadows) myLight.shadows = LightShadows.None;
+            if (!DaggerfallUnity.Settings.EnableSpellShadows) myLight.shadows = LightShadows.None;
             initialRange = myLight.range;
             initialIntensity = myLight.intensity;
 
@@ -188,8 +187,14 @@ namespace DaggerfallWorkshop.Game
                 if (targetType == TargetTypes.SingleTargetAtRange ||
                     targetType == TargetTypes.AreaAtRange)
                 {
-                    UseSpellBillboardAnims(elementType);
+                    UseSpellBillboardAnims();
                 }
+            }
+
+            // Setup senses
+            if (caster != GameManager.Instance.PlayerEntityBehaviour)
+            {
+                enemySenses = caster.GetComponent<EnemySenses>();
             }
 
             // Setup arrow
@@ -204,19 +209,19 @@ namespace DaggerfallWorkshop.Game
                 {
                     CharacterController controller = caster.transform.GetComponent<CharacterController>();
                     adjust = caster.transform.forward * 0.6f;
-                    adjust.y = controller.height / 4;
+                    adjust.y += controller.height / 3;
                 }
                 else
                 {
                     // Offset forward to avoid collision with player
-                    adjust = caster.transform.forward * 0.6f;
+                    adjust = GameManager.Instance.MainCamera.transform.forward * 0.6f;
                     // Adjust slightly downward to match bow animation
-                    adjust.y -= 0.1f;
+                    adjust.y -= 0.11f;
                     // Adjust to the right or left to match bow animation
                     if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
-                        adjust += caster.transform.right * 0.15f;
+                        adjust += GameManager.Instance.MainCamera.transform.right * 0.15f;
                     else
-                        adjust -= caster.transform.right * 0.15f;
+                        adjust -= GameManager.Instance.MainCamera.transform.right * 0.15f;
                 }
 
                 goModel.transform.localPosition = adjust;
@@ -318,9 +323,19 @@ namespace DaggerfallWorkshop.Game
 
         private void FixedUpdate()
         {
-            if (isArrow && missileReleased && goModel && Physics.SphereCast(goModel.transform.position, 0.05f, goModel.transform.forward, out arrowHit, 1f))
+            if (isArrow && missileReleased && goModel)
             {
-                impactDetected = true;
+                // Check for arrow hit. For enemies, ray-casting in direction of the target works well.
+                // Otherwise it is easy for the target to ride on top of the arrow if it doesn't hit exactly head-on.
+                // Using a collider would probably be better.
+                Vector3 sphereCastDir;
+                if (enemySenses && enemySenses.LastKnownTargetPos != EnemySenses.ResetPlayerPos)
+                    sphereCastDir = (enemySenses.LastKnownTargetPos - goModel.transform.position).normalized;
+                else
+                    sphereCastDir = goModel.transform.forward;
+
+                if (Physics.SphereCast(goModel.transform.position, 0.05f, sphereCastDir, out arrowHit, 1f))
+                    impactDetected = true;
             }
         }
 
@@ -333,7 +348,7 @@ namespace DaggerfallWorkshop.Game
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
             {
-                UseSpellBillboardAnims(elementType, 1, true);
+                UseSpellBillboardAnims(1, true);
                 myBillboard.FramesPerSecond = ImpactBillboardFramesPerSecond;
                 impactDetected = true;
             }
@@ -404,7 +419,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (ignoreCaster && aoeEntity == caster)
                     continue;
-                
+
                 if (aoeEntity && !targetEntities.Contains(aoeEntity))
                 {
                     entities.Add(aoeEntity);
@@ -443,19 +458,24 @@ namespace DaggerfallWorkshop.Game
             {
                 aimDirection = GameManager.Instance.MainCamera.transform.forward;
             }
-            else
+            else if (enemySenses)
             {
-                EnemySenses enemySenses = caster.GetComponent<EnemySenses>();
-                if (enemySenses)
-                {
-                    aimDirection = enemySenses.DirectionToTarget;
-                }
+                Vector3 predictedPosition;
+                if (DaggerfallUnity.Settings.EnhancedCombatAI)
+                    predictedPosition = enemySenses.PredictNextTargetPos(MovementSpeed);
+                else
+                    predictedPosition = enemySenses.LastKnownTargetPos;
+
+                if (predictedPosition == EnemySenses.ResetPlayerPos)
+                    aimDirection = caster.transform.forward;
+                else
+                    aimDirection = (predictedPosition - caster.transform.position).normalized;
             }
 
             return aimDirection;
         }
 
-        void UseSpellBillboardAnims(ElementTypes elementType, int record = 0, bool oneShot = false)
+        void UseSpellBillboardAnims(int record = 0, bool oneShot = false)
         {
             // Destroy any existing billboard game object
             if (myBillboard)
@@ -465,7 +485,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Add new billboard parented to this missile
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(elementType), record, transform);
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(), record, transform);
             go.transform.localPosition = Vector3.zero;
             myBillboard = go.GetComponent<DaggerfallBillboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
@@ -488,7 +508,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        int GetMissileTextureArchive(ElementTypes elementType)
+        int GetMissileTextureArchive()
         {
             switch (elementType)
             {

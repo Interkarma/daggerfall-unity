@@ -95,23 +95,28 @@ namespace DaggerfallWorkshop.Game
                 if (!MeleeAnimation())
                     return;
 
-                MeleeTimer = Random.Range(1500, 3001);
-                MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
-
-                // Note: In classic, what happens here is
-                // meleeTimer += 450 * (enemydata[130] - 2);
-                // Apparently this was meant to reference the game reflexes setting,
-                // which is stored in playerentitydata[130].
-                // Instead enemydata[130] seems to instead always be 0, the equivalent of
-                // "very high" reflexes, regardless of what the game reflexes are.
-                // Here, we use the reflexes data as was intended.
-                MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
-
-                if (MeleeTimer > 100000 || MeleeTimer < 0)
-                    MeleeTimer = 1500;
-
-                MeleeTimer /= 980; // Approximates classic frame update
+                ResetMeleeTimer();
             }
+        }
+
+        public void ResetMeleeTimer()
+        {
+            MeleeTimer = Random.Range(1500, 3001);
+            MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
+
+            // Note: In classic, what happens here is
+            // meleeTimer += 450 * (enemydata[130] - 2);
+            // Looks like this was meant to reference the game reflexes setting,
+            // which is stored in playerentitydata[130].
+            // Instead enemydata[130] seems to instead always be 0, the equivalent of
+            // "very high" reflexes, regardless of what the game reflexes are.
+            // Here, we use the reflexes data as was intended.
+            MeleeTimer += 450 * ((int)GameManager.Instance.PlayerEntity.Reflexes - 2);
+
+            if (MeleeTimer < 0)
+                MeleeTimer = 0;
+
+            MeleeTimer /= 980; // Approximates classic frame update
         }
 
         public void BowDamage(Vector3 direction)

@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(magickaBar);
             Components.Add(breathBar);
 
-            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            VitalsChangeDetector.OnReset += VitalChangeDetector_OnReset;
         }
 
         public override void Update()
@@ -277,23 +277,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 breathBar.Color = new Color32(247, 239, 41, 255);
         }
 
-        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        private void SynchronizeImmediately()
         {
-            PlayerEntityData_v1 pData = saveData.playerData.playerEntity;
-
             // sync health bar
-            healthBarLoss.Amount = pData.currentHealth / (float)pData.maxHealth;
+            healthBarLoss.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
             healthBar.Amount = healthBarLoss.Amount;
+
             // sync fatigue bar
-            int maxFatigue = (pData.stats.LiveStrength + pData.stats.LiveEndurance) * 64;
-            fatigueBarLoss.Amount = pData.currentFatigue / (float)maxFatigue;
+            fatigueBarLoss.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
             fatigueBar.Amount = fatigueBarLoss.Amount;
 
             // sync magicka bar
-            DFCareer career = pData.careerTemplate;
-            int maxMagicka = FormulaHelper.SpellPoints(pData.stats.LiveIntelligence, career.SpellPointMultiplierValue);
-            magickaBarLoss.Amount = pData.currentMagicka / (float)maxMagicka;
+            magickaBarLoss.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
             magickaBar.Amount = magickaBarLoss.Amount;
+        }
+
+        private void VitalChangeDetector_OnReset()
+        {
+            SynchronizeImmediately();
         }
     }
 }

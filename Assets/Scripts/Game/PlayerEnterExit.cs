@@ -276,11 +276,6 @@ namespace DaggerfallWorkshop.Game
                     underwaterFog.UpdateFog(blockWaterLevel);
                 }
             }
-            else if(underwaterFog != null && underwaterFog.originalFog != RenderSettings.fogMode)
-            {
-                underwaterFog.ResetFog();
-            }
-
 
             // Count down holiday text display
             if (holidayTextTimer > 0)
@@ -839,6 +834,9 @@ namespace DaggerfallWorkshop.Game
             // Ensure we have component references
             if (!ReferenceComponents())
                 return;
+
+            // Raise event
+            RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior);
 
             // Layout dungeon
             GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, importEnemies);

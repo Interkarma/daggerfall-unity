@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
@@ -35,9 +34,9 @@ namespace DaggerfallWorkshop.Game.Player
         const int minPower = 1;
         const int maxPower = 100;
 
-        static HashSet<GuildNpcServices> questorIds = new HashSet<GuildNpcServices>()
+        static readonly HashSet<GuildNpcServices> questorIds = new HashSet<GuildNpcServices>()
             { GuildNpcServices.MG_Quests, GuildNpcServices.FG_Quests, GuildNpcServices.TG_Quests, GuildNpcServices.DB_Quests, GuildNpcServices.T_Quests, GuildNpcServices.KO_Quests };
-        
+
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
         Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
 
@@ -50,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Player
         // so the first entry (Alik'r Desert's border regions) is unused and the last region (Cybiades) uses out-of-range data.
 
                                                                              // Borders of:
-        byte[] borderRegions = { 44, 45, 47, 21, 56, 48, 49,  2, 55, 12, 57, // Alik'r Desert
+        readonly byte[] borderRegions = { 44, 45, 47, 21, 56, 48, 49,  2, 55, 12, 57, // Alik'r Desert
                                   1, 49, 55, 12, 54, 53, 52, 50, 23, 10,  0, // Dragontail Mountains
                                  22, 40, 39, 17, 38, 37, 10,  0,  0,  0,  0, // Dwynnen
                                   6, 37, 36, 35, 34, 24, 51, 23,  2,  0,  0, // Isle of Balfiera
@@ -186,7 +185,7 @@ namespace DaggerfallWorkshop.Game.Player
             List<FactionFile.FactionData> factionDataList = new List<FactionFile.FactionData>();
 
             // Match faction items
-            foreach(FactionFile.FactionData item in factionDict.Values)
+            foreach (FactionFile.FactionData item in factionDict.Values)
             {
                 bool match = true;
 
@@ -445,7 +444,7 @@ namespace DaggerfallWorkshop.Game.Player
             if (factionDict.ContainsKey(factionID))
             {
                 FactionFile.FactionData factionData = factionDict[factionID];
-                factionData.flags = factionData.flags | (int) flag;
+                factionData.flags |= (int)flag;
                 factionDict[factionID] = factionData;
                 return true;
             }
@@ -740,7 +739,7 @@ namespace DaggerfallWorkshop.Game.Player
             {
                 for (int i = 0; i < 11; ++i)
                 {
-                    if (borderRegions[11 * faction1.region + i] == faction2.region)
+                    if (borderRegions[(11 * faction1.region) + i] == faction2.region)
                         return true;
                 }
             }

@@ -251,6 +251,16 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Constructors
+
+        public PlayerGPS()
+        {
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+        }
+
+        #endregion
+
         #region Unity
 
         void Awake()
@@ -301,6 +311,27 @@ namespace DaggerfallWorkshop
                 UpdateNearbyObjects();
                 nearbyObjectsUpdateTimer = 0;
             }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            // Reset state when loading a new game
+            ResetState();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            // Reset state when starting a new load process
+            ResetState();
+        }
+
+        void ResetState()
+        {
+            isPlayerInLocationRect = false;
         }
 
         #endregion
@@ -518,7 +549,7 @@ namespace DaggerfallWorkshop
             currentClimateIndex = dfUnity.ContentReader.MapFileReader.GetClimateIndex(x, y);
             currentPoliticIndex = dfUnity.ContentReader.MapFileReader.GetPoliticIndex(x, y);
             climateSettings = MapsFile.GetWorldClimateSettings(currentClimateIndex);
-            if (currentPoliticIndex > 128)
+            if (currentPoliticIndex >= 128)
                 regionName = dfUnity.ContentReader.MapFileReader.GetRegionName(currentPoliticIndex - 128);
             else if (currentPoliticIndex == 64)
                 regionName = "Ocean";
@@ -846,6 +877,9 @@ namespace DaggerfallWorkshop
         /// <param name="overrideName">If provided, ignore previous discovery and override the name</param>
         public void DiscoverBuilding(int buildingKey, string overrideName = null)
         {
+            // Ensure current location also discovered before processing building
+            DiscoverCurrentLocation();
+
             // Must have a location loaded
             if (!CurrentLocation.Loaded)
                 return;

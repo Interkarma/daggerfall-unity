@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
@@ -26,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Player
     {
         const int totalGlobalVars = 64;
 
-        Dictionary<int, GlobalVar> globalVarsDict = new Dictionary<int, GlobalVar>();
+        readonly Dictionary<int, GlobalVar> globalVarsDict = new Dictionary<int, GlobalVar>();
 
         /// <summary>
         /// Gets full details of a global variable.
@@ -87,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Player
         public GlobalVar[] SerializeGlobalVars()
         {
             List<GlobalVar> globalVarsList = new List<GlobalVar>();
-            foreach(GlobalVar gv in globalVarsDict.Values)
+            foreach (GlobalVar gv in globalVarsDict.Values)
             {
                 globalVarsList.Add(gv);
             }
@@ -109,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Player
 
             // Restore items
             globalVarsDict.Clear();
-            foreach(GlobalVar gv in globalVarsList)
+            foreach (GlobalVar gv in globalVarsList)
             {
                 globalVarsDict.Add(gv.index, gv);
             }

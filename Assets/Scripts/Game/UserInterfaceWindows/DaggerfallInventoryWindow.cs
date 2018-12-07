@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Banking;
 using System.Linq;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -186,6 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         KeyCode toggleClosedBinding;
         bool controlPressed = false;
+        private int maxAmount;
 
         #endregion
 
@@ -1285,7 +1287,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Check cart weight limit
             int canCarry = item.stackCount;
-            if (item.ItemGroup != ItemGroups.Transportation && item.weightInKg != 0)
+            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
             {
                 canCarry = Math.Min(canCarry, (int)((ItemHelper.wagonKgLimit - remoteItems.GetWeight()) / item.weightInKg));
             }
@@ -1337,10 +1339,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (questItem.AllowDrop && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
                     questItem.PlayerDropped = false;
             }
+            // Extinguish light sources when transferring out of player inventory
+            if (item.IsLightSource && playerEntity.LightSource == item && from == localItems)
+                playerEntity.LightSource = null;
 
-            if (maxAmount == null)
-                maxAmount = item.stackCount;
-            if (maxAmount <= 0)
+            // Handle stacks & splitting if needed
+            this.maxAmount = maxAmount ?? item.stackCount;
+            if (this.maxAmount <= 0)
                 return;
 
             bool splitRequired = maxAmount < item.stackCount;
@@ -1352,18 +1357,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     stackFrom = from;
                     stackTo = to;
                     stackEquip = equip;
+                    string defaultValue = controlPressed ? "0" : this.maxAmount.ToString();
 
                     // Key will probably be released while messagebox is open
                     controlPressed = false;
 
                     // Show message box
                     DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText(textDatabase, "howManyItems"), maxAmount));
+                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText(textDatabase, "howManyItems"), this.maxAmount));
                     mb.TextPanelDistanceY = 0;
                     mb.InputDistanceX = 15;
                     mb.TextBox.Numeric = true;
                     mb.TextBox.MaxCharacters = 8;
-                    mb.TextBox.Text = "0";
+                    mb.TextBox.Text = defaultValue;
                     mb.OnGotUserInput += SplitStackPopup_OnGotUserInput;
                     mb.Show();
                     return;
@@ -1380,7 +1386,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Determine how many items to split
             int count = 0;
             bool result = int.TryParse(input, out count);
-            if (!result)
+            if (!result || count > maxAmount)
                 return;
 
             DaggerfallUnityItem item = stackFrom.SplitStack(stackItem, count);
@@ -1610,53 +1616,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void RecordLocationFromMap(DaggerfallUnityItem item)
         {
             const int mapTextId = 499;
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+            DFLocation revealedLocation = playerGPS.DiscoverRandomLocation();
 
-            uint numberOfUndiscoveredLocationsInRegion = 0;
-            PlayerGPS gps = GameManager.Instance.PlayerGPS;
-
-            // Get how many undiscovered locations exist in the current region
-            for (int i = 0; i < gps.CurrentRegion.LocationCount; i++)
+            if (string.IsNullOrEmpty(revealedLocation.Name))
             {
-                if (gps.CurrentRegion.MapTable[i].Discovered == false &&
-                        !gps.HasDiscoveredLocation(gps.CurrentRegion.MapTable[i].MapId & 0x000fffff))
-                numberOfUndiscoveredLocationsInRegion++;
-            }
-
-            // If there aren't any left, there's nothing to find. Classic will just keep returning a particular location over and over if this happens.
-            if (numberOfUndiscoveredLocationsInRegion == 0)
-            {
-                DaggerfallMessageBox nothingLeft = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.Nothing, TextManager.Instance.GetText(textDatabase, "readMapFail"), this);
-                nothingLeft.ClickAnywhereToClose = true;
-                nothingLeft.Show();
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "readMapFail"));
                 return;
             }
 
-            int locationToDiscover = (int)UnityEngine.Random.Range(0, numberOfUndiscoveredLocationsInRegion + 1);
-
-            // Get the location
-            DaggerfallConnect.DFLocation location;
-            for (int i = 0; i < gps.CurrentRegion.LocationCount; i++)
-            {
-                if (gps.CurrentRegion.MapTable[i].Discovered == false &&
-                        !gps.HasDiscoveredLocation(gps.CurrentRegion.MapTable[i].MapId & 0x000fffff))
-                    locationToDiscover--;
-
-                if (locationToDiscover <= 0)
-                {
-                    location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(gps.CurrentRegionIndex, i);
-
-                    // Discover the location
-                    gps.DiscoverLocation(gps.CurrentRegionName, location.Name);
-                    gps.LocationRevealedByMapItem = location.Name;
-                    GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                        TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", location.Name));
-                    break;
-                }
-            }
+            playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
 
             TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
             DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
-            mapText.SetTextTokens(textTokens);
+            mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
             mapText.ClickAnywhereToClose = true;
             mapText.Show();
         }
@@ -1727,7 +1702,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                EquipItem(item);
+                if (item.IsLightSource)
+                {
+                    UseItem(item);
+                    Refresh(false);
+                }
+                else
+                    EquipItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
             {

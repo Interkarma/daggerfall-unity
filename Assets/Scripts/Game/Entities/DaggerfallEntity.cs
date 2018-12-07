@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game.Entity
         int[] resistanceChances = new int[5];
 
         // Temp entity spellbook
-        List<EffectBundleSettings> spellbook = new List<EffectBundleSettings>();
+        protected List<EffectBundleSettings> spellbook = new List<EffectBundleSettings>();
 
         #endregion
 

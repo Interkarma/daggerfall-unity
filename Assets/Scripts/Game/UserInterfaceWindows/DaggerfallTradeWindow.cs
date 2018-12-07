@@ -104,15 +104,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 { ItemGroups.Gems, ItemGroups.CreatureIngredients1, ItemGroups.CreatureIngredients2, ItemGroups.CreatureIngredients3, ItemGroups.PlantIngredients1, ItemGroups.PlantIngredients2, ItemGroups.MiscellaneousIngredients1, ItemGroups.MiscellaneousIngredients2, ItemGroups.MetalIngredients } },
             { DFLocation.BuildingTypes.Armorer, new List<ItemGroups>()
                 { ItemGroups.Armor, ItemGroups.Weapons } },
-            { DFLocation.BuildingTypes.Bookseller, new List<ItemGroups>()   { ItemGroups.Books } },
+            { DFLocation.BuildingTypes.Bookseller, new List<ItemGroups>()
+                { ItemGroups.Books } },
             { DFLocation.BuildingTypes.ClothingStore, new List<ItemGroups>()
                 { ItemGroups.MensClothing, ItemGroups.WomensClothing } },
             { DFLocation.BuildingTypes.GemStore, new List<ItemGroups>()
                 { ItemGroups.Gems, ItemGroups.Jewellery } },
             { DFLocation.BuildingTypes.GeneralStore, new List<ItemGroups>()
-                { ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Transportation, ItemGroups.Jewellery, ItemGroups.Weapons } },
+                { ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Transportation, ItemGroups.Jewellery, ItemGroups.Weapons, ItemGroups.UselessItems2 } },
             { DFLocation.BuildingTypes.PawnShop, new List<ItemGroups>()
-                { ItemGroups.Armor, ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Gems, ItemGroups.Jewellery, ItemGroups.ReligiousItems, ItemGroups.Weapons } },
+                { ItemGroups.Armor, ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Gems, ItemGroups.Jewellery, ItemGroups.ReligiousItems, ItemGroups.Weapons, ItemGroups.UselessItems2 } },
             { DFLocation.BuildingTypes.WeaponSmith, new List<ItemGroups>()
                 { ItemGroups.Armor, ItemGroups.Weapons } },
         };
@@ -560,11 +561,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Buy:
-                        if (usingWagon)
-                        {
-                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: true);
-                        }
-                        else
+                        if (usingWagon)     // Allows player to get & equip stuff from cart while purchasing.
+                            TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: !item.IsAStack());
+                        else                // Allows player to equip and unequip while purchasing.
                             EquipItem(item);
                         break;
 
@@ -596,17 +595,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Select)
             {
-                int canCarry = CanCarryAmount(item);
-                if (usingWagon)
-                {
-                    canCarry = Math.Max(canCarry, WagonCanHoldAmount(item));
-                }
                 if (windowMode == WindowModes.Buy)
-                {
-                    TransferItem(item, remoteItems, basketItems, canCarry, equip: !item.IsAStack());
-                } else {
-                    TransferItem(item, remoteItems, localItems, canCarry);
-                }
+                    TransferItem(item, remoteItems, basketItems, CanCarryAmount(item), equip: !item.IsAStack());
+                else
+                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -667,7 +659,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
                     remoteItems.GetItem(i).IdentifyItem();
-                DaggerfallUI.MessageBox("Items identified.");
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "itemsIdentified"));
             }
             else if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
                 ShowTradePopup();

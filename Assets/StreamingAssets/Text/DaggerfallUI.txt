@@ -26,7 +26,7 @@ finishQuestHeader,  {0} {1} at {2}:
 quest,              Quest
 noteHeader,         {0} in {1}:
 
-- Inventory window:
+- Inventory & trade windows:
 
 readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
@@ -47,3 +47,4 @@ arSrc,              armor rating
 arRep,              armor
 northern,           (northern)
 southern,           (southern)
+itemsIdentified,    Items identified.

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Lypyl (lypyldf@gmail.com), Hazelnut
+// Contributors:    Lypyl (lypyldf@gmail.com), Hazelnut, Numidium
 // 
 // Notes:
 //
@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public BankDeedData_v1 bankDeeds;
         public FaceDetails[] escortingFaces;
         public SceneCache_v1 sceneCache;
+        public TravelMapSaveData travelMapData;
     }
 
     #endregion
@@ -194,6 +195,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerEntity.Crimes crimeCommitted;
         public bool haveShownSurrenderToGuardsDialogue;
         public ulong lightSourceUID;
+        public short reputationCommoners;
+        public short reputationMerchants;
+        public short reputationNobility;
+        public short reputationScholars;
+        public short reputationUnderworld;
     }
 
     [fsObject("v1")]
@@ -438,6 +444,18 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint loanDueDate;
         public int regionIndex;
         public bool hasDefaulted;
+    }
+
+    [fsObject("v1")]
+    public class TravelMapSaveData
+    {
+        public bool filterDungeons;
+        public bool filterTemples;
+        public bool filterHomes;
+        public bool filterTowns;
+        public bool sleepInn = true;
+        public bool speedCautious = true;
+        public bool travelShip = true;
     }
 
     #endregion

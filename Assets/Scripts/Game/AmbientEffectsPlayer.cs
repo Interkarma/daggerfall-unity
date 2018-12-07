@@ -1,10 +1,10 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich
 // 
 // Notes:
 //
@@ -37,9 +37,9 @@ namespace DaggerfallWorkshop.Game
         AudioClip cricketsLoop;
         float waitTime;
         float waitCounter;
-        float waterSoundWaitTime = 0.0625f; // Approximation of classic's main update loop. About 1/16 of a second (varies in classic by frame rate). TODO: Unify with runningTallyInterval in PlayerEntity. Where should this value go?
         float waterWaitCounter;
         AmbientSoundPresets lastPresets;
+        Entity.DaggerfallEntityBehaviour playerBehaviour;
         PlayerEnterExit playerEnterExit;
 
         public enum AmbientSoundPresets
@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game
             dfAudioSource.Preset = AudioPresets.OnDemand;
             ApplyPresets();
             StartWaiting();
+            playerBehaviour = GameManager.Instance.PlayerEntityBehaviour;
+            playerEnterExit = GameManager.Instance.PlayerEnterExit;
         }
 
         void OnDisable()
@@ -127,32 +129,26 @@ namespace DaggerfallWorkshop.Game
                 StartWaiting();
             }
 
-            // Play water sound effects. Timing and position based on classic behavior.
-            // TODO: Make sound follow player's X and Z movement but play from Y coordinate of dungeon water, for a more dynamically 3d sound.
-            // Currently the sound is a volume adjustment based on vertical distance from the water.
-            if (waterWaitCounter > waterSoundWaitTime)
+            // Play water sound effects. Timing based on classic.
+            if (waterWaitCounter > Entity.PlayerEntity.ClassicUpdateInterval)
             {
-                if (playerEnterExit == null)
-                    playerEnterExit = GameManager.Instance.PlayerEnterExit;
-                if (playerEnterExit)
+                if (playerEnterExit && playerEnterExit.blockWaterLevel != 10000)
                 {
-                    if (playerEnterExit.blockWaterLevel != 10000)
+                    // Chance to play gentle water sound at water surface
+                    if (DFRandom.rand() < 50)
                     {
-                        Entity.DaggerfallEntityBehaviour player = GameManager.Instance.PlayerEntityBehaviour;
-                        // Chance to play gentle water sound based on vertical distance between player and water surface
-                        if (DFRandom.rand() < 50)
-                        {
-                            float waterHeightInDFUnityUnits = (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale);
-                            float volumeScale = Mathf.Clamp(1 - (Mathf.Abs(player.transform.position.y - waterHeightInDFUnityUnits) / 9), 0, 1);
-                            dfAudioSource.PlayOneShot((int)SoundClips.WaterGentle, 0, volumeScale);
-                        }
+                        Vector3 waterSoundPosition = playerBehaviour.transform.position;
+                        waterSoundPosition.y = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
+                        waterSoundPosition.x += Random.Range(-3, 3);
+                        waterSoundPosition.y += Random.Range(-3, 3);
+                        dfAudioSource.transform.position = waterSoundPosition;
+                        dfAudioSource.PlayOneShot((int)SoundClips.WaterGentle, 1, 3f);
+                    }
 
-                        // Chance to play underwater bubbling noise if player is underwater
-                        if (playerEnterExit.IsPlayerSubmerged)
-                        {
-                            if (DFRandom.rand() < 100)
-                                dfAudioSource.PlayOneShot((int)SoundClips.AmbientWaterBubbles, 0);
-                        }
+                    // Chance to play water bubbles sound if player is underwater
+                    if (playerEnterExit.IsPlayerSubmerged && DFRandom.rand() < 100)
+                    {
+                        dfAudioSource.PlayOneShot((int)SoundClips.AmbientWaterBubbles, 0);
                     }
                 }
                 waterWaitCounter = 0;
@@ -183,16 +179,36 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (playerEnterExit == null)
                         playerEnterExit = GameManager.Instance.PlayerEnterExit;
-                    if (playerEnterExit)
+                    if (playerEnterExit && playerEnterExit.IsPlayerInsideDungeonCastle)
                     {
-                        if (playerEnterExit.IsPlayerInsideDungeonCastle)
-                            return;
+                        return;
                     }
                 }
 
-                // Play ambient sound as a one-shot 2D sound
+                // Play ambient sound as a one-shot 3D sound
                 SoundClips clip = ambientSounds[index];
-                dfAudioSource.PlayOneShot((int)clip, 0);
+                Vector3 randomPos = playerBehaviour.transform.position;
+                bool positiveChange = Random.Range(0, 1) == 0;
+                if (positiveChange)
+                    randomPos.x += 3;
+                else
+                    randomPos.x += -3;
+
+                positiveChange = Random.Range(0, 1) == 0;
+
+                if (positiveChange)
+                    randomPos.y += 3;
+                else
+                    randomPos.y += -3;
+
+                positiveChange = Random.Range(0, 1) == 0;
+                if (positiveChange)
+                    randomPos.z += 3;
+                else
+                    randomPos.z += -3;
+
+                dfAudioSource.transform.position = randomPos;
+                dfAudioSource.PlayOneShot((int)clip, 1, 5f);
                 RaiseOnPlayEffectEvent(clip);
             }
         }
@@ -201,10 +217,10 @@ namespace DaggerfallWorkshop.Game
         {
             //Debug.Log(string.Format("Playing index {0}", index));
 
-            int minFlashes = 5;
-            int maxFlashes = 10;
+            int minFlashes;
+            int maxFlashes;
             float soundDelay = 0f;
-            float randomSkip = 0.6f;
+            const float randomSkip = 0.6f;
 
             // Store starting values
             //float startSkyScale = 1f;
@@ -272,8 +288,6 @@ namespace DaggerfallWorkshop.Game
 
             // Raise event
             RaiseOnPlayEffectEvent(clip);
-
-            yield break;
         }
 
         private void StartWaiting()
@@ -351,7 +365,6 @@ namespace DaggerfallWorkshop.Game
 
             /// <summary>Constructor helper.</summary>
             public AmbientEffectsEventArgs(SoundClips clip)
-                : base()
             {
                 this.Clip = clip;
             }

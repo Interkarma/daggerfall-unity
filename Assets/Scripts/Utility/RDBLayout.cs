@@ -444,6 +444,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go,
             DFBlock.RdbObject[] editorObjects,
             ref DFBlock blockData,
+            GameObject[] startMarkers,
             bool serialize = true)
         {
             const int fixedMonsterFlatIndex = 16;
@@ -469,7 +470,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add fixed enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
-                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData, serialize);
+                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData, startMarkers, serialize);
             }
         }
 
@@ -1351,7 +1352,7 @@ namespace DaggerfallWorkshop.Utility
                 byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
                 // Add enemy
-                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false);
+                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false, waterLevel);
             }
             else
             {
@@ -1411,7 +1412,7 @@ namespace DaggerfallWorkshop.Utility
                 byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
                 // Add enemy
-                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false);
+                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false, waterLevel);
             }
             else
             {
@@ -1454,7 +1455,7 @@ namespace DaggerfallWorkshop.Utility
             return table.Enemies[DFRandom.random_range_inclusive(minTableIndex, maxTableIndex)];
         }
 
-        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
+        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, GameObject[] startMarkers, bool serialize)
         {
             // Get type value and ignore known invalid types
             int typeValue = (int)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
@@ -1471,7 +1472,18 @@ namespace DaggerfallWorkshop.Utility
 
             byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
-            AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType);
+            // Get water level from start marker if it exists
+            DaggerfallBillboard dfBillboard;
+            if (startMarkers.Length > 0)
+                dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+            else
+                dfBillboard = null;
+
+            int waterLevel = 10000;
+            if (dfBillboard != null)
+                waterLevel = dfBillboard.Summary.WaterLevel;
+
+            AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, true, waterLevel);
         }
 
         private static void AddEnemy(
@@ -1480,8 +1492,18 @@ namespace DaggerfallWorkshop.Utility
             Transform parent = null,
             ulong loadID = 0,
             byte classicSpawnDistanceType = 0,
-            bool useGenderFlag = true)
+            bool useGenderFlag = true,
+            int waterLevel = 10000)
         {
+            // Water level check. This is done by classic and is needed in at least one case, where otherwise
+            // a slaughterfish will be placed outside of water.
+            // These are classic values, so a greater y value means elevation is lower
+            if ((type == MobileTypes.Slaughterfish || type == MobileTypes.Dreugh || type == MobileTypes.Lamia)
+                && (waterLevel == 10000 || waterLevel - 20 > obj.YPos))
+            {
+                return;
+            }
+
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
             if (obj.Resources.FlatResource.Action == (int)DFBlock.EnemyReactionTypes.Passive)

@@ -616,6 +616,7 @@ namespace DaggerfallWorkshop.Game
                         else if (loot.Items.Count == 0)
                         {
                             DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
+                            DisableEmptyCorpseContainer(loot.gameObject);
                             return;
                         }
                         else if (loot.Items.Count == 1 && loot.Items.Contains(ItemGroups.Weapons, (int) Weapons.Arrow))
@@ -632,6 +633,16 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             return;
+        }
+
+        private void DisableEmptyCorpseContainer(GameObject go)
+        {
+            if (go)
+            {
+                SphereCollider collider = go.GetComponent<SphereCollider>();
+                if (collider)
+                    collider.enabled = false;
+            }
         }
 
         public void PrivateProperty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)

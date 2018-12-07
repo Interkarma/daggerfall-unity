@@ -84,7 +84,12 @@ furnitureshop,      0, 7 , 0
 jewelryshop,        0, 8 , 0
 generalstore,       0, 9 , 0
 library,            0, 10, 0
-magery,             0, 11, 0
+--      NOTE: Building type 11 is technically just a guild hall but classic quests use this type for Mages Guild exclusively
+--      Daggerfall Unity has extended support for more guild halls by allowing p3 to specify factionID of target guild hall
+guildhall,          0, 11, 0
+magery,             0, 11, 40
+fighters,           0, 11, 41
+--
 pawnshop,           0, 12, 0
 weaponstore,        0, 13, 0
 temple,             0, 14, 0

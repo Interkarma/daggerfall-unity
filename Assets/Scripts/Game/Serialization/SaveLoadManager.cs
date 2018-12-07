@@ -340,6 +340,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
+            // Do nothing if load in progress
+            if (LoadInProgress)
+                return;
+
             // Look for existing save with this character and name
             int key = FindSaveFolderByNames(characterName, saveName);
 
@@ -356,7 +360,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public void QuickSave(bool instantReload = false)
         {
-            Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
+            if (!LoadInProgress)
+                Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
         }
 
         public void Load(int key)
@@ -719,6 +724,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.bankDeeds = GetBankDeedData();
             saveData.escortingFaces = DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.GetSaveData();
             saveData.sceneCache = stateManager.GetSceneCache();
+            saveData.travelMapData = DaggerfallUI.Instance.DfTravelMapWindow.GetTravelMapSaveData();
 
             return saveData;
         }
@@ -1144,6 +1150,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore player position to world
             playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true);
+
+            //Restore Travel Map settings
+            DaggerfallUI.Instance.DfTravelMapWindow.SetTravelMapFromSaveData(saveData.travelMapData);
 
             // Smash to black while respawning
             DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();

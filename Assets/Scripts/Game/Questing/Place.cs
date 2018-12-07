@@ -502,9 +502,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get list of valid sites
             SiteDetails[] foundSites = null;
             if (p2 == -1)
-                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid);
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
             else
-                foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2);
+                foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
 
             // Must have found at least one site
             if (foundSites == null || foundSites.Length == 0)
@@ -597,7 +597,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (p2 == -1)
                 {
                     // Collect random building sites
-                    foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid);
+                    foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
                 }
                 else
                 {
@@ -607,7 +607,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                     // Get an array of potential quest sites with specified building type
                     // This ensures building site actually exists inside town, as MAPS.BSA directory can be incorrect
-                    foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2);
+                    foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
                 }
 
                 // Must have found at least one site
@@ -874,7 +874,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
         /// Specify BuildingTypes.AllValid to find all valid building types
         /// </summary>
-        SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
+        SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType, int guildHallFaction)
         {
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
@@ -918,6 +918,11 @@ namespace DaggerfallWorkshop.Game.Questing
                             if (DaggerfallBankManager.IsHouseOwned(buildingSummary[i].buildingKey))
                                 continue;
 
+                            // Guild halls must match specified type (e.g. guildhall/magery/fighters)
+                            if (buildingSummary[i].BuildingType == DFLocation.BuildingTypes.GuildHall &&
+                                !IsGuildFactionMatch(buildingSummary[i].FactionId, guildHallFaction))
+                                continue;
+
                             // Building must be a valid quest site
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
                             EnumerateBuildingQuestMarkers(blocks[index], i, out questSpawnMarkers, out questItemMarkers);
@@ -957,6 +962,16 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundSites.ToArray();
+        }
+
+        bool IsGuildFactionMatch(int factionID, int guildHallFaction)
+        {
+            // Allow ANY guild hall to match if guildHallFaction is 0
+            if (guildHallFaction == 0)
+                return true;
+
+            // Otherwise factionID of buildingSummary must be an exact match
+            return factionID == guildHallFaction;
         }
 
         string GetBuildingName(DFLocation.BuildingTypes buildingType, DFLocation location, BuildingSummary[] buildingSummary, int buildingIndex)

@@ -115,36 +115,103 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downstairsButton;
 
         // definitions of hotkey sequences
-        readonly HotkeySequence HotkeySequence_FocusPlayerPosition = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);      
-        readonly HotkeySequence HotkeySequence_SwitchToNextExteriorAutomapViewMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeOriginal = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeExtra = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeAll = new HotkeySequence(KeyCode.F4, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal = new HotkeySequence(KeyCode.F5, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1 = new HotkeySequence(KeyCode.F6, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2 = new HotkeySequence(KeyCode.F7, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3 = new HotkeySequence(KeyCode.F8, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_MoveLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_MoveBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_MoveToWestLocationBorder = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_MoveToEastLocationBorder = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_MoveToNorthLocationBorder = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_MoveToSouthLocationBorder = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-        readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-        readonly HotkeySequence HotkeySequence_Upstairs = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_Downstairs = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_ZoomIn = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_ZoomOut = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_MaxZoom1 = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-        readonly HotkeySequence HotkeySequence_MinZoom1 = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-        readonly HotkeySequence HotkeySequence_MinZoom2 = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
-        readonly HotkeySequence HotkeySequence_MaxZoom2 = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        UnityEngine.KeyCode fallbackKey = KeyCode.Home;
+
+        // the default hotkey keycodes
+        static UnityEngine.KeyCode keyCode_FocusPlayerPosition = KeyCode.Tab;
+        static UnityEngine.KeyCode keyCode_ResetView = KeyCode.Backspace;
+        static UnityEngine.KeyCode keyCode_SwitchToNextExteriorAutomapViewMode = KeyCode.Return;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapViewModeOriginal = KeyCode.F2;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapViewModeExtra = KeyCode.F3;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapViewModeAll = KeyCode.F4;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapBackgroundOriginal = KeyCode.F5;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapBackgroundAlternative1 = KeyCode.F6;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapBackgroundAlternative2 = KeyCode.F7;
+        static UnityEngine.KeyCode keyCode_SwitchToExteriorAutomapBackgroundAlternative3 = KeyCode.F8;
+        static UnityEngine.KeyCode keyCode_MoveLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_MoveRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_MoveForward = KeyCode.UpArrow;
+        static UnityEngine.KeyCode keyCode_MoveBackward = KeyCode.DownArrow;
+        static UnityEngine.KeyCode keyCode_MoveToWestLocationBorder = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_MoveToEastLocationBorder = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_MoveToNorthLocationBorder = KeyCode.UpArrow;
+        static UnityEngine.KeyCode keyCode_MoveToSouthLocationBorder = KeyCode.DownArrow;
+        static UnityEngine.KeyCode keyCode_RotateLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_RotateRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_RotateAroundPlayerPosLeft = KeyCode.LeftArrow;
+        static UnityEngine.KeyCode keyCode_RotateAroundPlayerPosRight = KeyCode.RightArrow;
+        static UnityEngine.KeyCode keyCode_Upstairs = KeyCode.PageUp;
+        static UnityEngine.KeyCode keyCode_Downstairs = KeyCode.PageDown;
+        static UnityEngine.KeyCode keyCode_ZoomIn = KeyCode.KeypadPlus;
+        static UnityEngine.KeyCode keyCode_ZoomOut = KeyCode.KeypadMinus;
+        static UnityEngine.KeyCode keyCode_MaxZoom1 = KeyCode.PageUp;
+        static UnityEngine.KeyCode keyCode_MinZoom1 = KeyCode.PageDown;
+        static UnityEngine.KeyCode keyCode_MinZoom2 = KeyCode.KeypadPlus;
+        static UnityEngine.KeyCode keyCode_MaxZoom2 = KeyCode.KeypadMinus;
+
+        // the currently used keycodes (fallback keycode mechanism)
+        UnityEngine.KeyCode currentKeyCode_FocusPlayerPosition = keyCode_FocusPlayerPosition;
+        UnityEngine.KeyCode currentKeyCode_ResetView = keyCode_ResetView;
+        UnityEngine.KeyCode currentKeyCode_SwitchToNextExteriorAutomapViewMode = keyCode_SwitchToNextExteriorAutomapViewMode;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapViewModeOriginal = keyCode_SwitchToExteriorAutomapViewModeOriginal;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapViewModeExtra = keyCode_SwitchToExteriorAutomapViewModeExtra;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapViewModeAll = keyCode_SwitchToExteriorAutomapViewModeAll;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal = keyCode_SwitchToExteriorAutomapBackgroundOriginal;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1 = keyCode_SwitchToExteriorAutomapBackgroundAlternative1;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2 = keyCode_SwitchToExteriorAutomapBackgroundAlternative2;
+        UnityEngine.KeyCode currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3 = keyCode_SwitchToExteriorAutomapBackgroundAlternative3;
+        UnityEngine.KeyCode currentKeyCode_MoveLeft = keyCode_MoveLeft;
+        UnityEngine.KeyCode currentKeyCode_MoveRight = keyCode_MoveRight;
+        UnityEngine.KeyCode currentKeyCode_MoveForward = keyCode_MoveForward;
+        UnityEngine.KeyCode currentKeyCode_MoveBackward = keyCode_MoveBackward;
+        UnityEngine.KeyCode currentKeyCode_MoveToWestLocationBorder = keyCode_MoveToWestLocationBorder;
+        UnityEngine.KeyCode currentKeyCode_MoveToEastLocationBorder = keyCode_MoveToEastLocationBorder;
+        UnityEngine.KeyCode currentKeyCode_MoveToNorthLocationBorder = keyCode_MoveToNorthLocationBorder;
+        UnityEngine.KeyCode currentKeyCode_MoveToSouthLocationBorder = keyCode_MoveToSouthLocationBorder;
+        UnityEngine.KeyCode currentKeyCode_RotateLeft = keyCode_RotateLeft;
+        UnityEngine.KeyCode currentKeyCode_RotateRight = keyCode_RotateRight;
+        UnityEngine.KeyCode currentKeyCode_RotateAroundPlayerPosLeft = keyCode_RotateAroundPlayerPosLeft;
+        UnityEngine.KeyCode currentKeyCode_RotateAroundPlayerPosRight = keyCode_RotateAroundPlayerPosRight;
+        UnityEngine.KeyCode currentKeyCode_Upstairs = keyCode_Upstairs;
+        UnityEngine.KeyCode currentKeyCode_Downstairs = keyCode_Downstairs;
+        UnityEngine.KeyCode currentKeyCode_ZoomIn = keyCode_ZoomIn;
+        UnityEngine.KeyCode currentKeyCode_ZoomOut = keyCode_ZoomOut;
+        UnityEngine.KeyCode currentKeyCode_MaxZoom1 = keyCode_MaxZoom1;
+        UnityEngine.KeyCode currentKeyCode_MinZoom1 = keyCode_MinZoom1;
+        UnityEngine.KeyCode currentKeyCode_MinZoom2 = keyCode_MinZoom2;
+        UnityEngine.KeyCode currentKeyCode_MaxZoom2 = keyCode_MaxZoom2;
+
+        // sequence of modifier keys for each hotkey sequence
+        HotkeySequence HotkeySequence_FocusPlayerPosition;
+        HotkeySequence HotkeySequence_ResetView;      
+        HotkeySequence HotkeySequence_SwitchToNextExteriorAutomapViewMode;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeOriginal;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeExtra;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeAll;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2;
+        HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3;
+        HotkeySequence HotkeySequence_MoveLeft;
+        HotkeySequence HotkeySequence_MoveRight;
+        HotkeySequence HotkeySequence_MoveForward;
+        HotkeySequence HotkeySequence_MoveBackward;
+        HotkeySequence HotkeySequence_MoveToWestLocationBorder;
+        HotkeySequence HotkeySequence_MoveToEastLocationBorder;
+        HotkeySequence HotkeySequence_MoveToNorthLocationBorder;
+        HotkeySequence HotkeySequence_MoveToSouthLocationBorder;
+        HotkeySequence HotkeySequence_RotateLeft;
+        HotkeySequence HotkeySequence_RotateRight;
+        HotkeySequence HotkeySequence_RotateAroundPlayerPosLeft;
+        HotkeySequence HotkeySequence_RotateAroundPlayerPosRight;
+        HotkeySequence HotkeySequence_Upstairs;
+        HotkeySequence HotkeySequence_Downstairs;
+        HotkeySequence HotkeySequence_ZoomIn;
+        HotkeySequence HotkeySequence_ZoomOut;
+        HotkeySequence HotkeySequence_MaxZoom1;
+        HotkeySequence HotkeySequence_MinZoom1;
+        HotkeySequence HotkeySequence_MinZoom2;
+        HotkeySequence HotkeySequence_MaxZoom2;
 
         KeyCode toggleClosedBinding;
 
@@ -229,6 +296,181 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallExteriorAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+        }
+
+        /// <summary>
+        /// sets up hotkey sequences (tests for automap open key and uses fallback key for actions that are assigned to the same key)
+        /// </summary>
+        private void SetupHotkeySequences()
+        {
+            currentKeyCode_FocusPlayerPosition = keyCode_FocusPlayerPosition;
+            currentKeyCode_ResetView = keyCode_ResetView;
+            currentKeyCode_SwitchToNextExteriorAutomapViewMode = keyCode_SwitchToNextExteriorAutomapViewMode;
+            currentKeyCode_SwitchToExteriorAutomapViewModeOriginal = keyCode_SwitchToExteriorAutomapViewModeOriginal;
+            currentKeyCode_SwitchToExteriorAutomapViewModeExtra = keyCode_SwitchToExteriorAutomapViewModeExtra;
+            currentKeyCode_SwitchToExteriorAutomapViewModeAll = keyCode_SwitchToExteriorAutomapViewModeAll;
+            currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal = keyCode_SwitchToExteriorAutomapBackgroundOriginal;
+            currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1 = keyCode_SwitchToExteriorAutomapBackgroundAlternative1;
+            currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2 = keyCode_SwitchToExteriorAutomapBackgroundAlternative2;
+            currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3 = keyCode_SwitchToExteriorAutomapBackgroundAlternative3;
+            currentKeyCode_MoveLeft = keyCode_MoveLeft;
+            currentKeyCode_MoveRight = keyCode_MoveRight;
+            currentKeyCode_MoveForward = keyCode_MoveForward;
+            currentKeyCode_MoveBackward = keyCode_MoveBackward;
+            currentKeyCode_MoveToWestLocationBorder = keyCode_MoveToWestLocationBorder;
+            currentKeyCode_MoveToEastLocationBorder = keyCode_MoveToEastLocationBorder;
+            currentKeyCode_MoveToNorthLocationBorder = keyCode_MoveToNorthLocationBorder;
+            currentKeyCode_MoveToSouthLocationBorder = keyCode_MoveToSouthLocationBorder;
+            currentKeyCode_RotateLeft = keyCode_RotateLeft;
+            currentKeyCode_RotateRight = keyCode_RotateRight;
+            currentKeyCode_RotateAroundPlayerPosLeft = keyCode_RotateAroundPlayerPosLeft;
+            currentKeyCode_RotateAroundPlayerPosRight = keyCode_RotateAroundPlayerPosRight;
+            currentKeyCode_Upstairs = keyCode_Upstairs;
+            currentKeyCode_Downstairs = keyCode_Downstairs;
+            currentKeyCode_ZoomIn = keyCode_ZoomIn;
+            currentKeyCode_ZoomOut = keyCode_ZoomOut;
+            currentKeyCode_MaxZoom1 = keyCode_MaxZoom1;
+            currentKeyCode_MinZoom1 = keyCode_MinZoom1;
+            currentKeyCode_MinZoom2 = keyCode_MinZoom2;
+            currentKeyCode_MaxZoom2 = keyCode_MaxZoom2;
+
+            if (toggleClosedBinding == keyCode_FocusPlayerPosition)
+                currentKeyCode_FocusPlayerPosition = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ResetView)
+                currentKeyCode_ResetView = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToNextExteriorAutomapViewMode)
+                currentKeyCode_SwitchToNextExteriorAutomapViewMode = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapViewModeOriginal)
+                currentKeyCode_SwitchToExteriorAutomapViewModeOriginal = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapViewModeExtra)
+                currentKeyCode_SwitchToExteriorAutomapViewModeExtra = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapViewModeAll)
+                currentKeyCode_SwitchToExteriorAutomapViewModeAll = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapBackgroundOriginal)
+                currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapBackgroundAlternative1)
+                currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapBackgroundAlternative2)
+                currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_SwitchToExteriorAutomapBackgroundAlternative3)
+                currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveLeft)
+                currentKeyCode_MoveLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveRight)
+                currentKeyCode_MoveRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveForward)
+                currentKeyCode_MoveForward = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveBackward)
+                currentKeyCode_MoveBackward = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveToWestLocationBorder)
+                currentKeyCode_MoveToWestLocationBorder = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveToEastLocationBorder)
+                currentKeyCode_MoveToEastLocationBorder = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveToNorthLocationBorder)
+                currentKeyCode_MoveToNorthLocationBorder = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MoveToSouthLocationBorder)
+                currentKeyCode_MoveToSouthLocationBorder = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateLeft)
+                currentKeyCode_RotateLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateRight)
+                currentKeyCode_RotateRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateAroundPlayerPosLeft)
+                currentKeyCode_RotateAroundPlayerPosLeft = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_RotateAroundPlayerPosRight)
+                currentKeyCode_RotateAroundPlayerPosRight = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_Upstairs)
+                currentKeyCode_Upstairs = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_Downstairs)
+                currentKeyCode_Downstairs = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ZoomIn)
+                currentKeyCode_ZoomIn = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_ZoomOut)
+                currentKeyCode_ZoomOut = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MaxZoom1)
+                currentKeyCode_MaxZoom1 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MinZoom1)
+                currentKeyCode_MinZoom1 = fallbackKey;
+        
+            if (toggleClosedBinding == keyCode_MinZoom2)
+                currentKeyCode_MinZoom2 = fallbackKey;
+
+            if (toggleClosedBinding == keyCode_MaxZoom2)
+                currentKeyCode_MaxZoom2 = fallbackKey;
+
+            HotkeySequence_FocusPlayerPosition = new HotkeySequence(currentKeyCode_FocusPlayerPosition, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_ResetView = new HotkeySequence(currentKeyCode_ResetView, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToNextExteriorAutomapViewMode = new HotkeySequence(currentKeyCode_SwitchToNextExteriorAutomapViewMode, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapViewModeOriginal = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapViewModeOriginal, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapViewModeExtra = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapViewModeExtra, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapViewModeAll = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapViewModeAll, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1 = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2 = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3 = new HotkeySequence(currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveLeft = new HotkeySequence(currentKeyCode_MoveLeft, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveRight = new HotkeySequence(currentKeyCode_MoveRight, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveForward = new HotkeySequence(currentKeyCode_MoveForward, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveBackward = new HotkeySequence(currentKeyCode_MoveBackward, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MoveToWestLocationBorder = new HotkeySequence(currentKeyCode_MoveToWestLocationBorder, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_MoveToEastLocationBorder = new HotkeySequence(currentKeyCode_MoveToEastLocationBorder, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_MoveToNorthLocationBorder = new HotkeySequence(currentKeyCode_MoveToNorthLocationBorder, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_MoveToSouthLocationBorder = new HotkeySequence(currentKeyCode_MoveToSouthLocationBorder, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+            HotkeySequence_RotateLeft = new HotkeySequence(currentKeyCode_RotateLeft, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_RotateRight = new HotkeySequence(currentKeyCode_RotateRight, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_RotateAroundPlayerPosLeft = new HotkeySequence(currentKeyCode_RotateAroundPlayerPosLeft, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+            HotkeySequence_RotateAroundPlayerPosRight = new HotkeySequence(currentKeyCode_RotateAroundPlayerPosRight, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+            HotkeySequence_Upstairs = new HotkeySequence(currentKeyCode_Upstairs, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_Downstairs = new HotkeySequence(currentKeyCode_Downstairs, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_ZoomIn = new HotkeySequence(keyCode_ZoomIn, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_ZoomOut = new HotkeySequence(keyCode_ZoomOut, HotkeySequence.KeyModifiers.None);
+            HotkeySequence_MaxZoom1 = new HotkeySequence(currentKeyCode_MaxZoom1, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_MinZoom1 = new HotkeySequence(currentKeyCode_MinZoom1, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_MinZoom2 = new HotkeySequence(currentKeyCode_MinZoom2, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+            HotkeySequence_MaxZoom2 = new HotkeySequence(currentKeyCode_MaxZoom2, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        }
+
+        /// <summary>
+        /// updates button tool tip texts (with dynamic hotkey mappings)
+        /// </summary>
+        private void UpdateButtonToolTipsText()
+        {
+            gridButton.ToolTipText = String.Format("left click: switch to next view mode (hotkey: {0})\ravailable view modes are:\r- original (hotkey {1})\r- extra: includes extra buildings (hotkey {2})\r- all: includes extra buildings, ground flats (hotkey {3})\rswitch background texture with {4}, {5}, {6}, {7}", currentKeyCode_SwitchToNextExteriorAutomapViewMode.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeOriginal.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeExtra.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeAll.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3.ToString());
+            forwardButton.ToolTipText = String.Format("left click: move up (hotkey: {0})\rright click: move to north location border (hotkey: Shift+{1})", currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveToNorthLocationBorder.ToString());
+            backwardButton.ToolTipText = String.Format("left click: move down (hotkey: {0})\rright click: move to south location border (hotkey: Shift+{1})", currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveToSouthLocationBorder.ToString());
+            leftButton.ToolTipText = String.Format("left click: move to the left (hotkey: {0})\rright click: move to west location border (hotkey: Shift+{1})", currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveToWestLocationBorder.ToString());
+            rightButton.ToolTipText = String.Format("left click: move to the right (hotkey: {0})\rright click: move to east location border (hotkey: Shift+{1})", currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveToEastLocationBorder.ToString());
+            rotateLeftButton.ToolTipText = String.Format("left click: rotate map to the left (hotkey: Control+{0})\rright click: rotate map around the player position\rto the left  (hotkey: Alt+{1})", currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateAroundPlayerPosLeft.ToString());
+            rotateRightButton.ToolTipText = String.Format("left click: rotate map to the right (hotkey: Control+{0})\rright click: rotate map around the player position\rto the right (hotkey: Alt+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateAroundPlayerPosRight.ToString());
+            upstairsButton.ToolTipText = String.Format("left click: zoom in (hotkey: {0})\rright click: apply maximum zoom", currentKeyCode_ZoomIn.ToString());
+            downstairsButton.ToolTipText = String.Format("left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)", currentKeyCode_ZoomOut.ToString());
+            dummyPanelCompass.ToolTipText = String.Format("left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})", currentKeyCode_FocusPlayerPosition.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
@@ -348,7 +590,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnMouseClick += GridButton_OnMouseClick;
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
             gridButton.ToolTip = buttonToolTip;
-            gridButton.ToolTipText = "left click: switch to next view mode (hotkey: enter key)\ravailable view modes are:\r- original (hotkey F2)\r- extra: includes extra buildings (hotkey F3)\r- all: includes extra buildings, ground flats (hotkey F4)\rswitch background texture with F5-F8";
 
             // forward button
             forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -357,7 +598,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = buttonToolTip;
-            forwardButton.ToolTipText = "left click: move up (hotkey: up arrow)\rright click: move to north location border (hotkey: shift+up arrow)";
 
             // backward button
             backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
@@ -366,7 +606,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = buttonToolTip;
-            backwardButton.ToolTipText = "left click: move down (hotkey: down arrow)\rright click: move to south location border (hotkey: shift+down arrow)";
 
             // left button
             leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
@@ -374,8 +613,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnMouseUp += LeftButton_OnMouseUp;
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
-            leftButton.ToolTip = buttonToolTip;           
-            leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)\rright click: move to west location border (hotkey: shift+left arrow)";
+            leftButton.ToolTip = buttonToolTip;
 
             // right button
             rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
@@ -384,7 +622,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = buttonToolTip;
-            rightButton.ToolTipText = "left click: move to the right (hotkey: right arrow)\rright click: move to east location border (hotkey: shift+right arrow)";
 
             // rotate left button
             rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
@@ -393,7 +630,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = buttonToolTip;
-            rotateLeftButton.ToolTipText = "left click: rotate map to the left (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the left  (hotkey: alt+right arrow)";
 
             // rotate right button
             rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
@@ -402,7 +638,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = buttonToolTip;
-            rotateRightButton.ToolTipText = "left click: rotate map to the right (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the right (hotkey: alt+right arrow)";
 
             // upstairs button
             upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
@@ -411,7 +646,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = buttonToolTip;
-            upstairsButton.ToolTipText = "left click: zoom in (hotkey: page up)\rright click: apply maximum zoom";
 
             // downstairs button
             downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
@@ -420,7 +654,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = buttonToolTip;
-            downstairsButton.ToolTipText = "left click: zoom out (hotkey: page down\rright click: apply minimum zoom)";
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -434,7 +667,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = buttonToolTip;
-            dummyPanelCompass.ToolTipText = "left click: focus player position (hotkey: tab)\rright click: reset view (hotkey: backspace)";
+
+            // update button tool tip texts
+            UpdateButtonToolTipsText();
 
             if (buttonToolTip != null)
             {
@@ -457,11 +692,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Scale = scale;
             NativePanel.Components.Add(compass);
 
+            startZoomMultiplier = DaggerfallUnity.Settings.ExteriorMapDefaultZoomLevel;
+            resetZoomLevelOnNewLocation = DaggerfallUnity.Settings.ExteriorMapResetZoomLevelOnNewLocation;
+
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
 
-            startZoomMultiplier = DaggerfallUnity.Settings.ExteriorMapDefaultZoomLevel;
-            resetZoomLevelOnNewLocation = DaggerfallUnity.Settings.ExteriorMapResetZoomLevelOnNewLocation;
+            // update hotkey sequences taking current toggleClosedBinding into account
+            SetupHotkeySequences();
 
             isSetup = true;
         }
@@ -475,6 +713,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
+
+            // check if global automap open/close hotkey has changed
+            if (toggleClosedBinding != InputManager.Instance.GetBinding(InputManager.Actions.AutoMap))
+            {
+                // Store toggle closed binding for this window
+                toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
+                // update hotkey sequences taking current toggleClosedBinding into account
+                SetupHotkeySequences();
+                // update button tool tip texts - since hotkeys changed
+                UpdateButtonToolTipsText();
+            }
 
             exteriorAutomap.updateAutomapStateOnWindowPush(); // signal ExteriorAutomap script that exterior automap window was closed and that it should update its state (updates player marker arrow)
 

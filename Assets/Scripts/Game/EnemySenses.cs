@@ -4,13 +4,12 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich
 // 
 // Notes:
 //
 
 using UnityEngine;
-using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
@@ -26,9 +25,9 @@ namespace DaggerfallWorkshop.Game
     {
         public static readonly Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-        public float SightRadius = 4096 * MeshReader.GlobalScale;         // Range of enemy sight
-        public float HearingRadius = 25f;       // Range of enemy hearing
-        public float FieldOfView = 180f;        // Enemy field of view
+        public float SightRadius = 4096 * MeshReader.GlobalScale;       // Range of enemy sight
+        public float HearingRadius = 25f;                               // Range of enemy hearing
+        public float FieldOfView = 180f;                                // Enemy field of view
 
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
@@ -45,6 +44,8 @@ namespace DaggerfallWorkshop.Game
         float lastDistanceToTarget;
         float targetRateOfApproach;
         Vector3 lastKnownTargetPos;
+        Vector3 oldLastKnownTargetPos;
+        Vector3 predictedTargetPos;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
@@ -56,10 +57,13 @@ namespace DaggerfallWorkshop.Game
 
         float classicUpdateTimer = 0f;
         bool classicUpdate = false;
-        float classicTargetUpdateTimer = 0f;
-        float systemTimerUpdatesDivisor = .0549254f;  // Divisor for updates per second by the system timer at memory location 0x46C.
+        float targetPosPredictTimer = 0f;
+        bool targetPosPredict = false;
 
-        float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
+        float classicTargetUpdateTimer = 0f;
+        const float systemTimerUpdatesDivisor = .0549254f;  // Divisor for updates per second by the system timer at memory location 0x46C.
+
+        const float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
         float classicSpawnXZDist = 0f;
         float classicSpawnYDistUpper = 0f;
         float classicSpawnYDistLower = 0f;
@@ -108,6 +112,18 @@ namespace DaggerfallWorkshop.Game
             set { lastKnownTargetPos = value; }
         }
 
+        public Vector3 OldLastKnownTargetPos
+        {
+            get { return oldLastKnownTargetPos; }
+            set { oldLastKnownTargetPos = value; }
+        }
+
+        public Vector3 PredictedTargetPos
+        {
+            get { return predictedTargetPos; }
+            set { predictedTargetPos = value; }
+        }
+
         public DaggerfallActionDoor LastKnownDoor
         {
             get { return actionDoor; }
@@ -150,6 +166,7 @@ namespace DaggerfallWorkshop.Game
             motor = GetComponent<EnemyMotor>();
             questBehaviour = GetComponent<QuestResourceBehaviour>();
             lastKnownTargetPos = ResetPlayerPos;
+            predictedTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
             short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
@@ -176,6 +193,15 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 classicUpdate = false;
+
+            targetPosPredictTimer += Time.deltaTime;
+            if (targetPosPredictTimer >= 0.25f)
+            {
+                targetPosPredict = true;
+                targetPosPredictTimer = 0.25f;
+            }
+            else
+                targetPosPredict = false;
 
             // Reset whether enemy would be spawned or not in classic.
             if (classicUpdate)
@@ -245,6 +271,7 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour.Target == null)
                 {
                     lastKnownTargetPos = ResetPlayerPos;
+                    predictedTargetPos = ResetPlayerPos;
                     directionToTarget = ResetPlayerPos;
                     lastDistanceToTarget = 0;
                     targetRateOfApproach = 0;
@@ -361,12 +388,24 @@ namespace DaggerfallWorkshop.Game
                 else
                     detectedTarget = false;
 
+                if (oldLastKnownTargetPos == ResetPlayerPos)
+                    oldLastKnownTargetPos = lastKnownTargetPos;
+
+                if (predictedTargetPos == ResetPlayerPos)
+                    predictedTargetPos = lastKnownTargetPos;
+
+                // Predict target's next position
+                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && predictedTargetPos != ResetPlayerPos)
+                {
+                    float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
+                    predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                }
+
                 if (detectedTarget && !hasEncounteredPlayer && entityBehaviour.Target == Player)
                 {
                     hasEncounteredPlayer = true;
 
                     // Check appropriate language skill to see if player can pacify enemy
-                    DaggerfallEntityBehaviour entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
                     if (entityBehaviour && motor &&
                         (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass))
                     {
@@ -378,7 +417,7 @@ namespace DaggerfallWorkshop.Game
                             {
                                 motor.IsHostile = false;
                                 DaggerfallUI.AddHUDText(HardStrings.languagePacified.Replace("%e", enemyEntity.Name).Replace("%s", languageSkill.ToString()), 5);
-                                player.TallySkill(languageSkill, 3);    // BCHG: increased skill uses from (assumed) 1 in classic on success to make raising language skills easier
+                                player.TallySkill(languageSkill, 3);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
                             }
                             else if (languageSkill != DFCareer.Skills.Etiquette && languageSkill != DFCareer.Skills.Streetwise)
                                 player.TallySkill(languageSkill, 1);
@@ -390,13 +429,55 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
+        public Vector3 PredictNextTargetPos(float interceptSpeed)
+        {
+            Vector3 lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
+
+            Vector3 assumedCurrentPosition;
+            if (targetInSight || targetInEarshot)
+                assumedCurrentPosition = lastKnownTargetPos;
+            else
+                assumedCurrentPosition = predictedTargetPos;
+
+            float secondsToCurrentTargetPos = (assumedCurrentPosition - transform.position).magnitude / interceptSpeed;
+
+            if (targetPosPredictTimer == 0)
+                targetPosPredictTimer = 0.25f;
+
+            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff * (4 / (targetPosPredictTimer / .25f)) * secondsToCurrentTargetPos);
+
+            // Don't predict target will move right past us (prevents AI from turning around
+            // when target is approaching)
+            float a = assumedCurrentPosition.z * transform.position.x - assumedCurrentPosition.x * transform.position.z;
+            float b = assumedCurrentPosition.z * prediction.x - assumedCurrentPosition.x * prediction.z;
+            float c = prediction.z * transform.position.x - prediction.x * transform.position.z;
+            float d = prediction.z * assumedCurrentPosition.x - prediction.x * assumedCurrentPosition.z;
+
+            if (a * b >= 0 && c * d >= 0)
+                prediction = assumedCurrentPosition;
+
+            // Don't predict target will move through obstacles (prevent predicting movement through walls)
+            RaycastHit hit;
+            Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
+            if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
+                prediction = assumedCurrentPosition;
+
+            // Store current last known target position for predicting next position
+            if (targetInSight || targetInEarshot)
+                oldLastKnownTargetPos = lastKnownTargetPos;
+
+            targetPosPredictTimer = 0;
+
+            return prediction;
+        }
+
         public bool StealthCheck()
         {
             if (!wouldBeSpawnedInClassic)
                 return false;
 
             if (distanceToTarget > 1024 * MeshReader.GlobalScale)
-                    return false;
+                return false;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             if (gameMinutes == timeOfLastStealthCheck)
@@ -436,36 +517,28 @@ namespace DaggerfallWorkshop.Game
             if (mobile.Summary.Enemy.SeesThroughInvisibility)
                 return false;
 
-            if (entityBehaviour.Target == Player)
-            {
-                // If not one of the above enemy types, and player has invisibility,
-                // detection is always blocked.
-                PlayerEntity player = GameManager.Instance.PlayerEntity;
-                if (player.IsInvisible)
-                    return true;
+            // If not one of the above enemy types, and target has invisibility,
+            // detection is always blocked.
+            if (entityBehaviour.Target.Entity.IsInvisible)
+                return true;
 
-                // If player doesn't have any illusion effect, detection is not blocked.
-                if (!player.IsBlending && !player.IsAShade)
-                    return false;
-
-                // Player has either chameleon or shade. Try to see through it.
-                int chance;
-                if (player.IsBlending)
-                    chance = 8;
-                else // is a shade
-                    chance = 4;
-
-                return Random.Range(1, 101) > chance;
-            }
-            else // TODO: Apply these effects for concealed AI characers.
-            {
+            // If target doesn't have any illusion effect, detection is not blocked.
+            if (!entityBehaviour.Target.Entity.IsBlending && !entityBehaviour.Target.Entity.IsAShade)
                 return false;
-            }
+
+            // Target has either chameleon or shade. Try to see through it.
+            int chance;
+            if (entityBehaviour.Target.Entity.IsBlending)
+                chance = 8;
+            else // is a shade
+                chance = 4;
+
+            return Random.Range(1, 101) > chance;
         }
 
-        public bool TargetIsWithinYawAngle(float targetAngle)
+        public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)
         {
-            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 toTarget = targetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
             directionToLastKnownTarget2D.y = 0;
 
@@ -473,15 +546,12 @@ namespace DaggerfallWorkshop.Game
             enemyDirection2D.y = 0;
 
             float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
-            if (angle < targetAngle)
-                return true;
-            else
-                return false;
+            return angle < targetAngle;
         }
 
         public bool TargetHasBackTurned()
         {
-            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 toTarget = predictedTargetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
             directionToLastKnownTarget2D.y = 0;
 
@@ -493,21 +563,18 @@ namespace DaggerfallWorkshop.Game
                 targetDirection2D = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
             }
             else
-                targetDirection2D = new Vector3(entityBehaviour.Target.transform.forward.x, 0, entityBehaviour.Target.transform.forward.z);
+                targetDirection2D = -new Vector3(entityBehaviour.Target.transform.forward.x, 0, entityBehaviour.Target.transform.forward.z);
 
             float angle = Vector3.Angle(directionToLastKnownTarget2D, targetDirection2D);
 
-            if (angle > 157.5f)
-                return true;
-            else
-                return false;
+            return angle > 157.5f;
         }
 
         public bool TargetIsWithinPitchAngle(float targetAngle)
         {
-            Vector3 toTarget = lastKnownTargetPos - transform.position;
+            Vector3 toTarget = predictedTargetPos - transform.position;
             Vector3 directionToLastKnownTarget2D = toTarget.normalized;
-            Plane verticalTransformToLastKnownPos = new Plane(lastKnownTargetPos, transform.position, transform.position + Vector3.up);
+            Plane verticalTransformToLastKnownPos = new Plane(predictedTargetPos, transform.position, transform.position + Vector3.up);
             // first project enemy direction to horizontal plane.
             Vector3 enemyDirection2D = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
             // next project enemy direction to vertical plane intersecting with last known position
@@ -515,17 +582,12 @@ namespace DaggerfallWorkshop.Game
 
             float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
 
-            if (angle < targetAngle)
-                return true;
-            else
-                return false;
+            return angle < targetAngle;
         }
 
         public bool TargetIsAbove()
         {
-            if (lastKnownTargetPos.y > transform.position.y)
-                return true;
-            return false;
+            return predictedTargetPos.y > transform.position.y;
         }
 
         #endregion
@@ -590,12 +652,9 @@ namespace DaggerfallWorkshop.Game
 
                     bool see = CanSeeTarget(targetBehaviour);
 
-                    if (targetSenses)
-                    {
-                        // Is potential target neither visible nor in area around player? If so, reject as target.
-                        if (!targetSenses.WouldBeSpawnedInClassic && !see)
-                            continue;
-                    }
+                    // Is potential target neither visible nor in area around player? If so, reject as target.
+                    if (targetSenses && !targetSenses.WouldBeSpawnedInClassic && !see)
+                        continue;
 
                     float priority = 0;
 
@@ -631,8 +690,7 @@ namespace DaggerfallWorkshop.Game
             return highestPriorityTarget;
         }
 
-
-        private bool CanSeeTarget(DaggerfallEntityBehaviour target)
+        bool CanSeeTarget(DaggerfallEntityBehaviour target)
         {
             bool seen = false;
             actionDoor = null;
@@ -670,13 +728,10 @@ namespace DaggerfallWorkshop.Game
 
                         // Check if hit was an action door
                         DaggerfallActionDoor door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-                        if (door != null)
+                        if (door != null && !door.IsLocked && !door.IsMagicallyHeld)
                         {
-                            if (!door.IsLocked && !door.IsMagicallyHeld)
-                            {
-                                actionDoor = door;
-                                distanceToActionDoor = Vector3.Distance(transform.position, actionDoor.transform.position);
-                            }
+                            actionDoor = door;
+                            distanceToActionDoor = Vector3.Distance(transform.position, actionDoor.transform.position);
                         }
                     }
                 }
@@ -685,7 +740,7 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        private bool CanHearTarget(DaggerfallEntityBehaviour target)
+        bool CanHearTarget(DaggerfallEntityBehaviour target)
         {
             bool heard = false;
             float hearingScale = 1f;

@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallMessageBox : DaggerfallPopupWindow
     {
         const string buttonsFilename = "BUTTONS.RCI";
+        const float minTimePresented = 0.0833f;
 
         Panel imagePanel = new Panel();
         Panel messagePanel = new Panel();
@@ -39,6 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool clickAnywhereToClose = false;
         DaggerfallMessageBox nextMessageBox;
         int customYPos = -1;
+        float presentationTime = 0;
 
         KeyCode extraProceedBinding = KeyCode.None;
 
@@ -215,6 +217,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Setup();
 
             uiManager.PushWindow(this);
+            presentationTime = Time.realtimeSinceStartup;
         }
 
         public override void Update()
@@ -398,6 +401,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ParentPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Must be presented for minimum time before allowing to click through
+            // This prevents capturing parent-level click events and closing immediately
+            if (Time.realtimeSinceStartup - presentationTime < minTimePresented)
+                return;
+
             if (uiManager.TopWindow == this)
             {
                 if (nextMessageBox != null)
