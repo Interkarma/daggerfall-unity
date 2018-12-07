@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public BankDeedData_v1 bankDeeds;
         public FaceDetails[] escortingFaces;
         public SceneCache_v1 sceneCache;
+        public TravelMapSaveData travelMapData;
     }
 
     #endregion
@@ -443,6 +444,18 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint loanDueDate;
         public int regionIndex;
         public bool hasDefaulted;
+    }
+
+    [fsObject("v1")]
+    public class TravelMapSaveData
+    {
+        public bool filterDungeons;
+        public bool filterTemples;
+        public bool filterHomes;
+        public bool filterTowns;
+        public bool sleepInn = true;
+        public bool speedCautious = true;
+        public bool travelShip = true;
     }
 
     #endregion

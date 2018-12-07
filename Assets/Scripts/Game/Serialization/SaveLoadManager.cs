@@ -724,6 +724,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.bankDeeds = GetBankDeedData();
             saveData.escortingFaces = DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.GetSaveData();
             saveData.sceneCache = stateManager.GetSceneCache();
+            saveData.travelMapData = DaggerfallUI.Instance.DfTravelMapWindow.GetTravelMapSaveData();
 
             return saveData;
         }
@@ -1149,6 +1150,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore player position to world
             playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true);
+
+            //Restore Travel Map settings
+            DaggerfallUI.Instance.DfTravelMapWindow.SetTravelMapFromSaveData(saveData.travelMapData);
 
             // Smash to black while respawning
             DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
