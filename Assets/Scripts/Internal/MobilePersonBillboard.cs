@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop
         Vector3 cameraPosition;
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
+        MeshRenderer meshRenderer = null;
         float facingAngle;
         int lastOrientation;
         AnimStates currentAnimState;
@@ -50,6 +51,7 @@ namespace DaggerfallWorkshop
         MobileAnimation[] stateAnims;
         MobileAnimation[] moveAnims;
         MobileAnimation[] idleAnims;
+        EnemyImportedTextures importedTextures;
         int currentFrame = 0;
 
         float animSpeed;
@@ -312,15 +314,17 @@ namespace DaggerfallWorkshop
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 
-            // Get atlas size
-            int size = DaggerfallUnity.Settings.AssetInjection ? 4096 : 1024;
+            // Seek textures from mods
+            TextureReplacement.SetEnemyImportedTextures(textureArchive, GetComponent<MeshFilter>(), ref importedTextures);
 
-            // Load material atlas
-            Material material = DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
+            // Create material
+            Material material = importedTextures.HasImportedTextures ?
+                MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout) :
+                DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
                 textureArchive,
                 0,
                 4,
-                size,
+                1024,
                 out atlasRects,
                 out atlasIndices,
                 4,
@@ -403,28 +407,58 @@ namespace DaggerfallWorkshop
 
             // Set mesh scale for this state
             transform.localScale = new Vector3(size.x, size.y, 1);
-            Rect rect = atlasRects[atlasIndices[record].startIndex + currentFrame];
 
             // Check if orientation flip needed
             bool flip = stateAnims[orientation].FlipLeftRight;
 
-            // Daggerfall Atlas: Update UVs on mesh
-            Vector2[] uvs = new Vector2[4];
-            if (flip)
+            // Update Record/Frame texture
+            if (importedTextures.HasImportedTextures)
             {
-                uvs[0] = new Vector2(rect.xMax, rect.yMax);
-                uvs[1] = new Vector2(rect.x, rect.yMax);
-                uvs[2] = new Vector2(rect.xMax, rect.y);
-                uvs[3] = new Vector2(rect.x, rect.y);
+                if (meshRenderer == null)
+                    meshRenderer = GetComponent<MeshRenderer>();
+
+                // Assign imported texture
+                meshRenderer.sharedMaterial.mainTexture = importedTextures.Textures[record][currentFrame];
+
+                // Update UVs on mesh
+                Vector2[] uvs = new Vector2[4];
+                if (flip)
+                {
+                    uvs[0] = new Vector2(1, 1);
+                    uvs[1] = new Vector2(0, 1);
+                    uvs[2] = new Vector2(1, 0);
+                    uvs[3] = new Vector2(0, 0);
+                }
+                else
+                {
+                    uvs[0] = new Vector2(0, 1);
+                    uvs[1] = new Vector2(1, 1);
+                    uvs[2] = new Vector2(0, 0);
+                    uvs[3] = new Vector2(1, 0);
+                }
+                meshFilter.sharedMesh.uv = uvs;
             }
             else
             {
-                uvs[0] = new Vector2(rect.x, rect.yMax);
-                uvs[1] = new Vector2(rect.xMax, rect.yMax);
-                uvs[2] = new Vector2(rect.x, rect.y);
-                uvs[3] = new Vector2(rect.xMax, rect.y);
+                // Daggerfall Atlas: Update UVs on mesh
+                Rect rect = atlasRects[atlasIndices[record].startIndex + currentFrame];
+                Vector2[] uvs = new Vector2[4];
+                if (flip)
+                {
+                    uvs[0] = new Vector2(rect.xMax, rect.yMax);
+                    uvs[1] = new Vector2(rect.x, rect.yMax);
+                    uvs[2] = new Vector2(rect.xMax, rect.y);
+                    uvs[3] = new Vector2(rect.x, rect.y);
+                }
+                else
+                {
+                    uvs[0] = new Vector2(rect.x, rect.yMax);
+                    uvs[1] = new Vector2(rect.xMax, rect.yMax);
+                    uvs[2] = new Vector2(rect.x, rect.y);
+                    uvs[3] = new Vector2(rect.xMax, rect.y);
+                }
+                meshFilter.sharedMesh.uv = uvs;
             }
-            meshFilter.sharedMesh.uv = uvs;
 
             // Assign new orientation
             lastOrientation = orientation;
