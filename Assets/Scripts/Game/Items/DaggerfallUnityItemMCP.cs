@@ -14,6 +14,7 @@ using UnityEngine;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -148,8 +149,9 @@ namespace DaggerfallWorkshop.Game.Items
             public override string BookAuthor()
             {   // %ba
                 BookFile bookFile = new BookFile();
-                bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, BookFile.messageToBookFilename(parent.message));
-                // Should the bookfile get closed?
+                string name = BookFile.messageToBookFilename(parent.message);
+                if (!BookReplacement.TryImportBook(name, bookFile))
+                    bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
                 return bookFile.Author;
             }
 
