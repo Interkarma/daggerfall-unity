@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public List<Texture2D> Emission;            // EmissionMaps for all frames.
     }
 
-    public struct EnemyImportedTextures
+    public struct MobileBillboardImportedTextures
     {
         public bool HasImportedTextures;            // Contains imported textures ?  
         public List<List<Texture2D>> Textures;      // Textures for all records and frames.
@@ -397,9 +397,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import textures for all records and frames of this enemy.
+        /// Import textures for all records and frames of a mobile billboard.
         /// </summary>
-        public static void SetEnemyImportedTextures(int archive, MeshFilter meshFilter, ref EnemyImportedTextures importedTextures)
+        public static void SetMobileBillboardImportedTextures(int archive, MeshFilter meshFilter, ref MobileBillboardImportedTextures importedTextures)
         {
             if (!DaggerfallUnity.Settings.AssetInjection)
                 return;

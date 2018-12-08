@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop
         MobileAnimation[] stateAnims;
         MobileAnimation[] moveAnims;
         MobileAnimation[] idleAnims;
-        EnemyImportedTextures importedTextures;
+        MobileBillboardImportedTextures importedTextures;
         int currentFrame = 0;
 
         float animSpeed;
@@ -315,7 +315,7 @@ namespace DaggerfallWorkshop
             meshFilter.sharedMesh = mesh;
 
             // Seek textures from mods
-            TextureReplacement.SetEnemyImportedTextures(textureArchive, GetComponent<MeshFilter>(), ref importedTextures);
+            TextureReplacement.SetMobileBillboardImportedTextures(textureArchive, GetComponent<MeshFilter>(), ref importedTextures);
 
             // Create material
             Material material = importedTextures.HasImportedTextures ?
