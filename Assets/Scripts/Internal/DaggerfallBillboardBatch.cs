@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop
         [Range(0, 30)]
         public float FramesPerSecond = 0;
         public bool RandomStartFrame = true;
-        public ShadowCastingMode ShadowCasting = ShadowCastingMode.On;
+        public ShadowCastingMode ShadowCasting = ShadowCastingMode.TwoSided;
         [Range(1, 127)]
         public int RandomWidth = 16;
         [Range(1, 127)]
