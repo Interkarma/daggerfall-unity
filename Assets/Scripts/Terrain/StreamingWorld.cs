@@ -977,8 +977,8 @@ namespace DaggerfallWorkshop
         // Destroy any loose objects outside of range
         private void CollectLooseObjects(bool collectAll = false)
         {
-            int i = 0;
-            while (i < looseObjectsList.Count)
+            // Walk list backward to RemoveAt doesn't shift unprocessed items
+            for (int i = looseObjectsList.Count; i-- > 0; )
             {
                 if (!IsInRange(looseObjectsList[i].mapPixelX, looseObjectsList[i].mapPixelY) || collectAll)
                 {
@@ -989,8 +989,6 @@ namespace DaggerfallWorkshop
                     }
                     looseObjectsList.RemoveAt(i);
                 }
-                else
-                    i++;
             }
         }
 
