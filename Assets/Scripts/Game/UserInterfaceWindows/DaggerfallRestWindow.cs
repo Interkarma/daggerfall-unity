@@ -17,8 +17,6 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Banking;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -76,6 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool enemyBrokeRest = false;
         int remainingHoursRented = -1;
         Vector3 allocatedBed;
+        bool ignoreAllocatedBed = false;
         bool abortRestForEnemySpawn = false;
 
         PlayerEntity playerEntity;
@@ -99,9 +98,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallRestWindow(IUserInterfaceManager uiManager)
+        public DaggerfallRestWindow(IUserInterfaceManager uiManager, bool ignoreAllocatedBed = false)
             : base(uiManager)
         {
+            this.ignoreAllocatedBed = ignoreAllocatedBed;
         }
 
         #endregion
@@ -214,6 +214,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             base.OnPop();
+            ignoreAllocatedBed = false;
 
             Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
@@ -497,7 +498,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void MoveToBed()
         {
-            if (allocatedBed != Vector3.zero)
+            if (allocatedBed != Vector3.zero && !ignoreAllocatedBed)
             {
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
                 playerMotor.transform.position = allocatedBed;
