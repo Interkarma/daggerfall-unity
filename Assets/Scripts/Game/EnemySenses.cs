@@ -479,6 +479,9 @@ namespace DaggerfallWorkshop.Game
 
         public bool StealthCheck()
         {
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle && !motor.IsHostile)
+                return false;
+
             if (!wouldBeSpawnedInClassic)
                 return false;
 
