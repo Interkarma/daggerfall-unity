@@ -1050,7 +1050,8 @@ namespace DaggerfallWorkshop.Game
         {
             // Try to open doors blocking way
             if (mobile.Summary.Enemy.CanOpenDoors && senses.LastKnownDoor != null
-                && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen)
+                && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen
+                && !senses.LastKnownDoor.IsLocked)
             {
                 senses.LastKnownDoor.ToggleDoor();
             }
