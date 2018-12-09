@@ -199,10 +199,11 @@ namespace DaggerfallWorkshop.Game
             }
             mobile.FreezeAnims = false;
 
-            // Apply gravity to non-moving AI if active (has a combat target) or nearby
-            if ((entityBehaviour.Target != null || senses.WouldBeSpawnedInClassic) && !flies && !swims)
+            // Apply gravity
+            if (!flies && !swims && !controller.isGrounded)
             {
                 controller.SimpleMove(Vector3.zero);
+                return;
             }
 
             // If hit, get knocked back
