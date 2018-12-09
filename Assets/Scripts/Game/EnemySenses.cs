@@ -734,7 +734,7 @@ namespace DaggerfallWorkshop.Game
 
                         // Check if hit was an action door
                         DaggerfallActionDoor door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-                        if (door != null && !door.IsLocked && !door.IsMagicallyHeld)
+                        if (door != null)
                         {
                             actionDoor = door;
                             distanceToActionDoor = Vector3.Distance(transform.position, actionDoor.transform.position);

@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game
         float checkingClockwiseTimer;
         bool didClockwiseCheck;
         float lastTimeWasStuck;
+        bool bashing;
 
         EnemySenses senses;
         Vector3 targetPos;
@@ -92,6 +93,11 @@ namespace DaggerfallWorkshop.Game
         {
             get { return knockBackDirection; }
             set { knockBackDirection = value; }
+        }
+
+        public bool Bashing
+        {
+            get { return bashing; }
         }
 
         void Start()
@@ -149,6 +155,8 @@ namespace DaggerfallWorkshop.Game
 
             if (attacker == GameManager.Instance.PlayerEntityBehaviour)
                 isHostile = true;
+
+            bashing = false;
         }
 
         /// <summary>
@@ -297,8 +305,26 @@ namespace DaggerfallWorkshop.Game
             if (entityBehaviour.Target == null || giveUpTimer == 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
             {
                 SetChangeStateTimer();
+                bashing = false;
 
                 return;
+            }
+
+            if (bashing)
+            {
+                if (senses.TargetInSight || senses.LastKnownDoor == null || !senses.LastKnownDoor.IsLocked)
+                    bashing = false;
+                else
+                {
+                    int speed = entity.Stats.LiveSpeed;
+                    if (classicUpdate && DFRandom.rand() % speed >= (speed >> 3) + 6 && attack.MeleeTimer == 0)
+                    {
+                        mobile.ChangeEnemyState(MobileStates.PrimaryAttack);
+                        attack.ResetMeleeTimer();
+                    }
+
+                    return;
+                }
             }
 
             bool targetPosIsEnemyPos = false;
@@ -1027,6 +1053,11 @@ namespace DaggerfallWorkshop.Game
             {
                 senses.LastKnownDoor.ToggleDoor();
             }
+
+            // If door didn't open, and we are trying to get to the target, bash
+            if (DaggerfallUnity.Settings.EnhancedCombatAI && moveInForAttack && senses.LastKnownDoor != null
+                && senses.DistanceToDoor < attack.MeleeDistance && senses.LastKnownDoor.IsLocked)
+                bashing = true;
         }
 
         #endregion
