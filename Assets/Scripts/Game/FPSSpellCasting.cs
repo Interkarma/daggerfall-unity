@@ -31,6 +31,16 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class FPSSpellCasting : MonoBehaviour
     {
+        #region Types
+
+        private struct AnimationRecord
+        {
+            public Texture2D Texture;
+            public DFSize Size;
+        }
+
+        #endregion
+
         #region Fields
 
         const int nativeScreenWidth = 300;
@@ -41,8 +51,8 @@ namespace DaggerfallWorkshop.Game
 
         int[] frameIndices = new int[] { 0, 1, 2, 3, 4, 5, 0 };     // Animation starts and ends with frame 0
         ElementTypes currentAnimType = ElementTypes.None;
-        Dictionary<ElementTypes, Texture2D[]> castAnims = new Dictionary<ElementTypes, Texture2D[]>();
-        Texture2D[] currentAnims;
+        Dictionary<ElementTypes, AnimationRecord[]> castAnims = new Dictionary<ElementTypes, AnimationRecord[]>();
+        AnimationRecord[] currentAnims;
         int currentFrame = -1;
 
         Rect leftHandPosition;
@@ -115,8 +125,8 @@ namespace DaggerfallWorkshop.Game
                 int frameIndex = frameIndices[currentFrame];
 
                 // Draw spell cast texture behind other HUD elements
-                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex], leftHandAnimRect);
-                GUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex], rightHandAnimRect);
+                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex].Texture, leftHandAnimRect);
+                GUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex].Texture, rightHandAnimRect);
             }
         }
 
@@ -169,38 +179,41 @@ namespace DaggerfallWorkshop.Game
             cifFile.Palette.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, cifFile.PaletteName));
 
             // Load textures - spells have a single frame per record unlike weapons
-            Texture2D[] frames = new Texture2D[cifFile.RecordCount];
+            AnimationRecord[] animationRecords = new AnimationRecord[cifFile.RecordCount];
             for (int record = 0; record < cifFile.RecordCount; record++)
             {
-                Texture2D texture = null;
+                Texture2D texture;
+                if (!TextureReplacement.TryImportCifRci(filename, record, 0, out texture))
+                {
+                    // Get Color32 array
+                    DFSize sz;
+                    Color32[] colors = cifFile.GetColor32(record, 0, 0, border, out sz);
 
-                // Get Color32 array
-                DFSize sz;
-                Color32[] colors = cifFile.GetColor32(record, 0, 0, border, out sz);
+                    // Dilate edges
+                    if (border > 0 && dilate)
+                        ImageProcessing.DilateColors(ref colors, sz);
 
-                // Dilate edges
-                if (border > 0 && dilate)
-                    ImageProcessing.DilateColors(ref colors, sz);
-
-                // Create Texture2D
-                texture = new Texture2D(sz.Width, sz.Height, TextureFormat.ARGB32, false);
-                texture.SetPixels32(colors);
-                texture.Apply(true);
+                    // Create Texture2D
+                    texture = new Texture2D(sz.Width, sz.Height, TextureFormat.ARGB32, false);
+                    texture.SetPixels32(colors);
+                    texture.Apply(true);
+                }   
 
                 // Set filter mode and store in frames array
                 if (texture)
                 {
                     texture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                    frames[record] = texture;
+                    animationRecords[record].Texture = texture;
+                    animationRecords[record].Size = cifFile.GetSize(record);
                 }
             }
 
             // Add frames array to dictionary
-            castAnims.Add(elementType, frames);
+            castAnims.Add(elementType, animationRecords);
 
             // Use as current anims
             currentAnimType = elementType;
-            currentAnims = frames;
+            currentAnims = animationRecords;
         }
 
         private bool UpdateSpellCast()
@@ -211,8 +224,8 @@ namespace DaggerfallWorkshop.Game
 
             // Get frame dimensions
             int frameIndex = frameIndices[currentFrame];
-            int width = currentAnims[frameIndex].width;
-            int height = currentAnims[frameIndex].height;
+            int width = currentAnims[frameIndex].Size.Width;
+            int height = currentAnims[frameIndex].Size.Height;
 
             // Get hand scale
             handScaleX = (float)Screen.width / (float)nativeScreenWidth;
