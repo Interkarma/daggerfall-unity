@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop
         Vector3 cameraPosition;
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
+        MeshRenderer meshRenderer = null;
         float facingAngle;
         int lastOrientation;
         AnimStates currentAnimState;
@@ -50,10 +51,13 @@ namespace DaggerfallWorkshop
         MobileAnimation[] stateAnims;
         MobileAnimation[] moveAnims;
         MobileAnimation[] idleAnims;
+        MobileBillboardImportedTextures importedTextures;
         int currentFrame = 0;
 
         float animSpeed;
         float animTimer = 0;
+
+        bool isUsingGuardTexture = false;
 
         #endregion
 
@@ -68,6 +72,8 @@ namespace DaggerfallWorkshop
         int[] maleBretonTextures = new int[] { 385, 386, 391, 394 };
         int[] femaleBretonTextures = new int[] { 453, 454, 455, 456 };
 
+        int[] guardTextures = { 399 };
+
         #endregion
 
         #region Animations
@@ -78,6 +84,11 @@ namespace DaggerfallWorkshop
         static MobileAnimation[] IdleAnims = new MobileAnimation[]
         {
             new MobileAnimation() {Record = 5, FramePerSecond = IdleAnimSpeed, FlipLeftRight = false},          // Idle
+        };
+
+        static MobileAnimation[] IdleAnimsGuard = new MobileAnimation[]
+        {
+            new MobileAnimation() {Record = 15, FramePerSecond = IdleAnimSpeed, FlipLeftRight = false},          // Guard idle
         };
 
         static MobileAnimation[] MoveAnims = new MobileAnimation[]
@@ -111,6 +122,11 @@ namespace DaggerfallWorkshop
         {
             get { return (currentAnimState == AnimStates.Idle); }
             set { SetIdle(value); }
+        }
+
+        public bool IsUsingGuardTexture
+        {
+            get { return isUsingGuardTexture; }
         }
 
         #endregion
@@ -160,7 +176,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public void SetPerson(Races race, Genders gender, int personVariant)
+        public void SetPerson(Races race, Genders gender, int personVariant, bool isGuard)
         {
             // Must specify a race
             if (race == Races.None)
@@ -168,18 +184,28 @@ namespace DaggerfallWorkshop
 
             // Get texture range for this race and gender
             int[] textures = null;
-            switch (race)
+
+            isUsingGuardTexture = isGuard;
+
+            if (isGuard)
             {
-                case Races.Redguard:
-                    textures = (gender == Genders.Male) ? maleRedguardTextures : femaleRedguardTextures;
-                    break;
-                case Races.Nord:
-                    textures = (gender == Genders.Male) ? maleNordTextures : femaleNordTextures;
-                    break;
-                case Races.Breton:
-                default:
-                    textures = (gender == Genders.Male) ? maleBretonTextures : femaleBretonTextures;
-                    break;
+                textures = guardTextures;
+            }
+            else
+            {
+                switch (race)
+                {
+                    case Races.Redguard:
+                        textures = (gender == Genders.Male) ? maleRedguardTextures : femaleRedguardTextures;
+                        break;
+                    case Races.Nord:
+                        textures = (gender == Genders.Male) ? maleNordTextures : femaleNordTextures;
+                        break;
+                    case Races.Breton:
+                    default:
+                        textures = (gender == Genders.Male) ? maleBretonTextures : femaleBretonTextures;
+                        break;
+                }
             }
 
             // Setup person rendering
@@ -312,15 +338,17 @@ namespace DaggerfallWorkshop
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 
-            // Get atlas size
-            int size = DaggerfallUnity.Settings.AssetInjection ? 4096 : 1024;
+            // Seek textures from mods
+            TextureReplacement.SetMobileBillboardImportedTextures(textureArchive, GetComponent<MeshFilter>(), ref importedTextures);
 
-            // Load material atlas
-            Material material = DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
+            // Create material
+            Material material = importedTextures.HasImportedTextures ?
+                MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout) :
+                DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
                 textureArchive,
                 0,
                 4,
-                size,
+                1024,
                 out atlasRects,
                 out atlasIndices,
                 4,
@@ -403,28 +431,58 @@ namespace DaggerfallWorkshop
 
             // Set mesh scale for this state
             transform.localScale = new Vector3(size.x, size.y, 1);
-            Rect rect = atlasRects[atlasIndices[record].startIndex + currentFrame];
 
             // Check if orientation flip needed
             bool flip = stateAnims[orientation].FlipLeftRight;
 
-            // Daggerfall Atlas: Update UVs on mesh
-            Vector2[] uvs = new Vector2[4];
-            if (flip)
+            // Update Record/Frame texture
+            if (importedTextures.HasImportedTextures)
             {
-                uvs[0] = new Vector2(rect.xMax, rect.yMax);
-                uvs[1] = new Vector2(rect.x, rect.yMax);
-                uvs[2] = new Vector2(rect.xMax, rect.y);
-                uvs[3] = new Vector2(rect.x, rect.y);
+                if (meshRenderer == null)
+                    meshRenderer = GetComponent<MeshRenderer>();
+
+                // Assign imported texture
+                meshRenderer.sharedMaterial.mainTexture = importedTextures.Textures[record][currentFrame];
+
+                // Update UVs on mesh
+                Vector2[] uvs = new Vector2[4];
+                if (flip)
+                {
+                    uvs[0] = new Vector2(1, 1);
+                    uvs[1] = new Vector2(0, 1);
+                    uvs[2] = new Vector2(1, 0);
+                    uvs[3] = new Vector2(0, 0);
+                }
+                else
+                {
+                    uvs[0] = new Vector2(0, 1);
+                    uvs[1] = new Vector2(1, 1);
+                    uvs[2] = new Vector2(0, 0);
+                    uvs[3] = new Vector2(1, 0);
+                }
+                meshFilter.sharedMesh.uv = uvs;
             }
             else
             {
-                uvs[0] = new Vector2(rect.x, rect.yMax);
-                uvs[1] = new Vector2(rect.xMax, rect.yMax);
-                uvs[2] = new Vector2(rect.x, rect.y);
-                uvs[3] = new Vector2(rect.xMax, rect.y);
+                // Daggerfall Atlas: Update UVs on mesh
+                Rect rect = atlasRects[atlasIndices[record].startIndex + currentFrame];
+                Vector2[] uvs = new Vector2[4];
+                if (flip)
+                {
+                    uvs[0] = new Vector2(rect.xMax, rect.yMax);
+                    uvs[1] = new Vector2(rect.x, rect.yMax);
+                    uvs[2] = new Vector2(rect.xMax, rect.y);
+                    uvs[3] = new Vector2(rect.x, rect.y);
+                }
+                else
+                {
+                    uvs[0] = new Vector2(rect.x, rect.yMax);
+                    uvs[1] = new Vector2(rect.xMax, rect.yMax);
+                    uvs[2] = new Vector2(rect.x, rect.y);
+                    uvs[3] = new Vector2(rect.xMax, rect.y);
+                }
+                meshFilter.sharedMesh.uv = uvs;
             }
-            meshFilter.sharedMesh.uv = uvs;
 
             // Assign new orientation
             lastOrientation = orientation;
@@ -440,7 +498,10 @@ namespace DaggerfallWorkshop
                     anims = (MobileAnimation[])MoveAnims.Clone();
                     break;
                 case AnimStates.Idle:
-                    anims = (MobileAnimation[])IdleAnims.Clone();
+                    if (isUsingGuardTexture)
+                        anims = (MobileAnimation[])IdleAnimsGuard.Clone();
+                    else
+                        anims = (MobileAnimation[])IdleAnims.Clone();
                     break;
                 default:
                     return null;

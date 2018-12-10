@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -115,6 +115,8 @@ namespace DaggerfallConnect.Save
                 armorValues[i] = reader.ReadSByte();
             }
             parsedData.armorValues = armorValues;
+
+            reader.BaseStream.Position = 0x50;
 
             parsedData.skillsRaisedThisLevel1 = reader.ReadUInt32();
             parsedData.skillsRaisedThisLevel2 = reader.ReadUInt32();

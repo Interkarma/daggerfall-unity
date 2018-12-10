@@ -83,6 +83,11 @@ namespace DaggerfallWorkshop.Utility
             return materials;
         }
 
+        public static string GetGoModelName(uint modelID)
+        {
+            return string.Format("DaggerfallMesh [ID={0}]", modelID);
+        }
+
         /// <summary>
         /// Adds a single DaggerfallMesh game object to scene.
         /// </summary>
@@ -102,11 +107,10 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
             // Create gameobject
-            string name = string.Format("DaggerfallMesh [ID={0}]", modelID);
             GameObject go = (useExistingObject != null) ? useExistingObject : new GameObject();
             if (parent != null)
                 go.transform.parent = parent;
-            go.name = name;
+            go.name = GetGoModelName(modelID);
 
             // Add DaggerfallMesh component
             DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
@@ -194,7 +198,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Update name
-            dfMesh.name = string.Format("DaggerfallMesh [ID={0}]", newModelID);
+            dfMesh.name = GetGoModelName(newModelID);
         }
 
         public static GameObject CreateCombinedMeshGameObject(
@@ -1153,7 +1157,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="maxDistance">Maximum distance from player.</param>
         /// <param name="parent">Parent GameObject. If none specified the most suitable parent will be selected automatically.</param>
         /// <returns>FoeSpawner GameObject.</returns>
-        public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, int minDistance = 4, int maxDistance = 20, Transform parent = null)
+        public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, float minDistance = 4, float maxDistance = 20, Transform parent = null)
         {
             // Create new foe spawner
             GameObject go = new GameObject();

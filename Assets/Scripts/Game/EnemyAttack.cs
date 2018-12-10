@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game
         public float MeleeTimer = 0;                // Must be 0 for a melee attack or touch spell to be done
         public DaggerfallMissile ArrowMissilePrefab;
 
-        //EnemyMotor motor;
+        EnemyMotor motor;
         EnemySenses senses;
         EnemySounds sounds;
         DaggerfallMobileUnit mobile;
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            //motor = GetComponent<EnemyMotor>();
+            motor = GetComponent<EnemyMotor>();
             senses = GetComponent<EnemySenses>();
             sounds = GetComponent<EnemySounds>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
@@ -187,6 +187,11 @@ namespace DaggerfallWorkshop.Game
                         damage = ApplyDamageToPlayer(weapon);
                     else
                         damage = ApplyDamageToNonPlayer(weapon, transform.forward);
+                }
+                // Handle bashing door
+                else if (motor.Bashing && senses.LastKnownDoor != null && senses.DistanceToDoor <= MeleeDistance && !senses.LastKnownDoor.IsOpen)
+                {
+                    senses.LastKnownDoor.AttemptBash(false);
                 }
                 else
                 {

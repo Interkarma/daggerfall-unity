@@ -596,15 +596,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 581803dfddb0b7741868a443507efd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RayDistance: 2.25
-  ActivateDistance: 2.25
-  DefaultActivationDistance: 128
-  DoorActivationDistance: 128
-  TreasureActivationDistance: 128
-  PickpocketDistance: 128
-  CorpseActivationDistance: 150
-  StaticNPCActivationDistance: 256
-  MobileNPCActivationDistance: 256
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

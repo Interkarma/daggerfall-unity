@@ -127,11 +127,13 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallActionDoor LastKnownDoor
         {
             get { return actionDoor; }
+            set { actionDoor = value; }
         }
 
         public float DistanceToDoor
         {
             get { return distanceToActionDoor; }
+            set { distanceToActionDoor = value; }
         }
 
         public bool HasEncounteredPlayer
@@ -181,6 +183,10 @@ namespace DaggerfallWorkshop.Game
             classicSpawnYDistLower = classicSpawnYDistLowerArray[index] * MeshReader.GlobalScale;
             classicDespawnXZDist = classicDespawnXZDistArray[index] * MeshReader.GlobalScale;
             classicDespawnYDist = classicDespawnYDistArray[index] * MeshReader.GlobalScale;
+
+            // 180 degrees is classic's value. 190 degrees is actual human FOV according to online sources.
+            if (DaggerfallUnity.Settings.EnhancedCombatAI)
+                FieldOfView = 190;
         }
 
         void FixedUpdate()
@@ -195,10 +201,10 @@ namespace DaggerfallWorkshop.Game
                 classicUpdate = false;
 
             targetPosPredictTimer += Time.deltaTime;
-            if (targetPosPredictTimer >= 0.25f)
+            if (targetPosPredictTimer >= 0.10f)
             {
                 targetPosPredict = true;
-                targetPosPredictTimer = 0.25f;
+                targetPosPredictTimer = 0.10f;
             }
             else
                 targetPosPredict = false;
@@ -391,7 +397,7 @@ namespace DaggerfallWorkshop.Game
                 if (oldLastKnownTargetPos == ResetPlayerPos)
                     oldLastKnownTargetPos = lastKnownTargetPos;
 
-                if (predictedTargetPos == ResetPlayerPos)
+                if (predictedTargetPos == ResetPlayerPos || !DaggerfallUnity.Settings.EnhancedCombatAI)
                     predictedTargetPos = lastKnownTargetPos;
 
                 // Predict target's next position
@@ -442,9 +448,9 @@ namespace DaggerfallWorkshop.Game
             float secondsToCurrentTargetPos = (assumedCurrentPosition - transform.position).magnitude / interceptSpeed;
 
             if (targetPosPredictTimer == 0)
-                targetPosPredictTimer = 0.25f;
+                targetPosPredictTimer = 0.10f;
 
-            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff * (4 / (targetPosPredictTimer / .25f)) * secondsToCurrentTargetPos);
+            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff * (10 / (targetPosPredictTimer / .10f)) * secondsToCurrentTargetPos);
 
             // Don't predict target will move right past us (prevents AI from turning around
             // when target is approaching)
@@ -473,6 +479,9 @@ namespace DaggerfallWorkshop.Game
 
         public bool StealthCheck()
         {
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle && !motor.IsHostile)
+                return false;
+
             if (!wouldBeSpawnedInClassic)
                 return false;
 
@@ -707,12 +716,12 @@ namespace DaggerfallWorkshop.Game
                     // Set origin of ray to approximate eye position
                     CharacterController controller = entityBehaviour.transform.GetComponent<CharacterController>();
                     Vector3 eyePos = transform.position;
-                    eyePos.y += controller.height / 4;
+                    eyePos.y += controller.height / 3;
 
                     // Set destination to the target's approximate eye position
                     controller = target.transform.GetComponent<CharacterController>();
                     Vector3 targetEyePos = target.transform.position;
-                    targetEyePos.y += controller.height / 4;
+                    targetEyePos.y += controller.height / 3;
 
                     // Check if can see.
                     Vector3 eyeToTarget = targetEyePos - eyePos;
@@ -728,7 +737,7 @@ namespace DaggerfallWorkshop.Game
 
                         // Check if hit was an action door
                         DaggerfallActionDoor door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-                        if (door != null && !door.IsLocked && !door.IsMagicallyHeld)
+                        if (door != null)
                         {
                             actionDoor = door;
                             distanceToActionDoor = Vector3.Distance(transform.position, actionDoor.transform.position);

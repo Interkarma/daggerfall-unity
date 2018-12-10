@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game
             DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
             if (actionDoor)
             {
-                actionDoor.AttemptBash();
+                actionDoor.AttemptBash(true);
                 return false;
             }
 
