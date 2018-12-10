@@ -135,6 +135,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
         readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
         readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
+        readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
 
         const string baseTextureName = "INVE00I0.IMG";
         const string goldTextureName = "INVE01I0.IMG";
@@ -1156,9 +1157,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             bool result = int.TryParse(input, out goldToDrop);
             if (!result || goldToDrop < 1 || goldToDrop > playerGold)
                 return;
-            // Check wagon weight limit
-            if (usingWagon && (remoteItems.GetWeight() + (goldToDrop / DaggerfallBankManager.gold1kg) > ItemHelper.wagonKgLimit))
-                return;
+            if (usingWagon)
+            {
+                // Check wagon weight limit
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.wagonKgLimit - remoteItems.GetWeight());
+                if (goldToDrop > wagonCanHold)
+                {
+                    goldToDrop = wagonCanHold;
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetText(String.Format(wagonFullGold, wagonCanHold));
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                }
+            }
 
             // Create new item for gold pieces and add to other container
             DaggerfallUnityItem goldPieces = ItemBuilder.CreateGoldPieces(goldToDrop);
@@ -1268,11 +1279,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int CanCarryAmount(DaggerfallUnityItem item)
         {
             // Check weight limit
-            int canCarry = item.stackCount;
-            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
-            {
-                canCarry = Math.Min(canCarry, (int)((playerEntity.MaxEncumbrance - GetCarriedWeight()) / item.weightInKg));
-            }
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance - GetCarriedWeight());
             if (canCarry <= 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
@@ -1286,11 +1293,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            int canCarry = item.stackCount;
-            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
-            {
-                canCarry = Math.Min(canCarry, (int)((ItemHelper.wagonKgLimit - remoteItems.GetWeight()) / item.weightInKg));
-            }
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.wagonKgLimit - remoteItems.GetWeight());
             if (canCarry <= 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
@@ -1299,6 +1302,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.Show();
             }
             return canCarry;
+        }
+
+        private int ComputeCanHoldAmount(int unitsAvailable, float unitWeightInKg, float capacityLeftInKg)
+        {
+            int canHold = unitsAvailable;
+            if (unitWeightInKg > 0f)
+                canHold = Math.Min(canHold, (int)(capacityLeftInKg / unitWeightInKg));
+            return canHold;
         }
 
         protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null, 

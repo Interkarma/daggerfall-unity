@@ -532,6 +532,14 @@ namespace DaggerfallWorkshop.Game.Items
             return (TemplateIndex == templateIndex);
         }
 
+        // Horses, carts and arrows are not counted against encumbrance.
+        public float EffectiveUnitWeightInKg()
+        {
+            if (ItemGroup == ItemGroups.Transportation || TemplateIndex == (int)Weapons.Arrow)
+                return 0f;
+            return weightInKg;
+        }
+
         /// <summary>
         /// Determines if item is stackable.
         /// Only ingredients, gold pieces, oil and arrows are stackable,
