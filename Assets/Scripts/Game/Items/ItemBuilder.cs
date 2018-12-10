@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -265,6 +266,12 @@ namespace DaggerfallWorkshop.Game.Items
             // TODO: Change DaggerfallUnityItem.message from int to ushort
             book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
             book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
+            // Update item value for this book.
+            BookFile bookFile = new BookFile();
+            string name = BookFile.messageToBookFilename(book.message);
+            if (!BookReplacement.TryImportBook(name, bookFile))
+                bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
+            book.value = bookFile.Price;
             return book;
         }
 
