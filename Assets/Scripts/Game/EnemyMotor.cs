@@ -142,6 +142,11 @@ namespace DaggerfallWorkshop.Game
         /// <param name="attacker">Attacker to become hostile towards</param>
         public void MakeEnemyHostileToAttacker(DaggerfallEntityBehaviour attacker)
         {
+            if (!senses)
+                senses = GetComponent<EnemySenses>();
+            if (!entityBehaviour)
+                entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+
             if (attacker && senses)
             {
                 // Assign target if don't already have target, or original target isn't seen or adjacent

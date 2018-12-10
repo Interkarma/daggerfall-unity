@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -55,6 +55,8 @@ namespace DaggerfallWorkshop
         float animSpeed;
         float animTimer = 0;
 
+        bool isUsingGuardTexture = false;
+
         #endregion
 
         #region Textures
@@ -68,6 +70,8 @@ namespace DaggerfallWorkshop
         int[] maleBretonTextures = new int[] { 385, 386, 391, 394 };
         int[] femaleBretonTextures = new int[] { 453, 454, 455, 456 };
 
+        int[] guardTextures = { 399 };
+
         #endregion
 
         #region Animations
@@ -78,6 +82,11 @@ namespace DaggerfallWorkshop
         static MobileAnimation[] IdleAnims = new MobileAnimation[]
         {
             new MobileAnimation() {Record = 5, FramePerSecond = IdleAnimSpeed, FlipLeftRight = false},          // Idle
+        };
+
+        static MobileAnimation[] IdleAnimsGuard = new MobileAnimation[]
+        {
+            new MobileAnimation() {Record = 15, FramePerSecond = IdleAnimSpeed, FlipLeftRight = false},          // Guard idle
         };
 
         static MobileAnimation[] MoveAnims = new MobileAnimation[]
@@ -111,6 +120,11 @@ namespace DaggerfallWorkshop
         {
             get { return (currentAnimState == AnimStates.Idle); }
             set { SetIdle(value); }
+        }
+
+        public bool IsUsingGuardTexture
+        {
+            get { return isUsingGuardTexture; }
         }
 
         #endregion
@@ -160,7 +174,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public void SetPerson(Races race, Genders gender, int personVariant)
+        public void SetPerson(Races race, Genders gender, int personVariant, bool isGuard)
         {
             // Must specify a race
             if (race == Races.None)
@@ -168,18 +182,28 @@ namespace DaggerfallWorkshop
 
             // Get texture range for this race and gender
             int[] textures = null;
-            switch (race)
+
+            isUsingGuardTexture = isGuard;
+
+            if (isGuard)
             {
-                case Races.Redguard:
-                    textures = (gender == Genders.Male) ? maleRedguardTextures : femaleRedguardTextures;
-                    break;
-                case Races.Nord:
-                    textures = (gender == Genders.Male) ? maleNordTextures : femaleNordTextures;
-                    break;
-                case Races.Breton:
-                default:
-                    textures = (gender == Genders.Male) ? maleBretonTextures : femaleBretonTextures;
-                    break;
+                textures = guardTextures;
+            }
+            else
+            {
+                switch (race)
+                {
+                    case Races.Redguard:
+                        textures = (gender == Genders.Male) ? maleRedguardTextures : femaleRedguardTextures;
+                        break;
+                    case Races.Nord:
+                        textures = (gender == Genders.Male) ? maleNordTextures : femaleNordTextures;
+                        break;
+                    case Races.Breton:
+                    default:
+                        textures = (gender == Genders.Male) ? maleBretonTextures : femaleBretonTextures;
+                        break;
+                }
             }
 
             // Setup person rendering
@@ -440,7 +464,10 @@ namespace DaggerfallWorkshop
                     anims = (MobileAnimation[])MoveAnims.Clone();
                     break;
                 case AnimStates.Idle:
-                    anims = (MobileAnimation[])IdleAnims.Clone();
+                    if (isUsingGuardTexture)
+                        anims = (MobileAnimation[])IdleAnimsGuard.Clone();
+                    else
+                        anims = (MobileAnimation[])IdleAnims.Clone();
                     break;
                 default:
                     return null;
