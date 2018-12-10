@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -72,6 +73,22 @@ namespace DaggerfallWorkshop.Game
         {
             return (openHours[(int)buildingType] <= DaggerfallUnity.Instance.WorldTime.Now.Hour &&
                     closeHours[(int)buildingType] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
+        }
+
+        // Allow mods to register custom model activation methods.
+        public delegate void ModelActivation(Transform transform);
+        private static Dictionary<string, ModelActivation> customModelActivations = new Dictionary<string, ModelActivation>();
+
+        public static bool RegisterModelActivation(uint modelID, ModelActivation modelActivation)
+        {
+            string goModelName = GameObjectHelper.GetGoModelName(modelID);
+            DaggerfallUnity.LogMessage("RegisterModelActivation: " + goModelName, true);
+            if (!customModelActivations.ContainsKey(goModelName))
+            {
+                customModelActivations.Add(goModelName, modelActivation);
+                return true;
+            }
+            return false;
         }
 
         void Start()
@@ -463,7 +480,6 @@ namespace DaggerfallWorkshop.Game
                     // Check for functional interior furniture: Ladders, Bookshelves.
                     DaggerfallLadder ladder = hit.transform.GetComponent<DaggerfallLadder>();
                     DaggerfallBookshelf bookshelf = hit.transform.GetComponent<DaggerfallBookshelf>();
-
                     if (ladder || bookshelf)
                     {
                         if (hit.distance > DefaultActivationDistance)
@@ -480,9 +496,16 @@ namespace DaggerfallWorkshop.Game
                             bookshelf.ReadBook();
                         }
                     }
+
+                    // Invoke any matched custom model activations registered by mods.
+                    ModelActivation activation;
+                    if (customModelActivations.TryGetValue(hit.transform.gameObject.name, out activation))
+                    {
+                        activation(hit.transform);
+                    }
+
                     // Debug for identifying interior furniture model ids.
                     Debug.Log(hit.transform);
-
                     #endregion
                 }
             }
