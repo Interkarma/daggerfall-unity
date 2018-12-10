@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop.Game.Entity
         private float classicUpdateTimer = 0f;
         public const float ClassicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which varies with framerate.
         private int breathUpdateTally = 0;
+        private int runningTallyCounter = 0;
         private float guardsArriveCountdown = 0;
         DaggerfallLocation guardsArriveCountdownLocation;
 
@@ -279,9 +280,18 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Handle events that are called by classic's update loop
                 if (classicUpdate)
                 {
-                    // Tally running skill
+                    // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
+                    // Here we use a rate of 1/4 that observed for classic.
                     if (playerMotor.IsRunning && !playerMotor.IsRiding)
-                        TallySkill(DFCareer.Skills.Running, 1);
+                    {
+                        if (runningTallyCounter == 3)
+                        {
+                            TallySkill(DFCareer.Skills.Running, 1);
+                            runningTallyCounter = 0;
+                        }
+                        else
+                            runningTallyCounter++;
+                    }
 
                     // Handle breath when underwater and not water breathing
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged && !GameManager.Instance.PlayerEntity.IsWaterBreathing)
