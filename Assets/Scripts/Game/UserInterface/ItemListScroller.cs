@@ -300,6 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, this);
             itemsListPanel.OnMouseScrollUp += ItemsListPanel_OnMouseScrollUp;
             itemsListPanel.OnMouseScrollDown += ItemsListPanel_OnMouseScrollDown;
+            itemsListPanel.OnMouseLeave += ItemsListPanel_OnMouseLeave;
 
             // Setup buttons
             itemButtons = new Button[listDisplayTotal];
@@ -556,6 +557,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (scroller)
                 itemListScrollBar.ScrollIndex++;
+        }
+
+        void ItemsListPanel_OnMouseLeave(BaseScreenComponent sender)
+        {
+            UpdateItemsDisplay(false);
         }
 
         #endregion
