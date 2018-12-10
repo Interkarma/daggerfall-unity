@@ -274,6 +274,15 @@ namespace DaggerfallWorkshop.Game.Serialization
         public MobileTypes trappedSoulType;
         public string className;
         public Poisons poisonType = Poisons.None;
+        public ItemRepairData_v1 repairData;
+    }
+
+    [fsObject("v1")]
+    public class ItemRepairData_v1
+    {
+        public string sceneName;
+        public ulong timeStarted;
+        public int repairTime;
     }
 
     #endregion

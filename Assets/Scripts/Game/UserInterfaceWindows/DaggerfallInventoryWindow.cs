@@ -876,7 +876,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// Creates filtered list of remote items.
         /// For now this just creates a flat list, as that is Daggerfall's behaviour.
         /// </summary>
-        protected void FilterRemoteItems()
+        protected virtual void FilterRemoteItems()
         {
             // Clear current references
             remoteItemsFiltered.Clear();

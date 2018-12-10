@@ -1297,6 +1297,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
+        public static int CalculateItemRepairTime(int condition, int max)
+        {
+            int damage = max - condition;
+            int repairTime = (damage * DaggerfallDateTime.SecondsPerDay / 1000);
+            return Mathf.Max(repairTime, DaggerfallDateTime.SecondsPerDay);
+        }
+
         public static int CalculateItemIdentifyCost(int baseItemValue, Guild guild)
         {
             // Free on Witches Festival

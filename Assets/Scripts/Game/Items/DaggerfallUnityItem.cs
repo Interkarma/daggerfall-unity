@@ -16,6 +16,7 @@ using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -74,6 +75,9 @@ namespace DaggerfallWorkshop.Game.Items
 
         // References current slot if equipped
         EquipSlots equipSlot = EquipSlots.None;
+
+        // Repair data, used when left for repair.
+        ItemRepairData repairData = new ItemRepairData();
 
         #endregion
 
@@ -336,6 +340,12 @@ namespace DaggerfallWorkshop.Game.Items
         public int NativeMaterialValue
         {
             get { return nativeMaterialValue; }
+        }
+
+        /// <summary>Gets the repair data for this item.</summary>
+        public ItemRepairData RepairData
+        {
+            get { return repairData; }
         }
 
         #endregion
@@ -671,6 +681,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.poisonType = poisonType;
             if ((int)poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 data.poisonType = Poisons.None;
+            data.repairData = repairData.GetSaveData();
 
             return data;
         }
@@ -1314,6 +1325,7 @@ namespace DaggerfallWorkshop.Game.Items
             poisonType = data.poisonType;
             if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 poisonType = Poisons.None;
+            repairData.RestoreRepairData(data.repairData);
         }
 
         /// <summary>
