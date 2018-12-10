@@ -87,18 +87,18 @@ namespace DaggerfallWorkshop
         [Serializable]
         public struct MobileUnitSummary
         {
-            public bool IsSetup;                                // Flagged true when mobile settings are populated
-            public Rect[] AtlasRects;                           // Array of rectangles for atlased materials
-            public RecordIndex[] AtlasIndices;                  // Indices into rect array for atlased materials, supports animations
-            public Vector2[] RecordSizes;                       // Size and scale of individual records
-            public int[] RecordFrames;                          // Number of frames of individual records
-            public MobileEnemy Enemy;                           // Mobile enemy settings
-            public MobileStates EnemyState;                     // Animation state
-            public MobileAnimation[] StateAnims;                // Animation frames for this state
-            public EnemyImportedTextures ImportedTextures;      // Textures imported from mods
-            public int AnimStateRecord;                         // Record number of animation state
-            public int[] StateAnimFrames;                       // Sequence of frames to play for this animation. Used for attacks
-            public byte ClassicSpawnDistanceType;               // 0 through 6 value read from spawn marker that determines distance at which enemy spawns/despawns in classic.
+            public bool IsSetup;                                        // Flagged true when mobile settings are populated
+            public Rect[] AtlasRects;                                   // Array of rectangles for atlased materials
+            public RecordIndex[] AtlasIndices;                          // Indices into rect array for atlased materials, supports animations
+            public Vector2[] RecordSizes;                               // Size and scale of individual records
+            public int[] RecordFrames;                                  // Number of frames of individual records
+            public MobileEnemy Enemy;                                   // Mobile enemy settings
+            public MobileStates EnemyState;                             // Animation state
+            public MobileAnimation[] StateAnims;                        // Animation frames for this state
+            public MobileBillboardImportedTextures ImportedTextures;    // Textures imported from mods
+            public int AnimStateRecord;                                 // Record number of animation state
+            public int[] StateAnimFrames;                               // Sequence of frames to play for this animation. Used for attacks
+            public byte ClassicSpawnDistanceType;                       // 0 through 6 value read from spawn marker that determines distance at which enemy spawns/despawns in classic.
         }
 
         void Start()
@@ -638,7 +638,7 @@ namespace DaggerfallWorkshop
             meshFilter.sharedMesh = mesh;
 
             // Seek textures from mods
-            TextureReplacement.SetEnemyImportedTextures(archive, GetComponent<MeshFilter>(), ref summary.ImportedTextures);
+            TextureReplacement.SetMobileBillboardImportedTextures(archive, GetComponent<MeshFilter>(), ref summary.ImportedTextures);
 
             // Create material
             Material material;
