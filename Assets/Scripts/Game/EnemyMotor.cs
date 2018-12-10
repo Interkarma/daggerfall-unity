@@ -28,14 +28,13 @@ namespace DaggerfallWorkshop.Game
     {
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
 
-        public const float AttackSpeedDivisor = 3f; // How much to slow down during attack animations
+        const float AttackSpeedDivisor = 3f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         int giveUpTimer;                            // Timer before enemy gives up
         bool isHostile;                             // Is enemy hostile to player
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
         bool pausePursuit;                          // pause to wait for the player to come closer to ground
-        int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
         bool isLevitating;                          // Allow non-flying enemy to levitate
         float classicUpdateTimer;                   // Timer for matching classic's update loop
         bool classicUpdate;                         // True when reached a classic update
@@ -49,16 +48,17 @@ namespace DaggerfallWorkshop.Game
         bool retreating;                            // Is retreating
         bool fallDetected;                          // Detected a fall in front of us, so don't move there
         bool obstacleDetected;
+        bool foundUpwardSlope;
+        bool foundDoor;
         Vector3 lastPosition;                       // Used to track whether we have moved or not
         Vector3 lastDirection;                      // Used to track whether we have rotated or not
         bool rotating;                              // Used to track whether we have rotated or not
         float avoidObstaclesTimer;
-        bool lookingForDetour;
-        bool checkingClockWise;
-        int checkingClockWiseCounter;
-        float lastYPos;
-        int detourNumber;
+        bool checkingClockwise;
+        float checkingClockwiseTimer;
+        bool didClockwiseCheck;
         float lastTimeWasStuck;
+        bool bashing;
 
         EnemySenses senses;
         Vector3 targetPos;
@@ -95,6 +95,11 @@ namespace DaggerfallWorkshop.Game
             set { knockBackDirection = value; }
         }
 
+        public bool Bashing
+        {
+            get { return bashing; }
+        }
+
         void Start()
         {
             senses = GetComponent<EnemySenses>();
@@ -104,7 +109,6 @@ namespace DaggerfallWorkshop.Game
             flies = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
                     mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
-            enemyLayerMask = LayerMask.GetMask("Enemies");
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityEffectManager = GetComponent<EntityEffectManager>();
             entity = entityBehaviour.Entity as EnemyEntity;
@@ -135,8 +139,14 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Immediately become hostile towards attacker and know attacker's location.
         /// </summary>
+        /// <param name="attacker">Attacker to become hostile towards</param>
         public void MakeEnemyHostileToAttacker(DaggerfallEntityBehaviour attacker)
         {
+            if (!senses)
+                senses = GetComponent<EnemySenses>();
+            if (!entityBehaviour)
+                entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+
             if (attacker && senses)
             {
                 // Assign target if don't already have target, or original target isn't seen or adjacent
@@ -150,6 +160,8 @@ namespace DaggerfallWorkshop.Game
 
             if (attacker == GameManager.Instance.PlayerEntityBehaviour)
                 isHostile = true;
+
+            bashing = false;
         }
 
         /// <summary>
@@ -169,45 +181,6 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// Avoid other AI characters by checking for collisions with them along the planned motion vector.
-        /// </summary>
-        /// <param name="plannedMotion">Path to check for collisions. This will be updated if a collision is found.</param>
-        void AvoidEnemies(ref Vector3 plannedMotion)
-        {
-            // Compute the capsule start/end points for the casting operation
-            var capsuleStart = transform.position;
-            var capsuleEnd = transform.position;
-            capsuleStart.y += (controller.height / 2) - controller.radius;
-            capsuleEnd.y -= (controller.height / 2) + controller.radius;
-
-            // We capsule cast because a ray might grace the edge of an enemy and allow it to move across & over
-            // We use cast all to detect a collision at the start of the cast as well
-            // To optimize, cast only in enemy layer and don't cause triggers to fire
-            var hits = Physics.CapsuleCastAll(capsuleStart, capsuleEnd, controller.radius, plannedMotion,
-                controller.radius * 2, enemyLayerMask, QueryTriggerInteraction.Ignore);
-
-            // Note: CapsuleCastAll doesn't know about the "source", so "this" enemy will always count as a collision.
-            if (hits.Length <= 1)
-                return;
-
-            // Simplest approach: Stop moving.
-            plannedMotion *= 0;
-
-            if (DaggerfallUnity.Settings.EnhancedCombatAI)
-            {
-                SetChangeStateTimer();
-                pursuing = false;
-                retreating = false;
-            }
-
-            // Slightly better approach: Route around.
-            // This isn't perfect. In some cases enemies may still stack. It seems to happen when enemies are very close.
-            // Always choose one direction. If this is random, the enemy will wiggle behind the other enemy because it's
-            // computed so frequently. We could choose a direction at a lower rate to still give some randomness.
-            // plannedMotion = Quaternion.Euler(0, 90, 0) * plannedMotion;
-        }
 
         /// <summary>
         /// Make decision about what movement action to take.
@@ -231,10 +204,11 @@ namespace DaggerfallWorkshop.Game
             }
             mobile.FreezeAnims = false;
 
-            // Apply gravity to non-moving AI if active (has a combat target) or nearby
-            if ((entityBehaviour.Target != null || senses.WouldBeSpawnedInClassic) && !flies && !swims)
+            // Apply gravity
+            if (!flies && !swims && !controller.isGrounded)
             {
                 controller.SimpleMove(Vector3.zero);
+                return;
             }
 
             // If hit, get knocked back
@@ -289,8 +263,11 @@ namespace DaggerfallWorkshop.Game
             // Monster speed of movement follows the same formula as for when the player walks
             float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
+            // Get isPlayingOneShot for use below
+            bool isPlayingOneShot = mobile.IsPlayingOneShot();
+
             // Reduced speed if playing a one-shot animation with enhanced AI
-            if (mobile.IsPlayingOneShot() && DaggerfallUnity.Settings.EnhancedCombatAI)
+            if (isPlayingOneShot && DaggerfallUnity.Settings.EnhancedCombatAI)
                 moveSpeed /= AttackSpeedDivisor;
 
             // As long as the target is detected,
@@ -299,11 +276,8 @@ namespace DaggerfallWorkshop.Game
                 giveUpTimer = 200;
 
             // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
-            if (!senses.DetectedTarget
-                && giveUpTimer > 0 && classicUpdate)
-            {
+            if (classicUpdate && !senses.DetectedTarget && giveUpTimer > 0)
                 giveUpTimer--;
-            }
 
             // Change to idle animation if haven't moved or rotated
             if (!mobile.IsPlayingOneShot())
@@ -333,16 +307,37 @@ namespace DaggerfallWorkshop.Game
                 lastPosition = transform.position;
             }
 
-            // Do nothing if no target or after giving up finding the target
-            if (entityBehaviour.Target == null || giveUpTimer == 0)
+            // Do nothing if no target or after giving up finding the target or if target position hasn't been acquired yet
+            if (entityBehaviour.Target == null || giveUpTimer == 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
             {
                 SetChangeStateTimer();
+                bashing = false;
 
                 return;
             }
 
-            // Get predicted target position
-            if (avoidObstaclesTimer == 0 && !lookingForDetour)
+            if (bashing)
+            {
+                if (senses.TargetInSight || senses.LastKnownDoor == null || !senses.LastKnownDoor.IsLocked)
+                    bashing = false;
+                else
+                {
+                    int speed = entity.Stats.LiveSpeed;
+                    if (classicUpdate && DFRandom.rand() % speed >= (speed >> 3) + 6 && attack.MeleeTimer == 0)
+                    {
+                        mobile.ChangeEnemyState(MobileStates.PrimaryAttack);
+                        attack.ResetMeleeTimer();
+                    }
+
+                    return;
+                }
+            }
+
+            bool targetPosIsEnemyPos = false;
+
+            // Get location to move towards. Either the combat target's position or, if trying to avoid an obstacle or fall,
+            // a location to try to detour around the obstacle/fall.
+            if (avoidObstaclesTimer == 0 && (senses.PredictedTargetPos.y > transform.position.y || ClearPathToPosition(senses.PredictedTargetPos)))
             {
                 targetPos = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
@@ -353,23 +348,31 @@ namespace DaggerfallWorkshop.Game
                     // Ground enemies target at their own height
                     // This avoids short enemies from stepping on each other as they approach the target
                     // Otherwise, their target vector aims up towards the target
-                    var playerController = GameManager.Instance.PlayerController;
-                    var deltaHeight = (playerController.height - controller.height) / 2;
+                    var targetController = entityBehaviour.Target.GetComponent<CharacterController>();
+                    var deltaHeight = (targetController.height - controller.height) / 2;
                     targetPos.y -= deltaHeight;
                 }
                 tempMovePos = targetPos;
+                targetPosIsEnemyPos = true;
             }
+            // If detouring, use the detour position
+            else if (avoidObstaclesTimer > 0)
+            {
+                targetPos = tempMovePos;
+            }
+            // Otherwise, go straight
             else
             {
+                tempMovePos = transform.position + transform.forward * 2;
                 targetPos = tempMovePos;
             }
 
             // Get direction & distance.
-            var direction = targetPos - transform.position;
+            var direction = (targetPos - transform.position).normalized;
             float distance = (targetPos - transform.position).magnitude;
 
             // Ranged attacks
-            if (senses.TargetInSight && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if (targetPosIsEnemyPos && senses.TargetInSight && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 bool evaluateBow = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
                 bool evaluateRangedMagic = false;
@@ -378,14 +381,14 @@ namespace DaggerfallWorkshop.Game
 
                 if (evaluateBow || evaluateRangedMagic)
                 {
-                    if (senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
+                    if (classicUpdate && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
                     {
-                        if (!mobile.IsPlayingOneShot())
+                        if (!isPlayingOneShot)
                         {
                             if (evaluateBow)
                             {
                                 // Random chance to shoot bow
-                                if (classicUpdate && DFRandom.rand() < 1000)
+                                if (DFRandom.rand() < 1000)
                                 {
                                     if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
                                         mobile.ChangeEnemyState(MobileStates.RangedAttack1);
@@ -394,21 +397,22 @@ namespace DaggerfallWorkshop.Game
                                 }
                             }
                             // Random chance to shoot spell
-                            else if (classicUpdate && DFRandom.rand() % 40 == 0
-                                && entityEffectManager.SetReadySpell(selectedSpell))
+                            else if (DFRandom.rand() % 40 == 0
+                                 && entityEffectManager.SetReadySpell(selectedSpell))
                             {
                                 mobile.ChangeEnemyState(MobileStates.Spell);
                             }
                         }
                     }
                     else
-                        TurnToTarget(direction.normalized);
+                        TurnToTarget(direction);
 
                     return;
                 }
             }
 
-            if (senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
+            // Touch spells
+            if (targetPosIsEnemyPos && senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
                 senses.TargetRateOfApproach && CanCastTouchSpell() && entityEffectManager.SetReadySpell(selectedSpell))
             {
                 if (mobile.Summary.EnemyState != MobileStates.Spell)
@@ -418,62 +422,90 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Update melee decision
-            if (moveInForAttackTimer <= 0 && avoidObstaclesTimer == 0 && !lookingForDetour)
+            // Update advance/retreat decision
+            if (moveInForAttackTimer <= 0 && avoidObstaclesTimer == 0)
                 EvaluateMoveInForAttack();
+
+            // Update timers
             if (moveInForAttackTimer > 0)
                 moveInForAttackTimer -= Time.deltaTime;
 
-            if (avoidObstaclesTimer > 0)
+            if (avoidObstaclesTimer > 0 && senses.TargetIsWithinYawAngle(5.625f, targetPos))
                 avoidObstaclesTimer -= Time.deltaTime;
             if (avoidObstaclesTimer < 0)
                 avoidObstaclesTimer = 0;
 
+            if (checkingClockwiseTimer > 0)
+                checkingClockwiseTimer -= Time.deltaTime;
+            if (checkingClockwiseTimer < 0)
+            {
+                checkingClockwiseTimer = 0;
+            }
+
             if (changeStateTimer > 0)
                 changeStateTimer -= Time.deltaTime;
 
-            // Looking for detour
-            if (lookingForDetour)
+            // If detouring, attempt to move
+            if (avoidObstaclesTimer > 0)
             {
-                CombatMove(direction, moveSpeed);
+                AttemptMove(direction, moveSpeed);
             }
-            // Approach target until we are close enough to be on-guard, or continue to melee range if attacking
+            // Otherwise, if not still executing a retreat, approach target until close enough to be on-guard.
+            // If decided to move in for attack, continue until within melee range. Classic always moves in for attack.
             else if ((!retreating && distance >= (stopDistance * 2.75))
                     || (distance > stopDistance && moveInForAttack))
             {
-                // If state change timer is done, or we are already pursuing, we can move
+                // If state change timer is done, or we are continuing an already started combatMove, we can move immediately
                 if (changeStateTimer <= 0 || pursuing)
-                    CombatMove(direction, moveSpeed);
-                // Otherwise, just keep an eye on target until timer finishes
+                    AttemptMove(direction, moveSpeed);
+                // Otherwise, look at target until timer finishes
                 else if (!senses.TargetIsWithinYawAngle(22.5f, targetPos))
-                    TurnToTarget(direction.normalized);
+                    TurnToTarget(direction);
             }
-            // Back away if right next to target, if retreating, or if cooling down from attack
-            // Classic AI never backs away
-            else if (DaggerfallUnity.Settings.EnhancedCombatAI && (senses.TargetInSight && (distance < stopDistance * .50 ||
-                (!moveInForAttack && distance < (stopDistance * retreatDistanceMultiplier)))))
+            // Back away from combat target if right next to it, or if decided to retreat and enemy is too close.
+            // Classic AI never backs awwy.
+            else if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetInSight && (distance < stopDistance * .50 ||
+                (!moveInForAttack && distance < (stopDistance * retreatDistanceMultiplier))))
             {
-                // If state change timer is done, or we are already retreating, we can move
+                // If state change timer is done, or we are already executing a retreat, we can move immediately
                 if (changeStateTimer <= 0 || retreating)
-                    CombatMove(direction, moveSpeed / 2, true);
-                // Otherwise, just keep an eye on target until timer finishes
+                    AttemptMove(direction, moveSpeed / 2, true);
+                // Otherwise, look at target until timer finishes
                 else if (!senses.TargetIsWithinYawAngle(22.5f, targetPos))
                     TurnToTarget(direction.normalized);
             }
+            // Not moving, just look at target
             else if (!senses.TargetIsWithinYawAngle(22.5f, targetPos))
                 TurnToTarget(direction.normalized);
-            else if (avoidObstaclesTimer > 0 && distance > 0.1f)
-            {
-                CombatMove(direction, moveSpeed);
-            }
-            else // Next to target
+            else // Not moving, and no need to turn
             {
                 SetChangeStateTimer();
                 pursuing = false;
                 retreating = false;
-
                 avoidObstaclesTimer = 0;
             }
+        }
+
+        /// <summary>
+        /// Returns whether there is a clear path from the current location to the given location. True if clear
+        /// or if combat target is the first obstacle hit.
+        /// </summary>
+        bool ClearPathToPosition(Vector3 location)
+        {
+            float sphereCastDist = (location - transform.position).magnitude;
+            Vector3 sphereCastDir = (location - transform.position).normalized;
+            RaycastHit hit;
+
+            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, sphereCastDist))
+            {
+                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                if (hitTarget == entityBehaviour.Target)
+                    return true;
+
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -513,6 +545,29 @@ namespace DaggerfallWorkshop.Game
             if (EffectsAlreadyOnTarget(selectedSpell))
                 return false;
 
+            // Check that there is a clear path to shoot a spell
+            float spellMovementSpeed = 15; // All range spells are currently 15 speed
+            Vector3 sphereCastDir = senses.PredictNextTargetPos(spellMovementSpeed);
+            if (sphereCastDir == EnemySenses.ResetPlayerPos)
+                return false;
+
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
+
+            RaycastHit hit;
+            if (Physics.SphereCast(transform.position, 0.45f, sphereCastDir, out hit, sphereCastDist))
+            {
+                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+
+                // Clear path to target
+                if (hitTarget == entityBehaviour.Target)
+                    return true;
+
+                // Something in the way
+                return false;
+            }
+
+            // Clear path to predicted target position
             return true;
         }
 
@@ -602,10 +657,11 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Maneuver in combat with target
+        /// Try to move in given direction
         /// </summary>
-        void CombatMove(Vector3 direction, float moveSpeed, bool backAway = false)
+        void AttemptMove(Vector3 direction, float moveSpeed, bool backAway = false)
         {
+            // Set whether pursuing or retreating, for bypassing changeStateTimer delay when continuing these actions
             if (!backAway)
             {
                 pursuing = true;
@@ -620,17 +676,19 @@ namespace DaggerfallWorkshop.Game
             if (!senses.TargetIsWithinYawAngle(5.625f, targetPos))
             {
                 TurnToTarget(direction.normalized);
-                // Classic always turns in place. Enhanced only does so if enemy is not in sight.
+                // Classic always turns in place. Enhanced only does so if enemy is not in sight,
+                // for more natural-looking movement while pursuing.
                 if (!DaggerfallUnity.Settings.EnhancedCombatAI || !senses.TargetInSight)
                     return;
             }
 
-            Vector3 motion = transform.forward * moveSpeed;
+            // Slower movement when backing up
+            Vector3 motion = direction * moveSpeed;
             if (backAway)
                 motion *= -1;
 
             // If using enhanced combat, avoid moving directly below targets
-            if (!backAway && DaggerfallUnity.Settings.EnhancedCombatAI && avoidObstaclesTimer == 0 && !lookingForDetour)
+            if (!backAway && DaggerfallUnity.Settings.EnhancedCombatAI && avoidObstaclesTimer == 0)
             {
                 bool withinPitch = senses.TargetIsWithinPitchAngle(45.0f);
                 if (!pausePursuit && !withinPitch)
@@ -667,259 +725,210 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Avoid other enemies, and stop enemies from moving on top of shorter enemies
-            //AvoidEnemies(ref motion);
-
-            // Return if AvoidEnemies set change timer
-            //if (changeStateTimer > 0 && !pursuing && !retreating)
-                //return;
-
             SetChangeStateTimer();
-            if (swims)
-                WaterMove(motion);
-            else if (flies || isLevitating)
-                controller.Move(motion * Time.deltaTime);
+
+            // Check if there is something to collide with directly in movement direction, such as upward sloping ground.
+            Vector3 motion2d = motion.normalized;
+            motion2d.y = 0;
+
+            RayCheckForObstacle(motion2d);
+            RayCheckForFall(motion2d);
+
+            if (fallDetected || obstacleDetected)
+            {
+                FindDetour(motion2d);
+            }
             else
-                MoveIfNoFallDetected(motion);
-        }
-
-        /// <summary>
-        /// Check for a large fall, and proceed with move if none found.
-        /// </summary>
-        void MoveIfNoFallDetected(Vector3 motion)
-        {
-            // Check at classic rate to limit ray casts
-            if (classicUpdate)
+            // Clear to move
             {
-                obstacleDetected = false;
-                fallDetected = false;
-                float currentYPos = transform.position.y;
-
-                // First check if there is something to collide with directly in movement direction, such as upward sloping ground.
-                // If there is, we assume we won't fall.
-                RaycastHit hit;
-                Vector3 motion2d = motion.normalized;
-                motion2d.y = 0;
-                int checkDistance = 2;
-                Vector3 rayOrigin = transform.position;
-                rayOrigin.y -= controller.height / 4;
-
-                if (targetPos.y > transform.position.y + controller.height / 2)
-                {
-                    rayOrigin.y += controller.height / 2;
-                }
-
-                Ray ray = new Ray(rayOrigin, motion2d);
-
-                if (Physics.Raycast(ray, out hit, checkDistance))
-                {
-                    fallDetected = false;
-                    obstacleDetected = true;
-
-                    if (lastYPos < currentYPos)
-                        obstacleDetected = false;
-
-                    DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                    if (entityBehaviour2 == entityBehaviour.Target)
-                        obstacleDetected = false;
-
-                    DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
-                    if (door)
-                        obstacleDetected = false;
-
-                    DaggerfallLoot loot = hit.transform.GetComponent<DaggerfallLoot>();
-                    if (loot)
-                        obstacleDetected = false;
-                }
-                // Nothing to collide with. Check for a long fall.
+                if (swims)
+                    WaterMove(motion);
+                else if (flies || isLevitating)
+                    controller.Move(motion * Time.deltaTime);
                 else
-                {
-                    motion2d *= checkDistance;
-                    ray = new Ray(rayOrigin + motion2d, Vector3.down);
-                    fallDetected = !Physics.Raycast(ray, out hit, 5);
-                }
-
-                if ((fallDetected || obstacleDetected) && DaggerfallUnity.Settings.EnhancedCombatAI)
-                    FindDetour(motion);
-
-                lastYPos = currentYPos;
+                    controller.SimpleMove(motion);
             }
 
-            if (!fallDetected && !obstacleDetected)
+            // Reset clockwise check if we've been clear of obstacles/falls for a while
+            if (Time.time - lastTimeWasStuck > 2f)
             {
-                controller.SimpleMove(motion);
-
-                if (lookingForDetour)
-                {
-                    lookingForDetour = false;
-                    avoidObstaclesTimer = .5f;
-                    lastTimeWasStuck = Time.time;
-                    detourNumber--;
-                }
+                checkingClockwiseTimer = 0;
+                didClockwiseCheck = false;
             }
-            if (Time.time - lastTimeWasStuck > 3f)
-                detourNumber = 0;
         }
 
         void FindDetour(Vector3 motion)
         {
             Vector3 motion2d = motion;
             motion2d.y = 0;
+            float angle;
+            Vector3 testMove;
 
-            // First get whether we check clockwise or counterclockwise
-            if (checkingClockWiseCounter == 0)
+            if (checkingClockwiseTimer == 0)
             {
-                Vector3 toTarget = targetPos - transform.position;
-                Vector3 directionToTarget = toTarget.normalized;
-                float angleToTarget = Vector3.SignedAngle(directionToTarget, motion, Vector3.up);
-
-                if (angleToTarget > 0)
+                if (!didClockwiseCheck)
                 {
-                    checkingClockWise = false;
-                }
-                else
-                    checkingClockWise = true;
+                    // Check 45 degrees in both ways first
 
+                    // Pick first direction to check randomly
+                    if (Random.Range(0, 1) == 0)
+                        angle = 45;
+                    else
+                        angle = -45;
 
-                if (checkingClockWise)
-                    angleToTarget = 30;
-                else
-                    angleToTarget = -30;
-                RaycastHit hit;
-                Vector3 testAngle = Quaternion.AngleAxis(angleToTarget, Vector3.up) * motion;
-                motion2d.y = 0;
-                int checkDistance = 2;
-                Vector3 rayOrigin = transform.position;
-                rayOrigin.y -= controller.height / 4;
+                    testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
+                    RayCheckForObstacle(testMove);
+                    RayCheckForFall(testMove);
 
-                if (targetPos.y > transform.position.y + controller.height / 2)
-                {
-                    rayOrigin.y += controller.height / 2;
-                }
-
-                Ray ray = new Ray(rayOrigin, testAngle);
-
-                if (Physics.Raycast(ray, out hit, checkDistance))
-                {
-                    bool testObstacleDetected = true;
-                    if (lastYPos < transform.position.y)
-                        testObstacleDetected = false;
-
-                    DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                    if (entityBehaviour2 == entityBehaviour.Target)
-                        testObstacleDetected = false;
-
-                    DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
-                    if (door)
-                        testObstacleDetected = false;
-
-                    DaggerfallLoot loot = hit.transform.GetComponent<DaggerfallLoot>();
-                    if (loot)
-                        testObstacleDetected = false;
-
-                    if (testObstacleDetected)
-                        // Tested 30 degrees in the clockwise/counter-clockwise direction we chose,
+                    if (!obstacleDetected && !fallDetected)
+                    {
+                        // First direction was clear, use that way
+                        if (angle > 0)
+                        {
+                            checkingClockwise = true;
+                        }
+                        else
+                            checkingClockwise = false;
+                    }
+                    else
+                    {
+                        // Tested 45 degrees in the clockwise/counter-clockwise direction we chose,
                         // but hit something, so try other one.
-                        checkingClockWise = !checkingClockWise;
+                        angle *= -1;
+                        testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
+                        RayCheckForObstacle(testMove);
+                        RayCheckForFall(testMove);
+
+                        if (!obstacleDetected && !fallDetected)
+                            checkingClockwise = !checkingClockwise;
+                        else
+                        {
+                            // Both 45 degrees checks failed, pick clockwise/counterclockwise based on angle to target
+                            Vector3 toTarget = targetPos - transform.position;
+                            Vector3 directionToTarget = toTarget.normalized;
+                            angle = Vector3.SignedAngle(directionToTarget, motion, Vector3.up);
+
+                            if (angle > 0)
+                            {
+                                checkingClockwise = true;
+                            }
+                            else
+                                checkingClockwise = false;
+                        }
+                    }
+                    checkingClockwiseTimer = 5;
+                    didClockwiseCheck = true;
                 }
-                checkingClockWiseCounter = 5;
+                else
+                {
+                    didClockwiseCheck = false;
+                    checkingClockwise = !checkingClockwise;
+                    checkingClockwiseTimer = 5;
+                }
             }
+
+            if (checkingClockwise)
+                angle = 10;
             else
-                checkingClockWiseCounter--;
+                angle = -10;
 
-            float angle = 15;
-            if (!checkingClockWise)
-                angle *= -1;
+            int count = 0;
+            testMove = Vector3.zero;
 
-            Vector3 detour;
-            if (detourNumber == 0)
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            else if (detourNumber == 1)
+            while (obstacleDetected || fallDetected)
             {
-                angle *= 2;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 2)
-            {
-                angle *= 3;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 3)
-            {
-                angle *= 4;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 4)
-            {
-                angle *= 5;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if(detourNumber == 5)
-            {
-                angle *= 6;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 6)
-            {
-                angle *= -1;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 7)
-            {
-                angle *= -2;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 8)
-            {
-                angle *= -3;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 9)
-            {
-                angle *= -4;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 10)
-            {
-                angle *= -5;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 11)
-            {
-                angle *= -6;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 12)
-            {
-                angle *= 7;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 13)
-            {
-                angle *= -7;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else if (detourNumber == 14)
-            {
-                angle *= 8;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
-            }
-            else
-            {
-                angle *= -8;
-                detour = Quaternion.AngleAxis(angle, Vector3.up) * motion;
+                testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
+
+                RayCheckForObstacle(testMove);
+                RayCheckForFall(testMove);
+
+                if (checkingClockwise)
+                    angle += 10;
+                else
+                    angle -= 10;
+
+                // Break out of loop if can't find anywhere to go
+                count++;
+                if (count > 36)
+                {
+                    break;
+                }
             }
 
-            detourNumber++;
-            if (detourNumber == 16)
-                detourNumber = 0;
-
-            tempMovePos = transform.position + detour.normalized * 3;
+            tempMovePos = transform.position + testMove.normalized * 2;
             tempMovePos.y = transform.position.y;
 
-            lookingForDetour = true;
-
+            avoidObstaclesTimer = 0.25f;
+            lastTimeWasStuck = Time.time;
             moveInForAttack = true;
+        }
+
+        void RayCheckForObstacle(Vector3 direction)
+        {
+            obstacleDetected = false;
+            RaycastHit hit;
+            int checkDistance = 2;
+            Vector3 rayOrigin = transform.position;
+            rayOrigin.y -= controller.height / 3;
+            foundUpwardSlope = false;
+            foundDoor = false;
+
+            Ray ray = new Ray(rayOrigin, direction);
+
+            if (Physics.Raycast(ray, out hit, checkDistance))
+            {
+                obstacleDetected = true;
+                float firstDistance = hit.distance;
+
+                rayOrigin.y += 0.5f;
+                ray = new Ray(rayOrigin, direction);
+                RaycastHit hit2;
+                bool secondRayHit = Physics.Raycast(ray, out hit2, checkDistance);
+
+                if (!secondRayHit || firstDistance < hit2.distance)
+                {
+                    obstacleDetected = false;
+                    foundUpwardSlope = true;
+                }
+
+                DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                if (entityBehaviour2 == entityBehaviour.Target)
+                    obstacleDetected = false;
+
+                DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
+                if (door)
+                {
+                    obstacleDetected = false;
+                    foundDoor = true;
+                    if (senses.TargetIsWithinYawAngle(5.625f, door.transform.position))
+                    {
+                        senses.LastKnownDoor = door;
+                        senses.DistanceToDoor = Vector3.Distance(transform.position, door.transform.position);
+                    }
+                }
+
+                DaggerfallLoot loot = hit.transform.GetComponent<DaggerfallLoot>();
+                if (loot)
+                    obstacleDetected = false;
+            }
+        }
+
+        void RayCheckForFall(Vector3 direction)
+        {
+            if (flies || isLevitating || swims || obstacleDetected || foundUpwardSlope || foundDoor)
+            {
+                fallDetected = false;
+                return;
+            }
+
+            int checkDistance = 2;
+            Vector3 rayOrigin = transform.position;
+
+            direction *= checkDistance;
+            Ray ray = new Ray(rayOrigin + direction, Vector3.down);
+            RaycastHit hit;
+
+            fallDetected = !Physics.Raycast(ray, out hit, 5);
         }
 
         /// <summary>
@@ -1035,7 +1044,7 @@ namespace DaggerfallWorkshop.Game
             if (classicUpdate)
             {
                 transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, turnSpeed * Mathf.Deg2Rad, 0.0f);
-                    rotating = true;
+                rotating = true;
             }
         }
 
@@ -1046,10 +1055,16 @@ namespace DaggerfallWorkshop.Game
         {
             // Try to open doors blocking way
             if (mobile.Summary.Enemy.CanOpenDoors && senses.LastKnownDoor != null
-                && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen)
+                && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen
+                && !senses.LastKnownDoor.IsLocked)
             {
                 senses.LastKnownDoor.ToggleDoor();
             }
+
+            // If door didn't open, and we are trying to get to the target, bash
+            if (DaggerfallUnity.Settings.EnhancedCombatAI && moveInForAttack && senses.LastKnownDoor != null
+                && senses.DistanceToDoor < attack.MeleeDistance && senses.LastKnownDoor.IsLocked)
+                bashing = true;
         }
 
         #endregion

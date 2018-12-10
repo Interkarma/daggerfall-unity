@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game
         private int personOutfitVariant;                        // which basic outfit does the person wear
         private int personFaceRecordId;                         // used for portrait in talk window
         private bool pickpocketByPlayerAttempted = false;       // player can only attempt pickpocket on a mobile NPC once
+        private bool isGuard = false;                           // is a city watch guard
 
         private MobilePersonBillboard billboard;    // billboard for npc
         private MobilePersonMotor motor;            // motor for npc
@@ -125,17 +126,24 @@ namespace DaggerfallWorkshop.Game
         /// <param name="race">Entity race of NPC in current location.</param>
         public void RandomiseNPC(Races race)
         {
-            // randomize gender
-            Genders gender = (Random.Range(0f, 1f) > 0.5f) ? gender = Genders.Female : gender = Genders.Male;
-            this.gender = gender;
-
-            // set race (set current race before calling this function with property Race)
+            // Randomly set guards
+            if (Random.Range(0, 32) == 0)
+            {
+                gender = Genders.Male;
+                personOutfitVariant = 0;
+                isGuard = true;
+            }
+            else
+            {
+                // Randomize gender
+                gender = (Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
+                // Set outfit variant for npc
+                personOutfitVariant = Random.Range(0, numPersonOutfitVariants);
+                isGuard = false;
+            }
+            // Set race (set current race before calling this function with property Race)
             SetRace(race);
-
-            // set outfit variant for npc
-            this.personOutfitVariant = Random.Range(0, numPersonOutfitVariants);
-
-            // set remaining fields and update billboards
+            // Set remaining fields and update billboards
             SetPerson();
         }
 
@@ -215,7 +223,7 @@ namespace DaggerfallWorkshop.Game
 
             // set billboard to correct race, gender and outfit variant
             billboard = GetComponentInChildren<MobilePersonBillboard>();
-            billboard.SetPerson(race, gender, personOutfitVariant);
+            billboard.SetPerson(race, gender, personOutfitVariant, isGuard);
         }
 
         /// <summary>
