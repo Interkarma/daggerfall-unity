@@ -1629,7 +1629,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.Notebook.AddNote(
                 TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
 
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
+            //TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
             DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
             mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
             mapText.ClickAnywhereToClose = true;
