@@ -1279,10 +1279,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance - GetCarriedWeight());
             if (canCarry <= 0)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.cannotCarryAnymore);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                DaggerfallUI.MessageBox(HardStrings.cannotCarryAnymore);
             }
             return canCarry;
         }
@@ -1293,10 +1290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.wagonKgLimit - remoteItems.GetWeight());
             if (canCarry <= 0)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.cannotHoldAnymore);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                DaggerfallUI.MessageBox(HardStrings.cannotHoldAnymore);
             }
             return canCarry;
         }
