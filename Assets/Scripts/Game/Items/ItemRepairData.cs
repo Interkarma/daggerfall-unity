@@ -17,7 +17,7 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Game.Items
 {
     /// <summary>
-    /// Repaired data, used when left somewhere for repair
+    /// Repair data for an item, used when left somewhere for repair.
     /// </summary>
     public class ItemRepairData
     {
@@ -43,7 +43,6 @@ namespace DaggerfallWorkshop.Game.Items
 
         public bool IsRepairFinished()
         {
-            Debug.LogFormat("RepairFinished? doneTime={0}, now={1}, repairTime={2}", GetTimeDone(), DaggerfallUnity.Instance.WorldTime.Now.ToSeconds(), RepairTime);
             return IsBeingRepaired() && GetTimeDone() <= DaggerfallUnity.Instance.WorldTime.Now.ToSeconds();
         }
 
@@ -51,7 +50,6 @@ namespace DaggerfallWorkshop.Game.Items
         {
             if (!IsBeingRepaired())
             {
-                Debug.LogFormat("Repair Leave: repairTime={0}", repairTime);
                 sceneName = GameManager.Instance.PlayerEnterExit.Interior.name;
                 timeStarted = DaggerfallUnity.Instance.WorldTime.Now.ToSeconds();
                 RepairTime = repairTime;
@@ -62,7 +60,6 @@ namespace DaggerfallWorkshop.Game.Items
         {
             if (IsBeingRepaired())
             {
-                Debug.Log("Collecting");
                 sceneName = null;
                 timeStarted = 0;
             }

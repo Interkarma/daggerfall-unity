@@ -238,7 +238,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
         {
-            return (item.RepairData.IsBeingRepaired()) ? repairItemBackgroundColor : Color.clear;
+            if (DaggerfallUnity.Settings.InstantRepairs)
+                return (item.currentCondition == item.maxCondition) ? repairItemBackgroundColor : Color.clear;
+            else
+                return (item.RepairData.IsBeingRepaired()) ? repairItemBackgroundColor : Color.clear;
         }
 
         Texture2D[] BuyItemBackgroundAnimationHandler(DaggerfallUnityItem item)
@@ -248,7 +251,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string RepairItemLabelTextHandler(DaggerfallUnityItem item)
         {
-            //return (item.currentCondition == item.maxCondition) ? HardStrings.repairDone : String.Empty;
             if (item.RepairData.IsBeingRepaired())
             {
                 if (item.RepairData.IsRepairFinished())
@@ -256,7 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     return item.RepairData.DaysUntilRepaired() + " days";
             }
-            return string.Empty;
+            return (item.currentCondition == item.maxCondition) ? HardStrings.repairDone : String.Empty;
         }
 
         void SetupCostAndGold()
@@ -754,26 +756,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     case WindowModes.Repair:
                         PlayerEntity.DeductGoldAmount(tradePrice);
-                        int totalRepairTime = 0, longestRepairTime = 0;
-                        DaggerfallUnityItem itemLongestTime = null;
-                        foreach (DaggerfallUnityItem item in remoteItemsFiltered)
+                        if (DaggerfallUnity.Settings.InstantRepairs)
                         {
-                            int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
-                            if (!item.RepairData.IsBeingRepaired())
-                            {
-                                item.RepairData.LeaveForRepair(repairTime);
-                            }
-                            totalRepairTime += repairTime;
-                            if (repairTime > longestRepairTime)
-                            {
-                                longestRepairTime = repairTime;
-                                itemLongestTime = item;
-                            }
-                            item.RepairData.RepairTime = repairTime;
+                            foreach (DaggerfallUnityItem item in remoteItemsFiltered)
+                                item.currentCondition = item.maxCondition;
                         }
-                        if (itemLongestTime != null)
-                            itemLongestTime.RepairData.RepairTime = longestRepairTime + ((totalRepairTime - longestRepairTime) / 2);
+                        else
+                        {
+                            int totalRepairTime = 0, longestRepairTime = 0;
+                            DaggerfallUnityItem itemLongestTime = null;
+                            foreach (DaggerfallUnityItem item in remoteItemsFiltered)
+                            {
+                                int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
+                                if (!item.RepairData.IsBeingRepaired())
+                                    item.RepairData.LeaveForRepair(repairTime);
 
+                                totalRepairTime += repairTime;
+                                if (repairTime > longestRepairTime)
+                                {
+                                    longestRepairTime = repairTime;
+                                    itemLongestTime = item;
+                                }
+                                item.RepairData.RepairTime = repairTime;
+                            }
+                            if (itemLongestTime != null)
+                                itemLongestTime.RepairData.RepairTime = longestRepairTime + ((totalRepairTime - longestRepairTime) / 2);
+                        }
                         RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         break;
 
