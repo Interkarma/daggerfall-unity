@@ -33,6 +33,7 @@ readMapTG,          The Thieves Guild have revealed the closely guarded where-ab
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
 readMapFail,        You have already recorded all locations in this region!
 howManyItems,       Pick how many items (max {0})?
+wagonFullGold,      Your wagon could only hold {0} gold pieces.
 lightDouse,         You douse the %it.
 lightLight,         You light the %it.
 lightDies,          Your %it flickers and dies.
