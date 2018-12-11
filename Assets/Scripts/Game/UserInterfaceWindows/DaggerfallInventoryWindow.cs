@@ -1164,10 +1164,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (goldToDrop > wagonCanHold)
                 {
                     goldToDrop = wagonCanHold;
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetText(String.Format(wagonFullGold, wagonCanHold));
-                    messageBox.ClickAnywhereToClose = true;
-                    messageBox.Show();
+                    DaggerfallUI.MessageBox(String.Format(wagonFullGold, wagonCanHold));
                 }
             }
 
