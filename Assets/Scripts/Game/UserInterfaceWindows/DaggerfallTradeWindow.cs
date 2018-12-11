@@ -254,11 +254,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.RepairData.IsBeingRepaired())
             {
                 if (item.RepairData.IsRepairFinished())
-                    return HardStrings.repairDone;
+                    return TextManager.Instance.GetText(textDatabase, "repairDone");
                 else
-                    return item.RepairData.DaysUntilRepaired() + " days";
+                    return TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.DaysUntilRepaired().ToString());
             }
-            return (item.currentCondition == item.maxCondition) ? HardStrings.repairDone : String.Empty;
+            return (item.currentCondition == item.maxCondition) ? TextManager.Instance.GetText(textDatabase, "repairDone") : String.Empty;
         }
 
         void SetupCostAndGold()
@@ -629,7 +629,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         if (!item.IsIdentified)
                             TransferItem(item, localItems, remoteItems);
                         else
-                            DaggerfallUI.MessageBox(HardStrings.doesntNeedIdentifying);
+                            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "doesntNeedIdentify"));
                         break;
                 }
             }
@@ -689,14 +689,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 if (UnityEngine.Random.Range(0, 101) > chance)
                 {
-                    DaggerfallUI.AddHUDText(HardStrings.youAreSuccessful, 2);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreSuccessful"), 2);
                     RaiseOnTradeHandler(basketItems.GetNumItems(), 0);
                     PlayerEntity.Items.TransferAll(basketItems);
                     PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {   // Register crime and start spawning guards.
-                    DaggerfallUI.AddHUDText(HardStrings.youAreNotSuccessful, 2);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreNotSuccessful"), 2);
                     RaiseOnTradeHandler(0, 0);
                     PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
                     PlayerEntity.SpawnCityGuards(true);
@@ -711,7 +711,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
                     remoteItems.GetItem(i).IdentifyItem();
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "itemsIdentified"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "itemsIdentified"));
             }
             else if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
                 ShowTradePopup();
@@ -769,8 +769,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             {
                                 int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
                                 if (!item.RepairData.IsBeingRepaired())
+                                {
                                     item.RepairData.LeaveForRepair(repairTime);
-
+                                    string note = string.Format(TextManager.Instance.GetText(textDatabase, "repairNote"), item.LongName, buildingDiscoveryData.displayName);
+                                    GameManager.Instance.PlayerEntity.Notebook.AddNote(note);
+                                }
                                 totalRepairTime += repairTime;
                                 if (repairTime > longestRepairTime)
                                 {

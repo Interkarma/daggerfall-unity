@@ -28,15 +28,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string gameLoaded = "Game loaded.";
         public const string thisHouseHasNothingOfValue = "This house has nothing of value.";
         public const string findLocationPrompt = "Enter name of place : ";
-        public const string equippingWeapon = "Equipping %s";
         public const string rightHandEquipped = "Right hand equipped.";
         public const string leftHandEquipped = "Left hand equipped.";
         public const string usingRightHand = "Using weapon in right hand.";
         public const string usingLeftHand = "Using weapon in left hand.";
         public const string itemHasBroken = "%s has broken.";
         public const string itemHasBrokenPlural = "%s have broken.";
-        public const string cannotCarryAnymore = "You cannot carry anymore stuff.";
-        public const string cannotHoldAnymore = "Your cart cannot hold anymore stuff.";
         public const string cannotCarryGold = "You cannot carry that much gold.";
         public const string cannotFloat = "You are carrying too much to stay afloat.";
         public const string youHaveNoArrows = "You have no arrows.";
@@ -63,7 +60,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string potionRecipeFor = "Recipe for Potion of %po";
         public const string potionOf = "Potion of %po";
-        public const string cannotUseThis = "You cannot use this.";
         public const string letterPrefix = "Letter: ";
         public const string multipleAssignments = "You have multiple assignments...";
 
@@ -126,7 +122,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string youPinchedGoldPiece = "You pinched 1 gold piece."; // Not in classic.
         public const string youPinchedGoldPieces = "You pinched %d gold pieces.";
         public const string youAreNotSuccessful = "You are not successful...";
-        public const string youAreSuccessful = "You are successful.";
 
         public const string daysUntilFreedom = "%d days until freedom.";
 
@@ -169,8 +164,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
         public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";
         public const string youAreNotHungry = "You are not hungry.";
-
-        public const string doesntNeedIdentifying = "This does not need to be identified.";
 
         public const string exhaustedInWater = "Fatigue overcomes you and sends you to a watery grave...."; // Not in classic. Borrowed from Arena.
         public const string youFeelSomewhatBad = "You feel somewhat bad.";
@@ -320,11 +313,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public static readonly string[] healthLeechStopConditions = { "whenever used", "unless used daily", "unless used weekly" };
         public static readonly string[] badReactionFromEnemyGroups = { "humanoids", "animals", "Daedra" };
         public static readonly string[] repWithGroups = { "Commoners", "Merchants", "Scholars", "Nobility", "Underworld", "All" };
-
-        public const string repairDone = "DONE";
-        public const string repairDays = "%d days";
-
-        public const string cannotRemoveThisItem = "You cannot remove this item.";
 
         public const string youReceiveGoldPieces = "You receive %s gold pieces.";     // Custom message for "get item" gold assignment
 

@@ -34,6 +34,18 @@ readMapDB,          The Dark Brotherhood revealed the secret of some treasure-la
 readMapFail,        You have already recorded all locations in this region!
 howManyItems,       Pick how many items (max {0})?
 wagonFullGold,      Your wagon could only hold {0} gold pieces.
+itemsIdentified,    Items identified.
+repairDone,         DONE
+repairDays,         %d days
+repairNote,         Left my {0} for repair at {1}.
+doesntNeedIdentify, This does not need to be identified.
+stealSuccess,       You are successful.
+stealFailure,       You are not successful...
+cannotRemoveItem,   You cannot remove this item.
+cannotCarryAnymore, You cannot carry anymore stuff.
+cannotHoldAnymore,  Your cart cannot hold anymore stuff.
+cannotUseThis,      You cannot use this.
+equippingWeapon,    Equipping %s
 lightDouse,         You douse the %it.
 lightLight,         You light the %it.
 lightDies,          Your %it flickers and dies.
@@ -48,4 +60,3 @@ arSrc,              armor rating
 arRep,              armor
 northern,           (northern)
 southern,           (southern)
-itemsIdentified,    Items identified.
