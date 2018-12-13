@@ -10,6 +10,7 @@ namespace DaggerfallWorkshop.Game
         private CharacterController controller;
         private PlayerSpeedChanger speedChanger;
         private PlayerGroundMotor groundMotor;
+        private RappelMotor rappelMotor;
         private ClimbingMotor climbingMotor;
         private PlayerMoveScanner scanner;
         private Transform camTransform;
@@ -20,7 +21,8 @@ namespace DaggerfallWorkshop.Game
         {
             None,
             ExitImmediately,
-            BeginAfterTimer
+            BeginAfterTimer,
+            BeginImmediately
         }
         private float startTimer = 0;
         private float hangingContinueTimer = 0;
@@ -53,6 +55,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
             groundMotor = GetComponent<PlayerGroundMotor>();
+            rappelMotor = GetComponent<RappelMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             scanner = GetComponent<PlayerMoveScanner>();
             camTransform = GameManager.Instance.MainCamera.transform;
@@ -80,9 +83,12 @@ namespace DaggerfallWorkshop.Game
             bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startHangingHorizontalTolerance;
             bool forwardStationaryNearCeiling = inputForward && IsWithinHangingDistance && horizontallyStationary;
             bool pushingHeadAgainstCeilingWhileClimbing = climbingMotor.IsClimbing && !IsHanging && touchingAbove && forwardStationaryNearCeiling;
+            bool pushingHeadAgainstCeilingWhileRappeling = rappelMotor.IsRappelling && !IsHanging && touchingAbove;
             bool doHanging;
             if (pushingHeadAgainstCeilingWhileClimbing)
                 doHanging = HangingTransition(HangingTransitionState.BeginAfterTimer);
+            else if (pushingHeadAgainstCeilingWhileRappeling)
+                doHanging = HangingTransition(HangingTransitionState.BeginImmediately);
             else if (IsHanging)
                 doHanging = true;
             else
@@ -171,6 +177,11 @@ namespace DaggerfallWorkshop.Game
                     CancelHanging();
                     GetLastHorizontalPositon();
                     shouldHang = false;
+                    break;
+                case HangingTransitionState.BeginImmediately:
+                    StartHanging();
+                    startTimer = 0;
+                    shouldHang = true;
                     break;
             }
 

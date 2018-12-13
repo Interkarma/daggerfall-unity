@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game
                     // Auto move toward surface to grab
                     float speed = speedChanger.GetBaseSpeed();
 
-                    grappleDirection *= speed * 2.15f;
+                    grappleDirection = grappleDirection.normalized * speed * 1.15f;
                     groundMotor.MoveWithMovingPlatform(grappleDirection);
                 }
                 else // if we've moved past the distance limit
