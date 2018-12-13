@@ -42,9 +42,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (LoadID != 0)
             {
                 // Using same hack ID fix as SerializableEnemy
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && actionDoor)
                 {
-                    if (actionDoor && SaveLoadManager.StateManager.ContainsActionDoor(actionDoor.LoadID))
+                    while (SaveLoadManager.StateManager.ContainsActionDoor(actionDoor.LoadID))
                         actionDoor.LoadID++;
                 }
 
