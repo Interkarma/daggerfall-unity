@@ -17,7 +17,10 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
-
+using DaggerfallConnect;
+using System.Linq;
+using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -328,7 +331,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region region Private Methods
+        #region Private Methods
+
+        // Check if place is discovered, so it can be found on map.
+        private bool CanFindPlace(string regionName, string name)
+        {
+            DFLocation location;
+            if (DaggerfallUnity.Instance.ContentReader.GetLocation(regionName, name, out location))
+            {
+                int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude(location.MapTableData.Longitude, location.MapTableData.Latitude);
+                return GameManager.Instance.PlayerGPS.HasDiscoveredLocation(mapPixelID);
+            }
+            return false;
+        }
 
         private void HandleClick(Vector2 position, bool remove = false)
         {
@@ -354,12 +369,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     !string.IsNullOrEmpty(place.SiteDetails.locationName) &&
                     place.SiteDetails.locationName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
                 {
-                    findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
                     findPlaceName = place.SiteDetails.locationName;
-                    string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
-                    DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(entryStr, "selectedPlace", "confirmFind"));
-                    dialogBox.OnButtonClick += FindPlace_OnButtonClick;
-                    DaggerfallUI.UIManager.PushWindow(dialogBox);
+                    if (CanFindPlace(place.SiteDetails.regionName, findPlaceName))
+                    {
+                        findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
+                        string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
+                        DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(entryStr, "selectedPlace", "confirmFind"));
+                        dialogBox.OnButtonClick += FindPlace_OnButtonClick;
+                        DaggerfallUI.UIManager.PushWindow(dialogBox);
+                    }
                 }
             }
             else
