@@ -46,6 +46,8 @@ spellLighting,                                      Spell lighting
 spellLightingInfo,                                  Enable spell lighting
 spellShadows,                                       Spell shadows
 spellShadowsInfo,                                   Enable spell shadows
+instantRepairs,                                     Instant repair services
+instantRepairsInfo,                                 Disables waiting for repairs and makes them instantaneous
 
 toolTips,                                           Tool Tips
 toolTipsInfo,                                       Shows informations about GUI items

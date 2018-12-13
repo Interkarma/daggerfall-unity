@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        const string textDatabase = "DaggerfallUI";
+        protected const string textDatabase = "DaggerfallUI";
 
         readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
         readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
@@ -678,7 +678,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentRightHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
                 if (currentRightHandWeapon != null)
                 {
-                    string message = HardStrings.equippingWeapon;
+                    string message = TextManager.Instance.GetText(textDatabase, "equippingWeapon");
                     message = message.Replace("%s", currentRightHandWeapon.ItemTemplate.name);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
@@ -689,12 +689,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentLeftHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 if (currentLeftHandWeapon != null)
                 {
-                    string message = HardStrings.equippingWeapon;
+                    string message = TextManager.Instance.GetText(textDatabase, "equippingWeapon");
                     message = message.Replace("%s", currentLeftHandWeapon.ItemTemplate.name);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
-
         }
 
         #endregion
@@ -876,7 +875,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// Creates filtered list of remote items.
         /// For now this just creates a flat list, as that is Daggerfall's behaviour.
         /// </summary>
-        protected void FilterRemoteItems()
+        protected virtual void FilterRemoteItems()
         {
             // Clear current references
             remoteItemsFiltered.Clear();
@@ -1279,7 +1278,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance - GetCarriedWeight());
             if (canCarry <= 0)
             {
-                DaggerfallUI.MessageBox(HardStrings.cannotCarryAnymore);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotCarryAnymore"));
             }
             return canCarry;
         }
@@ -1290,7 +1289,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.wagonKgLimit - remoteItems.GetWeight());
             if (canCarry <= 0)
             {
-                DaggerfallUI.MessageBox(HardStrings.cannotHoldAnymore);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
             }
             return canCarry;
         }
@@ -1328,10 +1327,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Player cannot drop most quest items
                 if (questItem == null | (!questItem.AllowDrop && from == localItems))
                 {
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetText(HardStrings.cannotRemoveThisItem);
-                    messageBox.ClickAnywhereToClose = true;
-                    messageBox.Show();
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
                     return;
                 }
 
@@ -1535,7 +1531,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
                 // -IC122016
                 DaggerfallMessageBox cannotUse = new DaggerfallMessageBox(uiManager, this);
-                cannotUse.SetText(HardStrings.cannotUseThis);
+                cannotUse.SetText(TextManager.Instance.GetText(textDatabase, "cannotUseThis"));
                 cannotUse.ClickAnywhereToClose = true;
                 cannotUse.Show();
             }
