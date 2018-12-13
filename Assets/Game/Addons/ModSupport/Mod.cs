@@ -346,9 +346,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         public ModSettings.ModSettings GetSettings()
         {
-#pragma warning disable 618
             return new ModSettings.ModSettings(this);
-#pragma warning restore 618
         }
 
         /// <summary>
@@ -629,6 +627,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
             else
             {
+                if (la.T == typeof(GameObject) && assetBundle.Contains(ImportedComponentAttribute.MakeFileName(assetName)))
+                    ImportedComponentAttribute.Restore(this, la.Obj as GameObject);
+
                 loadedAssets.Add(assetName, la);
 
                 if (this.modInfo != null && string.IsNullOrEmpty(this.Title) == false)

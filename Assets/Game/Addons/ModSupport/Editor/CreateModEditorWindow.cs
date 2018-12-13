@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -513,6 +513,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         if(!tempAssetPaths.Contains(serializedPrefabPath))
                             tempAssetPaths.Add(serializedPrefabPath);
                     }
+
+                    string importedComponentsPath = CheckForImportedComponents(assetPath);
+                    if (importedComponentsPath != null)
+                    {
+                        if (!tempAssetPaths.Contains(importedComponentsPath))
+                            tempAssetPaths.Add(importedComponentsPath);
+                    }
                 }
             }
 
@@ -727,6 +734,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return result.Succeeded;
         }
 
+        private string CheckForImportedComponents(string prefabPath)
+        {
+            var go = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
+            string importedComponentsPath = ImportedComponentAttribute.Save(go, GetTempModDirPath(modInfo.ModTitle));
+            if (importedComponentsPath != null)
+            {
+                importedComponentsPath = GetAssetPathFromFilePath(importedComponentsPath);
+                AddAssetToMod(importedComponentsPath);
+                AssetDatabase.Refresh();
+                return importedComponentsPath;
+            }
 
+            return null;
+        }
     }
 }

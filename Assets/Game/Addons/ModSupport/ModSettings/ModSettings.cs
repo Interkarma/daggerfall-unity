@@ -35,8 +35,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// Import settings for a mod.
         /// </summary>
         /// <param name="mod">Mod to load settings for.</param>
-        [Obsolete("Use Mod.GetSettings() to get an instance for the mod; the constructor won't be publicy accessible anymore in 0.6.")]
-        public ModSettings(Mod mod)
+        internal ModSettings(Mod mod)
         {
             if (!mod.HasSettings)
                 throw new ArgumentException(string.Format("{0} has no settings.", mod.Title), "mod");
@@ -63,39 +62,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public int GetInt(string section, string name)
         {
-            // Legacy support
-            int value;
-            if (int.TryParse(GetTextValue(section, name), out value))
-                return value;
-
             return GetValue<int>(section, name);
-        }
-
-        /// <summary>
-        /// Get integer from user settings or, as fallback, from default settings.
-        /// Value is at least equal to min.
-        /// </summary>
-        /// <param name="section">Name of section.</param>
-        /// <param name="name">Name of key.</param>
-        /// <param name="min">Minimum accepted value.</param>
-        [Obsolete("Set range from editor gui")]
-        public int GetInt(string section, string name, int min)
-        {
-            return Mathf.Max(min, GetInt(section, name));
-        }
-
-        /// <summary>
-        /// Get integer from user settings or, as fallback, from default settings.
-        /// Value is clamped in range (min-max).
-        /// </summary>
-        /// <param name="section">Name of section.</param>
-        /// <param name="name">Name of key.</param>
-        /// <param name="min">Minimum accepted value.</param>
-        /// <param name="max">Maximum accepted value.</param>
-        [Obsolete("Set range from editor gui")]
-        public int GetInt(string section, string name, int min, int max)
-        {
-            return Mathf.Clamp(GetInt(section, name), min, max);
         }
 
         /// <summary>
@@ -105,39 +72,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public float GetFloat(string section, string name)
         {
-            // Legacy support
-            float value;
-            if (float.TryParse(GetTextValue(section, name), out value))
-                return value;
-
             return GetValue<float>(section, name);
-        }
-
-        /// <summary>
-        /// Get float from user settings or, as fallback, from default settings.
-        /// Value is at least equal to min.
-        /// </summary>
-        /// <param name="section">Name of section.</param>
-        /// <param name="name">Name of key.</param>
-        /// <param name="min">Minimum accepted value.</param>
-        [Obsolete("Set range from editor gui")]
-        public float GetFloat(string section, string name, float min)
-        {
-            return Mathf.Max(min, GetFloat(section, name));
-        }
-
-        /// <summary>
-        /// Get float from user settings or, as fallback, from default settings.
-        /// Value is clamped in range (min-max).
-        /// </summary>
-        /// <param name="section">Name of section.</param>
-        /// <param name="name">Name of key.</param>
-        /// <param name="min">Minimum accepted value.</param>
-        /// <param name="max">Maximum accepted value.</param>
-        [Obsolete("Set range from editor gui")]
-        public float GetFloat(string section, string name, float min, float max)
-        {
-            return Mathf.Clamp(GetFloat(section, name), min, max);
         }
 
         /// <summary>
@@ -147,11 +82,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <param name="name">Name of key.</param>
         public bool GetBool(string section, string name)
         {
-            // Legacy support
-            bool value;
-            if (bool.TryParse(GetTextValue(section, name), out value))
-                return value;
-
             return GetValue<bool>(section, name);
         }
 
@@ -224,23 +154,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     if (section.Keys.TryGetValue(property.Name, out key))
                         property.SetValue(instance, key.ToObject(), null);
                 }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Get non type-safe value from user settings (legacy support).
-        /// </summary>
-        private string GetTextValue(string section, string name)
-        {
-            Key key;
-            if (data.TryGetKey(section, name, out key))
-                return key.TextValue;
-
-            Debug.LogErrorFormat("Failed to get ({0},{1}) for mod {2}.", section, name, mod.Title);
-            return null;
         }
 
         #endregion

@@ -15,7 +15,6 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using FullSerializer;
-using IniParser;
 using IniParser.Model;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
@@ -26,6 +25,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     public class ModSettingsData
     {
         #region Fields
+
+        const string settingsFileName = "modsettings.json";
+        const string presetsFileName = "modpresets.json";
 
         readonly Mod mod;
 
@@ -147,10 +149,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 Presets.Clear();
 
             // Get presets from mod
-            if (mod.AssetBundle.Contains("modpresets.json"))
+            if (mod.AssetBundle.Contains(presetsFileName))
             {
                 List<Preset> modPresets = new List<Preset>();
-                if (TryDeserialize(mod, "modpresets.json", ref modPresets))
+                if (TryDeserialize(mod, presetsFileName, ref modPresets))
                     Presets.AddRange(modPresets);
             }
 
@@ -391,10 +393,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>       
         public static bool HasSettings(Mod mod)
         {
-            // TODO: remove support for old ini files.
-            return (mod.AssetBundle.Contains("modsettings.json")
-                || mod.AssetBundle.Contains(mod.Title + ".ini.txt")
-                || mod.AssetBundle.Contains("modsettings.ini.txt"));
+            return mod.AssetBundle.Contains(settingsFileName);
         }
 
         /// <summary>
@@ -403,26 +402,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public static ModSettingsData Make(Mod mod)
         {
             ModSettingsData instance = new ModSettingsData(mod);
-
-            if (mod.AssetBundle.Contains("modsettings.json"))
-            {
-                TryDeserialize(mod, "modsettings.json", ref instance);
-            }
-            else if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
-            {
-                Debug.LogWarningFormat("{0} is using an obsolete modsettings format!", mod.Title);
-                LoadLegacySettingsFromMod(mod, mod.Title + ".ini.txt", ref instance);
-            }
-            else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
-            {
-                Debug.LogWarningFormat("{0} is using an obsolete modsettings format!", mod.Title);
-                LoadLegacySettingsFromMod(mod, "modsettings.ini.txt", ref instance);
-            }
-
-            if (instance != null)
+            if (HasSettings(mod) && TryDeserialize(mod, settingsFileName, ref instance))
                 return instance;
 
-            throw new ArgumentException("Mod has no associated settings.");
+            throw new ArgumentException(string.Format("Failed to load settings for mod {0}.", mod.Title));
         }
 
 #if UNITY_EDITOR
@@ -547,14 +530,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 File.WriteAllText(path, fsJsonPrinter.PrettyJson(fsData));
             else
                 Debug.LogErrorFormat("Failed to write {0}:\n{1}", path, fsResult.FormattedMessages);
-        }
-
-        private static void LoadLegacySettingsFromMod(Mod mod, string assetName, ref ModSettingsData instance)
-        {
-            var textAsset = mod.GetAsset<TextAsset>(assetName);
-            using (var stream = new MemoryStream(textAsset.bytes))
-            using (var reader = new StreamReader(stream))
-                instance.ImportLegacyIni((new FileIniDataParser()).ReadData(reader));
         }
 
         #endregion
