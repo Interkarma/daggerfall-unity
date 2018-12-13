@@ -331,7 +331,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Generates a weapon.
         /// </summary>
         /// <param name="weapon"></param>
-        /// <param name="material"></param>
+        /// <param name="material">Ignored for arrows</param>
         /// <returns></returns>
         public static DaggerfallUnityItem CreateWeapon(Weapons weapon, WeaponMaterialTypes material)
         {
@@ -339,18 +339,17 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.Weapons, (int)weapon);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
 
-            // Adjust material
-            newItem.nativeMaterialValue = (int)material;
-            newItem = SetItemPropertiesByMaterial(newItem, material);
-            newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
-
-            // Handle arrows
-            if (groupIndex == 18)
-            {
+            if (weapon == Weapons.Arrow)
+            {   // Handle arrows
                 newItem.stackCount = UnityEngine.Random.Range(1, 21);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
-
+            else
+            {   // Adjust material
+                newItem.nativeMaterialValue = (int)material;
+                newItem = SetItemPropertiesByMaterial(newItem, material);
+                newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
+            }
             return newItem;
         }
 
