@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game.Items
                 if (quest != null)
                 {
                     Item questItem = quest.GetItem(item.QuestItemSymbol);
-                    if (questItem.UsedMessageID != 0)
+                    if (questItem.UsedMessageID >= 0)
                     {
                         Message msg = quest.GetMessage(questItem.UsedMessageID);
                         TextFile.Token[] tokens = msg.GetTextTokens();

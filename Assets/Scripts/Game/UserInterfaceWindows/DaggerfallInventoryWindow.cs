@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        const string textDatabase = "DaggerfallUI";
+        protected const string textDatabase = "DaggerfallUI";
 
         readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
         readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
@@ -135,6 +135,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
         readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
         readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
+        readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
 
         const string baseTextureName = "INVE00I0.IMG";
         const string goldTextureName = "INVE01I0.IMG";
@@ -677,7 +678,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentRightHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
                 if (currentRightHandWeapon != null)
                 {
-                    string message = HardStrings.equippingWeapon;
+                    string message = TextManager.Instance.GetText(textDatabase, "equippingWeapon");
                     message = message.Replace("%s", currentRightHandWeapon.ItemTemplate.name);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
@@ -688,12 +689,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentLeftHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 if (currentLeftHandWeapon != null)
                 {
-                    string message = HardStrings.equippingWeapon;
+                    string message = TextManager.Instance.GetText(textDatabase, "equippingWeapon");
                     message = message.Replace("%s", currentLeftHandWeapon.ItemTemplate.name);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
-
         }
 
         #endregion
@@ -875,7 +875,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// Creates filtered list of remote items.
         /// For now this just creates a flat list, as that is Daggerfall's behaviour.
         /// </summary>
-        protected void FilterRemoteItems()
+        protected virtual void FilterRemoteItems()
         {
             // Clear current references
             remoteItemsFiltered.Clear();
@@ -1156,9 +1156,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             bool result = int.TryParse(input, out goldToDrop);
             if (!result || goldToDrop < 1 || goldToDrop > playerGold)
                 return;
-            // Check wagon weight limit
-            if (usingWagon && (remoteItems.GetWeight() + (goldToDrop / DaggerfallBankManager.gold1kg) > ItemHelper.wagonKgLimit))
-                return;
+            if (usingWagon)
+            {
+                // Check wagon weight limit
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.wagonKgLimit - remoteItems.GetWeight());
+                if (goldToDrop > wagonCanHold)
+                {
+                    goldToDrop = wagonCanHold;
+                    DaggerfallUI.MessageBox(String.Format(wagonFullGold, wagonCanHold));
+                }
+            }
 
             // Create new item for gold pieces and add to other container
             DaggerfallUnityItem goldPieces = ItemBuilder.CreateGoldPieces(goldToDrop);
@@ -1268,17 +1275,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int CanCarryAmount(DaggerfallUnityItem item)
         {
             // Check weight limit
-            int canCarry = item.stackCount;
-            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
-            {
-                canCarry = Math.Min(canCarry, (int)((playerEntity.MaxEncumbrance - GetCarriedWeight()) / item.weightInKg));
-            }
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance - GetCarriedWeight());
             if (canCarry <= 0)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.cannotCarryAnymore);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotCarryAnymore"));
             }
             return canCarry;
         }
@@ -1286,19 +1286,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            int canCarry = item.stackCount;
-            if (item.ItemGroup != ItemGroups.Transportation && item.TemplateIndex != (int)Weapons.Arrow && item.weightInKg != 0)
-            {
-                canCarry = Math.Min(canCarry, (int)((ItemHelper.wagonKgLimit - remoteItems.GetWeight()) / item.weightInKg));
-            }
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.wagonKgLimit - remoteItems.GetWeight());
             if (canCarry <= 0)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.cannotHoldAnymore);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
             }
             return canCarry;
+        }
+
+        private int ComputeCanHoldAmount(int unitsAvailable, float unitWeightInKg, float capacityLeftInKg)
+        {
+            int canHold = unitsAvailable;
+            if (unitWeightInKg > 0f)
+                canHold = Math.Min(canHold, (int)(capacityLeftInKg / unitWeightInKg));
+            return canHold;
         }
 
         protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null, 
@@ -1326,10 +1327,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Player cannot drop most quest items
                 if (questItem == null | (!questItem.AllowDrop && from == localItems))
                 {
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetText(HardStrings.cannotRemoveThisItem);
-                    messageBox.ClickAnywhereToClose = true;
-                    messageBox.Show();
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
                     return;
                 }
 
@@ -1533,7 +1531,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
                 // -IC122016
                 DaggerfallMessageBox cannotUse = new DaggerfallMessageBox(uiManager, this);
-                cannotUse.SetText(HardStrings.cannotUseThis);
+                cannotUse.SetText(TextManager.Instance.GetText(textDatabase, "cannotUseThis"));
                 cannotUse.ClickAnywhereToClose = true;
                 cannotUse.Show();
             }
@@ -1629,7 +1627,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.Notebook.AddNote(
                 TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
 
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
+            //TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
             DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
             mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
             mapText.ClickAnywhereToClose = true;

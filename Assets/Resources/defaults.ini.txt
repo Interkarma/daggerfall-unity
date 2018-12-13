@@ -66,6 +66,7 @@ ClickToAttack = False
 CameraRecoilStrength = 3
 SoundVolume = 1.0
 MusicVolume = 1.0
+InstantRepairs = False
 
 [Map]
 AutomapNumberOfDungeons=5

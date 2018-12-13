@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
     public static class DaggerfallBankManager
     {
-        public const int gold1kg = 400;
+        public const float goldUnitWeightInKg = 0.0025f;
         private const float deedSellMult = 0.85f;
         private const float housePriceMult = 1280f;
 
@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Check weight limit
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (playerEntity.CarriedWeight + (amount / gold1kg) > playerEntity.MaxEncumbrance)
+            if (playerEntity.CarriedWeight + (amount * goldUnitWeightInKg) > playerEntity.MaxEncumbrance)
                 return TransactionResult.TOO_HEAVY;
 
             BankAccounts[regionIndex].accountGold -= amount;

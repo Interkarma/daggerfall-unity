@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider musicVolume;
         Checkbox spellLighting;
         Checkbox spellShadows;
+        Checkbox instantRepairs;
 
         // Interface
         Checkbox toolTips;
@@ -204,6 +205,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
                 DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
+            instantRepairs = AddCheckbox(leftPanel, "instantRepairs", DaggerfallUnity.Settings.InstantRepairs);
 
             // Controls
             AddSectionTitle(leftPanel, "controls");
@@ -329,6 +331,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.StartInDungeon = startInDungeon.IsChecked;
             DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
+            DaggerfallUnity.Settings.InstantRepairs = instantRepairs.IsChecked;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();

@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 // Only fixing for enemies now - will look for a better solution in the future
                 if (enemy && GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
                 {
-                    if (SaveLoadManager.StateManager.ContainsEnemy(enemy.LoadID))
+                    while (SaveLoadManager.StateManager.ContainsEnemy(enemy.LoadID))
                         enemy.LoadID++;
                 }
 
