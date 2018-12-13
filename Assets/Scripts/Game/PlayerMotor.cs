@@ -260,6 +260,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             playerScanner.FindHeadHit(new Ray(controller.transform.position, Vector3.up));
+            playerScanner.SetHitSomethingInFront();
             // Check if should hang
             hangingMotor.HangingChecks();
             // Handle Rappeling

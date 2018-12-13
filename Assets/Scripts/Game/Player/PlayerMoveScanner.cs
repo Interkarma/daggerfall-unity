@@ -46,11 +46,11 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// The force vector needed to maintain collision with the surface.
         /// </summary>
-        public readonly Vector3 adjacentGrabDirection;
+        public readonly Vector3 grabDirection;
         public AdjacentSurface(Ray adjSurfRay, Vector3 surfaceHitNormal, int turnCount, float hitDistance)
         {
             adjacentSurfaceRay = adjSurfRay;
-            adjacentGrabDirection = surfaceHitNormal;
+            grabDirection = surfaceHitNormal;
             adjacentTurns = turnCount;
             turnHitDistance = hitDistance;
         }
@@ -74,10 +74,15 @@ namespace DaggerfallWorkshop.Game
         AcrobatMotor acrobatMotor;
         PlayerMotor playerMotor;
         private int turnCount = 0;
-        
+
         public float HeadHitRadius { get; private set; }
         public float StepHitDistance { get; private set; }
         public float HeadHitDistance { get; private set; }
+        public bool HitSomethingInFront { get; private set; }
+        /// <summary>
+        /// Saved WallGrab vector after detaching from a wall.  
+        /// </summary>
+        public Vector3 WallDetachedVector { get; private set; }
         /// <summary>
         /// The wall above and behind the hanging player
         /// </summary>
@@ -114,18 +119,28 @@ namespace DaggerfallWorkshop.Game
         /// <param name="WallDirection">The vector to be copied to</param>
         public void CutAndPasteAboveBehindWallTo(ref Vector3 WallDirection)
         {
-            WallDirection = AboveBehindWall.adjacentGrabDirection;
+            WallDirection = AboveBehindWall.grabDirection;
             AboveBehindWall = null;
         }
         public void CutAndPasteFrontWallTo(ref Vector3 WallDirection)
         {
-            WallDirection = FrontWall.adjacentGrabDirection;
+            WallDirection = FrontWall.grabDirection;
             FrontWall = null;
         }
         public void CutAndPasteBelowBehindWallTo(ref Vector3 WallDirection)
         {
-            WallDirection = BelowBehindWall.adjacentGrabDirection;
+            WallDirection = BelowBehindWall.grabDirection;
             BelowBehindWall = null;
+        }
+        public void CutAndPasteFrontUnderCeilingTo(ref Vector3 CeilingDirection)
+        {
+            CeilingDirection = FrontUnderCeiling.grabDirection;
+            FrontUnderCeiling = null;
+        }
+        public void CutAndPasteVectorToDetached(ref Vector3 wallGrab)
+        {
+            WallDetachedVector = wallGrab;
+            wallGrab = Vector3.zero;
         }
 
         /// <summary>
@@ -185,16 +200,18 @@ namespace DaggerfallWorkshop.Game
             {
                 if (hangingMotor.IsHanging && turns == 1)
                     FrontWall = surf;
-                else if (turns == 2)
-                {
-                    if (climbingMotor.IsClimbing)
-                        FrontUnderCeiling = surf;
-                    else
-                        BelowBehindWall = surf;
-                }
+                else if (turns == 2 && surf.grabDirection.y < 0.2f)
+                    BelowBehindWall = surf;
+                else if (turns == 3 && surf.grabDirection.y > 0.8f)
+                    FrontUnderCeiling = surf;
             } 
         }
-
+        /// <summary>
+        /// Finds the adjacent surface to the one that the player is on.
+        /// </summary>
+        /// <param name="origin">The place from which the scanning ray is cast</param>
+        /// <param name="direction"></param>
+        /// <param name="turnDirection"></param>
         public void FindAdjacentSurface(Vector3 origin, Vector3 direction, RotationDirection turnDirection)
         {
             RaycastHit hit;
@@ -269,6 +286,9 @@ namespace DaggerfallWorkshop.Game
                             // TODO: write code to make a diagonal upwards forward check for turncount 3 to find
                             // a ceiling under the wall the player is climbing on.  Could possibly be another wall
                             // to rappel onto?
+
+                            if (turnCount == 3)
+                                nextDirection = Vector3.Reflect((lastDirection + nextDirection).normalized, lastDirection);
                             break;
                         default:
                             nextDirection = Vector3.zero;
@@ -279,6 +299,19 @@ namespace DaggerfallWorkshop.Game
                 turnCount = 0;
                 AssignAdjacentSurface(null, turnDirection);
             }
+        }
+
+        public void SetHitSomethingInFront()
+        {
+            RaycastHit hit;
+            Vector3 inFrontDirection;
+                
+            if (climbingMotor.IsClimbing)
+                inFrontDirection = climbingMotor.WallGrabDirection;
+            else
+                inFrontDirection = controller.transform.forward;
+               
+            HitSomethingInFront = (Physics.Raycast(controller.transform.position, inFrontDirection, out hit, 0.3f));
         }
     }
 }

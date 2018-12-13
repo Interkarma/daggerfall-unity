@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game
             else
                 doHanging = HangingTransition(HangingTransitionState.ExitImmediately);
 
+            // TODO: make condition that allows player to hang from rappel state
             if (inputAbortCondition
                 || !IsWithinHangingDistance
                 || levitateMotor.IsLevitating
@@ -120,10 +121,9 @@ namespace DaggerfallWorkshop.Game
             {
                 // handle movement direction
                 HangMoveDirection();
-                //if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                    FindAboveBehindWall();
-                //if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                    FindFrontWall();
+                
+                FindAboveBehindWall();      
+                FindFrontWall();
 
                 acrobatMotor.Falling = false;
             }
@@ -144,6 +144,7 @@ namespace DaggerfallWorkshop.Game
             Vector3 pos = controller.transform.position;
             Vector3 startPos = pos + (-controller.transform.forward * 0.2f) + (Vector3.down * 0.2f);
             if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                // initial scan direction is downward
                 scanner.FindAdjacentSurface(startPos, Vector3.down, PlayerMoveScanner.RotationDirection.YZCounterClockwise);
         }
 

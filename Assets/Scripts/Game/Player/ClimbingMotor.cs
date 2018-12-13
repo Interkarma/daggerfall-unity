@@ -85,7 +85,11 @@ namespace DaggerfallWorkshop.Game
         /// True if player just jumped from a wall
         /// </summary>
         public bool WallEject { get; private set; }
-        public Vector3 LedgeDirection { get { return myLedgeDirection; } }
+        /// <summary>
+        /// True if player just initiated climbing under wall to hang from ceiling beneath
+        /// </summary>
+        public bool ClimbQuitMoveUnderToHang { get; private set; }
+        public Vector3 WallGrabDirection { get { return myLedgeDirection; } }
         void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -155,10 +159,13 @@ namespace DaggerfallWorkshop.Game
             RaycastHit hit;
             bool hangTouchNonVertical = hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
 
+            ClimbQuitMoveUnderToHang = (inputBack && !moveScanner.HitSomethingInFront && moveScanner.FrontUnderCeiling != null);
+
             // Should we reset climbing starter timers?
             if ((!pushingFaceAgainstWallNearCeiling)
                 &&
                 (inputAbortCondition
+                || ClimbQuitMoveUnderToHang
                 || !climbingOrForwardOrGrasping 
                 || !touchingSides && !releasedFromCeiling
                 || levitateMotor.IsLevitating
@@ -248,7 +255,9 @@ namespace DaggerfallWorkshop.Game
                 atInsideCorner = false;
                 showClimbingModeMessage = true;
                 moveDirection = Vector3.zero;
-                myLedgeDirection = Vector3.zero;
+                // deletes locally and saves myLedgeDirection to variable in class
+                if (myLedgeDirection != Vector3.zero)
+                    moveScanner.CutAndPasteVectorToDetached(ref myLedgeDirection);
             }
         }
 
@@ -360,7 +369,7 @@ namespace DaggerfallWorkshop.Game
 
             if (adjSurface != null)
             {
-                adjacentLedgeDirection = adjSurface.adjacentGrabDirection;
+                adjacentLedgeDirection = adjSurface.grabDirection;
                 adjacentWallRay = adjSurface.adjacentSurfaceRay;
             }
 
@@ -408,10 +417,10 @@ namespace DaggerfallWorkshop.Game
 
                 if (DaggerfallUnity.Settings.AdvancedClimbing)
                 {
-                    RaycastHit hit;
-                    bool hitSomethingInFront = (Physics.Raycast(controller.transform.position, myLedgeDirection, out hit, 0.3f));
+                    bool hitSomethingInFront = moveScanner.HitSomethingInFront;
                     #region Vertical Climbing
-                    if (!atOutsideCorner && (movedForward || !hitSomethingInFront))
+                    // TODO: Disallow rappel when pressing back if auto climbing
+                    if (!movedBackward && !atOutsideCorner && (movedForward || !hitSomethingInFront))
                     {
                         // TODO: devise horizontal distance-based solution to terminate forward movement
                         // It may fix the problem of climbing to the top of gabled roofs.
@@ -421,7 +430,6 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (movedBackward)
                         moveDirection.y = Vector3.down.y * climbScalar;
-
                     #endregion
                     #region Horizontal Climbing
                     if (movedRight || movedLeft)
