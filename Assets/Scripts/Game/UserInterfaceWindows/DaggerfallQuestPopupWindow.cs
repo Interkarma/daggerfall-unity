@@ -210,7 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.OnButtonClick += ConfirmSummon_OnButtonClick;
             }
-            uiManager.PushWindow(messageBox);
+            messageBox.Show();
         }
 
         private void ConfirmSummon_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
@@ -290,7 +290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                     messageBox.SetTextTokens(msg, this);
                     messageBox.ClickAnywhereToClose = true;
-                    uiManager.PushWindow(messageBox);
+                    messageBox.Show();
                 }
             }
         }
