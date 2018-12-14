@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(updatedRank, guild);
                 messageBox.ClickAnywhereToClose = true;
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
             // Check for free healing (Temple members)
             if (guild.FreeHealing() && playerEntity.CurrentHealth < playerEntity.MaxHealth)
@@ -406,7 +406,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     messageBox.SetTextTokens(guild.TokensIneligible(playerEntity), guild);
                     messageBox.ClickAnywhereToClose = true;
                 }
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
         }
 
@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(guild.TokensWelcome(), guild);
                 messageBox.ClickAnywhereToClose = true;
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
         }
 
@@ -510,7 +510,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(tokens);
                 messageBox.ClickAnywhereToClose = true;
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
             else
             {   // Offer training price
@@ -520,7 +520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.OnButtonClick += ConfirmTraining_OnButtonClick;
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
         }
 
@@ -558,7 +558,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                 messageBox.SetTextTokens(tokens, guild);
                 messageBox.ClickAnywhereToClose = true;
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
             else
             {   // Train the skill
@@ -612,14 +612,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                     messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(DonationThanksId), this);
                     messageBox.ClickAnywhereToClose = true;
-                    uiManager.PushWindow(messageBox);
+                    messageBox.Show();
                 }
                 else
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, uiManager.TopWindow);
                     messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TooGenerousId), this);
                     messageBox.ClickAnywhereToClose = true;
-                    uiManager.PushWindow(messageBox);
+                    messageBox.Show();
                 }
             }
         }
@@ -667,7 +667,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.OnButtonClick += ConfirmCuring_OnButtonClick;
-                uiManager.PushWindow(messageBox);
+                messageBox.Show();
             }
             else
             {   // Not diseased
