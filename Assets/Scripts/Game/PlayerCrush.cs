@@ -9,6 +9,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerHeightChanger heightChanger;
         private PlayerMotor playerMotor;
         private CharacterController controller;
+        private PlayerMoveScanner moveScanner;
         private float previousHeightHit;
     
 	    void Start ()
@@ -16,6 +17,7 @@ namespace DaggerfallWorkshop.Game
             heightChanger = GetComponent<PlayerHeightChanger>();
             playerMotor = GetComponent<PlayerMotor>();
             controller = GetComponent<CharacterController>();
+            moveScanner = GetComponent<PlayerMoveScanner>();
             previousHeightHit = 0f;
 	    }
 	
@@ -33,26 +35,21 @@ namespace DaggerfallWorkshop.Game
                 distance = (controller.height / 2f) - (controller.height * 0.1f);
             else
                 distance = (controller.height / 2f);
-
-            Ray ray = new Ray(controller.transform.position, Vector3.up);
-            RaycastHit hit = new RaycastHit();
-            if (Physics.SphereCast(ray, controller.radius * 0.85f, out hit, distance))
+            
+            if (moveScanner.HeadHitDistance < distance && moveScanner.HeadHitDistance > 0)
             {
-                if (hit.collider.GetComponent<MeshCollider>())
+                // If player is standing, crushing object forces them into a crouch, 
+                if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
                 {
-                    // If player is standing, crushing object forces them into a crouch, 
-                    if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
-                    {
-                        heightChanger.HeightAction = HeightChangeAction.DoCrouching;
-                    }
-                    // if player already crouching and on the ground, then kill.
-                    else if (playerMotor.IsCrouching && playerMotor.IsGrounded)
-                    {
-                        if (previousHeightHit > 0 && previousHeightHit > hit.distance)
-                            GameManager.Instance.PlayerEntity.SetHealth(0);
-                    }
-                    previousHeightHit = hit.distance;
+                    heightChanger.HeightAction = HeightChangeAction.DoCrouching;
                 }
+                // if player already crouching and on the ground, then kill.
+                else if (playerMotor.IsCrouching && playerMotor.IsGrounded)
+                {
+                    if (previousHeightHit > 0 && previousHeightHit > moveScanner.HeadHitDistance)
+                        GameManager.Instance.PlayerEntity.SetHealth(0);
+                }
+                previousHeightHit = moveScanner.HeadHitDistance;
             }
             else
                 previousHeightHit = 0f;

@@ -19,7 +19,8 @@ namespace DaggerfallWorkshop.Game
         FrictionMotor frictionMotor;
         ClimbingMotor climbingMotor;
         Transform myTransform;
-        PlayerStepDetector stepDetector;
+        PlayerMoveScanner playerScanner;
+        RappelMotor rappelMotor;
 
         private float fallStartLevel;
         private bool falling;
@@ -43,7 +44,8 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             frictionMotor = GetComponent<FrictionMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
-            stepDetector = GetComponent<PlayerStepDetector>();
+            playerScanner = GetComponent<PlayerMoveScanner>();
+            rappelMotor = GetComponent<RappelMotor>();
             myTransform = playerMotor.transform;
         }
 
@@ -109,7 +111,7 @@ namespace DaggerfallWorkshop.Game
 
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
 
-            if ((climbingMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
+            if ((rappelMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
             {
                 moveDirection.x = inputX * speed * inputModifyFactor;
                 moveDirection.z = inputY * speed * inputModifyFactor;
@@ -131,12 +133,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// If we stepped over a cliff or something, set the height at which we started falling
         /// </summary>
-        public void CheckInitFall()
+        public void CheckInitFall(ref Vector3 moveDirection)
         {
             if (!falling)
             {
                 falling = true;
                 fallStartLevel = myTransform.position.y;
+                // begin y movement at 0
+                if (!jumping)
+                    moveDirection.y = 0;
             }
         }
 
@@ -150,14 +155,14 @@ namespace DaggerfallWorkshop.Game
                 fallStartLevel = myTransform.position.y;
                 moveDirection.y = -slowFallSpeed * Time.deltaTime;
             }
-            else if (!climbingMotor.IsRappelling)
+            else if (!rappelMotor.IsRappelling)
             {
                 const float antiBumpFactor = 20.75f;
                 float minRange = (controller.height / 2f) - 0.15f;
                 float maxRange = minRange + 1.10f;
 
                 // should we apply anti-bump gravity?
-                if (!climbingMotor.IsClimbing && stepDetector.HitDistance > minRange && stepDetector.HitDistance < maxRange)
+                if (!climbingMotor.IsClimbing && playerScanner.StepHitDistance > minRange && playerScanner.StepHitDistance < maxRange)
                     moveDirection.y -= antiBumpFactor;
 
                 // apply normal gravity

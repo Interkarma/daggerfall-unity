@@ -338,6 +338,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string climbingMode = "Climbing mode.";
         public const string rappelMode = "Rappel mode.";
+        public const string hangingMode = "Hanging Mode";
 
         public const string acuteHearing = "Acute Hearing";
         public const string adrenalineRush = "Adrenaline Rush";

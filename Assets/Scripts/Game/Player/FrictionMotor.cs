@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game
                 moveDirection *= slideSpeed;
                 playerControl = false;
             }
-            // Otherwise recalculate moveDirection directly from axes, adding a bit of -y to avoid bumping down inclines
+            // Otherwise recalculate moveDirection directly from axes
             else
             {
                 float inputX = InputManager.Instance.Horizontal;

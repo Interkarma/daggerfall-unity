@@ -46,13 +46,15 @@ namespace DaggerfallWorkshop.Game
         private float speed;
 
         private ClimbingMotor climbingMotor;
+        private RappelMotor rappelMotor;
+        private HangingMotor hangingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
         private PlayerGroundMotor groundMotor;
         private PlayerEnterExit playerEnterExit;
-        private PlayerStepDetector stepDetector;
+        private PlayerMoveScanner playerScanner;
 
         private CollisionFlags collisionFlags = 0;
 
@@ -148,7 +150,10 @@ namespace DaggerfallWorkshop.Game
         public CollisionFlags CollisionFlags
         {
             get { return collisionFlags; }
-            set { collisionFlags = value; }
+            set {
+                //if (value != collisionFlags)
+                //    Debug.Log(collisionFlags + " -> " + value + "\n");
+                collisionFlags = value; }
         }
 
         public bool IsMovingLessThanHalfSpeed
@@ -220,14 +225,16 @@ namespace DaggerfallWorkshop.Game
             levitateMotor = GetComponent<LevitateMotor>();
             frictionMotor = GetComponent<FrictionMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
-            stepDetector = GetComponent<PlayerStepDetector>();
+            playerScanner = GetComponent<PlayerMoveScanner>();
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            rappelMotor = GetComponent<RappelMotor>();
+            hangingMotor = GetComponent<HangingMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
-
+      
         void FixedUpdate()
         {
             // Check if on a solid surface
@@ -255,12 +262,22 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            playerScanner.FindHeadHit(new Ray(controller.transform.position, Vector3.up));
+            playerScanner.SetHitSomethingInFront();
+            // Check if should hang
+            hangingMotor.HangingChecks();
+            // Handle Rappeling
+            rappelMotor.RappelChecks();
             // Handle climbing
             climbingMotor.ClimbingCheck();
 
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
-            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing)
+            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing || hangingMotor.IsHanging)
+            {
+                moveDirection = Vector3.zero;
                 return;
+            }
+
 
             if (climbingMotor.WallEject)
             {   // True in terms of the player having their feet on solid surface.
@@ -280,12 +297,13 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                acrobatMotor.CheckInitFall();
+                acrobatMotor.CheckInitFall(ref moveDirection);
 
                 acrobatMotor.CheckAirControl(ref moveDirection, speed);
             }
 
-            stepDetector.FindStep(moveDirection);
+            playerScanner.FindStep(moveDirection);
+            
             acrobatMotor.ApplyGravity(ref moveDirection);
 
             acrobatMotor.HitHead(ref moveDirection);
