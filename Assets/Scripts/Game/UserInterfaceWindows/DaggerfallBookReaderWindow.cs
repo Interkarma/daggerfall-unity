@@ -70,6 +70,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
+            NativePanel.OnMouseScrollDown += Panel_OnMouseScrollDown;
+            NativePanel.OnMouseScrollUp += Panel_OnMouseScrollUp;
+
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
         }
@@ -92,10 +95,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+        }
+
+        private void Panel_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            NextPageButton_OnMouseClick(sender, Vector2.zero);
+        }
+
+        private void Panel_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            PreviousPageButton_OnMouseClick(sender, Vector2.zero);
         }
 
         public override void OnPush()
