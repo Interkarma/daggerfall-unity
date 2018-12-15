@@ -1494,6 +1494,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonLogbook_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (listboxConversation.SelectedIndex < 0)
+                return;
+
             if (!copyIndexes.Contains(listboxConversation.SelectedIndex))
             {
                 copyIndexes.Add(listboxConversation.SelectedIndex);
