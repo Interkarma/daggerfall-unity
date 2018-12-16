@@ -42,9 +42,9 @@ namespace DaggerfallWorkshop.Game
         public float WinterSunlightScale = 0.65f;
 
         [Range(0, 1)]
-        public float SunnyFogDensity = 0.00005f;
+        public float SunnyFogDensity = 0.0005f;
         [Range(0, 1)]
-        public float OvercastFogDensity = 0.00005f;
+        public float OvercastFogDensity = 0.0005f;
         [Range(0, 1)]
         public float RainyFogDensity = 0.0001f;
         [Range(0, 1)]
@@ -82,6 +82,9 @@ namespace DaggerfallWorkshop.Game
 
             if (DaggerfallUnity.Settings.AssetInjection)
                 AddWindZone();
+
+            // initialize with clear overcast sky (so that initial fog settings like exponential fog mode are set)
+            ClearOvercast();
         }
 
         void Update()
@@ -115,14 +118,16 @@ namespace DaggerfallWorkshop.Game
 
         public void SetFog(bool isFoggy, float density)
         {
+            // note Nystul: important to set fog mode to exponential (fog density values are not applied in linear mode!)
+            RenderSettings.fogMode = FogMode.Exponential;
+
             // edit by Nystul: don't disable RenderSettings fog! Rendering Fog != Weather Fog
             //RenderSettings.fog = isFoggy;
 
             if (isFoggy)
             {
-                RenderSettings.fogDensity = density;
-//                RenderSettings.fogMode = FogMode.Exponential;
-//                RenderSettings.fogColor = Color.gray;
+                RenderSettings.fogDensity = density;                
+                //                RenderSettings.fogColor = Color.gray;
             }
             else
             {

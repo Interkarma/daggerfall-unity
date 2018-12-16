@@ -1711,8 +1711,8 @@ MonoBehaviour:
   StormSunlightScale: 0.35
   SnowSunlightScale: 0.5
   WinterSunlightScale: 0.65
-  SunnyFogDensity: 0.00005
-  OvercastFogDensity: 0.00005
+  SunnyFogDensity: 0.0005
+  OvercastFogDensity: 0.0005
   RainyFogDensity: 0.0001
   SnowyFogDensity: 0.001
   HeavyFogDensity: 0.05
