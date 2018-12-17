@@ -1526,6 +1526,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
             }
+            else if (item.ItemGroup == ItemGroups.UselessItems1 && item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
+            {   // Handle drinking magic potions
+                GameManager.Instance.PlayerEffectManager.DrinkPotion(item);
+                DaggerfallUI.MessageBox("potion: " + item.typeDependentData); /*
+                MagicAndEffects.MagicEffects.HealHealth heal = new MagicAndEffects.MagicEffects.HealHealth();
+                Debug.Log(heal.PotionProperties.Recipes[0].GetHashCode());
+                Debug.Log(heal.PotionProperties.Recipes[1].GetHashCode());*/
+            }
             else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
             {
                 // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.

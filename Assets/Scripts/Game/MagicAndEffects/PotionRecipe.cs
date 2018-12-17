@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Properties
+
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Gets or sets effect settings for this recipe.
@@ -74,10 +76,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// int[] array of item template IDs constructor.
         /// </summary>
+        /// <param name="displayName">Potion name to use for this recipe.</param>
         /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ids">Array of item template IDs.</param>
-        public PotionRecipe(EffectSettings settings, params int[] ids)
+        public PotionRecipe(string displayName, EffectSettings settings, params int[] ids)
         {
+            DisplayName = displayName;
             this.settings = settings;
             if (ids != null && ids.Length > 0)
             {

@@ -246,6 +246,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return null;
         }
 
+        public PotionRecipe GetPotionRecipe(int recipeKey)
+        {
+            if (potionEffectTemplates.ContainsKey(recipeKey))
+            {
+                foreach (PotionRecipe recipe in potionEffectTemplates[recipeKey].PotionProperties.Recipes)
+                    if (recipe.GetHashCode() == recipeKey)
+                        return recipe;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Gets group names of registered effects.
         /// </summary>

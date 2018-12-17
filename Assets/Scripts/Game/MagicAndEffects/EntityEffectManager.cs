@@ -635,6 +635,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
+        #region Potions
+
+        public void DrinkPotion(DaggerfallUnityItem item)
+        {
+            // Item must be a valid potion
+            if (item == null || item.potionRecipe == 0)
+                return;
+
+            PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(item.potionRecipe);
+
+            EffectBundleSettings bundleSettings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.Potion,
+                Effects = new EffectEntry[] { new EffectEntry(potionRecipe.DisplayName, potionRecipe.Settings) },
+            };
+
+            // Assign bundle
+            EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+            AssignBundle(bundle);
+        }
+
+        #endregion
+
         #region Magic Items
 
         /// <summary>

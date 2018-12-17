@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Items
         public DaggerfallEnchantment[] legacyMagic = null;
         public int stackCount = 1;
         public Poisons poisonType = Poisons.None;
+        public int potionRecipe;
 
         // Private item fields
         int playerTextureArchive;
@@ -681,6 +682,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.poisonType = poisonType;
             if ((int)poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 data.poisonType = Poisons.None;
+            data.potionRecipe = potionRecipe;
             data.repairData = repairData.GetSaveData();
 
             return data;
@@ -1325,6 +1327,7 @@ namespace DaggerfallWorkshop.Game.Items
             poisonType = data.poisonType;
             if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 poisonType = Poisons.None;
+            potionRecipe = data.potionRecipe;
             repairData.RestoreRepairData(data.repairData);
         }
 

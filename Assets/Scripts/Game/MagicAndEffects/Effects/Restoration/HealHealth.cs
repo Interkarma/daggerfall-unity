@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // First recipe variant: Magnitude 5-5 + 9-9 per 1 levels
             EffectSettings recipe1Settings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 9, 9, 1);
             PotionRecipe recipe1 = new PotionRecipe(
+                "Healing",
                 recipe1Settings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
                 (int)Items.PlantIngredients1.Yellow_berries,
@@ -49,6 +50,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Second recipe variant: Magnitude 5-5 + 19-19 per 1 levels
             EffectSettings recipe2Settings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 19, 19, 1);
             PotionRecipe recipe2 = new PotionRecipe(
+                "Heal True",
                 recipe2Settings,
                 (int)Items.PlantIngredients1.Pine_branch,
                 (int)Items.PlantIngredients1.Red_berries,
