@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Entity
         // Entity magic effect flags
         // Note: These properties are intentionally not serialized. They should only be set by live effects.
         public bool IsImmuneToParalysis { get; set; }
+        public bool IsImmuneToDisease { get; set; }
         public bool IsSilenced { get; set; }
         public bool IsWaterWalking { get; set; }
         public bool IsWaterBreathing { get; set; }
@@ -654,6 +655,7 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             IsParalyzed = false;
             IsImmuneToParalysis = false;
+            IsImmuneToDisease = false;
             IsSilenced = false;
             IsWaterWalking = false;
             IsWaterBreathing = false;

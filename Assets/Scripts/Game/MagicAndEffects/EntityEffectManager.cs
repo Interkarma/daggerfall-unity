@@ -386,6 +386,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
+                // Incoming disease effects are blocked if entity is hard immune to disease (e.g. vampires)
+                if (effect is DiseaseEffect && entityBehaviour.Entity.IsImmuneToDisease)
+                {
+                    continue;
+                }
+
                 // Set parent bundle
                 effect.ParentBundle = instancedBundle;
 

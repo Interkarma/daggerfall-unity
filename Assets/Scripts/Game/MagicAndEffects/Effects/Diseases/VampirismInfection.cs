@@ -21,6 +21,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Handles deployment tasks during three-day infection window.
     /// This disease can be cured in the usual way up until it completes.
     /// Note: This disease should only be assigned to player entity.
+    ///
+    /// TODO:
+    ///  * Death video once days have elapsed
+    ///  * Schedule vampire questline
+    ///  * Clear guild memberships and reset reputations
+    ///  * Teleport player to small crypt inside region
+    ///  * Display "death is not the end" popup
+    ///  * Shut down this disease effect (in fact cure all diseases and poisons) and start vampirism effect
+    ///  * Pass infection region to vampirism effect for clan-specific work
     /// </summary>
     public class VampirismInfection : DiseaseEffect
     {
