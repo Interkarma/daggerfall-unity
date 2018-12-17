@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         uint startingDay = 0;
         bool warningDreamVideoPlayed = false;
+        int infectionRegionIndex;
 
         public override void SetProperties()
         {
@@ -43,6 +44,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Record starting day of infection
             startingDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
+
+            // Record region of infection for clan at time of deployment
+            // Think classic uses current region at time of turning, this will use current region at time of infection
+            infectionRegionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
 
             // Capture rest and travel events for disease progression on Start
             DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
@@ -91,6 +96,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             public bool warningDreamVideoPlayed;
             public uint startingDay;
+            public int infectionRegionIndex;
         }
 
         protected override object GetCustomDiseaseSaveData()
@@ -98,6 +104,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = new CustomSaveData_v1();
             data.warningDreamVideoPlayed = warningDreamVideoPlayed;
             data.startingDay = startingDay;
+            data.infectionRegionIndex = infectionRegionIndex;
 
             return data;
         }
@@ -110,6 +117,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
             warningDreamVideoPlayed = data.warningDreamVideoPlayed;
             startingDay = data.startingDay;
+            infectionRegionIndex = data.infectionRegionIndex;
         }
 
         #endregion
