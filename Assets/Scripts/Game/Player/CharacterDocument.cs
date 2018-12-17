@@ -48,9 +48,12 @@ namespace DaggerfallWorkshop.Game.Player
         public uint lastTimePlayerBoughtTraining;
         public uint timeForThievesGuildLetter;
         public uint timeForDarkBrotherhoodLetter;
+        public byte vampireClan;
         public byte darkBrotherhoodRequirementTally;
         public byte thievesGuildRequirementTally;
         public uint timeToBecomeVampireOrWerebeast;
+        public byte hasStartedInitialVampireQuest;
+        public uint lastTimeVampireNeedToKillSatiated;
         public uint lastTimePlayerAteOrDrankAtTavern;
         public sbyte biographyReactionMod;
         public List<string> biographyEffects;
