@@ -41,8 +41,8 @@ namespace DaggerfallWorkshop.Game
         public float SnowSunlightScale = 0.45f;
         [Range(0, 1)]
         public float WinterSunlightScale = 0.65f;
-
-        [Range(0, 1)]
+        
+        [Range(0, 1)]      
         public float SunnyFogDensity = 0.0005f;
         [Range(0, 1)]
         public float OvercastFogDensity = 0.0005f;
@@ -60,8 +60,6 @@ namespace DaggerfallWorkshop.Game
 
         // used to set post processing fog settings (excludeSkybox setting)
         private PostProcessingBehaviour postProcessingBehaviour;
-        private PostProcessingProfile defaultPostProcessingProfile; // default profile with fog setting excludeSkybox disabled
-        private PostProcessingProfile modifiedPostProcessingProfile; // default profile with fog setting excludeSkybox enabled
 
         public bool IsRaining { get; private set; }
 
@@ -89,47 +87,9 @@ namespace DaggerfallWorkshop.Game
             postProcessingBehaviour = Camera.main.GetComponent<PostProcessingBehaviour>();
             if (postProcessingBehaviour != null)
             {
-                // get default profile
-                defaultPostProcessingProfile = postProcessingBehaviour.profile;
-
-                // create new profile and copy settings (note: don't know if there is an easier way to copy settings - did not fing a copyFrom function or similar
-                modifiedPostProcessingProfile = new PostProcessingProfile();
-                modifiedPostProcessingProfile.ambientOcclusion.enabled = defaultPostProcessingProfile.ambientOcclusion.enabled;
-                modifiedPostProcessingProfile.ambientOcclusion.settings = defaultPostProcessingProfile.ambientOcclusion.settings;
-                modifiedPostProcessingProfile.antialiasing.enabled = defaultPostProcessingProfile.antialiasing.enabled;
-                modifiedPostProcessingProfile.antialiasing.settings = defaultPostProcessingProfile.antialiasing.settings;
-                modifiedPostProcessingProfile.bloom.enabled = defaultPostProcessingProfile.bloom.enabled;
-                modifiedPostProcessingProfile.bloom.settings = defaultPostProcessingProfile.bloom.settings;
-                modifiedPostProcessingProfile.chromaticAberration.enabled = defaultPostProcessingProfile.chromaticAberration.enabled;
-                modifiedPostProcessingProfile.chromaticAberration.settings = defaultPostProcessingProfile.chromaticAberration.settings;
-                modifiedPostProcessingProfile.colorGrading.enabled = defaultPostProcessingProfile.colorGrading.enabled;
-                modifiedPostProcessingProfile.colorGrading.settings = defaultPostProcessingProfile.colorGrading.settings;
-                modifiedPostProcessingProfile.depthOfField.enabled = defaultPostProcessingProfile.depthOfField.enabled;
-                modifiedPostProcessingProfile.depthOfField.settings = defaultPostProcessingProfile.depthOfField.settings;
-                modifiedPostProcessingProfile.dithering.enabled = defaultPostProcessingProfile.dithering.enabled;
-                modifiedPostProcessingProfile.dithering.settings = defaultPostProcessingProfile.dithering.settings;
-                modifiedPostProcessingProfile.eyeAdaptation.enabled = defaultPostProcessingProfile.eyeAdaptation.enabled;
-                modifiedPostProcessingProfile.eyeAdaptation.settings = defaultPostProcessingProfile.eyeAdaptation.settings;                
-                modifiedPostProcessingProfile.grain.enabled = defaultPostProcessingProfile.grain.enabled;
-                modifiedPostProcessingProfile.grain.settings = defaultPostProcessingProfile.grain.settings;
-                modifiedPostProcessingProfile.motionBlur.enabled = defaultPostProcessingProfile.motionBlur.enabled;
-                modifiedPostProcessingProfile.motionBlur.settings = defaultPostProcessingProfile.motionBlur.settings;
-                modifiedPostProcessingProfile.screenSpaceReflection.enabled = defaultPostProcessingProfile.screenSpaceReflection.enabled;
-                modifiedPostProcessingProfile.screenSpaceReflection.settings = defaultPostProcessingProfile.screenSpaceReflection.settings;
-                modifiedPostProcessingProfile.userLut.enabled = defaultPostProcessingProfile.userLut.enabled;
-                modifiedPostProcessingProfile.userLut.settings = defaultPostProcessingProfile.userLut.settings;
-                modifiedPostProcessingProfile.vignette.enabled = defaultPostProcessingProfile.vignette.enabled;
-                modifiedPostProcessingProfile.vignette.settings = defaultPostProcessingProfile.vignette.settings;
-                modifiedPostProcessingProfile.debugViews.enabled = defaultPostProcessingProfile.debugViews.enabled;
-                modifiedPostProcessingProfile.debugViews.settings = defaultPostProcessingProfile.debugViews.settings;
-                modifiedPostProcessingProfile.monitors = defaultPostProcessingProfile.monitors;
-
-                // update fog settings in modified profile
-                modifiedPostProcessingProfile.fog.settings = defaultPostProcessingProfile.fog.settings;
-                modifiedPostProcessingProfile.fog.enabled = true;
-                FogModel.Settings modifiedSettings = modifiedPostProcessingProfile.fog.settings;
-                modifiedSettings.excludeSkybox = true;
-                modifiedPostProcessingProfile.fog.settings = modifiedSettings;                
+                var fogSettings = postProcessingBehaviour.profile.fog.settings;
+                fogSettings.excludeSkybox = true;
+                postProcessingBehaviour.profile.fog.settings = fogSettings;              
             }
             
             if (DaggerfallUnity.Settings.AssetInjection)
@@ -183,7 +143,9 @@ namespace DaggerfallWorkshop.Game
 
                 if (postProcessingBehaviour != null)
                 {
-                    postProcessingBehaviour.profile = defaultPostProcessingProfile;
+                    var fogSettings = postProcessingBehaviour.profile.fog.settings;
+                    fogSettings.excludeSkybox = false;
+                    postProcessingBehaviour.profile.fog.settings = fogSettings;
                 }
             }
             else
@@ -196,7 +158,9 @@ namespace DaggerfallWorkshop.Game
 
                 if (postProcessingBehaviour != null)
                 {
-                    postProcessingBehaviour.profile = modifiedPostProcessingProfile;
+                    var fogSettings = postProcessingBehaviour.profile.fog.settings;
+                    fogSettings.excludeSkybox = true;
+                    postProcessingBehaviour.profile.fog.settings = fogSettings;
                 }
             }
         }
