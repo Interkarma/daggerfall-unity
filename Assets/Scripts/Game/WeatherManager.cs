@@ -1,10 +1,10 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:
+// Contributors:    Michael Rauter (Nystul)
 //
 // Notes:
 //
@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
+using UnityEngine.PostProcessing;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game
@@ -57,6 +58,11 @@ namespace DaggerfallWorkshop.Game
         private WeatherTable _weatherTable;
         private float _pollWeatherInSeconds = 30f;
 
+        // used to set post processing fog settings (excludeSkybox setting)
+        private PostProcessingBehaviour postProcessingBehaviour;
+        private PostProcessingProfile defaultPostProcessingProfile; // default profile with fog setting excludeSkybox disabled
+        private PostProcessingProfile modifiedPostProcessingProfile; // default profile with fog setting excludeSkybox enabled
+
         public bool IsRaining { get; private set; }
 
         public bool IsStorming { get; private set; }
@@ -79,7 +85,53 @@ namespace DaggerfallWorkshop.Game
         {
             _dfUnity = DaggerfallUnity.Instance;
             _weatherTable = WeatherTable.ParseJsonTable();
+            
+            postProcessingBehaviour = Camera.main.GetComponent<PostProcessingBehaviour>();
+            if (postProcessingBehaviour != null)
+            {
+                // get default profile
+                defaultPostProcessingProfile = postProcessingBehaviour.profile;
 
+                // create new profile and copy settings (note: don't know if there is an easier way to copy settings - did not fing a copyFrom function or similar
+                modifiedPostProcessingProfile = new PostProcessingProfile();
+                modifiedPostProcessingProfile.ambientOcclusion.enabled = defaultPostProcessingProfile.ambientOcclusion.enabled;
+                modifiedPostProcessingProfile.ambientOcclusion.settings = defaultPostProcessingProfile.ambientOcclusion.settings;
+                modifiedPostProcessingProfile.antialiasing.enabled = defaultPostProcessingProfile.antialiasing.enabled;
+                modifiedPostProcessingProfile.antialiasing.settings = defaultPostProcessingProfile.antialiasing.settings;
+                modifiedPostProcessingProfile.bloom.enabled = defaultPostProcessingProfile.bloom.enabled;
+                modifiedPostProcessingProfile.bloom.settings = defaultPostProcessingProfile.bloom.settings;
+                modifiedPostProcessingProfile.chromaticAberration.enabled = defaultPostProcessingProfile.chromaticAberration.enabled;
+                modifiedPostProcessingProfile.chromaticAberration.settings = defaultPostProcessingProfile.chromaticAberration.settings;
+                modifiedPostProcessingProfile.colorGrading.enabled = defaultPostProcessingProfile.colorGrading.enabled;
+                modifiedPostProcessingProfile.colorGrading.settings = defaultPostProcessingProfile.colorGrading.settings;
+                modifiedPostProcessingProfile.depthOfField.enabled = defaultPostProcessingProfile.depthOfField.enabled;
+                modifiedPostProcessingProfile.depthOfField.settings = defaultPostProcessingProfile.depthOfField.settings;
+                modifiedPostProcessingProfile.dithering.enabled = defaultPostProcessingProfile.dithering.enabled;
+                modifiedPostProcessingProfile.dithering.settings = defaultPostProcessingProfile.dithering.settings;
+                modifiedPostProcessingProfile.eyeAdaptation.enabled = defaultPostProcessingProfile.eyeAdaptation.enabled;
+                modifiedPostProcessingProfile.eyeAdaptation.settings = defaultPostProcessingProfile.eyeAdaptation.settings;                
+                modifiedPostProcessingProfile.grain.enabled = defaultPostProcessingProfile.grain.enabled;
+                modifiedPostProcessingProfile.grain.settings = defaultPostProcessingProfile.grain.settings;
+                modifiedPostProcessingProfile.motionBlur.enabled = defaultPostProcessingProfile.motionBlur.enabled;
+                modifiedPostProcessingProfile.motionBlur.settings = defaultPostProcessingProfile.motionBlur.settings;
+                modifiedPostProcessingProfile.screenSpaceReflection.enabled = defaultPostProcessingProfile.screenSpaceReflection.enabled;
+                modifiedPostProcessingProfile.screenSpaceReflection.settings = defaultPostProcessingProfile.screenSpaceReflection.settings;
+                modifiedPostProcessingProfile.userLut.enabled = defaultPostProcessingProfile.userLut.enabled;
+                modifiedPostProcessingProfile.userLut.settings = defaultPostProcessingProfile.userLut.settings;
+                modifiedPostProcessingProfile.vignette.enabled = defaultPostProcessingProfile.vignette.enabled;
+                modifiedPostProcessingProfile.vignette.settings = defaultPostProcessingProfile.vignette.settings;
+                modifiedPostProcessingProfile.debugViews.enabled = defaultPostProcessingProfile.debugViews.enabled;
+                modifiedPostProcessingProfile.debugViews.settings = defaultPostProcessingProfile.debugViews.settings;
+                modifiedPostProcessingProfile.monitors = defaultPostProcessingProfile.monitors;
+
+                // update fog settings in modified profile
+                modifiedPostProcessingProfile.fog.settings = defaultPostProcessingProfile.fog.settings;
+                modifiedPostProcessingProfile.fog.enabled = true;
+                FogModel.Settings modifiedSettings = modifiedPostProcessingProfile.fog.settings;
+                modifiedSettings.excludeSkybox = true;
+                modifiedPostProcessingProfile.fog.settings = modifiedSettings;                
+            }
+            
             if (DaggerfallUnity.Settings.AssetInjection)
                 AddWindZone();
 
@@ -126,8 +178,13 @@ namespace DaggerfallWorkshop.Game
 
             if (isFoggy)
             {
-                RenderSettings.fogDensity = density;                
+                RenderSettings.fogDensity = density;
                 //                RenderSettings.fogColor = Color.gray;
+
+                if (postProcessingBehaviour != null)
+                {
+                    postProcessingBehaviour.profile = defaultPostProcessingProfile;
+                }
             }
             else
             {
@@ -135,7 +192,12 @@ namespace DaggerfallWorkshop.Game
                 // TODO set this based on ... something.
                 // ex. time of day/angle of sun so we can get nice sunset/rise atmospheric effects
                 // also blend with climate so climates end up having faint 'tints' to them
-//                RenderSettings.fogColor = Color.clear;
+                //                RenderSettings.fogColor = Color.clear;
+
+                if (postProcessingBehaviour != null)
+                {
+                    postProcessingBehaviour.profile = modifiedPostProcessingProfile;
+                }
             }
         }
 
