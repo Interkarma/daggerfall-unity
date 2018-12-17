@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected bool incubationOver = false;
         protected uint lastDay;
         protected int daysOfSymptomsLeft;
+        protected int daysPast;
 
         #endregion
 
@@ -56,6 +57,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             get { return daysOfSymptomsLeft; }
             set { daysOfSymptomsLeft = value; }
+        }
+
+        public int DaysPast
+        {
+            get { return daysPast; }
         }
 
         public TextFile.Token[] ContractedMessageTokens
@@ -138,7 +144,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
-            int daysPast = (int)(currentDay - lastDay);
+            daysPast = (int)(currentDay - lastDay);
 
             // Do nothing if still same day or disease has run its course
             // if this is same day host contracted disease it is considered incubation time

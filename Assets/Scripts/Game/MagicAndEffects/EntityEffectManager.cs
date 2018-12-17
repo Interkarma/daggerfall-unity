@@ -926,6 +926,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        /// <summary>
+        /// Helper to create stage one infection disease for vampirism.
+        /// </summary>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateVampirismDisease()
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.Disease,
+                Effects = new EffectEntry[] { new EffectEntry(VampirismInfection.VampirismInfectionKey) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         public void CureDisease(Diseases disease)
         {
             // Find specific disease incumbent
