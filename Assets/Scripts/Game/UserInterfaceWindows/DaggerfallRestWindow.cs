@@ -171,6 +171,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 hud.Update();
             }
 
+            // Tick sleep event on full or timed sleep
+            if (currentRestMode == RestModes.FullRest || currentRestMode == RestModes.TimedRest)
+                RaiseOnSleepTickEvent();
+
             ShowStatus();
             if (currentRestMode != RestModes.Selection)
             {
@@ -617,6 +621,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemaining = time;
             waitTimer = Time.realtimeSinceStartup;
             currentRestMode = RestModes.Loiter;
+        }
+
+        // OnSleepTick - does not fire while loitering
+        public delegate void OnOnSleepTickEventHandler();
+        public static event OnOnSleepTickEventHandler OnSleepTick;
+        void RaiseOnSleepTickEvent()
+        {
+            if (OnSleepTick != null)
+                OnSleepTick();
         }
 
         #endregion

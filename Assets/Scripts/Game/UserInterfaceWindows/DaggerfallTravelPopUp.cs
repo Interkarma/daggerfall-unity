@@ -325,6 +325,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             travelWindow.CloseTravelWindows(true);
             GameManager.Instance.PlayerEntity.RaiseSkills();
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
+
+            RaiseOnPostFastTravelEvent();
         }
 
         // Return whether player has enough gold for the selected travel options
@@ -434,6 +436,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             sleepModeInn = !sleepModeInn;
             Refresh();
+        }
+
+        // OnPostFastTravel
+        public delegate void OnOnPostFastTravelEventHandler();
+        public static event OnOnPostFastTravelEventHandler OnPostFastTravel;
+        void RaiseOnPostFastTravelEvent()
+        {
+            if (OnPostFastTravel != null)
+                OnPostFastTravel();
         }
 
         #endregion

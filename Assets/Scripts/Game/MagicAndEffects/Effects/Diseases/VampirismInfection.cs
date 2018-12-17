@@ -9,7 +9,10 @@
 // Notes:
 //
 
-using UnityEngine;
+using FullSerializer;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -17,10 +20,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Stage one disease effect for vampirism.
     /// Handles deployment tasks during three-day infection window.
     /// This disease can be cured in the usual way up until it completes.
+    /// Note: This disease should only be assigned to player entity.
     /// </summary>
     public class VampirismInfection : DiseaseEffect
     {
         public const string VampirismInfectionKey = "Vampirism-Infection";
+
+        uint startingDay = 0;
+        bool warningDreamVideoPlayed = false;
 
         public override void SetProperties()
         {
@@ -30,11 +37,81 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             diseaseData = new DiseaseData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF); // Permanent no-effect disease, will manage custom lifecycle
         }
 
-        protected override void IncrementDailyDiseaseEffects()
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            base.IncrementDailyDiseaseEffects();
+            base.Start(manager, caster);
 
-            Debug.LogFormat("{0} days of vampirism disease have elapsed", daysPast);
+            // Record starting day of infection
+            startingDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
+
+            // Capture rest and travel events for disease progression on Start
+            DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
+            DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
         }
+
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+
+            // Capture rest and travel events for disease progression on Resume
+            DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
+            DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
+        }
+
+        #region Events
+
+        void ProgressDiseaseAfterSleepOrTravel()
+        {
+            const string videoName = "ANIM0004.VID";    // Vampire dream video
+
+            // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
+            uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
+            int daysPast = (int)(currentDay - startingDay);
+
+            // Always allow dream to play on first rest or travel event
+            // In current implementation, disease will not progress to stage 2 effect until player has experienced dream then rests or travels a second time
+            if (daysPast > 0 && !warningDreamVideoPlayed)
+            {
+                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, videoName);
+                DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
+                warningDreamVideoPlayed = true;
+            }
+            else if (daysPast > 3 && warningDreamVideoPlayed)
+            {
+                // TODO: End stage one disease effect and deploy vampirism effect
+            }
+        }
+
+        #endregion
+
+        #region Serialization
+
+        [fsObject("v1")]
+        public struct CustomSaveData_v1
+        {
+            public bool warningDreamVideoPlayed;
+            public uint startingDay;
+        }
+
+        protected override object GetCustomDiseaseSaveData()
+        {
+            CustomSaveData_v1 data = new CustomSaveData_v1();
+            data.warningDreamVideoPlayed = warningDreamVideoPlayed;
+            data.startingDay = startingDay;
+
+            return data;
+        }
+
+        protected override void RestoreCustomDiseaseSaveData(object dataIn)
+        {
+            if (dataIn == null)
+                return;
+
+            CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
+            warningDreamVideoPlayed = data.warningDreamVideoPlayed;
+            startingDay = data.startingDay;
+        }
+
+        #endregion
     }
 }

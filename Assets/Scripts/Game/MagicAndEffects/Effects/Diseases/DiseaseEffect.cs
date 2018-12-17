@@ -36,7 +36,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected bool incubationOver = false;
         protected uint lastDay;
         protected int daysOfSymptomsLeft;
-        protected int daysPast;
 
         #endregion
 
@@ -57,11 +56,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             get { return daysOfSymptomsLeft; }
             set { daysOfSymptomsLeft = value; }
-        }
-
-        public int DaysPast
-        {
-            get { return daysPast; }
         }
 
         public TextFile.Token[] ContractedMessageTokens
@@ -144,7 +138,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
-            daysPast = (int)(currentDay - lastDay);
+            int daysPast = (int)(currentDay - lastDay);
 
             // Do nothing if still same day or disease has run its course
             // if this is same day host contracted disease it is considered incubation time
@@ -278,6 +272,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             public bool incubationOver;
             public uint lastDay;
             public int daysOfSymptomsLeft;
+            public object customDiseaseData;
         }
 
         public override object GetSaveData()
@@ -287,6 +282,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             data.incubationOver = incubationOver;
             data.lastDay = lastDay;
             data.daysOfSymptomsLeft = daysOfSymptomsLeft;
+            data.customDiseaseData = GetCustomDiseaseSaveData();
 
             return data;
         }
@@ -301,6 +297,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             incubationOver = data.incubationOver;
             lastDay = data.lastDay;
             daysOfSymptomsLeft = data.daysOfSymptomsLeft;
+            RestoreCustomDiseaseSaveData(data.customDiseaseData);
+        }
+
+        protected virtual object GetCustomDiseaseSaveData()
+        {
+            return null;
+        }
+
+        protected virtual void RestoreCustomDiseaseSaveData(object dataIn)
+        {
         }
 
         #endregion
