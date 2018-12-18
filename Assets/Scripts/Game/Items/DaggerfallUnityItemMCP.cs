@@ -201,22 +201,23 @@ namespace DaggerfallWorkshop.Game.Items
                 return soul.Name;
             }
 
-            private int[] classicRecipeMapping = { 0, 0, 5522181, 0, 0, 0, 0, 0, 0, 0, 0, 4937009, 0, 0, 0, 0, 0, 0, 0, 0 };
-
             public override string Potion()
             {   // %po
-                // Convert classic recipes to DFU Effect hashcode.
-                if (parent.potionRecipe == 0 && parent.typeDependentData < classicRecipeMapping.Length)
-                    parent.potionRecipe = classicRecipeMapping[parent.typeDependentData];
-
-                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(parent.potionRecipe);
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(parent.potionRecipeKey);
+                if (potionRecipe != null)
+                {
+                    if (parent.IsPotionRecipe)
+                        return potionRecipe.DisplayName;                                          // "Potion recipe for %po"
+                    else if (parent.IsPotion)
+                        return HardStrings.potionOf.Replace("%po", potionRecipe.DisplayName);     // "Potion of %po" (255=Unknown Powers)
+                }
 
                 KeyValuePair<string, Recipe[]> mapping = DaggerfallUnity.Instance.ItemHelper.getPotionRecipesByID(parent.typeDependentData);
                 recipeArray = mapping.Value;
                 if (parent.TemplateIndex == (int)MiscItems.Potion_recipe)
                     return mapping.Key;                                          // "Potion recipe for %po"
                 else if (parent.TemplateIndex == (int)UselessItems1.Glass_Bottle)
-                    return HardStrings.potionOf.Replace("%po", potionRecipe == null ? mapping.Key : potionRecipe.DisplayName);     // "Potion of %po" (255=Unknown Powers)
+                    return HardStrings.potionOf.Replace("%po", mapping.Key);     // "Potion of %po" (255=Unknown Powers)
                 throw new NotImplementedException();
             }
 

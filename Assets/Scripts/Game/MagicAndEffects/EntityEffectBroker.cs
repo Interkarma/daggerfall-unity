@@ -239,11 +239,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (recipe != null)
             {
                 int recipeKey = recipe.GetHashCode();
-                if (!potionEffectTemplates.ContainsKey(recipeKey))
+                if (potionEffectTemplates.ContainsKey(recipeKey))
                     return potionEffectTemplates[recipeKey];
             }
 
             return null;
+        }
+
+        public PotionRecipe GetPotionRecipe(PotionRecipe recipe)
+        {
+            return GetPotionRecipe(recipe.GetHashCode());
         }
 
         public PotionRecipe GetPotionRecipe(int recipeKey)

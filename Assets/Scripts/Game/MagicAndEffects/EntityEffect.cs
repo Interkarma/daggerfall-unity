@@ -164,6 +164,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        protected const string textDatabase = "ClassicEffects";
+
         protected EffectProperties properties = new EffectProperties();
         protected EffectSettings settings = new EffectSettings();
         protected PotionProperties potionProperties = new PotionProperties();

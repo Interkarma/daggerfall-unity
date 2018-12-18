@@ -327,12 +327,7 @@ namespace DaggerfallWorkshop.Game
                 // Remove arrow
                 ItemCollection playerItems = playerEntity.Items;
                 DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow);
-                if (arrow != null)
-                {
-                    arrow.stackCount--;
-                    if (arrow.stackCount <= 0)
-                        playerItems.RemoveItem(arrow);
-                }
+                playerItems.RemoveOne(arrow);
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {

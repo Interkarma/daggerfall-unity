@@ -718,6 +718,16 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="recipe">Recipe index for the potion</param>
         /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreatePotion(int recipeKey)
+        {
+            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) { PotionRecipeKey = recipeKey };
+        }
+
+        /// <summary>
+        /// Creates a potion
+        /// </summary>
+        /// <param name="recipe">Recipe index for the potion</param>
+        /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreatePotion(byte recipe)
         {
             return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1)
@@ -728,7 +738,7 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Creates a random potion
+        /// Creates a random classic potion
         /// </summary>
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomPotion()

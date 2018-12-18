@@ -198,7 +198,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Resolve potion names
-            if (item.ItemGroup == ItemGroups.UselessItems1 && item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
+            if (item.IsPotion)
                 return MacroHelper.GetValue("%po", item);
 
             // Resolve quest letters, get last 2 lines which should be the signoff
@@ -558,7 +558,7 @@ namespace DaggerfallWorkshop.Game.Items
 
                 case ItemGroups.MiscItems:
                     // A few items in the MiscItems group have their own text display
-                    if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
+                    if (item.IsPotionRecipe)
                         return GetPotionRecipeTokens();                             // Handle potion recipes
                     else if (item.TemplateIndex == (int)MiscItems.House_Deed)
                         return textProvider.GetRSCTokens(houseDeedTextId);          // Handle house deeds
@@ -572,8 +572,7 @@ namespace DaggerfallWorkshop.Game.Items
                 default:
                     // Handle potions in glass bottles
                     // In classic, the check is whether RecordRoot.SublistHead is non-null and of PotionMix type.
-                    // TODO: Do we need it or will glass bottles with typedependentdata cover it?
-                    if (item.ItemGroup == ItemGroups.UselessItems1 && item.TemplateIndex == (int)UselessItems1.Glass_Bottle)
+                    if (item.IsPotion)
                         return textProvider.GetRSCTokens(potionTextId);
 
                     // Handle Azura's Star

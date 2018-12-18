@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
 
@@ -21,6 +22,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// </summary>
     public class PotionRecipe : IEqualityComparer<PotionRecipe.Ingredient[]>
     {
+        // Classic potion recipe mapping to DFU recipe keys:
+        //  Stamina, Orc Strength, Healing, Waterwalking, Restore Power, Resist Fire, Resist Frost, Resist Shock, Cure Disease, Slow Falling,
+        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chaemelon Form, Shadow Form, Invisibility, Purification
+        public static readonly int[] classicRecipeKeys = { 0, 0, 4975678, 0, 0, 0, 0, 0, 0, 0, 0, 4937012, 0, 0, 0, 0, 0, 0, 0, 0 };
+
         #region Fields
 
         EffectSettings settings;
@@ -31,6 +37,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Properties
 
         public string DisplayName { get; set; }
+        public int Price { get; set; }
 
         /// <summary>
         /// Gets or sets effect settings for this recipe.
@@ -65,24 +72,47 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Ingredient[] array constructor.
         /// </summary>
+        /// <param name="displayName">Potion name to use for this recipe.</param>
+        /// <param name="price">Value of potion in gp.</param>
         /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ingredients">Ingredient array.</param>
-        public PotionRecipe(EffectSettings settings, params Ingredient[] ingredients)
+        public PotionRecipe(string displayName, int price, EffectSettings settings, params Ingredient[] ingredients)
         {
+            DisplayName = displayName;
+            Price = price;
             this.settings = settings;
+            Array.Sort(ingredients);
             this.ingredients = ingredients;
+        }
+
+        /// <summary>
+        /// Ingredient[] array constructor - for finding and comparisons only.
+        /// </summary>
+        /// <param name="ids">Ingredient ids list.</param>
+        public PotionRecipe(List<int> ids)
+        {
+            ids.Sort();
+            if (ids != null && ids.Count > 0)
+            {
+                ingredients = new Ingredient[ids.Count];
+                for (int i = 0; i < ids.Count; i++)
+                    ingredients[i].id = ids[i];
+            }
         }
 
         /// <summary>
         /// int[] array of item template IDs constructor.
         /// </summary>
         /// <param name="displayName">Potion name to use for this recipe.</param>
+        /// <param name="price">Value of potion in gp.</param>
         /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ids">Array of item template IDs.</param>
-        public PotionRecipe(string displayName, EffectSettings settings, params int[] ids)
+        public PotionRecipe(string displayName, int price, EffectSettings settings, params int[] ids)
         {
             DisplayName = displayName;
+            Price = price;
             this.settings = settings;
+            Array.Sort(ids);
             if (ids != null && ids.Length > 0)
             {
                 ingredients = new Ingredient[ids.Length];

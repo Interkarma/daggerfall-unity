@@ -640,21 +640,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void DrinkPotion(DaggerfallUnityItem item)
         {
             // Item must be a valid potion
-            if (item == null || item.potionRecipe == 0)
+            if (item == null || item.PotionRecipeKey == 0)
                 return;
 
-            PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(item.potionRecipe);
+            PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(item.PotionRecipeKey);
+            IEntityEffect potionEffect = GameManager.Instance.EntityEffectBroker.GetPotionRecipeEffect(potionRecipe);
 
             EffectBundleSettings bundleSettings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
                 BundleType = BundleTypes.Potion,
-                Effects = new EffectEntry[] { new EffectEntry(potionRecipe.DisplayName, potionRecipe.Settings) },
+                TargetType = TargetTypes.CasterOnly,
+                Effects = new EffectEntry[] { new EffectEntry(potionEffect.Key, potionRecipe.Settings) },
             };
 
             // Assign bundle
             EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
             AssignBundle(bundle);
+
+            // Play cast sound on drink for player only
+            if (IsPlayerEntity)
+                PlayCastSound(entityBehaviour, GetCastSoundID(ElementTypes.Magic));
         }
 
         #endregion
