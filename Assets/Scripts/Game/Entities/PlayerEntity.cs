@@ -9,6 +9,8 @@
 // Notes:
 //
 
+using UnityEngine;
+using System;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -20,10 +22,9 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
-using UnityEngine;
-using System;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -33,6 +34,8 @@ namespace DaggerfallWorkshop.Game.Entity
     public class PlayerEntity : DaggerfallEntity
     {
         #region Fields
+
+        public const string vampireSpellTag = "vampire";
 
         bool godMode = false;
         bool noTargetMode = false;
@@ -844,6 +847,82 @@ namespace DaggerfallWorkshop.Game.Entity
                     //}
                 }
             }
+        }
+
+        public void AssignPlayerVampireSpells(VampireClans clan)
+        {
+            // IDs from SPELLS.STD record ID https://en.uesp.net/wiki/Daggerfall:SPELLS.STD_indices
+            int levitateID = 4;
+            //int charmMortalID = 90;       // Not implemented
+            int calmHumanoidID = 91;
+            int nimblenessID = 85;
+            int paralysisID = 50;
+            int freeActionID = 10;
+            int healID = 64;
+            //int shieldID = 17;            // Not implemented
+            int resistColdID = 11;
+            int resistFireID = 12;
+            int resistShockID = 13;
+            int silenceID = 23;
+            int invisibilityID = 6;
+            int iceStormID = 20;
+            int wildfireID = 33;
+
+            // Common spells
+            AssignVampireSpell(levitateID);
+            //AssignVampireSpell(charmMortalID);
+            AssignVampireSpell(calmHumanoidID);
+
+            // Clan spells
+            switch (clan)
+            {
+                case VampireClans.Vraseth:
+                    AssignVampireSpell(nimblenessID);
+                    break;
+                case VampireClans.Khulari:
+                    AssignVampireSpell(paralysisID);
+                    break;
+                case VampireClans.Montalion:
+                    AssignVampireSpell(freeActionID);
+                    break;
+                case VampireClans.Thrafey:
+                    AssignVampireSpell(healID);
+                    break;
+                case VampireClans.Garlythi:
+                    //AssignVampireSpell(shieldID);
+                    break;
+                case VampireClans.Selenu:
+                    AssignVampireSpell(resistColdID);
+                    AssignVampireSpell(resistFireID);
+                    AssignVampireSpell(resistShockID);
+                    break;
+                case VampireClans.Lyrezi:
+                    AssignVampireSpell(silenceID);
+                    AssignVampireSpell(invisibilityID);
+                    break;
+                case VampireClans.Haarvenu:
+                    AssignVampireSpell(iceStormID);
+                    AssignVampireSpell(wildfireID);
+                    break;
+            }
+        }
+
+        void AssignVampireSpell(int id)
+        {
+            // Get spell record data
+            SpellRecord.SpellRecordData recordData;
+            if (!GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(id, out recordData))
+                return;
+
+            // Get effect bundle settings
+            EffectBundleSettings bundleSettings;
+            if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(recordData, BundleTypes.Spell, out bundleSettings))
+                return;
+
+            // Assign to player entity spellbook with some custom settings
+            bundleSettings.MinimumCastingCost = true;
+            bundleSettings.Tag = vampireSpellTag;
+            GameManager.Instance.PlayerEntity.AddSpell(bundleSettings);
         }
 
         /// <summary>

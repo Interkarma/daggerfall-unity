@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         // Show spell name and cost
                         // Costs can change based on player skills and stats so must be calculated each time
                         int goldCost, spellPointCost;
-                        FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost);
+                        FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost, null, spellbook[i].MinimumCastingCost);
                         spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name));
                     }
                 }

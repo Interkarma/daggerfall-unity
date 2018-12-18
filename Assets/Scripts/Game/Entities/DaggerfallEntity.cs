@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Entity
         bool[] resistanceFlags = new bool[5];     // Indices map to DFCareer.Elements 0-4
         int[] resistanceChances = new int[5];
 
-        // Temp entity spellbook
+        // Entity spellbook
         protected List<EffectBundleSettings> spellbook = new List<EffectBundleSettings>();
 
         #endregion
@@ -571,8 +571,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
         // NOTES:
         //  Likely to add a custom spell collection class later for spellbook
-        //  Currently just need to wire up different ends of the systems and a simple collection will do here
-        //  These old v1 spells will be removed at some point in future when ready
 
         public int SpellbookCount()
         {

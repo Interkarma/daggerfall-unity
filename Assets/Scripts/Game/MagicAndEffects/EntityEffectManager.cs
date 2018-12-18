@@ -282,7 +282,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Get spellpoint costs of this spell
             int totalGoldCostUnused;
-            FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
+            FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost, null, spell.Settings.MinimumCastingCost);
 
             // Allow casting spells of any cost if entity is player and godmode enabled
             bool godModeCast = (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode);
@@ -1040,6 +1040,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 RemoveBundle(bundle);
                 Debug.LogFormat("Removing poison bundle {0}", bundle.GetHashCode());
             }
+        }
+
+        public void CureAll()
+        {
+            DaggerfallEntity entity = entityBehaviour.Entity;
+            entity.CurrentHealth = entity.MaxHealth;
+            entity.CurrentFatigue = entity.MaxFatigue;
+            entity.CurrentMagicka = entity.MaxMagicka;
+            CureAllPoisons();
+            CureAllDiseases();
+        }
+
+        public bool HasVampirism()
+        {
+            return FindIncumbentEffect<VampirismEffect>() != null;
         }
 
         #endregion

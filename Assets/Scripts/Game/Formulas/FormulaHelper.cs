@@ -1451,8 +1451,11 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <param name="totalGoldCostOut">Total gold cost out.</param>
         /// <param name="totalSpellPointCostOut">Total spellpoint cost out.</param>
         /// <param name="casterEntity">Caster entity. Assumed to be player if null.</param>
-        public static void CalculateTotalEffectCosts(EffectEntry[] effectEntries, TargetTypes targetType, out int totalGoldCostOut, out int totalSpellPointCostOut, DaggerfallEntity casterEntity = null)
+        /// <param name="minimumCastingCost">Spell point always costs minimum (e.g. from vampirism). Do not set true for reflection/absorption cost calculations.</param>
+        public static void CalculateTotalEffectCosts(EffectEntry[] effectEntries, TargetTypes targetType, out int totalGoldCostOut, out int totalSpellPointCostOut, DaggerfallEntity casterEntity = null, bool minimumCastingCost = false)
         {
+            const int castCostFloor = 5;
+
             totalGoldCostOut = 0;
             totalSpellPointCostOut = 0;
 
@@ -1471,8 +1474,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Multipliers for target type
             totalGoldCostOut = ApplyTargetCostMultiplier(totalGoldCostOut, targetType);
             totalSpellPointCostOut = ApplyTargetCostMultiplier(totalSpellPointCostOut, targetType);
-            if (totalSpellPointCostOut < 5)
-                totalSpellPointCostOut = 5;
+
+            // Set vampire spell cost
+            if (minimumCastingCost)
+                totalSpellPointCostOut = castCostFloor;
+
+            // Enforce minimum
+            if (totalSpellPointCostOut < castCostFloor)
+                totalSpellPointCostOut = castCostFloor;
         }
 
         /// <summary>
