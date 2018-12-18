@@ -19,23 +19,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Slowfall : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
         bool awakeAlert = true;
 
         public override void SetProperties()
         {
             properties.Key = "Slowfall";
             properties.ClassicKey = MakeClassicKey(25, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "slowfall");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "slowfall");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1575);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1275);
             properties.SupportDuration = true;
             properties.AllowedTargets = TargetTypes.CasterOnly;
             properties.AllowedElements = ElementTypes.Magic;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Alteration;
             properties.DurationCosts = MakeEffectCosts(20, 100);
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe slowFalling = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "slowFalling"),
+                100,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Pure_water,
+                (int)Items.PlantIngredients2.White_poppy,
+                (int)Items.PlantIngredients2.Black_poppy);
+
+            AssignPotionRecipes(slowFalling);
         }
 
         public override void ConstantEffect()

@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Alteration;
             properties.DurationCosts = MakeEffectCosts(100, 100);
             properties.ChanceCosts = MakeEffectCosts(8, 100);
@@ -81,6 +81,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetVariantProperties(DFCareer.Elements.DiseaseOrPoison);
             SetVariantProperties(DFCareer.Elements.Shock);
             SetVariantProperties(DFCareer.Elements.Magic);
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe resistFire = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "resistFire"),
+                75,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.Gems.Amber,
+                (int)Items.PlantIngredients1.Red_flowers,
+                (int)Items.CreatureIngredients1.Fairy_dragon_scales,
+                (int)Items.PlantIngredients2.Cactus);
+
+            PotionRecipe resistFrost = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "resistFrost"),
+                75,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.Gems.Turquoise,
+                (int)Items.PlantIngredients1.Pine_branch,
+                (int)Items.PlantIngredients2.White_rose);
+
+            // Assign recipes
+            AssignPotionRecipes(resistFire, resistFrost);
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

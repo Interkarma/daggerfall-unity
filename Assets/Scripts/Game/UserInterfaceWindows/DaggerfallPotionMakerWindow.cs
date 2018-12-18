@@ -253,6 +253,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.LogFormat("Potion matched: {0}", potionRecipe.DisplayName);
                 GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(recipeKey));
             }
+            else
+                GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
 
             // Remove item from player inventory unless a stack remains.
             foreach (DaggerfallUnityItem item in cauldron)

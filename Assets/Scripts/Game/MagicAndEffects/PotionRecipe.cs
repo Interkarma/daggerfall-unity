@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         // Classic potion recipe mapping to DFU recipe keys:
         //  Stamina, Orc Strength, Healing, Waterwalking, Restore Power, Resist Fire, Resist Frost, Resist Shock, Cure Disease, Slow Falling,
         //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chaemelon Form, Shadow Form, Invisibility, Purification
-        public static readonly int[] classicRecipeKeys = { 0, 0, 4975678, 0, 0, 0, 0, 0, 0, 0, 0, 4937012, 0, 0, 0, 0, 0, 0, 0, 0 };
+        public static readonly int[] classicRecipeKeys = { 0, 0, 4975678, 0, 0, 111516185, 4826108, 0, 224588, 220192, 0, 4937012, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         #region Fields
 
