@@ -465,10 +465,18 @@ namespace DaggerfallWorkshop
                     if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                     {
                         if (bundleSettings.TargetType == TargetTypes.CasterOnly)
+                        {
                             // Spell is readied on player for free
                             GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, false);
-                        // else
-                        // Spell is fired at player, at strength of player level, from triggering object
+                        }
+                        else
+                        {
+                            // Spell is fired at player, at strength of player level, from triggering object
+                            DaggerfallMissile missile = GameManager.Instance.PlayerEffectManager.InstantiateSpellMissile(bundleSettings.ElementType);
+                            missile.Payload = new EntityEffectBundle(bundleSettings, GameManager.Instance.PlayerEntityBehaviour);
+                            missile.CustomAimPosition = thisAction.transform.position;
+                            missile.CustomAimDirection = Vector3.Normalize(GameManager.Instance.PlayerObject.transform.position - thisAction.transform.position);
+                        }
                     }
                 }
 
