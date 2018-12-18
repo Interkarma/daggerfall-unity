@@ -315,6 +315,80 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 1;   // TODO Amount of stat boost, guessing what this formula might need...
         }
 
+        // Gets vampire clan based on region
+        public static VampireClans GetVampireClan(DaggerfallRegions region)
+        {
+            // Clan assignment according to UESP https://en.uesp.net/wiki/Daggerfall:Vampirism
+            switch (region)
+            {
+                // Anthotis
+                case DaggerfallRegions.AlikrDesert:
+                case DaggerfallRegions.Antiphyllos:
+                case DaggerfallRegions.Bergama:
+                case DaggerfallRegions.Dakfron:
+                case DaggerfallRegions.Tigonus:
+                    return VampireClans.Anthotis;
+
+                // Garlythi
+                case DaggerfallRegions.Northmoor:
+                case DaggerfallRegions.Phrygias:
+                    return VampireClans.Garlythi;
+
+                // Haarvenu
+                case DaggerfallRegions.Anticlere:
+                case DaggerfallRegions.IlessanHills:
+                case DaggerfallRegions.Shalgora:
+                    return VampireClans.Haarvenu;
+
+                // Khulari
+                case DaggerfallRegions.DragontailMountains:
+                case DaggerfallRegions.Ephesus:
+                case DaggerfallRegions.Kozanset:
+                case DaggerfallRegions.Santaki:
+                case DaggerfallRegions.Totambu:
+                    return VampireClans.Khulari;
+
+                // Lyrezi (default bloodline)
+                default:
+                    return VampireClans.Lyrezi;
+
+                // Montalion
+                case DaggerfallRegions.Bhoraine:
+                case DaggerfallRegions.Gavaudon:
+                case DaggerfallRegions.Lainlyn:
+                case DaggerfallRegions.Mournoth:
+                case DaggerfallRegions.Satakalaam:
+                case DaggerfallRegions.Wayrest:
+                    return VampireClans.Montalion;
+
+                // Selenu
+                case DaggerfallRegions.AbibonGora:
+                case DaggerfallRegions.Ayasofya:
+                case DaggerfallRegions.Cybiades:
+                case DaggerfallRegions.Kairou:
+                case DaggerfallRegions.Myrkwasa:
+                case DaggerfallRegions.Pothago:
+                case DaggerfallRegions.Sentinel:
+                    return VampireClans.Selenu;
+
+                // Thrafey
+                case DaggerfallRegions.Daenia:
+                case DaggerfallRegions.Dwynnen:
+                case DaggerfallRegions.Ykalon:
+                case DaggerfallRegions.Urvaius:
+                    return VampireClans.Thrafey;
+
+                // Vraseth
+                case DaggerfallRegions.Betony:
+                case DaggerfallRegions.Daggerfall:
+                case DaggerfallRegions.Glenpoint:
+                case DaggerfallRegions.GlenumbraMoors:
+                case DaggerfallRegions.Kambria:
+                case DaggerfallRegions.Tulune:
+                    return VampireClans.Vraseth;
+            }
+        }
+
         #endregion
 
         #region Damage
