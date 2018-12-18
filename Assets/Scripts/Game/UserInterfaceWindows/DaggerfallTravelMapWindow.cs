@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string colorPaletteColName                    = "FMAP_PAL.COL";
         const int regionPanelOffset                         = 12;
         const int identifyFlashCount                        = 4;
+        const int identifyFlashCountSelected                = 2;
         const float identifyFlashInterval                   = 0.5f;
 
         DaggerfallTravelPopUp popUp;
@@ -1586,7 +1587,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Turn off flash after specified number of on states
             if (!lastIdentifyState && identifyState)
             {
-                if (++identifyChanges > identifyFlashCount)
+                int flashCount = locationSelected ? identifyFlashCountSelected : identifyFlashCount;
+                if (++identifyChanges > flashCount)
                 {
                     StopIdentify();
                 }
