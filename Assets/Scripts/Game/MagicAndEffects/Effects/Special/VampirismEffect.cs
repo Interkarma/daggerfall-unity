@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Assign vampire spells to spellbook
             GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(vampireClan);
 
-            // Considered well fed one first start
+            // Considered well fed on first start
             lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
             // Our dark transformation is complete - cure everything on player (including stage one disease)

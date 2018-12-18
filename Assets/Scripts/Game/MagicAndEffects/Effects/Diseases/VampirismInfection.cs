@@ -137,6 +137,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 true,
                 false);
 
+            // Fade in from black
+            DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack(1.0f);
+
             // Start permanent vampirism effect stage two
             EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
             GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
