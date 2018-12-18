@@ -1,10 +1,10 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:
+// Contributors:    Michael Rauter (Nystul)
 //
 // Notes:
 //
@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
+using UnityEngine.PostProcessing;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game
@@ -41,21 +42,29 @@ namespace DaggerfallWorkshop.Game
         [Range(0, 1)]
         public float WinterSunlightScale = 0.65f;
 
-        [Range(0, 1)]
-        public float SunnyFogDensity = 0.00005f;
-        [Range(0, 1)]
-        public float OvercastFogDensity = 0.00005f;
-        [Range(0, 1)]
-        public float RainyFogDensity = 0.0001f;
-        [Range(0, 1)]
-        public float SnowyFogDensity = 0.001f;
-        [Range(0, 1)]
-        public float HeavyFogDensity = 0.05f;
+        [System.Serializable]
+        public struct FogSettings
+        {
+            public FogMode fogMode;
+            [Range(0, 1)]
+            public float density;
+            public float startDistance;
+            public float endDistance;
+        }
+
+        public FogSettings SunnyFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400 };
+        public FogSettings OvercastFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400 };
+        public FogSettings RainyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0 };
+        public FogSettings SnowyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0 };
+        public FogSettings HeavyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.05f, startDistance = 0, endDistance = 0 };
 
         DaggerfallUnity _dfUnity;
         float _pollTimer;
         private WeatherTable _weatherTable;
         private float _pollWeatherInSeconds = 30f;
+
+        // used to set post processing fog settings (excludeSkybox setting)
+        private PostProcessingBehaviour postProcessingBehaviour;
 
         public bool IsRaining { get; private set; }
 
@@ -79,9 +88,20 @@ namespace DaggerfallWorkshop.Game
         {
             _dfUnity = DaggerfallUnity.Instance;
             _weatherTable = WeatherTable.ParseJsonTable();
-
+            
+            postProcessingBehaviour = Camera.main.GetComponent<PostProcessingBehaviour>();
+            if (postProcessingBehaviour != null)
+            {
+                var fogSettings = postProcessingBehaviour.profile.fog.settings;
+                fogSettings.excludeSkybox = true;
+                postProcessingBehaviour.profile.fog.settings = fogSettings;              
+            }
+            
             if (DaggerfallUnity.Settings.AssetInjection)
                 AddWindZone();
+
+            // initialize with clear overcast sky (so that initial fog settings like exponential fog mode are set)
+            ClearOvercast();
         }
 
         void Update()
@@ -101,7 +121,7 @@ namespace DaggerfallWorkshop.Game
             if (DaggerfallSky)
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
             IsOvercast = false;
-            SetFog(false, SunnyFogDensity);
+            SetFog(false, SunnyFogSettings);
         }
 
         public void ClearAllWeather()
@@ -113,24 +133,41 @@ namespace DaggerfallWorkshop.Game
 
         #region Fog
 
-        public void SetFog(bool isFoggy, float density)
+        public void SetFog(bool isFoggy, FogSettings fogSettings)
         {
+            // set fog mode first
+            RenderSettings.fogMode = fogSettings.fogMode;
+            RenderSettings.fogDensity = fogSettings.density;
+            RenderSettings.fogStartDistance = fogSettings.startDistance;
+            RenderSettings.fogEndDistance = fogSettings.endDistance;
+
             // edit by Nystul: don't disable RenderSettings fog! Rendering Fog != Weather Fog
             //RenderSettings.fog = isFoggy;
 
             if (isFoggy)
             {
-                RenderSettings.fogDensity = density;
-//                RenderSettings.fogMode = FogMode.Exponential;
-//                RenderSettings.fogColor = Color.gray;
+                //                RenderSettings.fogColor = Color.gray;
+
+                if (postProcessingBehaviour != null)
+                {
+                    var fogPostProcess = postProcessingBehaviour.profile.fog.settings;
+                    fogPostProcess.excludeSkybox = false;
+                    postProcessingBehaviour.profile.fog.settings = fogPostProcess;
+                }
             }
             else
-            {
-                RenderSettings.fogDensity = SunnyFogDensity;
+            {                
                 // TODO set this based on ... something.
                 // ex. time of day/angle of sun so we can get nice sunset/rise atmospheric effects
                 // also blend with climate so climates end up having faint 'tints' to them
-//                RenderSettings.fogColor = Color.clear;
+                //                RenderSettings.fogColor = Color.clear;
+
+                if (postProcessingBehaviour != null)
+                {
+                    var fogPostProcess = postProcessingBehaviour.profile.fog.settings;
+                    fogPostProcess.excludeSkybox = true;
+                    postProcessingBehaviour.profile.fog.settings = fogPostProcess;
+                }
             }
         }
 
@@ -147,7 +184,7 @@ namespace DaggerfallWorkshop.Game
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Rain2;
             }
-            SetFog(true, RainyFogDensity);
+            SetFog(true, RainyFogSettings);
             IsOvercast = true;
         }
 
@@ -182,7 +219,7 @@ namespace DaggerfallWorkshop.Game
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Snow2;
             }
-            SetFog(true, SnowyFogDensity);
+            SetFog(true, SnowyFogSettings);
             IsOvercast = true;
         }
 
@@ -319,7 +356,7 @@ namespace DaggerfallWorkshop.Game
             {
                 case WeatherType.Cloudy:
                     // TODO make skybox cloudy
-                    SetFog(true, SunnyFogDensity);
+                    SetFog(true, SunnyFogSettings);
                     break;
 
                 case WeatherType.Overcast:
@@ -328,7 +365,7 @@ namespace DaggerfallWorkshop.Game
 
                 case WeatherType.Fog:
                     SetRainOvercast();
-                    SetFog(true, HeavyFogDensity);
+                    SetFog(true, HeavyFogSettings);
                     break;
 
                 case WeatherType.Rain:
