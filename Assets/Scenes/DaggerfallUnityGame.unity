@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
@@ -1711,6 +1711,31 @@ MonoBehaviour:
   StormSunlightScale: 0.35
   SnowSunlightScale: 0.5
   WinterSunlightScale: 0.65
+  SunnyFogSettings:
+    fogMode: 1
+    density: 0
+    startDistance: 0
+    endDistance: 2400
+  OvercastFogSettings:
+    fogMode: 1
+    density: 0
+    startDistance: 0
+    endDistance: 2400
+  RainyFogSettings:
+    fogMode: 2
+    density: 0.003
+    startDistance: 0
+    endDistance: 0
+  SnowyFogSettings:
+    fogMode: 2
+    density: 0.003
+    startDistance: 0
+    endDistance: 0
+  HeavyFogSettings:
+    fogMode: 2
+    density: 0.05
+    startDistance: 0
+    endDistance: 0
 --- !u!1 &1437448953
 GameObject:
   m_ObjectHideFlags: 0
