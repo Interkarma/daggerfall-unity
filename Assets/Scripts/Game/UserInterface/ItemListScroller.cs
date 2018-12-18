@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return items; }
             set {
                 items = value;
-                UpdateItemsDisplay();
+                UpdateItemsDisplay(true);
             }
         }
 
@@ -300,6 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Panel itemsListPanel = DaggerfallUI.AddPanel(itemListPanelRect, this);
             itemsListPanel.OnMouseScrollUp += ItemsListPanel_OnMouseScrollUp;
             itemsListPanel.OnMouseScrollDown += ItemsListPanel_OnMouseScrollDown;
+            itemsListPanel.OnMouseLeave += ItemsListPanel_OnMouseLeave;
 
             // Setup buttons
             itemButtons = new Button[listDisplayTotal];
@@ -371,7 +372,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        void UpdateItemsDisplay()
+        void UpdateItemsDisplay(bool delayScrollUp)
         {
             // Clear list elements
             ClearItemsList();
@@ -384,7 +385,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Update scrollbar
                 int rows = (items.Count + listWidth - 1) / listWidth;
                 itemListScrollBar.TotalUnits = rows;
-                scrollIndex = GetSafeScrollIndex(itemListScrollBar);
+                scrollIndex = GetSafeScrollIndex(itemListScrollBar, delayScrollUp);
 
                 // Update scroller buttons
                 UpdateListScrollerButtons(scrollIndex, rows);
@@ -435,7 +436,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        int GetSafeScrollIndex(VerticalScrollBar scroller)
+        int GetSafeScrollIndex(VerticalScrollBar scroller, bool delayScrollUp)
         {
             // Get current scroller index
             int scrollIndex = scroller.ScrollIndex;
@@ -443,7 +444,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scrollIndex = 0;
 
             // Ensure scroll index within current range
-            if (scrollIndex + scroller.DisplayUnits > scroller.TotalUnits)
+            if (!delayScrollUp && scrollIndex + scroller.DisplayUnits > scroller.TotalUnits || scrollIndex >= scroller.TotalUnits)
             {
                 scrollIndex = scroller.TotalUnits - scroller.DisplayUnits;
                 if (scrollIndex < 0) scrollIndex = 0;
@@ -531,7 +532,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ItemsScrollBar_OnScroll()
         {
-            UpdateItemsDisplay();
+            UpdateItemsDisplay(false);
         }
 
         void ItemsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -556,6 +557,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (scroller)
                 itemListScrollBar.ScrollIndex++;
+        }
+
+        void ItemsListPanel_OnMouseLeave(BaseScreenComponent sender)
+        {
+            UpdateItemsDisplay(false);
         }
 
         #endregion
