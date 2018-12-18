@@ -9,55 +9,77 @@
 // Notes:
 //
 
+using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Stage two curse effect for vampirism deployed after stage one infection completed.
     /// Handles buffs and other long-running vampire effects.
-    /// Note: This disease should only be assigned to player entity by stage one disease effect.
+    /// Note: This effect should only be assigned to player entity by stage one disease effect.
     ///
     /// TODO:
+    ///  * Get clan from infection (DONE)
+    ///  * Display "death is not eternal" popup (DONE)
+    ///  * Assign cheap vampire spells and clan-specific spells (DONE)
+    ///  * Support for cheaper spells in casting system (DONE)
+    ///  * Clear guild memberships and reset reputations
     ///  * Non-clan modifiers (DONE)
-    ///  * Clan-based modifiers
-    ///  * Assign cheap vampire spells and clan-specific spells
-    ///  * Support for cheaper spells in casting system
+    ///  * Clan-based modifiers (DONE)
     ///  * Damage from sunlight
     ///  * Damage from holy places
+    ///  * Fast travel to arrive in early evening instead of early morning
+    ///  * Must feed once per day to rest
+    ///  * Can't rest in daylight or holy places
+    ///  * Deploy vampire questline
     /// </summary>
-    public class VampirismEffect : IncumbentEffect
+    public class VampirismEffect : RacialOverrideEffect
     {
-        int forcedRoundsRemaining = 1;
+        public const string VampirismCurseKey = "Vampirism-Curse";
+
+        VampireClans vampireClan;
+        uint lastTimeFed;
+
+        public VampireClans VampireClan
+        {
+            get { return vampireClan; }
+        }
 
         public override void SetProperties()
         {
-            properties.Key = "Vampirism-Effect";
+            properties.Key = VampirismCurseKey;
+            properties.ShowSpellIcon = false;
         }
 
-        // Always present at least one round remaining so effect system does not remove
-        public override int RoundsRemaining
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            get { return forcedRoundsRemaining; }
-        }
+            const int deathIsNotEternalTextID = 401;
 
-        // Vampirism effect is permanent until cured so we manage our own lifecycle
-        protected override int RemoveRound()
-        {
-            return forcedRoundsRemaining;
-        }
+            base.Start(manager, caster);
 
-        protected override bool IsLikeKind(IncumbentEffect other)
-        {
-            // Comparing keys should be enough for like-kind test
-            // Child classes can override test if they need to
-            return (other.Key == Key);
-        }
+            // Get vampire clan from stage one disease
+            VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
+            if (infection == null)
+            {
+                End();
+                return;
+            }
+            vampireClan = infection.InfectionVampireClan;
 
-        protected override void AddState(IncumbentEffect incumbent)
-        {
-            // Nothing to do here
-            return;
+            // Assign vampire spells to spellbook
+            GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(vampireClan);
+
+            // Considered well fed one first start
+            lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
+            // Our dark transformation is complete - cure everything on player (including stage one disease)
+            GameManager.Instance.PlayerEffectManager.CureAll();
+
+            // Display popup
+            DaggerfallMessageBox mb = DaggerfallUI.MessageBox(deathIsNotEternalTextID);
+            mb.Show();
         }
 
         public override void ConstantEffect()
@@ -96,6 +118,40 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetSkillMod(DaggerfallConnect.DFCareer.Skills.CriticalStrike, skillModAmount);
             SetSkillMod(DaggerfallConnect.DFCareer.Skills.Climbing, skillModAmount);
             SetSkillMod(DaggerfallConnect.DFCareer.Skills.HandToHand, skillModAmount);
+
+            // Set clan stat mods
+            if (vampireClan == VampireClans.Anthotis)
+                SetStatMod(DaggerfallConnect.DFCareer.Stats.Intelligence, statModAmount);
         }
+
+        #region Serialization
+
+        [fsObject("v1")]
+        public struct CustomSaveData_v1
+        {
+            public VampireClans vampireClan;
+            public uint lastTimeFed;
+        }
+
+        public override object GetSaveData()
+        {
+            CustomSaveData_v1 data = new CustomSaveData_v1();
+            data.vampireClan = vampireClan;
+            data.lastTimeFed = lastTimeFed;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            if (dataIn == null)
+                return;
+
+            CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
+            vampireClan = data.vampireClan;
+            lastTimeFed = data.lastTimeFed;
+        }
+
+        #endregion
     }
 }

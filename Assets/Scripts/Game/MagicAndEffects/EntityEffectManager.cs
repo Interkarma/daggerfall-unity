@@ -948,6 +948,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        /// <summary>
+        /// Helper to create stage two curse of vampirism.
+        /// </summary>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateVampirismCurse()
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(VampirismEffect.VampirismCurseKey) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         public void CureDisease(Diseases disease)
         {
             // Find specific disease incumbent

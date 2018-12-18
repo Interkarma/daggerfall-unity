@@ -9,35 +9,33 @@
 // Notes:
 //
 
+using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Stage one disease effect for vampirism.
-    /// Handles deployment tasks during three-day infection window.
+    /// Handles deployment tasks over three-day infection window.
     /// This disease can be cured in the usual way up until it completes.
     /// Note: This disease should only be assigned to player entity.
-    ///
-    /// TODO:
-    ///  * Death video once days have elapsed
-    ///  * Schedule vampire questline
-    ///  * Clear guild memberships and reset reputations
-    ///  * Teleport player to small crypt inside region
-    ///  * Display "death is not the end" popup
-    ///  * Shut down this disease effect (in fact cure all diseases and poisons) and start vampirism effect
-    ///  * Pass infection region to vampirism effect for clan-specific work
     /// </summary>
     public class VampirismInfection : DiseaseEffect
     {
         public const string VampirismInfectionKey = "Vampirism-Infection";
+        const string spellsFilename = "SPELLS.STD";
 
         uint startingDay = 0;
         bool warningDreamVideoPlayed = false;
-        int infectionRegionIndex;
+        bool fakeDeathVideoPlayed = false;
+        int infectionRegionIndex = -1;
 
         public override void SetProperties()
         {
@@ -45,6 +43,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             classicDiseaseType = Diseases.None;
             diseaseData = new DiseaseData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF); // Permanent no-effect disease, will manage custom lifecycle
+        }
+
+        public int InfectionRegionIndex
+        {
+            get { return infectionRegionIndex; }
+        }
+
+        public VampireClans InfectionVampireClan
+        {
+            get { return FormulaHelper.GetVampireClan((DaggerfallRegions)infectionRegionIndex); }
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -72,11 +80,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
         }
 
-        #region Events
+        protected override void UpdateDisease()
+        {
+            // Not calling base as this is a very custom disease that manages its own lifecycle
+        }
+
+        #region Private Methods
 
         void ProgressDiseaseAfterSleepOrTravel()
         {
-            const string videoName = "ANIM0004.VID";    // Vampire dream video
+            const string dreamVideoName = "ANIM0004.VID";   // Vampire dream video
+            const string deathVideoName = "ANIM0012.VID";   // Death video  
 
             // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
@@ -86,14 +100,69 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // In current implementation, disease will not progress to stage 2 effect until player has experienced dream then rests or travels a second time
             if (daysPast > 0 && !warningDreamVideoPlayed)
             {
-                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, videoName);
+                // Play infection warning dream video
+                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, dreamVideoName);
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 warningDreamVideoPlayed = true;
             }
-            else if (daysPast > 3 && warningDreamVideoPlayed)
+            else if (daysPast > 3 && warningDreamVideoPlayed && !fakeDeathVideoPlayed)
             {
-                // TODO: End stage one disease effect and deploy vampirism effect
+                // Play "death" video ahead of final stage of infection
+                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, deathVideoName);
+                DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
+                vidPlayerWindow.OnClose += DeployFullBlownVampirism;
+                fakeDeathVideoPlayed = true;
             }
+        }
+
+        private void DeployFullBlownVampirism()
+        {
+            // Cancel rest window if sleeping
+            if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
+                (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).CloseWindow();
+
+            // Raise game time to early the following evening
+            float raiseTime = (DaggerfallDateTime.DuskHour + 1 - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600;
+            DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+
+            // Transfer player to a random cemetery
+            // Always using a small cemetery, nothing spoils that first vampire moment like being lost the guts of a massive dungeon
+            // Intentionally not spawning enemies, for this time the PLAYER is the monster lurking inside the crypt
+            DFLocation location = GetRandomCemetery();
+            DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(location.MapTableData.Longitude, location.MapTableData.Latitude);
+            DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
+            GameManager.Instance.PlayerEnterExit.RespawnPlayer(
+                worldPos.X,
+                worldPos.Y,
+                true,
+                false);
+
+            // Start permanent vampirism effect stage two
+            EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
+            GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+        }
+
+        DFLocation GetRandomCemetery()
+        {
+            // Get player region data
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+
+            // Collect all cemetery locations
+            List<int> foundLocationIndices = new List<int>();
+            for (int i = 0; i < regionData.LocationCount; i++)
+            {
+                if (((int)regionData.MapTable[i].DungeonType) == (int)DFRegion.DungeonTypes.Cemetery)
+                    foundLocationIndices.Add(i);
+            }
+
+            // Select one at random
+            int index = UnityEngine.Random.Range(0, foundLocationIndices.Count);
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundLocationIndices[index]);
+            if (!location.Loaded)
+                throw new System.Exception("VampirismInfection.GetRandomCemetery() could not find a cemetery in this region.");
+
+            return location;
         }
 
         #endregion
@@ -104,6 +173,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public struct CustomSaveData_v1
         {
             public bool warningDreamVideoPlayed;
+            public bool fakeDeathVideoPlayed;
             public uint startingDay;
             public int infectionRegionIndex;
         }
@@ -112,6 +182,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             CustomSaveData_v1 data = new CustomSaveData_v1();
             data.warningDreamVideoPlayed = warningDreamVideoPlayed;
+            data.fakeDeathVideoPlayed = fakeDeathVideoPlayed;
             data.startingDay = startingDay;
             data.infectionRegionIndex = infectionRegionIndex;
 
@@ -125,6 +196,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
             warningDreamVideoPlayed = data.warningDreamVideoPlayed;
+            fakeDeathVideoPlayed = data.fakeDeathVideoPlayed;
             startingDay = data.startingDay;
             infectionRegionIndex = data.infectionRegionIndex;
         }
