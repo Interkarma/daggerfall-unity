@@ -111,8 +111,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.OnCancel += ConfirmRacePopup_OnCancel;
                 uiManager.PushWindow(messageBox);
 
-                AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip((uint)selectedRace.ClipID);
-                DaggerfallUI.Instance.AudioSource.PlayOneShot(clip, DaggerfallUnity.Settings.SoundVolume);
+                DaggerfallAudioSource source = DaggerfallUI.Instance.GetComponent<DaggerfallAudioSource>();
+                source.PlayOneShot((uint)selectedRace.ClipID);
             }
         }
 
