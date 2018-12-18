@@ -34,7 +34,6 @@ namespace DaggerfallWorkshop.Utility
         public const float RDBSide = 2048f * MeshReader.GlobalScale;
 
         // Special model IDs
-        const int dungeonAngledDoor = 55007;
         const int exitDoorModelID = 70300;
         const int redBrickDoorModelID = 72100;
         const int minTapestryID = 42500;
@@ -738,15 +737,10 @@ namespace DaggerfallWorkshop.Utility
             if (blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum == redBrickDoorModelID)
                 return false;
 
-            // Always allow angled dungeon door piece
-            // These pieces have a tag of "NEW" - not sure if this should be globally considered a door like "DOR" and "DDR"
-            // Just treating this specific model ID as a door for now
-            if (blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum == dungeonAngledDoor)
-                return true;
-
-            // Otherwise Check if this is a door (DOR) or double-door (DDR)
+            // Otherwise Check if this is a door (DOR) or double-door (DDR) or has a NEW tag
+            //models 55007 550245 5018 have the NEW tag and always seem to be doors
             string description = blockData.RdbBlock.ModelReferenceList[modelReference].Description;
-            if (description == "DOR" || description == "DDR")
+            if (description == "DOR" || description == "DDR" || description == "NEW")
                 return true;
 
             return false;
