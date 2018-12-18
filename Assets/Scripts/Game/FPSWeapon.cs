@@ -58,13 +58,15 @@ namespace DaggerfallWorkshop.Game
         Rect weaponPosition;
         float weaponScaleX;
         float weaponScaleY;
-        Dictionary<string, Texture2D> CustomTextures;
 
         DaggerfallAudioSource dfAudioSource;
         WeaponAnimation[] weaponAnims;
         WeaponStates weaponState = WeaponStates.Idle;
         int currentFrame = 0;
         Rect curAnimRect;
+
+        readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
+        Texture2D curCustomTexture;
 
         #region Properties
 
@@ -99,11 +101,7 @@ namespace DaggerfallWorkshop.Game
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
                 // Draw weapon texture behind other HUD elements
-                Texture2D tex;
-                if (CustomTextures.TryGetValue((int)weaponState + "-" + currentFrame, out tex))
-                    GUI.DrawTexture(weaponPosition, tex);
-                else
-                    GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
+                GUI.DrawTextureWithTexCoords(weaponPosition, curCustomTexture ? curCustomTexture : weaponAtlas, curAnimRect);
             }
         }
 
@@ -245,15 +243,23 @@ namespace DaggerfallWorkshop.Game
 
             try
             {
+                bool isImported = customTextures.TryGetValue(MaterialReader.MakeTextureKey(0, (byte)weaponState, (byte)currentFrame), out curCustomTexture);
                 if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
                 {
                     // Mirror weapon rect
-                    Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
-                    curAnimRect = new Rect(rect.xMax, rect.yMin, -rect.width, rect.height);
+                    if (isImported)
+                    {
+                        curAnimRect = new Rect(0, 1, -1, 1);
+                    }
+                    else
+                    {
+                        Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
+                        curAnimRect = new Rect(rect.xMax, rect.yMin, -rect.width, rect.height);
+                    }
                 }
                 else
                 {
-                    curAnimRect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
+                    curAnimRect = isImported ? new Rect(0, 0, 1, 1) : weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
                 }
                 WeaponAnimation anim = weaponAnims[(int)weaponState];
 
@@ -463,7 +469,7 @@ namespace DaggerfallWorkshop.Game
             Rect rect;
             List<Texture2D> textures = new List<Texture2D>();
             List<RecordIndex> indices = new List<RecordIndex>();
-            CustomTextures = new Dictionary<string, Texture2D>();
+            customTextures.Clear();
             for (int record = 0; record < cifFile.RecordCount; record++)
             {
                 int frames = cifFile.GetFrameCount(record);
@@ -483,17 +489,9 @@ namespace DaggerfallWorkshop.Game
                     Texture2D tex;
                     if (TextureReplacement.TryImportCifRci(filename, record, frame, metalType, out tex))
                     {
-                        tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                        CustomTextures.Add(record + "-" + frame, tex);
+                        tex.filterMode = dfUnity.MaterialReader.MainFilterMode;
+                        customTextures.Add(MaterialReader.MakeTextureKey(0, (byte)record, (byte)frame), tex);
                     }
-
-                    //// Import custom texture
-                    //if (TextureReplacement.CustomCifExist(filename, record, frame, metalType))
-                    //{
-                    //    Texture2D tex = TextureReplacement.LoadCustomCif(filename, record, frame, metalType);
-                    //    tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                    //    CustomTextures.Add(record + "-" + frame, tex);
-                    //}
                 }
             }
 
