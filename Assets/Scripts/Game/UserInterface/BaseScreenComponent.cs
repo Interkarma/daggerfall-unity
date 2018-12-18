@@ -346,6 +346,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 backgroundTexture = null;
                 animatedBackgroundTextures = value;
+                if (animatedBackgroundTextures != null && animationFrame >= animatedBackgroundTextures.Length)
+                    animationFrame = 0;
             }
         }
 
