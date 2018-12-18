@@ -50,13 +50,14 @@ namespace DaggerfallWorkshop.Game
             public float density;
             public float startDistance;
             public float endDistance;
+            public bool excludeSkybox;
         }
 
-        public FogSettings SunnyFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400 };
-        public FogSettings OvercastFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400 };
-        public FogSettings RainyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0 };
-        public FogSettings SnowyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0 };
-        public FogSettings HeavyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.05f, startDistance = 0, endDistance = 0 };
+        public FogSettings SunnyFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400, excludeSkybox = true };
+        public FogSettings OvercastFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400, excludeSkybox = true };
+        public FogSettings RainyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0, excludeSkybox = true };
+        public FogSettings SnowyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0, excludeSkybox = true };
+        public FogSettings HeavyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.05f, startDistance = 0, endDistance = 0, excludeSkybox = false };
 
         DaggerfallUnity _dfUnity;
         float _pollTimer;
@@ -121,7 +122,7 @@ namespace DaggerfallWorkshop.Game
             if (DaggerfallSky)
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
             IsOvercast = false;
-            SetFog(false, SunnyFogSettings);
+            SetFog(SunnyFogSettings);
         }
 
         public void ClearAllWeather()
@@ -133,7 +134,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Fog
 
-        public void SetFog(bool isFoggy, FogSettings fogSettings)
+        public void SetFog(FogSettings fogSettings)
         {
             // set fog mode first
             RenderSettings.fogMode = fogSettings.fogMode;
@@ -144,7 +145,7 @@ namespace DaggerfallWorkshop.Game
             // edit by Nystul: don't disable RenderSettings fog! Rendering Fog != Weather Fog
             //RenderSettings.fog = isFoggy;
 
-            if (isFoggy)
+            if (fogSettings.excludeSkybox == false)
             {
                 //                RenderSettings.fogColor = Color.gray;
 
@@ -184,7 +185,7 @@ namespace DaggerfallWorkshop.Game
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Rain2;
             }
-            SetFog(true, RainyFogSettings);
+            SetFog(RainyFogSettings);
             IsOvercast = true;
         }
 
@@ -219,7 +220,7 @@ namespace DaggerfallWorkshop.Game
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Snow2;
             }
-            SetFog(true, SnowyFogSettings);
+            SetFog(SnowyFogSettings);
             IsOvercast = true;
         }
 
@@ -356,7 +357,7 @@ namespace DaggerfallWorkshop.Game
             {
                 case WeatherType.Cloudy:
                     // TODO make skybox cloudy
-                    SetFog(true, SunnyFogSettings);
+                    SetFog(SunnyFogSettings);
                     break;
 
                 case WeatherType.Overcast:
@@ -365,7 +366,7 @@ namespace DaggerfallWorkshop.Game
 
                 case WeatherType.Fog:
                     SetRainOvercast();
-                    SetFog(true, HeavyFogSettings);
+                    SetFog(HeavyFogSettings);
                     break;
 
                 case WeatherType.Rain:
