@@ -42,6 +42,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         MetallicGloss
     }
 
+    public enum TextureImport
+    {
+        None,
+        LooseFiles,
+        AllLocations
+    }
+
     public struct BillboardImportedTextures
     {
         public bool HasImportedTextures;            // Contains imported textures ?
@@ -172,6 +179,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, out Texture2D tex)
         {
             return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), out tex);
+        }
+
+        /// <summary>
+        /// Seek texture from modding locations.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Animation frame index.</param>
+        /// <param name="textureMap">Texture type.</param>
+        /// <param name="textureImport">Texture import options.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, TextureImport textureImport, out Texture2D tex)
+        {
+            tex = null;
+            return (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), out tex))
+                || (textureImport == TextureImport.LooseFiles && TryImportTextureFromLooseFiles(archive, record, frame, textureMap, out tex));
         }
 
         /// <summary>

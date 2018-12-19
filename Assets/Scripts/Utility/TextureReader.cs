@@ -162,12 +162,12 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="settings">Get texture settings.</param>
         /// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
-        /// <param name="allowImport">Import texture from disk if present.</param>
+        /// <param name="textureImport">Options for import of custom textures.</param>
         /// <returns>GetTextureResults.</returns>
         public GetTextureResults GetTexture2D(
             GetTextureSettings settings,
             SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.ARGB32,
-            bool allowImport = true)
+            TextureImport textureImport = TextureImport.None)
         {
             GetTextureResults results = new GetTextureResults();
 
@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Set albedo texture
             Texture2D albedoMap;
-            if (!allowImport || !TextureReplacement.TryImportTextureFromLooseFiles(settings.archive, settings.record, settings.frame, TextureMap.Albedo, out albedoMap))
+            if (!TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, out albedoMap))
             {
                 // Create albedo texture
                 albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Set normal texture (always import normal if present on disk)
             Texture2D normalMap = null;
-            bool normalMapImported = allowImport && TextureReplacement.TryImportTextureFromLooseFiles(settings.archive, settings.record, settings.frame, TextureMap.Normal, out normalMap);
+            bool normalMapImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Normal, textureImport, out normalMap);
             if (!normalMapImported && settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
             {
                 // Create normal texture - must be ARGB32
@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Utility
             // Import emission map or create basic emissive texture
             Texture2D emissionMap = null;
             bool resultEmissive = false;
-            if (allowImport && TextureReplacement.TryImportTextureFromLooseFiles(settings.archive, settings.record, settings.frame, TextureMap.Emission, out emissionMap))
+            if (TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Emission, textureImport, out emissionMap))
             {
                 // Always import emission if present on disk
                 resultEmissive = true;
@@ -333,7 +333,7 @@ namespace DaggerfallWorkshop.Utility
             bool hasNormalMaps = false;
             bool hasEmissionMaps = false;
             bool hasAnimation = false;
-            bool allowImport = (settings.atlasMaxSize == 4096);
+            var textureImport = settings.atlasMaxSize == 4096 ? TextureImport.AllLocations : TextureImport.None;
             List<Texture2D> albedoTextures = new List<Texture2D>();
             List<Texture2D> normalTextures = new List<Texture2D>();
             List<Texture2D> emissionTextures = new List<Texture2D>();
@@ -361,7 +361,7 @@ namespace DaggerfallWorkshop.Utility
                 for (int frame = 0; frame < frames; frame++)
                 {
                     settings.frame = frame;
-                    GetTextureResults nextTextureResults = GetTexture2D(settings, alphaTextureFormat, allowImport);
+                    GetTextureResults nextTextureResults = GetTexture2D(settings, alphaTextureFormat, textureImport);
 
                     albedoTextures.Add(nextTextureResults.albedoMap);
                     if (nextTextureResults.normalMap != null)
