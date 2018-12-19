@@ -23,19 +23,33 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = "Shadow-Normal";
             properties.ClassicKey = MakeClassicKey(24, 0);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "shadow");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "normal");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "shadow");
+            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1573);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1273);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(20, 80);
             concealmentFlag = MagicalConcealmentFlags.ShadeNormal;
             startConcealmentMessageKey = "youAreAShade";
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe shadowForm = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "shadowForm"),
+                200,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Rain_water,
+                (int)Items.MiscellaneousIngredients1.Nectar,
+                (int)Items.Gems.Malachite,
+                (int)Items.PlantIngredients2.Black_rose);
+
+            AssignPotionRecipes(shadowForm);
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

@@ -85,6 +85,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(IngredientUsage.name, IngredientUsage.description, IngredientUsage.usage, IngredientUsage.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
         }
@@ -211,6 +212,23 @@ namespace Wenzil.Console
                     return "Building data written to " + Path.Combine(Application.persistentDataPath, fileName);
                 }
                 return error;
+            }
+        }
+
+        private static class IngredientUsage
+        {
+            public static readonly string name = "ingredUsage";
+            public static readonly string description = "Log analysis of potion recipe usage of ingredients";
+            public static readonly string usage = "ingredUsage";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length > 0)
+                    return usage;
+
+                GameManager.Instance.EntityEffectBroker.LogRecipeIngredientUsage();
+
+                return "Finished";
             }
         }
 

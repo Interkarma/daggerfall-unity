@@ -262,6 +262,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return null;
         }
 
+        public void LogRecipeIngredientUsage()
+        {
+            Dictionary<int, int> ingredCounts = new Dictionary<int, int>();
+            foreach (int key in potionEffectTemplates.Keys)
+            {
+                PotionRecipe potionRecipe = GetPotionRecipe(key);
+                foreach (PotionRecipe.Ingredient ingred in potionRecipe.Ingredients)
+                {
+                    if (ingredCounts.ContainsKey(ingred.id))
+                        ingredCounts[ingred.id]++;
+                    else
+                        ingredCounts.Add(ingred.id, 1);
+                }
+            }
+            foreach (int key in ingredCounts.Keys)
+            {
+                DaggerfallConnect.FallExe.ItemTemplate ingredientTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(key);
+                Debug.LogFormat("{0} recipes use: {1}", ingredCounts[key], ingredientTemplate.name);
+            }
+        }
+
         /// <summary>
         /// Gets group names of registered effects.
         /// </summary>

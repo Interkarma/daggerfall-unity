@@ -104,22 +104,18 @@ openFailed,                 Lock is too powerful.
 stamina,                    Stamina
 orcStrength,                Orc Strength
 healing,                    Healing
-waterwalking,               Waterwalking
 restorePower,               Restore Power
 resistFire,                 Resist Fire
 resistFrost,                Resist Frost
 resistShock,                Resist Shock
 cureDisease,                Cure Disease
 slowFalling,                Slow Falling
--waterBreathing,             Water Breathing
 healTrue,                   Heal True
 levitation,                 Levitation
 resistPoison,               Resist Poison
--freeAction,                 Free Action
 curePoison,                 Cure Poison
 chameleonForm,              Chameleon Form
 shadowForm,                 Shadow Form
--invisibility,              Invisibility
 purification,               Purification
 
 potionMixed,                Your potion has been mixed.

@@ -23,16 +23,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = "WaterBreathing";
             properties.ClassicKey = MakeClassicKey(30, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "waterBreathing");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "waterBreathing");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1582);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1282);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = ElementTypes.Magic;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Alteration;
             properties.DurationCosts = MakeEffectCosts(20, 8);
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe waterBreathing = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "waterBreathing"),
+                100,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Rain_water,
+                (int)Items.MiscellaneousIngredients1.Elixir_vitae,
+                (int)Items.MiscellaneousIngredients2.Ivory);
+
+            AssignPotionRecipes(waterBreathing);
         }
 
         public override void ConstantEffect()

@@ -37,10 +37,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void SetPotionProperties()
         {
+            EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 1, 10, 1);
             PotionRecipe cureDisease = new PotionRecipe(
                 TextManager.Instance.GetText(textDatabase, "cureDisease"),
                 100,
-                DefaultEffectSettings(),
+                cureSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
                 (int)Items.PlantIngredients2.Fig,
                 (int)Items.MiscellaneousIngredients1.Big_tooth);
