@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// <summary>
     /// Toggles lights and particle systems, switch emission maps color according to day time.
     /// </summary>
-    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/")]
+    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/#daynight")]
     public class DayNight : MonoBehaviour
     {
         #region Enums

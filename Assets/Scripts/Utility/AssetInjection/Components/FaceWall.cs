@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// Rotate a GameObject so that it appears hung on the wall on its Z axis.
     /// This is useful for models meant to replace sprites as they miss the rotation component.
     /// </summary>
+    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/#facewall")]
     public class FaceWall : MonoBehaviour
     {
         #region Fields
