@@ -321,7 +321,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Gets/sets the key of the potion recipe allocated to this item.
-        /// Has a side effect of populating the item value from the recipe price. (due to value not being encapsulated)
+        /// Has a side effect (ugh, sorry) of populating the item value from the recipe price. (due to value not being encapsulated)
         /// </summary>
         public int PotionRecipeKey
         {

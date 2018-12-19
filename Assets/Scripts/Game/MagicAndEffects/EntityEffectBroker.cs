@@ -262,6 +262,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return null;
         }
 
+        /// <summary>
+        /// Get recipeKeys for all registered potion recipes.
+        /// </summary>
+        /// <returns>List of int recipeKeys</returns>
         public List<int> GetPotionRecipeKeys()
         {
             return new List<int>(potionEffectTemplates.Keys);

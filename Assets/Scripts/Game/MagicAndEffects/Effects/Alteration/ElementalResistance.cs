@@ -200,7 +200,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             entityBehaviour.Entity.SetResistanceFlag(variantProperties[currentVariant].elementResisted, true);
             entityBehaviour.Entity.SetResistanceChance(variantProperties[currentVariant].elementResisted, ChanceValue());
-            //UnityEngine.Debug.LogFormat("{0} started with chance {1}", Key, ChanceValue());
         }
 
         void StopResisting()

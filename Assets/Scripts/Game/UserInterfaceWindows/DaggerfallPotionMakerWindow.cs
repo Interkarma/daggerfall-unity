@@ -254,7 +254,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(recipeKey));
             }
             else
-                GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
+            {
+                // Changed from classic, don't create useless 'Unknown Powers' potions.
+                //GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "ingredientsWasted"));
+                return;
+            }
 
             // Remove item from player inventory unless a stack remains.
             foreach (DaggerfallUnityItem item in cauldron)
