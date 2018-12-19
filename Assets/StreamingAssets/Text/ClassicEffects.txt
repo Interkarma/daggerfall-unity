@@ -99,7 +99,7 @@ doorLocked,                 Door is now locked.
 doorAlreadyLocked,          Door already locked.
 openFailed,                 Lock is too powerful.
 
-- Potions:
+- Potion names:
 
 stamina,                    Stamina
 orcStrength,                Orc Strength
@@ -117,6 +117,3 @@ curePoison,                 Cure Poison
 chameleonForm,              Chameleon Form
 shadowForm,                 Shadow Form
 purification,               Purification
-
-potionMixed,                Your potion has been mixed.
-indredientsWasted,          Those ingredients did not concoct an effective potion and are wasted.

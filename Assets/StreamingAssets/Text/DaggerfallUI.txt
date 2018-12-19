@@ -60,3 +60,9 @@ arSrc,              armor rating
 arRep,              armor
 northern,           (northern)
 southern,           (southern)
+
+- Potion mixing window:
+
+noRecipes,                  You have no recipes.
+potionMixed,                Your potion has been mixed.
+indredientsWasted,          Those ingredients did not concoct an effective potion and are wasted.

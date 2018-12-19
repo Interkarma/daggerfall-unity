@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Potion()
             {   // %po
-                string potionName = "Unknown Powers";
+                string potionName = PotionRecipe.UnknownPowers;
                 PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(parent.potionRecipeKey);
                 if (potionRecipe != null)
                     potionName = potionRecipe.DisplayName;

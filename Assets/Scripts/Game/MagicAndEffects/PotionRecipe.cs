@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public static readonly int[] classicRecipeKeys = { 221871, 239524, 4975678, 5017404, 5188896, 111516185, 4826108, 216843, 224588, 220192,
                                                            240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196 };
 
+        public static readonly string UnknownPowers = "Unknown Powers";
+
         #region Fields
 
         EffectSettings settings;
