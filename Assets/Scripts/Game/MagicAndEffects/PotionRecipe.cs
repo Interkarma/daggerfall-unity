@@ -37,7 +37,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region Properties
 
+        /// <summary>
+        /// The display name of this potion recipe.
+        /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// The price of this potion recipe.
+        /// </summary>
         public int Price { get; set; }
 
         /// <summary>
@@ -50,7 +57,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Gets or sets potion recipe ingredients.
+        /// Gets or sets potion recipe ingredients. Ingredients must be sorted by id.
         /// </summary>
         public Ingredient[] Ingredients
         {
@@ -87,7 +94,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Ingredient[] array constructor - for finding and comparisons only.
+        /// Ingredient[] array constructor - for finding and comparisons.
         /// </summary>
         /// <param name="ids">Ingredient ids list.</param>
         public PotionRecipe(List<int> ids)

@@ -218,7 +218,7 @@ namespace Wenzil.Console
         private static class IngredientUsage
         {
             public static readonly string name = "ingredUsage";
-            public static readonly string description = "Log analysis of potion recipe usage of ingredients";
+            public static readonly string description = "Log an analysis of potion recipe usage of ingredients";
             public static readonly string usage = "ingredUsage";
 
             public static string Execute(params string[] args)

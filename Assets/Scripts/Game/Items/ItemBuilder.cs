@@ -714,37 +714,34 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Creates a potion
+        /// Creates a potion.
         /// </summary>
         /// <param name="recipe">Recipe index for the potion</param>
-        /// <returns>DaggerfallUnityItem</returns>
+        /// <returns>Potion DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreatePotion(int recipeKey)
         {
             return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) { PotionRecipeKey = recipeKey };
         }
 
         /// <summary>
-        /// Creates a potion
+        /// Creates a random potion from all registered recipes.
         /// </summary>
-        /// <param name="recipe">Recipe index for the potion</param>
-        /// <returns>DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreatePotion(byte recipe)
+        /// <returns>Potion DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomPotion()
         {
-            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1)
-            {
-                typeDependentData = recipe,
-                value = potionValues[recipe],
-            };
+            List<int> recipeKeys = GameManager.Instance.EntityEffectBroker.GetPotionRecipeKeys();
+            int recipeIdx = UnityEngine.Random.Range(0, recipeKeys.Count);
+            return CreatePotion(recipeKeys[recipeIdx]);
         }
 
         /// <summary>
-        /// Creates a random classic potion
+        /// Creates a random (classic) potion
         /// </summary>
-        /// <returns>DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreateRandomPotion()
+        /// <returns>Potion DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomClassicPotion()
         {
-            byte recipe = (byte)UnityEngine.Random.Range(0, 20);
-            return CreatePotion(recipe);
+            int recipeIdx = UnityEngine.Random.Range(0, MagicAndEffects.PotionRecipe.classicRecipeKeys.Length);
+            return CreatePotion(MagicAndEffects.PotionRecipe.classicRecipeKeys[recipeIdx]);
         }
 
         /// <summary>

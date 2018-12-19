@@ -246,11 +246,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return null;
         }
 
-        public PotionRecipe GetPotionRecipe(PotionRecipe recipe)
-        {
-            return GetPotionRecipe(recipe.GetHashCode());
-        }
-
+        /// <summary>
+        /// Gets PotionRecipe from effect that matches the recipeKey provided.
+        /// </summary>
+        /// <param name="recipeKey">Hashcode of a set of ingredients.</param>
+        /// <returns>PotionRecipe if the key matches one from an effect, otherwise null.</returns>
         public PotionRecipe GetPotionRecipe(int recipeKey)
         {
             if (potionEffectTemplates.ContainsKey(recipeKey))
@@ -262,6 +262,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return null;
         }
 
+        public List<int> GetPotionRecipeKeys()
+        {
+            return new List<int>(potionEffectTemplates.Keys);
+        }
+
+        /// <summary>
+        /// Logs a summary of how many recipes ingredients are used in so new recipes can choose to use little used ingredients.
+        /// Intended for mod devs, used by invoking 'ingredUsage' console command.
+        /// </summary>
         public void LogRecipeIngredientUsage()
         {
             Dictionary<int, int> ingredCounts = new Dictionary<int, int>();
