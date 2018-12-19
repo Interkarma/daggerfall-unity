@@ -593,6 +593,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        /// <summary>
+        /// Clears all bundles of BundleTypes.Spell.
+        /// </summary>
         public void ClearSpellBundles()
         {
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -603,6 +606,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             RemovePendingBundles();
+        }
+
+        /// <summary>
+        /// Instantiates a spell missile based on prefabs set to player.
+        /// Mainly used by player casting and action records that throw spells at player.
+        /// </summary>
+        /// <param name="elementType">Element of missile.</param>
+        /// <returns>DaggerfallMissile.</returns>
+        public DaggerfallMissile InstantiateSpellMissile(ElementTypes elementType)
+        {
+            switch (elementType)
+            {
+                case ElementTypes.Cold:
+                    return Instantiate(ColdMissilePrefab);
+                case ElementTypes.Fire:
+                    return Instantiate(FireMissilePrefab);
+                case ElementTypes.Poison:
+                    return Instantiate(PoisonMissilePrefab);
+                case ElementTypes.Shock:
+                    return Instantiate(ShockMissilePrefab);
+                case ElementTypes.Magic:
+                    return Instantiate(MagicMissilePrefab);
+                default:
+                    return null;
+            }
         }
 
         #endregion
@@ -1216,25 +1244,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        DaggerfallMissile InstantiateMissile(ElementTypes elementType)
-        {
-            switch (elementType)
-            {
-                case ElementTypes.Cold:
-                    return Instantiate(ColdMissilePrefab);
-                case ElementTypes.Fire:
-                    return Instantiate(FireMissilePrefab);
-                case ElementTypes.Poison:
-                    return Instantiate(PoisonMissilePrefab);
-                case ElementTypes.Shock:
-                    return Instantiate(ShockMissilePrefab);
-                case ElementTypes.Magic:
-                    return Instantiate(MagicMissilePrefab);
-                default:
-                    return null;
-            }
-        }
-
         void UpdateEntityMods()
         {
             // Clear all mods
@@ -1407,7 +1416,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
             else
             {
-                DaggerfallMissile missile = InstantiateMissile(readySpell.Settings.ElementType);
+                DaggerfallMissile missile = InstantiateSpellMissile(readySpell.Settings.ElementType);
                 if (missile)
                     missile.Payload = readySpell;
             }
@@ -1450,7 +1459,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
             else
             {
-                DaggerfallMissile missile = InstantiateMissile(readySpell.Settings.ElementType);
+                DaggerfallMissile missile = InstantiateSpellMissile(readySpell.Settings.ElementType);
                 if (missile)
                     missile.Payload = readySpell;
             }

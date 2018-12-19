@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game
     {
         #region Unity Properties
 
-        public float MovementSpeed = 12.0f;                     // Speed missile moves through world
+        public float MovementSpeed = 25.0f;                     // Speed missile moves through world
         public float ColliderRadius = 0.45f;                    // Radius of missile contact sphere
         public float ExplosionRadius = 3.0f;                    // Radius of area of effect explosion
         public float TouchRange = 2.5f;                         // Maximum range for touch spherecast
@@ -146,6 +146,10 @@ namespace DaggerfallWorkshop.Game
         {
             get { return targetEntities.ToArray(); }
         }
+
+        public Vector3 CustomAimPosition { get; set; }
+
+        public Vector3 CustomAimDirection { get; set; }
 
         #endregion
 
@@ -438,6 +442,10 @@ namespace DaggerfallWorkshop.Game
         // Get missile aim position from player or enemy mobile
         Vector3 GetAimPosition()
         {
+            // Aim position from custom source
+            if (CustomAimPosition != Vector3.zero)
+                return CustomAimPosition;
+
             // Aim position is from eye level for player or origin for other mobile
             // Player must aim from camera position or it feels out of alignment
             Vector3 aimPosition = caster.transform.position;
@@ -452,6 +460,10 @@ namespace DaggerfallWorkshop.Game
         // Get missile aim direction from player or enemy mobile
         Vector3 GetAimDirection()
         {
+            // Aim direction from custom source
+            if (CustomAimDirection != Vector3.zero)
+                return CustomAimDirection;
+
             // Aim direction should be from camera for player or facing for other mobile
             Vector3 aimDirection = Vector3.zero;
             if (caster == GameManager.Instance.PlayerEntityBehaviour)

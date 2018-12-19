@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927ece42bfa9465449615806dc107aed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSpeed: 15
+  MovementSpeed: 25
   ColliderRadius: 0.45
   ExplosionRadius: 3
   TouchRange: 2.5
