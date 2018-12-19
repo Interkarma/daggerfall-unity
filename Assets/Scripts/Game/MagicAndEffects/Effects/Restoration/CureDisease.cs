@@ -46,7 +46,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.Fig,
                 (int)Items.MiscellaneousIngredients1.Big_tooth);
 
-            AssignPotionRecipes(cureDisease);
+            EffectSettings purificationSettings = SetEffectChance(DefaultEffectSettings(), 1, 10, 1);
+            purificationSettings = SetEffectMagnitude(purificationSettings, 5, 5, 19, 19, 1);
+            PotionRecipe purification = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "purification"),
+                500,
+                purificationSettings,
+                (int)Items.MiscellaneousIngredients1.Elixir_vitae,
+                (int)Items.MiscellaneousIngredients1.Nectar,
+                (int)Items.MiscellaneousIngredients1.Rain_water,
+                (int)Items.PlantIngredients2.Fig,
+                (int)Items.MiscellaneousIngredients1.Big_tooth,
+                (int)Items.CreatureIngredients1.Ectoplasm,
+                (int)Items.Gems.Diamond,
+                (int)Items.CreatureIngredients2.Mummy_wrappings);
+            purification.AddSecondaryEffect(HealHealth.PublicKey);
+            purification.AddSecondaryEffect(InvisibilityNormal.PublicKey);
+
+            AssignPotionRecipes(cureDisease, purification);
         }
 
         public override void MagicRound()
@@ -61,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Implement effect
             manager.CureAllDiseases();
 
-            //Debug.LogFormat("Cured entity of all diseases");
+            UnityEngine.Debug.LogFormat("Cured entity of all diseases");
         }
     }
 }

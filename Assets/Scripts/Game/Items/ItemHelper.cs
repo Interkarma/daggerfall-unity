@@ -42,7 +42,6 @@ namespace DaggerfallWorkshop.Game.Items
         const string magicItemTemplatesFilename = "MagicItemTemplates";
         const string containerIconsFilename = "INVE16I0.CIF";
         const string bookMappingFilename = "books";
-        const string recipeMappingFilename = "PotionRecipes";
 
         const int artifactMaleTextureArchive = 432;
         const int artifactFemaleTextureArchive = 433;
@@ -53,7 +52,6 @@ namespace DaggerfallWorkshop.Game.Items
         readonly Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
         readonly Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         readonly Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
-        readonly Dictionary<int, RecipeMapping> potionRecipeMapping = new Dictionary<int, RecipeMapping>();
 
         #endregion
 
@@ -64,7 +62,6 @@ namespace DaggerfallWorkshop.Game.Items
             LoadItemTemplates();
             LoadMagicItemTemplates();
             LoadBookIDNameMapping();
-            LoadPotionRecipeIDMapping();
         }
 
         #endregion
@@ -405,18 +402,6 @@ namespace DaggerfallWorkshop.Game.Items
         {
             string title = "";
             return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookName;
-        }
-
-        /// <summary>
-        /// Gets the recipe(s) for a potion based on the recipe's ID
-        /// </summary>
-        /// <param name="id">The ID of the requested potion recipe</param>
-        /// <returns>A KeyValuePair<string, Recipe[]>, where the string is the name of the recipe and the Recipe array contains the different ways it can be made</returns>
-        public KeyValuePair<string, Recipe[]> getPotionRecipesByID(int id)
-        {
-            RecipeMapping mapping;
-            potionRecipeMapping.TryGetValue(id, out mapping);
-            return new KeyValuePair<string, Recipe[]>(mapping.name, mapping.recipes);
         }
 
         /// <summary>
@@ -1157,29 +1142,6 @@ namespace DaggerfallWorkshop.Game.Items
             catch
             {
                 Debug.Log("Could not load the BookIDName mapping from Resources. Check file exists and is in correct format.");
-            }
-        }
-
-        /// <summary>
-        /// Loads potion recipe ID mappings from JSON file. This is used whenever you need to read the content of a potion recipe item
-        /// It should be called once to initilaize the internal data structures used for potion-related helper functions.
-        /// This data was obtained by looking at the internal array of potion objects in the FALL.EXE file and combining it
-        /// with a known resource for potion ingredients. The IDs in the file correspond to the DFU IDs in the ItemTemplates.txt
-        /// </summary>
-        void LoadPotionRecipeIDMapping()
-        {
-            try
-            {
-                TextAsset recipeNames = Resources.Load<TextAsset>(recipeMappingFilename);
-                List<RecipeMapping> mappings = SaveLoadManager.Deserialize(typeof(List<RecipeMapping>), recipeNames.text) as List<RecipeMapping>;
-                for (int x = 0; x < mappings.Count; ++x)
-                {
-                    potionRecipeMapping.Add(x, mappings[x]);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log("Could not load the Potion recipe mapping from Resources. Check file exists and is in correct format. " + e.ToString());
             }
         }
 

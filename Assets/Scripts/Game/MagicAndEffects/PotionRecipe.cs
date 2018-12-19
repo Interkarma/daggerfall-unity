@@ -26,12 +26,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         //  Stamina, Orc Strength, Healing, Waterwalking, Restore Power, Resist Fire, Resist Frost, Resist Shock, Cure Disease, Slow Falling,
         //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chaemelon Form, Shadow Form, Invisibility, Purification
         public static readonly int[] classicRecipeKeys = { 221871, 239524, 4975678, 5017404, 5188896, 111516185, 4826108, 216843, 224588, 220192,
-                                                           240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 0 };
+                                                           240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196 };
 
         #region Fields
 
         EffectSettings settings;
         Ingredient[] ingredients = null;
+        List<string> secondaryEffects;
 
         #endregion
 
@@ -63,6 +64,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return ingredients; }
             set { ingredients = value; }
+        }
+
+        public List<string> SecondaryEffects
+        {
+            get { return secondaryEffects; }
         }
 
         #endregion
@@ -208,6 +214,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool HasRecipe()
         {
             return (ingredients != null && ingredients.Length > 0);
+        }
+
+        public void AddSecondaryEffect(string effectKey)
+        {
+            if (secondaryEffects == null)
+                secondaryEffects = new List<string>();
+            secondaryEffects.Add(effectKey);
         }
 
         /// <summary>

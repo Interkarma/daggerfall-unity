@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class InvisibilityNormal : ConcealmentEffect
     {
+        public static readonly string PublicKey = "Invisibility-Normal";
+
         public override void SetProperties()
         {
-            properties.Key = "Invisibility-Normal";
+            properties.Key = PublicKey;
             properties.ClassicKey = MakeClassicKey(13, 0);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "invisibility");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
