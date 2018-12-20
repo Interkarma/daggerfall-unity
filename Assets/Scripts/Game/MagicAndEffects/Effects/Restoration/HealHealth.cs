@@ -19,11 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class HealHealth : BaseEntityEffect
     {
-        public static readonly string PublicKey = "Heal-Health";
+        public static readonly string EffectKey = "Heal-Health";
 
         public override void SetProperties()
         {
-            properties.Key = PublicKey;
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(10, 8);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "heal");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "health");

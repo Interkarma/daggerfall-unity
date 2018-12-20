@@ -63,6 +63,6 @@ southern,           (southern)
 
 - Potion mixing window:
 
-noRecipes,                  You have no recipes.
-potionMixed,                Your potion has been mixed.
-indredientsWasted,          Those ingredients did not concoct an effective potion and are wasted.
+noRecipes,          You have no recipes.
+potionMixed,        Your potion has been mixed.
+potionFailed,       Those ingredients did not concoct an effective potion.

@@ -122,9 +122,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            // Remove all ingredients from cauldron to restore correct stack sizes
-            while (cauldron.Count > 0)
-                RemoveFromCauldron(cauldron[0]);
+            ClearCauldron();
         }
 
         void Refresh()
@@ -264,6 +262,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldronListScroller.Items = cauldron;
         }
 
+        void ClearCauldron()
+        {
+            // Remove all ingredients from cauldron to restore correct stack sizes
+            while (cauldron.Count > 0)
+                RemoveFromCauldron(cauldron[0]);
+        }
+
         void MixCauldron()
         {
             // Check recipes and create appropriate potion in player inventory if a match found
@@ -278,13 +283,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Debug.LogFormat("Potion matched: {0}", potionRecipe.DisplayName);
                 GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(recipeKey));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionMixed"));
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.MakePotion);
             }
             else
             {
                 // Changed from classic, don't create useless 'Unknown Powers' potions.
                 //GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "ingredientsWasted"));
-                return;
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionFailed"));
             }
 
             // Remove item from player inventory unless a stack remains.
@@ -307,9 +313,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldron.Clear();
             ingredientsListScroller.Items = ingredients;
             cauldronListScroller.Items = cauldron;
+        }
 
-            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionMixed"));
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.MakePotion);
+        void AddRecipeToCauldron(int index, string recipeName)
+        {
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            PotionRecipe recipe = recipes[index];
+            Dictionary<int, DaggerfallUnityItem> recipeIngreds = new Dictionary<int, DaggerfallUnityItem>();
+            foreach (PotionRecipe.Ingredient ingred in recipe.Ingredients)
+                recipeIngreds.Add(ingred.id, null);
+
+            // Find matching items for the recipe ingredients
+            for (int i = 0; i < playerItems.Count; i++)
+            {
+                DaggerfallUnityItem item = playerItems.GetItem(i);
+                if (item.IsIngredient && recipeIngreds.ContainsKey(item.TemplateIndex) && recipeIngreds[item.TemplateIndex] == null)
+                    recipeIngreds[item.TemplateIndex] = item;
+            }
+            // If player doesn't have all the required ingredients, display message else move ingredients into cauldron.
+            if (recipeIngreds.ContainsValue(null))
+            {
+                DaggerfallUI.MessageBox("You don't have the required ingredients.");
+            }
+            else
+            {
+                ClearCauldron();
+                foreach (DaggerfallUnityItem item in recipeIngreds.Values)
+                    AddToCauldron(item);
+            }
         }
 
         #endregion
@@ -337,6 +368,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void RecipePicker_OnItemPicked(int index, string recipeName)
         {
             Debug.LogFormat("Picked recipe {0} at idx {1}.", recipeName, index);
+            recipePicker.CloseWindow();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            if (index < recipes.Count)
+                AddRecipeToCauldron(index, recipeName);
         }
 
         private void MixButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

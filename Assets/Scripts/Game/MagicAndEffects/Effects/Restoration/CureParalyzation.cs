@@ -18,9 +18,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class CureParalyzation : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Cure-Paralyzation";
+
         public override void SetProperties()
         {
-            properties.Key = "Cure-Paralyzation";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(3, 2);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "cure");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "paralyzation");
