@@ -41,6 +41,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float barMaxLength = 109.1f;
         DaggerfallHUD hud;
 
+        TextLabel versionTextLabel;
+        Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
+        Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
+
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             :base(uiManager, previousWindow)
         {
@@ -107,6 +111,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             headBobbingTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), headBobbingButton);
             headBobbingTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
+
+            // Set version text
+            versionTextLabel = new TextLabel();
+            versionTextLabel.Text = string.Format("{0} {1} {2}", VersionInfo.DaggerfallUnityProductName, VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion);
+            versionTextLabel.TextColor = versionTextColor;
+            versionTextLabel.ShadowColor = versionShadowColor;
+            versionTextLabel.ShadowPosition = Vector2.one;
+            versionTextLabel.HorizontalAlignment = HorizontalAlignment.Right;
+            ParentPanel.Components.Add(versionTextLabel);
         }
 
         public override void OnPush()
@@ -127,6 +140,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 hud.EscortingFaces.Update();
                 hud.HUDVitals.Update();
             }
+
+            // Scale version text based on native panel scaling
+            versionTextLabel.TextScale = NativePanel.LocalScale.x * 0.75f;
         }
 
         public override void Draw()

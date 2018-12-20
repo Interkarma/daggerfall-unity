@@ -80,12 +80,6 @@ namespace DaggerfallWorkshop.Game
         KeyCode lastKeyCode;
         FadeBehaviour fadeBehaviour = null;
 
-        string versionText;
-        DaggerfallFont versionFont;
-        Vector2 versionTextScale = Vector2.one;
-        float versionTextWidth;
-        Color versionTextColor = new Color(0.6f, 0.6f, 0.6f, 1);
-
         bool hudSetup = false;
         DaggerfallHUD dfHUD;
         DaggerfallPauseOptionsWindow dfPauseOptionsWindow;
@@ -321,12 +315,6 @@ namespace DaggerfallWorkshop.Game
             // Create SDF font material
             if (sdfFontMaterial == null)
                 sdfFontMaterial = new Material(Shader.Find(MaterialReader._DaggerfallSDFFontShaderName));
-
-            // Set version text
-            versionFont = DefaultFont;
-            versionTextScale = new Vector2(Screen.width / 320, Screen.height / 200) / 2;
-            versionText = string.Format("{0} {1} {2}", VersionInfo.DaggerfallUnityProductName, VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion);
-            versionTextWidth = versionFont.GetCharacterWidth(versionText, -1, versionTextScale.x);
         }
 
         void Update()
@@ -409,13 +397,6 @@ namespace DaggerfallWorkshop.Game
                 if (uiManager.TopWindow != null)
                 {
                     uiManager.TopWindow.Draw();
-                }
-
-                // Draw version text when paused
-                if (ShowVersionText)
-                {
-                    Vector2 versionTextPos = new Vector2(Screen.width - versionTextWidth, 0);
-                    versionFont.DrawText(versionText, versionTextPos, versionTextScale, versionTextColor);
                 }
 
                 if (customRenderTarget)
