@@ -62,6 +62,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.CreatureIngredients3.Unicorn_horn);
 
             // Assign recipes
+            healing.TextureRecord = 15;
+            healTrue.TextureRecord = 16;
             AssignPotionRecipes(healing, healTrue);
         }
 

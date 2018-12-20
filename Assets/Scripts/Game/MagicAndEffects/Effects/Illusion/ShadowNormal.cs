@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.Gems.Malachite,
                 (int)Items.PlantIngredients2.Black_rose);
 
+            shadowForm.TextureRecord = 33;
             AssignPotionRecipes(shadowForm);
         }
 

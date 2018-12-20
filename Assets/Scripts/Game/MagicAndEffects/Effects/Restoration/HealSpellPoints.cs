@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.CreatureIngredients1.Saints_hair);
 
             // Assign recipe
+            restorePower.TextureRecord = 12;
             AssignPotionRecipes(restorePower);
         }
 

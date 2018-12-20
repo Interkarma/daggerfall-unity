@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients1.Twigs,
                 (int)Items.PlantIngredients2.Bamboo);
 
+            freeAction.TextureRecord = 35;
             AssignPotionRecipes(freeAction);
         }
 

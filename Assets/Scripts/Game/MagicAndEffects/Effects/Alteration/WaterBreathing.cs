@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
                 (int)Items.MiscellaneousIngredients2.Ivory);
 
+            waterBreathing.TextureRecord = 32;
             AssignPotionRecipes(waterBreathing);
         }
 

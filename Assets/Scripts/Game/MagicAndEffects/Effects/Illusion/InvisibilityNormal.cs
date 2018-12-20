@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.CreatureIngredients1.Ectoplasm,
                 (int)Items.Gems.Diamond);
 
+            invisibility.TextureRecord = 33;
             AssignPotionRecipes(invisibility);
         }
 

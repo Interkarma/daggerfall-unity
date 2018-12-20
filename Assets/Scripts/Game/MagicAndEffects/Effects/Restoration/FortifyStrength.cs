@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.MiscellaneousIngredients1.Pure_water);
 
             // Assign recipe
+            orcStrength.TextureRecord = 13;
             AssignPotionRecipes(orcStrength);
         }
     }

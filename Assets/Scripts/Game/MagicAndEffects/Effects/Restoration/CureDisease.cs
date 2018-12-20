@@ -65,6 +65,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             purification.AddSecondaryEffect(HealHealth.EffectKey);
             purification.AddSecondaryEffect(InvisibilityNormal.EffectKey);
 
+            cureDisease.TextureRecord = 35;
+            purification.TextureRecord = 35;
             AssignPotionRecipes(cureDisease, purification);
         }
 

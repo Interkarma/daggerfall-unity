@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         // Classic potion recipe mapping to DFU recipe keys:
         //  Stamina, Orc Strength, Healing, Waterwalking, Restore Power, Resist Fire, Resist Frost, Resist Shock, Cure Disease, Slow Falling,
-        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chaemelon Form, Shadow Form, Invisibility, Purification
+        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chameleon Form, Shadow Form, Invisibility, Purification
         public static readonly int[] classicRecipeKeys = { 221871, 239524, 4975678, 5017404, 5188896, 111516185, 4826108, 216843, 224588, 220192,
                                                            240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196 };
 
@@ -32,9 +32,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region Fields
 
-        EffectSettings settings;
         Ingredient[] ingredients = null;
-        List<string> secondaryEffects;
+        int textureRecord = 11;
 
         #endregion
 
@@ -51,13 +50,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int Price { get; set; }
 
         /// <summary>
+        /// The texture record from archive 205 to use for this potion, default = 11.
+        /// </summary>
+        public int TextureRecord
+        {
+            get { return textureRecord; }
+            set { textureRecord = value; }
+        }
+
+        /// <summary>
         /// Gets or sets effect settings for this recipe.
         /// </summary>
-        public EffectSettings Settings
-        {
-            get { return settings; }
-            set { settings = value; }
-        }
+        public EffectSettings Settings { get; set; }
 
         /// <summary>
         /// Gets or sets potion recipe ingredients. Ingredients must be sorted by id.
@@ -71,10 +75,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Retrieves a list of secondary effect keys.
         /// </summary>
-        public List<string> SecondaryEffects
-        {
-            get { return secondaryEffects; }
-        }
+        public List<string> SecondaryEffects { get; private set; }
 
         #endregion
 
@@ -85,7 +86,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public PotionRecipe()
         {
-            settings = BaseEntityEffect.DefaultEffectSettings();
+            Settings = BaseEntityEffect.DefaultEffectSettings();
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             DisplayName = displayName;
             Price = price;
-            this.settings = settings;
+            this.Settings = settings;
             Array.Sort(ingredients);
             this.ingredients = ingredients;
         }
@@ -130,7 +131,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             DisplayName = displayName;
             Price = price;
-            this.settings = settings;
+            this.Settings = settings;
             Array.Sort(ids);
             if (ids != null && ids.Length > 0)
             {
@@ -227,9 +228,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <param name="effectKey">The EffectKey of the effect to add.</param>
         public void AddSecondaryEffect(string effectKey)
         {
-            if (secondaryEffects == null)
-                secondaryEffects = new List<string>();
-            secondaryEffects.Add(effectKey);
+            if (SecondaryEffects == null)
+                SecondaryEffects = new List<string>();
+            SecondaryEffects.Add(effectKey);
         }
 
         /// <summary>

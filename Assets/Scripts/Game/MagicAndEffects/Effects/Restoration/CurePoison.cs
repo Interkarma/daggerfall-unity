@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.MiscellaneousIngredients1.Small_tooth,
                 (int)Items.MiscellaneousIngredients2.Pearl);
 
+            curePoison.TextureRecord = 35;
             AssignPotionRecipes(curePoison);
         }
 

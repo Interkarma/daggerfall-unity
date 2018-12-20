@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.Yellow_flowers,
                 (int)Items.PlantIngredients2.Red_berries);
 
+            chameleonForm.TextureRecord = 33;
             AssignPotionRecipes(chameleonForm);
         }
 

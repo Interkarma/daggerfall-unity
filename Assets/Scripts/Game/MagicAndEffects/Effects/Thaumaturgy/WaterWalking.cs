@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients1.Yellow_rose,
                 (int)Items.MetalIngredients.Sulphur);
 
+            waterWalking.TextureRecord = 32;
             AssignPotionRecipes(waterWalking);
         }
 
