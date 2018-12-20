@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game
         ushort factionID = 0;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
 
-        DFLocation holidayTextLocation;
+        DaggerfallLocation holidayTextLocation;
         bool holidayTextPrimed = false;
         float holidayTextTimer = 0f;
 
@@ -277,6 +277,12 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            if (holidayTextPrimed && holidayTextLocation != GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject)
+            {
+                holidayTextTimer = 0;
+                holidayTextPrimed = false;
+            }
+
             // Count down holiday text display
             if (holidayTextTimer > 0)
                 holidayTextTimer -= Time.deltaTime;
@@ -464,7 +470,8 @@ namespace DaggerfallWorkshop.Game
             const int holidaysStartID = 8349;
 
             uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            int holidayId = Formulas.FormulaHelper.GetHolidayId(minutes, holidayTextLocation.RegionIndex);
+            int holidayId = Formulas.FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+
             if (holidayId != 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
@@ -1231,7 +1238,7 @@ namespace DaggerfallWorkshop.Game
                         holidayTextTimer = 2.5f; // Short delay to give save game fade-in time to finish
                         holidayTextPrimed = true;
                     }
-                    holidayTextLocation = location;
+                    holidayTextLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
 
                     // note Nystul: this next line is not enough to manage questor dictionary update since player might load a savegame in an interior -
                     // so this never gets triggered and questor list is rebuild always as a consequence
