@@ -668,7 +668,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             // Randomise ingredient group
             ItemGroups itemGroup;
-            int group = UnityEngine.Random.Range(0, 7);
+            int group = UnityEngine.Random.Range(0, 8);
             Array enumArray;
             switch (group)
             {
