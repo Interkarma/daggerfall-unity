@@ -13,19 +13,22 @@ using System;
 using UnityEngine;
 using DaggerfallWorkshop;
 
-namespace AssetInjection
+namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Implements DayNight logic for imported models. 
     /// Toggles lights and particle systems, switch emission maps color according to day time.
     /// </summary>
-    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/")]
+    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/#daynight")]
     public class DayNight : MonoBehaviour
     {
-        #region Inspector
+        #region Enums
 
         public enum LightingSelection { SelectedOnly, All };
         public enum EmissionColors { NoColors, DaggerfallColors, CustomColors };
+
+        #endregion
+
+        #region Fields
 
         [Header("Lighting")]
 
@@ -52,18 +55,13 @@ namespace AssetInjection
         [ColorUsage(false, true)]
         public Color nightColor;
 
-        #endregion
-
-        #region Unity
-
-        // Private fields
         DaggerfallUnity dfUnity;
         Material emissiveMaterial;
         bool lastFlag;
 
-        void Start()
-        {
-        }
+        #endregion
+
+        #region Unity
 
         void OnDisable()
         {
@@ -124,7 +122,7 @@ namespace AssetInjection
                         break;
 
                     case EmissionColors.CustomColors:
-                        emissiveMaterial.SetColor("_EmissionColor", lightsOn ? nightColor : dayColor);
+                        emissiveMaterial.SetColor(Uniforms.EmissionColor, lightsOn ? nightColor : dayColor);
                         break;
                 }
             }
@@ -142,8 +140,8 @@ namespace AssetInjection
                 emissiveMaterial = renderer.materials[materialIndex];
 
                 // Force emission
-                if (!emissiveMaterial.IsKeywordEnabled("_EMISSION"))
-                    emissiveMaterial.EnableKeyword("_EMISSION");
+                if (!emissiveMaterial.IsKeywordEnabled(KeyWords.Emission))
+                    emissiveMaterial.EnableKeyword(KeyWords.Emission);
             }
             catch (Exception e)
             {

@@ -6,7 +6,7 @@
 // Original Author: TheLacus
 // Contributors:
 // 
-// Notes: version 1.1
+// Notes:
 //
 
 using UnityEngine;
@@ -14,15 +14,13 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Rotate a GameObject so that it appears hung on the wall.
-    /// The GameObject will face the wall along the Unity Z/Blue axis of the model.
+    /// Rotate a GameObject so that it appears hung on the wall on its Z axis.
     /// This is useful for models meant to replace sprites as they miss the rotation component.
-    /// This script needs to be added as a component in the inspector, only for models wich
-    /// actually require this adjustment (like torches).
     /// </summary>
+    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/#facewall")]
     public class FaceWall : MonoBehaviour
     {
-        #region Inspector Fields
+        #region Fields
 
         [Tooltip("The wall will be seeked inside this radius. Big values can cause wrong results.")]
         public float maxDistance = 1.1f;
@@ -168,6 +166,5 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         #endregion
-
     }
 }
