@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Entity
             WoodElf woodElf = new WoodElf();
             Khajiit khajiit = new Khajiit();
             Argonian argonian = new Argonian();
-            //Vampire vampire = new Vampire();          // TODO: Uncomment later when paper doll and morphology support completed
+            Vampire vampire = new Vampire();          // TODO: Uncomment later when paper doll and morphology support completed
             //Werewolf werewolf = new Werewolf();
             //Wereboar wereboar = new Wereboar();
 
@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Entity
             raceDict.Add(woodElf.ID, woodElf);
             raceDict.Add(khajiit.ID, khajiit);
             raceDict.Add(argonian.ID, argonian);
-            //raceDict.Add(vampire.ID, vampire);      // TODO: Uncomment later when paper doll and morphology support completed
+            raceDict.Add(vampire.ID, vampire);      // TODO: Uncomment later when paper doll and morphology support completed
             //raceDict.Add(werewolf.ID, werewolf);
             //raceDict.Add(wereboar.ID, wereboar);
 
@@ -267,6 +267,15 @@ namespace DaggerfallWorkshop.Game.Entity
             ClipID = 0;
 
             PaperDollBackground = "SCBG08I0.IMG";
+
+            // Temporarily using Breton so that classic saves can be imported.
+            PaperDollBodyMaleUnclothed = "BODY00I0.IMG";
+            PaperDollBodyMaleClothed = "BODY00I1.IMG";
+            PaperDollBodyFemaleUnclothed = "BODY10I0.IMG";
+            PaperDollBodyFemaleClothed = "BODY10I1.IMG";
+
+            PaperDollHeadsMale = "FACE00I0.CIF";
+            PaperDollHeadsFemale = "FACE10I0.CIF";
 
             // TODO:
             //  * Paper doll body to match base race

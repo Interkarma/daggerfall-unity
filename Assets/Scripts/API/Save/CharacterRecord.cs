@@ -78,10 +78,13 @@ namespace DaggerfallConnect.Save
             doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
             doc.timeToBecomeVampireOrWerebeast = parsedData.timeToBecomeVampireOrWerebeast;
+            doc.hasStartedInitialVampireQuest = parsedData.hasStartedInitialVampireQuest;
+            doc.lastTimeVampireNeedToKillSatiated = parsedData.lastTimeVampireNeedToKillSatiated;
             doc.lastTimePlayerAteOrDrankAtTavern = parsedData.lastTimePlayerAteOrDrankAtTavern;
             doc.lastTimePlayerBoughtTraining = parsedData.lastTimePlayerBoughtTraining;
             doc.timeForThievesGuildLetter = parsedData.timeForThievesGuildLetter;
             doc.timeForDarkBrotherhoodLetter = parsedData.timeForDarkBrotherhoodLetter;
+            doc.vampireClan = parsedData.vampireClan;
             doc.darkBrotherhoodRequirementTally = parsedData.darkBrotherhoodRequirementTally;
             doc.thievesGuildRequirementTally = parsedData.thievesGuildRequirementTally;
             doc.biographyReactionMod = parsedData.biographyReactionMod;
@@ -169,8 +172,11 @@ namespace DaggerfallConnect.Save
             parsedData.race2 = ReadRace(reader);
             parsedData.timeToBecomeVampireOrWerebeast = reader.ReadUInt32();
 
+            reader.BaseStream.Position = 0x1f8;
+            parsedData.hasStartedInitialVampireQuest = reader.ReadByte();
+
             reader.BaseStream.Position = 0x1fd;
-            parsedData.timeStamp = reader.ReadUInt32();
+            parsedData.lastTimeVampireNeedToKillSatiated = reader.ReadUInt32();
 
             reader.BaseStream.Position = 0x205;
             parsedData.lastTimePlayerAteOrDrankAtTavern = reader.ReadUInt32();
@@ -180,6 +186,7 @@ namespace DaggerfallConnect.Save
             parsedData.timeForThievesGuildLetter = reader.ReadUInt32();
             parsedData.timeForDarkBrotherhoodLetter = reader.ReadUInt32();
             parsedData.shieldEffectAmount = reader.ReadUInt32();
+            parsedData.vampireClan = reader.ReadByte();
 
             reader.BaseStream.Position = 0x21f;
             parsedData.darkBrotherhoodRequirementTally = reader.ReadByte();
@@ -350,8 +357,9 @@ namespace DaggerfallConnect.Save
             public Int16 attackDamageMin5;
             public Int16 attackDamageMax5;*/
             public Races race2; // Stores character's original race for when returning from being a vampire, werewolf or wereboar
-            public UInt32 timeToBecomeVampireOrWerebeast; // Should equal three days after infection.
-            public UInt32 timeStamp; // Time of last kill by vampires and werewolves?
+            public UInt32 timeToBecomeVampireOrWerebeast; // Three days after infection.
+            public Byte hasStartedInitialVampireQuest;
+            public UInt32 lastTimeVampireNeedToKillSatiated;
             public UInt32 lastTimePlayerCastLycanthropy;
             public UInt32 lastTimePlayerAteOrDrankAtTavern;
             public UInt32 lastTimePlayerBoughtTraining;
@@ -359,7 +367,7 @@ namespace DaggerfallConnect.Save
             public UInt32 timeForDarkBrotherhoodLetter;
             public UInt32 shieldEffectAmount;
             public Byte vampireClan;
-            public Byte effectStrength; // Used for Open and Shade effects at least.
+            public Byte effectStrength; // Used for Open effect at least.
             public Byte darkBrotherhoodRequirementTally;
             public Byte thievesGuildRequirementTally;
             public SByte biographyReactionMod;
