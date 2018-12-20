@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             public DFCareer.Elements elementResisted;
             public EffectProperties effectProperties;
+            public PotionProperties potionProperties;
         }
 
         #endregion
@@ -57,6 +58,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return variantProperties[currentVariant].elementResisted; }
         }
 
+        public override PotionProperties PotionProperties
+        {
+            get { return variantProperties[currentVariant].potionProperties; }
+        }
+
         #endregion
 
         #region Overrides
@@ -69,7 +75,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Alteration;
             properties.DurationCosts = MakeEffectCosts(100, 100);
             properties.ChanceCosts = MakeEffectCosts(8, 100);
@@ -81,6 +87,53 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetVariantProperties(DFCareer.Elements.DiseaseOrPoison);
             SetVariantProperties(DFCareer.Elements.Shock);
             SetVariantProperties(DFCareer.Elements.Magic);
+        }
+
+        public override void SetPotionProperties()
+        {
+            EffectSettings resistSettings = SetEffectChance(DefaultEffectSettings(), 100, 1, 1);
+
+            PotionRecipe resistFire = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "resistFire"),
+                75,
+                resistSettings,
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.Gems.Amber,
+                (int)Items.PlantIngredients1.Red_flowers,
+                (int)Items.CreatureIngredients1.Fairy_dragon_scales,
+                (int)Items.PlantIngredients2.Cactus);
+
+            PotionRecipe resistFrost = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "resistFrost"),
+                75,
+                resistSettings,
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.Gems.Turquoise,
+                (int)Items.PlantIngredients1.Pine_branch,
+                (int)Items.PlantIngredients2.White_rose);
+
+            PotionRecipe resistShock = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "resistShock"),
+                75,
+                resistSettings,
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.MetalIngredients.Lodestone,
+                (int)Items.PlantIngredients1.Red_berries);
+
+            EffectSettings poisonResistSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
+            PotionRecipe resistPoison = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "resistPoison"),
+                125,
+                poisonResistSettings,
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.CreatureIngredients1.Snake_venom,
+                (int)Items.PlantIngredients1.Golden_poppy);
+
+            // Assign potion recipes
+            variantProperties[(int)DFCareer.Elements.Fire].potionProperties.Recipes = new PotionRecipe[] { resistFire };
+            variantProperties[(int)DFCareer.Elements.Frost].potionProperties.Recipes = new PotionRecipe[] { resistFrost };
+            variantProperties[(int)DFCareer.Elements.Shock].potionProperties.Recipes = new PotionRecipe[] { resistShock };
+            variantProperties[(int)DFCareer.Elements.DiseaseOrPoison].potionProperties.Recipes = new PotionRecipe[] { resistPoison };
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

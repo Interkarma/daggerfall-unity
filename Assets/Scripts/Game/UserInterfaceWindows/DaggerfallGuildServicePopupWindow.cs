@@ -305,8 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakePotions:
-                    CloseWindow();
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                    MakePotionService();
                     break;
 
                 case GuildServices.BuySpells:
@@ -690,6 +689,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);
             }
+        }
+
+        #endregion
+
+        #region Service Handling: Make Potions
+
+        private void MakePotionService()
+        {
+            // Open potion mixer window if player has some ingredients
+            CloseWindow();
+            for (int i = 0; i < playerEntity.Items.Count; i++)
+            {
+                if (playerEntity.Items.GetItem(i).IsIngredient)
+                {
+                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                    return;
+                }
+            }
+            DaggerfallUI.MessageBox(34);
         }
 
         #endregion

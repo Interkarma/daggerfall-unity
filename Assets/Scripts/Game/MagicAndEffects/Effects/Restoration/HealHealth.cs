@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -19,12 +19,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class HealHealth : BaseEntityEffect
     {
+        public static readonly string PublicKey = "Heal-Health";
+
         public override void SetProperties()
         {
-            properties.Key = "Heal-Health";
+            properties.Key = PublicKey;
             properties.ClassicKey = MakeClassicKey(10, 8);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "heal");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "health");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "heal");
+            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "health");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1548);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1248);
             properties.SupportMagnitude = true;
@@ -38,25 +40,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             // First recipe variant: Magnitude 5-5 + 9-9 per 1 levels
-            EffectSettings recipe1Settings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 9, 9, 1);
-            PotionRecipe recipe1 = new PotionRecipe(
-                recipe1Settings,
+            EffectSettings healingSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 9, 9, 1);
+            PotionRecipe healing = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "healing"),
+                50,
+                healingSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
-                (int)Items.PlantIngredients1.Yellow_berries,
+                (int)Items.PlantIngredients1.Red_berries,
                 (int)Items.MetalIngredients.Mercury,
                 (int)Items.CreatureIngredients1.Troll_blood);
 
             // Second recipe variant: Magnitude 5-5 + 19-19 per 1 levels
-            EffectSettings recipe2Settings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 19, 19, 1);
-            PotionRecipe recipe2 = new PotionRecipe(
-                recipe2Settings,
-                (int)Items.PlantIngredients1.Pine_branch,
+            EffectSettings healTrueSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 19, 19, 1);
+            PotionRecipe healTrue = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "healTrue"),
+                100,
+                healTrueSettings,
+                (int)Items.MiscellaneousIngredients1.Elixir_vitae,
                 (int)Items.PlantIngredients1.Red_berries,
-                (int)Items.CreatureIngredients3.Unicorn_horn,
-                (int)Items.MiscellaneousIngredients1.Pure_water);
+                (int)Items.PlantIngredients1.Pine_branch,
+                (int)Items.CreatureIngredients3.Unicorn_horn);
 
             // Assign recipes
-            AssignPotionRecipes(recipe1, recipe2);
+            AssignPotionRecipes(healing, healTrue);
         }
 
         public override void MagicRound()
@@ -72,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             int magnitude = GetMagnitude(caster);
             entityBehaviour.Entity.IncreaseHealth(magnitude);
 
-            //Debug.LogFormat("{0} incremented {1}'s health by {2} points", Key, entityBehaviour.EntityType.ToString(), magnitude);
+            UnityEngine.Debug.LogFormat("{0} incremented {1}'s health by {2} points", Key, entityBehaviour.EntityType.ToString(), magnitude);
         }
     }
 }

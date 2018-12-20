@@ -23,16 +23,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = "WaterWalking";
             properties.ClassicKey = MakeClassicKey(31, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "waterWalking");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "waterWalking");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1583);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1283);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = ElementTypes.Magic;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Thaumaturgy;
             properties.DurationCosts = MakeEffectCosts(20, 8);
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe waterWalking = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "waterWalking"),
+                50,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Pure_water,
+                (int)Items.PlantIngredients2.Palm,
+                (int)Items.PlantIngredients1.Yellow_rose,
+                (int)Items.MetalIngredients.Sulphur);
+
+            AssignPotionRecipes(waterWalking);
         }
 
         public override void ConstantEffect()

@@ -1430,7 +1430,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(tokens, item);
 
-                if (item.TemplateIndex == (int)MiscItems.Potion_recipe)
+                if (item.IsPotionRecipe)
                 {   // Setup the next message box with the potion recipe ingredients list.
                     DaggerfallMessageBox messageBoxRecipe = new DaggerfallMessageBox(uiManager, messageBox);
                     messageBoxRecipe.SetTextTokens(item.GetMacroDataSource().PotionRecipeIngredients(TextFile.Formatting.JustifyCenter));
@@ -1526,7 +1526,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
             }
-            else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
+            else if (item.IsPotion)
+            {   // Handle drinking magic potions
+                GameManager.Instance.PlayerEffectManager.DrinkPotion(item);
+                collection.RemoveOne(item);
+            }
+            else if (item.IsPotionRecipe)
             {
                 // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
                 // -IC122016

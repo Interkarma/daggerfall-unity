@@ -15,6 +15,8 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Entity;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -60,6 +62,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemListScroller ingredientsListScroller;
         ItemListScroller cauldronListScroller;
 
+        DaggerfallListPickerWindow recipePicker;
+
         #endregion
 
         #region UI Textures
@@ -67,11 +71,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D baseTexture;
         const string baseTextureName = "MASK00I0.IMG";
         const int alternateAlphaIndex = 12;
+        const string textDatabase = "DaggerfallUI";
 
         #endregion
 
         List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
         List<DaggerfallUnityItem> cauldron = new List<DaggerfallUnityItem>();
+        List<PotionRecipe> recipes = new List<PotionRecipe>();
 
         #region Constructors
 
@@ -100,6 +106,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupButtons();
             SetupItemListScrollers();
 
+            recipePicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
+            recipePicker.OnItemPicked += RecipePicker_OnItemPicked;
+
             Refresh();
         }
 
@@ -120,7 +129,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void Refresh()
         {
-            // Add ingredient items to list
+            // Gather recipe items from wagon
+            List<DaggerfallUnityItem> recipeItems = GameManager.Instance.PlayerEntity.WagonItems.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Potion_recipe);
+
+            // Add ingredient items to list and gather recipes from inventory
             ingredients.Clear();
             ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
             for (int i = 0; i < playerItems.Count; i++)
@@ -128,11 +140,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = playerItems.GetItem(i);
                 if (item.IsIngredient)
                     ingredients.Add(item);
+                else if (item.IsPotionRecipe)
+                    recipeItems.Add(item);
             }
             ingredientsListScroller.Items = ingredients;
 
+            // Clear cauldron and assign to scroller
             cauldron.Clear();
             cauldronListScroller.Items = cauldron;
+
+            // Populate picker from recipe items
+            recipes.Clear();
+            recipePicker.ListBox.ClearItems();
+            foreach (DaggerfallUnityItem recipeItem in recipeItems)
+            {
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(recipeItem.PotionRecipeKey);
+                if (!recipes.Contains(potionRecipe))
+                    recipes.Add(potionRecipe);
+            }
+            recipes.Sort((x, y) => (x.DisplayName.CompareTo(y.DisplayName)));
+            foreach (PotionRecipe potionRecipe in recipes)
+                recipePicker.ListBox.AddItem(potionRecipe.DisplayName);
         }
 
         #endregion
@@ -238,7 +266,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void MixCauldron()
         {
-            // TODO: Check recipes and create appropriate potion in player inventory if a match found
+            // Check recipes and create appropriate potion in player inventory if a match found
+            List<int> cauldronIngredients = new List<int>(cauldron.Count);
+            foreach (DaggerfallUnityItem item in cauldron)
+                cauldronIngredients.Add(item.TemplateIndex);
+            int recipeKey = new PotionRecipe(cauldronIngredients).GetHashCode();
+
+            //IEntityEffect potionEffect = GameManager.Instance.EntityEffectBroker.GetPotionRecipeEffect(recipe);
+            PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(recipeKey);
+            if (potionRecipe != null)
+            {
+                Debug.LogFormat("Potion matched: {0}", potionRecipe.DisplayName);
+                GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(recipeKey));
+            }
+            else
+            {
+                // Changed from classic, don't create useless 'Unknown Powers' potions.
+                //GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "ingredientsWasted"));
+                return;
+            }
 
             // Remove item from player inventory unless a stack remains.
             foreach (DaggerfallUnityItem item in cauldron)
@@ -255,10 +302,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (!stacked)
                     GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
             }
+
             // Empty cauldron and update list displays
             cauldron.Clear();
             ingredientsListScroller.Items = ingredients;
             cauldronListScroller.Items = cauldron;
+
+            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionMixed"));
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.MakePotion);
         }
 
         #endregion
@@ -277,13 +328,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void RecipesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO: Present a list of recipes player has.
-            CloseWindow();
+            if (recipes.Count > 0)
+                uiManager.PushWindow(recipePicker);
+            else
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noRecipes"));
+        }
+
+        public void RecipePicker_OnItemPicked(int index, string recipeName)
+        {
+            Debug.LogFormat("Picked recipe {0} at idx {1}.", recipeName, index);
         }
 
         private void MixButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            MixCauldron();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            if (cauldron.Count > 0)
+                MixCauldron();
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

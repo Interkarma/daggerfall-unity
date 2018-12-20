@@ -19,23 +19,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class InvisibilityNormal : ConcealmentEffect
     {
+        public static readonly string PublicKey = "Invisibility-Normal";
+
         public override void SetProperties()
         {
-            properties.Key = "Invisibility-Normal";
+            properties.Key = PublicKey;
             properties.ClassicKey = MakeClassicKey(13, 0);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "invisibility");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "normal");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "invisibility");
+            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1560);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1260);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(40, 120);
             concealmentFlag = MagicalConcealmentFlags.InvisibleNormal;
             startConcealmentMessageKey = "youAreInvisible";
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe invisibility = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "invisibility"),
+                250,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Rain_water,
+                (int)Items.MiscellaneousIngredients1.Nectar,
+                (int)Items.CreatureIngredients1.Ectoplasm,
+                (int)Items.Gems.Diamond);
+
+            AssignPotionRecipes(invisibility);
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

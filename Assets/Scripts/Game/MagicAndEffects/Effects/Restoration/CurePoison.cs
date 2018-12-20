@@ -23,16 +23,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = "Cure-Poison";
             properties.ClassicKey = MakeClassicKey(3, 1);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "cure");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "poison");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "cure");
+            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "poison");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1510);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1210);
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.ChanceCosts = MakeEffectCosts(8, 100);
+        }
+
+        public override void SetPotionProperties()
+        {
+            EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
+            PotionRecipe curePoison = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "curePoison"),
+                200,
+                cureSettings,
+                (int)Items.MiscellaneousIngredients1.Ichor,
+                (int)Items.CreatureIngredients2.Giant_scorpion_stinger,
+                (int)Items.MiscellaneousIngredients1.Small_tooth,
+                (int)Items.MiscellaneousIngredients2.Pearl);
+
+            AssignPotionRecipes(curePoison);
         }
 
         public override void MagicRound()

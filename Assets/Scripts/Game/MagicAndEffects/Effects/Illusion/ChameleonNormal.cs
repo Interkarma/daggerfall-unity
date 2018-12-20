@@ -23,19 +23,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = "Chameleon-Normal";
             properties.ClassicKey = MakeClassicKey(23, 0);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "chameleon");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "normal");
+            properties.GroupName = TextManager.Instance.GetText(textDatabase, "chameleon");
+            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1571);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1271);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
-            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+            properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker | MagicCraftingStations.PotionMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
             properties.DurationCosts = MakeEffectCosts(20, 80);
             concealmentFlag = MagicalConcealmentFlags.BlendingNormal;
             startConcealmentMessageKey = "youAreBlending";
+        }
+
+        public override void SetPotionProperties()
+        {
+            PotionRecipe chameleonForm = new PotionRecipe(
+                TextManager.Instance.GetText(textDatabase, "chameleonForm"),
+                200,
+                DefaultEffectSettings(),
+                (int)Items.MiscellaneousIngredients1.Rain_water,
+                (int)Items.MiscellaneousIngredients1.Nectar,
+                (int)Items.PlantIngredients2.Green_leaves,
+                (int)Items.PlantIngredients2.Yellow_flowers,
+                (int)Items.PlantIngredients2.Red_berries);
+
+            AssignPotionRecipes(chameleonForm);
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

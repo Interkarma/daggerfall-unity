@@ -281,6 +281,23 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Removes one item from this collection, decrementing stack count.
+        /// </summary>
+        /// <param name="item">Item to remove. Must exist inside this collection.</param>
+        public void RemoveOne(DaggerfallUnityItem item)
+        {
+            if (item == null)
+                return;
+
+            if (items.Contains(item.UID))
+            {
+                item.stackCount--;
+                if (item.stackCount <= 0)
+                    RemoveItem(item);
+            }
+        }
+
+        /// <summary>
         /// Reorders item in collection.
         /// </summary>
         /// <param name="item">Item to reorder. Must exist inside this collection.</param>
@@ -589,7 +606,8 @@ namespace DaggerfallWorkshop.Game.Items
             foreach (DaggerfallUnityItem checkItem in items.Values)
             {
                 if (checkItem != item && 
-                    checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex && 
+                    checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex &&
+                    checkItem.PotionRecipeKey == item.PotionRecipeKey &&
                     checkItem.IsStackable())
                     return checkItem;
             }

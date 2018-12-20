@@ -635,6 +635,55 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
+        #region Potions
+
+        public void DrinkPotion(DaggerfallUnityItem item)
+        {
+            // Item must be a valid potion.
+            if (item == null || item.PotionRecipeKey == 0)
+                return;
+
+            // Get potion recipe and main effect. (most potions only have one effect)
+            EntityEffectBroker effectBroker = GameManager.Instance.EntityEffectBroker;
+            PotionRecipe potionRecipe = effectBroker.GetPotionRecipe(item.PotionRecipeKey);
+            IEntityEffect potionEffect = effectBroker.GetPotionRecipeEffect(potionRecipe);
+
+            // Get any secondary effects and generate the effect entry array. (a single settings struct is shared between the effects)
+            EffectEntry[] potionEffects;
+            List<string> secondaryEffects = potionRecipe.SecondaryEffects;
+            if (secondaryEffects != null)
+            {
+                potionEffects = new EffectEntry[secondaryEffects.Count + 1];
+                potionEffects[0] = new EffectEntry(potionEffect.Key, potionRecipe.Settings);
+                for (int i = 0; i < secondaryEffects.Count; i++)
+                {
+                    IEntityEffect effect = effectBroker.GetEffectTemplate(secondaryEffects[i]);
+                    potionEffects[i+1] = new EffectEntry(effect.Key, potionRecipe.Settings);
+                }
+            }
+            else
+            {
+                potionEffects = new EffectEntry[] { new EffectEntry(potionEffect.Key, potionRecipe.Settings) };
+            }
+            // Create the effect bundle settings.
+            EffectBundleSettings bundleSettings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.Potion,
+                TargetType = TargetTypes.CasterOnly,
+                Effects = potionEffects,
+            };
+            // Assign effect bundle.
+            EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+            AssignBundle(bundle);
+
+            // Play cast sound on drink for player only.
+            if (IsPlayerEntity)
+                PlayCastSound(entityBehaviour, GetCastSoundID(ElementTypes.Magic));
+        }
+
+        #endregion
+
         #region Magic Items
 
         /// <summary>

@@ -164,6 +164,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
+        protected const string textDatabase = "ClassicEffects";
+
         protected EffectProperties properties = new EffectProperties();
         protected EffectSettings settings = new EffectSettings();
         protected PotionProperties potionProperties = new PotionProperties();
@@ -234,7 +236,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { settings = value; }
         }
 
-        public PotionProperties PotionProperties
+        public virtual PotionProperties PotionProperties
         {
             get { return potionProperties; }
         }
@@ -597,6 +599,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected int ChanceValue()
         {
             int casterLevel = (caster) ? caster.Entity.Level : 1;
+            //Debug.LogFormat("{5} ChanceValue {0} = base + plus * (level/chancePerLevel) = {1} + {2} * ({3}/{4})", settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel), settings.ChanceBase, settings.ChancePlus, casterLevel, settings.ChancePerLevel, Key);
             return settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
         }
 

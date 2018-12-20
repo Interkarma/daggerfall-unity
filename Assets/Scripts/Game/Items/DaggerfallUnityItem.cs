@@ -58,6 +58,8 @@ namespace DaggerfallWorkshop.Game.Items
 
         // Soul trapped
         MobileTypes trappedSoulType = MobileTypes.None;
+        // Potion recipe
+        int potionRecipeKey;
 
         // Time for magically-created item to disappear
         uint timeForItemToDisappear = 0;
@@ -293,12 +295,45 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if this item is a potion recipe.
+        /// </summary>
+        public bool IsPotionRecipe
+        {
+            get { return ItemGroup == ItemGroups.MiscItems && TemplateIndex == (int)MiscItems.Potion_recipe; }
+        }
+
+        /// <summary>
+        /// Checks if this item is a potion.
+        /// </summary>
+        public bool IsPotion
+        {
+            get { return ItemGroup == ItemGroups.UselessItems1 && TemplateIndex == (int)UselessItems1.Glass_Bottle; }
+        }
+
+        /// <summary>
         /// Gets/sets the soul trapped in a soul trap.
         /// </summary>
         public MobileTypes TrappedSoulType
         {
             get { return trappedSoulType; }
             set { trappedSoulType = value; }
+        }
+
+        /// <summary>
+        /// Gets/sets the key of the potion recipe allocated to this item.
+        /// Has a side effect (ugh, sorry) of populating the item value from the recipe price. (due to value not being encapsulated)
+        /// </summary>
+        public int PotionRecipeKey
+        {
+            get { return potionRecipeKey; }
+            set {
+                MagicAndEffects.PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
+                if (potionRecipe != null)
+                {
+                    potionRecipeKey = value;
+                    this.value = potionRecipe.Price;
+                }
+            }
         }
 
         /// <summary>
@@ -552,7 +587,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Determines if item is stackable.
-        /// Only ingredients, gold pieces, oil and arrows are stackable,
+        /// Only ingredients, potions, gold pieces, oil and arrows are stackable,
         /// but equipped items, enchanted ingredients and quest items are never stackable.
         /// </summary>
         /// <returns>True if item stackable.</returns>
@@ -560,7 +595,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             if (IsEquipped || IsQuestItem || IsEnchanted)
                 return false;
-            if (IsIngredient ||
+            if (IsIngredient || IsPotion ||
                 IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) ||
                 IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow) ||
                 IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
@@ -577,6 +612,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             return stackCount > 1;
         }
+
         /// <summary>
         /// Allow use of item to be implemented by item object and overridden
         /// </summary>
@@ -681,6 +717,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.poisonType = poisonType;
             if ((int)poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 data.poisonType = Poisons.None;
+            data.potionRecipe = potionRecipeKey;
             data.repairData = repairData.GetSaveData();
 
             return data;
@@ -1237,6 +1274,10 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 stackCount = 1;
             }
+            // Convert classic recipes to DFU recipe key.
+            if ((IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
+                potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
+
             currentVariant = 0;
             enchantmentPoints = itemRecord.ParsedData.enchantmentPoints;
             message = (int)itemRecord.ParsedData.message;
@@ -1325,6 +1366,11 @@ namespace DaggerfallWorkshop.Game.Items
             poisonType = data.poisonType;
             if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 poisonType = Poisons.None;
+            potionRecipeKey = data.potionRecipe;
+            // Convert any old classic recipe items in saves to DFU recipe key.
+            if (potionRecipeKey == 0 && (IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
+                potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
+
             repairData.RestoreRepairData(data.repairData);
         }
 

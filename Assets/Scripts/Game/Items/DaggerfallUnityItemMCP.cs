@@ -15,6 +15,7 @@ using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -202,27 +203,31 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Potion()
             {   // %po
-                KeyValuePair<string, Recipe[]> mapping = DaggerfallUnity.Instance.ItemHelper.getPotionRecipesByID(parent.typeDependentData);
-                recipeArray = mapping.Value;
-                if (parent.TemplateIndex == (int)MiscItems.Potion_recipe)
-                    return mapping.Key;                                          // "Potion recipe for %po"
-                else if (parent.TemplateIndex == (int)UselessItems1.Glass_Bottle)
-                    return HardStrings.potionOf.Replace("%po", mapping.Key);     // "Potion of %po"
+                string potionName = PotionRecipe.UnknownPowers;
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(parent.potionRecipeKey);
+                if (potionRecipe != null)
+                    potionName = potionRecipe.DisplayName;
+
+                if (parent.IsPotionRecipe)
+                    return potionName;                                          // "Potion recipe for %po"
+                else if (parent.IsPotion)
+                    return HardStrings.potionOf.Replace("%po", potionName);     // "Potion of %po" (255=Unknown Powers)
+
                 throw new NotImplementedException();
             }
 
             public override TextFile.Token[] PotionRecipeIngredients(TextFile.Formatting format)
             {
-                // InconsolableCellist:
-                // Potions can have multiple recipes, and it's unclear how this variation is stored
-                // The actual variation could be stored in the currentVariation field, but I haven't been able find any recipes
-                // in the game that aren't just the first recipe in the list; for now we'll just pick the first one here
                 List<TextFile.Token> ingredientsTokens = new List<TextFile.Token>();
-                Ingredient[] ingredients = recipeArray[0].ingredients;
-                for (int i = 0; i < ingredients.Length; ++i)
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(parent.potionRecipeKey);
+                if (potionRecipe != null)
                 {
-                    ingredientsTokens.Add(TextFile.CreateTextToken(ingredients[i].name));
-                    ingredientsTokens.Add(TextFile.CreateFormatToken(format));
+                    foreach (PotionRecipe.Ingredient ingredient in potionRecipe.Ingredients)
+                    {
+                        ItemTemplate ingredientTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ingredient.id);
+                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientTemplate.name));
+                        ingredientsTokens.Add(TextFile.CreateFormatToken(format));
+                    }
                 }
                 return ingredientsTokens.ToArray();
             }

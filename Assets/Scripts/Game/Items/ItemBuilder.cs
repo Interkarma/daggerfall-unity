@@ -49,9 +49,6 @@ namespace DaggerfallWorkshop.Game.Items
         // Enchantment point multipliers by material type. Iron through Daedric. Enchantment points is baseEnchanmentPoints * value / 4.
         static readonly short[] enchantmentPointMultipliersByMaterial = { 3, 4, 7, 5, 6, 5, 7, 8, 10, 12 };
 
-        // Value of potions indexed by recipe
-        static readonly ushort[] potionValues = { 25, 50, 50, 50, 75, 75, 75, 75, 100, 100, 100, 100, 125, 125, 125, 200, 200, 200, 250, 500 };
-
         // Enchantment point/gold value data for item powers
         static readonly int[] extraSpellPtsEnchantPts = { 0x1F4, 0x1F4, 0x1F4, 0x1F4, 0xC8, 0xC8, 0xC8, 0x2BC, 0x320, 0x384, 0x3E8 };
         static readonly int[] potentVsEnchantPts = { 0x320, 0x384, 0x3E8, 0x4B0 };
@@ -714,27 +711,34 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Creates a potion
+        /// Creates a potion.
         /// </summary>
         /// <param name="recipe">Recipe index for the potion</param>
-        /// <returns>DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreatePotion(byte recipe)
+        /// <returns>Potion DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreatePotion(int recipeKey)
         {
-            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1)
-            {
-                typeDependentData = recipe,
-                value = potionValues[recipe],
-            };
+            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) { PotionRecipeKey = recipeKey };
         }
 
         /// <summary>
-        /// Creates a random potion
+        /// Creates a random potion from all registered recipes.
         /// </summary>
-        /// <returns>DaggerfallUnityItem</returns>
+        /// <returns>Potion DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomPotion()
         {
-            byte recipe = (byte)UnityEngine.Random.Range(0, 20);
-            return CreatePotion(recipe);
+            List<int> recipeKeys = GameManager.Instance.EntityEffectBroker.GetPotionRecipeKeys();
+            int recipeIdx = UnityEngine.Random.Range(0, recipeKeys.Count);
+            return CreatePotion(recipeKeys[recipeIdx]);
+        }
+
+        /// <summary>
+        /// Creates a random (classic) potion
+        /// </summary>
+        /// <returns>Potion DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomClassicPotion()
+        {
+            int recipeIdx = UnityEngine.Random.Range(0, MagicAndEffects.PotionRecipe.classicRecipeKeys.Length);
+            return CreatePotion(MagicAndEffects.PotionRecipe.classicRecipeKeys[recipeIdx]);
         }
 
         /// <summary>

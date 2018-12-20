@@ -274,6 +274,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public MobileTypes trappedSoulType;
         public string className;
         public Poisons poisonType = Poisons.None;
+        public int potionRecipe;
         public ItemRepairData_v1 repairData;
     }
 

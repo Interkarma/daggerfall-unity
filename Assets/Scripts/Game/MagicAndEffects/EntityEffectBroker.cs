@@ -239,11 +239,61 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (recipe != null)
             {
                 int recipeKey = recipe.GetHashCode();
-                if (!potionEffectTemplates.ContainsKey(recipeKey))
+                if (potionEffectTemplates.ContainsKey(recipeKey))
                     return potionEffectTemplates[recipeKey];
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets PotionRecipe from effect that matches the recipeKey provided.
+        /// </summary>
+        /// <param name="recipeKey">Hashcode of a set of ingredients.</param>
+        /// <returns>PotionRecipe if the key matches one from an effect, otherwise null.</returns>
+        public PotionRecipe GetPotionRecipe(int recipeKey)
+        {
+            if (potionEffectTemplates.ContainsKey(recipeKey))
+            {
+                foreach (PotionRecipe recipe in potionEffectTemplates[recipeKey].PotionProperties.Recipes)
+                    if (recipe.GetHashCode() == recipeKey)
+                        return recipe;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get recipeKeys for all registered potion recipes.
+        /// </summary>
+        /// <returns>List of int recipeKeys</returns>
+        public List<int> GetPotionRecipeKeys()
+        {
+            return new List<int>(potionEffectTemplates.Keys);
+        }
+
+        /// <summary>
+        /// Logs a summary of how many recipes ingredients are used in so new recipes can choose to use little used ingredients.
+        /// Intended for mod devs, used by invoking 'ingredUsage' console command.
+        /// </summary>
+        public void LogRecipeIngredientUsage()
+        {
+            Dictionary<int, int> ingredCounts = new Dictionary<int, int>();
+            foreach (int key in potionEffectTemplates.Keys)
+            {
+                PotionRecipe potionRecipe = GetPotionRecipe(key);
+                foreach (PotionRecipe.Ingredient ingred in potionRecipe.Ingredients)
+                {
+                    if (ingredCounts.ContainsKey(ingred.id))
+                        ingredCounts[ingred.id]++;
+                    else
+                        ingredCounts.Add(ingred.id, 1);
+                }
+            }
+            foreach (int key in ingredCounts.Keys)
+            {
+                DaggerfallConnect.FallExe.ItemTemplate ingredientTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(key);
+                Debug.LogFormat("{0} recipes use: {1}", ingredCounts[key], ingredientTemplate.name);
+            }
         }
 
         /// <summary>
