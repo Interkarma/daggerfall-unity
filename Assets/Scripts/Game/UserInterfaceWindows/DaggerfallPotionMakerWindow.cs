@@ -203,13 +203,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Create misc text label template
             TextLabel miscLabelTemplate = new TextLabel(DaggerfallUI.Instance.Font3)
             {
-                Position = new Vector2(0, ingredientButtonRects[0].height - 1),
+                Position = new Vector2(0, ingredientButtonRects[0].height - 2),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.None
             };
 
-            // Setup item list scroller for ingredients
-            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, miscLabelTemplate, defaultToolTip, 2, 0.8f)
+            // Setup item list scroller for ingredients with offset of 5 on column 1 for misc labels
+            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, miscLabelTemplate, defaultToolTip, 2, 0.8f, true, 5, 1)
             {
                 Position = new Vector2(ingredientsListScrollerRect.x, ingredientsListScrollerRect.y),
                 Size = new Vector2(ingredientsListScrollerRect.width, ingredientsListScrollerRect.height),

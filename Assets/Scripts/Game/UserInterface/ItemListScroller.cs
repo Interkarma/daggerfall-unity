@@ -98,6 +98,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int itemButtonMargin = 2;   // Margin of item buttons
         float textScale = 1f;       // Scale of text on item buttons
         bool scroller = true;       // Scroller active or not
+        int miscLabelOffsetDist = 0;// Vertical distance to offset the misc label
+        int miscLabelOffsetIdx = 0; //Index of column for which to offset the misc label
 
         float foregroundAnimationDelay = 0.2f;    
         float backgroundAnimationDelay = 0.2f;
@@ -225,7 +227,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
         /// <param name="itemMarginSize">Individual item display margin size.</param>
         /// <param name="textScale">Text scale factor for stack labels.</param>
-        public ItemListScroller(int listRows, int listCols, Rect itemListRect, Rect[] itemsRects, TextLabel miscLabelTemplate, ToolTip toolTip = null, int itemMarginSize = 1, float textScale = 1f, bool scroll = true)
+        /// <param name="scroll">True for a scrollable list, false otherwise.</param>
+        /// <param name="miscLabelOffsetDist">Vertical distance to offset the misc label, 0 to disable.</param>
+        /// <param name="miscLabelOffsetIdx">Index of column for which to offset the misc label.</param>
+        public ItemListScroller(int listRows, int listCols, Rect itemListRect, Rect[] itemsRects, TextLabel miscLabelTemplate, ToolTip toolTip = null,
+                                int itemMarginSize = 1, float textScale = 1f, bool scroll = true, int miscLabelOffsetDist = 0, int miscLabelOffsetIdx = 0)
             : base()
         {
             listDisplayTotal = listRows * listCols;
@@ -240,6 +246,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.toolTip = toolTip;
             this.textScale = textScale;
             scroller = scroll;
+            this.miscLabelOffsetDist = miscLabelOffsetDist;
+            this.miscLabelOffsetIdx = miscLabelOffsetIdx;
 
             LoadTextures(false);
             if (scroller) {
@@ -309,6 +317,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             itemStackLabels = new TextLabel[listDisplayTotal];
             itemMiscLabels = new TextLabel[listDisplayTotal];
 
+            // Setup column misc label offsetting.
+            Vector2 offsetPosition = miscLabelTemplate.Position + new Vector2(0, miscLabelOffsetDist);
+            int osi = miscLabelOffsetIdx;
+
             for (int i = 0; i < listDisplayTotal; i++)
             {
                 // Panel - for backing button in enhanced mode
@@ -345,7 +357,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemStackLabels[i].TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
 
                 // Misc labels
-                itemMiscLabels[i] = DaggerfallUI.AddTextLabel(miscLabelTemplate.Font, miscLabelTemplate.Position, string.Empty, itemButtons[i]);
+                Vector2 position = miscLabelTemplate.Position;
+                if (miscLabelOffsetDist != 0 && i == osi)
+                {
+                    position = offsetPosition;
+                    osi += listWidth;
+                }
+                itemMiscLabels[i] = DaggerfallUI.AddTextLabel(miscLabelTemplate.Font, position, string.Empty, itemButtons[i]);
                 itemMiscLabels[i].HorizontalAlignment = miscLabelTemplate.HorizontalAlignment;
                 itemMiscLabels[i].VerticalAlignment = miscLabelTemplate.VerticalAlignment;
                 itemMiscLabels[i].TextScale = miscLabelTemplate.TextScale;
