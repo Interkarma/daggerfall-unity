@@ -68,6 +68,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { ingredients = value; }
         }
 
+        /// <summary>
+        /// Retrieves a list of secondary effect keys.
+        /// </summary>
         public List<string> SecondaryEffects
         {
             get { return secondaryEffects; }
@@ -218,6 +221,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return (ingredients != null && ingredients.Length > 0);
         }
 
+        /// <summary>
+        /// Adds secondary effects to this potion recipe.
+        /// </summary>
+        /// <param name="effectKey">The EffectKey of the effect to add.</param>
         public void AddSecondaryEffect(string effectKey)
         {
             if (secondaryEffects == null)

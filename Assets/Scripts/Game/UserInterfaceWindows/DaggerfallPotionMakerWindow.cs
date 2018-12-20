@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
         Rect ingredientsListRect = new Rect(11, 0, 140, 142);
 
-        static Rect[] ingredientButtonRects = new Rect[]
+        static readonly Rect[] ingredientButtonRects = new Rect[]
         {
             new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),    new Rect(112, 0, 28, 28),
             new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),   new Rect(112, 38, 28, 28),
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
         Rect cauldronListRect = new Rect(0, 0, 84, 142);
 
-        static Rect[] cauldronButtonRects = new Rect[]
+        static readonly Rect[] cauldronButtonRects = new Rect[]
         {
             new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),
             new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),
@@ -52,6 +52,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region UI Controls
+
+        TextLabel nameLabel = new TextLabel();
+        TextLabel costLabel = new TextLabel();
+        TextLabel goldLabel = new TextLabel();
 
         Button recipesButton;
         Button mixButton;
@@ -101,6 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = baseTexture;
 
             // Setup UI
+            SetupLabels();
             SetupButtons();
             SetupItemListScrollers();
 
@@ -125,6 +130,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void Refresh()
         {
+            // Update labels
+            goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
+
             // Gather recipe items from wagon
             List<DaggerfallUnityItem> recipeItems = GameManager.Instance.PlayerEntity.WagonItems.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Potion_recipe);
 
@@ -183,6 +191,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
+        void SetupLabels()
+        {
+            nameLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(33, 185), NativePanel);
+            costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(174, 185), NativePanel);
+            goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(237, 185), NativePanel);
+        }
+
         void SetupItemListScrollers()
         {
             // Create misc text label template
@@ -223,6 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (cauldron.Count < 8)
             {
+                nameLabel.Text = "";
                 if (item.stackCount == 1)
                 {
                     cauldron.Add(item);
@@ -242,6 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void RemoveFromCauldron(DaggerfallUnityItem item)
         {
+            nameLabel.Text = "";
             cauldron.Remove(item);
             bool stacked = false;
             foreach (DaggerfallUnityItem checkItem in ingredients)
@@ -292,6 +309,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ClearCauldron();
                 foreach (DaggerfallUnityItem item in recipeIngreds.Values)
                     AddToCauldron(item);
+                nameLabel.Text = recipeName;
             }
         }
 
