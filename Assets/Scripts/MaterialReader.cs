@@ -381,7 +381,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Get texture
-                results = textureReader.GetTexture2D(settings, AlphaTextureFormat);
+                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, TextureImport.LooseFiles);
 
                 // Create material
                 if (isBillboard)
