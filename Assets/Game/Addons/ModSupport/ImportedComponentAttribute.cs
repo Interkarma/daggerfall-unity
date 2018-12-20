@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using FullSerializer;
 
@@ -78,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 // Get and destroy only imported components
                 List<fsData> components = null;
-                foreach (var component in gameObject.GetComponents(typeof(Component)))
+                foreach (var component in gameObject.GetComponents<Component>().Where(x => x))
                 {
                     if (GetCustomAttribute(component.GetType(), typeof(ImportedComponentAttribute)) != null)
                     {
