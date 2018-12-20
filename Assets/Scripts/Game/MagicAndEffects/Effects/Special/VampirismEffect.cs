@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     ///  * Assign cheap vampire spells and clan-specific spells (DONE)
     ///  * Support for cheaper spells in casting system (DONE)
     ///  * Clear guild memberships and reset reputations
+    ///  * Show racial changes in character sheet
     ///  * Non-clan modifiers (DONE)
     ///  * Clan-based modifiers (DONE)
     ///  * Damage from sunlight
@@ -100,6 +101,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
 
+            // Execute advantages and disadvantages
+            VampireAdvantages();
+            VampireDisadvantages();
+        }
+
+        #region Private Methods
+
+        void VampireAdvantages()
+        {
             // Set stat mods to all but INT
             const int statModAmount = 20;
             SetStatMod(DaggerfallConnect.DFCareer.Stats.Strength, statModAmount);
@@ -123,6 +133,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (vampireClan == VampireClans.Anthotis)
                 SetStatMod(DaggerfallConnect.DFCareer.Stats.Intelligence, statModAmount);
         }
+
+        void VampireDisadvantages()
+        {
+            // TODO: Damage from sunlight
+
+            // TODO: Damage from holy places
+        }
+
+        #endregion
 
         #region Serialization
 
