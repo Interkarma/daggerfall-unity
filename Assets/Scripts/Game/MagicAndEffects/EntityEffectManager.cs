@@ -221,7 +221,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (InputManager.Instance.ActionStarted(InputManager.Actions.RecastSpell) && lastSpell != null &&
                     !GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
                 {
-                    SetReadySpell(lastSpell);
+                    if (GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+                        SetReadySpell(lastSpell);
+                    else
+                        DaggerfallUI.AddHUDText("You have no spellbook!");
                     return;
                 }
 

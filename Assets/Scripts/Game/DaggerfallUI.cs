@@ -441,8 +441,11 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfUnityMouseControlsWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenSpellBookWindow:
-                    if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
+                    if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim &&
+                        GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
                         uiManager.PushWindow(dfSpellBookWindow);
+                    else
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
                     break;
                 case DaggerfallUIMessages.dfuiOpenCourtWindow:
                     uiManager.PushWindow(dfCourtWindow);
