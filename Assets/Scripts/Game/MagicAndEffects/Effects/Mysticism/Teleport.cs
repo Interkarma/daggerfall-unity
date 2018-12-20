@@ -23,6 +23,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Teleport : IncumbentEffect
     {
+        public static readonly string EffectKey = "Teleport-Effect";
+
         #region Fields
 
         // Constants
@@ -44,7 +46,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void SetProperties()
         {
-            properties.Key = "Teleport-Effect";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(43, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "teleport");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1602);

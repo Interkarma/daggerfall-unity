@@ -16,12 +16,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     public class LightNormal : IncumbentEffect
     {
+        public static readonly string EffectKey = "Light";
+
         bool lightStarted = false;
         MagicCandleBehaviour magicCandle = null;
 
         public override void SetProperties()
         {
-            properties.Key = "Light";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(15, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "light");
             properties.SubGroupName = string.Empty;

@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Climbing : IncumbentEffect
     {
+        public static readonly string EffectKey = "Climbing";
+
         public override void SetProperties()
         {
-            properties.Key = "Climbing";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(26, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "climbing");
             properties.SubGroupName = string.Empty;

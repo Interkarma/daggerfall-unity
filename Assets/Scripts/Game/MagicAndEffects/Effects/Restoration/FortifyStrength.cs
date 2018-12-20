@@ -18,9 +18,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class FortifyStrength : FortifyEffect
     {
+        public static readonly string EffectKey = "Fortify-Strength";
+
         public override void SetProperties()
         {
-            properties.Key = "Fortify-Strength";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(9, 0);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "fortifyAttribute");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "strength");

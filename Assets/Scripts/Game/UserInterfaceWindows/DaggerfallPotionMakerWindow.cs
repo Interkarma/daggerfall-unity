@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:
 //
 // Notes:
 //
@@ -13,10 +13,8 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Entity;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -269,6 +267,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RemoveFromCauldron(cauldron[0]);
         }
 
+        void AddRecipeToCauldron(int index, string recipeName)
+        {
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            PotionRecipe recipe = recipes[index];
+            Dictionary<int, DaggerfallUnityItem> recipeIngreds = new Dictionary<int, DaggerfallUnityItem>();
+            foreach (PotionRecipe.Ingredient ingred in recipe.Ingredients)
+                recipeIngreds.Add(ingred.id, null);
+
+            // Find matching items for the recipe ingredients
+            for (int i = 0; i < playerItems.Count; i++)
+            {
+                DaggerfallUnityItem item = playerItems.GetItem(i);
+                if (item.IsIngredient && recipeIngreds.ContainsKey(item.TemplateIndex) && recipeIngreds[item.TemplateIndex] == null)
+                    recipeIngreds[item.TemplateIndex] = item;
+            }
+            // If player doesn't have all the required ingredients, display message else move ingredients into cauldron.
+            if (recipeIngreds.ContainsValue(null))
+            {
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "reqIngredients"));
+            }
+            else
+            {
+                ClearCauldron();
+                foreach (DaggerfallUnityItem item in recipeIngreds.Values)
+                    AddToCauldron(item);
+            }
+        }
+
         void MixCauldron()
         {
             // Check recipes and create appropriate potion in player inventory if a match found
@@ -313,34 +339,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldron.Clear();
             ingredientsListScroller.Items = ingredients;
             cauldronListScroller.Items = cauldron;
-        }
-
-        void AddRecipeToCauldron(int index, string recipeName)
-        {
-            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
-            PotionRecipe recipe = recipes[index];
-            Dictionary<int, DaggerfallUnityItem> recipeIngreds = new Dictionary<int, DaggerfallUnityItem>();
-            foreach (PotionRecipe.Ingredient ingred in recipe.Ingredients)
-                recipeIngreds.Add(ingred.id, null);
-
-            // Find matching items for the recipe ingredients
-            for (int i = 0; i < playerItems.Count; i++)
-            {
-                DaggerfallUnityItem item = playerItems.GetItem(i);
-                if (item.IsIngredient && recipeIngreds.ContainsKey(item.TemplateIndex) && recipeIngreds[item.TemplateIndex] == null)
-                    recipeIngreds[item.TemplateIndex] = item;
-            }
-            // If player doesn't have all the required ingredients, display message else move ingredients into cauldron.
-            if (recipeIngreds.ContainsValue(null))
-            {
-                DaggerfallUI.MessageBox("You don't have the required ingredients.");
-            }
-            else
-            {
-                ClearCauldron();
-                foreach (DaggerfallUnityItem item in recipeIngreds.Values)
-                    AddToCauldron(item);
-            }
         }
 
         #endregion

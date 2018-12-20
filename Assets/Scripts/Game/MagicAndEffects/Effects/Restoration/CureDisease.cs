@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.Gems.Diamond,
                 (int)Items.CreatureIngredients2.Mummy_wrappings);
             purification.AddSecondaryEffect(HealHealth.EffectKey);
-            purification.AddSecondaryEffect(InvisibilityNormal.PublicKey);
+            purification.AddSecondaryEffect(InvisibilityNormal.EffectKey);
 
             AssignPotionRecipes(cureDisease, purification);
         }

@@ -19,13 +19,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Lock : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
+        public static readonly string EffectKey = "Lock";
+
         int forcedRoundsRemaining = 1;
         bool awakeAlert = true;
 
         public override void SetProperties()
         {
-            properties.Key = "Lock";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(16, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "lock");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1564);

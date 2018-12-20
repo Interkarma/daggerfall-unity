@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class DamageSpellPoints : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Damage-SpellPoints";
+
         public override void SetProperties()
         {
-            properties.Key = "Damage-SpellPoints";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(4, 2);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "damage");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "spellPoints");

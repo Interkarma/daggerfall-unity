@@ -19,11 +19,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Slowfall : IncumbentEffect
     {
+        public static readonly string EffectKey = "Slowfall";
+
         bool awakeAlert = true;
 
         public override void SetProperties()
         {
-            properties.Key = "Slowfall";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(25, 255);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "slowfall");
             properties.SubGroupName = string.Empty;

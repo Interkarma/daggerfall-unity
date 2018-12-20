@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class CurePoison : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Cure-Poison";
+
         public override void SetProperties()
         {
-            properties.Key = "Cure-Poison";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(3, 1);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "cure");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "poison");

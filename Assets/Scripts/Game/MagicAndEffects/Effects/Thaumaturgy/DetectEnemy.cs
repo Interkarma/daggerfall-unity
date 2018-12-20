@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class DetectEnemy : DetectEffect
     {
+        public static readonly string EffectKey = "Detect-Enemy";
+
         public override void SetProperties()
         {
-            properties.Key = "Detect-Enemy";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(39, 1);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "detect");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "enemy");

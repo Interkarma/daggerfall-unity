@@ -18,20 +18,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class HealSpellPoints : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Heal-SpellPoints";
+
         public override void SetProperties()
         {
-            properties.Key = "Heal-SpellPoints";
-            //properties.ClassicKey = MakeClassicKey(10, 9);
+            properties.Key = EffectKey;
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "heal");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "spellPoints");
-            //properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1549);
-            //properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1249);
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.PotionMaker;
-            //properties.MagicSkill = DFCareer.MagicSkills.Restoration;
-            //properties.MagnitudeCosts = MakeEffectCosts(8, 28);
         }
 
         public override void SetPotionProperties()

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -20,9 +20,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class ContinuousDamageFatigue : IncumbentEffect
     {
+        public static readonly string EffectKey = "ContinuousDamage-Fatigue";
+
         public override void SetProperties()
         {
-            properties.Key = "ContinuousDamage-Fatigue";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(1, 1);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "continuousDamage");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "fatigue");

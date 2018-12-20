@@ -21,9 +21,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Identify : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Identify";
+
         public override void SetProperties()
         {
-            properties.Key = "Identify";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(40, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "identify");
             properties.SubGroupName = string.Empty;

@@ -19,13 +19,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Open : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
+        public static readonly string EffectKey = "Open";
+
         int forcedRoundsRemaining = 1;
         bool awakeAlert = true;
 
         public override void SetProperties()
         {
-            properties.Key = "Open";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(17, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "open");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1565);

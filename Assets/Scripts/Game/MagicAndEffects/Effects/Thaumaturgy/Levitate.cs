@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Levitate : IncumbentEffect
     {
+        public static readonly string EffectKey = "Levitate";
+
         public override void SetProperties()
         {
-            properties.Key = "Levitate";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(14, 255);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "levitate");
             properties.SubGroupName = string.Empty;

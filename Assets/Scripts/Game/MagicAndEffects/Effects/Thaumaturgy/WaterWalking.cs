@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class WaterWalking : IncumbentEffect
     {
+        public static readonly string EffectKey = "WaterWalking";
+
         public override void SetProperties()
         {
-            properties.Key = "WaterWalking";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(31, 255);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "waterWalking");
             properties.SubGroupName = string.Empty;

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -18,9 +18,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class TransferEndurance : TransferEffect
     {
+        public static readonly string EffectKey = "Transfer-Endurance";
+
         public override void SetProperties()
         {
-            properties.Key = "Transfer-Endurance";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(11, 4);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "transfer");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "endurance");

@@ -18,9 +18,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class SpellAbsorption : IncumbentEffect
     {
+        public static readonly string EffectKey = "SpellAbsorption";
+
         public override void SetProperties()
         {
-            properties.Key = "SpellAbsorption";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(20, 255);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "spellAbsorption");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1568);

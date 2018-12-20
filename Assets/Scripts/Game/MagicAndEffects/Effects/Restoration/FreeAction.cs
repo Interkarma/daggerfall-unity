@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class FreeAction : IncumbentEffect
     {
+        public static readonly string EffectKey = "FreeAction";
+
         public override void SetProperties()
         {
-            properties.Key = "FreeAction";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(28, 255);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "freeAction");
             properties.SubGroupName = string.Empty;
