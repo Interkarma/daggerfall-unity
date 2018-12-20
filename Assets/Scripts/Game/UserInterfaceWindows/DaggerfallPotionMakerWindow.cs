@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:
 //
 // Notes:
 //
@@ -13,10 +13,8 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Entity;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -31,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
         Rect ingredientsListRect = new Rect(11, 0, 140, 142);
 
-        static Rect[] ingredientButtonRects = new Rect[]
+        static readonly Rect[] ingredientButtonRects = new Rect[]
         {
             new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),    new Rect(112, 0, 28, 28),
             new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),   new Rect(112, 38, 28, 28),
@@ -42,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
         Rect cauldronListRect = new Rect(0, 0, 84, 142);
 
-        static Rect[] cauldronButtonRects = new Rect[]
+        static readonly Rect[] cauldronButtonRects = new Rect[]
         {
             new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),
             new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),
@@ -54,6 +52,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region UI Controls
+
+        TextLabel nameLabel = new TextLabel();
+        TextLabel costLabel = new TextLabel();
+        TextLabel goldLabel = new TextLabel();
 
         Button recipesButton;
         Button mixButton;
@@ -103,6 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = baseTexture;
 
             // Setup UI
+            SetupLabels();
             SetupButtons();
             SetupItemListScrollers();
 
@@ -122,13 +125,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            // Remove all ingredients from cauldron to restore correct stack sizes
-            while (cauldron.Count > 0)
-                RemoveFromCauldron(cauldron[0]);
+            ClearCauldron();
         }
 
         void Refresh()
         {
+            // Update labels
+            goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
+
             // Gather recipe items from wagon
             List<DaggerfallUnityItem> recipeItems = GameManager.Instance.PlayerEntity.WagonItems.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Potion_recipe);
 
@@ -187,18 +191,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
+        void SetupLabels()
+        {
+            nameLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(33, 185), NativePanel);
+            costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(174, 185), NativePanel);
+            goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(237, 185), NativePanel);
+        }
+
         void SetupItemListScrollers()
         {
             // Create misc text label template
             TextLabel miscLabelTemplate = new TextLabel(DaggerfallUI.Instance.Font3)
             {
-                Position = new Vector2(0, ingredientButtonRects[0].height - 1),
+                Position = new Vector2(0, ingredientButtonRects[0].height - 2),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.None
             };
 
-            // Setup item list scroller for ingredients
-            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, miscLabelTemplate, defaultToolTip, 2, 0.8f)
+            // Setup item list scroller for ingredients with offset of 5 on column 1 for misc labels
+            ingredientsListScroller = new ItemListScroller(4, 3, ingredientsListRect, ingredientButtonRects, miscLabelTemplate, defaultToolTip, 2, 0.8f, true, 5, 1)
             {
                 Position = new Vector2(ingredientsListScrollerRect.x, ingredientsListScrollerRect.y),
                 Size = new Vector2(ingredientsListScrollerRect.width, ingredientsListScrollerRect.height),
@@ -227,6 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (cauldron.Count < 8)
             {
+                nameLabel.Text = "";
                 if (item.stackCount == 1)
                 {
                     cauldron.Add(item);
@@ -246,6 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void RemoveFromCauldron(DaggerfallUnityItem item)
         {
+            nameLabel.Text = "";
             cauldron.Remove(item);
             bool stacked = false;
             foreach (DaggerfallUnityItem checkItem in ingredients)
@@ -264,6 +277,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldronListScroller.Items = cauldron;
         }
 
+        void ClearCauldron()
+        {
+            // Remove all ingredients from cauldron to restore correct stack sizes
+            while (cauldron.Count > 0)
+                RemoveFromCauldron(cauldron[0]);
+        }
+
+        void AddRecipeToCauldron(int index, string recipeName)
+        {
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            PotionRecipe recipe = recipes[index];
+            Dictionary<int, DaggerfallUnityItem> recipeIngreds = new Dictionary<int, DaggerfallUnityItem>();
+            foreach (PotionRecipe.Ingredient ingred in recipe.Ingredients)
+                recipeIngreds.Add(ingred.id, null);
+
+            // Find matching items for the recipe ingredients
+            for (int i = 0; i < playerItems.Count; i++)
+            {
+                DaggerfallUnityItem item = playerItems.GetItem(i);
+                if (item.IsIngredient && recipeIngreds.ContainsKey(item.TemplateIndex) && recipeIngreds[item.TemplateIndex] == null)
+                    recipeIngreds[item.TemplateIndex] = item;
+            }
+            // If player doesn't have all the required ingredients, display message else move ingredients into cauldron.
+            if (recipeIngreds.ContainsValue(null))
+            {
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "reqIngredients"));
+            }
+            else
+            {
+                ClearCauldron();
+                foreach (DaggerfallUnityItem item in recipeIngreds.Values)
+                    AddToCauldron(item);
+                nameLabel.Text = recipeName;
+            }
+        }
+
         void MixCauldron()
         {
             // Check recipes and create appropriate potion in player inventory if a match found
@@ -278,13 +327,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Debug.LogFormat("Potion matched: {0}", potionRecipe.DisplayName);
                 GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(recipeKey));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionMixed"));
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.MakePotion);
             }
             else
             {
                 // Changed from classic, don't create useless 'Unknown Powers' potions.
                 //GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "ingredientsWasted"));
-                return;
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionFailed"));
             }
 
             // Remove item from player inventory unless a stack remains.
@@ -307,9 +357,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldron.Clear();
             ingredientsListScroller.Items = ingredients;
             cauldronListScroller.Items = cauldron;
-
-            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionMixed"));
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.MakePotion);
         }
 
         #endregion
@@ -337,6 +384,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void RecipePicker_OnItemPicked(int index, string recipeName)
         {
             Debug.LogFormat("Picked recipe {0} at idx {1}.", recipeName, index);
+            recipePicker.CloseWindow();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            if (index < recipes.Count)
+                AddRecipeToCauldron(index, recipeName);
         }
 
         private void MixButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

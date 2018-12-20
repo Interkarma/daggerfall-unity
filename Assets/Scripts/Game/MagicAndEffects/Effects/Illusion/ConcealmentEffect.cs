@@ -19,8 +19,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public abstract class ConcealmentEffect : IncumbentEffect
     {
-        const string textDatabase = "ClassicEffects";
-
         protected MagicalConcealmentFlags concealmentFlag = MagicalConcealmentFlags.None;
         protected string startConcealmentMessageKey = string.Empty;
         bool awakeAlert = true;

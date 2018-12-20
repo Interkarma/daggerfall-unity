@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class CureDisease : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Cure-Disease";
+
         public override void SetProperties()
         {
-            properties.Key = "Cure-Disease";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(3, 0);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "cure");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "disease");
@@ -60,9 +62,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.CreatureIngredients1.Ectoplasm,
                 (int)Items.Gems.Diamond,
                 (int)Items.CreatureIngredients2.Mummy_wrappings);
-            purification.AddSecondaryEffect(HealHealth.PublicKey);
-            purification.AddSecondaryEffect(InvisibilityNormal.PublicKey);
+            purification.AddSecondaryEffect(HealHealth.EffectKey);
+            purification.AddSecondaryEffect(InvisibilityNormal.EffectKey);
 
+            cureDisease.TextureRecord = 35;
+            purification.TextureRecord = 35;
             AssignPotionRecipes(cureDisease, purification);
         }
 

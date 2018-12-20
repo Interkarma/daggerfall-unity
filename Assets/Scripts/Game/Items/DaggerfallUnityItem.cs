@@ -321,7 +321,8 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Gets/sets the key of the potion recipe allocated to this item.
-        /// Has a side effect (ugh, sorry) of populating the item value from the recipe price. (due to value not being encapsulated)
+        /// Has a side effect (ugh, sorry) of populating the item value from the recipe price.
+        /// (due to value not being encapsulated) Also populates texture record.
         /// </summary>
         public int PotionRecipeKey
         {
@@ -332,6 +333,7 @@ namespace DaggerfallWorkshop.Game.Items
                 {
                     potionRecipeKey = value;
                     this.value = potionRecipe.Price;
+                    worldTextureRecord = potionRecipe.TextureRecord;
                 }
             }
         }

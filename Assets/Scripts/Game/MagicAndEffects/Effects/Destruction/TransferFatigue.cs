@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class TransferFatigue : BaseEntityEffect
     {
+        public static readonly string EffectKey = "Transfer-Fatigue";
+
         public override void SetProperties()
         {
-            properties.Key = "Transfer-Fatigue";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(11, 9);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "transfer");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "fatigue");

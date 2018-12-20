@@ -130,6 +130,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients1.Golden_poppy);
 
             // Assign potion recipes
+            resistFire.TextureRecord = 34;
+            resistFrost.TextureRecord = 34;
+            resistShock.TextureRecord = 34;
+            resistPoison.TextureRecord = 14;
+
             variantProperties[(int)DFCareer.Elements.Fire].potionProperties.Recipes = new PotionRecipe[] { resistFire };
             variantProperties[(int)DFCareer.Elements.Frost].potionProperties.Recipes = new PotionRecipe[] { resistFrost };
             variantProperties[(int)DFCareer.Elements.Shock].potionProperties.Recipes = new PotionRecipe[] { resistShock };

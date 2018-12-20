@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class WaterBreathing : IncumbentEffect
     {
+        public static readonly string EffectKey = "WaterBreathing";
+
         public override void SetProperties()
         {
-            properties.Key = "WaterBreathing";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(30, 255);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "waterBreathing");
             properties.SubGroupName = string.Empty;
@@ -45,6 +47,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
                 (int)Items.MiscellaneousIngredients2.Ivory);
 
+            waterBreathing.TextureRecord = 32;
             AssignPotionRecipes(waterBreathing);
         }
 

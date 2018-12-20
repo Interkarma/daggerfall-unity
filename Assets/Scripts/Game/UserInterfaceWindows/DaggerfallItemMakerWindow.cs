@@ -39,8 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Rect itemListScrollerRect = new Rect(253, 49, 60, 148);
         Rect itemListPanelRect = new Rect(10, 0, 50, 148);
-
-        Rect[] itemButtonRects = new Rect[]
+        readonly Rect[] itemButtonRects = new Rect[]
         {
             new Rect(0, 0, 50, 37),
             new Rect(0, 37, 50, 37),

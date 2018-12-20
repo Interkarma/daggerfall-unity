@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class ChameleonTrue : ConcealmentEffect
     {
+        public static readonly string EffectKey = "Chameleon-True";
+
         public override void SetProperties()
         {
-            properties.Key = "Chameleon-True";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(23, 1);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "chameleon");
             properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "true");

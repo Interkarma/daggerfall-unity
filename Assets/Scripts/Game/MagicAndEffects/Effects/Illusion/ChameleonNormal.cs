@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class ChameleonNormal : ConcealmentEffect
     {
+        public static readonly string EffectKey = "Chameleon-Normal";
+
         public override void SetProperties()
         {
-            properties.Key = "Chameleon-Normal";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(23, 0);
             properties.GroupName = TextManager.Instance.GetText(textDatabase, "chameleon");
             properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
@@ -50,6 +52,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.Yellow_flowers,
                 (int)Items.PlantIngredients2.Red_berries);
 
+            chameleonForm.TextureRecord = 33;
             AssignPotionRecipes(chameleonForm);
         }
 

@@ -19,9 +19,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class Jumping : IncumbentEffect
     {
+        public static readonly string EffectKey = "Jumping";
+
         public override void SetProperties()
         {
-            properties.Key = "Jumping";
+            properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(27, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "jumping");
             properties.SubGroupName = string.Empty;

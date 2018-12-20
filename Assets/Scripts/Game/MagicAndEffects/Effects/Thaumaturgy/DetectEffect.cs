@@ -19,8 +19,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public abstract class DetectEffect : IncumbentEffect
     {
-        //const string textDatabase = "ClassicEffects";
-
         public List<PlayerGPS.NearbyObject> DetectedObjects { get; protected set; }
 
         public int DetectedObjectsCount
