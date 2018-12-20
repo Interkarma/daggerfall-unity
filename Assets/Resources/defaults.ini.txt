@@ -80,6 +80,7 @@ StartInDungeon=True
 
 [Experimental]
 TerrainDistance=3
+TerrainHeightmapPixelError=5
 
 [Enhancements]
 LypyL_GameConsole=True

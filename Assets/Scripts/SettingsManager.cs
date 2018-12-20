@@ -143,6 +143,8 @@ namespace DaggerfallWorkshop
         // [Experimental]
         public int TerrainDistance { get; set; }
 
+        public float TerrainHeightmapPixelError { get; set; }
+
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
         public bool LypyL_ModSystem { get; set; }
@@ -244,6 +246,7 @@ namespace DaggerfallWorkshop
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
 
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
+            TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -336,6 +339,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
 
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
+            SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);

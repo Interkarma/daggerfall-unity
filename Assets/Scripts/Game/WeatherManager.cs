@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game
         public FogSettings SunnyFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400, excludeSkybox = true };
         public FogSettings OvercastFogSettings = new FogSettings { fogMode = FogMode.Linear, density = 0.0f, startDistance = 0, endDistance = 2400, excludeSkybox = true };
         public FogSettings RainyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0, excludeSkybox = true };
-        public FogSettings SnowyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.003f, startDistance = 0, endDistance = 0, excludeSkybox = true };
+        public FogSettings SnowyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.005f, startDistance = 0, endDistance = 0, excludeSkybox = true };
         public FogSettings HeavyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.05f, startDistance = 0, endDistance = 0, excludeSkybox = false };
 
         DaggerfallUnity _dfUnity;
@@ -175,6 +175,12 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Rain
+
+        public void SetOvercast()
+        {
+            SetFog(OvercastFogSettings);
+            IsOvercast = true;
+        }
 
         public void SetRainOvercast()
         {
@@ -361,7 +367,7 @@ namespace DaggerfallWorkshop.Game
                     break;
 
                 case WeatherType.Overcast:
-                    SetRainOvercast();
+                    SetOvercast();
                     break;
 
                 case WeatherType.Fog:

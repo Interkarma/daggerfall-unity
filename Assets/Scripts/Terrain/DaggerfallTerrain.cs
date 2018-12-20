@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -70,7 +70,21 @@ namespace DaggerfallWorkshop
         int currentWorldClimate = -1;
         DaggerfallDateTime.Seasons season = DaggerfallDateTime.Seasons.Summer;
         bool ready;
-        
+
+        private float heightMapPixelError = 5; // just a default value in case ini value reading fails (so value will be overwritten by ini file value)
+
+        public float HeightMapPixelError
+        {
+            get { return heightMapPixelError; }
+            set { heightMapPixelError = value; }
+        }
+
+
+        void Awake()
+        {
+            HeightMapPixelError = DaggerfallUnity.Settings.TerrainHeightmapPixelError;
+        }
+
         void Start()
         {
             UpdateNeighbours();
@@ -263,6 +277,7 @@ namespace DaggerfallWorkshop
                 terrain.terrainData = terrainData;
                 terrain.GetComponent<TerrainCollider>().terrainData = terrainData;
                 terrain.basemapDistance = basemapDistance;
+                terrain.heightmapPixelError = heightMapPixelError;
             }
 
             // Promote tileMap
