@@ -4,7 +4,7 @@
 -- name:        filename of QRC txt file
 -- group:       guild group from FactionFile.GuildGroups enum, or ?quest giver type?
 -- minReq:      minimum requirement to be offered the quest: (val < 10) = guild rank / player level, or (val >= 10) = min reputation
--- flag:        0 = nothing, X = adult/nudity, O = one time quest
+-- flag:        0 = nothing, X = adult/nudity, 1 = one time quest
 -- notes:
 
 schema: *name, group, membership, minReq, flag, notes
