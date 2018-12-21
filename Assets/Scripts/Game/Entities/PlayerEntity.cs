@@ -384,11 +384,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (((i + lastGameMinutes) % 54720) == 0) // 38 days
                 {
                     RegionPowerAndConditionsUpdate(true);
-                    StartVampireOrWereCreatureQuest(false);
+                    //StartVampireOrWereCreatureQuest(false);
                 }
 
                 if (((i + lastGameMinutes) % 120960) == 0) // 84 days
-                    StartVampireOrWereCreatureQuest(true);
+                    //StartVampireOrWereCreatureQuest(true);
             }
 
             // TODO: Right now enemy spawns are only prevented when time has been raised for
