@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -37,8 +38,9 @@ namespace DaggerfallWorkshop.Game.Questing
         public string path;
         public string group;
         public char membership;
-        public int minRep;
-        public bool unitWildC;
+        public int minReq;
+        public bool oneTime;    // flag = 1
+        public bool adult;      // flag = X
     }
 
     /// <summary>
@@ -161,19 +163,22 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 QuestData questData = new QuestData();
                 questData.path = questsPath;
-                string minRep = questsTable.GetValue("minRep", i);
-                if (minRep.EndsWith("X"))
+                string minRep = questsTable.GetValue("minReq", i);
+/*                if (minRep.EndsWith("X"))
                 {
                     questData.unitWildC = true;
                     minRep = minRep.Replace("X", "0");
-                }
+                }*/
                 int d = 0;
                 if (int.TryParse(minRep, out d))
                 {
                     questData.name = questsTable.GetValue("name", i);
                     questData.group = questsTable.GetValue("group", i);
                     questData.membership = questsTable.GetValue("membership", i)[0];
-                    questData.minRep = d;
+                    questData.minReq = d;
+                    char flag = questsTable.GetValue("flag", i)[0];
+                    questData.oneTime = (flag == '1');
+                    questData.adult = (flag == 'X');
 
                     // Is the group a guild group?
                     if (Enum.IsDefined(typeof(FactionFile.GuildGroups), questData.group))
@@ -269,7 +274,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get a random quest for a guild from appropriate subset.
         /// </summary>
-        public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep)
+        //public Quest GetGuildQuest(Guild guild, FactionFile.GuildGroups guildGroup, int factionId)
+        public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
         {
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
@@ -279,16 +285,15 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Modifications for Temple dual membership status
                 MembershipStatus tplMemb = (guildGroup == FactionFile.GuildGroups.HolyOrder && status != MembershipStatus.Nonmember) ? MembershipStatus.Member : status;
-                // Underworld guilds don't expel and continue to offer std quests below zero reputation
-                rep = ((guildGroup == FactionFile.GuildGroups.DarkBrotherHood || guildGroup == FactionFile.GuildGroups.GeneralPopulace) && rep < 0) ? 0 : rep;
 
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in guildQuests)
                 {
                     if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
-                        (status == MembershipStatus.Nonmember || (rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))))
+                        (status == MembershipStatus.Nonmember || (quest.minReq < 10 && quest.minReq <= rank) || rep >= quest.minReq))
                     {
-                        pool.Add(quest);
+                        if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
+                            pool.Add(quest);
                     }
                 }
                 return SelectQuest(pool, factionId);
@@ -296,7 +301,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return null;
         }
 
-        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, int rep)
+        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, int rep, int level)
         {
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
@@ -307,9 +312,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in socialQuests)
                 {
-                    if (rep >= quest.minRep && (!quest.unitWildC || rep < quest.minRep + 10))
+                    if ((quest.minReq < 10 && quest.minReq <= level) || rep >= quest.minReq)
                     {
-                        pool.Add(quest);
+                        if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
+                            pool.Add(quest);
                     }
                 }
                 return SelectQuest(pool, factionId);
