@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override RaceTemplate CustomRace
         {
-            get { return compoundRace; }
+            get { return GetCompoundRace(); }
         }
 
         public override void SetProperties()
@@ -116,8 +116,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             base.MagicRound();
 
             // Execute advantages and disadvantages
-            VampireAdvantages();
-            VampireDisadvantages();
+            ApplyVampireAdvantages();
+            ApplyVampireDisadvantages();
         }
 
         #region Private Methods
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Clone birth race and assign custom settings
             // New compound races will retain almost everything from birth race
-            compoundRace = GameManager.Instance.PlayerEntity.RaceTemplate.Clone();
+            compoundRace = GameManager.Instance.PlayerEntity.BirthRaceTemplate.Clone();
 
             // Set special vampire flags
             compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Paralysis;
@@ -135,7 +135,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.HolyDamage;
         }
 
-        void VampireAdvantages()
+        RaceTemplate GetCompoundRace()
+        {
+            // Create compound race if one doesn't already exist
+            if (compoundRace == null)
+                CreateCompoundRace();
+
+            return compoundRace;
+        }
+
+        void ApplyVampireAdvantages()
         {
             // Set stat mods to all but INT
             const int statModAmount = 20;
@@ -161,7 +170,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 SetStatMod(DFCareer.Stats.Intelligence, statModAmount);
         }
 
-        void VampireDisadvantages()
+        void ApplyVampireDisadvantages()
         {
             // TODO: Damage from sunlight
 
@@ -175,6 +184,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         [fsObject("v1")]
         public struct CustomSaveData_v1
         {
+            public RaceTemplate compoundRace;
             public VampireClans vampireClan;
             public uint lastTimeFed;
         }
@@ -182,6 +192,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override object GetSaveData()
         {
             CustomSaveData_v1 data = new CustomSaveData_v1();
+            data.compoundRace = compoundRace;
             data.vampireClan = vampireClan;
             data.lastTimeFed = lastTimeFed;
 
@@ -194,6 +205,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
+            compoundRace = data.compoundRace;
             vampireClan = data.vampireClan;
             lastTimeFed = data.lastTimeFed;
         }
