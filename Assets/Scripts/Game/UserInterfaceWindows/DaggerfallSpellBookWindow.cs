@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.Arena2;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -679,8 +680,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Not implemented in Daggerfall, could be useful. Possibly move through different sorts (lexigraphic, date added, cost etc.)
         public void SortButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Just sort as alpha for now
+            var spellsBefore = GameManager.Instance.PlayerEntity.GetSpells();
             GameManager.Instance.PlayerEntity.SortSpellsAlpha();
+            var spellsAfter = GameManager.Instance.PlayerEntity.GetSpells();
+            if (spellsAfter.SequenceEqual(spellsBefore))
+            {
+                // List was already in alphabetic order, switch to magicka cost
+                GameManager.Instance.PlayerEntity.SortSpellsPointCost();
+            }
             RefreshSpellsList();
         }
 

@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -599,6 +600,20 @@ namespace DaggerfallWorkshop.Game.Entity
         public void SortSpellsAlpha()
         {
             List<EffectBundleSettings> sortedSpellbook = spellbook.OrderBy(x => x.Name).ToList();
+            if (sortedSpellbook.Count == spellbook.Count)
+                spellbook = sortedSpellbook;
+        }
+
+        public void SortSpellsPointCost()
+        {
+            List<EffectBundleSettings> sortedSpellbook = spellbook
+                .OrderBy((EffectBundleSettings spell) =>
+                {
+                    int goldCost, spellPointCost;
+                    FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, out goldCost, out spellPointCost, null, spell.MinimumCastingCost);
+                    return spellPointCost;
+                })
+            .ToList();
             if (sortedSpellbook.Count == spellbook.Count)
                 spellbook = sortedSpellbook;
         }
