@@ -777,7 +777,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static string PlayerRace(IMacroContextProvider mcp)
         {   // %ra
-            return GameManager.Instance.PlayerEntity.RaceTemplate.Name;
+            return GameManager.Instance.PlayerEntity.BirthRaceTemplate.Name;
         }
 
         private static string GoldCarried(IMacroContextProvider mcp)

@@ -127,6 +127,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Clone birth race and assign custom settings
             // New compound races will retain almost everything from birth race
             compoundRace = GameManager.Instance.PlayerEntity.BirthRaceTemplate.Clone();
+            compoundRace.Name = TextManager.Instance.GetText(racesTextDatabase, "vampire");
 
             // Set special vampire flags
             compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Paralysis;
