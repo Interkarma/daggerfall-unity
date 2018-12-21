@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Constructors
 
         public DaggerfallUseMagicItemWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
-            : base(uiManager, previous, DaggerfallUI.SmallFont, 12)
+            : base(uiManager, previous)
         {
             ParentPanel.BackgroundColor = Color.clear;
         }
