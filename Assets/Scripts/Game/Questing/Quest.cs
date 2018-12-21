@@ -158,6 +158,11 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Whether this is a one time quest
+        /// </summary>
+        public bool OneTime { get; set; }
+
+        /// <summary>
         /// External non-quest context provider.
         /// </summary>
         public IMacroContextProvider ExternalMCP

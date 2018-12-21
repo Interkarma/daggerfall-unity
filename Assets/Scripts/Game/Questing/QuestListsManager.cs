@@ -65,6 +65,9 @@ namespace DaggerfallWorkshop.Game.Questing
         private Dictionary<FactionFile.SocialGroups, List<QuestData>> social;
         private List<QuestData> init;
 
+        // List of one time quests player has accepted
+        public List<string> oneTimeQuestsAccepted;
+
         // Registered quest lists
         private static List<string> questLists = new List<string>();
 
@@ -73,6 +76,19 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             DiscoverQuestPackLists();
             LoadQuestLists();
+
+            QuestMachine.OnQuestStarted += QuestMachine_OnQuestStarted;
+        }
+
+        public void QuestMachine_OnQuestStarted(Quest quest)
+        {
+            // Record that this quest was accepted so it doesn't get offered again.
+            if (quest.OneTime)
+            {
+                if (oneTimeQuestsAccepted == null)
+                     oneTimeQuestsAccepted = new List<string>();
+                oneTimeQuestsAccepted.Add(quest.QuestName);
+            }
         }
 
         #region Quest Packs
@@ -286,7 +302,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
                         (status == MembershipStatus.Nonmember || (quest.minReq < 10 && quest.minReq <= rank) || rep >= quest.minReq))
                     {
-                        if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
+                        if ((!quest.adult || DaggerfallUnity.Settings.PlayerNudity) && !(quest.oneTime && oneTimeQuestsAccepted.Contains(quest.name)))
                             pool.Add(quest);
                     }
                 }
@@ -372,6 +388,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception("Quest file " + questFile + " not found.");
             }
             quest.FactionId = factionId;
+            quest.OneTime = questData.oneTime;
             return quest;
         }
 

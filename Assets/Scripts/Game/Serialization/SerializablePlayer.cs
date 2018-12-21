@@ -175,6 +175,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
             // Store guild memberships
             data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
+            // Store one time quest acceptances
+            data.oneTimeQuestsAccepted = GameManager.Instance.QuestListsManager.oneTimeQuestsAccepted;
 
             // Store instanced effect bundles
             data.playerEntity.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
@@ -385,6 +387,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore guild memberships, also done early in SaveLoadManager for interiors
             GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
+            // Restore one time quest acceptances
+            GameManager.Instance.QuestListsManager.oneTimeQuestsAccepted = data.oneTimeQuestsAccepted;
 
             entity.DeserializeSpellbook(data.playerEntity.spellbook);
 
