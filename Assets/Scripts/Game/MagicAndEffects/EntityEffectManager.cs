@@ -74,6 +74,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         float refreshModsTimer = 0;
         const float refreshModsDelay = 0.2f;
 
+        RacialOverrideEffect racialOverrideEffect;
+
         #endregion
 
         #region Properties
@@ -467,6 +469,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
 
+                // Cache racial override effect
+                if (effect is RacialOverrideEffect)
+                    racialOverrideEffect = (RacialOverrideEffect)effect;
+
                 // At this point effect is ready and gets initial magic round
                 effect.MagicRound();
             }
@@ -496,6 +502,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets current racial override effect if one is present.
+        /// Racial override is a special case effect that is cached when started/resumed on entity.
+        /// Can still search using FindIncumbentEffect<RacialOverrideEffect>(), but this method will be more efficient.
+        /// </summary>
+        /// <returns>RacialOverrideEffect or null.</returns>
+        public RacialOverrideEffect GetRacialOverrideEffect()
+        {
+            return racialOverrideEffect;
         }
 
         /// <summary>
@@ -562,6 +579,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             instancedBundles.Clear();
             RaiseOnRemoveBundle(null);
+            racialOverrideEffect = null;
         }
 
         /// <summary>
@@ -1250,7 +1268,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void RemoveBundle(LiveEffectBundle bundle)
         {
             foreach (IEntityEffect effect in bundle.liveEffects)
+            {
                 effect.End();
+
+                // Remove racial override cache
+                if (effect is RacialOverrideEffect)
+                    racialOverrideEffect = null;
+            }
 
             instancedBundles.Remove(bundle);
             RaiseOnRemoveBundle(bundle);
@@ -1690,8 +1714,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     effect.ParentBundle = instancedBundle;
                     effect.Resume(effectData, this, instancedBundle.caster);
                     effect.RestoreSaveData(effectData.effectSpecific);
-
                     instancedBundle.liveEffects.Add(effect);
+
+                    // Cache racial override effect
+                    if (effect is RacialOverrideEffect)
+                        racialOverrideEffect = (RacialOverrideEffect)effect;
                 }
 
                 instancedBundles.Add(instancedBundle);
