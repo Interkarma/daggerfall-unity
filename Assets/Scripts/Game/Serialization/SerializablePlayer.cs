@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
             data.playerEntity = new PlayerEntityData_v1();
             data.playerEntity.gender = entity.Gender;
-            data.playerEntity.raceTemplate = entity.RaceTemplate;
+            data.playerEntity.raceTemplate = entity.BirthRaceTemplate;
             data.playerEntity.faceIndex = entity.FaceIndex;
             data.playerEntity.reflexes = entity.Reflexes;
             data.playerEntity.careerTemplate = entity.Career;
@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
 
             entity.Gender = data.playerEntity.gender;
-            entity.RaceTemplate = data.playerEntity.raceTemplate;
+            entity.BirthRaceTemplate = data.playerEntity.raceTemplate;
             entity.FaceIndex = data.playerEntity.faceIndex;
             entity.Reflexes = data.playerEntity.reflexes;
             entity.Career = data.playerEntity.careerTemplate;

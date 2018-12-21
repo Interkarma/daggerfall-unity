@@ -1,0 +1,15 @@
+- Text database for race names. These text items were previously hardcoded into FALL.EXE.
+
+schema: *key,text
+
+breton,      Breton
+redguard,    Redguard
+nord,        Nord
+darkElf,     Dark Elf
+highElf,     High Elf
+woodElf,     Wood Elf
+khajiit,     Khajiit
+argonian,    Argonian
+vampire,     Vampire
+werewolf,    Werewolf
+wereboar,    Wereboar

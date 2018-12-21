@@ -12,6 +12,7 @@
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -40,12 +41,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public const string VampirismCurseKey = "Vampirism-Curse";
 
-        VampireClans vampireClan;
+        RaceTemplate compoundRace;
+        VampireClans vampireClan = VampireClans.None;
         uint lastTimeFed;
 
         public VampireClans VampireClan
         {
             get { return vampireClan; }
+            set { vampireClan = value; }
+        }
+
+        public override RaceTemplate CustomRace
+        {
+            get { return compoundRace; }
         }
 
         public override void SetProperties()
@@ -60,14 +68,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             base.Start(manager, caster);
 
-            // Get vampire clan from stage one disease
-            VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
-            if (infection == null)
+            // Create compound vampire race from birth race
+            CreateCompoundRace();
+
+            // Get vampire clan from stage one disease if not already set
+            if (vampireClan == VampireClans.None)
             {
-                End();
-                return;
+                VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
+                if (infection == null)
+                {
+                    End();
+                    return;
+                }
+                vampireClan = infection.InfectionVampireClan;
             }
-            vampireClan = infection.InfectionVampireClan;
 
             // Assign vampire spells to spellbook
             GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(vampireClan);
@@ -108,30 +122,43 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Private Methods
 
+        void CreateCompoundRace()
+        {
+            // Clone birth race and assign custom settings
+            // New compound races will retain almost everything from birth race
+            compoundRace = GameManager.Instance.PlayerEntity.RaceTemplate.Clone();
+
+            // Set special vampire flags
+            compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Paralysis;
+            compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Disease;
+            compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.SunDamage;
+            compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.HolyDamage;
+        }
+
         void VampireAdvantages()
         {
             // Set stat mods to all but INT
             const int statModAmount = 20;
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Strength, statModAmount);
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Willpower, statModAmount);
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Agility, statModAmount);
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Endurance, statModAmount);
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Personality, statModAmount);
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Speed, statModAmount);
-            SetStatMod(DaggerfallConnect.DFCareer.Stats.Luck, statModAmount);
+            SetStatMod(DFCareer.Stats.Strength, statModAmount);
+            SetStatMod(DFCareer.Stats.Willpower, statModAmount);
+            SetStatMod(DFCareer.Stats.Agility, statModAmount);
+            SetStatMod(DFCareer.Stats.Endurance, statModAmount);
+            SetStatMod(DFCareer.Stats.Personality, statModAmount);
+            SetStatMod(DFCareer.Stats.Speed, statModAmount);
+            SetStatMod(DFCareer.Stats.Luck, statModAmount);
 
             // Set skill mods
             const int skillModAmount = 30;
-            SetSkillMod(DaggerfallConnect.DFCareer.Skills.Jumping, skillModAmount);
-            SetSkillMod(DaggerfallConnect.DFCareer.Skills.Running, skillModAmount);
-            SetSkillMod(DaggerfallConnect.DFCareer.Skills.Stealth, skillModAmount);
-            SetSkillMod(DaggerfallConnect.DFCareer.Skills.CriticalStrike, skillModAmount);
-            SetSkillMod(DaggerfallConnect.DFCareer.Skills.Climbing, skillModAmount);
-            SetSkillMod(DaggerfallConnect.DFCareer.Skills.HandToHand, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Jumping, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Running, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Stealth, skillModAmount);
+            SetSkillMod(DFCareer.Skills.CriticalStrike, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Climbing, skillModAmount);
+            SetSkillMod(DFCareer.Skills.HandToHand, skillModAmount);
 
             // Set clan stat mods
             if (vampireClan == VampireClans.Anthotis)
-                SetStatMod(DaggerfallConnect.DFCareer.Stats.Intelligence, statModAmount);
+                SetStatMod(DFCareer.Stats.Intelligence, statModAmount);
         }
 
         void VampireDisadvantages()

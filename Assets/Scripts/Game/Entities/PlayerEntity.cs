@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -132,7 +133,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool PreventNormalizingReputations { get { return preventNormalizingReputations; } set { preventNormalizingReputations = value; } }
         public bool IsResting { get { return isResting; } set { isResting = value; } }
         public Races Race { get { return (Races)RaceTemplate.ID; } }
-        public RaceTemplate RaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
+        public RaceTemplate RaceTemplate { get { return GetLiveRaceTemplate(); } }
+        public RaceTemplate BirthRaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
         public int FaceIndex { get { return faceIndex; } set { faceIndex = value; } }
         public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
         public ItemCollection WagonItems { get { return wagonItems; } set { wagonItems.ReplaceAll(value); } }
@@ -187,6 +189,16 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Public Methods
+
+        public RaceTemplate GetLiveRaceTemplate()
+        {
+            // Look for racial override effect
+            RacialOverrideEffect racialOverrideEffect = (RacialOverrideEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<RacialOverrideEffect>();
+            if (racialOverrideEffect != null)
+                return racialOverrideEffect.CustomRace;
+            else
+                return raceTemplate;
+        }
 
         public RoomRental_v1 GetRentedRoom(int mapId, int buildingKey)
         {
