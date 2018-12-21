@@ -387,7 +387,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     //StartVampireOrWereCreatureQuest(false);
                 }
 
-                if (((i + lastGameMinutes) % 120960) == 0) // 84 days
+                //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
                     //StartVampireOrWereCreatureQuest(true);
             }
 
