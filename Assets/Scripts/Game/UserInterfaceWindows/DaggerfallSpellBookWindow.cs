@@ -37,9 +37,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect mainPanelRect = new Rect(0, 0, 259, 164);
         Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
         Rect deleteOrBuyButtonRect = new Rect(3, 152, 38, 9);
-        //Rect upButtonRect = new Rect(48, 152, 38, 9);
-        //Rect downButtonRect = new Rect(132, 152, 38, 9);
+        Rect upButtonRect = new Rect(48, 152, 38, 9);
         Rect sortButtonRect = new Rect(90, 152, 38, 9);
+        Rect downButtonRect = new Rect(132, 152, 38, 9);
         Rect upArrowButtonRect = new Rect(121, 11, 9, 16);
         Rect downArrowButtonRect = new Rect(121, 132, 9, 16);
         Rect exitButtonRect = new Rect(216, 149, 43, 15);
@@ -67,8 +67,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button exitButton;
         Button deleteButton;
         Button buyButton;
-        //Button downButton;
-        //Button upButton;
+        Button downButton;
+        Button upButton;
         Button sortButton;
         Button upArrowButton;
         Button downArrowButton;
@@ -322,11 +322,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 deleteButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
                 deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
 
-                //upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
+                upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
                 sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
-                //downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
+                downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
 
+                upButton.OnMouseClick += SwapButton_OnMouseClick;
                 sortButton.OnMouseClick += SortButton_OnMouseClick;
+                downButton.OnMouseClick += SwapButton_OnMouseClick;
             }
             else
             {
@@ -635,12 +637,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            spellsListBox.SelectedIndex--;
         }
 
         private void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            spellsListBox.SelectedIndex++;
         }
 
         void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -671,10 +671,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SwapButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //if(sender.Name == downButton.Name && spellsListBox.SelectedIndex < spellsListBox.Count-1)
-            //    spellsListBox.SwapItems(spellsListBox.SelectedIndex, ++spellsListBox.SelectedIndex);
-            //else if(sender.Name == upButton.Name && spellsListBox.SelectedIndex > 0)
-            //    spellsListBox.SwapItems(spellsListBox.SelectedIndex, --spellsListBox.SelectedIndex);
+            int newSelectedIndex = -1;
+            if (sender == downButton && spellsListBox.SelectedIndex < spellsListBox.Count-1)
+                newSelectedIndex = spellsListBox.SelectedIndex + 1;
+            else if(sender == upButton && spellsListBox.SelectedIndex > 0)
+                newSelectedIndex = spellsListBox.SelectedIndex - 1;
+
+            if (newSelectedIndex >= 0)
+            {
+                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, newSelectedIndex);
+                RefreshSpellsList();
+                spellsListBox.SelectIndex(newSelectedIndex);
+            }
         }
 
         // Not implemented in Daggerfall, could be useful. Possibly move through different sorts (lexigraphic, date added, cost etc.)

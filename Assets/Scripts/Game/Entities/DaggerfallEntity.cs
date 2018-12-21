@@ -597,6 +597,15 @@ namespace DaggerfallWorkshop.Game.Entity
             return spellbook.ToArray();
         }
 
+        public void SwapSpells(int indexA, int indexB)
+        {
+            if (indexA < 0 || indexA >= spellbook.Count || indexB < 0 || indexB >= spellbook.Count || indexA == indexB)
+                return;
+            var tempSpell = spellbook[indexA];
+            spellbook[indexA] = spellbook[indexB];
+            spellbook[indexB] = tempSpell;
+        }
+
         public void SortSpellsAlpha()
         {
             List<EffectBundleSettings> sortedSpellbook = spellbook.OrderBy(x => x.Name).ToList();
