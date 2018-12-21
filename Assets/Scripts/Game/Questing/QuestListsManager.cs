@@ -164,11 +164,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 QuestData questData = new QuestData();
                 questData.path = questsPath;
                 string minRep = questsTable.GetValue("minReq", i);
-/*                if (minRep.EndsWith("X"))
-                {
-                    questData.unitWildC = true;
-                    minRep = minRep.Replace("X", "0");
-                }*/
                 int d = 0;
                 if (int.TryParse(minRep, out d))
                 {
@@ -274,7 +269,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get a random quest for a guild from appropriate subset.
         /// </summary>
-        //public Quest GetGuildQuest(Guild guild, FactionFile.GuildGroups guildGroup, int factionId)
         public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
         {
 #if UNITY_EDITOR    // Reload every time when in editor
