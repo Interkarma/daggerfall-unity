@@ -142,13 +142,9 @@ namespace DaggerfallWorkshop.Game
                     case Races.Redguard:
                         whichOath = RacialOaths.Redguard;
                         break;
-                    case Races.Vampire:
-                        whichOath = RacialOaths.Dunmer;
-                        break;
-                    case Races.Wereboar:
-                    case Races.Werewolf:
-                        whichOath = RacialOaths.None;
-                        break;
+                    //case Races.Vampire:                       // TODO: Restore this via racial override effect
+                    //    whichOath = RacialOaths.Dunmer;
+                    //    break;
                     case Races.WoodElf:
                         whichOath = RacialOaths.Bosmer;
                         break;

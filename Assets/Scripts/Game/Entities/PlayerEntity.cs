@@ -371,11 +371,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (((i + lastGameMinutes) % 54720) == 0) // 38 days
                 {
                     RegionPowerAndConditionsUpdate(true);
-                    GetVampireOrWereCreatureQuest(false);
+                    //GetVampireOrWereCreatureQuest(false);
                 }
 
-                if (((i + lastGameMinutes) % 120960) == 0) // 84 days
-                    GetVampireOrWereCreatureQuest(true);
+                //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
+                //    GetVampireOrWereCreatureQuest(true);
             }
 
             // TODO: Right now enemy spawns are only prevented when time has been raised for
@@ -450,53 +450,54 @@ namespace DaggerfallWorkshop.Game.Entity
         //    when the initial quest begins, not on successful completion.
         void GetVampireOrWereCreatureQuest(bool isCureQuest)
         {
-            if (Race == Races.Vampire)
-            {
-                if (isCureQuest)
-                {
-                    if (DFRandom.random_range_inclusive(10, 100) < 30)
-                        Questing.QuestMachine.Instance.InstantiateQuest("$CUREVAM");
-                }
-                else if (hasStartedInitialVampireQuest)
-                {
-                    // Do a quest starting with "P0B" for player's level
-                    // TODO: Merge with rest of quest-loading code
-                    string[] vampireQuests = { "P0B00L01", "P0B00L03", "P0B00L04", "P0B00L06", "P0B01L02", "P0B10L07", "P0B10L08", "P0B10L10", "P0B20L09" };
-                    List<string> vQList = new List<string>(vampireQuests);
-                    if (DFRandom.random_range_inclusive(1, 100) < 50)
-                    {
-                        bool found = false;
-                        string choice = string.Empty;
-                        while (!found && vQList.Count > 0)
-                        {
-                            int index = UnityEngine.Random.Range(0, vQList.Count);
-                            choice = vQList[index];
-                            // 4th letter of name is the minimum level the player must be to get the quest
-                            if (choice[3] - 48 <= level)
-                            {
-                                found = true;
-                            }
-                            else
-                                vQList.RemoveAt(index);
-                        }
+            // TEMP: Commenting out for now until quest deployment system is ready for this - please do not remove
+            //if (Race == Races.Vampire)
+            //{
+            //    if (isCureQuest)
+            //    {
+            //        if (DFRandom.random_range_inclusive(10, 100) < 30)
+            //            Questing.QuestMachine.Instance.InstantiateQuest("$CUREVAM");
+            //    }
+            //    else if (hasStartedInitialVampireQuest)
+            //    {
+            //        // Do a quest starting with "P0B" for player's level
+            //        // TODO: Merge with rest of quest-loading code
+            //        string[] vampireQuests = { "P0B00L01", "P0B00L03", "P0B00L04", "P0B00L06", "P0B01L02", "P0B10L07", "P0B10L08", "P0B10L10", "P0B20L09" };
+            //        List<string> vQList = new List<string>(vampireQuests);
+            //        if (DFRandom.random_range_inclusive(1, 100) < 50)
+            //        {
+            //            bool found = false;
+            //            string choice = string.Empty;
+            //            while (!found && vQList.Count > 0)
+            //            {
+            //                int index = UnityEngine.Random.Range(0, vQList.Count);
+            //                choice = vQList[index];
+            //                // 4th letter of name is the minimum level the player must be to get the quest
+            //                if (choice[3] - 48 <= level)
+            //                {
+            //                    found = true;
+            //                }
+            //                else
+            //                    vQList.RemoveAt(index);
+            //            }
 
-                        if (found)
-                            Questing.QuestMachine.Instance.InstantiateQuest(choice);
-                    }
-                }
-                else if (DFRandom.random_range_inclusive(1, 100) < 50)
-                {
-                    Questing.QuestMachine.Instance.InstantiateQuest("P0A01L00");
-                    hasStartedInitialVampireQuest = true;
-                }
-            }
-            /*else
-            {
-                if (playerIsWereCreature && isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
-                {
-                    Questing.QuestMachine.Instance.InstantiateQuest("$CUREWER");
-                }
-            }*/
+            //            if (found)
+            //                Questing.QuestMachine.Instance.InstantiateQuest(choice);
+            //        }
+            //    }
+            //    else if (DFRandom.random_range_inclusive(1, 100) < 50)
+            //    {
+            //        Questing.QuestMachine.Instance.InstantiateQuest("P0A01L00");
+            //        hasStartedInitialVampireQuest = true;
+            //    }
+            //}
+            ///*else
+            //{
+            //    if (playerIsWereCreature && isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
+            //    {
+            //        Questing.QuestMachine.Instance.InstantiateQuest("$CUREWER");
+            //    }
+            //}*/
         }
 
         public bool IntermittentEnemySpawn(uint Minutes)

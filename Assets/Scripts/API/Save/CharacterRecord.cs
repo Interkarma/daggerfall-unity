@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop;
 
 namespace DaggerfallConnect.Save
 {
@@ -54,7 +55,11 @@ namespace DaggerfallConnect.Save
             CharacterDocument doc = new CharacterDocument();
             Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
 
-            doc.raceTemplate = raceDict[(int)parsedData.race + 1];
+            // Strip back classic changes for vampire or lycanthrope as this is handled by effect system in DFU
+            // If player is not transformed then this will simply return parsedData.race + 1
+            Races liveRace = StripTransformedRace();
+
+            doc.raceTemplate = raceDict[(int)liveRace];
             doc.gender = parsedData.gender;
             doc.career = parsedData.career;
             doc.name = parsedData.characterName;
@@ -90,6 +95,48 @@ namespace DaggerfallConnect.Save
             doc.biographyReactionMod = parsedData.biographyReactionMod;
 
             return doc;
+        }
+
+        Races StripTransformedRace()
+        {
+            // Restore original character race if vampire or lycanthrope
+            // Racial overrides are handled by the effect system in DFU rather than entirely hardcoded, but still need to handle importing from classic
+            Races liveRace = parsedData.race + 1;
+            Races transformedRace = Races.None;
+            if (liveRace == Races.Vampire || liveRace == Races.Werewolf || liveRace == Races.Wereboar)
+            {
+                transformedRace = liveRace;
+                liveRace = parsedData.race2 + 1;
+            }
+
+            // Remove vampire bonuses to stats and skills
+            if (transformedRace == Races.Vampire)
+            {
+                // Remove +20 bonus to stats
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Strength, parsedData.currentStats.PermanentStrength - 20);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Willpower, parsedData.currentStats.PermanentWillpower - 20);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Agility, parsedData.currentStats.PermanentAgility - 20);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Endurance, parsedData.currentStats.PermanentEndurance - 20);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Personality, parsedData.currentStats.PermanentPersonality - 20);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Speed, parsedData.currentStats.PermanentSpeed - 20);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Luck, parsedData.currentStats.PermanentLuck - 20);
+                if ((VampireClans)parsedData.vampireClan == VampireClans.Anthotis)
+                    parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Intelligence, parsedData.currentStats.PermanentIntelligence - 20);
+
+                // Remove +30 bonus to vampire skills
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Jumping, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Jumping) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Running, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Running) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Stealth, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Stealth) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.CriticalStrike, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.CriticalStrike) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Climbing, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Climbing) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
+            }
+
+            // TODO: Remove werewolf/wereboar bonuses to stats and skills and instantiate racial override effect
+
+            // TODO: Instantiate appropriate racial override effect and clan for transformedRace on successful load
+
+            return liveRace;
         }
 
         #region Readers
