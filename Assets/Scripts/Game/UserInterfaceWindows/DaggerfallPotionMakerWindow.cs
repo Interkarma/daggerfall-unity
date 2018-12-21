@@ -133,19 +133,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update labels
             goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
 
-            // Gather recipe items from wagon
-            List<DaggerfallUnityItem> recipeItems = GameManager.Instance.PlayerEntity.WagonItems.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Potion_recipe);
-
-            // Add ingredient items to list and gather recipes from inventory
+            // Add ingredient items to list and gather recipes - from inventory and wagon
             ingredients.Clear();
-            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
-            for (int i = 0; i < playerItems.Count; i++)
+            List<DaggerfallUnityItem> recipeItems = new List<DaggerfallUnityItem>();
+            foreach (ItemCollection playerItems in new ItemCollection[] { GameManager.Instance.PlayerEntity.Items, GameManager.Instance.PlayerEntity.WagonItems })
             {
-                DaggerfallUnityItem item = playerItems.GetItem(i);
-                if (item.IsIngredient)
-                    ingredients.Add(item);
-                else if (item.IsPotionRecipe)
-                    recipeItems.Add(item);
+                for (int i = 0; i < playerItems.Count; i++)
+                {
+                    DaggerfallUnityItem item = playerItems.GetItem(i);
+                    if (item.IsIngredient)
+                        ingredients.Add(item);
+                    else if (item.IsPotionRecipe)
+                        recipeItems.Add(item);
+                }
             }
             ingredientsListScroller.Items = ingredients;
 

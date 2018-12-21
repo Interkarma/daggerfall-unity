@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection GetMerchantPotions()
         {
             ItemCollection potions = new ItemCollection();
-            for (int n = UnityEngine.Random.Range(12, 20); n > 0; n--)
+            for (int n = UnityEngine.Random.Range(16, 24); n > 0; n--)
                 potions.AddItem(ItemBuilder.CreateRandomPotion());
             return potions;
         }
