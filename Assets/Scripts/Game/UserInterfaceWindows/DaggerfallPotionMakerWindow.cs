@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         TextLabel nameLabel = new TextLabel();
-        TextLabel costLabel = new TextLabel();
+        //TextLabel costLabel = new TextLabel();
         TextLabel goldLabel = new TextLabel();
 
         Button recipesButton;
@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetupLabels()
         {
             nameLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(33, 185), NativePanel);
-            costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(174, 185), NativePanel);
+            //costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(174, 185), NativePanel);
             goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(237, 185), NativePanel);
         }
 
