@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallConnect.Save
 {
@@ -44,6 +45,7 @@ namespace DaggerfallConnect.Save
         const int usingLeftHandWeaponOffset = 0x3D9;
         //const int currentRegionIdOffset = 0x173A;
         const int cheatFlagsOffset = 0x173B;
+        const int shipOwnershipOffset = 0x1750;
         const int lastSkillCheckTimeOffset = 0x179A;
         const int climateWeathersDuplicateOffset = 0x17A2; // Same data as other climateWeathers
         //const int dungeonWaterLevelOffset = 0x17A8;
@@ -88,6 +90,7 @@ namespace DaggerfallConnect.Save
         bool weaponDrawn = false;
         uint gameTime = 0;
         bool usingLeftHandWeapon = false;
+        ShipType playerOwnedShip = ShipType.None;
 
         bool allMapLocationsRevealedMode = false;
         bool godMode = false;
@@ -318,6 +321,14 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// The type of ship owned by the player.
+        /// </summary>
+        public ShipType PlayerOwnedShip
+        {
+            get { return playerOwnedShip; }
+        }
+
+        /// <summary>
         /// Gets whether invulnerability cheat is on from savevars.
         /// </summary>
         public bool GodMode
@@ -421,6 +432,7 @@ namespace DaggerfallConnect.Save
             ReadWeaponDrawn(reader);
             ReadGameTime(reader);
             ReadUsingLeftHandWeapon(reader);
+            ReadPlayerOwnedShip(reader);
             ReadCheatFlags(reader);
             ReadLastSkillCheckTime(reader);
             ReadRegionData(reader);
@@ -538,6 +550,16 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = usingLeftHandWeaponOffset;
             if (reader.ReadByte() == 1)
                 usingLeftHandWeapon = true;
+        }
+
+        void ReadPlayerOwnedShip(BinaryReader reader)
+        {
+            reader.BaseStream.Position = shipOwnershipOffset;
+            int shipOwned = reader.ReadInt32();
+            if (shipOwned == 25600000)
+                playerOwnedShip = ShipType.Small;
+            if (shipOwned == 51200000)
+                playerOwnedShip = ShipType.Large;
         }
 
         void ReadCheatFlags(BinaryReader reader)
