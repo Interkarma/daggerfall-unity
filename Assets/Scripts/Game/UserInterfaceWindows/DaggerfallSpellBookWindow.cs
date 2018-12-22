@@ -634,12 +634,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            spellsListBox.SelectedIndex--;
+            spellsListBox.SelectPrevious();
         }
 
         private void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            spellsListBox.SelectedIndex++;
+            spellsListBox.SelectNext();
         }
 
         void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
