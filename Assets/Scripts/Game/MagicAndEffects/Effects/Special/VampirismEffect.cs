@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public const string VampirismCurseKey = "Vampirism-Curse";
 
         RaceTemplate compoundRace;
-        VampireClans vampireClan = VampireClans.None;
+        VampireClans vampireClan = VampireClans.Lyrezi;
         uint lastTimeFed;
 
         public VampireClans VampireClan
@@ -64,24 +64,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            const int deathIsNotEternalTextID = 401;
-
             base.Start(manager, caster);
 
             // Create compound vampire race from birth race
             CreateCompoundRace();
 
-            // Get vampire clan from stage one disease if not already set
-            if (vampireClan == VampireClans.None)
-            {
-                VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
-                if (infection == null)
-                {
-                    End();
-                    return;
-                }
+            // Get vampire clan from stage one disease
+            // Otherwise start as Lyrezi by default if no infection found
+            // Note: Classic save import will start this effect and set correct clan after load
+            VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
+            if (infection != null)
                 vampireClan = infection.InfectionVampireClan;
-            }
 
             // Assign vampire spells to spellbook
             GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(vampireClan);
@@ -91,10 +84,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Our dark transformation is complete - cure everything on player (including stage one disease)
             GameManager.Instance.PlayerEffectManager.CureAll();
-
-            // Display popup
-            DaggerfallMessageBox mb = DaggerfallUI.MessageBox(deathIsNotEternalTextID);
-            mb.Show();
         }
 
         public override void ConstantEffect()

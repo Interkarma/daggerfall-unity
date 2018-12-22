@@ -57,7 +57,8 @@ namespace DaggerfallConnect.Save
 
             // Strip back classic changes for vampire or lycanthrope as this is handled by effect system in DFU
             // If player is not transformed then this will simply return parsedData.race + 1
-            Races liveRace = StripTransformedRace();
+            Races classicTransformedRace;
+            Races liveRace = StripTransformedRace(out classicTransformedRace);
 
             doc.raceTemplate = raceDict[(int)liveRace];
             doc.gender = parsedData.gender;
@@ -93,24 +94,25 @@ namespace DaggerfallConnect.Save
             doc.darkBrotherhoodRequirementTally = parsedData.darkBrotherhoodRequirementTally;
             doc.thievesGuildRequirementTally = parsedData.thievesGuildRequirementTally;
             doc.biographyReactionMod = parsedData.biographyReactionMod;
+            doc.classicTransformedRace = classicTransformedRace;
 
             return doc;
         }
 
-        Races StripTransformedRace()
+        Races StripTransformedRace(out Races classicTransformedRace)
         {
             // Restore original character race if vampire or lycanthrope
             // Racial overrides are handled by the effect system in DFU rather than entirely hardcoded, but still need to handle importing from classic
             Races liveRace = parsedData.race + 1;
-            Races transformedRace = Races.None;
+            classicTransformedRace = Races.None;
             if (liveRace == Races.Vampire || liveRace == Races.Werewolf || liveRace == Races.Wereboar)
             {
-                transformedRace = liveRace;
+                classicTransformedRace = liveRace;
                 liveRace = parsedData.race2 + 1;
             }
 
             // Remove vampire bonuses to stats and skills
-            if (transformedRace == Races.Vampire)
+            if (classicTransformedRace == Races.Vampire)
             {
                 // Remove +20 bonus to stats
                 parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Strength, parsedData.currentStats.PermanentStrength - 20);
@@ -146,8 +148,6 @@ namespace DaggerfallConnect.Save
             }
 
             // TODO: Remove werewolf/wereboar bonuses to stats and skills and instantiate racial override effect
-
-            // TODO: Instantiate appropriate racial override effect and clan for transformedRace on successful load
 
             return liveRace;
         }
