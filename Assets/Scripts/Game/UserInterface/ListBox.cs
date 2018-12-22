@@ -679,9 +679,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void ScrollToSelected()
         {
-            scrollIndex = selectedIndex;
+            if (selectedIndex < 0)
+                return;
+            // Try to lazyly follow selection
+            int margin = rowsDisplayed > 3 ? 1 : 0;
+            int oldSelectedIndex = selectedIndex;
+            if (selectedIndex < scrollIndex + margin)
+                scrollIndex = selectedIndex - margin;
+            else if (selectedIndex > scrollIndex + rowsDisplayed - 1 - margin)
+                scrollIndex = selectedIndex - (rowsDisplayed - 1 - margin);
             scrollIndex = Mathf.Clamp(scrollIndex, 0, (listItems.Count - 1) - (rowsDisplayed - 1));
-            RaiseOnScrollEvent();
+            if (scrollIndex != oldSelectedIndex)
+                RaiseOnScrollEvent();
         }
 
         public void UseSelectedItem()
