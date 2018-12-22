@@ -260,8 +260,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (preservePosition)
             {
                 spellsListBox.ScrollIndex = oldScrollIndex;
-                spellsListBox.SelectedIndex = oldSelectedIndex;
-                spellsListBox.LazyScrollToSelected();
+                if (oldSelectedIndex >= spellsListBox.Count)
+                    if (spellsListBox.Count > 0)
+                        spellsListBox.SelectedIndex = spellsListBox.Count - 1;
+                    else
+                        spellsListBox.SelectNone();
+                else
+                    spellsListBox.SelectedIndex = oldSelectedIndex;
             }
         }
 
@@ -679,12 +684,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (deleteSpellIndex != -1 && messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 GameManager.Instance.PlayerEntity.DeleteSpell(deleteSpellIndex);
-                int remainingSpells = GameManager.Instance.PlayerEntity.SpellbookCount();
-                if (spellsListBox.SelectedIndex >= remainingSpells)
-                    if (remainingSpells > 0)
-                        spellsListBox.SelectIndex(remainingSpells - 1);
-                    else
-                        spellsListBox.SelectNone();
                 deleteSpellIndex = -1;
                 RefreshSpellsList(true);
             }
@@ -702,17 +701,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (spellsListBox.SelectedIndex == -1)
                 return;
 
-            int newSelectedIndex = -1;
             if (sender == downButton && spellsListBox.SelectedIndex < spellsListBox.Count - 1)
-                newSelectedIndex = spellsListBox.SelectedIndex + 1;
-            else if (sender == upButton && spellsListBox.SelectedIndex > 0)
-                newSelectedIndex = spellsListBox.SelectedIndex - 1;
-
-            if (newSelectedIndex >= 0)
             {
-                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, newSelectedIndex);
-                spellsListBox.SelectIndex(newSelectedIndex);
+                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, spellsListBox.SelectedIndex + 1);
                 RefreshSpellsList(true);
+                spellsListBox.SelectNext();
+                // Force revealing one item ahead
+                if (spellsListBox.SelectedIndex < spellsListBox.Count - 1)
+                {
+                    spellsListBox.SelectNext();
+                    spellsListBox.SelectPrevious();
+                }
+            }
+            else if (sender == upButton && spellsListBox.SelectedIndex > 0)
+            {
+                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, spellsListBox.SelectedIndex - 1);
+                RefreshSpellsList(true);
+                spellsListBox.SelectPrevious();
+                // Force revealing one item ahead
+                if (spellsListBox.SelectedIndex > 0)
+                {
+                    spellsListBox.SelectPrevious();
+                    spellsListBox.SelectNext();
+                }
             }
         }
 
