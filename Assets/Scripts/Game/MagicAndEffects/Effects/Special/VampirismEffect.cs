@@ -22,14 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Note: This effect should only be assigned to player entity by stage one disease effect.
     ///
     /// TODO:
-    ///  * Get clan from infection (DONE)
-    ///  * Display "death is not eternal" popup (DONE)
-    ///  * Assign cheap vampire spells and clan-specific spells (DONE)
-    ///  * Support for cheaper spells in casting system (DONE)
     ///  * Clear guild memberships and reset reputations
-    ///  * Show racial changes in character sheet
-    ///  * Non-clan modifiers (DONE)
-    ///  * Clan-based modifiers (DONE)
     ///  * Damage from sunlight
     ///  * Damage from holy places
     ///  * Fast travel to arrive in early evening instead of early morning
