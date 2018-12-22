@@ -218,9 +218,17 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                         else
                         {
-                            playerEntity.TallyCrimeGuildRequirements(false, 5);
-                            playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                            playerEntity.SpawnCityGuards(true);
+                            if (!mobileNpc.Billboard.IsUsingGuardTexture)
+                            {
+                                playerEntity.TallyCrimeGuildRequirements(false, 5);
+                                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                                playerEntity.SpawnCityGuards(true);
+                            }
+                            else
+                            {
+                                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
+                                GameObject guard = playerEntity.SpawnCityGuard(mobileNpc.transform.position, mobileNpc.transform.forward);
+                            }
 
                             // Disable when dead
                             mobileNpc.Motor.gameObject.SetActive(false);
