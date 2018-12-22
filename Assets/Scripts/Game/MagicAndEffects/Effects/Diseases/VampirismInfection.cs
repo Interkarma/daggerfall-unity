@@ -139,6 +139,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 true,
                 false);
 
+            // Assign vampire spells to spellbook
+            GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(InfectionVampireClan);
+
             // Fade in from black
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack(1.0f);
 

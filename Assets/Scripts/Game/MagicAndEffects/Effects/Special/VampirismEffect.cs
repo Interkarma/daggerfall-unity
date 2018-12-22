@@ -76,9 +76,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (infection != null)
                 vampireClan = infection.InfectionVampireClan;
 
-            // Assign vampire spells to spellbook
-            GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(vampireClan);
-
             // Considered well fed on first start
             lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
