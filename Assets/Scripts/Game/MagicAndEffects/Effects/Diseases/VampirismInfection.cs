@@ -117,6 +117,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         private void DeployFullBlownVampirism()
         {
+            const int deathIsNotEternalTextID = 401;
+
             // Cancel rest window if sleeping
             if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
                 (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).CloseWindow();
@@ -137,12 +139,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 true,
                 false);
 
+            // Assign vampire spells to spellbook
+            GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(InfectionVampireClan);
+
             // Fade in from black
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack(1.0f);
 
             // Start permanent vampirism effect stage two
             EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
             GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+
+            // Display popup
+            DaggerfallMessageBox mb = DaggerfallUI.MessageBox(deathIsNotEternalTextID);
+            mb.Show();
         }
 
         DFLocation GetRandomCemetery()

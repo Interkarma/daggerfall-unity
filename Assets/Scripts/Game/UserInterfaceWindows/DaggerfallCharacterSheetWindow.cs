@@ -465,6 +465,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string[] GetClassSpecials()
         {
+            // TODO: Support racial specials from GameManager.Instance.PlayerEntity.RaceTemplate
+
             List<string> specials = new List<string>();
             DFCareer career = GameManager.Instance.PlayerEntity.Career;
 

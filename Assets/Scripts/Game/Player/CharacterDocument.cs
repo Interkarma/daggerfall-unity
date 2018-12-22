@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game.Player
         public int classIndex;
         public List<string> backStory;
         public bool isCustom = false;
+        public Races classicTransformedRace = Races.None;
 
         public CharacterDocument()
         {

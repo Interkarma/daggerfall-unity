@@ -74,6 +74,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         float refreshModsTimer = 0;
         const float refreshModsDelay = 0.2f;
 
+        RacialOverrideEffect racialOverrideEffect;
+        PassiveSpecialsEffect passiveSpecialsEffect;
+
         #endregion
 
         #region Properties
@@ -174,8 +177,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void Update()
         {
-            // Do nothing if no peer entity
-            if (!entityBehaviour)
+            // Do nothing if no peer entity, game not in play, or load in progress
+            if (!entityBehaviour || !GameManager.Instance.IsPlayingGame() || SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             // Remove any bundles pending deletion
@@ -197,12 +200,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 WipeAllBundles();
                 wipeAllBundles = false;
+                return;
             }
 
             // Player can cast a spell, recast last spell, or abort current spell
             // Handling input here is similar to handling weapon input in WeaponManager
             if (IsPlayerEntity)
             {
+                // Player must always have passive specials effect
+                PassiveSpecialsCheck();
+
                 // Fire instant cast spells
                 if (readySpell != null && instantCast)
                 {
@@ -467,6 +474,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
 
+                // Cache racial override effect
+                if (effect is RacialOverrideEffect)
+                    racialOverrideEffect = (RacialOverrideEffect)effect;
+
                 // At this point effect is ready and gets initial magic round
                 effect.MagicRound();
             }
@@ -496,6 +507,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets current racial override effect if one is present.
+        /// Racial override is a special case effect that is cached when started/resumed on entity.
+        /// Can still search using FindIncumbentEffect<RacialOverrideEffect>(), but this method will be more efficient.
+        /// </summary>
+        /// <returns>RacialOverrideEffect or null.</returns>
+        public RacialOverrideEffect GetRacialOverrideEffect()
+        {
+            return racialOverrideEffect;
         }
 
         /// <summary>
@@ -562,6 +584,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             instancedBundles.Clear();
             RaiseOnRemoveBundle(null);
+            racialOverrideEffect = null;
+            passiveSpecialsEffect = null;
         }
 
         /// <summary>
@@ -1250,7 +1274,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void RemoveBundle(LiveEffectBundle bundle)
         {
             foreach (IEntityEffect effect in bundle.liveEffects)
+            {
                 effect.End();
+
+                // Remove racial override cache
+                if (effect is RacialOverrideEffect)
+                    racialOverrideEffect = null;
+            }
 
             instancedBundles.Remove(bundle);
             RaiseOnRemoveBundle(bundle);
@@ -1424,6 +1454,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (effect != null)
                     GameManager.Instance.PlayerEntity.TallySkill((DFCareer.Skills)effect.Properties.MagicSkill, 1);
             }
+        }
+
+        void PassiveSpecialsCheck()
+        {
+            // Do nothing if effect already found
+            if (passiveSpecialsEffect != null)
+                return;
+
+            // Attempt to find effect
+            passiveSpecialsEffect = (PassiveSpecialsEffect)FindIncumbentEffect<PassiveSpecialsEffect>();
+            if (passiveSpecialsEffect != null)
+                return;
+
+            // Instantiate effect
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(PassiveSpecialsEffect.EffectKey) },
+            };
+            AssignBundle(new EntityEffectBundle(settings, entityBehaviour));
         }
 
         #endregion
@@ -1690,8 +1741,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     effect.ParentBundle = instancedBundle;
                     effect.Resume(effectData, this, instancedBundle.caster);
                     effect.RestoreSaveData(effectData.effectSpecific);
-
                     instancedBundle.liveEffects.Add(effect);
+
+                    // Cache racial override effect
+                    if (effect is RacialOverrideEffect)
+                        racialOverrideEffect = (RacialOverrideEffect)effect;
                 }
 
                 instancedBundles.Add(instancedBundle);

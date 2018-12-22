@@ -11,7 +11,7 @@
 
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -22,14 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Note: This effect should only be assigned to player entity by stage one disease effect.
     ///
     /// TODO:
-    ///  * Get clan from infection (DONE)
-    ///  * Display "death is not eternal" popup (DONE)
-    ///  * Assign cheap vampire spells and clan-specific spells (DONE)
-    ///  * Support for cheaper spells in casting system (DONE)
     ///  * Clear guild memberships and reset reputations
-    ///  * Show racial changes in character sheet
-    ///  * Non-clan modifiers (DONE)
-    ///  * Clan-based modifiers (DONE)
     ///  * Damage from sunlight
     ///  * Damage from holy places
     ///  * Fast travel to arrive in early evening instead of early morning
@@ -42,7 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public const string VampirismCurseKey = "Vampirism-Curse";
 
         RaceTemplate compoundRace;
-        VampireClans vampireClan = VampireClans.None;
+        VampireClans vampireClan = VampireClans.Lyrezi;
         uint lastTimeFed;
 
         public VampireClans VampireClan
@@ -64,37 +57,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            const int deathIsNotEternalTextID = 401;
-
             base.Start(manager, caster);
 
             // Create compound vampire race from birth race
             CreateCompoundRace();
 
-            // Get vampire clan from stage one disease if not already set
-            if (vampireClan == VampireClans.None)
-            {
-                VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
-                if (infection == null)
-                {
-                    End();
-                    return;
-                }
+            // Get vampire clan from stage one disease
+            // Otherwise start as Lyrezi by default if no infection found
+            // Note: Classic save import will start this effect and set correct clan after load
+            VampirismInfection infection = (VampirismInfection)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismInfection>();
+            if (infection != null)
                 vampireClan = infection.InfectionVampireClan;
-            }
-
-            // Assign vampire spells to spellbook
-            GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(vampireClan);
 
             // Considered well fed on first start
             lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
             // Our dark transformation is complete - cure everything on player (including stage one disease)
             GameManager.Instance.PlayerEffectManager.CureAll();
-
-            // Display popup
-            DaggerfallMessageBox mb = DaggerfallUI.MessageBox(deathIsNotEternalTextID);
-            mb.Show();
         }
 
         public override void ConstantEffect()
@@ -118,6 +97,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Execute advantages and disadvantages
             ApplyVampireAdvantages();
             ApplyVampireDisadvantages();
+        }
+
+        public override bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
+        {
+            const string vampHeads = "VAMP00I0.CIF";
+
+            // Vampires have a limited set of heads, one per birth race and gender
+            // Does not follow same selection rules as standard racial head images
+            int index;
+            switch (entity.Gender)
+            {
+                default:
+                case Genders.Male:
+                    index = 8 + entity.BirthRaceTemplate.ID - 1;
+                    break;
+                case Genders.Female:
+                    index = entity.BirthRaceTemplate.ID - 1;
+                    break;
+            }
+
+            imageDataOut = ImageReader.GetImageData(vampHeads, index, 0, true);
+            return true;
         }
 
         #region Private Methods

@@ -10,21 +10,14 @@
 //
 
 using UnityEngine;
-using System;
-using System.IO;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallConnect.FallExe;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -284,24 +277,43 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        ImageData GetHeadImageData(PlayerEntity entity)
+        {
+            // Check for racial override head
+            ImageData customHead;
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null && racialOverride.GetCustomHeadImageData(entity, out customHead))
+                return customHead;
+
+            // Otherwise just get standard head based on gender and race
+            switch(entity.Gender)
+            {
+                default:
+                case Genders.Male:
+                    return ImageReader.GetImageData(entity.RaceTemplate.PaperDollHeadsMale, entity.FaceIndex, 0, true);
+                case Genders.Female:
+                    return ImageReader.GetImageData(entity.RaceTemplate.PaperDollHeadsFemale, entity.FaceIndex, 0, true);
+            }
+        }
+
+        // TODO: Allow for body racial overrides (e.g. werewolf in transformed state)
+
         // Copy body parts to target
         void BlitBody(PlayerEntity entity)
         {
             // Get gender-based body parts
             ImageData nudeBody = new ImageData();
             ImageData clothedBody = new ImageData();
-            ImageData head = new ImageData();
+            ImageData head = GetHeadImageData(entity);
             if (entity.Gender == Genders.Male)
             {
                 nudeBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyMaleUnclothed, 0, 0, true);
                 clothedBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyMaleClothed, 0, 0, true);
-                head = ImageReader.GetImageData(entity.RaceTemplate.PaperDollHeadsMale, entity.FaceIndex, 0, true);
             }
             else if (entity.Gender == Genders.Female)
             {
                 nudeBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyFemaleUnclothed, 0, 0, true);
                 clothedBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyFemaleClothed, 0, 0, true);
-                head = ImageReader.GetImageData(entity.RaceTemplate.PaperDollHeadsFemale, entity.FaceIndex, 0, true);
             }
             else
             {

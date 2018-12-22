@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -56,7 +57,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #endregion
 
-        #region Abstract Properties
+        #region Public Methods
+
+        /// <summary>
+        /// Gets custom head ImageData for this override.
+        /// Return false to just use standard head.
+        /// </summary>
+        public virtual bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
+        {
+            imageDataOut = new ImageData();
+            return false;
+        }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets custom race exposed by this override

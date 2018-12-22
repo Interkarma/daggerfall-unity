@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public RaceTemplate GetLiveRaceTemplate()
         {
             // Look for racial override effect
-            RacialOverrideEffect racialOverrideEffect = (RacialOverrideEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<RacialOverrideEffect>();
+            RacialOverrideEffect racialOverrideEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
             if (racialOverrideEffect != null)
                 return racialOverrideEffect.CustomRace;
             else
