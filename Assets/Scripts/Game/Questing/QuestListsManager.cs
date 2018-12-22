@@ -13,7 +13,6 @@ using DaggerfallWorkshop.Utility;
 using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
-using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -51,6 +50,11 @@ namespace DaggerfallWorkshop.Game.Questing
     /// The files must be named: QuestList-{name}.txt
     /// 
     /// Quest scripts sit alongside list and must be uniquely named. They are loaded at runtime.
+    ///
+    /// Get quests by calling one of these methods:
+    /// GetQuest()
+    /// GetGuildQuest()
+    /// GetSocialQuest()
     /// </summary>
     public class QuestListsManager
     {
@@ -65,7 +69,7 @@ namespace DaggerfallWorkshop.Game.Questing
         private Dictionary<FactionFile.SocialGroups, List<QuestData>> social;
         private List<QuestData> init;
 
-        // List of one time quests player has accepted
+        // List of one time quests player has previously accepted
         public List<string> oneTimeQuestsAccepted;
 
         // Registered quest lists

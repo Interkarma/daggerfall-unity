@@ -21,7 +21,6 @@ using DaggerfallWorkshop.Game.Questing;
 using System;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -74,8 +73,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Guild guild;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         int curingCost = 0;
-
-        static ItemCollection merchantItems;    // Temporary
 
         #endregion
 
