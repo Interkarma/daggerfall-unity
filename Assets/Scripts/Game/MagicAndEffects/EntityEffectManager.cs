@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         const float refreshModsDelay = 0.2f;
 
         RacialOverrideEffect racialOverrideEffect;
+        PassiveSpecialsEffect passiveSpecialsEffect;
 
         #endregion
 
@@ -176,8 +177,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void Update()
         {
-            // Do nothing if no peer entity
-            if (!entityBehaviour)
+            // Do nothing if no peer entity, game not in play, or load in progress
+            if (!entityBehaviour || !GameManager.Instance.IsPlayingGame() || SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             // Remove any bundles pending deletion
@@ -199,12 +200,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 WipeAllBundles();
                 wipeAllBundles = false;
+                return;
             }
 
             // Player can cast a spell, recast last spell, or abort current spell
             // Handling input here is similar to handling weapon input in WeaponManager
             if (IsPlayerEntity)
             {
+                // Player must always have passive specials effect
+                PassiveSpecialsCheck();
+
                 // Fire instant cast spells
                 if (readySpell != null && instantCast)
                 {
@@ -580,6 +585,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundles.Clear();
             RaiseOnRemoveBundle(null);
             racialOverrideEffect = null;
+            passiveSpecialsEffect = null;
         }
 
         /// <summary>
@@ -1448,6 +1454,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (effect != null)
                     GameManager.Instance.PlayerEntity.TallySkill((DFCareer.Skills)effect.Properties.MagicSkill, 1);
             }
+        }
+
+        void PassiveSpecialsCheck()
+        {
+            // Do nothing if effect already found
+            if (passiveSpecialsEffect != null)
+                return;
+
+            // Attempt to find effect
+            passiveSpecialsEffect = (PassiveSpecialsEffect)FindIncumbentEffect<PassiveSpecialsEffect>();
+            if (passiveSpecialsEffect != null)
+                return;
+
+            // Instantiate effect
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(PassiveSpecialsEffect.EffectKey) },
+            };
+            AssignBundle(new EntityEffectBundle(settings, entityBehaviour));
         }
 
         #endregion

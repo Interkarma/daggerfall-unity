@@ -431,6 +431,9 @@ namespace DaggerfallWorkshop.Game
             // Try to set all properties at startup
             //GetProperties();
 
+            // Always start game paused
+            PauseGame(true);
+
             // Log welcome message
             Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
         }
@@ -713,8 +716,10 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
-        // Returns true when gameplay is active
-        bool IsPlayingGame()
+        /// <summary>
+        /// Returns true when gameplay is active.
+        /// </summary>
+        public bool IsPlayingGame()
         {
             // Game not active when paused
             if (isGamePaused)
