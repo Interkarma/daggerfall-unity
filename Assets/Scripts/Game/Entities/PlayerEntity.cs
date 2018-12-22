@@ -463,6 +463,7 @@ namespace DaggerfallWorkshop.Game.Entity
         //    when the initial quest begins, not on successful completion.
         void StartVampireOrWereCreatureQuest(bool isCureQuest)
         {
+            /* TEMP: Commenting out for now until quest deployment system is ready for this - please do not remove
             if (Race == Races.Vampire)
             {
                 if (isCureQuest)
