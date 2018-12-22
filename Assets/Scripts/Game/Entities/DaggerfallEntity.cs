@@ -627,6 +627,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 spellbook = sortedSpellbook;
         }
 
+        public void SetSpell(int index, EffectBundleSettings spell)
+        {
+            if (index < 0 || index > spellbook.Count - 1)
+                return;
+
+            spellbook[index] = spell;
+        }
+
         public void AddSpell(EffectBundleSettings spell)
         {
             // Just add spell to end of list for now

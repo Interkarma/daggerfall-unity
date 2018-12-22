@@ -99,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool buyMode = false;
         bool autoClose = false;
+        EffectBundleSettings renamedSpellSettings;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
         List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
@@ -701,10 +702,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void SpellNameLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out renamedSpellSettings))
+                return;
+
             DaggerfallInputMessageBox renameSpellPrompt;
             renameSpellPrompt = new DaggerfallInputMessageBox(uiManager, this);
             renameSpellPrompt.SetTextBoxLabel(TextManager.Instance.GetText(textDatabase, "enterSpellName") + " ");
-            renameSpellPrompt.TextBox.Text = spellsListBox.SelectedItem;
+            renameSpellPrompt.TextBox.Text = renamedSpellSettings.Name;
             renameSpellPrompt.OnGotUserInput += RenameSpellPromptHandler;
             uiManager.PushWindow(renameSpellPrompt);
         }
@@ -715,7 +719,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (string.IsNullOrEmpty(input))
                 return;
 
-            // TODO: Rename spell
+            renamedSpellSettings.Name = input;
+            int renamedSpellIndex = spellsListBox.SelectedIndex;
+            GameManager.Instance.PlayerEntity.SetSpell(renamedSpellIndex, renamedSpellSettings);
+            RefreshSpellsList();
+            spellsListBox.SelectedIndex = renamedSpellIndex;
+            UpdateSelection();
         }
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
