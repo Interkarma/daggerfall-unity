@@ -157,8 +157,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 string fileName = QuestListPrefix + questList + QExt;
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out questListAsset))
                 {
-                    List<string> lines = ModManager.GetTextAssetLines(questListAsset);
-                    ParseQuestList(new Table(lines.ToArray()));
+                    try {
+                        List<string> lines = ModManager.GetTextAssetLines(questListAsset);
+                        Table table = new Table(lines.ToArray());
+                        ParseQuestList(table);
+                    } catch (Exception ex) {
+                        Debug.LogErrorFormat("QuestListsManager unable to parse quest list table {0} with exception message {1}", questListAsset.name, ex.Message);
+                    }
                 }
                 else
                 {
@@ -169,8 +174,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private void LoadQuestList(string questListFilename, string questsPath)
         {
-            Table table = new Table(QuestMachine.Instance.GetTableSourceText(questListFilename));
-            ParseQuestList(table, questsPath);
+            try {
+                Table table = new Table(QuestMachine.Instance.GetTableSourceText(questListFilename));
+                ParseQuestList(table, questsPath);
+            } catch (Exception ex) {
+                Debug.LogErrorFormat("QuestListsManager unable to parse quest list table {0} with exception message {1}", questListFilename, ex.Message);
+            }
         }
 
         private void ParseQuestList(Table questsTable, string questsPath = "")
