@@ -11,7 +11,7 @@
 
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -97,6 +97,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Execute advantages and disadvantages
             ApplyVampireAdvantages();
             ApplyVampireDisadvantages();
+        }
+
+        public override bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
+        {
+            const string vampHeads = "VAMP00I0.CIF";
+
+            // Vampires have a limited set of heads, one per birth race and gender
+            // Does not follow same selection rules as standard racial head images
+            int index;
+            switch (entity.Gender)
+            {
+                default:
+                case Genders.Male:
+                    index = 8 + entity.BirthRaceTemplate.ID - 1;
+                    break;
+                case Genders.Female:
+                    index = entity.BirthRaceTemplate.ID - 1;
+                    break;
+            }
+
+            imageDataOut = ImageReader.GetImageData(vampHeads, index, 0, true);
+            return true;
         }
 
         #region Private Methods
