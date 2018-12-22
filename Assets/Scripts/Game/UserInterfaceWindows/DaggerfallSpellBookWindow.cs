@@ -261,7 +261,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 spellsListBox.ScrollIndex = oldScrollIndex;
                 spellsListBox.SelectedIndex = oldSelectedIndex;
-                spellsListBox.ScrollToSelected();
+                spellsListBox.LazyScrollToSelected();
             }
         }
 
@@ -658,7 +658,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             spellsListBox.SelectIndex(spellsListBox.SelectedIndex - 1);
-            spellsListBox.ScrollToSelected();
+            spellsListBox.LazyScrollToSelected();
             UpdateSelection();
         }
 
@@ -668,7 +668,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             spellsListBox.SelectIndex(spellsListBox.SelectedIndex + 1);
-            spellsListBox.ScrollToSelected();
+            spellsListBox.LazyScrollToSelected();
             UpdateSelection();
         }
 

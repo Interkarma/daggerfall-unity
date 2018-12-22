@@ -679,9 +679,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void ScrollToSelected()
         {
+            scrollIndex = selectedIndex;
+            scrollIndex = Mathf.Clamp(scrollIndex, 0, (listItems.Count - 1) - (rowsDisplayed - 1));
+            RaiseOnScrollEvent();
+        }
+
+        /// <summary>
+        /// If selected item is not visible, scroll just enough to make it visible.
+        /// Futhermore for list of at least 4 visible items, if the selected item is the first or last visible,
+        /// scroll to make one more item visible above or below it, respectively.
+        /// </summary>
+        public void LazyScrollToSelected()
+        {
             if (selectedIndex < 0)
                 return;
-            // Try to lazyly follow selection
             int margin = rowsDisplayed > 3 ? 1 : 0;
             int oldSelectedIndex = selectedIndex;
             if (selectedIndex < scrollIndex + margin)
