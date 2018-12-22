@@ -1610,7 +1610,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Will see what feedback is like and revert to classic behaviour if widely preferred
             if (item.IsEnchanted)
             {
-                GameManager.Instance.PlayerEffectManager.UseItem(item);
+                GameManager.Instance.PlayerEffectManager.UseItem(item, collection);
                 DaggerfallUI.Instance.PopToHUD();
                 return;
             }

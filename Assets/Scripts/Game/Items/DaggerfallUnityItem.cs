@@ -1223,6 +1223,7 @@ namespace DaggerfallWorkshop.Game.Items
             stackCount = other.stackCount;
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
+            potionRecipeKey = other.potionRecipeKey;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();

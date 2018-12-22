@@ -96,6 +96,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         DaggerfallPlayerHistoryWindow dfPlayerHistoryWindow;
         DaggerfallSpellBookWindow dfSpellBookWindow;
+        DaggerfallUseMagicItemWindow dfUseMagicItemWindow;
         DaggerfallSpellMakerWindow dfSpellMakerWindow;
         DaggerfallItemMakerWindow dfItemMakerWindow;
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
@@ -289,6 +290,7 @@ namespace DaggerfallWorkshop.Game
             dfPlayerHistoryWindow = new DaggerfallPlayerHistoryWindow(uiManager);
             dfTalkWindow = new DaggerfallTalkWindow(uiManager);
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
+            dfUseMagicItemWindow = new DaggerfallUseMagicItemWindow(uiManager);
             dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
             dfItemMakerWindow = new DaggerfallItemMakerWindow(uiManager);
             dfPotionMakerWindow = new DaggerfallPotionMakerWindow(uiManager);
@@ -448,6 +450,9 @@ namespace DaggerfallWorkshop.Game
                         else
                             AddHUDText(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
                     }
+                    break;
+                case DaggerfallUIMessages.dfuiOpenUseMagicItemWindow:
+                    uiManager.PushWindow(dfUseMagicItemWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenCourtWindow:
                     uiManager.PushWindow(dfCourtWindow);

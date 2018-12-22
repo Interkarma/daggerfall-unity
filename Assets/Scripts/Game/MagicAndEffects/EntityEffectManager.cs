@@ -781,7 +781,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Offers item to effect manager when used by player in inventory.
         /// </summary>
         /// <param name="item">Item just used.</param>
-        public void UseItem(DaggerfallUnityItem item)
+        /// <param name="collection">Collection containing item.</param>
+        public void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
@@ -809,8 +810,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         SetReadySpell(bundle, true);
 
-                        // TODO: Apply durability loss to used item on use
+                        // Apply durability loss to used item on use
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+                        item.currentCondition -= 10;
+                        if (item.currentCondition <= 0 && collection != null)
+                        {
+                            item.ItemBreaks(GameManager.Instance.PlayerEntity);
+                            collection.RemoveItem(item);
+                        }
                     }
 
                     break;
