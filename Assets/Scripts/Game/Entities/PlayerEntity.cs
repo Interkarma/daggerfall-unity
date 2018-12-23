@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         public const string vampireSpellTag = "vampire";
+        public const string VampireInitiationQuest = "P0A01L00";
 
         bool godMode = false;
         bool noTargetMode = false;
@@ -45,7 +46,7 @@ namespace DaggerfallWorkshop.Game.Entity
         bool preventNormalizingReputations = false;
         bool isResting = false;
 
-        bool hasStartedInitialVampireQuest = false;
+        bool hasFinishedInitialVampireQuest = false;
         //byte vampireClan = 0;
         //uint lastTimeVampireNeedToKillSatiated = 0;
 
@@ -471,7 +472,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (DFRandom.random_range_inclusive(10, 100) < 30)
                         QuestMachine.Instance.InstantiateQuest("$CUREVAM");
                 }
-                else if (hasStartedInitialVampireQuest)
+                else if (hasFinishedInitialVampireQuest)
                 {
                     // Get an appropriate quest for player's level?
                     if (DFRandom.random_range_inclusive(1, 100) < 50)
@@ -488,8 +489,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
                 else if (DFRandom.random_range_inclusive(1, 100) < 50)
                 {
-                    QuestMachine.Instance.InstantiateQuest("P0A01L00");
-                    hasStartedInitialVampireQuest = true;
+                    // Start initiation quest and listen for quest end events
+                    QuestMachine.Instance.InstantiateQuest(VampireInitiationQuest);
+                    QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
                 }
             }
             /*else
@@ -500,6 +502,16 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
             }*/
         }
+
+        public void QuestMachine_OnQuestEnded(Quest quest)
+        {
+            if (quest.QuestName == VampireInitiationQuest)
+            {
+                hasFinishedInitialVampireQuest = true;
+                QuestMachine.OnQuestEnded -= QuestMachine_OnQuestEnded;
+            }
+        }
+
 
         public bool IntermittentEnemySpawn(uint Minutes)
         {
@@ -788,7 +800,7 @@ namespace DaggerfallWorkshop.Game.Entity
             this.timeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
             this.darkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
             this.thievesGuildRequirementTally = character.thievesGuildRequirementTally;
-            this.hasStartedInitialVampireQuest = character.hasStartedInitialVampireQuest != 0;
+            this.hasFinishedInitialVampireQuest = character.hasFinishedInitialVampireQuest != 0;
             //this.vampireClan = character.vampireClan;
             //this.lastTimeVampireNeedToKillSatiated = character.lastTimeVampireNeedToKillSatiated;
 

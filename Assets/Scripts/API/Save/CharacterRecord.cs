@@ -84,7 +84,7 @@ namespace DaggerfallConnect.Save
             doc.minMetalToHit = parsedData.minMetalToHit;
             doc.armorValues = parsedData.armorValues;
             doc.timeToBecomeVampireOrWerebeast = parsedData.timeToBecomeVampireOrWerebeast;
-            doc.hasStartedInitialVampireQuest = parsedData.hasStartedInitialVampireQuest;
+            doc.hasFinishedInitialVampireQuest = parsedData.hasStartedInitialVampireQuest;  // DFU tracks initiation quest being finished, classic that it's started.
             doc.lastTimeVampireNeedToKillSatiated = parsedData.lastTimeVampireNeedToKillSatiated;
             doc.lastTimePlayerAteOrDrankAtTavern = parsedData.lastTimePlayerAteOrDrankAtTavern;
             doc.lastTimePlayerBoughtTraining = parsedData.lastTimePlayerBoughtTraining;

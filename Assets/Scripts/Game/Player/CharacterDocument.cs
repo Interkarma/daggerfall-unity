@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.Player
         public byte darkBrotherhoodRequirementTally;
         public byte thievesGuildRequirementTally;
         public uint timeToBecomeVampireOrWerebeast;
-        public byte hasStartedInitialVampireQuest;
+        public byte hasFinishedInitialVampireQuest;
         public uint lastTimeVampireNeedToKillSatiated;
         public uint lastTimePlayerAteOrDrankAtTavern;
         public sbyte biographyReactionMod;
