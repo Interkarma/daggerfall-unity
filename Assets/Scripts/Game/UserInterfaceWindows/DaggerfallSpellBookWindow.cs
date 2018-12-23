@@ -707,11 +707,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RefreshSpellsList(true);
                 spellsListBox.SelectNext();
                 // Force revealing one item ahead
-                if (spellsListBox.SelectedIndex < spellsListBox.Count - 1)
-                {
-                    spellsListBox.SelectNext();
-                    spellsListBox.SelectPrevious();
-                }
+                if (spellsListBox.SelectedIndex == spellsListBox.ScrollIndex + spellsListBox.RowsDisplayed - 1 &&
+                    spellsListBox.SelectedIndex < spellsListBox.Count - 1)
+                    spellsListBox.ScrollDown();
             }
             else if (sender == upButton && spellsListBox.SelectedIndex > 0)
             {
@@ -719,11 +717,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RefreshSpellsList(true);
                 spellsListBox.SelectPrevious();
                 // Force revealing one item ahead
-                if (spellsListBox.SelectedIndex > 0)
-                {
-                    spellsListBox.SelectPrevious();
-                    spellsListBox.SelectNext();
-                }
+                if (spellsListBox.SelectedIndex == spellsListBox.ScrollIndex &&
+                    spellsListBox.SelectedIndex > 0)
+                    spellsListBox.ScrollUp();
             }
         }
 
