@@ -70,11 +70,16 @@ namespace DaggerfallWorkshop.Game
                     if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
                         controller.height /= 2f;
 
-                    // Uncomment below lines to limit maximum controller height
+                    // Limit maximum controller height
                     // Some particularly tall sprites (e.g. giants) require this hack to get through doors
-                    // However they will appear sunken into ground as a result
-                    //if (controller.height > 1.9f)
-                    //    controller.height = 1.9f;
+                    if (controller.height > 1.75f)
+                    {
+                        // Adjust center so that sprite doesn't sink into the ground
+                        Vector3 newCenter = controller.center;
+                        newCenter.y += (1.75f - controller.height) / 2;
+                        controller.center = newCenter;
+                        controller.height = 1.75f;
+                    }
 
                     controller.gameObject.layer = LayerMask.NameToLayer("Enemies");
                 }
