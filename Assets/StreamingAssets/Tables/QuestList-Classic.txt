@@ -10,251 +10,252 @@
 -- name:        filename of QRC txt file
 -- group:       guild group from FactionFile.GuildGroups enum, or social group from FactionFile.SocialGroups enum
 -- membership:  N=non-member, M=member, P=prospect, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
--- minRep:      minimum reputation required to be offered the quest (units can use X wildcard)
+-- minReq:      minimum requirement to be offered the quest: (val < 10) = guild rank / player level, or (val >= 10) = min reputation
+-- flag:        0 = nothing, X = adult/nudity, 1 = one time quest
 -- notes:
 -   "reward bug" is a script error where reward is given before quest completed
 -   "questor clear bug" is a script error where clicking on questor will cause quest to end immediately after target complete
 -   "no hot-placement" is a DFU bug where resources cannot be placed to an active interior/dungeon. Need to exit and re-enter interior
 -   "needs more action support" means DFU quest system needs more development for these quests to work properly.
 
-schema: *name, group, membership, minRep, notes
+schema: *name, group, membership, minReq, flag, notes
 
 -- Classic: Fighters Guild
-M0C00Y11, FightersGuild, N, 0, Passed
-M0C00Y12, FightersGuild, N, 0, Passed
-M0C00Y13, FightersGuild, N, 0, Passed
-M0C00Y14, FightersGuild, N, 0, Passed
-M0B00Y00, FightersGuild, M, 0, Passed
-M0B00Y06, FightersGuild, M, 0, Passed
-M0B00Y07, FightersGuild, M, 0, Passed
-M0B00Y15, FightersGuild, M, 0, Passed
-M0B00Y16, FightersGuild, M, 0, Passed
--M0B00Y17, FightersGuild, M, 0, FAILED needs more action support
-M0B1XY01, FightersGuild, M, 1X, Passed
--M0B11Y18, FightersGuild, M, 11, FAILED needs more action support
-M0B20Y02, FightersGuild, M, 20, Passed
--M0B21Y19, FightersGuild, M, 21, FAILED needs more action support
-M0B30Y03, FightersGuild, M, 30, Passed
-M0B30Y04, FightersGuild, M, 30, Passed
-M0B30Y08, FightersGuild, M, 30, Passed
--M0B40Y04, FightersGuild, M, 40, BROKEN. QBN file is missing in DF+DFQFIX.
-M0B40Y05, FightersGuild, M, 40, Passed. Possible to break if one-shotting spriggan
-M0B50Y09, FightersGuild, M, 50, Passed
-M0B60Y10, FightersGuild, M, 60, Passed
+M0C00Y11, FightersGuild, N, 0, 0, Passed
+M0C00Y12, FightersGuild, N, 0, 0, Passed
+M0C00Y13, FightersGuild, N, 0, 0, Passed
+M0C00Y14, FightersGuild, N, 0, 0, Passed
+M0B00Y00, FightersGuild, M, 0, 0, Passed
+M0B00Y06, FightersGuild, M, 0, 0, Passed
+M0B00Y07, FightersGuild, M, 0, 0, Passed
+M0B00Y15, FightersGuild, M, 0, 0, Passed
+M0B00Y16, FightersGuild, M, 0, 0, Passed
+-M0B00Y17, FightersGuild, M, 0, 0, FAILED needs more action support
+M0B1XY01, FightersGuild, M, 1, X, Passed
+-M0B11Y18, FightersGuild, M, 1, 1, FAILED needs more action support
+M0B20Y02, FightersGuild, M, 2, 0, Passed
+-M0B21Y19, FightersGuild, M, 2, 1, FAILED needs more action support
+M0B30Y03, FightersGuild, M, 3, 0, Passed
+M0B30Y04, FightersGuild, M, 3, 0, Passed
+M0B30Y08, FightersGuild, M, 3, 0, Passed
+-M0B40Y04, FightersGuild, M, 4, 0, BROKEN. QBN file is missing in DF+DFQFIX.
+M0B40Y05, FightersGuild, M, 4, 0, Passed. Possible to break if one-shotting spriggan
+M0B50Y09, FightersGuild, M, 5, 0, Passed
+M0B60Y10, FightersGuild, M, 6, 0, Passed
 
 -- Classic: Mages Guild
--N0C00Y01, MagesGuild, N, 0, BROKEN. QRC file is missing in DF+DFQFIX.
-N0C00Y10, MagesGuild, N, 0, Passed after fixing duplicate RumorsPostfailure entry
-N0C00Y11, MagesGuild, N, 0, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
-N0C00Y12, MagesGuild, N, 0, Passed
-N0C00Y13, MagesGuild, N, 0, Passed
-N0B00Y04, MagesGuild, M, 0, Passed
-N0B00Y06, MagesGuild, M, 0, Passed
-N0B00Y08, MagesGuild, M, 0, Passed
--N0B00Y09, MagesGuild, M, 0, FAILED. Repute exceeds task not yet functional so invitation always arrives.
-N0B00Y16, MagesGuild, M, 0, IN-TESTING
--N0B00Y17, MagesGuild, M, 0, more testing needed
-N0B10Y01, MagesGuild, M, 10, Passed
-N0B10Y03, MagesGuild, M, 10, Passed. Repute tasks not yet existent. Corpses do not disappear at quest end.
--N0B11Y18, MagesGuild, M, 11, changed house4 to house1. More testing needed.
-N0B20Y02, MagesGuild, M, 20, Passed. Corpses don't disappear at the end of the quest. Sleeping mage is sometimes female (not classic?). Enemies don't show up as a bunch. Enemies may not appear while loitering.
-N0B20Y05, MagesGuild, M, 20, Passed. Lacks text variables in intro
--N0B21Y14, MagesGuild, M, 21, FAILED. GetCurrentRegionFaction() needed
-N0B30Y15, MagesGuild, M, 30, Passed. Lacks spells on imp
-N0B40Y07, MagesGuild, M, 40, IN-TESTING
+-N0C00Y01, MagesGuild, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX.
+N0C00Y10, MagesGuild, N, 0, 0, Passed after fixing duplicate RumorsPostfailure entry
+N0C00Y11, MagesGuild, N, 0, 0, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
+N0C00Y12, MagesGuild, N, 0, 0, Passed
+N0C00Y13, MagesGuild, N, 0, 0, Passed
+N0B00Y04, MagesGuild, M, 0, 0, Passed
+N0B00Y06, MagesGuild, M, 0, 0, Passed
+N0B00Y08, MagesGuild, M, 0, 0, Passed
+-N0B00Y09, MagesGuild, M, 0, 0, FAILED. Repute exceeds task not yet functional so invitation always arrives.
+N0B00Y16, MagesGuild, M, 0, 0, IN-TESTING
+-N0B00Y17, MagesGuild, M, 0, 0, more testing needed
+N0B10Y01, MagesGuild, M, 1, 0, Passed
+N0B10Y03, MagesGuild, M, 1, 0, Passed. Repute tasks not yet existent. Corpses do not disappear at quest end.
+-N0B11Y18, MagesGuild, M, 1, 1, changed house4 to house1. More testing needed.
+N0B20Y02, MagesGuild, M, 2, 0, Passed. Corpses don't disappear at the end of the quest. Sleeping mage is sometimes female (not classic?). Enemies don't show up as a bunch. Enemies may not appear while loitering.
+N0B20Y05, MagesGuild, M, 2, 0, Passed. Lacks text variables in intro
+-N0B21Y14, MagesGuild, M, 2, 1, FAILED. GetCurrentRegionFaction() needed
+N0B30Y15, MagesGuild, M, 3, 0, Passed. Lacks spells on imp
+N0B40Y07, MagesGuild, M, 4, 0, IN-TESTING
 
 -- Classic: Temples (general)
--C0C00Y10, HolyOrder, N, 0, FAILED. Player log says "Exception during quest compile: An element with the same key already exists in the dictionary."
-C0C00Y11, HolyOrder, N, 0, Passed. __qgiver_ resolves to BLANK
-C0C00Y12, HolyOrder, N, 0, Passed. Needs rumor dialogue links.
--C0C00Y13, HolyOrder, N, 0, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0 
-C0B00Y00, HolyOrder, M, 0, Passed.
--C0B00Y01, HolyOrder, M, 0, FAILED. PLayer log says "Exception during quest compile: An element with the same key already exists in the dictionary."
--C0B00Y02, HolyOrder, M, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
-C0B00Y03, HolyOrder, M, 0, Passed.
--C0B00Y04, HolyOrder, M, 0, FAILED. Needs "remove foe" quest action.
--C0B00Y14, HolyOrder, M, 0, FAILED. Exception during quest compile: "Could not find Item name item in items table"
--C0B10Y05, HolyOrder, M, 10, FAILED. Action not found. Ignoring 'make pc ill with Witches'_Pox saying 1012 '
-C0B10Y06, HolyOrder, M, 10, Passed.
--C0B10Y07, HolyOrder, M, 10, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0 
-C0B10Y15, HolyOrder, M, 10, Passed. Lich and object spawn far apart.
-C0B20Y08, HolyOrder, M, 20, Identical to C0B10Y06.
-C0B3XY09, HolyOrder, M, 3X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches. 
+-C0C00Y10, HolyOrder, N, 0, 0, FAILED. Player log says "Exception during quest compile: An element with the same key already exists in the dictionary."
+C0C00Y11, HolyOrder, N, 0, 0, Passed. __qgiver_ resolves to BLANK
+C0C00Y12, HolyOrder, N, 0, 0, Passed. Needs rumor dialogue links.
+-C0C00Y13, HolyOrder, N, 0, 0, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0
+C0B00Y00, HolyOrder, M, 0, 0, Passed.
+-C0B00Y01, HolyOrder, M, 0, 0, FAILED. PLayer log says "Exception during quest compile: An element with the same key already exists in the dictionary."
+-C0B00Y02, HolyOrder, M, 0, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
+C0B00Y03, HolyOrder, M, 0, 0, Passed.
+-C0B00Y04, HolyOrder, M, 0, 0, FAILED. Needs "remove foe" quest action.
+-C0B00Y14, HolyOrder, M, 0, 0, FAILED. Exception during quest compile: "Could not find Item name item in items table"
+-C0B10Y05, HolyOrder, M, 1, 0, FAILED. Action not found. Ignoring 'make pc ill with Witches'_Pox saying 1012 '
+C0B10Y06, HolyOrder, M, 1, 0, Passed.
+-C0B10Y07, HolyOrder, M, 1, 0, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0
+C0B10Y15, HolyOrder, M, 1, 0, Passed. Lich and object spawn far apart.
+C0B20Y08, HolyOrder, M, 2, 0, Identical to C0B10Y06.
+C0B3XY09, HolyOrder, M, 3, X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches.
 
 -- Classic: Temples (specific)
-00B00Y00, HolyOrder, J, 0, Passed. Undefined enemy name.
-D0B00Y00, HolyOrder, T, 0, Passed.
-E0B00Y00, HolyOrder, A, 0, Passed.
-F0B00Y00, HolyOrder, D, 0, Passed.
-G0B00Y00, HolyOrder, K, 0, Passed.
-H0B00Y00, HolyOrder, R, 0, Passed.
-I0B00Y00, HolyOrder, S, 0, Passed.
-J0B00Y00, HolyOrder, Z, 0, Passed.
+00B00Y00, HolyOrder, J, 0, 0, Passed. Undefined enemy name.
+D0B00Y00, HolyOrder, T, 0, 0, Passed.
+E0B00Y00, HolyOrder, A, 0, 0, Passed.
+F0B00Y00, HolyOrder, D, 0, 0, Passed.
+G0B00Y00, HolyOrder, K, 0, 0, Passed.
+H0B00Y00, HolyOrder, R, 0, 0, Passed.
+I0B00Y00, HolyOrder, S, 0, 0, Passed.
+J0B00Y00, HolyOrder, Z, 0, 0, Passed.
 
 -- Classic: Thieves Guild
-O0A0AL00, GeneralPopulace, P, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
-O0B00Y00, GeneralPopulace, M, 0, Apparently an exact copy of O0B10Y00.
--O0B00Y01, GeneralPopulace, M, 0, FAILED. Need to handle Group5.0 
--O0B00Y11, GeneralPopulace, M, 0, FAILED. Could not find local site with P2=17 in Daggerfall/Penbrugh. 
--O0B00Y12, GeneralPopulace, M, 0, FAILED. Action not found. Ignoring 'create npc _contact1_ '
-O0B10Y00, GeneralPopulace, M, 10, Passed.
-O0B10Y03, GeneralPopulace, M, 10, Passed.
-O0B10Y05, GeneralPopulace, M, 10, Passed. Changed house4 to house1.
-O0B10Y06, GeneralPopulace, M, 10, Passed.
-O0B10Y07, GeneralPopulace, M, 10, Passed.
-O0B20Y02, GeneralPopulace, M, 20, Passed.
-O0B2XY04, GeneralPopulace, M, 2X, Passed.
-O0B2XY08, GeneralPopulace, M, 2X, Passed.
-O0B2XY09, GeneralPopulace, M, 2X, Passed.
-O0B2XY10, GeneralPopulace, M, 2X, Passed.
+O0A0AL00, GeneralPopulace, P, 0, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
+O0B00Y00, GeneralPopulace, M, 0, 0, Apparently an exact copy of O0B10Y00.
+-O0B00Y01, GeneralPopulace, M, 0, 0, FAILED. Need to handle Group5.0
+-O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Could not find local site with P2=17 in Daggerfall/Penbrugh.
+-O0B00Y12, GeneralPopulace, M, 0, 0, FAILED. Action not found. Ignoring 'create npc _contact1_ '
+O0B10Y00, GeneralPopulace, M, 1, 0, Passed.
+O0B10Y03, GeneralPopulace, M, 1, 0, Passed.
+O0B10Y05, GeneralPopulace, M, 1, 0, Passed. Changed house4 to house1.
+O0B10Y06, GeneralPopulace, M, 1, 0, Passed.
+O0B10Y07, GeneralPopulace, M, 1, 0, Passed.
+O0B20Y02, GeneralPopulace, M, 2, 0, Passed.
+O0B2XY04, GeneralPopulace, M, 2, X, Passed.
+O0B2XY08, GeneralPopulace, M, 2, X, Passed.
+O0B2XY09, GeneralPopulace, M, 2, X, Passed.
+O0B2XY10, GeneralPopulace, M, 2, X, Passed.
 
 -- Classic: Dark Brotherhood
--L0A01L00, DarkBrotherHood, P, 1, FAILED, needs action support at mixing poison and decanter. (worked around this for now)
+-L0A01L00, DarkBrotherHood, P, 0, 1, FAILED. needs action support at mixing poison and decanter. (worked around this for now)
 - Set quest timers as fixed 14 and 30 days to allow completion. Set 30 day timer to stop when 14 day timer begins for fairness.
 - AddDialogLinkForQuestInfoResource() could not find a quest info resource with name Mastersly Manor
 - Unable to find DB member to finish quest, so changed to finish after poisoning decanter
-L0B00Y00, DarkBrotherHood, M, 0, Passed
--L0B00Y01, DarkBrotherHood, M, 0, FAILED. Need to handle Temple npc's (sgroup 5)
-L0B00Y02, DarkBrotherHood, M, 0, Passed. Various undefined names. Quest timer is tight due to multiple remote locations.
-L0B00Y03, DarkBrotherHood, M, 0, Passed. Enemy mage has no defined name.
-L0B10Y01, DarkBrotherHood, M, 10, Passed. Enemy bard has no defined name.
-L0B10Y03, DarkBrotherHood, M, 10, Passed. Quest timer is tight due to multiple remote locations.
-L0B20Y02, DarkBrotherHood, M, 20, Passed
-L0B30Y03, DarkBrotherHood, M, 30, Passed
-L0B30Y09, DarkBrotherHood, M, 30, Passed
-L0B40Y04, DarkBrotherHood, M, 40, Passed. Flat NPC and enemy mismatching problem.
-L0B50Y11, DarkBrotherHood, M, 50, Passed
-L0B60Y10, DarkBrotherHood, M, 60, Passed
+L0B00Y00, DarkBrotherHood, M, 0, 0, Passed
+-L0B00Y01, DarkBrotherHood, M, 0, 0, FAILED. Need to handle Temple npc's (sgroup 5)
+L0B00Y02, DarkBrotherHood, M, 0, 0, Passed. Various undefined names. Quest timer is tight due to multiple remote locations.
+L0B00Y03, DarkBrotherHood, M, 0, 0, Passed. Enemy mage has no defined name.
+L0B10Y01, DarkBrotherHood, M, 1, 0, Passed. Enemy bard has no defined name.
+L0B10Y03, DarkBrotherHood, M, 1, 0, Passed. Quest timer is tight due to multiple remote locations.
+L0B20Y02, DarkBrotherHood, M, 2, 0, Passed
+L0B30Y03, DarkBrotherHood, M, 3, 0, Passed
+L0B30Y09, DarkBrotherHood, M, 3, 0, Passed
+L0B40Y04, DarkBrotherHood, M, 4, 0, Passed. Flat NPC and enemy mismatching problem.
+L0B50Y11, DarkBrotherHood, M, 5, 0, Passed
+L0B60Y10, DarkBrotherHood, M, 6, 0, Passed
 
 -- Classic: Knightly Orders
-B0C00Y05, KnightlyOrder, N, 0, Passed. Undefined enemy name.
-B0C00Y06, KnightlyOrder, N, 0, Passed.
-B0C00Y10, KnightlyOrder, N, 0, Passed.
-B0C00Y13, KnightlyOrder, N, 0, Passed.
-B0B00Y00, KnightlyOrder, M, 0, Passed.
-B0B00Y01, KnightlyOrder, M, 0, Passed. Undefined enemy name.
-B0B10Y04, KnightlyOrder, M, 10, Passed. 
-B0B20Y07, KnightlyOrder, M, 20, Passed.
-B0B40Y08, KnightlyOrder, M, 40, Passed.
-B0B40Y09, KnightlyOrder, M, 40, Passed.
-B0B50Y11, KnightlyOrder, M, 50, Passed
-B0B60Y12, KnightlyOrder, M, 60, Passed.
-B0B70Y14, KnightlyOrder, M, 70, Passed.
-B0B70Y16, KnightlyOrder, M, 70, Passed.
--B0B71Y03, KnightlyOrder, M, 71, FAILED.	Discovered a new op-code: _0x3c_ 19
-B0B80Y17, KnightlyOrder, M, 80, Passed.
--B0B81Y02, KnightlyOrder, M, 81, FAILED. Player log says "Exception during quest compile: Could not find Item name item in items table." "Item _I.06_ item class 17 subclass 13"
+B0C00Y05, KnightlyOrder, N, 0, 0, Passed. Undefined enemy name.
+B0C00Y06, KnightlyOrder, N, 0, 0, Passed.
+B0C00Y10, KnightlyOrder, N, 0, 0, Passed.
+B0C00Y13, KnightlyOrder, N, 0, 0, Passed.
+B0B00Y00, KnightlyOrder, M, 0, 0, Passed.
+B0B00Y01, KnightlyOrder, M, 0, 0, Passed. Undefined enemy name.
+B0B10Y04, KnightlyOrder, M, 1, 0, Passed.
+B0B20Y07, KnightlyOrder, M, 2, 0, Passed.
+B0B40Y08, KnightlyOrder, M, 4, 0, Passed.
+B0B40Y09, KnightlyOrder, M, 4, 0, Passed.
+B0B50Y11, KnightlyOrder, M, 5, 0, Passed
+B0B60Y12, KnightlyOrder, M, 6, 0, Passed.
+B0B70Y14, KnightlyOrder, M, 7, 0, Passed.
+B0B70Y16, KnightlyOrder, M, 7, X, Passed.
+-B0B71Y03, KnightlyOrder, M, 7, 1, FAILED.	Discovered a new op-code: _0x3c_ 19
+B0B80Y17, KnightlyOrder, M, 8, 0, Passed.
+-B0B81Y02, KnightlyOrder, M, 8, 1, FAILED. Player log says "Exception during quest compile: Could not find Item name item in items table." "Item _I.06_ item class 17 subclass 13"
 
 -- Witches Covens
-Q0C00Y01, Witches, N, 0, Passed.
-Q0C00Y03, Witches, N, 0,
-Q0C00Y04, Witches, N, 0,
-Q0C00Y06, Witches, N, 0,
-Q0C00Y07, Witches, N, 0,
--Q0C00Y08, Witches, N, 0, FAILED. Clock wants a travel time but quest has no Place resources.
-Q0C0XY02, Witches, N, 0X,
-Q0C10Y00, Witches, N, 10,
-Q0C20Y02, Witches, N, 20,
-Q0C4XY04, Witches, N, 4X,
+Q0C00Y01, Witches, N, 0, 0, Passed.
+Q0C00Y03, Witches, N, 0, 0,
+Q0C00Y04, Witches, N, 0, 0,
+Q0C00Y06, Witches, N, 0, 0,
+Q0C00Y07, Witches, N, 0, 0,
+-Q0C00Y08, Witches, N, 0, 0, FAILED. Clock wants a travel time but quest has no Place resources.
+Q0C0XY02, Witches, N, 0, X,
+Q0C10Y00, Witches, N, 1, 0,
+Q0C20Y02, Witches, N, 2, 0,
+Q0C4XY04, Witches, N, 4, X,
 
 -- Commoners
--A0C00Y00, Commoners, N, 0, FAILED. Cannot get rid of popup 1013 after entering the _inn_.
--A0C00Y04, Commoners, N, 0, BROKEN. QRC file is missing in DF+DFQFIX
--A0C00Y06, Commoners, N, 0, FAILED. No master npc in the shop indicated
-A0C00Y07, Commoners, N, 0,
-A0C00Y08, Commoners, N, 0, Passed. questgiver name is incorrect (almost like a codename)
-A0C00Y10, Commoners, N, 0,
-A0C00Y11, Commoners, N, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
-A0C00Y12, Commoners, N, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
-A0C00Y14, Commoners, N, 0,
-A0C00Y15, Commoners, N, 0,
-A0C00Y16, Commoners, N, 0,
-A0C00Y17, Commoners, N, 0,
-A0C01Y01, Commoners, N, 1,
-A0C01Y03, Commoners, N, 1,
-A0C01Y06, Commoners, N, 1,
-A0C01Y09, Commoners, N, 1,
-A0C01Y13, Commoners, N, 1,
-A0C0XY04, Commoners, N, 0X,
-A0C10Y02, Commoners, N, 10,
-A0C10Y05, Commoners, N, 10,
-A0C41Y18, Commoners, N, 41,
+-A0C00Y00, Commoners, N, 0, 0, FAILED. Cannot get rid of popup 1013 after entering the _inn_.
+-A0C00Y04, Commoners, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX
+-A0C00Y06, Commoners, N, 0, 0, FAILED. No master npc in the shop indicated
+A0C00Y07, Commoners, N, 0, 0,
+A0C00Y08, Commoners, N, 0, 0, Passed. questgiver name is incorrect (almost like a codename)
+A0C00Y10, Commoners, N, 0, 0,
+A0C00Y11, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
+A0C00Y12, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
+A0C00Y14, Commoners, N, 0, 0,
+A0C00Y15, Commoners, N, 0, 0,
+A0C00Y16, Commoners, N, 0, 0,
+A0C00Y17, Commoners, N, 0, 0,
+A0C01Y01, Commoners, N, 0, 1,
+A0C01Y03, Commoners, N, 0, 1,
+A0C01Y06, Commoners, N, 0, 1,
+A0C01Y09, Commoners, N, 0, 1,
+A0C01Y13, Commoners, N, 0, 1,
+A0C0XY04, Commoners, N, 0, X,
+A0C10Y02, Commoners, N, 1, 0,
+A0C10Y05, Commoners, N, 1, 0,
+A0C41Y18, Commoners, N, 4, 1,
 
 -- Merchants
-K0C00Y00, Merchants, N, 0,
-K0C00Y02, Merchants, N, 0,
-K0C00Y03, Merchants, N, 0,
-K0C00Y04, Merchants, N, 0,
-K0C00Y05, Merchants, N, 0,
-K0C00Y06, Merchants, N, 0,
-K0C00Y07, Merchants, N, 0,
-K0C00Y08, Merchants, N, 0,
--K0C00Y09, Merchants, N, 0, FAILED. Requires action "add foe aFoe face" and drop foe aFoe face"
-K0C01Y00, Merchants, N, 1,
-K0C01Y10, Merchants, N, 1,
-K0C0XY01, Merchants, N, 0X,
-K0C30Y03, Merchants, N, 30,
+K0C00Y00, Merchants, N, 0, 0,
+K0C00Y02, Merchants, N, 0, 0,
+K0C00Y03, Merchants, N, 0, 0,
+K0C00Y04, Merchants, N, 0, 0,
+K0C00Y05, Merchants, N, 0, 0,
+K0C00Y06, Merchants, N, 0, 0,
+K0C00Y07, Merchants, N, 0, 0,
+K0C00Y08, Merchants, N, 0, 0,
+-K0C00Y09, Merchants, N, 0, 0, FAILED. Requires action "add foe aFoe face" and drop foe aFoe face"
+K0C01Y00, Merchants, N, 0, 1,
+K0C01Y10, Merchants, N, 0, 1,
+K0C0XY01, Merchants, N, 0, X,
+K0C30Y03, Merchants, N, 3, 0,
 
 -- Vampires
--P0A01L00, Vampires, P, 1,
--P0B00L01, Vampires, M, 0,
--P0B00L03, Vampires, M, 0,
--P0B00L04, Vampires, M, 0,
--P0B00L06, Vampires, M, 0,
--P0B01L02, Vampires, M, 1,
--P0B10L07, Vampires, M, 10,
--P0B10L08, Vampires, M, 10, In vanilla DF P0B10L08.QBN file is missing but P0B1XL08.QBN is used instead.
--P0B10L10, Vampires, M, 10,
--P0B1XL08, Vampires, M, 1X, BROKEN. QBN file is a counterpart of P0B10L08.QRC
--P0B20L09, Vampires, M, 20,
+P0A01L00, Vampires, P, 0, 1,
+P0B00L01, Vampires, M, 0, 0,
+P0B00L03, Vampires, M, 0, 0,
+P0B00L04, Vampires, M, 0, 0,
+P0B00L06, Vampires, M, 0, 0,
+P0B01L02, Vampires, M, 0, 1,
+P0B10L07, Vampires, M, 1, 0,
+-P0B10L08, Vampires, M, 1, 0, In vanilla DF P0B10L08.QBN file is missing but P0B1XL08.QBN is used instead.
+P0B10L10, Vampires, M, 1, 0,
+-P0B1XL08, Vampires, M, 1, X, BROKEN. QBN file is a counterpart of P0B10L08.QRC
+P0B20L09, Vampires, M, 2, 0,
 
 -- Nobility
-R0C10Y00, Nobility, N, 10,
-R0C10Y01, Nobility, N, 10,
-R0C10Y02, Nobility, N, 10,
-R0C10Y04, Nobility, N, 10,
-R0C10Y05, Nobility, N, 10,
-R0C10Y06, Nobility, N, 10,
-R0C10Y08, Nobility, N, 10,
-R0C10Y09, Nobility, N, 10,
-R0C10Y10, Nobility, N, 10,
-R0C10Y11, Nobility, N, 10,
-R0C10Y12, Nobility, N, 10,
-R0C10Y13, Nobility, N, 10,
-R0C10Y14, Nobility, N, 10,
-R0C10Y15, Nobility, N, 10,
-R0C10Y17, Nobility, N, 10,
-R0C10Y18, Nobility, N, 10,
-R0C10Y20, Nobility, N, 10,
-R0C10Y21, Nobility, N, 10,
-R0C11Y03, Nobility, N, 11,
-R0C11Y16, Nobility, N, 11,
-R0C11Y19, Nobility, N, 11,
-R0C11Y26, Nobility, N, 11, Adds journal entries which need %qdat - assuming thats the date of entry and not quest start
-R0C11Y27, Nobility, N, 11,
-R0C11Y28, Nobility, N, 11,
-R0C20Y07, Nobility, N, 20,
-R0C20Y22, Nobility, N, 20,
--R0C30Y25, Nobility, N, 30, Needs support for: reveal totambuCoven in province 46 at 423290
--R0C40Y23, Nobility, N, 40, BROKEN. QRC file is missing in DF+DFQFIX
--R0C4XY23, Nobility, N, 4X, Needs support for: until _thing_ performed: & reveal _skeffingcoven_ in province 38 at 5531
--R0C60Y24, Nobility, N, 60, Needs support for: reveal kykosCoven in province 11 at 484567
+R0C10Y00, Nobility, N, 1, 0,
+R0C10Y01, Nobility, N, 1, 0,
+R0C10Y02, Nobility, N, 1, 0,
+R0C10Y04, Nobility, N, 1, 0,
+R0C10Y05, Nobility, N, 1, 0,
+R0C10Y06, Nobility, N, 1, 0,
+R0C10Y08, Nobility, N, 1, 0,
+R0C10Y09, Nobility, N, 1, 0,
+R0C10Y10, Nobility, N, 1, 0,
+R0C10Y11, Nobility, N, 1, 0,
+R0C10Y12, Nobility, N, 1, 0,
+R0C10Y13, Nobility, N, 1, 0,
+R0C10Y14, Nobility, N, 1, 0,
+R0C10Y15, Nobility, N, 1, 0,
+R0C10Y17, Nobility, N, 1, 0,
+R0C10Y18, Nobility, N, 1, 0,
+R0C10Y20, Nobility, N, 1, 0,
+R0C10Y21, Nobility, N, 1, 0,
+R0C11Y03, Nobility, N, 1, 1,
+R0C11Y16, Nobility, N, 1, 1,
+R0C11Y19, Nobility, N, 1, 1,
+R0C11Y26, Nobility, N, 1, 1, Adds journal entries which need %qdat - assuming thats the date of entry and not quest start
+R0C11Y27, Nobility, N, 1, 1,
+R0C11Y28, Nobility, N, 1, 1,
+R0C20Y07, Nobility, N, 2, 0,
+R0C20Y22, Nobility, N, 2, 0,
+-R0C30Y25, Nobility, N, 3, 0, Needs support for: reveal totambuCoven in province 46 at 423290
+-R0C40Y23, Nobility, N, 4, 0, BROKEN. QRC file is missing in DF+DFQFIX
+-R0C4XY23, Nobility, N, 4, X, Needs support for: until _thing_ performed: & reveal _skeffingcoven_ in province 38 at 5531
+-R0C60Y24, Nobility, N, 6, 0, Needs support for: reveal kykosCoven in province 11 at 484567
 
--- Daedra Princes
--10C00Y00
--20C00Y00
--30C00Y00
--40C00Y00
--50C00Y00
--60C00Y00
--70C00Y00
--80C00Y00, BROKEN. QRC file is missing in DF+DFQFIX. QBN is a dupe of 80C0XY00.
--80C0XY00
--90C00Y00
--T0C00Y00
--U0C00Y00
--V0C00Y00
--W0C00Y00
--X0C00Y00
--Y0C00Y00
--Z0C00Y00
+-- Daedra Princes (unused as handled in code)
+-10C00Y00, Oblivion, 0, 0,
+-20C00Y00, Oblivion, 0, 0,
+-30C00Y00, Oblivion, 0, 0,
+-40C00Y00, Oblivion, 0, 0,
+-50C00Y00, Oblivion, 0, 0,
+-60C00Y00, Oblivion, 0, 0,
+-70C00Y00, Oblivion, 0, 0,
+-80C00Y00, Oblivion, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX. QBN is a dupe of 80C0XY00.
+-80C0XY00, Oblivion, 0, X,
+-90C00Y00, Oblivion, 0, 0,
+-T0C00Y00, Oblivion, 0, 0,
+-U0C00Y00, Oblivion, 0, 0,
+-V0C00Y00, Oblivion, 0, 0,
+-W0C00Y00, Oblivion, 0, 0,
+-X0C00Y00, Oblivion, 0, 0,
+-Y0C00Y00, Oblivion, 0, 0,
+-Z0C00Y00, Oblivion, 0, 0,

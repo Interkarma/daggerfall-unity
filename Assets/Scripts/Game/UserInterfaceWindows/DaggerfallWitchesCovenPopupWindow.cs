@@ -118,9 +118,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get the faction id for affecting reputation on success/failure, and current rep
             int factionId = witchNPC.Data.factionID;
             int reputation = GameManager.Instance.PlayerEntity.FactionData.GetReputation(factionId);
+            int level = GameManager.Instance.PlayerEntity.Level;     // Not a proper guild so rank = player level
 
             // Select a quest at random from appropriate pool
-            offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(FactionFile.GuildGroups.Witches, MembershipStatus.Nonmember, factionId, reputation);
+            offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(FactionFile.GuildGroups.Witches, MembershipStatus.Nonmember, factionId, reputation, level);
             if (offeredQuest != null)
             {
                 // Log offered quest
