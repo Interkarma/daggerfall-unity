@@ -968,7 +968,7 @@ namespace DaggerfallWorkshop
                     {
                         terrainArray[i].mapPixelX = int.MinValue;
                         terrainArray[i].mapPixelY = int.MinValue;
-                        terrainArray[i].updateLocation = false;
+                        terrainArray[i].updateLocation = terrainArray[i].hasLocation;
                     }
                 }
             }
