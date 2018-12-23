@@ -185,6 +185,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
 
             // Run any per-frame constant effects
+            entityBehaviour.Entity.ClearConstantEffects();
             DoConstantEffects();
 
             // Refresh mods more frequently than magic rounds, but not too frequently
