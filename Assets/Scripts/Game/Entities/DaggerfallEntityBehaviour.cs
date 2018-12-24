@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             else
                             {
                                 playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
-                                GameObject guard = playerEntity.SpawnCityGuard(mobileNpc.transform.position, mobileNpc.transform.forward);
+                                playerEntity.SpawnCityGuard(mobileNpc.transform.position, mobileNpc.transform.forward);
                             }
 
                             // Disable when dead
@@ -249,17 +249,14 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                         enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
                     }
-                }
 
-                // Handle killing guards
-                if (entity == null)
-                    return;
-
-                EnemyEntity enemyEntity = entity as EnemyEntity;
-                if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && entity.CurrentHealth <= 0)
-                {
-                    playerEntity.TallyCrimeGuildRequirements(false, 1);
-                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                    // Handle killing guards
+                    EnemyEntity enemyEntity = entity as EnemyEntity;
+                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && entity.CurrentHealth <= 0)
+                    {
+                        playerEntity.TallyCrimeGuildRequirements(false, 1);
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                    }
                 }
             }
         }
