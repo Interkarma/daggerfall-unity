@@ -359,9 +359,15 @@ namespace DaggerfallWorkshop.Game
 
         void DoCollision(Collision collision, Collider other)
         {
-            // Disable my collider immediately after impact to prevent mobiles from walking over collider
+            // Set my collider to trigger and rigidbody to kinematic immediately after impact
+            // This helps prevent mobiles from walking over low missiles or the missile bouncing off in some other direction
+            // Seems to eliminate the combined worst-case scenario where mobile will "ride" a missile bounce, throwing them high into the air
+            // Now the worst that seems to happen is mobile will "bump" over low missiles occasionally
+            // TODO: Review later and find a better way to eliminate issue other than this quick workaround
             if (myCollider)
-                myCollider.enabled = false;
+                myCollider.isTrigger = true;
+            if (myRigidbody)
+                myRigidbody.isKinematic = true;
 
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
