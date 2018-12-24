@@ -349,6 +349,20 @@ namespace DaggerfallWorkshop.Game
 
         private void OnCollisionEnter(Collision collision)
         {
+            DoCollision(collision, null);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            DoCollision(null, other);
+        }
+
+        void DoCollision(Collision collision, Collider other)
+        {
+            // Disable my collider immediately after impact to prevent mobiles from walking over collider
+            if (myCollider)
+                myCollider.enabled = false;
+
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
             {
@@ -357,8 +371,16 @@ namespace DaggerfallWorkshop.Game
                 impactDetected = true;
             }
 
+            // Get entity based on collision type
+            DaggerfallEntityBehaviour entityBehaviour = null;
+            if (collision != null && other == null)
+                entityBehaviour = collision.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
+            else if (collision == null && other != null)
+                entityBehaviour = other.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
+            else
+                return;
+
             // If entity was hit then add to target list
-            DaggerfallEntityBehaviour entityBehaviour = collision.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
             if (entityBehaviour)
             {
                 targetEntities.Add(entityBehaviour);

@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 108958489047367644}
   - component: {fileID: 114701158002484598}
   - component: {fileID: 54482902062701562}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: PoisonMissile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
