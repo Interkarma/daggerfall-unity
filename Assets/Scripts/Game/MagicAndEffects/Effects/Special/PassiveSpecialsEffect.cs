@@ -9,6 +9,10 @@
 // Notes:
 //
 
+using UnityEngine;
+using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Entity;
+
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
@@ -20,10 +24,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class PassiveSpecialsEffect : IncumbentEffect
     {
-
         #region Fields
 
         public static readonly string EffectKey = "Passive-Specials";
+        const int sunDamageAmount = 12;
+        const int sunDamageMinutes = 4;
 
         int forcedRoundsRemaining = 1;
 
@@ -57,7 +62,59 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return;
         }
 
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+
+            // TODO: Assign constant advantages/disadvantages
+        }
+
+        public override void MagicRound()
+        {
+            base.MagicRound();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // TODO: Assign advantages/disadvantages aligned to minutes
+
+            DamageFromSunlight(entityBehaviour);
+        }
+
         #endregion
 
+        #region Sun Damage
+
+        void DamageFromSunlight(DaggerfallEntityBehaviour entityBehaviour)
+        {
+            // This special only triggers once every sunDamageMinutes
+            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() % sunDamageMinutes != 0)
+                return;
+
+            // From entity career (e.g. vampire enemy mobile)
+            bool fromCareer = entityBehaviour.Entity.Career.DamageFromSunlight;
+
+            // From player race (e.g. vampire curse)
+            bool fromRace = (manager.IsPlayerEntity) ?
+                ((entityBehaviour.Entity as PlayerEntity).RaceTemplate.SpecialAbilities & DFCareer.SpecialAbilityFlags.SunDamage) == DFCareer.SpecialAbilityFlags.SunDamage :
+                false;
+
+            // Must have career or race active
+            if (!fromCareer && !fromRace)
+                return;
+
+            // Must be outside during the day
+            // Note: Active entities are always where the player is, so we can just use their context
+            if (GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Exterior && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            {
+                // Assign sunDamageAmount points of damage
+                entityBehaviour.Entity.DecreaseHealth(sunDamageAmount);
+                Debug.LogFormat("Applied {0} points of sun damage after {1} minutes", sunDamageAmount, sunDamageMinutes);
+            }
+        }
+
+        #endregion
     }
 }
