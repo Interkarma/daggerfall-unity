@@ -61,9 +61,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
         const string hoursRemainingTextureName = "REST02I0.IMG";    // "Hours remaining"
 
-        const int minutesPerTick = 10;
-        const float restWaitTimePerHour = 0.75f;
-        const float loiterWaitTimePerHour = 1.25f;
+        const float restWaitTimePerMinute = 0.0125f;                // 0.75 seconds per hour in UI countdown
+        const float loiterWaitTimePerMinute = 0.02f;                // 1.20 seconds per hour in UI countdown
         const int cityCampingIllegal = 17;
 
         RestModes currentRestMode = RestModes.Selection;
@@ -295,22 +294,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             playerEntity.IsResting = true;
 
             // Loitering runs at a slower rate to rest
-            float waitTimePerHour = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
+            float waitTimePerMinute = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerMinute : restWaitTimePerMinute;
 
-            // Tick through minutesPerTick intervals until one full hour has passed
-            // This allows quest machine to have more time resolution while still counting off rest in hourly increments
-            if (Time.realtimeSinceStartup > waitTimer + waitTimePerHour / minutesPerTick)
+            // Tick game time once per minute while resting
+            // This allows quest system and effect system to have adequate time resolution while resting
+            if (Time.realtimeSinceStartup > waitTimer + waitTimePerMinute)
             {
                 waitTimer = Time.realtimeSinceStartup;
 
                 // Progress world time and tick quest machine
                 // This could cause enemies to be spawned
-                DaggerfallUnity.WorldTime.Now.RaiseTime(minutesPerTick * 60);
+                DaggerfallUnity.WorldTime.Now.RaiseTime(DaggerfallDateTime.SecondsPerMinute);
                 Questing.QuestMachine.Instance.Tick();
 
                 // Count a full hour
-                minutesOfHour += minutesPerTick;
-                if (minutesOfHour < 60)
+                minutesOfHour += 1;
+                if (minutesOfHour < DaggerfallDateTime.MinutesPerHour)
                     return false;
                 else
                     minutesOfHour = 0;
