@@ -137,6 +137,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
+        public override void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        {
+            // Player just needs to strike enemy with any weapon (including melee) to register a feeding strike
+            lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+        }
+
         #region Private Methods
 
         void CreateCompoundRace()

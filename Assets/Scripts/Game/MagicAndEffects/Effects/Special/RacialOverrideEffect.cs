@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// Gets custom head ImageData for this override.
         /// Return false to just use standard head.
         /// </summary>
-        public virtual bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
+        public virtual bool GetCustomHeadImageData(PlayerEntity playerEntity, out ImageData imageDataOut)
         {
             imageDataOut = new ImageData();
             return false;
@@ -72,10 +72,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// <summary>
         /// Gets custom attack sound clip for race and gender.
         /// </summary>
-        public virtual bool GetCustomRaceGenderAttackSoundData(PlayerEntity entity, out SoundClips soundClipOut)
+        public virtual bool GetCustomRaceGenderAttackSoundData(PlayerEntity playerEntity, out SoundClips soundClipOut)
         {
             soundClipOut = SoundClips.None;
             return false;
+        }
+
+        /// <summary>
+        /// Called by WeaponManager when player hits an enemy with a weapon (includes hand-to-hand).
+        /// </summary>
+        public virtual void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        {
         }
 
         #endregion
