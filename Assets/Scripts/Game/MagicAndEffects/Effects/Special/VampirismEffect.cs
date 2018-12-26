@@ -159,6 +159,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
+        public override bool CheckStartRest(PlayerEntity playerEntity)
+        {
+            const int notSatedTextID = 36;
+
+            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastTimeFed > DaggerfallDateTime.MinutesPerDay)
+            {
+                DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
+                mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
+                mb.ClickAnywhereToClose = true;
+                mb.SetTextTokens(notSatedTextID);
+                mb.Show();
+                return false;
+            }
+
+            return true;
+        }
+
         #region Private Methods
 
         void CreateCompoundRace()

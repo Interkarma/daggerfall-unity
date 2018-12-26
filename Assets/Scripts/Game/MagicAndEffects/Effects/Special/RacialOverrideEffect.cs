@@ -94,6 +94,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
+        /// <summary>
+        /// Checks if custom race can initiate rest.
+        /// Return true to allow rest or false to block it.
+        /// </summary>
+        public virtual bool CheckStartRest(PlayerEntity playerEntity)
+        {
+            return true;
+        }
+
         #endregion
 
         #region Properties
