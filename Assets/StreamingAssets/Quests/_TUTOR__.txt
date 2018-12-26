@@ -61,12 +61,12 @@ Message:  1012
 <ce>            with moving your character around. Don't worry
 <ce>          about monsters, there are none in this first room.
 <ce>                                    
-<ce>           When this text clears, move the mouse around,
-<ce>           it will change where you are looking.
+<ce>           When this text clears, move the mouse around
+<ce>            to change where you are looking.
 <ce>
 <ce>              Use the W, A, S and D keys to go around.
-<ce>          Hint: Those are the default keys, to change them later
-<ce>          use the ESC key then click on CONTROLS button.
+<ce>          Hint: Those are the default keys. You can change them later
+<ce>          using the ESC key and then the CONTROLS button.
 <ce>                                    
 <ce>          I'll be back in about one minute to tell you about
 <ce>                arming yourself and fighting monsters.
@@ -76,7 +76,7 @@ Message:  1013
 <ce>                                    
 <ce>           Before you brave the depths of Privateer's Hold,
 <ce>          you will want to arm yourself. Press the F6 key
-<ce>          to bring your inventory window.
+<ce>          to bring up your inventory window.
 <ce>                                    
 <ce>          Clicking on the weapon puts it into your hand. Now
 <ce>          you are able to draw your weapon. Click on the EXIT
@@ -156,8 +156,8 @@ Message:  1030
 <ce>         If you get killed in this dungeon, you can go back to
 <ce>       that saved game without having to create a new character.
 <ce>                                    
-<ce>        Hint: You can also use F9 for quicksaving and
-<ce>            F12 for quickloading
+<ce>        Hint: You can also use F9 to quicksave and
+<ce>            F12 to quickload.
 <ce>                                    
 <ce>         I'll leave you for several minutes now. Go ahead and
 <ce>           explore the dungeon. Click YES to continue, NO to
