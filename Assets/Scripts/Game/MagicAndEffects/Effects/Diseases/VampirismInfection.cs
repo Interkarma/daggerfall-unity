@@ -123,6 +123,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
                 (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).CloseWindow();
 
+            // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies after transform time
+            GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
+
             // Raise game time to an evening two weeks later
             float raiseTime = (2 * DaggerfallDateTime.SecondsPerWeek) + (DaggerfallDateTime.DuskHour + 1 - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600;
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
