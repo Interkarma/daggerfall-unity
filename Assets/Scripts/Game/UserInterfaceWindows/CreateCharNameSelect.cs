@@ -82,8 +82,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             randomNameButton.Label.Text = "Random";
             randomNameButton.Label.ShadowColor = Color.black;
             randomNameButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
-            randomNameButton.Enabled = false;
             randomNameButton.OnMouseClick += RandomNameButton_OnMouseClick;
+            SetRandomButtonVisibility();
 
             // OK button
             okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
@@ -91,6 +91,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         public override void OnPush()
+        {
+            SetRandomButtonVisibility();
+
+            // Randomise DFRandom seed from System.Random
+            // A bit of a hack but better than starting with a seed of 0 every time
+            System.Random random = new System.Random();
+            DFRandom.Seed = (uint)random.Next();
+
+            base.OnPush();
+        }
+
+        private void SetRandomButtonVisibility()
         {
             // Must have a race template set
             if (raceTemplate == null)
@@ -113,13 +125,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     randomNameButton.Enabled = false;
                     break;
             }
-
-            // Randomise DFRandom seed from System.Random
-            // A bit of a hack but better than starting with a seed of 0 every time
-            System.Random random = new System.Random();
-            DFRandom.Seed = (uint)random.Next();
-
-            base.OnPush();
         }
 
         public override void Update()
