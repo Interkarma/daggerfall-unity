@@ -1182,7 +1182,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public bool HasVampirism()
         {
-            return FindIncumbentEffect<VampirismEffect>() != null;
+            return racialOverrideEffect is VampirismEffect;
         }
 
         #endregion
