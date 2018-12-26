@@ -291,7 +291,8 @@ namespace DaggerfallWorkshop.Game.Entity
                         TallySkill(DFCareer.Skills.Swimming, 1);
                     }
 
-                    DecreaseFatigue(amount);
+                    if (!isResting)
+                        DecreaseFatigue(amount);
 
                     // Make magically-created items that have expired disappear
                     items.RemoveExpiredItems();
