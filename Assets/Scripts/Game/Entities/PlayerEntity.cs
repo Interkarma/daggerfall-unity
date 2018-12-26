@@ -392,9 +392,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     //StartVampireOrWereCreatureQuest(true);
             }
 
-            // TODO: Right now enemy spawns are only prevented when time has been raised for
-            // fast travel. They should later be prevented when time has been raised for
-            // turning into vampire
+            // Enemy spawns are prevented after time is raised for fast travel, jail time, and vampire transformation
             // Classic also prevents enemy spawns during loitering,
             // but this seems counterintuitive so it's not implemented in DF Unity for now
             if (!preventEnemySpawns)
