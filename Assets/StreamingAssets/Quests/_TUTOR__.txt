@@ -61,10 +61,10 @@ Message:  1012
 <ce>            with moving your character around. Don't worry
 <ce>          about monsters, there are none in this first room.
 <ce>                                    
-<ce>           When this text clears, move the cursor around on
-<ce>           the screen, it will change where you are looking.
+<ce>           When this text clears, move the mouse around,
+<ce>           it will change where you are looking.
 <ce>
-<ce>              Use the W, A, S and D keys to move around.
+<ce>              Use the W, A, S and D keys to go around.
 <ce>          Hint: Those are the default keys, to change them later
 <ce>          use the ESC key then click on CONTROLS button.
 <ce>                                    
