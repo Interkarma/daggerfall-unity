@@ -24,11 +24,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     ///
     /// TODO:
     ///  * Clear guild memberships and reset reputations
-    ///  * Damage from sunlight
-    ///  * Damage from holy places
-    ///  * Fast travel to arrive in early evening instead of early morning
-    ///  * Must feed once per day to rest
-    ///  * Can't rest in daylight or holy places
     ///  * Deploy vampire questline
     /// </summary>
     public class VampirismEffect : RacialOverrideEffect
