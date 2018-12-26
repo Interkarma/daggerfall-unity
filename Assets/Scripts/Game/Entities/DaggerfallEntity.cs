@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -746,8 +747,17 @@ namespace DaggerfallWorkshop.Game.Entity
             return monsterFile.GetMonsterClass((int)career);
         }
 
-        public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender)
+        public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender, bool isPlayerAttack = false)
         {
+            // Check for racial override attack sound for player only
+            if (isPlayerAttack)
+            {
+                SoundClips customSound;
+                RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                if (racialOverride != null && racialOverride.GetCustomRaceGenderAttackSoundData(GameManager.Instance.PlayerEntity, out customSound))
+                    return customSound;
+            }
+
             if (gender == Genders.Male)
             {
                 switch (race)

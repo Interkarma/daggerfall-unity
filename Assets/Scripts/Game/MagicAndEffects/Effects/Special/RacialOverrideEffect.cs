@@ -69,6 +69,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return false;
         }
 
+        /// <summary>
+        /// Gets custom attack sound clip for race and gender.
+        /// </summary>
+        public virtual bool GetCustomRaceGenderAttackSoundData(PlayerEntity entity, out SoundClips soundClipOut)
+        {
+            soundClipOut = SoundClips.None;
+            return false;
+        }
+
         #endregion
 
         #region Properties

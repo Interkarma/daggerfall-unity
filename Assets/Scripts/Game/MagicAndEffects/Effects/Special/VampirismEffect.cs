@@ -121,6 +121,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
+        public override bool GetCustomRaceGenderAttackSoundData(PlayerEntity entity, out SoundClips soundClipOut)
+        {
+            switch (entity.Gender)
+            {
+                default:
+                case Genders.Male:
+                    soundClipOut = SoundClips.EnemyVampireAttack;
+                    break;
+                case Genders.Female:
+                    soundClipOut = SoundClips.EnemyFemaleVampireAttack;
+                    break;
+            }
+
+            return true;
+        }
+
         #region Private Methods
 
         void CreateCompoundRace()
