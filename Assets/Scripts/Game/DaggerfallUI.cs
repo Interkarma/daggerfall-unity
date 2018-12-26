@@ -461,6 +461,9 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfSpellMakerWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
+                    RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block fast travel (e.g. vampire during day)
+                    if (racialOverride != null && !racialOverride.CheckFastTravel(GameManager.Instance.PlayerEntity))
+                        return;
                     if (GameManager.Instance.IsPlayerInside)
                     {
                         AddHUDText(HardStrings.cannotTravelIndoors);

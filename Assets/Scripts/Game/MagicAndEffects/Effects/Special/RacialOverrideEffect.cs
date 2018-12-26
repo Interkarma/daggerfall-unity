@@ -85,6 +85,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
         }
 
+        /// <summary>
+        /// Checks if custom race can initiate fast travel.
+        /// Return true to allow fast travel or false to block it.
+        /// </summary>
+        public virtual bool CheckFastTravel(PlayerEntity playerEntity)
+        {
+            return true;
+        }
+
         #endregion
 
         #region Properties

@@ -99,6 +99,7 @@ doorLocked,                 Door is now locked.
 doorAlreadyLocked,          Door already locked.
 openFailed,                 Lock is too powerful.
 noSpellbook,                You have no spellbook!
+vampireFastTravelDay,       You cannot initiate fast travel during the day.
 
 - Potion names:
 

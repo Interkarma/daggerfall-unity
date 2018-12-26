@@ -11,6 +11,7 @@
 
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 
@@ -141,6 +142,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Player just needs to strike enemy with any weapon (including melee) to register a feeding strike
             lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+        }
+
+        public override bool CheckFastTravel(PlayerEntity playerEntity)
+        {
+            if (DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            {
+                DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
+                mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
+                mb.ClickAnywhereToClose = true;
+                mb.SetText(TextManager.Instance.GetText(textDatabase, "vampireFastTravelDay"));
+                mb.Show();
+                return false;
+            }
+
+            return true;
         }
 
         #region Private Methods
