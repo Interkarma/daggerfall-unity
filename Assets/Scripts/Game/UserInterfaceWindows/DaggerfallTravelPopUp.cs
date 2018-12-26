@@ -18,6 +18,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -299,10 +300,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies at the end of a long trip
             GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
 
-            // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
-            // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
-            // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now
-            if (speedCautious)
+            // Vampires always arrive just after 6pm regardless of travel type
+            // Otherwise raise arrival time to just after 7am if cautious travel would arrive at night
+            if (GameManager.Instance.PlayerEffectManager.HasVampirism())
+            {
+                DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime((DaggerfallDateTime.DuskHour - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600);
+            }
+            else if (speedCautious)
             {
                 if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 7)
                     || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 7) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
