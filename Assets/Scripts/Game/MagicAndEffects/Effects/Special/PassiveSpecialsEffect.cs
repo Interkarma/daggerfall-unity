@@ -30,8 +30,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "Passive-Specials";
         const int sunDamageAmount = 12;
         const int holyDamageAmount = 12;
-        const int sunDamageMinutes = 4;
-        const int holyDamageMinutes = 4;
+        const int sunDamagePerRounds = 4;
+        const int holyDamagePerRounds = 4;
 
         int forcedRoundsRemaining = 1;
 
@@ -93,8 +93,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void DamageFromSunlight(DaggerfallEntityBehaviour entityBehaviour)
         {
-            // This special only triggers once every sunDamageMinutes
-            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() % sunDamageMinutes != 0)
+            // This special only triggers once every sunDamagePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % sunDamagePerRounds != 0)
                 return;
 
             // From entity career (e.g. vampire enemy mobile)
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Assign sunDamageAmount points of damage
                 entityBehaviour.Entity.DecreaseHealth(sunDamageAmount);
-                Debug.LogFormat("Applied {0} points of sun damage after {1} minutes", sunDamageAmount, sunDamageMinutes);
+                //Debug.LogFormat("Applied {0} points of sun damage after {1} magic (game minutes)", sunDamageAmount, sunDamagePerRounds);
             }
         }
 
@@ -125,8 +125,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void DamageFromHolyPlaces(DaggerfallEntityBehaviour entityBehaviour)
         {
-            // This special only triggers once every holyDamageMinutes
-            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() % holyDamageMinutes != 0)
+            // This special only triggers once every holyDamagePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % holyDamagePerRounds != 0)
                 return;
 
             // From entity career (e.g. vampire enemy mobile)
@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     // Assign holyDamageAmount points of damage
                     entityBehaviour.Entity.DecreaseHealth(holyDamageAmount);
-                    Debug.LogFormat("Applied {0} points of holy damage after {1} minutes", holyDamageAmount, holyDamageMinutes);
+                    //Debug.LogFormat("Applied {0} points of holy damage after {1} magic rounds (game minutes)", holyDamageAmount, holyDamagePerRounds);
                 }
             }
         }
