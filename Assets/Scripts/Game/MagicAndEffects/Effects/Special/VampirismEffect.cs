@@ -244,6 +244,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             forcedRoundsRemaining = 0;
             ResignAsIncumbent();
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(60);
+            // TODO: End all vampire quests that might be running other than cure quest
+        }
+
+        /// <summary>
+        /// Gets name of vampire clan from Races text database.
+        /// </summary>
+        public string GetClanName()
+        {
+            return TextManager.Instance.GetText(racesTextDatabase, vampireClan.ToString().ToLower());
         }
 
         #endregion

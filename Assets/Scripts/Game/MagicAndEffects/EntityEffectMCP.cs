@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -17,7 +17,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         EntityEffectMacroDataSource dataSource;
 
-        public MacroDataSource GetMacroDataSource()
+        public virtual MacroDataSource GetMacroDataSource()
         {
             if (dataSource == null)
                 dataSource = new EntityEffectMacroDataSource(this);
