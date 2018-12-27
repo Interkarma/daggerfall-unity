@@ -1185,6 +1185,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return racialOverrideEffect is VampirismEffect;
         }
 
+        public void EndVampirism()
+        {
+            if (HasVampirism())
+                (racialOverrideEffect as VampirismEffect).CureVampirism();
+        }
+
         #endregion
 
         #region Static Helpers

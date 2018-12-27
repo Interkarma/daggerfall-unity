@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected const string racesTextDatabase = "Races";
 
-        int forcedRoundsRemaining = 1;
+        protected int forcedRoundsRemaining = 1;
 
         #endregion
 
