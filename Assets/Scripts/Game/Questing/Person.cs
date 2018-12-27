@@ -573,7 +573,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // For other NPCs use default scope and building type
             Place.Scopes scope = Place.Scopes.Remote;
-            string buildingTypeString = "house2";
+            string buildingTypeString = "house";
 
             // Adjust scope and building type based on faction hints
             int p1 = 0, p2 = 0, p3 = 0;

@@ -501,8 +501,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Get list of valid sites
             SiteDetails[] foundSites = null;
-            if (p2 == -1)
+            if (p2 == -1 && p3 == 0)
                 foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
+            else if (p2 == -1 && p3 == 1)
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
             else
                 foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
 
@@ -594,11 +596,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Get list of valid sites
                 SiteDetails[] foundSites = null;
-                if (p2 == -1)
-                {
-                    // Collect random building sites
+                if (p2 == -1 && p3 == 0)
                     foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
-                }
+                else if (p2 == -1 && p3 == 1)
+                    foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
                 else
                 {
                     // Check if town contains specified building type in MAPS.BSA directory
@@ -878,6 +879,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
+            int[] validHouseTypes = { 18, 19, 20 };
 
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
@@ -895,17 +897,28 @@ namespace DaggerfallWorkshop.Game.Questing
                     BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index], x, y);
                     for (int i = 0; i < buildingSummary.Length; i++)
                     {
-                        // When enumAllValid is specified accept all valid building types
                         bool wildcardFound = false;
-                        DFLocation.BuildingTypes wildcardType = DFLocation.BuildingTypes.AllValid;
+                        DFLocation.BuildingTypes wildcardType = DFLocation.BuildingTypes.None;
                         if (buildingType == DFLocation.BuildingTypes.AllValid)
                         {
-                            for(int j = 0; j < validBuildingTypes.Length; j++)
+                            for (int j = 0; j < validBuildingTypes.Length; j++)
                             {
                                 if (validBuildingTypes[j] == (int)buildingSummary[i].BuildingType)
                                 {
                                     wildcardFound = true;
                                     wildcardType = (DFLocation.BuildingTypes)validBuildingTypes[j];
+                                    break;
+                                }
+                            }
+                        }
+                        else if (buildingType == DFLocation.BuildingTypes.AnyHouse)
+                        {
+                            for (int j = 0; j < validHouseTypes.Length; j++)
+                            {
+                                if (validHouseTypes[j] == (int)buildingSummary[i].BuildingType)
+                                {
+                                    wildcardFound = true;
+                                    wildcardType = (DFLocation.BuildingTypes)validHouseTypes[j];
                                     break;
                                 }
                             }
