@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
             PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
             PlayerGPS.OnMapPixelChanged += PlayerGPS_OnMapPixelChanged;
+            StreamingWorld.OnFloatingOriginChange += StreamingWorld_OnFloatingOriginChange;
         }
 
         public override void Update()
@@ -145,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         if (door.buildingKey == site.buildingKey)
                         {
                             foundTotal++;
-                            Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
+                            Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position + GameManager.Instance.StreamingWorld.WorldCompensation;
 
                             SiteTarget target = new SiteTarget();
                             target.doorPosition = position;
@@ -183,6 +184,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void QuestMachine_OnQuestStarted(Quest quest)
         {
             // Refresh when starting a new quest
+            RefreshSiteTargets();
+        }
+
+        private void StreamingWorld_OnFloatingOriginChange()
+        {
+            // Refresh when world compensation changes or markers may appear floating in air
             RefreshSiteTargets();
         }
 
