@@ -482,6 +482,10 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
             }
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.UseMagicItem))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
+            }
 
             if (InputManager.Instance.ActionComplete(InputManager.Actions.Status))
             {

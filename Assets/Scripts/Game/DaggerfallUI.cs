@@ -96,6 +96,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallQuestJournalWindow dfQuestJournalWindow;
         DaggerfallPlayerHistoryWindow dfPlayerHistoryWindow;
         DaggerfallSpellBookWindow dfSpellBookWindow;
+        DaggerfallUseMagicItemWindow dfUseMagicItemWindow;
         DaggerfallSpellMakerWindow dfSpellMakerWindow;
         DaggerfallItemMakerWindow dfItemMakerWindow;
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
@@ -289,6 +290,7 @@ namespace DaggerfallWorkshop.Game
             dfPlayerHistoryWindow = new DaggerfallPlayerHistoryWindow(uiManager);
             dfTalkWindow = new DaggerfallTalkWindow(uiManager);
             dfSpellBookWindow = new DaggerfallSpellBookWindow(uiManager);
+            dfUseMagicItemWindow = new DaggerfallUseMagicItemWindow(uiManager);
             dfSpellMakerWindow = new DaggerfallSpellMakerWindow(uiManager);
             dfItemMakerWindow = new DaggerfallItemMakerWindow(uiManager);
             dfPotionMakerWindow = new DaggerfallPotionMakerWindow(uiManager);
@@ -408,6 +410,7 @@ namespace DaggerfallWorkshop.Game
 
         void ProcessMessages()
         {
+            RacialOverrideEffect racialOverride = null;
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiSetupGameWizard:
@@ -449,6 +452,9 @@ namespace DaggerfallWorkshop.Game
                             AddHUDText(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
                     }
                     break;
+                case DaggerfallUIMessages.dfuiOpenUseMagicItemWindow:
+                    uiManager.PushWindow(dfUseMagicItemWindow);
+                    break;
                 case DaggerfallUIMessages.dfuiOpenCourtWindow:
                     uiManager.PushWindow(dfCourtWindow);
                     break;
@@ -469,7 +475,13 @@ namespace DaggerfallWorkshop.Game
                         else
                         {
                             if (!GiveOffer())
+                            {
+                                racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block fast travel (e.g. vampire during day)
+                                if (racialOverride != null && !racialOverride.CheckFastTravel(GameManager.Instance.PlayerEntity))
+                                    return;
+
                                 uiManager.PushWindow(dfTravelMapWindow);
+                            }
                         }
                     }
                     break;
@@ -507,7 +519,13 @@ namespace DaggerfallWorkshop.Game
                     else
                     {
                         if (!GiveOffer())
+                        {
+                            racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block rest (e.g. vampire not sated)
+                            if (racialOverride != null && !racialOverride.CheckStartRest(GameManager.Instance.PlayerEntity))
+                                return;
+
                             uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                        }
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenTransportWindow:

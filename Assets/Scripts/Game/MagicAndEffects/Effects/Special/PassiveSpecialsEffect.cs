@@ -9,6 +9,11 @@
 // Notes:
 //
 
+using UnityEngine;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Entity;
+
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
@@ -20,10 +25,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class PassiveSpecialsEffect : IncumbentEffect
     {
-
         #region Fields
 
         public static readonly string EffectKey = "Passive-Specials";
+        const int sunDamageAmount = 12;
+        const int holyDamageAmount = 12;
+        const int sunDamagePerRounds = 4;
+        const int holyDamagePerRounds = 4;
 
         int forcedRoundsRemaining = 1;
 
@@ -57,7 +65,99 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return;
         }
 
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+
+            // TODO: Assign constant advantages/disadvantages
+        }
+
+        public override void MagicRound()
+        {
+            base.MagicRound();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // TODO: Assign advantages/disadvantages aligned to minutes
+
+            DamageFromSunlight(entityBehaviour);
+            DamageFromHolyPlaces(entityBehaviour);
+        }
+
         #endregion
 
+        #region Sun Damage
+
+        void DamageFromSunlight(DaggerfallEntityBehaviour entityBehaviour)
+        {
+            // This special only triggers once every sunDamagePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % sunDamagePerRounds != 0)
+                return;
+
+            // From entity career (e.g. vampire enemy mobile)
+            bool fromCareer = entityBehaviour.Entity.Career.DamageFromSunlight;
+
+            // From player race (e.g. vampire curse)
+            bool fromRace = (manager.IsPlayerEntity) ?
+                ((entityBehaviour.Entity as PlayerEntity).RaceTemplate.SpecialAbilities & DFCareer.SpecialAbilityFlags.SunDamage) == DFCareer.SpecialAbilityFlags.SunDamage :
+                false;
+
+            // Must have career or race active
+            if (!fromCareer && !fromRace)
+                return;
+
+            // Must be outside during the day
+            // Note: Active entities are always where the player is, so we can just use player context
+            if (GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Exterior && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            {
+                // Assign sunDamageAmount points of damage
+                entityBehaviour.Entity.DecreaseHealth(sunDamageAmount);
+                //Debug.LogFormat("Applied {0} points of sun damage after {1} magic (game minutes)", sunDamageAmount, sunDamagePerRounds);
+            }
+        }
+
+        #endregion
+
+        #region Holy Damage
+
+        void DamageFromHolyPlaces(DaggerfallEntityBehaviour entityBehaviour)
+        {
+            // This special only triggers once every holyDamagePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % holyDamagePerRounds != 0)
+                return;
+
+            // From entity career (e.g. vampire enemy mobile)
+            bool fromCareer = entityBehaviour.Entity.Career.DamageFromHolyPlaces;
+
+            // From player race (e.g. vampire curse)
+            bool fromRace = (manager.IsPlayerEntity) ?
+                ((entityBehaviour.Entity as PlayerEntity).RaceTemplate.SpecialAbilities & DFCareer.SpecialAbilityFlags.HolyDamage) == DFCareer.SpecialAbilityFlags.HolyDamage :
+                false;
+
+            // Must have career or race active
+            if (!fromCareer && !fromRace)
+                return;
+
+            // Must be inside
+            // Note: Active entities are always where the player is, so we can just use player context
+            if (GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Interior)
+            {
+                // Holy places include all Temples and guildhalls of the Fighter Trainers (faction #849)
+                // https://en.uesp.net/wiki/Daggerfall:ClassMaker#Special_Disadvantages
+                DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
+                if (interior.BuildingData.BuildingType == DFLocation.BuildingTypes.Temple ||
+                    interior.BuildingData.FactionId == (int)FactionFile.FactionIDs.Fighter_Trainers)
+                {
+                    // Assign holyDamageAmount points of damage
+                    entityBehaviour.Entity.DecreaseHealth(holyDamageAmount);
+                    //Debug.LogFormat("Applied {0} points of holy damage after {1} magic rounds (game minutes)", holyDamageAmount, holyDamagePerRounds);
+                }
+            }
+        }
+
+        #endregion
     }
 }

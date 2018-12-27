@@ -311,6 +311,14 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if this item is a parchment.
+        /// </summary>
+        public bool IsParchment
+        {
+            get { return ItemGroup == ItemGroups.UselessItems2 && TemplateIndex == (int)UselessItems2.Parchment; }
+        }
+
+        /// <summary>
         /// Gets/sets the soul trapped in a soul trap.
         /// </summary>
         public MobileTypes TrappedSoulType
@@ -1223,6 +1231,7 @@ namespace DaggerfallWorkshop.Game.Items
             stackCount = other.stackCount;
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
+            potionRecipeKey = other.potionRecipeKey;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();

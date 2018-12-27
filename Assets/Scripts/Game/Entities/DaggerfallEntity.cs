@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -545,25 +546,26 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Gets resistance chance as set by ElementalResistance effect.
-        /// This is only used when corresponding element resistance flag is raised by effect.
+        /// Gets current total resistance chance for an element.
+        /// This is only used when corresponding elemental resistance flag is raised by effect.
         /// </summary>
-        /// <param name="elementType">Element type.</param>
-        /// <returns>Resistance chance.</returns>
+        /// <param name="elementType">Element type to check total resistance value of.</param>
+        /// <returns>Resistance chance for that element.</returns>
         public int GetResistanceChance(DFCareer.Elements elementType)
         {
             return resistanceChances[(int)elementType];
         }
 
         /// <summary>
-        /// Sets resistance chance from ElementalResistance effect.
+        /// Raise resistance chance total for an element.
         /// This is only used when corresponding element resistance flag is raised by effect.
+        /// Resistance chance is reset each frame so multiple effects can contribute to total resistance chance.
         /// </summary>
-        /// <param name="elementType">Element type.</param>
-        /// <param name="value">Resist chance.</param>
-        public void SetResistanceChance(DFCareer.Elements elementType, int value)
+        /// <param name="elementType">Element type to raise resistance of.</param>
+        /// <param name="value">Amount to raise resist chance for element.</param>
+        public void RaiseResistanceChance(DFCareer.Elements elementType, int value)
         {
-            resistanceChances[(int)elementType] = value;
+            resistanceChances[(int)elementType] += value;
         }
 
         #endregion
@@ -678,10 +680,9 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Called when starting a new game or when a game starts to load.
-        /// Used to clear out any state that should not persist to a new game session.
+        /// Constant effects are cleared each frame by peered entity effect manager and must be actively set by effects maintaining them.
         /// </summary>
-        protected virtual void ResetEntityState()
+        public virtual void ClearConstantEffects()
         {
             IsParalyzed = false;
             IsImmuneToParalysis = false;
@@ -698,7 +699,20 @@ namespace DaggerfallWorkshop.Game.Entity
             IsResistingDiseaseOrPoison = false;
             IsResistingShock = false;
             IsResistingMagic = false;
-            Array.Clear(resistanceChances, 0, resistanceChances.Length);
+            resistanceChances[0] = 0;
+            resistanceChances[1] = 0;
+            resistanceChances[2] = 0;
+            resistanceChances[3] = 0;
+            resistanceChances[4] = 0;
+        }
+
+        /// <summary>
+        /// Called when starting a new game or when a game starts to load.
+        /// Used to clear out any state that should not persist to a new game session.
+        /// </summary>
+        protected virtual void ResetEntityState()
+        {
+            ClearConstantEffects();
             SetEntityDefaults();
         }
 
@@ -765,8 +779,17 @@ namespace DaggerfallWorkshop.Game.Entity
             return monsterFile.GetMonsterClass((int)career);
         }
 
-        public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender)
+        public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender, bool isPlayerAttack = false)
         {
+            // Check for racial override attack sound for player only
+            if (isPlayerAttack)
+            {
+                SoundClips customSound;
+                RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                if (racialOverride != null && racialOverride.GetCustomRaceGenderAttackSoundData(GameManager.Instance.PlayerEntity, out customSound))
+                    return customSound;
+            }
+
             if (gender == Genders.Male)
             {
                 switch (race)

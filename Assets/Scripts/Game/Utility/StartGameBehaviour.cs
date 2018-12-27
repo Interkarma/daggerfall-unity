@@ -11,14 +11,11 @@
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
@@ -575,6 +572,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Setup bank accounts
             var bankRecords = saveTree.FindRecord(RecordTypes.BankAccount);
             Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
+
+            // Ship ownership
+            Banking.DaggerfallBankManager.AssignShipToPlayer(saveVars.PlayerOwnedShip);
 
             // Get regional data.
             playerEntity.RegionData = saveVars.RegionData;

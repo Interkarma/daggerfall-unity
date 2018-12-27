@@ -4,15 +4,19 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich, Hazelnut
 // 
 // Notes:
 //
 
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
+using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -23,20 +27,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     ///
     /// TODO:
     ///  * Clear guild memberships and reset reputations
-    ///  * Damage from sunlight
-    ///  * Damage from holy places
-    ///  * Fast travel to arrive in early evening instead of early morning
-    ///  * Must feed once per day to rest
-    ///  * Can't rest in daylight or holy places
-    ///  * Deploy vampire questline
     /// </summary>
     public class VampirismEffect : RacialOverrideEffect
     {
+        #region Fields
+
         public const string VampirismCurseKey = "Vampirism-Curse";
 
         RaceTemplate compoundRace;
         VampireClans vampireClan = VampireClans.Lyrezi;
         uint lastTimeFed;
+        bool hasStartedInitialVampireQuest;
+
+        #endregion
+
+        #region Constructors
+
+        public VampirismEffect()
+        {
+            VampireConsoleCommands.RegisterCommands();
+        }
+
+        #endregion
+
+        #region Overrides
 
         public VampireClans VampireClan
         {
@@ -70,7 +84,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 vampireClan = infection.InfectionVampireClan;
 
             // Considered well fed on first start
-            lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            UpdateSatiation();
 
             // Our dark transformation is complete - cure everything on player (including stage one disease)
             GameManager.Instance.PlayerEffectManager.CureAll();
@@ -93,10 +107,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void MagicRound()
         {
             base.MagicRound();
-
-            // Execute advantages and disadvantages
             ApplyVampireAdvantages();
-            ApplyVampireDisadvantages();
         }
 
         public override bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
@@ -120,6 +131,131 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             imageDataOut = ImageReader.GetImageData(vampHeads, index, 0, true);
             return true;
         }
+
+        public override bool GetCustomRaceGenderAttackSoundData(PlayerEntity entity, out SoundClips soundClipOut)
+        {
+            switch (entity.Gender)
+            {
+                default:
+                case Genders.Male:
+                    soundClipOut = SoundClips.EnemyVampireAttack;
+                    break;
+                case Genders.Female:
+                    soundClipOut = SoundClips.EnemyFemaleVampireAttack;
+                    break;
+            }
+
+            return true;
+        }
+
+        public override void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        {
+            // Player just needs to strike enemy with any weapon (including melee) to register a feeding strike
+            UpdateSatiation();
+        }
+
+        public override bool CheckFastTravel(PlayerEntity playerEntity)
+        {
+            if (DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            {
+                DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
+                mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
+                mb.ClickAnywhereToClose = true;
+                mb.SetText(TextManager.Instance.GetText(textDatabase, "vampireFastTravelDay"));
+                mb.Show();
+                return false;
+            }
+
+            return true;
+        }
+
+        public override bool CheckStartRest(PlayerEntity playerEntity)
+        {
+            const int notSatedTextID = 36;
+
+            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastTimeFed > DaggerfallDateTime.MinutesPerDay)
+            {
+                DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
+                mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
+                mb.ClickAnywhereToClose = true;
+                mb.SetTextTokens(notSatedTextID);
+                mb.Show();
+                return false;
+            }
+
+            return true;
+        }
+
+        public override void StartQuest(bool isCureQuest)
+        {
+            // More about vampire clan quests can found here:
+            // https://en.uesp.net/wiki/Daggerfall:Quests#Vampire_Clans
+
+            if (isCureQuest)
+            {
+                if (DFRandom.random_range_inclusive(10, 100) < 30)
+                    QuestMachine.Instance.InstantiateQuest("$CUREVAM");
+            }
+            else if (hasStartedInitialVampireQuest)
+            {
+                // Get an appropriate quest for player's level?
+                if (DFRandom.random_range_inclusive(1, 100) < 50)
+                {
+                    // Get the regional vampire clan faction id for affecting reputation on success/failure, and current rep
+                    int factionId = (int)vampireClan;
+                    int reputation = GameManager.Instance.PlayerEntity.FactionData.GetReputation(factionId);
+
+                    // Select a quest at random from appropriate pool
+                    Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(
+                        FactionFile.GuildGroups.Vampires,
+                        MembershipStatus.Nonmember,
+                        factionId,
+                        reputation,
+                        GameManager.Instance.PlayerEntity.Level);
+                    if (offeredQuest != null)
+                        QuestMachine.Instance.InstantiateQuest(offeredQuest);
+                }
+            }
+            else if (DFRandom.random_range_inclusive(1, 100) < 50)
+            {
+                QuestMachine.Instance.InstantiateQuest("P0A01L00");
+                hasStartedInitialVampireQuest = true;
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Sets vampire thirst sated from current point in time.
+        /// </summary>
+        public void UpdateSatiation()
+        {
+            lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+        }
+
+        /// <summary>
+        /// Cure vampirism and allow this racial override effect to expire.
+        /// Game time is raised by one minute so effect payload expires almost immediately.
+        /// </summary>
+        public void CureVampirism()
+        {
+            forcedRoundsRemaining = 0;
+            ResignAsIncumbent();
+            DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(60);
+            // TODO: End all vampire quests that might be running other than cure quest
+        }
+
+        /// <summary>
+        /// Gets name of vampire clan from Races text database.
+        /// </summary>
+        public string GetClanName()
+        {
+            return TextManager.Instance.GetText(racesTextDatabase, vampireClan.ToString().ToLower());
+        }
+
+        #endregion
 
         #region Private Methods
 
@@ -172,13 +308,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 SetStatMod(DFCareer.Stats.Intelligence, statModAmount);
         }
 
-        void ApplyVampireDisadvantages()
-        {
-            // TODO: Damage from sunlight
-
-            // TODO: Damage from holy places
-        }
-
         #endregion
 
         #region Serialization
@@ -189,6 +318,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             public RaceTemplate compoundRace;
             public VampireClans vampireClan;
             public uint lastTimeFed;
+            public bool hasStartedInitialVampireQuest;
         }
 
         public override object GetSaveData()
@@ -197,6 +327,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             data.compoundRace = compoundRace;
             data.vampireClan = vampireClan;
             data.lastTimeFed = lastTimeFed;
+            data.hasStartedInitialVampireQuest = hasStartedInitialVampireQuest;
 
             return data;
         }
@@ -210,6 +341,63 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             compoundRace = data.compoundRace;
             vampireClan = data.vampireClan;
             lastTimeFed = data.lastTimeFed;
+            hasStartedInitialVampireQuest = data.hasStartedInitialVampireQuest;
+        }
+
+        #endregion
+
+        #region Console Commands
+
+        public static class VampireConsoleCommands
+        {
+            public static void RegisterCommands()
+            {
+                try
+                {
+                    ConsoleCommandsDatabase.RegisterCommand(FeedMe.name, FeedMe.description, FeedMe.usage, FeedMe.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(CureMe.name, CureMe.description, CureMe.usage, CureMe.Execute);
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+            private static class FeedMe
+            {
+                public static readonly string name = "vamp_feedme";
+                public static readonly string description = "Vampire thirst becomes sated.";
+                public static readonly string usage = "vamp_feedme";
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.PlayerEffectManager.HasVampirism())
+                    {
+                        (GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect() as VampirismEffect).UpdateSatiation();
+                        return "Your thirst has been sated.";
+                    }
+                    else
+                        return "Player is not a vampire.";
+                }
+            }
+
+            private static class CureMe
+            {
+                public static readonly string name = "vamp_cureme";
+                public static readonly string description = "Player is cured of vampirism effect at start of next magic round (1 game minute).";
+                public static readonly string usage = "vamp_cureme";
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.PlayerEffectManager.HasVampirism())
+                    {
+                        GameManager.Instance.PlayerEffectManager.EndVampirism();
+                        return "You have been cured of vampirism.";
+                    }
+                    else
+                        return "Player is not a vampire.";
+                }
+            }
         }
 
         #endregion
