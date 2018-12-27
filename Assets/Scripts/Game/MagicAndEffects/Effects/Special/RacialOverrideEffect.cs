@@ -103,6 +103,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
+        /// <summary>
+        /// Starts custom racial quest.
+        ///  * Called every 38 days with isCureQuest = false
+        ///  * Called every 84 days with isCureQuest = true
+        /// Mainly used by vampirism and lycanthropy in core.
+        /// Custom racial override effects can ignore this virtual to start and manage quests however they like.
+        /// </summary>
+        /// <param name="isCureQuest">True when this should start cure quest.</param>
+        public virtual void StartQuest(bool isCureQuest)
+        {
+        }
+
         #endregion
 
         #region Properties

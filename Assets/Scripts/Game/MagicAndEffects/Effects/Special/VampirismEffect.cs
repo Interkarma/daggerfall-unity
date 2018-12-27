@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich, Hazelnut
 // 
 // Notes:
 //
@@ -12,6 +12,8 @@
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using Wenzil.Console;
@@ -25,7 +27,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     ///
     /// TODO:
     ///  * Clear guild memberships and reset reputations
-    ///  * Deploy vampire questline
     /// </summary>
     public class VampirismEffect : RacialOverrideEffect
     {
@@ -36,6 +37,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         RaceTemplate compoundRace;
         VampireClans vampireClan = VampireClans.Lyrezi;
         uint lastTimeFed;
+        bool hasStartedInitialVampireQuest;
 
         #endregion
 
@@ -184,6 +186,43 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
+        public override void StartQuest(bool isCureQuest)
+        {
+            // More about vampire clan quests can found here:
+            // https://en.uesp.net/wiki/Daggerfall:Quests#Vampire_Clans
+
+            if (isCureQuest)
+            {
+                if (DFRandom.random_range_inclusive(10, 100) < 30)
+                    QuestMachine.Instance.InstantiateQuest("$CUREVAM");
+            }
+            else if (hasStartedInitialVampireQuest)
+            {
+                // Get an appropriate quest for player's level?
+                if (DFRandom.random_range_inclusive(1, 100) < 50)
+                {
+                    // Get the regional vampire clan faction id for affecting reputation on success/failure, and current rep
+                    int factionId = (int)vampireClan;
+                    int reputation = GameManager.Instance.PlayerEntity.FactionData.GetReputation(factionId);
+
+                    // Select a quest at random from appropriate pool
+                    Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(
+                        FactionFile.GuildGroups.Vampires,
+                        MembershipStatus.Nonmember,
+                        factionId,
+                        reputation,
+                        GameManager.Instance.PlayerEntity.Level);
+                    if (offeredQuest != null)
+                        QuestMachine.Instance.InstantiateQuest(offeredQuest);
+                }
+            }
+            else if (DFRandom.random_range_inclusive(1, 100) < 50)
+            {
+                QuestMachine.Instance.InstantiateQuest("P0A01L00");
+                hasStartedInitialVampireQuest = true;
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -270,6 +309,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             public RaceTemplate compoundRace;
             public VampireClans vampireClan;
             public uint lastTimeFed;
+            public bool hasStartedInitialVampireQuest;
         }
 
         public override object GetSaveData()
@@ -278,6 +318,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             data.compoundRace = compoundRace;
             data.vampireClan = vampireClan;
             data.lastTimeFed = lastTimeFed;
+            data.hasStartedInitialVampireQuest = hasStartedInitialVampireQuest;
 
             return data;
         }
@@ -291,6 +332,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             compoundRace = data.compoundRace;
             vampireClan = data.vampireClan;
             lastTimeFed = data.lastTimeFed;
+            hasStartedInitialVampireQuest = data.hasStartedInitialVampireQuest;
         }
 
         #endregion

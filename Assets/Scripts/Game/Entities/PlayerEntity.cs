@@ -385,11 +385,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (((i + lastGameMinutes) % 54720) == 0) // 38 days
                 {
                     RegionPowerAndConditionsUpdate(true);
-                    //StartVampireOrWereCreatureQuest(false);
+                    StartRacialOverrideQuest(false);
                 }
 
-                //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
-                    //StartVampireOrWereCreatureQuest(true);
+                if (((i + lastGameMinutes) % 120960) == 0) // 84 days
+                    StartRacialOverrideQuest(true);
             }
 
             // Enemy spawns are prevented after time is raised for fast travel, jail time, and vampire transformation
@@ -453,6 +453,13 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 haveShownSurrenderToGuardsDialogue = false;
             }
+        }
+
+        void StartRacialOverrideQuest(bool isCureQuest)
+        {
+            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialEffect != null)
+                racialEffect.StartQuest(isCureQuest);
         }
 
         // Recreation of vampire/werecreature quest starter from classic
