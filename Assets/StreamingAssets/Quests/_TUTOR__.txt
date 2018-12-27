@@ -300,16 +300,17 @@ QBN:
 Place pirateerHold permanent PirateerHold2
 Place cityOfDaggerfall permanent DaggerfallCity1
 
-Clock _S.03_ 00:06 0 flag 1 range 0 1
-Clock _S.04_ 00:08 0 flag 1 range 0 1
-Clock _S.05_ 00:24 0 flag 1 range 0 1
-Clock _S.06_ 00:12 0 flag 1 range 0 1
-Clock _S.07_ 00:06 0 flag 1 range 0 1
-Clock _S.08_ 00:08 0 flag 1 range 0 1
-Clock _S.10_ 14.00:00 0 flag 1 range 0 1
-Clock _day1_ 1.00:00 0 flag 1 range 0 1
-Clock _day2_ 1.00:00 0 flag 1 range 0 1
-Clock _2dagger_ 13.22:40 0 flag 1 range 0 1
+-- "range 0 1" removed from all timers so no days get added
+Clock _S.03_ 00:06 0 flag 1
+Clock _S.04_ 00:08 0 flag 1
+Clock _S.05_ 00:24 0 flag 1
+Clock _S.06_ 00:12 0 flag 1
+Clock _S.07_ 00:06 0 flag 1
+Clock _S.08_ 00:08 0 flag 1
+Clock _S.10_ 14.00:00 0 flag 1
+Clock _day1_ 1.00:00 0 flag 1
+Clock _day2_ 1.00:00 0 flag 1
+Clock _2dagger_ 13.22:40 0 flag 1
 
 
 --	Quest start-up:
