@@ -1522,7 +1522,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (questItem.UsedMessageID != 0)
                 {
                     // Display the message popup
-                    quest.ShowMessagePopup(questItem.UsedMessageID);
+                    quest.ShowMessagePopup(questItem.UsedMessageID, true);
                 }
             }
 
