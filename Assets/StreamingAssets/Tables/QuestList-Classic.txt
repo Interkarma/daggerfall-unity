@@ -200,7 +200,7 @@ K0C30Y03, Merchants, N, 3, 0,
 P0A01L00, Vampires, P, 0, 1, Passed
 P0B00L01, Vampires, M, 0, 0, Passed
 P0B00L03, Vampires, M, 0, 0, Passed
-P0B00L04, Vampires, M, 0, 0,
+P0B00L04, Vampires, M, 0, 0, Passed
 P0B00L06, Vampires, M, 0, 0,
 P0B01L02, Vampires, M, 0, 1,
 P0B10L07, Vampires, M, 1, 0,
