@@ -79,9 +79,6 @@ namespace DaggerfallWorkshop.Game.Questing
             if (person == null)
                 return false;
 
-            // Rearm person click after current task
-            ParentQuest.ScheduleClickRearm(person);
-
             // Check player clicked flag
             if (person.HasPlayerClicked)
             {
@@ -104,7 +101,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 if (id != 0)
                     ParentQuest.ShowMessagePopup(id);
-                
+
+                // Rearm person click after current task
+                ParentQuest.ScheduleClickRearm(person);
+
                 return true;
             }
 
