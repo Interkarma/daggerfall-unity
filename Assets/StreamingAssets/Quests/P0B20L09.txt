@@ -147,6 +147,12 @@ _queston_ task:
 _vampclicked_ task:
 	clicked npc _vamp_ 
 
+_S.06_ task:
+	when _vampclicked_ 
+	reveal _mondung_ 
+	log 1013 step 1 
+	say 1011 
+
 _nononono_ task:
 	when _vampclicked_ and not _S.04_ 
 	clear _vampclicked_ _nononono_ 
@@ -164,12 +170,6 @@ _readletter_ task:
 	add dialog for person _vamp_ 
 	log 1012 step 0 
 	create npc _vamp_ 
-
-_S.06_ task:
-	when _vampclicked_ 
-	reveal _mondung_ 
-	log 1013 step 1 
-	say 1011 
 
 _S.07_ task:
 	create foe _F.00_ every 12 minutes 30 times with 50% success 
