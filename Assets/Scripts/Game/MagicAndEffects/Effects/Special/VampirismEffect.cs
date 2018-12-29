@@ -23,10 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Stage two curse effect for vampirism deployed after stage one infection completed.
     /// Handles buffs and other long-running vampire effects.
-    /// Note: This effect should only be assigned to player entity by stage one disease effect.
-    ///
-    /// TODO:
-    ///  * Clear guild memberships and reset reputations
+    /// Note: This effect should only be assigned to player entity by stage one disease effect or classic character import.
     /// </summary>
     public class VampirismEffect : RacialOverrideEffect
     {
