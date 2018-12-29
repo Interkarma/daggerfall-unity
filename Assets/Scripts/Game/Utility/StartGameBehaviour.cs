@@ -613,6 +613,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Validate spellbook item
             DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(playerEntity);
 
+            // Restore old class specials
+            RestoreOldClassSpecials(saveTree, characterDocument.classicTransformedRace);
+
             // Restore vampirism if classic character was a vampire
             if (characterDocument.classicTransformedRace == Races.Vampire)
             {
@@ -643,6 +646,46 @@ namespace DaggerfallWorkshop.Game.Utility
 
             if (OnStartGame != null)
                 OnStartGame(this, null);
+        }
+
+        void RestoreOldClassSpecials(SaveTree saveTree, Races classicTransformedRace)
+        {
+            try
+            {
+                // Get old class record
+                SaveTreeBaseRecord oldClassRecord = saveTree.FindRecord(RecordTypes.OldClass);
+                if (oldClassRecord == null)
+                    return;
+
+                // Read old class data
+                System.IO.MemoryStream stream = new System.IO.MemoryStream(oldClassRecord.RecordData);
+                System.IO.BinaryReader reader = new System.IO.BinaryReader(stream);
+                ClassFile classFile = new ClassFile();
+                classFile.Load(reader);
+                reader.Close();
+
+                // Restore any specials set by transformed race
+                if (classicTransformedRace == Races.Vampire)
+                {
+                    // Restore pre-vampire specials
+                    characterDocument.career.DamageFromSunlight = classFile.Career.DamageFromSunlight;
+                    characterDocument.career.DamageFromHolyPlaces = classFile.Career.DamageFromHolyPlaces;
+                    characterDocument.career.Paralysis = classFile.Career.Paralysis;
+                    characterDocument.career.Disease = classFile.Career.Disease;
+                }
+                else if (classicTransformedRace == Races.Werewolf)
+                {
+                    // TODO: Restore pre-werewolf specials
+                }
+                else if (classicTransformedRace == Races.Wereboar)
+                {
+                    // TODO: Restore pre-wereboar specials
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.LogErrorFormat("Could not restore old class specials for vamp/were import. Error: '{0}'", ex.Message);
+            }
         }
 
         #endregion

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Always treating monsters as male for now as they don't have any gender in game files
             if ((int)foeType < 128)
             {
-                DFRandom.srand(DateTime.Now.Millisecond);
+                DFRandom.srand(DateTime.Now.Millisecond + DFRandom.random_range(1, 1000000));
                 displayName = DaggerfallUnity.Instance.NameHelper.MonsterName();
                 return;
             }

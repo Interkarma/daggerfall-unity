@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -219,7 +220,7 @@ namespace DaggerfallWorkshop.Utility
             { "%tcn", null }, // Travel city name
             { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
-            { "%vam", null }, // PC's vampire clan
+            { "%vam", VampireClan }, // PC's vampire clan
             { "%vcn", null }, // Vampire's Clan
             { "%vn", null },  // ?
             { "%wdm", WeaponDamage }, // Weapon damage
@@ -1393,6 +1394,16 @@ namespace DaggerfallWorkshop.Utility
             // %hpw
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().GeographicalFeature();
+        }
+
+        private static string VampireClan(IMacroContextProvider mcp)
+        {
+            // %vam
+            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialEffect is VampirismEffect)
+                return (racialEffect as VampirismEffect).GetClanName();
+            else
+                return "%vam[ERROR: PC not a vampire]";
         }
 
         public static string Q1(IMacroContextProvider mcp)

@@ -410,6 +410,7 @@ namespace DaggerfallWorkshop.Game
 
         void ProcessMessages()
         {
+            RacialOverrideEffect racialOverride = null;
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiSetupGameWizard:
@@ -474,7 +475,13 @@ namespace DaggerfallWorkshop.Game
                         else
                         {
                             if (!GiveOffer())
+                            {
+                                racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block fast travel (e.g. vampire during day)
+                                if (racialOverride != null && !racialOverride.CheckFastTravel(GameManager.Instance.PlayerEntity))
+                                    return;
+
                                 uiManager.PushWindow(dfTravelMapWindow);
+                            }
                         }
                     }
                     break;
@@ -512,7 +519,13 @@ namespace DaggerfallWorkshop.Game
                     else
                     {
                         if (!GiveOffer())
+                        {
+                            racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block rest (e.g. vampire not sated)
+                            if (racialOverride != null && !racialOverride.CheckStartRest(GameManager.Instance.PlayerEntity))
+                                return;
+
                             uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                        }
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenTransportWindow:

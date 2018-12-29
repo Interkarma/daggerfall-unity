@@ -291,7 +291,8 @@ namespace DaggerfallWorkshop.Game.Entity
                         TallySkill(DFCareer.Skills.Swimming, 1);
                     }
 
-                    DecreaseFatigue(amount);
+                    if (!isResting)
+                        DecreaseFatigue(amount);
 
                     // Make magically-created items that have expired disappear
                     items.RemoveExpiredItems();
@@ -384,16 +385,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (((i + lastGameMinutes) % 54720) == 0) // 38 days
                 {
                     RegionPowerAndConditionsUpdate(true);
-                    //StartVampireOrWereCreatureQuest(false);
+                    StartRacialOverrideQuest(false);
                 }
 
-                //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
-                    //StartVampireOrWereCreatureQuest(true);
+                if (((i + lastGameMinutes) % 120960) == 0) // 84 days
+                    StartRacialOverrideQuest(true);
             }
 
-            // TODO: Right now enemy spawns are only prevented when time has been raised for
-            // fast travel. They should later be prevented when time has been raised for
-            // turning into vampire
+            // Enemy spawns are prevented after time is raised for fast travel, jail time, and vampire transformation
             // Classic also prevents enemy spawns during loitering,
             // but this seems counterintuitive so it's not implemented in DF Unity for now
             if (!preventEnemySpawns)
@@ -454,6 +453,13 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 haveShownSurrenderToGuardsDialogue = false;
             }
+        }
+
+        void StartRacialOverrideQuest(bool isCureQuest)
+        {
+            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialEffect != null)
+                racialEffect.StartQuest(isCureQuest);
         }
 
         // Recreation of vampire/werecreature quest starter from classic

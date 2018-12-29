@@ -257,6 +257,7 @@ namespace DaggerfallWorkshop
         {
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            DaggerfallTravelPopUp.OnPostFastTravel += DaggerfallTravelPopUp_OnPostFastTravel;
         }
 
         #endregion
@@ -326,6 +327,12 @@ namespace DaggerfallWorkshop
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
             // Reset state when starting a new load process
+            ResetState();
+        }
+
+        private void DaggerfallTravelPopUp_OnPostFastTravel()
+        {
+            // Reset state after fast travelling
             ResetState();
         }
 

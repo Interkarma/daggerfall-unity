@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected const string racesTextDatabase = "Races";
 
-        int forcedRoundsRemaining = 1;
+        protected int forcedRoundsRemaining = 1;
 
         #endregion
 
@@ -63,10 +63,56 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// Gets custom head ImageData for this override.
         /// Return false to just use standard head.
         /// </summary>
-        public virtual bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
+        public virtual bool GetCustomHeadImageData(PlayerEntity playerEntity, out ImageData imageDataOut)
         {
             imageDataOut = new ImageData();
             return false;
+        }
+
+        /// <summary>
+        /// Gets custom attack sound clip for race and gender.
+        /// </summary>
+        public virtual bool GetCustomRaceGenderAttackSoundData(PlayerEntity playerEntity, out SoundClips soundClipOut)
+        {
+            soundClipOut = SoundClips.None;
+            return false;
+        }
+
+        /// <summary>
+        /// Called by WeaponManager when player hits an enemy with a weapon (includes hand-to-hand).
+        /// </summary>
+        public virtual void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        {
+        }
+
+        /// <summary>
+        /// Checks if custom race can initiate fast travel.
+        /// Return true to allow fast travel or false to block it.
+        /// </summary>
+        public virtual bool CheckFastTravel(PlayerEntity playerEntity)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if custom race can initiate rest.
+        /// Return true to allow rest or false to block it.
+        /// </summary>
+        public virtual bool CheckStartRest(PlayerEntity playerEntity)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Starts custom racial quest.
+        ///  * Called every 38 days with isCureQuest = false
+        ///  * Called every 84 days with isCureQuest = true
+        /// Mainly used by vampirism and lycanthropy in core.
+        /// Custom racial override effects can ignore this virtual to start and manage quests however they like.
+        /// </summary>
+        /// <param name="isCureQuest">True when this should start cure quest.</param>
+        public virtual void StartQuest(bool isCureQuest)
+        {
         }
 
         #endregion

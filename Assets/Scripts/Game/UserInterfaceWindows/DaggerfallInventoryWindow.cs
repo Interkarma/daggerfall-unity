@@ -1503,20 +1503,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get the Item resource from quest
                 Item questItem = quest.GetItem(item.QuestItemSymbol);
 
-                // If item not already used, and is being watched, then pop back to HUD so quest system has first shot at it
-                // On second pass the normal message popup will display instead
+                // Use quest item
                 if (!questItem.UseClicked && questItem.ActionWatching)
                 {
                     questItem.UseClicked = true;
-                    DaggerfallUI.Instance.PopToHUD();
-                    return;
+
+                    // Non-parchment items pop back to HUD so quest system has first shot at a custom click action in game world
+                    // This is usually the case when actioning most quest items (e.g. a painting, bell, holy item, etc.)
+                    // But when clicking a parchment item this behaviour is usually incorrect (e.g. a letter to read)
+                    if (!questItem.DaggerfallUnityItem.IsParchment)
+                    {
+                        DaggerfallUI.Instance.PopToHUD();
+                        return;
+                    }
                 }
 
                 // Check for an on use value
                 if (questItem.UsedMessageID != 0)
                 {
                     // Display the message popup
-                    quest.ShowMessagePopup(questItem.UsedMessageID);
+                    quest.ShowMessagePopup(questItem.UsedMessageID, true);
                 }
             }
 

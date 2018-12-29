@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using System.Text.RegularExpressions;
@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Rearm click so player can click again if quest allows it.
         /// </summary>
-        private void RearmPlayerClick()
+        public void RearmPlayerClick()
         {
             hasPlayerClicked = false;
         }

@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -570,6 +571,11 @@ namespace DaggerfallWorkshop.Game
                         playerEntity.TallyCrimeGuildRequirements(false, 1);
                         playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
                     }
+
+                    // Allow custom race handling of weapon hit, e.g. vampire feeding
+                    RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                    if (racialOverride != null)
+                        racialOverride.OnWeaponHitEnemy(GameManager.Instance.PlayerEntity, enemyEntity);
 
                     return true;
                 }

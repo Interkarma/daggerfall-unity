@@ -403,6 +403,7 @@ namespace DaggerfallWorkshop
             worldCompensation += offset;
             if (offsetLastPlayerPos)
                 lastPlayerPos += offset;
+            RaiseOnFloatingOriginChangeEvent();
         }
 
         /// <summary>
@@ -1713,6 +1714,15 @@ namespace DaggerfallWorkshop
         {
             if (OnAvailableLocationGameObject != null)
                 OnAvailableLocationGameObject();
+        }
+
+        // OnFloatingOriginChange
+        public delegate void OnFloatingOriginChangeEventHandler();
+        public static event OnFloatingOriginChangeEventHandler OnFloatingOriginChange;
+        protected virtual void RaiseOnFloatingOriginChangeEvent()
+        {
+            if (OnFloatingOriginChange != null)
+                OnFloatingOriginChange();
         }
 
         #endregion

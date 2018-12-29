@@ -17,7 +17,7 @@ Error: Questtext 1002 Called.
 
 QuestComplete:  [1004]
 <ce>                         _knight_ is half out
-<ce>                    of %g3 mind, %pcf. What a terror
+<ce>                    of %g2 mind, %pcf. What a terror
 <ce>                           you are. %vam feel
 <ce>                    that you deserve this _jewelry_
 <ce>                   in recognition of your loyalty and

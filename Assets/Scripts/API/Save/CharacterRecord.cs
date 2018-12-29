@@ -132,22 +132,9 @@ namespace DaggerfallConnect.Save
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.CriticalStrike, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.CriticalStrike) - 30));
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Climbing, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Climbing) - 30));
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
-
-                // Remove vampire advantages/disadvantages
-                // NOTES:
-                //  * This will also strip similar advantages/disadvantages selected at character creation time
-                //  * Need a way to differentiate base vs. transformed specials so they can be restored to pre-transform state only
-                //  * DFU does not deliver most of these effects via the career template anyway, rather uses effect system
-                //  * Custom effect mods have no way of showing specials on History popup either
-                //  * Will need to find a solution to help unify specials popup output with modern effect system while supporting classic
-                parsedData.career.DamageFromSunlight = false;
-                parsedData.career.DamageFromSunlight = false;
-                parsedData.career.DamageFromHolyPlaces = false;
-                parsedData.career.Paralysis = DFCareer.Tolerance.Normal;
-                parsedData.career.Disease = DFCareer.Tolerance.Normal;
             }
 
-            // TODO: Remove werewolf/wereboar bonuses to stats and skills and instantiate racial override effect
+            // TODO: Remove werewolf/wereboar bonuses to stats and skills
 
             return liveRace;
         }

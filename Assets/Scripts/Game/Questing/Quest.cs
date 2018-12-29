@@ -61,6 +61,8 @@ namespace DaggerfallWorkshop.Game.Questing
         Place lastPlaceReferenced = null;
         QuestResource lastResourceReferenced = null;
         bool questBreak = false;
+        Stack<DaggerfallMessageBox> pendingMessageBoxStack = new Stack<DaggerfallMessageBox>();
+        List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
 
@@ -280,21 +282,51 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (task.IsDropped)
                     continue;
 
-                // Handle quest break or completion
+                // Handle quest break or completion from previous task
                 if (questBreak || questComplete)
                 {
                     questBreak = false;
                     return;
                 }
 
+                // Update task
                 task.Update();
+                ShowPendingTaskMessages();
+
+                // Perform pending click rearms
+                // Allows tasks to "own" a player click on a first-come, first-serve basis
+                // Prevents concurrency issues when multiple tasks are listening for click on same resource and may all run at same time
+                // Reference quest P0B00L01 where clicks on _vampire_ will both progress and end quest
+                ClearPendingClickRearms();
             }
+
+            // Show any remaining pending task messages
+            // Can reach here with pending messages after task break
+            ShowPendingTaskMessages();
 
             // PostTick resources
             foreach (QuestResource resource in resources.Values)
             {
                 resource.PostTick(this);
             }
+        }
+
+        /// <summary>
+        /// Schedule a quest resource to rearm player click immediately after task execution.
+        /// </summary>
+        /// <param name="resource"></param>
+        public void ScheduleClickRearm(QuestResource resource)
+        {
+            pendingClickRearms.Add(resource);
+        }
+
+        void ClearPendingClickRearms()
+        {
+            foreach(QuestResource resource in pendingClickRearms)
+            {
+                resource.RearmPlayerClick();
+            }
+            pendingClickRearms.Clear();
         }
 
         /// <summary>
@@ -662,7 +694,14 @@ namespace DaggerfallWorkshop.Game.Questing
             return foundQuestors.ToArray();
         }
 
-        public DaggerfallMessageBox ShowMessagePopup(int id)
+        /// <summary>
+        /// Schedule a quest message popup at end of task execution.
+        /// Message may be split into multiple chunks to display on screen.
+        /// </summary>
+        /// <param name="id">ID of message,</param>
+        /// <param name="immediate">Break quest execution at point of popup to display it immediately.</param>
+        /// <returns>MessageBox. Will be top of display stack for chunked messages. Always null after using immediate flag.</returns>
+        public DaggerfallMessageBox ShowMessagePopup(int id, bool immediate = false)
         {
             const int chunkSize = 22;
 
@@ -704,48 +743,34 @@ namespace DaggerfallWorkshop.Game.Questing
             if (currentChunk.Count > 0)
                 chunks.Add(currentChunk.ToArray());
 
-            // Display message boxes in reverse order - this is the previous way of showing stacked popups
-            DaggerfallMessageBox rootMessageBox = null;
-            for (int i = chunks.Count - 1; i >= 0; i--)
+            // Push message boxes to stack
+            for (int i = 0; i < chunks.Count; i++)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
                 messageBox.SetTextTokens(chunks[i]);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.AllowCancel = true;
                 messageBox.ParentPanel.BackgroundColor = Color.clear;
-                messageBox.Show();
-
-                if (i == 0)
-                    rootMessageBox = messageBox;
+                pendingMessageBoxStack.Push(messageBox);
             }
 
-            //// Compose root message box and use AddNextMessageBox() - this is a new technique added by Hazelnut
-            //// TODO: Currently when linking more than two message boxes the final two boxes loop between each other
-            //// Will return to this later to check, for now just want to continue with quest work
-            //DaggerfallMessageBox rootMessageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            //rootMessageBox.SetTextTokens(chunks[0]);
-            //rootMessageBox.ClickAnywhereToClose = true;
-            //rootMessageBox.AllowCancel = true;
-            //rootMessageBox.ParentPanel.BackgroundColor = Color.clear;
+            // Show messages immediately if requested
+            if (immediate)
+            {
+                ShowPendingTaskMessages();
+                return null;
+            }
 
-            //// String together remaining message boxes (if any)
-            //DaggerfallMessageBox lastMessageBox = rootMessageBox;
-            //for (int i = 1; i < chunks.Count; i++)
-            //{
-            //    DaggerfallMessageBox thisMessageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            //    thisMessageBox.SetTextTokens(chunks[i]);
-            //    thisMessageBox.ClickAnywhereToClose = true;
-            //    thisMessageBox.AllowCancel = true;
-            //    thisMessageBox.ParentPanel.BackgroundColor = Color.clear;
-            //    lastMessageBox.AddNextMessageBox(thisMessageBox);
-            //    lastMessageBox = thisMessageBox;
-            //}
-            //rootMessageBox.Show();
+            return pendingMessageBoxStack.Peek();
+        }
 
-            // Set a quest break so popup will display immediately
-            questBreak = true;
-
-            return rootMessageBox;
+        void ShowPendingTaskMessages()
+        {
+            while(pendingMessageBoxStack.Count > 0)
+            {
+                DaggerfallMessageBox messageBox = pendingMessageBoxStack.Pop();
+                messageBox.Show();
+            }
         }
 
         #endregion
