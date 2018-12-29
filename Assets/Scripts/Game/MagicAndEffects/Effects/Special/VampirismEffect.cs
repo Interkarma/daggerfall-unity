@@ -269,6 +269,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Disease;
             compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.SunDamage;
             compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.HolyDamage;
+            compoundRace.ImmuneToMaterials |= DFCareer.MaterialFlags.Iron | DFCareer.MaterialFlags.Steel;
         }
 
         RaceTemplate GetCompoundRace()
