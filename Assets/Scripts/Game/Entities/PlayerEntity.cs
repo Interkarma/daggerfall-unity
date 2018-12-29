@@ -175,6 +175,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool Arrested { get { return arrested; } set { arrested = value; } }
         public bool IsInBeastForm { get; set; }
         public List<string> BackStory { get; set; }
+        public VampireClans PreviousVampireClan { get; set; }
 
         #endregion
 

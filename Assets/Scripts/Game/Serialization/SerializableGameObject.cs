@@ -201,6 +201,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public short reputationNobility;
         public short reputationScholars;
         public short reputationUnderworld;
+        public VampireClans previousVampireClan;
     }
 
     [fsObject("v1")]

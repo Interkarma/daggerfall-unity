@@ -241,6 +241,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             forcedRoundsRemaining = 0;
             ResignAsIncumbent();
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(60);
+            GameManager.Instance.PlayerEntity.PreviousVampireClan = vampireClan;
             // TODO: End all vampire quests that might be running other than cure quest
         }
 

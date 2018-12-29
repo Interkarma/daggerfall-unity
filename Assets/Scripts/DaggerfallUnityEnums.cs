@@ -644,7 +644,7 @@ namespace DaggerfallWorkshop
     /// </summary>
     public enum VampireClans
     {
-        None = -1,
+        None = 0,
         Vraseth = 150,
         Haarvenu = 151,
         Thrafey = 152,
