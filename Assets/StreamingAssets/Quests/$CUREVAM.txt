@@ -292,7 +292,6 @@ _S.08_ task:
 	say 1022 
 
 _S.09_ task:
-	when _S.01_ and not _S.07_ 
 	add dialog for person _vamp2_ 
 	start timer _S.10_ 
 	reveal _fatherdung_ 
