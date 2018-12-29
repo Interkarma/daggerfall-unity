@@ -203,10 +203,10 @@ namespace DaggerfallWorkshop.Game.Entity
             // When source is player
             if (sourceEntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 // Handle civilian NPC crime reporting
                 if (EntityType == EntityTypes.CivilianNPC)
                 {
-                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                     MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
                     if (mobileNpc)
                     {
@@ -218,10 +218,17 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                         else
                         {
-                            playerEntity.TallyCrimeGuildRequirements(false, 5);
-                            // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
-                            playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                            playerEntity.SpawnCityGuards(true);
+                            if (!mobileNpc.Billboard.IsUsingGuardTexture)
+                            {
+                                playerEntity.TallyCrimeGuildRequirements(false, 5);
+                                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                                playerEntity.SpawnCityGuards(true);
+                            }
+                            else
+                            {
+                                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
+                                playerEntity.SpawnCityGuard(mobileNpc.transform.position, mobileNpc.transform.forward);
+                            }
 
                             // Disable when dead
                             mobileNpc.Motor.gameObject.SetActive(false);
@@ -241,6 +248,14 @@ namespace DaggerfallWorkshop.Game.Entity
                             GameManager.Instance.MakeEnemiesHostile();
                         }
                         enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
+                    }
+
+                    // Handle killing guards
+                    EnemyEntity enemyEntity = entity as EnemyEntity;
+                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && entity.CurrentHealth <= 0)
+                    {
+                        playerEntity.TallyCrimeGuildRequirements(false, 1);
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
                     }
                 }
             }

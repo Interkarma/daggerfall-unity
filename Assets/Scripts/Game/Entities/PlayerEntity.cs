@@ -604,23 +604,22 @@ namespace DaggerfallWorkshop.Game.Entity
                             continue;
 
                         Vector3 directionToMobile = populationManager.PopulationPool[i].npc.Motor.transform.position - GameManager.Instance.PlayerMotor.transform.position;
-                        float distance = directionToMobile.magnitude;
-
-                        // Spawn from guard mobile NPCs first
-                        if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                        if (directionToMobile.magnitude <= 77.5f)
                         {
-                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
-                            populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
-                            // Count those within classic npc range as spawned from NPCs, to mimic classic behavior
-                            if (distance <= 77.5f)
+                            // Spawn from guard mobile NPCs first
+                            if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                            {
+                                SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                                populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
                                 ++guardsSpawnedFromNPCs;
-                        }
-                        // Next try non-guards
-                        else if (distance <= 77.5f && Vector3.Angle(directionToMobile, GameManager.Instance.PlayerMotor.transform.forward) >= 105.469
-                            && UnityEngine.Random.Range(0, 4) == 0)
-                        {
-                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
-                            ++guardsSpawnedFromNPCs;
+                            }
+                            // Next try non-guards
+                            else if (Vector3.Angle(directionToMobile, GameManager.Instance.PlayerMotor.transform.forward) >= 105.469
+                                && UnityEngine.Random.Range(0, 4) == 0)
+                            {
+                                SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                                ++guardsSpawnedFromNPCs;
+                            }
                         }
                     }
 
@@ -687,17 +686,19 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        void SpawnCityGuard(Vector3 position, Vector3 direction)
+        public GameObject SpawnCityGuard(Vector3 position, Vector3 direction)
         {
             GameObject[] cityWatch = GameObjectHelper.CreateFoeGameObjects(position, MobileTypes.Knight_CityWatch, 1);
             if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
                 cityWatch[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
             else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
                 cityWatch[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
-            cityWatch[0].transform.LookAt(direction);
+            cityWatch[0].transform.forward = direction;
             EnemyMotor enemyMotor = cityWatch[0].GetComponent<EnemyMotor>();
             enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
             cityWatch[0].SetActive(true);
+
+            return cityWatch[0];
         }
 
         void MakeNPCGuardsIntoEnemiesIfGuardsSpawned()
