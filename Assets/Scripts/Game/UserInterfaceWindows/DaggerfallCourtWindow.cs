@@ -226,7 +226,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.AllowCancel = false;
                 uiManager.PushWindow(messageBox);
-                state = 3;
+
+                if (daysInPrison > 0)
+                    state = 3;
+                else
+                {
+                    // Give the reputation raise here if no prison time will be served.
+                    playerEntity.RaiseReputationForDoingSentence();
+                    repositionPlayer = true;
+                    playerEntity.FillVitalSigns();
+                    ReleaseFromPrison();
+                    state = 100;
+                }
             }
             else if (state == 3) // Serve prison sentence
             {
