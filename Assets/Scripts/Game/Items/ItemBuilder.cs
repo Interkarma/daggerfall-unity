@@ -419,7 +419,6 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor((ArmorMaterialTypes)newItem.nativeMaterialValue);
-            FixLeatherHelm(newItem);
 
             // Adjust for variant
             if (variant >= 0)
@@ -470,7 +469,6 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor(material);
-            FixLeatherHelm(newItem);
             RandomizeArmorVariant(newItem);
 
             return newItem;
@@ -794,17 +792,6 @@ namespace DaggerfallWorkshop.Game.Items
                 variant = UnityEngine.Random.Range(0, item.ItemTemplate.variants);
 
             SetVariant(item, variant);
-        }
-
-        /// <summary>
-        /// Set leather helms to use chain dye.
-        /// Daggerfall seems to do this also as "leather" helms have the chain tint in-game.
-        /// Might need to revisit this later.
-        /// </summary>
-        public static void FixLeatherHelm(DaggerfallUnityItem item)
-        {
-            if (item.TemplateIndex == (int)Armor.Helm && (ArmorMaterialTypes)item.nativeMaterialValue == ArmorMaterialTypes.Leather)
-                item.dyeColor = DyeColors.Chain;
         }
 
         #endregion

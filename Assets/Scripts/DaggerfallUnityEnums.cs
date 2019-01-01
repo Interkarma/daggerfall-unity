@@ -349,7 +349,6 @@ namespace DaggerfallWorkshop
         None,
         Iron,
         Steel,
-        Chain,
         Silver,
         Elven,
         Dwarven,
@@ -384,9 +383,11 @@ namespace DaggerfallWorkshop
         // Weapon and armour dyes
         Iron = 15,
         Steel = 16,
-        Chain = 17,
+        Chain = 18, // This enum kept for compatibility with older saves
         Unchanged = 18,
-        SilverOrElven = 19,
+        SilverOrElven = 18, // This enum kept for compatibility with older saves
+        Silver = 18,
+        Elven = 19,
         Dwarven = 20,
         Mithril = 21,
         Adamantium = 22,

@@ -1322,9 +1322,6 @@ namespace DaggerfallWorkshop.Game.Items
             // TEST: Force dye color to match material of imported weapons & armor
             // This is to fix cases where dye colour may be set incorrectly on imported item
             dyeColor = DaggerfallUnity.Instance.ItemHelper.GetDyeColor(this);
-
-            // Fix leather helms
-            ItemBuilder.FixLeatherHelm(this);
         }
 
         /// <summary>
