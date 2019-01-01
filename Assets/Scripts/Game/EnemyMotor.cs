@@ -487,16 +487,15 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Returns whether there is a clear path from the current location to the given location. True if clear
+        /// Returns whether there is a clear path to move the given distance from the current location towards the given location. True if clear
         /// or if combat target is the first obstacle hit.
         /// </summary>
-        bool ClearPathToPosition(Vector3 location)
+        bool ClearPathToPosition(Vector3 location, float dist = 2)
         {
-            float sphereCastDist = (location - transform.position).magnitude;
             Vector3 sphereCastDir = (location - transform.position).normalized;
             RaycastHit hit;
 
-            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, sphereCastDist))
+            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 if (hitTarget == entityBehaviour.Target)
