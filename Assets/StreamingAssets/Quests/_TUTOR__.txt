@@ -61,14 +61,12 @@ Message:  1012
 <ce>            with moving your character around. Don't worry
 <ce>          about monsters, there are none in this first room.
 <ce>                                    
-<ce>           When this text clears, move the cursor around on
-<ce>           the screen. You'll see it change shape. Hold down
-<ce>           the left mouse button and watch what happens. If
-<ce>            you are using the view based interface, it will
-<ce>                     change where you are looking.
-<ce>                                    
-<ce>           Hint: The closer the arrow is to the edge of the
-<ce>                   screen, the faster you will move.
+<ce>           When this text clears, move the mouse around
+<ce>            to change where you are looking.
+<ce>
+<ce>              Use the W, A, S and D keys to go around.
+<ce>          Hint: Those are the default keys. You can change them later
+<ce>          using the ESC key and then the CONTROLS button.
 <ce>                                    
 <ce>          I'll be back in about one minute to tell you about
 <ce>                arming yourself and fighting monsters.
@@ -77,8 +75,8 @@ Message:  1013
 <ce>                           Tutorial Lesson 2
 <ce>                                    
 <ce>           Before you brave the depths of Privateer's Hold,
-<ce>          you will want to arm yourself. Either click on the
-<ce>              bag icon (inventory), or press the F6 key.
+<ce>          you will want to arm yourself. Press the F6 key
+<ce>          to bring up your inventory window.
 <ce>                                    
 <ce>          Clicking on the weapon puts it into your hand. Now
 <ce>          you are able to draw your weapon. Click on the EXIT
@@ -92,9 +90,9 @@ Message:  1013
 Message:  1015
 <ce>                           Tutorial Lesson 3
 <ce>                                    
-<ce>        To draw your weapon, click on the crossed blades icon,
-<ce>        or just press A. There is a short delay after equipping
-<ce>        a weapon, so don't panic if it doesn't draw instantly.
+<ce>        To draw your weapon, just press the A key. There is
+<ce>        a short delay after equipping a weapon, so don't panic
+<ce>        if it doesn't draw instantly.
 <ce>                                    
 <ce>         Take a few practice swings by holding down the right
 <ce>         mouse button and moving the mouse around. This is how
@@ -113,15 +111,13 @@ Message:  1020
 <ce>                                    
 <ce>          Down the hall and through the door is a giant rat.
 <ce>                           Let's go kill it!
-<ce>                                    
-<ce>           When you get to the door, get the X shaped cursor
-<ce>         on it and press the left mouse button. The door will
-<ce>         swing open. This is how you activate things, such as
+<ce>
+<ce>           When you get to the door, just get it in the
+<ce>           center of the screen and press the mouse button
+<ce>          to open it. This is how you activate things, such as
 <ce>          doors, levers, wheels, treasure piles, even people.
-<ce>                                    
-<ce>          If you are using the view based interface, just get
-<ce>          the door in the center of the screen and press the
-<ce>                       mouse button to open it.
+<ce>          You can sometimes get treasure off of dead bodies
+<ce>            by clicking on them, just like treasure piles.
 <ce>                                    
 <ce>         Hint: This door is a secret door. After you kill the
 <ce>         rat, go back to it and click it. The door will shut.
@@ -155,14 +151,13 @@ Message:  1030
 <ce>                                    
 <ce>         This would be a good time to save the game (assuming
 <ce>         you are not in the middle of a fight). Press the ESC
-<ce>          key and click on SAVE GAME. Double click one of the
-<ce>             empty boxes and it will save your game there.
+<ce>          key and click on SAVE GAME.
 <ce>                                    
 <ce>         If you get killed in this dungeon, you can go back to
 <ce>       that saved game without having to create a new character.
 <ce>                                    
-<ce>        Hint: You can sometimes get treasure off of dead bodies
-<ce>            by clicking on them, just like treasure piles.
+<ce>        Hint: You can also use F9 to quicksave and
+<ce>            F12 to quickload.
 <ce>                                    
 <ce>         I'll leave you for several minutes now. Go ahead and
 <ce>           explore the dungeon. Click YES to continue, NO to
@@ -177,12 +172,8 @@ Message:  1035
 <ce>          Press the BACKSPACE key to pull up the spells menu.
 <ce>        select SHOCK by double clicking on it. This spell will
 <ce>        only work if you are close enough to touch the monster
-<ce>            To cast the spell, press the left mouse button
-<ce>          anytime it is an X shape. In view based mode spells
-<ce>             are always fired at the center of the screen.
-<ce>                                    
-<ce>         Hint: You can fire spells or activate objects even if
-<ce>       the cursor is not an X if you use the right mouse button.
+<ce>            To cast the spell, press the left mouse button;
+<ce>        spells are always fired at the center of the screen.
 <ce>                                    
 <ce>           I'll wait until you have escaped from the dungeon
 <ce>                    for your next tutorial lesson.
@@ -309,16 +300,17 @@ QBN:
 Place pirateerHold permanent PirateerHold2
 Place cityOfDaggerfall permanent DaggerfallCity1
 
-Clock _S.03_ 00:06 0 flag 1 range 0 1
-Clock _S.04_ 00:08 0 flag 1 range 0 1
-Clock _S.05_ 00:24 0 flag 1 range 0 1
-Clock _S.06_ 00:12 0 flag 1 range 0 1
-Clock _S.07_ 00:06 0 flag 1 range 0 1
-Clock _S.08_ 00:08 0 flag 1 range 0 1
-Clock _S.10_ 14.00:00 0 flag 1 range 0 1
-Clock _day1_ 1.00:00 0 flag 1 range 0 1
-Clock _day2_ 1.00:00 0 flag 1 range 0 1
-Clock _2dagger_ 13.22:40 0 flag 1 range 0 1
+-- "range 0 1" removed from all timers so no days get added
+Clock _S.03_ 00:06 0 flag 1
+Clock _S.04_ 00:08 0 flag 1
+Clock _S.05_ 00:24 0 flag 1
+Clock _S.06_ 00:12 0 flag 1
+Clock _S.07_ 00:06 0 flag 1
+Clock _S.08_ 00:08 0 flag 1
+Clock _S.10_ 14.00:00 0 flag 1
+Clock _day1_ 1.00:00 0 flag 1
+Clock _day2_ 1.00:00 0 flag 1
+Clock _2dagger_ 13.22:40 0 flag 1
 
 
 --	Quest start-up:
