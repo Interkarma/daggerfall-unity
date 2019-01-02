@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.Arena2;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -36,9 +37,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect mainPanelRect = new Rect(0, 0, 259, 164);
         Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
         Rect deleteOrBuyButtonRect = new Rect(3, 152, 38, 9);
-        //Rect upButtonRect = new Rect(48, 152, 38, 9);
-        //Rect downButtonRect = new Rect(132, 152, 38, 9);
+        Rect upButtonRect = new Rect(48, 152, 38, 9);
         Rect sortButtonRect = new Rect(90, 152, 38, 9);
+        Rect downButtonRect = new Rect(132, 152, 38, 9);
         Rect upArrowButtonRect = new Rect(121, 11, 9, 16);
         Rect downArrowButtonRect = new Rect(121, 132, 9, 16);
         Rect exitButtonRect = new Rect(216, 149, 43, 15);
@@ -66,8 +67,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button exitButton;
         Button deleteButton;
         Button buyButton;
-        //Button downButton;
-        //Button upButton;
+        Button downButton;
+        Button upButton;
         Button sortButton;
         Button upArrowButton;
         Button downArrowButton;
@@ -98,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool buyMode = false;
         bool autoClose = false;
+        EffectBundleSettings renamedSpellSettings;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
         List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
@@ -134,7 +136,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupIcons();
             SetupLabels();
 
-            RefreshSpellsList();
+            RefreshSpellsList(false);
             SetDefaults();
 
             // Store toggle closed binding for this window
@@ -148,7 +150,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (IsSetup)
             {
-                RefreshSpellsList();
+                RefreshSpellsList(false);
                 SetDefaults();
             }
 
@@ -182,7 +184,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ClearEffectLabels();
 
             // Select default spell
-            spellsListBox.SelectedIndex = 0;
+            if (spellsListBox.Count > 0)
+                spellsListBox.SelectIndex(0);
+            else
+                spellsListBox.SelectNone();
         }
 
         public override void Update()
@@ -194,8 +199,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 CloseWindow();
         }
 
-        void RefreshSpellsList()
+        void RefreshSpellsList(bool preservePosition)
         {
+            // Preserve indices before ClearItems()
+            int oldScrollIndex = spellsListBox.ScrollIndex;
+            int oldSelectedIndex = spellsListBox.SelectedIndex;
+
             // Clear existing list
             spellsListBox.ClearItems();
 
@@ -246,6 +255,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name));
                     }
                 }
+            }
+
+            if (preservePosition)
+            {
+                spellsListBox.ScrollIndex = oldScrollIndex;
+                if (oldSelectedIndex >= spellsListBox.Count)
+                    if (spellsListBox.Count > 0)
+                        spellsListBox.SelectedIndex = spellsListBox.Count - 1;
+                    else
+                        spellsListBox.SelectNone();
+                else
+                    spellsListBox.SelectedIndex = oldSelectedIndex;
             }
         }
 
@@ -321,11 +342,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 deleteButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
                 deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
 
-                //upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
+                upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
                 sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
-                //downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
+                downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
 
+                upButton.OnMouseClick += SwapButton_OnMouseClick;
                 sortButton.OnMouseClick += SortButton_OnMouseClick;
+                downButton.OnMouseClick += SwapButton_OnMouseClick;
             }
             else
             {
@@ -348,6 +371,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellIconPanel = DaggerfallUI.AddPanel(spellIconPanelRect, mainPanel);
             spellIconPanel.BackgroundColor = Color.black;
             spellIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+            spellIconPanel.OnMouseClick += SpellIconPanel_OnMouseClick;
+            spellIconPanel.OnRightMouseClick += SpellIconPanel_OnRightMouseClick;
 
             spellTargetIconPanel = DaggerfallUI.AddPanel(spellTargetPanelRect, mainPanel);
             spellTargetIconPanel.BackgroundColor = Color.black;
@@ -644,10 +669,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (spellsListBox.SelectedIndex == -1)
+                return;
+
             // Prompt and delete spell
             deleteSpellIndex = spellsListBox.SelectedIndex;
             DaggerfallMessageBox mb = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, TextManager.Instance.GetText(textDatabase, "deleteSpell"), this);
-            mb.OnButtonClick += DeleteSpellConfirm_OnButtonClick;            
+            mb.OnButtonClick += DeleteSpellConfirm_OnButtonClick;
             mb.Show();
         }
 
@@ -657,7 +685,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 GameManager.Instance.PlayerEntity.DeleteSpell(deleteSpellIndex);
                 deleteSpellIndex = -1;
-                RefreshSpellsList();
+                RefreshSpellsList(true);
             }
 
             CloseWindow();
@@ -670,26 +698,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SwapButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //if(sender.Name == downButton.Name && spellsListBox.SelectedIndex < spellsListBox.Count-1)
-            //    spellsListBox.SwapItems(spellsListBox.SelectedIndex, ++spellsListBox.SelectedIndex);
-            //else if(sender.Name == upButton.Name && spellsListBox.SelectedIndex > 0)
-            //    spellsListBox.SwapItems(spellsListBox.SelectedIndex, --spellsListBox.SelectedIndex);
+            if (spellsListBox.SelectedIndex == -1)
+                return;
+
+            if (sender == downButton && spellsListBox.SelectedIndex < spellsListBox.Count - 1)
+            {
+                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, spellsListBox.SelectedIndex + 1);
+                RefreshSpellsList(true);
+                spellsListBox.SelectNext();
+                // Force revealing one item ahead
+                if (spellsListBox.SelectedIndex == spellsListBox.ScrollIndex + spellsListBox.RowsDisplayed - 1)
+                    spellsListBox.ScrollDown();
+            }
+            else if (sender == upButton && spellsListBox.SelectedIndex > 0)
+            {
+                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, spellsListBox.SelectedIndex - 1);
+                RefreshSpellsList(true);
+                spellsListBox.SelectPrevious();
+                // Force revealing one item ahead
+                if (spellsListBox.SelectedIndex == spellsListBox.ScrollIndex)
+                    spellsListBox.ScrollUp();
+            }
         }
 
         // Not implemented in Daggerfall, could be useful. Possibly move through different sorts (lexigraphic, date added, cost etc.)
         public void SortButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Just sort as alpha for now
+            var spellsBefore = GameManager.Instance.PlayerEntity.GetSpells();
             GameManager.Instance.PlayerEntity.SortSpellsAlpha();
-            RefreshSpellsList();
+            var spellsAfter = GameManager.Instance.PlayerEntity.GetSpells();
+            if (spellsAfter.SequenceEqual(spellsBefore))
+            {
+                // List was already in alphabetic order, switch to magicka cost
+                GameManager.Instance.PlayerEntity.SortSpellsPointCost();
+            }
+            RefreshSpellsList(false);
+            SetDefaults();
         }
 
         public void SpellNameLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out renamedSpellSettings))
+                return;
+
             DaggerfallInputMessageBox renameSpellPrompt;
             renameSpellPrompt = new DaggerfallInputMessageBox(uiManager, this);
             renameSpellPrompt.SetTextBoxLabel(TextManager.Instance.GetText(textDatabase, "enterSpellName") + " ");
-            renameSpellPrompt.TextBox.Text = spellsListBox.SelectedItem;
+            renameSpellPrompt.TextBox.Text = renamedSpellSettings.Name;
             renameSpellPrompt.OnGotUserInput += RenameSpellPromptHandler;
             uiManager.PushWindow(renameSpellPrompt);
         }
@@ -697,10 +752,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void RenameSpellPromptHandler(DaggerfallInputMessageBox sender, string input)
         {
             // Must not be blank
-            if (string.IsNullOrEmpty(input))
+            if (spellsListBox.SelectedIndex == -1 || string.IsNullOrEmpty(input))
                 return;
 
-            // TODO: Rename spell
+            renamedSpellSettings.Name = input;
+            GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, renamedSpellSettings);
+            RefreshSpellsList(true);
+            UpdateSelection();
+        }
+
+        private void SpellIconPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            EffectBundleSettings spellSettings;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                return;
+            spellSettings.IconIndex++;
+            if (spellSettings.IconIndex >= DaggerfallUI.Instance.SpellIconCollection.SpellIconCount)
+                spellSettings.IconIndex = 0;
+
+            GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
+            UpdateSelection();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+        }
+
+        private void SpellIconPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            EffectBundleSettings spellSettings;
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                return;
+            spellSettings.IconIndex--;
+            if (spellSettings.IconIndex < 0)
+                spellSettings.IconIndex = DaggerfallUI.Instance.SpellIconCollection.SpellIconCount - 1;
+
+            GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
+            UpdateSelection();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

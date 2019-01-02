@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
@@ -598,11 +599,42 @@ namespace DaggerfallWorkshop.Game.Entity
             return spellbook.ToArray();
         }
 
+        public void SwapSpells(int indexA, int indexB)
+        {
+            if (indexA < 0 || indexA >= spellbook.Count || indexB < 0 || indexB >= spellbook.Count || indexA == indexB)
+                return;
+            var tempSpell = spellbook[indexA];
+            spellbook[indexA] = spellbook[indexB];
+            spellbook[indexB] = tempSpell;
+        }
+
         public void SortSpellsAlpha()
         {
             List<EffectBundleSettings> sortedSpellbook = spellbook.OrderBy(x => x.Name).ToList();
             if (sortedSpellbook.Count == spellbook.Count)
                 spellbook = sortedSpellbook;
+        }
+
+        public void SortSpellsPointCost()
+        {
+            List<EffectBundleSettings> sortedSpellbook = spellbook
+                .OrderBy((EffectBundleSettings spell) =>
+                {
+                    int goldCost, spellPointCost;
+                    FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, out goldCost, out spellPointCost, null, spell.MinimumCastingCost);
+                    return spellPointCost;
+                })
+            .ToList();
+            if (sortedSpellbook.Count == spellbook.Count)
+                spellbook = sortedSpellbook;
+        }
+
+        public void SetSpell(int index, EffectBundleSettings spell)
+        {
+            if (index < 0 || index > spellbook.Count - 1)
+                return;
+
+            spellbook[index] = spell;
         }
 
         public void AddSpell(EffectBundleSettings spell)
