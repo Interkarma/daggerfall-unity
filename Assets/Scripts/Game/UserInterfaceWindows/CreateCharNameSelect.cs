@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -87,13 +87,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // OK button
             okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
             okButton.OnMouseClick += OkButton_OnMouseClick;
+
+            // First display of random button
+            ShowRandomButton();
         }
 
         public override void OnPush()
         {
+            // Subsequent display of random button
+            ShowRandomButton();
+
+            base.OnPush();
+        }
+
+        void ShowRandomButton()
+        {
             // Must have a race template set
             if (raceTemplate == null)
+            {
                 randomNameButton.Enabled = false;
+                return;
+            }
 
             // Check if race supported for random name button
             // Argonian and Khajiit not supported at this time (no generation rules found in NAMEGEN)
@@ -117,8 +131,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // A bit of a hack but better than starting with a seed of 0 every time
             System.Random random = new System.Random();
             DFRandom.Seed = (uint)random.Next();
-
-            base.OnPush();
         }
 
         public override void Update()
