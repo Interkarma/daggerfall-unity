@@ -59,6 +59,15 @@ namespace DaggerfallWorkshop.Game
         public FogSettings SnowyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.005f, startDistance = 0, endDistance = 0, excludeSkybox = true };
         public FogSettings HeavyFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.05f, startDistance = 0, endDistance = 0, excludeSkybox = false };
 
+        public FogSettings InteriorFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.001f, startDistance = 0, endDistance = 0, excludeSkybox = false };
+        public FogSettings DungeonFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.005f, startDistance = 0, endDistance = 0, excludeSkybox = false };
+
+        public FogSettings currentOutdoorFogSettings;
+
+        // this is needed so weather from savegame load is not overwritten by code in StreamingWorld_OnInitWorld()
+        // e.g. weather fog, going to interior, saving, restarting, loading save, going outdoors -> fog should still be present (without this workaround it is not)
+        bool startedFromLoadedSaveGame; // needed to correctly restore fog after loading a savegame since StreamingWorld_OnInitWorld() happens after load event overwritting the values set there
+
         DaggerfallUnity _dfUnity;
         float _pollTimer;
         private WeatherTable _weatherTable;
@@ -81,8 +90,22 @@ namespace DaggerfallWorkshop.Game
 
         void Awake()
         {
-            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;            
+            PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeon;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToExterior;
+        }
+
+        void OnDestroy()
+        {
+            StreamingWorld.OnInitWorld -= StreamingWorld_OnInitWorld;
+            SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+            PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeon;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToExterior;
         }
 
         void Start()
@@ -134,8 +157,14 @@ namespace DaggerfallWorkshop.Game
 
         #region Fog
 
-        public void SetFog(FogSettings fogSettings)
+        public void SetFog(FogSettings fogSettings, bool isInteriorOrDungeonFog = false)
         {
+            // if fog is a outdoor weather fog set currentOutdoorFogSettings so fog settings can be restored when player goes into an interior/dungeon and then back to exterior
+            if (isInteriorOrDungeonFog == false)
+            {
+                currentOutdoorFogSettings = fogSettings;
+            }
+
             // set fog mode first
             RenderSettings.fogMode = fogSettings.fogMode;
             RenderSettings.fogDensity = fogSettings.density;
@@ -408,17 +437,56 @@ namespace DaggerfallWorkshop.Game
 
         void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
+            // first restore general outdoor weather (which sets fog)
             SetWeather(saveData.playerData.playerPosition.weather);
+
+            // then check if player is inside and set fog accordingly
+            if (GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                SetFog(InteriorFogSettings, true);
+            }
+            else if (GameManager.Instance.IsPlayerInsideDungeon || GameManager.Instance.IsPlayerInsideCastle)
+            {
+                SetFog(DungeonFogSettings, true);
+            }
+
+            startedFromLoadedSaveGame = true; // needed so StreamingWorld_OnInitWorld() does not break stuff again (see details in comment at variable definition of startedFromLoadedSaveGame)
         }
 
         void StreamingWorld_OnInitWorld()
         {
-            // Clear weather when starting up world
-            ClearAllWeather();
+            // check if we did not just load a savegame (see details in comment at variable definition of startedFromLoadedSaveGame)            
+            if (startedFromLoadedSaveGame == false)
+            {
+                // Clear weather when starting up world
+                ClearAllWeather();
 
-            // Set weather in case we have loaded from a classic save.
-            // Currently loading a Unity save will replace this with its own weather value after this.
-            updateWeatherFromClimateArray = true;
+                // Set weather in case we have loaded from a classic save.
+                // Currently loading a Unity save will replace this with its own weather value after this.
+                updateWeatherFromClimateArray = true;
+
+                startedFromLoadedSaveGame = false;
+            }
+            else
+            {
+                // important so no weather update from climate array happens in case of loaded savegame 
+                updateWeatherFromClimateArray = false;
+            }
+        }
+
+        void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            SetFog(InteriorFogSettings, true);
+        }
+
+        void OnTransitionToDungeon(PlayerEnterExit.TransitionEventArgs args)
+        {
+            SetFog(DungeonFogSettings, true);
+        }
+
+        void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            SetFog(currentOutdoorFogSettings, false);
         }
 
         #endregion
