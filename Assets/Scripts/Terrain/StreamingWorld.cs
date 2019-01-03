@@ -403,6 +403,7 @@ namespace DaggerfallWorkshop
             worldCompensation += offset;
             if (offsetLastPlayerPos)
                 lastPlayerPos += offset;
+            RaiseOnFloatingOriginChangeEvent();
         }
 
         /// <summary>
@@ -968,7 +969,7 @@ namespace DaggerfallWorkshop
                     {
                         terrainArray[i].mapPixelX = int.MinValue;
                         terrainArray[i].mapPixelY = int.MinValue;
-                        terrainArray[i].updateLocation = false;
+                        terrainArray[i].updateLocation = terrainArray[i].hasLocation;
                     }
                 }
             }
@@ -1713,6 +1714,15 @@ namespace DaggerfallWorkshop
         {
             if (OnAvailableLocationGameObject != null)
                 OnAvailableLocationGameObject();
+        }
+
+        // OnFloatingOriginChange
+        public delegate void OnFloatingOriginChangeEventHandler();
+        public static event OnFloatingOriginChangeEventHandler OnFloatingOriginChange;
+        protected virtual void RaiseOnFloatingOriginChangeEvent()
+        {
+            if (OnFloatingOriginChange != null)
+                OnFloatingOriginChange();
         }
 
         #endregion

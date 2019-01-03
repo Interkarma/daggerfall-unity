@@ -193,15 +193,12 @@ _S.02_ task:
 
 _vampclicked_ task:
 	clicked npc _vampire_ say AcceptQuest 
+	reveal _mondung_
 	log 1026 step 1 
 
 _1stparton_ task:
 	make _vampproof_ permanent 
-	end quest 
-
-_clearclick_ task:
-	when _vampclicked_ and not _S.02_ 
-	clear _vampclicked_ _clearclick_ 
+	end quest  
 
 _S.06_ task:
 	when _S.07_ and not _vampclicked_ 
@@ -215,10 +212,6 @@ variable _S.09_
 _S.10_ task:
 	give item _vampproof_ to _vamprival_ 
 	place foe _vamprival_ at _mondung_ 
-
-_S.11_ task:
-	when _vampclicked_ 
-	reveal _mondung_ 
 
 _S.12_ task:
 	start timer _1stparton_ 

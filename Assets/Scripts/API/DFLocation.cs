@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -117,6 +117,7 @@ namespace DaggerfallConnect
             Special2 = 0xdf,
             Special3 = 0xf9,
             Special4 = 0xfa,
+            AnyHouse = 0xfffe,      // DaggerfallUnity: all valid house types
             AllValid = 0xffff,      // DaggerfallUnity: all valid types
         }
 

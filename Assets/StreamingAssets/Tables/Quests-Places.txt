@@ -102,6 +102,7 @@ house4,             0, 20, 0
 house5,             0, 21, 0
 house6,             0, 22, 0
 house7,             0, 23, 0
+house,              0, -1, 1
 random,             0, -1, 0
 dungeon,            1, -1, 0
 dungeon0,           1, 0 , 0

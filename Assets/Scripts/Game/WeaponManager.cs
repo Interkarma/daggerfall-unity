@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -413,9 +414,41 @@ namespace DaggerfallWorkshop.Game
                 return false;
             }
 
-            // Check if hit an entity and remove health
+            // Set up for use below
             DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
             DaggerfallMobileUnit entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
+            EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+            EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();
+
+            // Check if hit a mobile NPC
+            MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
+            if (mobileNpc)
+            {
+                if (!mobileNpc.Billboard.IsUsingGuardTexture)
+                {
+                    EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                    if (blood)
+                    {
+                        blood.ShowBloodSplash(0, hit.point);
+                    }
+                    mobileNpc.Motor.gameObject.SetActive(false);
+                    playerEntity.TallyCrimeGuildRequirements(false, 5);
+                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                    playerEntity.SpawnCityGuards(true);
+                }
+                else
+                {
+                    playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
+                    GameObject guard = playerEntity.SpawnCityGuard(mobileNpc.transform.position, mobileNpc.transform.forward);
+                    entityBehaviour = guard.GetComponent<DaggerfallEntityBehaviour>();
+                    entityMobileUnit = guard.GetComponentInChildren<DaggerfallMobileUnit>();
+                    enemyMotor = guard.GetComponent<EnemyMotor>();
+                    enemySounds = guard.GetComponent<EnemySounds>();
+                }
+                mobileNpc.Motor.gameObject.SetActive(false);
+            }
+
+            // Check if hit an entity and remove health
             if (entityBehaviour)
             {
                 if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
@@ -445,9 +478,6 @@ namespace DaggerfallWorkshop.Game
                     // Break any "normal power" concealment effects on player
                     if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
                         EntityEffectManager.BreakNormalPowerConcealmentEffects(GameManager.Instance.PlayerEntityBehaviour);
-
-                    EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
-                    EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();
 
                     // Play arrow sound and add arrow to target's inventory
                     if (arrowHit)
@@ -536,24 +566,19 @@ namespace DaggerfallWorkshop.Game
                         enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
                     }
 
+                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && enemyEntity.CurrentHealth <= 0)
+                    {
+                        playerEntity.TallyCrimeGuildRequirements(false, 1);
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
+                    }
+
+                    // Allow custom race handling of weapon hit, e.g. vampire feeding
+                    RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                    if (racialOverride != null)
+                        racialOverride.OnWeaponHitEnemy(GameManager.Instance.PlayerEntity, enemyEntity);
+
                     return true;
                 }
-            }
-
-            // Check if hit a mobile NPC
-            MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
-            if (mobileNpc)
-            {
-                EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
-                if (blood)
-                {
-                    blood.ShowBloodSplash(0, hit.point);
-                }
-                mobileNpc.Motor.gameObject.SetActive(false);
-                playerEntity.TallyCrimeGuildRequirements(false, 5);
-                // TODO: LOS check from each townsperson. If seen, register crime and start spawning guards as below.
-                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                playerEntity.SpawnCityGuards(true);
             }
 
             return false;

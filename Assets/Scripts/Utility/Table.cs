@@ -569,7 +569,7 @@ namespace DaggerfallWorkshop.Utility
                 // Split line by commas
                 parts = text.Split(','); 
                 if (parts.Length != columnCount)
-                    throw new Exception(string.Format("Row on line {0} does not match schema.", lineNumber));
+                    throw new Exception(string.Format("Row on line {0} does not match schema. \"{1}\"", lineNumber, text));
             }
 
             // Add values to columns

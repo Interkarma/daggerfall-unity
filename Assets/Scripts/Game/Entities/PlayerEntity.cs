@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -174,6 +175,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool Arrested { get { return arrested; } set { arrested = value; } }
         public bool IsInBeastForm { get; set; }
         public List<string> BackStory { get; set; }
+        public VampireClans PreviousVampireClan { get; set; }
 
         #endregion
 
@@ -193,7 +195,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public RaceTemplate GetLiveRaceTemplate()
         {
             // Look for racial override effect
-            RacialOverrideEffect racialOverrideEffect = (RacialOverrideEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<RacialOverrideEffect>();
+            RacialOverrideEffect racialOverrideEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
             if (racialOverrideEffect != null)
                 return racialOverrideEffect.CustomRace;
             else
@@ -290,7 +292,8 @@ namespace DaggerfallWorkshop.Game.Entity
                         TallySkill(DFCareer.Skills.Swimming, 1);
                     }
 
-                    DecreaseFatigue(amount);
+                    if (!isResting)
+                        DecreaseFatigue(amount);
 
                     // Make magically-created items that have expired disappear
                     items.RemoveExpiredItems();
@@ -383,16 +386,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (((i + lastGameMinutes) % 54720) == 0) // 38 days
                 {
                     RegionPowerAndConditionsUpdate(true);
-                    //GetVampireOrWereCreatureQuest(false);
+                    StartRacialOverrideQuest(false);
                 }
 
-                //if (((i + lastGameMinutes) % 120960) == 0) // 84 days
-                //    GetVampireOrWereCreatureQuest(true);
+                if (((i + lastGameMinutes) % 120960) == 0) // 84 days
+                    StartRacialOverrideQuest(true);
             }
 
-            // TODO: Right now enemy spawns are only prevented when time has been raised for
-            // fast travel. They should later be prevented when time has been raised for
-            // turning into vampire
+            // Enemy spawns are prevented after time is raised for fast travel, jail time, and vampire transformation
             // Classic also prevents enemy spawns during loitering,
             // but this seems counterintuitive so it's not implemented in DF Unity for now
             if (!preventEnemySpawns)
@@ -455,61 +456,56 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        void StartRacialOverrideQuest(bool isCureQuest)
+        {
+            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialEffect != null)
+                racialEffect.StartQuest(isCureQuest);
+        }
+
         // Recreation of vampire/werecreature quest starter from classic
         // Notes:
         // 1) In classic the initial quest can happen multiple times but this is probably a mistake.
         // 2) Additional quests will come regardless of whether the initial quest was completed or failed, as the bool is set
         //    when the initial quest begins, not on successful completion.
-        void GetVampireOrWereCreatureQuest(bool isCureQuest)
+        void StartVampireOrWereCreatureQuest(bool isCureQuest)
         {
-            // TEMP: Commenting out for now until quest deployment system is ready for this - please do not remove
-            //if (Race == Races.Vampire)
-            //{
-            //    if (isCureQuest)
-            //    {
-            //        if (DFRandom.random_range_inclusive(10, 100) < 30)
-            //            Questing.QuestMachine.Instance.InstantiateQuest("$CUREVAM");
-            //    }
-            //    else if (hasStartedInitialVampireQuest)
-            //    {
-            //        // Do a quest starting with "P0B" for player's level
-            //        // TODO: Merge with rest of quest-loading code
-            //        string[] vampireQuests = { "P0B00L01", "P0B00L03", "P0B00L04", "P0B00L06", "P0B01L02", "P0B10L07", "P0B10L08", "P0B10L10", "P0B20L09" };
-            //        List<string> vQList = new List<string>(vampireQuests);
-            //        if (DFRandom.random_range_inclusive(1, 100) < 50)
-            //        {
-            //            bool found = false;
-            //            string choice = string.Empty;
-            //            while (!found && vQList.Count > 0)
-            //            {
-            //                int index = UnityEngine.Random.Range(0, vQList.Count);
-            //                choice = vQList[index];
-            //                // 4th letter of name is the minimum level the player must be to get the quest
-            //                if (choice[3] - 48 <= level)
-            //                {
-            //                    found = true;
-            //                }
-            //                else
-            //                    vQList.RemoveAt(index);
-            //            }
+            /* TEMP: Commenting out for now until quest deployment system is ready for this - please do not remove
+            if (Race == Races.Vampire)
+            {
+                if (isCureQuest)
+                {
+                    if (DFRandom.random_range_inclusive(10, 100) < 30)
+                        QuestMachine.Instance.InstantiateQuest("$CUREVAM");
+                }
+                else if (hasStartedInitialVampireQuest)
+                {
+                    // Get an appropriate quest for player's level?
+                    if (DFRandom.random_range_inclusive(1, 100) < 50)
+                    {
+                        // Get the regional vampire clan faction id for affecting reputation on success/failure, and current rep
+                        int factionId = 23; // TODO: get appropriate value - just hardcoding The Vraseth for now!
+                        int reputation = FactionData.GetReputation(factionId);
 
-            //            if (found)
-            //                Questing.QuestMachine.Instance.InstantiateQuest(choice);
-            //        }
-            //    }
-            //    else if (DFRandom.random_range_inclusive(1, 100) < 50)
-            //    {
-            //        Questing.QuestMachine.Instance.InstantiateQuest("P0A01L00");
-            //        hasStartedInitialVampireQuest = true;
-            //    }
-            //}
-            ///*else
-            //{
-            //    if (playerIsWereCreature && isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
-            //    {
-            //        Questing.QuestMachine.Instance.InstantiateQuest("$CUREWER");
-            //    }
-            //}*/
+                        // Select a quest at random from appropriate pool
+                        Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(FactionFile.GuildGroups.Vampires, MembershipStatus.Nonmember, factionId, reputation, Level);
+                        if (offeredQuest != null)
+                            QuestMachine.Instance.InstantiateQuest(offeredQuest);
+                    }
+                }
+                else if (DFRandom.random_range_inclusive(1, 100) < 50)
+                {
+                    QuestMachine.Instance.InstantiateQuest("P0A01L00");
+                    hasStartedInitialVampireQuest = true;
+                }
+            }
+            /*else
+            {
+                if (playerIsWereCreature && isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
+                {
+                    QuestMachine.Instance.InstantiateQuest("$CUREWER");
+                }
+            }*/
         }
 
         public bool IntermittentEnemySpawn(uint Minutes)
@@ -609,23 +605,22 @@ namespace DaggerfallWorkshop.Game.Entity
                             continue;
 
                         Vector3 directionToMobile = populationManager.PopulationPool[i].npc.Motor.transform.position - GameManager.Instance.PlayerMotor.transform.position;
-                        float distance = directionToMobile.magnitude;
-
-                        // Spawn from guard mobile NPCs first
-                        if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                        if (directionToMobile.magnitude <= 77.5f)
                         {
-                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
-                            populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
-                            // Count those within classic npc range as spawned from NPCs, to mimic classic behavior
-                            if (distance <= 77.5f)
+                            // Spawn from guard mobile NPCs first
+                            if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                            {
+                                SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                                populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
                                 ++guardsSpawnedFromNPCs;
-                        }
-                        // Next try non-guards
-                        else if (distance <= 77.5f && Vector3.Angle(directionToMobile, GameManager.Instance.PlayerMotor.transform.forward) >= 105.469
-                            && UnityEngine.Random.Range(0, 4) == 0)
-                        {
-                            SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
-                            ++guardsSpawnedFromNPCs;
+                            }
+                            // Next try non-guards
+                            else if (Vector3.Angle(directionToMobile, GameManager.Instance.PlayerMotor.transform.forward) >= 105.469
+                                && UnityEngine.Random.Range(0, 4) == 0)
+                            {
+                                SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
+                                ++guardsSpawnedFromNPCs;
+                            }
                         }
                     }
 
@@ -692,17 +687,19 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        void SpawnCityGuard(Vector3 position, Vector3 direction)
+        public GameObject SpawnCityGuard(Vector3 position, Vector3 direction)
         {
             GameObject[] cityWatch = GameObjectHelper.CreateFoeGameObjects(position, MobileTypes.Knight_CityWatch, 1);
             if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
                 cityWatch[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
             else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
                 cityWatch[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
-            cityWatch[0].transform.LookAt(direction);
+            cityWatch[0].transform.forward = direction;
             EnemyMotor enemyMotor = cityWatch[0].GetComponent<EnemyMotor>();
             enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
             cityWatch[0].SetActive(true);
+
+            return cityWatch[0];
         }
 
         void MakeNPCGuardsIntoEnemiesIfGuardsSpawned()

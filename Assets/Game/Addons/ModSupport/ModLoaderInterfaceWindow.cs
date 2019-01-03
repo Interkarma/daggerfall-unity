@@ -82,7 +82,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modList.SelectedTextColor = textColor;
         modList.ShadowPosition = Vector2.zero;
         modList.RowsDisplayed = 14;
-        modList.RowAlignment = HorizontalAlignment.Center;
+        modList.RowAlignment = HorizontalAlignment.Left;
+        modList.LeftMargin += 4;
         modList.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         modList.SelectedShadowColor = Color.black;
         modList.OnScroll += ModList_OnScroll;

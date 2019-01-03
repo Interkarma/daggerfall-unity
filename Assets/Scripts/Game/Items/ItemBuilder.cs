@@ -419,7 +419,6 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor((ArmorMaterialTypes)newItem.nativeMaterialValue);
-            FixLeatherHelm(newItem);
 
             // Adjust for variant
             if (variant >= 0)
@@ -470,7 +469,6 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetArmorDyeColor(material);
-            FixLeatherHelm(newItem);
             RandomizeArmorVariant(newItem);
 
             return newItem;
@@ -715,16 +713,16 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="recipe">Recipe index for the potion</param>
         /// <returns>Potion DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreatePotion(int recipeKey)
+        public static DaggerfallUnityItem CreatePotion(int recipeKey, int stackSize = 1)
         {
-            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) { PotionRecipeKey = recipeKey };
+            return new DaggerfallUnityItem(ItemGroups.UselessItems1, 1) { PotionRecipeKey = recipeKey, stackCount = stackSize };
         }
 
         /// <summary>
         /// Creates a random potion from all registered recipes.
         /// </summary>
         /// <returns>Potion DaggerfallUnityItem</returns>
-        public static DaggerfallUnityItem CreateRandomPotion()
+        public static DaggerfallUnityItem CreateRandomPotion(int stackSize = 1)
         {
             List<int> recipeKeys = GameManager.Instance.EntityEffectBroker.GetPotionRecipeKeys();
             int recipeIdx = UnityEngine.Random.Range(0, recipeKeys.Count);
@@ -794,17 +792,6 @@ namespace DaggerfallWorkshop.Game.Items
                 variant = UnityEngine.Random.Range(0, item.ItemTemplate.variants);
 
             SetVariant(item, variant);
-        }
-
-        /// <summary>
-        /// Set leather helms to use chain dye.
-        /// Daggerfall seems to do this also as "leather" helms have the chain tint in-game.
-        /// Might need to revisit this later.
-        /// </summary>
-        public static void FixLeatherHelm(DaggerfallUnityItem item)
-        {
-            if (item.TemplateIndex == (int)Armor.Helm && (ArmorMaterialTypes)item.nativeMaterialValue == ArmorMaterialTypes.Leather)
-                item.dyeColor = DyeColors.Chain;
         }
 
         #endregion

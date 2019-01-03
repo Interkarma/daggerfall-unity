@@ -136,17 +136,15 @@ namespace DaggerfallWorkshop
             ApplyDungeonTextureTable();
         }
 
-        public void UseLocationDungeonTextureTable()
+        /// <summary>
+        /// Helper to check if dungeon is a main story dungeon.
+        /// </summary>
+        /// <param name="id">ID of dungeon.</param>
+        /// <returns>True if dungeon is a main story dungeon.</returns>
+        public static bool IsMainStoryDungeon(int id)
         {
-            // Generates dungeon texture table from random seed
-            // RandomDungeonTextures are read from settings.ini. Values are
-            // 0 : Classic textures (swamp and woodland texture sets unused)
-            // 1 : Textures by climate + classic textures for main story dungeons
-            // 2 : Textures by climate for all dungeons
-            // 3 : Randomized + classic textures for main story dungeons (method used in earlier DF Unity builds)
-            // 4 : Randomized for all dungeons
             bool mainStoryDungeon = false;
-            switch (Summary.ID)
+            switch (id)
             {
                 case 187853213:         // Daggerfall/Privateer's Hold
                 case 630439035:         // Wayrest/Wayrest
@@ -161,12 +159,25 @@ namespace DaggerfallWorkshop
                 case 9570447:           // Daggerfall/Castle Necromoghan
                 case 2352284:           // Betony/Tristore Laboratory
                 case 336619236:         // Ykalon/Castle Llugwych
-                     mainStoryDungeon = true;
-                     break;
-                  default:
-                     break;
+                    mainStoryDungeon = true;
+                    break;
+                default:
+                    break;
             }
 
+            return mainStoryDungeon;
+        }
+
+        public void UseLocationDungeonTextureTable()
+        {
+            // Generates dungeon texture table from random seed
+            // RandomDungeonTextures are read from settings.ini. Values are
+            // 0 : Classic textures (swamp and woodland texture sets unused)
+            // 1 : Textures by climate + classic textures for main story dungeons
+            // 2 : Textures by climate for all dungeons
+            // 3 : Randomized + classic textures for main story dungeons (method used in earlier DF Unity builds)
+            // 4 : Randomized for all dungeons
+            bool mainStoryDungeon = IsMainStoryDungeon(Summary.ID);
             int randomDungeonTextures = DaggerfallUnity.Settings.RandomDungeonTextures;
             // If not overriding with other textures (modes 2 and 4), use classic algorithm for main story dungeons
             if (mainStoryDungeon && randomDungeonTextures != 2 && randomDungeonTextures != 4)

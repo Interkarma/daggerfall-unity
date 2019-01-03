@@ -11,14 +11,11 @@
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
@@ -26,6 +23,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -575,6 +573,9 @@ namespace DaggerfallWorkshop.Game.Utility
             var bankRecords = saveTree.FindRecord(RecordTypes.BankAccount);
             Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
 
+            // Ship ownership
+            Banking.DaggerfallBankManager.AssignShipToPlayer(saveVars.PlayerOwnedShip);
+
             // Get regional data.
             playerEntity.RegionData = saveVars.RegionData;
 
@@ -612,6 +613,28 @@ namespace DaggerfallWorkshop.Game.Utility
             // Validate spellbook item
             DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(playerEntity);
 
+            // Restore old class specials
+            RestoreOldClassSpecials(saveTree, characterDocument.classicTransformedRace);
+
+            // Restore vampirism if classic character was a vampire
+            if (characterDocument.classicTransformedRace == Races.Vampire)
+            {
+                // Restore effect
+                Debug.Log("Restoring vampirism to classic character.");
+                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+
+                // Assign correct clan from classic save
+                VampirismEffect vampireEffect = (VampirismEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismEffect>();
+                if (vampireEffect != null)
+                {
+                    Debug.LogFormat("Setting vampire clan to {0}", (VampireClans)characterDocument.vampireClan);
+                    vampireEffect.VampireClan = (VampireClans)characterDocument.vampireClan;
+                }
+            }
+
+            // TODO: Restore lycanthropy if classic character was a werewolf/wereboar
+
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);
@@ -623,6 +646,46 @@ namespace DaggerfallWorkshop.Game.Utility
 
             if (OnStartGame != null)
                 OnStartGame(this, null);
+        }
+
+        void RestoreOldClassSpecials(SaveTree saveTree, Races classicTransformedRace)
+        {
+            try
+            {
+                // Get old class record
+                SaveTreeBaseRecord oldClassRecord = saveTree.FindRecord(RecordTypes.OldClass);
+                if (oldClassRecord == null)
+                    return;
+
+                // Read old class data
+                System.IO.MemoryStream stream = new System.IO.MemoryStream(oldClassRecord.RecordData);
+                System.IO.BinaryReader reader = new System.IO.BinaryReader(stream);
+                ClassFile classFile = new ClassFile();
+                classFile.Load(reader);
+                reader.Close();
+
+                // Restore any specials set by transformed race
+                if (classicTransformedRace == Races.Vampire)
+                {
+                    // Restore pre-vampire specials
+                    characterDocument.career.DamageFromSunlight = classFile.Career.DamageFromSunlight;
+                    characterDocument.career.DamageFromHolyPlaces = classFile.Career.DamageFromHolyPlaces;
+                    characterDocument.career.Paralysis = classFile.Career.Paralysis;
+                    characterDocument.career.Disease = classFile.Career.Disease;
+                }
+                else if (classicTransformedRace == Races.Werewolf)
+                {
+                    // TODO: Restore pre-werewolf specials
+                }
+                else if (classicTransformedRace == Races.Wereboar)
+                {
+                    // TODO: Restore pre-wereboar specials
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.LogErrorFormat("Could not restore old class specials for vamp/were import. Error: '{0}'", ex.Message);
+            }
         }
 
         #endregion

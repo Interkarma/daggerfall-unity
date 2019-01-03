@@ -204,7 +204,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             entityBehaviour.Entity.SetResistanceFlag(variantProperties[currentVariant].elementResisted, true);
-            entityBehaviour.Entity.SetResistanceChance(variantProperties[currentVariant].elementResisted, ChanceValue());
+            entityBehaviour.Entity.RaiseResistanceChance(variantProperties[currentVariant].elementResisted, ChanceValue());
         }
 
         void StopResisting()
@@ -215,7 +215,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             entityBehaviour.Entity.SetResistanceFlag(variantProperties[currentVariant].elementResisted, false);
-            entityBehaviour.Entity.SetResistanceChance(variantProperties[currentVariant].elementResisted, 0);
         }
 
         #endregion  

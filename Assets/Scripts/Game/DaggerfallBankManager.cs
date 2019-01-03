@@ -444,12 +444,20 @@ namespace DaggerfallWorkshop.Game.Banking
             amount = playerEntity.DeductGoldAmount(amount);
             bankAccounts[regionIndex].accountGold -= amount;
 
-            // Set player owned ship and add scenes to permanent list
-            ownedShip = shipType;
-            SaveLoadManager.StateManager.AddPermanentScene(shipExteriorSceneNames[(int)shipType]);
-            SaveLoadManager.StateManager.AddPermanentScene(shipInteriorSceneNames[(int)shipType]);
+            AssignShipToPlayer(shipType);
 
             return TransactionResult.PURCHASED_SHIP;
+        }
+
+        public static void AssignShipToPlayer(ShipType shipType)
+        {
+            // Set player owned ship and add scenes to permanent list
+            ownedShip = shipType;
+            if (shipType != ShipType.None)
+            {
+                SaveLoadManager.StateManager.AddPermanentScene(shipExteriorSceneNames[(int)shipType]);
+                SaveLoadManager.StateManager.AddPermanentScene(shipInteriorSceneNames[(int)shipType]);
+            }
         }
 
         public static TransactionResult SellShip(int regionIndex)

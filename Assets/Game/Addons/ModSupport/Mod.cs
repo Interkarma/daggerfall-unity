@@ -744,12 +744,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return null;
         }
 
-        /// <summary>
-        /// Helper function that uses serialized data from asset bundle to setup prefab
-        /// </summary>
-        /// <param name="prefab">prefab object to setup</param>
-        /// <param name="recordDictionary">serialized data</param>
-        /// <returns></returns>
+        [Obsolete("Obsolete. Please use ImportedComponent attribute instead.")]
         public GameObject SetupPrefabHelper(GameObject prefab, Dictionary<string, List<SerializedRecord>> recordDictionary)
         {
             if (prefab == null || recordDictionary == null)

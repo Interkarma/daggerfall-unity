@@ -204,13 +204,6 @@ namespace DaggerfallWorkshop.Game
             }
             mobile.FreezeAnims = false;
 
-            // Apply gravity
-            if (!flies && !swims && !controller.isGrounded)
-            {
-                controller.SimpleMove(Vector3.zero);
-                return;
-            }
-
             // If hit, get knocked back
             if (knockBackSpeed > 0)
             {
@@ -258,6 +251,18 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 return;
+            }
+
+            // Apply gravity
+            if (!flies && !swims && !isLevitating && !controller.isGrounded)
+            {
+                controller.SimpleMove(Vector3.zero);
+
+                // Only return if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
+                // Allowing them to continue and attempt a Move() in the code below frees them, but we don't want to allow that if we can avoid it so they aren't moving
+                // while falling, which can also accelerate the fall due to anti-bounce downward movement in Move().
+                if (lastPosition != transform.position)
+                    return;
             }
 
             // Monster speed of movement follows the same formula as for when the player walks
@@ -487,16 +492,15 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Returns whether there is a clear path from the current location to the given location. True if clear
+        /// Returns whether there is a clear path to move the given distance from the current location towards the given location. True if clear
         /// or if combat target is the first obstacle hit.
         /// </summary>
-        bool ClearPathToPosition(Vector3 location)
+        bool ClearPathToPosition(Vector3 location, float dist = 2)
         {
-            float sphereCastDist = (location - transform.position).magnitude;
             Vector3 sphereCastDir = (location - transform.position).normalized;
             RaycastHit hit;
 
-            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, sphereCastDist))
+            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 if (hitTarget == entityBehaviour.Target)
@@ -682,10 +686,14 @@ namespace DaggerfallWorkshop.Game
                     return;
             }
 
-            // Slower movement when backing up
-            Vector3 motion = direction * moveSpeed;
             if (backAway)
-                motion *= -1;
+                direction *= -1;
+
+            // Move downward some to eliminate bouncing down inclines
+            if (!flies && !swims && !isLevitating && controller.isGrounded)
+                direction.y = -2f;
+
+            Vector3 motion = direction * moveSpeed;
 
             // If using enhanced combat, avoid moving directly below targets
             if (!backAway && DaggerfallUnity.Settings.EnhancedCombatAI && avoidObstaclesTimer == 0)
@@ -746,7 +754,7 @@ namespace DaggerfallWorkshop.Game
                 else if (flies || isLevitating)
                     controller.Move(motion * Time.deltaTime);
                 else
-                    controller.SimpleMove(motion);
+                    controller.Move(motion * Time.deltaTime);
             }
 
             // Reset clockwise check if we've been clear of obstacles/falls for a while

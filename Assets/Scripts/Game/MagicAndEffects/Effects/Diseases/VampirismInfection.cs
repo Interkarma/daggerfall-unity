@@ -26,6 +26,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Handles deployment tasks over three-day infection window.
     /// This disease can be cured in the usual way up until it completes.
     /// Note: This disease should only be assigned to player entity.
+    ///
+    /// TODO:
+    ///  * Clear guild memberships and reset reputations
     /// </summary>
     public class VampirismInfection : DiseaseEffect
     {
@@ -117,9 +120,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         private void DeployFullBlownVampirism()
         {
+            const int deathIsNotEternalTextID = 401;
+
             // Cancel rest window if sleeping
             if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
                 (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).CloseWindow();
+
+            // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies after transform time
+            GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
+
+            // Reset legal reputation for all regions and strip player of guild memberships
+            ResetLegalRepAndGuildMembership();
 
             // Raise game time to an evening two weeks later
             float raiseTime = (2 * DaggerfallDateTime.SecondsPerWeek) + (DaggerfallDateTime.DuskHour + 1 - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600;
@@ -137,12 +148,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 true,
                 false);
 
+            // Assign vampire spells to spellbook
+            GameManager.Instance.PlayerEntity.AssignPlayerVampireSpells(InfectionVampireClan);
+
             // Fade in from black
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack(1.0f);
 
             // Start permanent vampirism effect stage two
             EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
             GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+
+            // Display popup
+            DaggerfallMessageBox mb = DaggerfallUI.MessageBox(deathIsNotEternalTextID);
+            mb.Show();
         }
 
         DFLocation GetRandomCemetery()
@@ -166,6 +184,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 throw new System.Exception("VampirismInfection.GetRandomCemetery() could not find a cemetery in this region.");
 
             return location;
+        }
+
+        void ResetLegalRepAndGuildMembership()
+        {
+            // TODO: Reset legal reputation for all regions and remove player's guilds memberships, but keep backup of current ranks
+            // UESP indicates that rank is restored after 28 days when player re-joins a guild as a vampire
+            // https://en.uesp.net/wiki/Daggerfall:Vampirism#Reputations
         }
 
         #endregion

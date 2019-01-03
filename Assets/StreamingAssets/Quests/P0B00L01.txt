@@ -179,7 +179,7 @@ Item _letter_ letter used 1013
 Item letter36 letter used 1020
 
 Person _vampire_ factiontype Vampire_Clan male anyInfo 1011 rumors 1012
-Person _pawn_ group Local_3.0 female anyInfo 1014 rumors 1015
+Person _pawn_ group Group_5.0 female anyInfo 1014 rumors 1015
 
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 2
@@ -213,15 +213,18 @@ _vampclicked_ task:
 _1stparton_ task:
 	end quest 
 
+_vampsecondclick_ task:
+	clicked npc _vampire_
+
 variable _2ndparton_
 _clearclick_ task:
-	when _S.11_ and not _npcclicked_ 
-	clear _S.11_ _clearclick_ 
+	when _vampsecondclick_ and not _npcclicked_ 
+	clear _S.11_ _vampsecondclick_ _clearclick_
 
 variable _S.09_
 variable _S.10_
 _S.11_ task:
-	clicked npc _vampire_ 
+	when _vampsecondclick_ 
 	give pc _reward_ 
 	end quest 
 

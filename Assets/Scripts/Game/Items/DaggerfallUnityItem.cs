@@ -311,6 +311,14 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if this item is a parchment.
+        /// </summary>
+        public bool IsParchment
+        {
+            get { return ItemGroup == ItemGroups.UselessItems2 && TemplateIndex == (int)UselessItems2.Parchment; }
+        }
+
+        /// <summary>
         /// Gets/sets the soul trapped in a soul trap.
         /// </summary>
         public MobileTypes TrappedSoulType
@@ -1223,6 +1231,7 @@ namespace DaggerfallWorkshop.Game.Items
             stackCount = other.stackCount;
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
+            potionRecipeKey = other.potionRecipeKey;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();
@@ -1313,9 +1322,6 @@ namespace DaggerfallWorkshop.Game.Items
             // TEST: Force dye color to match material of imported weapons & armor
             // This is to fix cases where dye colour may be set incorrectly on imported item
             dyeColor = DaggerfallUnity.Instance.ItemHelper.GetDyeColor(this);
-
-            // Fix leather helms
-            ItemBuilder.FixLeatherHelm(this);
         }
 
         /// <summary>

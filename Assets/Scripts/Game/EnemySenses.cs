@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game
         public float HearingRadius = 25f;                               // Range of enemy hearing
         public float FieldOfView = 180f;                                // Enemy field of view
 
+        const float predictionInterval = 0.0625f;
+
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         QuestResourceBehaviour questBehaviour;
@@ -46,6 +48,9 @@ namespace DaggerfallWorkshop.Game
         Vector3 lastKnownTargetPos;
         Vector3 oldLastKnownTargetPos;
         Vector3 predictedTargetPos;
+        Vector3 predictedTargetPosWithoutLead;
+        Vector3 lastPositionDiff;
+        bool awareOfTargetForLastPrediction;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
@@ -168,6 +173,7 @@ namespace DaggerfallWorkshop.Game
             motor = GetComponent<EnemyMotor>();
             questBehaviour = GetComponent<QuestResourceBehaviour>();
             lastKnownTargetPos = ResetPlayerPos;
+            oldLastKnownTargetPos = ResetPlayerPos;
             predictedTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
@@ -201,10 +207,10 @@ namespace DaggerfallWorkshop.Game
                 classicUpdate = false;
 
             targetPosPredictTimer += Time.deltaTime;
-            if (targetPosPredictTimer >= 0.10f)
+            if (targetPosPredictTimer >= predictionInterval)
             {
+                targetPosPredictTimer = 0f;
                 targetPosPredict = true;
-                targetPosPredictTimer = 0.10f;
             }
             else
                 targetPosPredict = false;
@@ -401,7 +407,7 @@ namespace DaggerfallWorkshop.Game
                     predictedTargetPos = lastKnownTargetPos;
 
                 // Predict target's next position
-                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && predictedTargetPos != ResetPlayerPos)
+                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && predictedTargetPos != ResetPlayerPos && lastKnownTargetPos != ResetPlayerPos)
                 {
                     float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
                     predictedTargetPos = PredictNextTargetPos(moveSpeed);
@@ -437,20 +443,54 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {
-            Vector3 lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
+            // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
+            if (targetInSight || targetInEarshot)
+            {
+                if (awareOfTargetForLastPrediction)
+                    lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
+
+                // Store current last known target position for next prediction update
+                oldLastKnownTargetPos = lastKnownTargetPos;
+
+                awareOfTargetForLastPrediction = true;
+            }
+            else
+                awareOfTargetForLastPrediction = false;
 
             Vector3 assumedCurrentPosition;
+
+            // If aware of target, use last known position as assumed current position
             if (targetInSight || targetInEarshot)
+            {
                 assumedCurrentPosition = lastKnownTargetPos;
+            }
+            // Stop predicting if distance is too far
+            else if ((predictedTargetPos - transform.position).magnitude > SightRadius + mobile.Summary.Enemy.SightModifier)
+            {
+                assumedCurrentPosition = predictedTargetPosWithoutLead;
+                lastPositionDiff = Vector3.zero;
+            }
+            // If not aware of target and predicted position may still be good, use predicted position
             else
-                assumedCurrentPosition = predictedTargetPos;
+            {
+                assumedCurrentPosition = predictedTargetPosWithoutLead;
+            }
 
-            float secondsToCurrentTargetPos = (assumedCurrentPosition - transform.position).magnitude / interceptSpeed;
+            // Get seconds to the predicted position so we lead target to intercept. Important when using this function to aim ranged attacks.
+            float secondsToPredictedPos = (assumedCurrentPosition - transform.position).magnitude / interceptSpeed;
+            float divisor = predictionInterval;
 
-            if (targetPosPredictTimer == 0)
-                targetPosPredictTimer = 0.10f;
+            // Account for mid-interval call by DaggerfallMissile
+            if (targetPosPredictTimer != 0)
+            {
+                divisor = targetPosPredictTimer;
+                targetPosPredictTimer = 0;
+            }
 
-            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff * (10 / (targetPosPredictTimer / .10f)) * secondsToCurrentTargetPos);
+            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff / divisor * secondsToPredictedPos);
+
+            // Store prediction minus lead for next prediction update
+            predictedTargetPosWithoutLead = assumedCurrentPosition + lastPositionDiff;
 
             // Don't predict target will move right past us (prevents AI from turning around
             // when target is approaching)
@@ -467,12 +507,6 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
             if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
                 prediction = assumedCurrentPosition;
-
-            // Store current last known target position for predicting next position
-            if (targetInSight || targetInEarshot)
-                oldLastKnownTargetPos = lastKnownTargetPos;
-
-            targetPosPredictTimer = 0;
 
             return prediction;
         }

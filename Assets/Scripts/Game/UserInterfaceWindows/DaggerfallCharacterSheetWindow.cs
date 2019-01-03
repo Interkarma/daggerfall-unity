@@ -467,6 +467,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             List<string> specials = new List<string>();
             DFCareer career = GameManager.Instance.PlayerEntity.Career;
+            RaceTemplate race = GameManager.Instance.PlayerEntity.RaceTemplate;
 
             // Tolerances
             Dictionary<DFCareer.Tolerance, string> tolerances = new Dictionary<DFCareer.Tolerance, string>
@@ -689,6 +690,81 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (career.DamageFromHolyPlaces)
                 specials.Add(HardStrings.damage + " " + HardStrings.fromHolyPlaces);
+
+            // Add racial tolerances and abilities
+            Dictionary<DFCareer.EffectFlags, string> raceEffectMods = new Dictionary<DFCareer.EffectFlags, string>
+            {
+                { DFCareer.EffectFlags.Paralysis, HardStrings.toParalysis },
+                { DFCareer.EffectFlags.Magic, HardStrings.toMagic },
+                { DFCareer.EffectFlags.Poison, HardStrings.toPoison },
+                { DFCareer.EffectFlags.Fire, HardStrings.toFire },
+                { DFCareer.EffectFlags.Frost, HardStrings.toFrost },
+                { DFCareer.EffectFlags.Shock, HardStrings.toShock },
+                { DFCareer.EffectFlags.Disease, HardStrings.toDisease },
+            };
+            foreach (DFCareer.EffectFlags effectFlag in Enum.GetValues(typeof(DFCareer.EffectFlags)))
+            {
+                if (effectFlag != DFCareer.EffectFlags.None)
+                {
+                    // Resistances
+                    if ((race.ResistanceFlags & effectFlag) == effectFlag)
+                    { 
+                        string toAdd = HardStrings.resistance + " " + raceEffectMods[effectFlag];
+                        if (!specials.Contains(toAdd)) // prevent duplicates from career
+                        {
+                            specials.Add(toAdd);
+                        }
+                    }
+                    // Immunities
+                    if ((race.ImmunityFlags & effectFlag) == effectFlag)
+                    {
+                        string toAdd = HardStrings.immunity + " " + raceEffectMods[effectFlag];
+                        if (!specials.Contains(toAdd))
+                        {
+                            specials.Add(toAdd);
+                        }
+                    }
+                    // Low tolerances
+                    if ((race.LowToleranceFlags & effectFlag) == effectFlag)
+                    {
+                        string toAdd = HardStrings.lowTolerance + " " + raceEffectMods[effectFlag];
+                        if (!specials.Contains(toAdd))
+                        {
+                            specials.Add(toAdd);
+                        }
+                    }
+                    // Critical weaknesses
+                    if ((race.CriticalWeaknessFlags & effectFlag) == effectFlag)
+                    {
+                        string toAdd = HardStrings.criticalWeakness + " " + raceEffectMods[effectFlag];
+                        if (!specials.Contains(toAdd))
+                        {
+                            specials.Add(toAdd);
+                        }
+                    }
+                }
+            }
+
+            Dictionary<DFCareer.SpecialAbilityFlags, string> raceAbilities = new Dictionary<DFCareer.SpecialAbilityFlags, string>
+            {
+                { DFCareer.SpecialAbilityFlags.AcuteHearing, HardStrings.acuteHearing },
+                { DFCareer.SpecialAbilityFlags.Athleticism, HardStrings.acuteHearing },
+                { DFCareer.SpecialAbilityFlags.AdrenalineRush, HardStrings.adrenalineRush },
+                { DFCareer.SpecialAbilityFlags.NoRegenSpellPoints, HardStrings.inabilityToRegen },
+                { DFCareer.SpecialAbilityFlags.SunDamage, HardStrings.damage + " " + HardStrings.fromSunlight },
+                { DFCareer.SpecialAbilityFlags.HolyDamage, HardStrings.damage + " " + HardStrings.fromHolyPlaces }
+            };
+            foreach (DFCareer.SpecialAbilityFlags abilityFlag in Enum.GetValues(typeof(DFCareer.SpecialAbilityFlags)))
+            {
+                if (abilityFlag != DFCareer.SpecialAbilityFlags.None && (race.SpecialAbilities & abilityFlag) == abilityFlag)
+                {
+                    string toAdd = raceAbilities[abilityFlag];
+                    if (!specials.Contains(toAdd))
+                    {
+                        specials.Add(toAdd);
+                    }
+                }
+            }
 
             return specials.ToArray();
         }

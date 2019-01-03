@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         List<SiteTarget> siteTargets = new List<SiteTarget>();
         int lastSiteLinkCount = 0;
+        Vector3 worldCompensation = Vector3.zero;
 
         struct SiteTarget
         {
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
             PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
             PlayerGPS.OnMapPixelChanged += PlayerGPS_OnMapPixelChanged;
+            StreamingWorld.OnFloatingOriginChange += StreamingWorld_OnFloatingOriginChange;
         }
 
         public override void Update()
@@ -145,7 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         if (door.buildingKey == site.buildingKey)
                         {
                             foundTotal++;
-                            Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
+                            Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position + worldCompensation;
 
                             SiteTarget target = new SiteTarget();
                             target.doorPosition = position;
@@ -168,6 +170,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Update SiteLink count
             lastSiteLinkCount = QuestMachine.Instance.SiteLinkCount;
+
+            worldCompensation = Vector3.zero;
         }
 
         #endregion
@@ -183,6 +187,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void QuestMachine_OnQuestStarted(Quest quest)
         {
             // Refresh when starting a new quest
+            RefreshSiteTargets();
+        }
+
+        private void StreamingWorld_OnFloatingOriginChange()
+        {
+            // Refresh when world compensation changes or markers may appear floating in air
+            worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             RefreshSiteTargets();
         }
 

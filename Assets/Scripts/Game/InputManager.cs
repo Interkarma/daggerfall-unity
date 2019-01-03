@@ -280,7 +280,7 @@ namespace DaggerfallWorkshop.Game
                 wasPaused = true;
 
                 // Allow quickload during death
-                if (GameManager.Instance.PlayerDeath.DeathInProgress)
+                if (GameManager.Instance.PlayerObject && GameManager.Instance.PlayerDeath.DeathInProgress)
                 {
                     KeyCode quickLoadBinding = GetBinding(Actions.QuickLoad);
                     if (Input.GetKey(quickLoadBinding))

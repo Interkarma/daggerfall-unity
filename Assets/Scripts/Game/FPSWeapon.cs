@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
             if (dfAudioSource)
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                SoundClips sound = DaggerfallEntity.GetRaceGenderAttackSound(playerEntity.Race, playerEntity.Gender);
+                SoundClips sound = DaggerfallEntity.GetRaceGenderAttackSound(playerEntity.Race, playerEntity.Gender, true);
                 float pitch = dfAudioSource.AudioSource.pitch;
                 dfAudioSource.AudioSource.pitch = pitch + UnityEngine.Random.Range(0, 0.3f);
                 dfAudioSource.PlayOneShot(sound, 0, 1f);

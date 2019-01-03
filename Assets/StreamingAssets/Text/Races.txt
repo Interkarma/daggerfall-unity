@@ -2,6 +2,7 @@
 
 schema: *key,text
 
+-- Races
 breton,      Breton
 redguard,    Redguard
 nord,        Nord
@@ -13,3 +14,14 @@ argonian,    Argonian
 vampire,     Vampire
 werewolf,    Werewolf
 wereboar,    Wereboar
+
+-- Vampire clans
+vraseth,     Vraseth
+haarvenu,    Haarvenu
+thrafey,     Thrafey
+lyrezi,      Lyrezi
+montalion,   Montalion
+khulari,     Khulari
+garlythi,    Garlythi
+anthotis,    Anthotis
+selenu,      Selenu

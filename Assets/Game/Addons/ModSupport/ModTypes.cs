@@ -129,6 +129,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
+    [Obsolete("Obsolete. Please use ImportedComponent attribute instead.")]
     public interface Idfmod_Serializable
     {
         System.Object[] ToSerialize();

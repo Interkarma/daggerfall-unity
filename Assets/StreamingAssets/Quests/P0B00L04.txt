@@ -227,6 +227,12 @@ Foe _vampire_ is Vampire
 _vampclicked_ task:
 	clicked npc _vamp_ 
 
+_S.07_ task:
+	when _vampclicked_ 
+	reveal _mondung_ 
+	log 1014 step 1 
+	say 1013 
+
 _S.01_ task:
 	killed 1 _vampire_ 
 	say 1016 
@@ -250,12 +256,6 @@ variable _S.05_
 _readletter_ task:
 	add dialog for person _vamp_ 
 	log 1012 step 0 
-
-_S.07_ task:
-	when _vampclicked_ 
-	reveal _mondung_ 
-	log 1014 step 1 
-	say 1013 
 
 _S.08_ task:
 	start timer _queston_ 

@@ -152,6 +152,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.reputationScholars = entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars];
             data.playerEntity.reputationNobility = entity.SGroupReputations[(int)FactionFile.SocialGroups.Nobility];
             data.playerEntity.reputationUnderworld = entity.SGroupReputations[(int)FactionFile.SocialGroups.Underworld];
+            data.playerEntity.previousVampireClan = entity.PreviousVampireClan;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -175,6 +176,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
             // Store guild memberships
             data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
+            // Store one time quest acceptances
+            data.oneTimeQuestsAccepted = GameManager.Instance.QuestListsManager.oneTimeQuestsAccepted;
 
             // Store instanced effect bundles
             data.playerEntity.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
@@ -299,6 +302,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars] = data.playerEntity.reputationScholars;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Nobility] = data.playerEntity.reputationNobility;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Underworld] = data.playerEntity.reputationUnderworld;
+            entity.PreviousVampireClan = data.playerEntity.previousVampireClan;
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 
@@ -385,6 +389,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore guild memberships, also done early in SaveLoadManager for interiors
             GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
+            // Restore one time quest acceptances
+            GameManager.Instance.QuestListsManager.oneTimeQuestsAccepted = data.oneTimeQuestsAccepted;
 
             entity.DeserializeSpellbook(data.playerEntity.spellbook);
 
