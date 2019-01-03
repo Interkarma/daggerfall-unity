@@ -209,6 +209,14 @@ namespace DaggerfallWorkshop.Game
         const int veryLikePlayerDoesNotKnowTellMeAboutNobility = 7283;
         const int veryLikePlayerDoesNotKnowTellMeAboutUnderworld = 7284;
 
+        const int minNeutralReaction = 0;
+        const int minLikeReaction = 10;
+        const int minVeryLikeReaction = 30;
+        // Lower reaction thresholds for info requests
+        const int minInfoNeutralReaction = minNeutralReaction - 5;
+        const int minInfoLikeReaction = minLikeReaction - 5;
+        const int minInfoVeryLikeReaction = minVeryLikeReaction - 5;
+
         public static List<FactionFile.FactionIDs> factionsUsedForFactionInNews = new List<FactionFile.FactionIDs>()
         {
             FactionFile.FactionIDs.Abibon_Gora, FactionFile.FactionIDs.Alcaire, FactionFile.FactionIDs.Alikra, FactionFile.FactionIDs.Anticlere,
@@ -629,9 +637,10 @@ namespace DaggerfallWorkshop.Game
             ResetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
         }
 
-        public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
+        public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup, MonoBehaviour target)
         {
             int reactionToPlayer = 0;
+            const int reactionRollMax = 15;
 
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
@@ -654,6 +663,9 @@ namespace DaggerfallWorkshop.Game
             reactionToPlayer = NPCfaction.rep;
             reactionToPlayer += player.BiographyReactionMod;
 
+            DFRandom.Seed = (uint)target.GetHashCode(); // Roll result should be the same every time for a given NPC
+            reactionToPlayer += DFRandom.random_range_inclusive(0, reactionRollMax);
+
             if ((int)socialGroup < player.SGroupReputations.Length) // one of the five general social groups
                 reactionToPlayer += player.SGroupReputations[(int)socialGroup];
 
@@ -666,7 +678,7 @@ namespace DaggerfallWorkshop.Game
             currentNPCType = NPCType.Mobile;
 
             // Get reaction to player
-            int reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners); // All mobile NPCs are commoners
+            int reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners, targetNPC); // All mobile NPCs are commoners
 
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
@@ -697,7 +709,7 @@ namespace DaggerfallWorkshop.Game
             currentNPCType = NPCType.Static;
 
             // Get reaction to player
-            int reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup);
+            int reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup, targetNPC);
 
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
@@ -850,25 +862,25 @@ namespace DaggerfallWorkshop.Game
             {
                 if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8553, 8554
                 {
-                    if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
+                    if (reactionToPlayer >= minVeryLikeReaction) // what reputation is needed to show like greeting message?
                         return ExpandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
-                    else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                    else if (reactionToPlayer >= minNeutralReaction) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
                         return ExpandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
                 }
                 else // all other guilds (including Knightly Orders) seem to use messages 8550, 8551
                 {
-                    if (reactionToPlayer >= 30) // what reputation is needed to show like greeting message?
+                    if (reactionToPlayer >= minVeryLikeReaction) // what reputation is needed to show like greeting message?
                         return ExpandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
-                    else if (reactionToPlayer >= 0) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                    else if (reactionToPlayer >= minNeutralReaction) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
                         return ExpandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
                 }
             }
 
-            if (reactionToPlayer >= 30)
+            if (reactionToPlayer >= minVeryLikeReaction)
                 return ExpandRandomTextRecord(veryLikePlayerGreetingTextId);
-            else if (reactionToPlayer >= 10)
+            else if (reactionToPlayer >= minLikeReaction)
                 return ExpandRandomTextRecord(likePlayerGreetingTextId);
-            else if (reactionToPlayer >= 0)
+            else if (reactionToPlayer >= minNeutralReaction)
                 return ExpandRandomTextRecord(neutralToPlayerGreetingTextId);
             else            
                 return ExpandRandomTextRecord(dislikePlayerGreetingTextId);
@@ -1433,11 +1445,11 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
             {
                 // messages if npc does not know
-                if (reactionToPlayer >= 30)
+                if (reactionToPlayer >= minInfoVeryLikeReaction)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
-                else if (reactionToPlayer >= 10)
+                else if (reactionToPlayer >= minInfoLikeReaction)
                     return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
-                else if (reactionToPlayer >= 0)
+                else if (reactionToPlayer >= minInfoNeutralReaction)
                     return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
                 else
                     return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
@@ -1469,11 +1481,11 @@ namespace DaggerfallWorkshop.Game
 
 
                 // location related messages if npc knows
-                if (reactionToPlayer >= 30)
+                if (reactionToPlayer >= minInfoVeryLikeReaction)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
-                else if (reactionToPlayer >= 10)
+                else if (reactionToPlayer >= minInfoLikeReaction)
                     return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
-                else if (reactionToPlayer >= 0)
+                else if (reactionToPlayer >= minInfoNeutralReaction)
                     return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
                 else
                     return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
@@ -1671,11 +1683,11 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
             {
                 // messages if npc does not know
-                if (reactionToPlayer >= 30)
+                if (reactionToPlayer >= minInfoVeryLikeReaction)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowTellMeAboutDefault, veryLikePlayerDoesNotKnowTellMeAboutGuildMembers, veryLikePlayerDoesNotKnowTellMeAboutMerchants, veryLikePlayerDoesNotKnowTellMeAboutScholars, veryLikePlayerDoesNotKnowTellMeAboutNobility, veryLikePlayerDoesNotKnowTellMeAboutUnderworld);
-                else if (reactionToPlayer >= 10)
+                else if (reactionToPlayer >= minInfoLikeReaction)
                     return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowTellMeAboutDefault, likePlayerDoesNotKnowTellMeAboutGuildMembers, likePlayerDoesNotKnowTellMeAboutMerchants, likePlayerDoesNotKnowTellMeAboutScholars, likePlayerDoesNotKnowTellMeAboutNobility, likePlayerDoesNotKnowTellMeAboutUnderworld);
-                else if (reactionToPlayer >= 0)
+                else if (reactionToPlayer >= minInfoNeutralReaction)
                     return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowTellMeAboutDefault, neutralToPlayerDoesNotKnowTellMeAboutGuildMembers, neutralToPlayerDoesNotKnowTellMeAboutMerchants, neutralToPlayerDoesNotKnowTellMeAboutScholars, neutralToPlayerDoesNotKnowTellMeAboutNobility, neutralToPlayerDoesNotKnowTellMeAboutUnderworld);
                 else
                     return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowTellMeAboutDefault, dislikePlayerDoesNotKnowTellMeAboutGuildMembers, dislikePlayerDoesNotKnowTellMeAboutMerchants, dislikePlayerDoesNotKnowTellMeAboutScholars, dislikePlayerDoesNotKnowTellMeAboutNobility, dislikePlayerDoesNotKnowTellMeAboutUnderworld);
@@ -1685,11 +1697,11 @@ namespace DaggerfallWorkshop.Game
                 npcData.numAnswersGivenTellMeAboutOrRumors++;
 
                 // location related messages if npc knows
-                if (reactionToPlayer >= 30)
+                if (reactionToPlayer >= minInfoVeryLikeReaction)
                     return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerTellMeAboutDefault, veryLikePlayerAnswerTellMeAboutGuildMembers, veryLikePlayerAnswerTellMeAboutMerchants, veryLikePlayerAnswerTellMeAboutScholars, veryLikePlayerAnswerTellMeAboutNobility, veryLikePlayerAnswerTellMeAboutUnderworld);
-                else if (reactionToPlayer >= 10)
+                else if (reactionToPlayer >= minInfoLikeReaction)
                     return getRecordIdByNpcsSocialGroup(likePlayerAnswerTellMeAboutDefault, likePlayerAnswerTellMeAboutGuildMembers, likePlayerAnswerTellMeAboutMerchants, likePlayerAnswerTellMeAboutScholars, likePlayerAnswerTellMeAboutNobility, likePlayerAnswerTellMeAboutUnderworld);
-                else if (reactionToPlayer >= 0)
+                else if (reactionToPlayer >= minInfoNeutralReaction)
                     return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerTellMeAboutDefault, neutralToPlayerAnswerTellMeAboutGuildMembers, neutralToPlayerAnswerTellMeAboutMerchants, neutralToPlayerAnswerTellMeAboutScholars, neutralToPlayerAnswerTellMeAboutNobility, neutralToPlayerAnswerTellMeAboutUnderworld);
                 else
                     return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerTellMeAboutDefault, dislikePlayerAnswerTellMeAboutGuildMembers, dislikePlayerAnswerTellMeAboutMerchants, dislikePlayerAnswerTellMeAboutScholars, dislikePlayerAnswerTellMeAboutNobility, dislikePlayerAnswerTellMeAboutUnderworld);
