@@ -79,7 +79,6 @@ namespace DaggerfallWorkshop
         public bool Option_AddMeshColliders = true;
         public bool Option_AddNavmeshAgents = true;
         public bool Option_RMBGroundPlane = true;
-        public bool Option_CloseCityGates = false;
 
         // Prefab options
         public bool Option_ImportLightPrefabs = true;

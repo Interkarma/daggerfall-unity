@@ -812,7 +812,6 @@ namespace DaggerfallWorkshop.Utility
             if (IsCityGate(modelID))
             {
                 DaggerfallCityGate gate = go.AddComponent<DaggerfallCityGate>();
-                gate.SetOpen(!dfUnity.Option_CloseCityGates);
             }
 
             return go;

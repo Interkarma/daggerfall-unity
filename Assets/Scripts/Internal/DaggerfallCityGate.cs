@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,11 +10,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
-using System.IO;
-using DaggerfallConnect;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
@@ -32,8 +27,6 @@ namespace DaggerfallWorkshop
             DaggerfallMesh mesh = GetComponent<DaggerfallMesh>();
             if (mesh != null)
             {
-                // Get current climate
-
                 // Set open/closed
                 if (isOpen)
                     GameObjectHelper.ChangeDaggerfallMeshGameObject(mesh, RMBLayout.CityGateOpenModelID);
@@ -48,6 +41,14 @@ namespace DaggerfallWorkshop
         public void Toggle()
         {
             SetOpen(!isOpen);
+        }
+
+        private void Update()
+        {
+            // Toggle closed at 18:00 and open again at 06:00
+            bool isNight = DaggerfallUnity.Instance.WorldTime.Now.IsNight;
+            if (isNight && isOpen || !isNight && !isOpen)
+                Toggle();
         }
     }
 }
