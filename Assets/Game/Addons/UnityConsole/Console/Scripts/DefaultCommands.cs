@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
@@ -88,6 +89,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(IngredientUsage.name, IngredientUsage.description, IngredientUsage.usage, IngredientUsage.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
         }
 
         private static class DumpBlock
@@ -1797,6 +1799,62 @@ namespace Wenzil.Console
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(window);
 
                 return "Finished";
+            }
+        }
+
+        private static class PrintLegalRep
+        {
+            public static readonly string name = "print_legalrep";
+            public static readonly string description = "Output current legal status and reputation value for all regions";
+            public static readonly string usage = "print_legalrep";
+
+            public static string Execute(params string[] args)
+            {
+                string output = string.Empty;
+                if (GameManager.Instance.PlayerEntity != null && GameManager.Instance.PlayerEntity.RegionData != null)
+                {
+                    for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
+                    {
+                        string regionName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+                        string reputationString = string.Empty;
+                        int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
+                        if (rep > 80)
+                            reputationString = HardStrings.revered;
+                        else if (rep > 60)
+                            reputationString = HardStrings.esteemed;
+                        else if (rep > 40)
+                            reputationString = HardStrings.honored;
+                        else if (rep > 20)
+                            reputationString = HardStrings.admired;
+                        else if (rep > 10)
+                            reputationString = HardStrings.respected;
+                        else if (rep > 0)
+                            reputationString = HardStrings.dependable;
+                        else if (rep == 0)
+                            reputationString = HardStrings.aCommonCitizen;
+                        else if (rep < -80)
+                            reputationString = HardStrings.hated;
+                        else if (rep < -60)
+                            reputationString = HardStrings.pondScum;
+                        else if (rep < -40)
+                            reputationString = HardStrings.aVillain;
+                        else if (rep < -20)
+                            reputationString = HardStrings.aCriminal;
+                        else if (rep < -10)
+                            reputationString = HardStrings.aScoundrel;
+                        else if (rep < 0)
+                            reputationString = HardStrings.undependable;
+
+                        output += string.Format("In '{0}' you are {1} [{2}]\n", regionName, reputationString, rep);
+                    }
+                    output += "Finished";
+                }
+                else
+                {
+                    return "Could not read legal reputation data.";
+                }
+
+                return output;
             }
         }
 
