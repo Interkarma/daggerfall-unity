@@ -249,7 +249,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public float CurrentHealthPercent { get { return GetCurrentHealth() / (float)maxHealth; } }
         public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
         public int CurrentFatigue { get { return GetCurrentFatigue(); } set { SetFatigue(value); } }
-        public int MaxMagicka { get { return (this == GameManager.Instance.PlayerEntity ? FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue) : maxMagicka); } set { maxMagicka = value; } }
+        public int MaxMagicka { get { return (career != null && this == GameManager.Instance.PlayerEntity ? FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue) : maxMagicka); } set { maxMagicka = value; } }
         public int CurrentMagicka { get { return GetCurrentMagicka(); } set { SetMagicka(value); } }
         public int MaxBreath { get { return stats.LiveEndurance / 2; } }
         public int CurrentBreath { get { return currentBreath; } set { SetBreath(value); } }
