@@ -781,7 +781,7 @@ namespace DaggerfallWorkshop.Game
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
 
             // Matched to classic. For dialogue, NPCs that are not of type 2, 7 or 9 use their first parent that is, if such a parent exists
-            for (int parentFactionID = 0; factionData.parent != 0 && factionData.type != 2 && factionData.type != 7 && factionData.type != 9; parentFactionID = factionData.parent)
+            while (factionData.parent != 0 && factionData.type != 2 && factionData.type != 7 && factionData.type != 9)
             {
                 GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionData.parent, out factionData);
             }
