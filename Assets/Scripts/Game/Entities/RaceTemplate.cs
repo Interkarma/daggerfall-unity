@@ -43,8 +43,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public DFCareer.EffectFlags CriticalWeaknessFlags;      // Racial critical weakness
         public DFCareer.SpecialAbilityFlags SpecialAbilities;   // Racial special abilities
 
-        public DFCareer.MaterialFlags ImmuneToMaterials;         // Custom: Immunity to material types
-
         /// <summary>
         /// Clones this race template.
         /// </summary>

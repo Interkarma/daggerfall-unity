@@ -13,6 +13,7 @@ using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
@@ -99,6 +100,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Assign constant state changes for vampires
             entityBehaviour.Entity.IsImmuneToDisease = true;
             entityBehaviour.Entity.IsImmuneToParalysis = true;
+            entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Silver;
         }
 
         public override void MagicRound()
@@ -220,6 +222,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
         }
 
+        public override void End()
+        {
+            base.End();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Remove player metal immunity
+            entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.None;
+        }
+
         #endregion
 
         #region Public Methods
@@ -269,7 +284,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Disease;
             compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.SunDamage;
             compoundRace.SpecialAbilities |= DFCareer.SpecialAbilityFlags.HolyDamage;
-            compoundRace.ImmuneToMaterials |= DFCareer.MaterialFlags.Iron | DFCareer.MaterialFlags.Steel;
         }
 
         RaceTemplate GetCompoundRace()
