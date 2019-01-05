@@ -414,6 +414,12 @@ namespace DaggerfallWorkshop.Game
                 return false;
             }
 
+            // Check if player hit a static exterior door
+            if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
+            {
+                return false;
+            }
+
             // Set up for use below
             DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
             DaggerfallMobileUnit entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();

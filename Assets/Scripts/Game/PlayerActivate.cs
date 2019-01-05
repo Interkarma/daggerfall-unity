@@ -558,6 +558,34 @@ namespace DaggerfallWorkshop.Game
             clickDelayStartTime = Time.realtimeSinceStartup;
         }
 
+        public bool AttemptExteriorDoorBash(RaycastHit hit)
+        {
+            Transform doorOwner;
+            DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
+            StaticDoor door;
+            if (doors && doors.HasHit(hit.point, out door))
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                if (dfAudioSource != null)
+                    dfAudioSource.PlayOneShot(SoundClips.PlayerDoorBash);
+
+                // Roll for chance to open
+                // TODO: Factor door lock value into chance to open
+                int chance = 20;
+                int roll = Random.Range(1, 101);
+                if (roll <= chance)
+                {
+                    TransitionInterior(doorOwner, door, true);
+                    return true;
+                }
+                // Bashing doors in cities is a crime
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
+                playerEntity.SpawnCityGuards(false);
+            }
+            return false;
+        }
+
         private void HandleLootContainer(RaycastHit hit, DaggerfallLoot loot)
         {
             // Check if close enough to activate for all types, except for corpses
