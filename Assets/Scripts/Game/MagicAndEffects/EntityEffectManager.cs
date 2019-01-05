@@ -397,8 +397,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Incoming disease effects are blocked if entity is hard immune to disease (e.g. vampires)
-                if (effect is DiseaseEffect && entityBehaviour.Entity.IsImmuneToDisease)
+                // Incoming disease and paralysis effects are blocked if entity is hard immune (e.g. vampires/lycanthropes)
+                if (effect is DiseaseEffect && IsEntityImmuneToDisease() ||
+                    effect is Paralyze && IsEntityImmuneToParalysis())
                 {
                     continue;
                 }
@@ -490,6 +491,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 RaiseOnAssignBundle(instancedBundle);
                 Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
             }
+        }
+
+        /// <summary>
+        /// Checks if peered entity is globally immune to disease from career or effect system.
+        /// </summary>
+        /// <returns>True if entity immune to disease.</returns>
+        public bool IsEntityImmuneToDisease()
+        {
+            return entityBehaviour.Entity.Career.Disease == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToDisease;
+        }
+
+        /// <summary>
+        /// Checks if peered entity is globally immune to paralysis from career or effect system.
+        /// </summary>
+        /// <returns>True if entity immune to paralysis.</returns>
+        public bool IsEntityImmuneToParalysis()
+        {
+            return entityBehaviour.Entity.Career.Paralysis == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToParalysis;
         }
 
         /// <summary>
