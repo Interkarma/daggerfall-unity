@@ -233,6 +233,9 @@ namespace DaggerfallWorkshop.Game
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
+            // Check for possible infection
+            CheckPlayerInfection(entity);
+
             // Calculate damage
             damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, weapon, -1);
 
@@ -274,6 +277,37 @@ namespace DaggerfallWorkshop.Game
                 sounds.PlayMissSound(weapon);
 
             return damage;
+        }
+
+        void CheckPlayerInfection(EnemyEntity enemy)
+        {
+            // Vampires, werewolves, and wereboars have a 0.6% chance to infect player with their diseases
+            if (Random.Range(0f, 100f) > 0.6f)
+                return;
+
+            // Vampires
+            if (enemy.MobileEnemy.ID == (int)MobileTypes.Vampire || enemy.MobileEnemy.ID == (int)MobileTypes.VampireAncient)
+            {
+                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                Debug.Log("Player infected by vampire.");
+            }
+
+            // TODO: Werewolf
+            if (enemy.MobileEnemy.ID == (int)MobileTypes.Werewolf)
+            {
+                //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWerewolfDisease();
+                //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                //Debug.Log("Player infected by werewolf.");
+            }
+
+            // TODO: Wereboar
+            if (enemy.MobileEnemy.ID == (int)MobileTypes.Wereboar)
+            {
+                //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWereboarDisease();
+                //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                //Debug.Log("Player infected by wereboar.");
+            }
         }
 
         private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
