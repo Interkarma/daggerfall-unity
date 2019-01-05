@@ -467,7 +467,7 @@ namespace DaggerfallWorkshop
                         if (bundleSettings.TargetType == TargetTypes.CasterOnly)
                         {
                             // Spell is readied on player for free
-                            GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, false);
+                            GameManager.Instance.PlayerEffectManager.SetReadySpell(thisAction.Index, true);
                         }
                         else
                         {
