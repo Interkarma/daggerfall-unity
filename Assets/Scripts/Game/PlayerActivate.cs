@@ -565,7 +565,6 @@ namespace DaggerfallWorkshop.Game
             StaticDoor door;
             if (doors && doors.HasHit(hit.point, out door))
             {
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                 if (dfAudioSource != null)
                     dfAudioSource.PlayOneShot(SoundClips.PlayerDoorBash);
@@ -580,6 +579,7 @@ namespace DaggerfallWorkshop.Game
                     return true;
                 }
                 // Bashing doors in cities is a crime
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
                 playerEntity.SpawnCityGuards(false);
             }
