@@ -1533,8 +1533,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 EnemyBlood sparkles = readySpell.CasterEntityBehaviour.GetComponent<EnemyBlood>();
 
-                Vector3 sparklesPos = entityBehaviour.transform.position;
                 CharacterController targetController = entityBehaviour.transform.GetComponent<CharacterController>();
+                Vector3 sparklesPos = entityBehaviour.transform.position + targetController.center;
                 sparklesPos.y += targetController.height / 8;
 
                 if (sparkles)

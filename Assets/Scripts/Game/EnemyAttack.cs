@@ -333,9 +333,8 @@ namespace DaggerfallWorkshop.Game
                 targetSounds.PlayHitSound(weapon);
 
                 EnemyBlood blood = senses.Target.transform.GetComponent<EnemyBlood>();
-
-                Vector3 bloodPos = senses.Target.transform.position;
                 CharacterController targetController = senses.Target.transform.GetComponent<CharacterController>();
+                Vector3 bloodPos = senses.Target.transform.position + targetController.center;
                 bloodPos.y += targetController.height / 8;
 
                 if (blood)
