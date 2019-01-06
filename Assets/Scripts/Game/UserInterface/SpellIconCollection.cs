@@ -174,12 +174,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             spellIcons.Clear();
 
             // Get source atlas
-            Texture2D spellIconAtlas = DaggerfallUI.GetTextureFromImg(spellIconsFile);
-            if (spellIconAtlas == null)
+            Texture2D loadSpellIconAtlas = DaggerfallUI.GetTextureFromImg(spellIconsFile);
+            if (loadSpellIconAtlas == null)
             {
                 Debug.LogWarning("SpellIconCollection: Could not load spell icons atlas texture. Arena2 path might not be set yet.");
                 return;
             }
+
+            Texture2D spellIconAtlas = new Texture2D(loadSpellIconAtlas.width, loadSpellIconAtlas.height, TextureFormat.ARGB32, false);
+            spellIconAtlas.SetPixels(loadSpellIconAtlas.GetPixels());
+            spellIconAtlas.Apply();
 
             // Derive dimension of each icon from atlas width
             const int rowCount = 20;
