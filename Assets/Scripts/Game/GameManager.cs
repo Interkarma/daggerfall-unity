@@ -566,7 +566,7 @@ namespace DaggerfallWorkshop.Game
                     if (enemySenses)
                     {
                         // Can enemy see player or is close enough they would be spawned in classic?
-                        if ((entityBehaviour.Target == Instance.PlayerEntityBehaviour && enemySenses.TargetInSight) || enemySenses.WouldBeSpawnedInClassic)
+                        if ((enemySenses.Target == Instance.PlayerEntityBehaviour && enemySenses.TargetInSight) || enemySenses.WouldBeSpawnedInClassic)
                         {
                             areEnemiesNearby = true;
                             break;

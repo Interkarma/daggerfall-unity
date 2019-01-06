@@ -295,7 +295,7 @@ namespace DaggerfallWorkshop.Game
                             DaggerfallEntityBehaviour entityBehaviour = null;
                             if (arrowHit.transform)
                                 entityBehaviour = arrowHit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                            if (entityBehaviour == caster.Target)
+                            if (entityBehaviour == caster.GetComponent<EnemySenses>().Target)
                             {
                                 EnemyAttack attack = caster.GetComponent<EnemyAttack>();
                                 if (attack)

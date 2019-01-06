@@ -150,8 +150,8 @@ namespace DaggerfallWorkshop.Game
             if (attacker && senses)
             {
                 // Assign target if don't already have target, or original target isn't seen or adjacent
-                if (entityBehaviour.Target == null || !senses.TargetInSight || senses.DistanceToTarget > 2f)
-                    entityBehaviour.Target = attacker;
+                if (senses.Target == null || !senses.TargetInSight || senses.DistanceToTarget > 2f)
+                    senses.Target = attacker;
                 senses.LastKnownTargetPos = attacker.transform.position;
                 senses.OldLastKnownTargetPos = attacker.transform.position;
                 senses.PredictedTargetPos = attacker.transform.position;
@@ -313,7 +313,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Do nothing if no target or after giving up finding the target or if target position hasn't been acquired yet
-            if (entityBehaviour.Target == null || giveUpTimer == 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
+            if (senses.Target == null || giveUpTimer == 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
             {
                 SetChangeStateTimer();
                 bashing = false;
@@ -353,7 +353,7 @@ namespace DaggerfallWorkshop.Game
                     // Ground enemies target at their own height
                     // This avoids short enemies from stepping on each other as they approach the target
                     // Otherwise, their target vector aims up towards the target
-                    var targetController = entityBehaviour.Target.GetComponent<CharacterController>();
+                    var targetController = senses.Target.GetComponent<CharacterController>();
                     var deltaHeight = (targetController.height - controller.height) / 2;
                     targetPos.y -= deltaHeight;
                 }
@@ -503,7 +503,7 @@ namespace DaggerfallWorkshop.Game
             if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                if (hitTarget == entityBehaviour.Target)
+                if (hitTarget == senses.Target)
                     return true;
 
                 return false;
@@ -564,7 +564,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
 
                 // Clear path to target
-                if (hitTarget == entityBehaviour.Target)
+                if (hitTarget == senses.Target)
                     return true;
 
                 // Something in the way
@@ -633,9 +633,9 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
         {
-            if (entityBehaviour.Target)
+            if (senses.Target)
             {
-                EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
+                EntityEffectManager targetEffectManager = senses.Target.GetComponent<EntityEffectManager>();
                 LiveEffectBundle[] bundles = targetEffectManager.EffectBundles;
 
                 for (int i = 0; i < spell.Settings.Effects.Length; i++)
@@ -900,7 +900,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                if (entityBehaviour2 == entityBehaviour.Target)
+                if (entityBehaviour2 == senses.Target)
                     obstacleDetected = false;
 
                 DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
@@ -959,9 +959,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             // No retreat if enemy is paralyzed
-            if (entityBehaviour.Target != null)
+            if (senses.Target != null)
             {
-                EntityEffectManager targetEffectManager = entityBehaviour.Target.GetComponent<EntityEffectManager>();
+                EntityEffectManager targetEffectManager = senses.Target.GetComponent<EntityEffectManager>();
                 if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
                 {
                     moveInForAttack = true;
@@ -976,7 +976,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // No retreat if enemy is player with bow or weapon not out
-                if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour
+                if (senses.Target == GameManager.Instance.PlayerEntityBehaviour
                     && GameManager.Instance.WeaponManager.ScreenWeapon
                     && (GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow
                     || !GameManager.Instance.WeaponManager.ScreenWeapon.ShowWeapon))
@@ -994,7 +994,7 @@ namespace DaggerfallWorkshop.Game
 
             // Level difference affects likelihood of backing away.
             moveInForAttackTimer = Random.Range(1, 3);
-            int levelMod = (entity.Level - entityBehaviour.Target.Entity.Level) / 2;
+            int levelMod = (entity.Level - senses.Target.Entity.Level) / 2;
             if (levelMod > 4)
                 levelMod = 4;
             if (levelMod < -4)
