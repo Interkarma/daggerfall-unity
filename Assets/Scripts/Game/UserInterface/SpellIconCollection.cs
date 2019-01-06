@@ -185,12 +185,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             const int rowCount = 20;
             int dim = spellIconAtlas.width / rowCount;
 
+            // Checks texture imported from mods
+            if (spellIconAtlas.format == TextureFormat.DXT5 && dim % 4 != 0)
+            {
+                Debug.LogErrorFormat("{0} is compressed with a block-based format but icons are not multiple of 4.", spellIconsFile);
+                return;
+            }
+
             // Read icons to their own texture (remembering Unity textures are flipped vertically)
             int srcX = 0, srcY = spellIconAtlas.height - dim;
             for (int i = 0; i < SpellIconCount; i++)
             {
                 // Extract texture
-                Texture2D iconTexture = new Texture2D(dim, dim);
+                Texture2D iconTexture = new Texture2D(dim, dim, spellIconAtlas.format, false);
                 Graphics.CopyTexture(spellIconAtlas, 0, 0, srcX, srcY, dim, dim, iconTexture, 0, 0, 0, 0);
                 iconTexture.filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
                 spellIcons.Add(iconTexture);
