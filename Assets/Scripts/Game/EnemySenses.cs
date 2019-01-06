@@ -299,6 +299,10 @@ namespace DaggerfallWorkshop.Game
                     targetRateOfApproach = 0;
                     distanceToTarget = 0;
                     targetSenses = null;
+
+                    // If had a valid target before, resume pursuing it. Looks better to first finish any attack animation.
+                    if (lastTarget != null && lastTarget.Entity.CurrentHealth > 0 && !mobile.IsPlayingOneShot())
+                        target = lastTarget;
                 }
 
                 if ((motor.IsHostile && target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
