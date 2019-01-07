@@ -276,19 +276,25 @@ namespace DaggerfallWorkshop.Game.Entity
                 gameStarted = true;
             if (playerMotor != null)
             {
+                // UESP describes Athleticism relating to fatigue/stamina as "decreases slower when running, jumping, climbing, and swimming."
+                // https://en.uesp.net/wiki/Daggerfall:ClassMaker#Special_Advantages
+                // In this implementation, players with athleticism will lose fatigue 10% slower, otherwise at normal rate
+                // TODO: Determine actual improvement multiplier to fatigue loss, possibly move to FormulaHelper
+                float fatigueLossMultiplier = (career.Athleticism) ? 0.90f : 1.0f;
+
                 // Apply per-minute events
                 if (lastGameMinutes != gameMinutes)
                 {
                     // Apply fatigue loss to the player
-                    int amount = DefaultFatigueLoss;
+                    int amount = (int)(DefaultFatigueLoss * fatigueLossMultiplier);
                     if (climbingMotor != null && climbingMotor.IsClimbing)
-                        amount = ClimbingFatigueLoss;
+                        amount = (int)(ClimbingFatigueLoss * fatigueLossMultiplier);
                     else if (playerMotor.IsRunning)
-                        amount = RunningFatigueLoss;
+                        amount = (int)(RunningFatigueLoss * fatigueLossMultiplier);
                     else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
                     {
                         if (Race != Races.Argonian && UnityEngine.Random.Range(1, 100 + 1) > Skills.GetLiveSkillValue(DFCareer.Skills.Swimming))
-                            amount = SwimmingFatigueLoss;
+                            amount = (int)(SwimmingFatigueLoss * fatigueLossMultiplier);
                         TallySkill(DFCareer.Skills.Swimming, 1);
                     }
 
@@ -342,7 +348,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Reduce fatigue when jumping and tally jumping skill
                 if (!CheckedCurrentJump && playerMotor.IsJumping)
                 {
-                    DecreaseFatigue(JumpingFatigueLoss);
+                    DecreaseFatigue((int)(JumpingFatigueLoss * fatigueLossMultiplier));
                     TallySkill(DFCareer.Skills.Jumping, 1);
                     CheckedCurrentJump = true;
                 }

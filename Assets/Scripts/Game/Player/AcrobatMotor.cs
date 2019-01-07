@@ -69,9 +69,13 @@ namespace DaggerfallWorkshop.Game
                 // Not quite double here, as it feels too high and all character have same base jump height anyway
                 // This is just temporary as jump height currently not modified by jumping skill or any other bonuses
                 // Ideally this spell would double jump skill which in turn increases height (classic matched jumping is todo on roadmap)
+                // TODO: Implement classic jump speed formula as per roadmap and refine below
+                // NOTE: Jump speed is either increased by 60% by jump spell or 10% by athleticism, they do not stack currently
                 float jumpSpeedMultiplier = 1.0f;
                 if (GameManager.Instance.PlayerEntity.IsEnhancedJumping)
                     jumpSpeedMultiplier = 1.6f;
+                else if (GameManager.Instance.PlayerEntity.Career.Athleticism)
+                    jumpSpeedMultiplier = 1.1f;
 
                 moveDirection.y = jumpSpeed * jumpSpeedMultiplier;
                 jumping = true;
