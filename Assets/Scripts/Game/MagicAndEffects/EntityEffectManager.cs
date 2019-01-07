@@ -940,14 +940,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             else
                 absorbSpellPointsOut = effectCastingCost;
 
-            // Check if entity has an absorb incumbent running
+            // Handle effect-based absorption
             SpellAbsorption absorbEffect = FindIncumbentEffect<SpellAbsorption>() as SpellAbsorption;
-            if (absorbEffect != null)
-                return TryEffectBasedAbsorption(effect, absorbEffect, casterEntity);
+            if (absorbEffect != null && TryEffectBasedAbsorption(effect, absorbEffect, casterEntity))
+                return true;
 
             // Handle career-based absorption
-            if (entityBehaviour.Entity.Career.SpellAbsorption != DFCareer.SpellAbsorptionFlags.None)
-                return TryCareerBasedAbsorption(effect, casterEntity);
+            if (entityBehaviour.Entity.Career.SpellAbsorption != DFCareer.SpellAbsorptionFlags.None && TryCareerBasedAbsorption(effect, casterEntity))
+                return true;
+
+            // Handle persistant absorption (e.g. special advantage general/day/night or from weapon effects)
+            if (entityBehaviour.Entity.IsAbsorbingSpells)
+                return true;
 
             return false;
         }
@@ -965,7 +969,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         bool TryEffectBasedAbsorption(IEntityEffect effect, SpellAbsorption absorbEffect, DaggerfallEntity casterEntity)
         {
-            return RollAbsorptionChance(absorbEffect, casterEntity);
+            int chance = absorbEffect.Settings.ChanceBase + absorbEffect.Settings.ChancePlus * (int)Mathf.Floor(casterEntity.Level / absorbEffect.Settings.ChancePerLevel);
+            int roll = UnityEngine.Random.Range(1, 100);
+
+            return (roll <= chance);
         }
 
         bool TryCareerBasedAbsorption(IEntityEffect effect, DaggerfallEntity casterEntity)
@@ -993,14 +1000,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return false;
-        }
-
-        bool RollAbsorptionChance(SpellAbsorption absorbEffect, DaggerfallEntity casterEntity)
-        {
-            int chance = absorbEffect.Settings.ChanceBase + absorbEffect.Settings.ChancePlus * (int)Mathf.Floor(casterEntity.Level / absorbEffect.Settings.ChancePerLevel);
-            int roll = UnityEngine.Random.Range(1, 100);
-
-            return (roll <= chance);
         }
 
         #endregion

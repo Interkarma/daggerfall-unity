@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsEnhancedClimbing { get; set; }
         public bool IsEnhancedJumping { get; set; }
         public bool IsSlowFalling { get; set; }
+        public bool IsAbsorbingSpells { get; set; }
 
         /// <summary>
         /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
@@ -694,6 +695,7 @@ namespace DaggerfallWorkshop.Game.Entity
             IsEnhancedClimbing = false;
             IsEnhancedJumping = false;
             IsSlowFalling = false;
+            IsAbsorbingSpells = false;
             IsResistingFire = false;
             IsResistingFrost = false;
             IsResistingDiseaseOrPoison = false;
