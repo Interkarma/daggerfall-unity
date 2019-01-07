@@ -1043,7 +1043,7 @@ namespace DaggerfallWorkshop.Game
 
             CifRciFile cifRciFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
             Texture2D texture;
-            if (!TextureReplacement.TryImportCifRci(name, record, frame, out texture))
+            if (!TextureReplacement.TryImportCifRci(name, record, frame, true, out texture))
             {
                 cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
                 DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);

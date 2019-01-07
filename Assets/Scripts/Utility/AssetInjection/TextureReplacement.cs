@@ -241,11 +241,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="name">Image name.</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation frame index</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported image as texture.</param>
         /// <returns>True if CifRci imported.</returns>
-        public static bool TryImportCifRci(string name, int record, int frame, out Texture2D tex)
+        public static bool TryImportCifRci(string name, int record, int frame, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), false, out tex);
+            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), readOnly, out tex);
         }
 
         /// <summary>
@@ -255,9 +256,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation frame index</param>
         /// <param name="metalType">Metal type.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported image as texture.</param>
         /// <returns>True if CifRci imported.</returns>
-        public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, out Texture2D tex)
+        public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, bool readOnly, out Texture2D tex)
         {
             return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), false, out tex);
         }

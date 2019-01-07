@@ -183,7 +183,7 @@ namespace DaggerfallWorkshop.Game
             for (int record = 0; record < cifFile.RecordCount; record++)
             {
                 Texture2D texture;
-                if (!TextureReplacement.TryImportCifRci(filename, record, 0, out texture))
+                if (!TextureReplacement.TryImportCifRci(filename, record, 0, false, out texture))
                 {
                     // Get Color32 array
                     DFSize sz;

@@ -340,7 +340,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Load npc portrait
             string imageName = facePortraitArchive == FacePortraitArchive.CommonFaces ? portraitImgName : facesImgName;
-            if (!TextureReplacement.TryImportCifRci(imageName, recordId, 0, out texturePortrait))
+            if (!TextureReplacement.TryImportCifRci(imageName, recordId, 0, false, out texturePortrait))
             {
                 CifRciFile rciFile = new CifRciFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imageName), FileUsage.UseMemory, false);
                 rciFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, rciFile.PaletteName));
