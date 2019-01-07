@@ -303,7 +303,7 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = imgFile.GetSize(0);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.TryImportImage(filename, out imageData.texture))
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportImage(filename, false, out imageData.texture))
                         createTexture = false;
 
                     break;

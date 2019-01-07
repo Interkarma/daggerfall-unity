@@ -993,7 +993,7 @@ namespace DaggerfallWorkshop.Game
 
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);
             Texture2D texture;
-            if (!TextureReplacement.TryImportImage(name, out texture))
+            if (!TextureReplacement.TryImportImage(name, readOnly, out texture))
             {
                 imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
                 texture = GetTextureFromImg(imgFile, format, readOnly);
