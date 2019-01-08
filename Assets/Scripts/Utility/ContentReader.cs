@@ -263,6 +263,16 @@ namespace DaggerfallWorkshop.Utility
             return -1;
         }
 
+        /// <summary>
+        /// Gets path to FACTION.TXT file in StreamingAssets/Factions folder.
+        /// </summary>
+        /// <returns>Full path to file.</returns>
+        public string GetFactionFilePath()
+        {
+            string path = Path.Combine(Application.streamingAssetsPath, "Factions");
+            return Path.Combine(path, FactionFile.Filename);
+        }
+
         #endregion
 
         #region Private Methods
@@ -282,7 +292,7 @@ namespace DaggerfallWorkshop.Utility
             if (woodsFileReader == null)
                 woodsFileReader = new WoodsFile(Path.Combine(arena2Path, WoodsFile.Filename), FileUsage.UseMemory, true);
             if (factionFileReader == null)
-                factionFileReader = new FactionFile(Path.Combine(arena2Path, FactionFile.Filename), FileUsage.UseMemory, true);
+                factionFileReader = new FactionFile(GetFactionFilePath(), FileUsage.UseMemory, true);
             if (flatsFileReader == null)
                 flatsFileReader = new FlatsFile(Path.Combine(arena2Path, FlatsFile.Filename), FileUsage.UseMemory, true);
             if (paintFileReader == null)
