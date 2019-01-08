@@ -876,7 +876,7 @@ namespace DaggerfallWorkshop.Game
             obstacleDetected = false;
             RaycastHit hit;
             int checkDistance = 2;
-            Vector3 rayOrigin = transform.position;
+            Vector3 rayOrigin = transform.position + controller.center;
             rayOrigin.y -= controller.height / 3;
             foundUpwardSlope = false;
             foundDoor = false;

@@ -768,12 +768,12 @@ namespace DaggerfallWorkshop.Game
 
                     // Set origin of ray to approximate eye position
                     CharacterController controller = entityBehaviour.transform.GetComponent<CharacterController>();
-                    Vector3 eyePos = transform.position;
+                    Vector3 eyePos = transform.position + controller.center;
                     eyePos.y += controller.height / 3;
 
                     // Set destination to the target's approximate eye position
                     controller = target.transform.GetComponent<CharacterController>();
-                    Vector3 targetEyePos = target.transform.position;
+                    Vector3 targetEyePos = target.transform.position + controller.center;
                     targetEyePos.y += controller.height / 3;
 
                     // Check if can see.
