@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich
+// Contributors:    Allofich, Numidium
 // 
 // Notes:
 //
@@ -556,6 +556,34 @@ namespace DaggerfallWorkshop.Game
         {
             clickDelay = Mathf.Clamp01(delay);
             clickDelayStartTime = Time.realtimeSinceStartup;
+        }
+
+        public bool AttemptExteriorDoorBash(RaycastHit hit)
+        {
+            Transform doorOwner;
+            DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
+            StaticDoor door;
+            if (doors && doors.HasHit(hit.point, out door))
+            {
+                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                if (dfAudioSource != null)
+                    dfAudioSource.PlayOneShot(SoundClips.PlayerDoorBash);
+
+                // Roll for chance to open
+                // TODO: Factor door lock value into chance to open
+                int chance = 20;
+                int roll = Random.Range(1, 101);
+                if (roll <= chance)
+                {
+                    TransitionInterior(doorOwner, door, true);
+                    return true;
+                }
+                // Bashing doors in cities is a crime
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
+                playerEntity.SpawnCityGuards(false);
+            }
+            return false;
         }
 
         private void HandleLootContainer(RaycastHit hit, DaggerfallLoot loot)

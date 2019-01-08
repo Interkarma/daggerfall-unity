@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors: Numidium   
 // 
 // Notes:
 //
@@ -411,6 +411,12 @@ namespace DaggerfallWorkshop.Game
             if (actionDoor)
             {
                 actionDoor.AttemptBash(true);
+                return false;
+            }
+
+            // Check if player hit a static exterior door
+            if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
+            {
                 return false;
             }
 
