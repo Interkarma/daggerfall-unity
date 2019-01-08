@@ -164,6 +164,11 @@ namespace DaggerfallWorkshop.Game
             {
                 currentOutdoorFogSettings = fogSettings;
             }
+            else // if in interior or dungeon
+            {
+                // set fog color to black
+                RenderSettings.fogColor = Color.black;
+            }
 
             // set fog mode first
             RenderSettings.fogMode = fogSettings.fogMode;
