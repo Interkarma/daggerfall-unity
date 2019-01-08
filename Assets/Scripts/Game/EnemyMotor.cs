@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop.Game
             float distance = (targetPos - transform.position).magnitude;
 
             // Ranged attacks
-            if (targetPosIsEnemyPos && senses.TargetInSight && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if (targetPosIsEnemyPos && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 bool evaluateBow = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
                 bool evaluateRangedMagic = false;
@@ -417,7 +417,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Touch spells
-            if (targetPosIsEnemyPos && senses.TargetInSight && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
+            if (targetPosIsEnemyPos && senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance +
                 senses.TargetRateOfApproach && CanCastTouchSpell() && entityEffectManager.SetReadySpell(selectedSpell))
             {
                 if (mobile.Summary.EnemyState != MobileStates.Spell)
