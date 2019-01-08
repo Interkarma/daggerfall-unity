@@ -85,6 +85,12 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsSlowFalling { get; set; }
         public bool IsAbsorbingSpells { get; set; }
 
+        // This property allows individual effects to increase/decrease global multiplier for maximum magicka
+        // Note: This property is intentionally not serialized and should only be set by live effects
+        private float maxMagickaMultiplier = 1.0f;
+        public float MaxMagickaMultiplier { get { return maxMagickaMultiplier; } }
+
+
         /// <summary>
         /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
         /// </summary>
@@ -250,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public float CurrentHealthPercent { get { return GetCurrentHealth() / (float)maxHealth; } }
         public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
         public int CurrentFatigue { get { return GetCurrentFatigue(); } set { SetFatigue(value); } }
-        public int MaxMagicka { get { return (career != null && this == GameManager.Instance.PlayerEntity ? FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue) : maxMagicka); } set { maxMagicka = value; } }
+        public int MaxMagicka { get { return GetMaxMagicka(); } set { maxMagicka = value; } }
         public int CurrentMagicka { get { return GetCurrentMagicka(); } set { SetMagicka(value); } }
         public int MaxBreath { get { return stats.LiveEndurance / 2; } }
         public int CurrentBreath { get { return currentBreath; } set { SetBreath(value); } }
@@ -359,6 +365,13 @@ namespace DaggerfallWorkshop.Game.Entity
             return currentMagicka;
         }
 
+        public void ChangeMaxMagickaMultiplier(float amount)
+        {
+            maxMagickaMultiplier += amount;
+            if (CurrentMagicka > MaxMagicka)
+                CurrentMagicka = MaxMagicka;
+        }
+
         public virtual int SetBreath(int amount)
         {
             currentBreath = Mathf.Clamp(amount, 0, MaxBreath);
@@ -386,6 +399,16 @@ namespace DaggerfallWorkshop.Game.Entity
         int GetCurrentMagicka()
         {
             return currentMagicka;
+        }
+
+        int GetMaxMagicka()
+        {
+            // Player's maximum magicka determined by career and intelligence, enemies are set by level elsewhere
+            // The global multiplier can apply to either player or enemies without changing permanent maximum
+            if (career != null && this == GameManager.Instance.PlayerEntity)
+                return (int)(maxMagickaMultiplier * FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue));
+            else
+                return (int)(MaxMagickaMultiplier * maxMagicka);
         }
 
         #endregion
@@ -696,6 +719,7 @@ namespace DaggerfallWorkshop.Game.Entity
             IsEnhancedJumping = false;
             IsSlowFalling = false;
             IsAbsorbingSpells = false;
+            maxMagickaMultiplier = 1.0f;
             IsResistingFire = false;
             IsResistingFrost = false;
             IsResistingDiseaseOrPoison = false;
