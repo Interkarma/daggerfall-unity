@@ -42,7 +42,9 @@ namespace DaggerfallWorkshop.Game
         Vector3 directionToTarget;
         float distanceToPlayer;
         float distanceToTarget;
+        DaggerfallEntityBehaviour target;
         DaggerfallEntityBehaviour lastTarget;
+        EnemySenses targetSenses;
         float lastDistanceToTarget;
         float targetRateOfApproach;
         Vector3 lastKnownTargetPos;
@@ -74,6 +76,12 @@ namespace DaggerfallWorkshop.Game
         float classicSpawnYDistLower = 0f;
         float classicDespawnXZDist = 0f;
         float classicDespawnYDist = 0f;
+
+        public DaggerfallEntityBehaviour Target
+        {
+            get { return target; }
+            set { target = value; }
+        }
 
         DaggerfallEntityBehaviour Player
         {
@@ -272,15 +280,17 @@ namespace DaggerfallWorkshop.Game
             {
                 classicTargetUpdateTimer += Time.deltaTime / systemTimerUpdatesDivisor;
 
-                if (entityBehaviour.Target != null && entityBehaviour.Target.Entity.CurrentHealth <= 0)
-                    entityBehaviour.Target = null;
+                if (target != null && target.Entity.CurrentHealth <= 0)
+                {
+                    target = null;
+                }
 
                 // NoTarget mode
-                if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && entityBehaviour.Target == Player)
-                    entityBehaviour.Target = null;
+                if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && target == Player)
+                    target = null;
 
                 // Reset these values if no target
-                if (entityBehaviour.Target == null)
+                if (target == null)
                 {
                     lastKnownTargetPos = ResetPlayerPos;
                     predictedTargetPos = ResetPlayerPos;
@@ -288,28 +298,37 @@ namespace DaggerfallWorkshop.Game
                     lastDistanceToTarget = 0;
                     targetRateOfApproach = 0;
                     distanceToTarget = 0;
+                    targetSenses = null;
+
+                    // If had a valid target before, resume pursuing it. Looks better to first finish any attack animation.
+                    if (lastTarget != null && lastTarget.Entity.CurrentHealth > 0 && !mobile.IsPlayingOneShot())
+                        target = lastTarget;
                 }
 
-                if ((motor.IsHostile && entityBehaviour.Target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
+                if ((motor.IsHostile && target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
                 {
                     classicTargetUpdateTimer = 0f;
 
                     // Is enemy in area around player or can see player?
                     if (wouldBeSpawnedInClassic || playerInSight)
                     {
-                        entityBehaviour.Target = GetTarget();
+                        target = GetTarget();
+                        if (target != null && target != Player)
+                            targetSenses = target.GetComponent<EnemySenses>();
+                        else
+                            targetSenses = null;
                     }
 
                     // Make targeted character also target this character if it doesn't have a target yet.
-                    if (entityBehaviour.Target != null && entityBehaviour.Target.Target == null)
+                    if (target != null && targetSenses && targetSenses.Target == null)
                     {
-                        entityBehaviour.Target.Target = entityBehaviour;
+                        targetSenses.Target = entityBehaviour;
                     }
                 }
 
                 // Compare change in target position to give AI some ability to read opponent's movements
 
-                if (entityBehaviour.Target != null && entityBehaviour.Target == lastTarget)
+                if (target != null && target == lastTarget)
                 {
                     if (DaggerfallUnity.Settings.EnhancedCombatAI)
                         targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
@@ -320,10 +339,10 @@ namespace DaggerfallWorkshop.Game
                     targetRateOfApproach = 0;
                 }
 
-                if (entityBehaviour.Target != null)
+                if (target != null)
                 {
                     lastDistanceToTarget = distanceToTarget;
-                    lastTarget = entityBehaviour.Target;
+                    lastTarget = target;
                 }
             }
 
@@ -343,8 +362,8 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 Vector3 toTarget = ResetPlayerPos;
-                if (entityBehaviour.Target != null)
-                    toTarget = entityBehaviour.Target.transform.position - transform.position;
+                if (target != null)
+                    toTarget = target.transform.position - transform.position;
 
                 if (toTarget != ResetPlayerPos)
                 {
@@ -352,19 +371,19 @@ namespace DaggerfallWorkshop.Game
                     directionToTarget = toTarget.normalized;
                 }
 
-                if (entityBehaviour.Target == null)
+                if (target == null)
                 {
                     targetInSight = false;
                     detectedTarget = false;
                     return;
                 }
 
-                targetInSight = CanSeeTarget(entityBehaviour.Target);
+                targetInSight = CanSeeTarget(target);
 
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
                 // hearing if the enemy has detected the target. If target is visible we can omit hearing.
                 if (detectedTarget && !targetInSight)
-                    targetInEarshot = CanHearTarget(entityBehaviour.Target);
+                    targetInEarshot = CanHearTarget(target);
                 else
                     targetInEarshot = false;
 
@@ -384,7 +403,7 @@ namespace DaggerfallWorkshop.Game
                 if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
                 {
                     detectedTarget = true;
-                    lastKnownTargetPos = entityBehaviour.Target.transform.position;
+                    lastKnownTargetPos = target.transform.position;
                     lastHadLOSTimer = 200f;
                 }
                 else if (!blockedByIllusionEffect && StealthCheck())
@@ -395,7 +414,7 @@ namespace DaggerfallWorkshop.Game
                     // actual LOS for a while. This gives better pursuit behavior since enemies
                     // will go to the last spot they saw the player instead of walking into walls.
                     if (lastHadLOSTimer <= 0)
-                        lastKnownTargetPos = entityBehaviour.Target.transform.position;
+                        lastKnownTargetPos = target.transform.position;
                 }
                 else
                     detectedTarget = false;
@@ -413,7 +432,7 @@ namespace DaggerfallWorkshop.Game
                     predictedTargetPos = PredictNextTargetPos(moveSpeed);
                 }
 
-                if (detectedTarget && !hasEncounteredPlayer && entityBehaviour.Target == Player)
+                if (detectedTarget && !hasEncounteredPlayer && target == Player)
                 {
                     hasEncounteredPlayer = true;
 
@@ -526,7 +545,7 @@ namespace DaggerfallWorkshop.Game
             if (gameMinutes == timeOfLastStealthCheck)
                 return detectedTarget;
 
-            if (entityBehaviour.Target == Player)
+            if (target == Player)
             {
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
                 if (playerMotor.IsMovingLessThanHalfSpeed)
@@ -547,7 +566,7 @@ namespace DaggerfallWorkshop.Game
 
             timeOfLastStealthCheck = gameMinutes;
 
-            int stealthRoll = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * entityBehaviour.Target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
+            int stealthRoll = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
 
             return Random.Range(1, 101) > stealthRoll;
         }
@@ -562,16 +581,16 @@ namespace DaggerfallWorkshop.Game
 
             // If not one of the above enemy types, and target has invisibility,
             // detection is always blocked.
-            if (entityBehaviour.Target.Entity.IsInvisible)
+            if (target.Entity.IsInvisible)
                 return true;
 
             // If target doesn't have any illusion effect, detection is not blocked.
-            if (!entityBehaviour.Target.Entity.IsBlending && !entityBehaviour.Target.Entity.IsAShade)
+            if (!target.Entity.IsBlending && !target.Entity.IsAShade)
                 return false;
 
             // Target has either chameleon or shade. Try to see through it.
             int chance;
-            if (entityBehaviour.Target.Entity.IsBlending)
+            if (target.Entity.IsBlending)
                 chance = 8;
             else // is a shade
                 chance = 4;
@@ -600,13 +619,13 @@ namespace DaggerfallWorkshop.Game
 
             Vector3 targetDirection2D;
 
-            if (entityBehaviour.Target == Player)
+            if (target == Player)
             {
                 Camera mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 targetDirection2D = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
             }
             else
-                targetDirection2D = -new Vector3(entityBehaviour.Target.transform.forward.x, 0, entityBehaviour.Target.transform.forward.z);
+                targetDirection2D = -new Vector3(target.transform.forward.x, 0, target.transform.forward.z);
 
             float angle = Vector3.Angle(directionToLastKnownTarget2D, targetDirection2D);
 
@@ -702,7 +721,7 @@ namespace DaggerfallWorkshop.Game
                     float priority = 0;
 
                     // Add 5 priority if this potential target isn't already targeting someone
-                    if (targetBehaviour.Target == null)
+                    if (targetSenses && targetSenses.Target == null)
                         priority += 5;
 
                     if (see)

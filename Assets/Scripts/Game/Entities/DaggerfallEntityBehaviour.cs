@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop.Game.Entity
         EntityTypes lastEntityType = EntityTypes.None;
         DaggerfallEntity entity = null;
         DaggerfallLoot corpseLootContainer = null;
-        DaggerfallEntityBehaviour target = null;
 
         #endregion
 
@@ -39,12 +38,6 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return entity; }
             set { SetEntityValue(value); }
-        }
-
-        public DaggerfallEntityBehaviour Target
-        {
-            get { return target; }
-            set { target = value; }
         }
 
         /// <summary>

@@ -121,17 +121,17 @@ namespace DaggerfallWorkshop.Game
 
         public void BowDamage(Vector3 direction)
         {
-            if (entityBehaviour.Target == null)
+            if (senses.Target == null)
                 return;
 
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-            if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
+            if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
                 damage = ApplyDamageToPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand));
             else
                 damage = ApplyDamageToNonPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand), direction, true);
 
             Items.DaggerfallUnityItem arrow = Items.ItemBuilder.CreateItem(Items.ItemGroups.Weapons, (int)Items.Weapons.Arrow);
-            entityBehaviour.Target.Entity.Items.AddItem(arrow);
+            senses.Target.Entity.Items.AddItem(arrow);
         }
 
         #region Private Methods
@@ -167,8 +167,8 @@ namespace DaggerfallWorkshop.Game
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
                 EnemyEntity targetEntity = null;
 
-                if (entityBehaviour.Target != null && entityBehaviour.Target != GameManager.Instance.PlayerEntityBehaviour)
-                    targetEntity = entityBehaviour.Target.Entity as EnemyEntity;
+                if (senses.Target != null && senses.Target != GameManager.Instance.PlayerEntityBehaviour)
+                    targetEntity = senses.Target.Entity as EnemyEntity;
 
                 // Switch to hand-to-hand if enemy is immune to weapon
                 Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
@@ -181,9 +181,9 @@ namespace DaggerfallWorkshop.Game
                 damage = 0;
 
                 // Are we still in range and facing target? Then apply melee damage.
-                if (entityBehaviour.Target != null && senses.DistanceToTarget <= MeleeDistance && senses.TargetInSight)
+                if (senses.Target != null && senses.DistanceToTarget <= MeleeDistance && senses.TargetInSight)
                 {
-                    if (entityBehaviour.Target == GameManager.Instance.PlayerEntityBehaviour)
+                    if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);
                     else
                         damage = ApplyDamageToNonPlayer(weapon, transform.forward);
@@ -312,13 +312,13 @@ namespace DaggerfallWorkshop.Game
 
         private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
         {
-            if (entityBehaviour.Target == null)
+            if (senses.Target == null)
                 return 0;
             // TODO: Merge with hit code in WeaponManager to eliminate duplicate code
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-            EnemyEntity targetEntity = entityBehaviour.Target.Entity as EnemyEntity;
-            EnemySounds targetSounds = entityBehaviour.Target.GetComponent<EnemySounds>();
-            EnemyMotor targetMotor = entityBehaviour.Target.transform.GetComponent<EnemyMotor>();
+            EnemyEntity targetEntity = senses.Target.Entity as EnemyEntity;
+            EnemySounds targetSounds = senses.Target.GetComponent<EnemySounds>();
+            EnemyMotor targetMotor = senses.Target.transform.GetComponent<EnemyMotor>();
 
             // Calculate damage
             damage = FormulaHelper.CalculateAttackDamage(entity, targetEntity, weapon, -1);
@@ -332,10 +332,10 @@ namespace DaggerfallWorkshop.Game
             {
                 targetSounds.PlayHitSound(weapon);
 
-                EnemyBlood blood = entityBehaviour.Target.transform.GetComponent<EnemyBlood>();
+                EnemyBlood blood = senses.Target.transform.GetComponent<EnemyBlood>();
 
-                Vector3 bloodPos = entityBehaviour.Target.transform.position;
-                CharacterController targetController = entityBehaviour.Target.transform.GetComponent<CharacterController>();
+                Vector3 bloodPos = senses.Target.transform.position;
+                CharacterController targetController = senses.Target.transform.GetComponent<CharacterController>();
                 bloodPos.y += targetController.height / 8;
 
                 if (blood)
@@ -365,9 +365,9 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.Target.EntityType == EntityTypes.EnemyClass && Random.Range(1, 101) <= 40)
+                if (DaggerfallUnity.Settings.CombatVoices && senses.Target.EntityType == EntityTypes.EnemyClass && Random.Range(1, 101) <= 40)
                 {
-                    DaggerfallMobileUnit targetMobileUnit = entityBehaviour.Target.GetComponentInChildren<DaggerfallMobileUnit>();
+                    DaggerfallMobileUnit targetMobileUnit = senses.Target.GetComponentInChildren<DaggerfallMobileUnit>();
                     Genders gender;
                     if (targetMobileUnit.Summary.Enemy.Gender == MobileGender.Male || targetEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                         gender = Genders.Male;
