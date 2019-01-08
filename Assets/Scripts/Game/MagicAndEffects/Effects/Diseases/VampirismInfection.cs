@@ -116,7 +116,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // In current implementation, disease will not progress to stage 2 effect until player has experienced dream then rests or travels a second time
             if (daysPast > 0 && !warningDreamVideoPlayed)
             {
-                UnityEngine.Debug.LogFormat("Playing warning dream for instance {0}", this.GetHashCode());
                 // Play infection warning dream video
                 DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, dreamVideoName);
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
