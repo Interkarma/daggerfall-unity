@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -73,7 +73,7 @@ namespace DaggerfallConnect.Save
         {
             None = 0x00,
             IngredientRegular = 0x01,
-            EdgedWeapon = 0x04,
+            OneHandedWeapon = 0x04,
             IngredientLiquid = 0x09,
             BluntWeapon = 0x10,
             Enchanted = 0x20,

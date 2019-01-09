@@ -338,7 +338,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             // Set hidden flag for other resources
-            isHidden = true;
+            isHidden = value;
         }
 
         #endregion

@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             byte[] diseaseListA = { 1 };
             byte[] diseaseListB = { 1, 3, 5 };
             byte[] diseaseListC = { 1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 14 };
-
+            float random;
             switch (attacker.CareerIndex)
             {
                 case (int)MonsterCareers.Rat:
@@ -783,17 +783,27 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                     break;
                 case (int)MonsterCareers.Werewolf:
-                    //uint random = DFRandom.rand();
-                    //if (random < 400)
-                    //  InflictLycanthropy (werewolf version)
+                    random = UnityEngine.Random.Range(0f, 100f);
+                    if (random <= 0.6f)
+                    {
+                        // TODO: Werewolf
+                        //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWerewolfDisease();
+                        //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                        //Debug.Log("Player infected by werewolf.");
+                    }
                     break;
                 case (int)MonsterCareers.Nymph:
                     FatigueDamage(target, damage);
                     break;
                 case (int)MonsterCareers.Wereboar:
-                    //uint random = DFRandom.rand();
-                    //if (random < 400)
-                    //  InflictLycanthropy (wereboar version)
+                    random = UnityEngine.Random.Range(0f, 100f);
+                    if (random <= 0.6f)
+                    {
+                        // TODO: Wereboar
+                        //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWereboarDisease();
+                        //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                        //Debug.Log("Player infected by wereboar.");
+                    }
                     break;
                 case (int)MonsterCareers.Zombie:
                     // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
@@ -807,13 +817,18 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
-                    uint random = DFRandom.rand();
-                    if (random >= 400 && UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                    random = UnityEngine.Random.Range(0f, 100f);
+                    if (random <= 0.6f)
+                    {
+                        // Inflict stage one vampirism disease
+                        EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                        Debug.Log("Player infected by vampire.");
+                    }
+                    else if (random <= 2.0f)
+                    {
                         InflictDisease(target, diseaseListA);
-                    // else
-                    //{
-                    //    InflictVampirism
-                    //}
+                    }
                     break;
                 case (int)MonsterCareers.Lamia:
                     // Nothing in classic, but DF Chronicles says 2 pts of fatigue damage per health damage

@@ -303,7 +303,7 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = imgFile.GetSize(0);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.TryImportImage(filename, out imageData.texture))
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportImage(filename, false, out imageData.texture))
                         createTexture = false;
 
                     break;
@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = cifFile.GetSize(record);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, out imageData.texture))
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, false, out imageData.texture))
                         createTexture = false;
 
                     break;
@@ -333,7 +333,7 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = cfaFile.GetSize(record);
 
                     // Texture pack support
-                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, out imageData.texture))
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, false, out imageData.texture))
                         createTexture = false;
 
                     break;

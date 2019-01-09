@@ -30,10 +30,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "Passive-Specials";
         const int sunDamageAmount = 12;
         const int holyDamageAmount = 12;
+        const int regenerateAmount = 1;
         const int sunDamagePerRounds = 4;
         const int holyDamagePerRounds = 4;
+        const int regeneratePerRounds = 4;
 
         int forcedRoundsRemaining = 1;
+        DaggerfallEntityBehaviour entityBehaviour;
 
         #endregion
 
@@ -65,33 +68,84 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return;
         }
 
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+            CacheReferences();
+        }
+
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+            CacheReferences();
+        }
+
         public override void ConstantEffect()
         {
             base.ConstantEffect();
 
-            // TODO: Assign constant advantages/disadvantages
+            // Execute constant advantages/disadvantages
+            if (entityBehaviour)
+            {
+                LightPoweredMagery();
+                DarknessPoweredMagery();
+            }
         }
 
         public override void MagicRound()
         {
             base.MagicRound();
 
-            // Get peered entity gameobject
-            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour)
+            // Execute round-based effects
+            if (entityBehaviour)
+            {
+                RegenerateHealth();
+                DamageFromSunlight();
+                DamageFromHolyPlaces();
+            }
+        }
+
+        #endregion
+
+        #region Regeneration
+
+        void RegenerateHealth()
+        {
+            // This special only triggers once every regeneratePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
                 return;
 
-            // TODO: Assign advantages/disadvantages aligned to minutes
+            // Check for regenerate conditions
+            bool regenerate = false;
+            switch(entityBehaviour.Entity.Career.Regeneration)
+            {
+                default:
+                case DFCareer.RegenerationFlags.None:
+                    return;
+                case DFCareer.RegenerationFlags.Always:
+                    regenerate = true;
+                    break;
+                case DFCareer.RegenerationFlags.InDarkness:
+                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Dungeon;
+                    break;
+                case DFCareer.RegenerationFlags.InLight:
+                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsDay && GameManager.Instance.PlayerEnterExit.WorldContext != WorldContext.Dungeon;
+                    break;
+                case DFCareer.RegenerationFlags.InWater:
+                    regenerate = manager.IsPlayerEntity && (GameManager.Instance.PlayerMotor.IsSwimming || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming);
+                    break;
+            }
 
-            DamageFromSunlight(entityBehaviour);
-            DamageFromHolyPlaces(entityBehaviour);
+            // Tick regeneration when conditions are right
+            if (regenerate)
+                entityBehaviour.Entity.IncreaseHealth(regenerateAmount);
         }
 
         #endregion
 
         #region Sun Damage
 
-        void DamageFromSunlight(DaggerfallEntityBehaviour entityBehaviour)
+        void DamageFromSunlight()
         {
             // This special only triggers once every sunDamagePerRounds
             if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % sunDamagePerRounds != 0)
@@ -123,7 +177,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Holy Damage
 
-        void DamageFromHolyPlaces(DaggerfallEntityBehaviour entityBehaviour)
+        void DamageFromHolyPlaces()
         {
             // This special only triggers once every holyDamagePerRounds
             if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % holyDamagePerRounds != 0)
@@ -156,6 +210,61 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     //Debug.LogFormat("Applied {0} points of holy damage after {1} magic rounds (game minutes)", holyDamageAmount, holyDamagePerRounds);
                 }
             }
+        }
+
+        #endregion
+
+        #region Light & Dark Powered Magery
+
+        void LightPoweredMagery()
+        {
+            // Entity suffers darkness disadvantage at night or inside dungeons
+            // They will not receive penalty going in and out of well-lit buildings during the day
+            if (DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Dungeon)
+            {
+                // Disadvantage has two variants
+                switch (entityBehaviour.Entity.Career.LightPoweredMagery)
+                {
+                    case DFCareer.LightMageryFlags.ReducedPowerInDarkness:
+                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-0.33f);      // 33% less magicka in darkness
+                        break;
+
+                    case DFCareer.LightMageryFlags.UnableToCastInDarkness:
+                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-1.0f);       // 100% less magicka in darkness
+                        break;
+                }
+            }
+        }
+
+        void DarknessPoweredMagery()
+        {
+            // Entity suffers light disadvantage during the day while outside of dungeons
+            // Even well-lit daytime buildings will make entity unable to cast
+            if (DaggerfallUnity.Instance.WorldTime.Now.IsDay && GameManager.Instance.PlayerEnterExit.WorldContext != WorldContext.Dungeon)
+            {
+                // Disadvantage has two variants
+                switch (entityBehaviour.Entity.Career.DarknessPoweredMagery)
+                {
+                    case DFCareer.DarknessMageryFlags.ReducedPowerInLight:
+                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-0.33f);      // 33% less magicka in light
+                        break;
+
+                    case DFCareer.DarknessMageryFlags.UnableToCastInLight:
+                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-1.0f);       // 100% less magicka in light
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void CacheReferences()
+        {
+            // Cache reference to peered entity behaviour
+            if (!entityBehaviour)
+                entityBehaviour = GetPeeredEntityBehaviour(manager);
         }
 
         #endregion

@@ -403,12 +403,15 @@ namespace DaggerfallWorkshop.Game.Entity
 
         int GetMaxMagicka()
         {
+            // Maximum magicka multiplier cannot go below 0
+            float effectiveMultiplier = (maxMagickaMultiplier < 0) ? 0 : maxMagickaMultiplier;
+
             // Player's maximum magicka determined by career and intelligence, enemies are set by level elsewhere
             // The global multiplier can apply to either player or enemies without changing permanent maximum
             if (career != null && this == GameManager.Instance.PlayerEntity)
-                return (int)(maxMagickaMultiplier * FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue));
+                return (int)(effectiveMultiplier * FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue));
             else
-                return (int)(MaxMagickaMultiplier * maxMagicka);
+                return (int)(effectiveMultiplier * maxMagicka);
         }
 
         #endregion

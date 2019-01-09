@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string Worth()
             {
-                return parent.value.ToString();
+                return (parent.value * parent.stackCount).ToString();
             }
 
             public override string Material()

@@ -70,8 +70,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             infectionRegionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
 
             // Capture rest and travel events for disease progression on Start
-            DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
-            DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
+            if (IsIncumbent)
+            {
+                DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
+                DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
+            }
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -79,13 +82,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             base.Resume(effectData, manager, caster);
 
             // Capture rest and travel events for disease progression on Resume
-            DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
-            DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
+            if (IsIncumbent)
+            {
+                DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
+                DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
+            }
         }
 
         protected override void UpdateDisease()
         {
             // Not calling base as this is a very custom disease that manages its own lifecycle
+        }
+
+        public override void End()
+        {
+            base.End();
+            DaggerfallRestWindow.OnSleepTick -= ProgressDiseaseAfterSleepOrTravel;
+            DaggerfallTravelPopUp.OnPostFastTravel -= ProgressDiseaseAfterSleepOrTravel;
         }
 
         #region Private Methods

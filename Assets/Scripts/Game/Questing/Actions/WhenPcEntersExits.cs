@@ -57,6 +57,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Get location type index
             Table placesTable = QuestMachine.Instance.PlacesTable;
+            int p1 = placesTable.GetInt("p1", action.sourceExteriorType);
+            if (p1 != 2)
+            {
+                throw new Exception("WhenPcEntersExits: This trigger condition can only be used with exterior types of p1=2 in Quests-Places table.");
+            }
             action.indexExteriorType = placesTable.GetInt("p2", action.sourceExteriorType);
 
             // Set location type (if any) when quest starts

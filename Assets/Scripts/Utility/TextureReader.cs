@@ -86,10 +86,10 @@ namespace DaggerfallWorkshop.Utility
             }
 
             Texture2D texture;
-            if (TextureReplacement.TryImportImage(image.FileName, out texture))
+            if (TextureReplacement.TryImportImage(image.FileName, makeNoLongerReadable, out texture))
                 return texture;
 
-            if (TextureReplacement.TryImportCifRci(image.FileName, record, frame, out texture))
+            if (TextureReplacement.TryImportCifRci(image.FileName, record, frame, makeNoLongerReadable, out texture))
                 return texture;
 
             DFSize sz;
