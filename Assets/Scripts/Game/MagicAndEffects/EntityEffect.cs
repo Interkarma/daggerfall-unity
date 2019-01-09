@@ -495,10 +495,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         protected DaggerfallEntityBehaviour GetPeeredEntityBehaviour(EntityEffectManager manager)
         {
-            if (manager == null)
-                return null;
-
-            return manager.GetComponent<DaggerfallEntityBehaviour>();
+            // Return cached entity behaviour or attempt to get component directly
+            if (manager && manager.EntityBehaviour)
+                return manager.EntityBehaviour;
+            else
+                return manager.GetComponent<DaggerfallEntityBehaviour>();
         }
 
         protected int GetMagnitude(DaggerfallEntityBehaviour caster = null)
