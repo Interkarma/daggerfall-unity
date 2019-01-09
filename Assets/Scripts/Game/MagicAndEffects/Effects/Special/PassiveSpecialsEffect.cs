@@ -30,8 +30,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "Passive-Specials";
         const int sunDamageAmount = 12;
         const int holyDamageAmount = 12;
+        const int regenerateAmount = 1;
         const int sunDamagePerRounds = 4;
         const int holyDamagePerRounds = 4;
+        const int regeneratePerRounds = 4;
 
         int forcedRoundsRemaining = 1;
         DaggerfallEntityBehaviour entityBehaviour;
@@ -97,9 +99,46 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Execute round-based effects
             if (entityBehaviour)
             {
+                RegenerateHealth();
                 DamageFromSunlight();
                 DamageFromHolyPlaces();
             }
+        }
+
+        #endregion
+
+        #region Regeneration
+
+        void RegenerateHealth()
+        {
+            // This special only triggers once every regeneratePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
+                return;
+
+            // Check for regenerate conditions
+            bool regenerate = false;
+            switch(entityBehaviour.Entity.Career.Regeneration)
+            {
+                default:
+                case DFCareer.RegenerationFlags.None:
+                    return;
+                case DFCareer.RegenerationFlags.Always:
+                    regenerate = true;
+                    break;
+                case DFCareer.RegenerationFlags.InDarkness:
+                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Dungeon;
+                    break;
+                case DFCareer.RegenerationFlags.InLight:
+                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsDay && GameManager.Instance.PlayerEnterExit.WorldContext != WorldContext.Dungeon;
+                    break;
+                case DFCareer.RegenerationFlags.InWater:
+                    regenerate = manager.IsPlayerEntity && (GameManager.Instance.PlayerMotor.IsSwimming || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming);
+                    break;
+            }
+
+            // Tick regeneration when conditions are right
+            if (regenerate)
+                entityBehaviour.Entity.IncreaseHealth(regenerateAmount);
         }
 
         #endregion
