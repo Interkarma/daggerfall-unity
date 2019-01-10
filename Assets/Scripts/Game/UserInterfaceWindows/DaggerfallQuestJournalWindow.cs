@@ -333,20 +333,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        // Check if place is discovered, so it can be found on map.
-        private bool CanFindPlace(string regionName, string name)
-        {
-            DFLocation location;
-            if (DaggerfallUnity.Instance.ContentReader.GetLocation(regionName, name, out location))
-            {
-                DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(location.MapTableData.Longitude, location.MapTableData.Latitude);
-                ContentReader.MapSummary summary;
-                if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out summary))
-                    return DaggerfallUI.Instance.DfTravelMapWindow.CheckLocationDiscovered(summary);
-            }
-            return false;
-        }
-
         private void HandleClick(Vector2 position, bool remove = false)
         {
             if (entryLineMap == null)
@@ -372,7 +358,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     place.SiteDetails.locationName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
                 {
                     findPlaceName = place.SiteDetails.locationName;
-                    if (CanFindPlace(place.SiteDetails.regionName, findPlaceName))
+                    if (DaggerfallUI.Instance.DfTravelMapWindow.CanFindPlace(place.SiteDetails.regionName, findPlaceName))
                     {
                         findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
                         string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
