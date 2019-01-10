@@ -339,8 +339,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DFLocation location;
             if (DaggerfallUnity.Instance.ContentReader.GetLocation(regionName, name, out location))
             {
-                int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude(location.MapTableData.Longitude, location.MapTableData.Latitude);
-                return GameManager.Instance.PlayerGPS.HasDiscoveredLocation(mapPixelID);
+                DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(location.MapTableData.Longitude, location.MapTableData.Latitude);
+                ContentReader.MapSummary summary;
+                if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out summary))
+                    return DaggerfallUI.Instance.DfTravelMapWindow.CheckLocationDiscovered(summary);
             }
             return false;
         }

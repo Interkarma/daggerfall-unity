@@ -981,7 +981,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // checks if location with MapSummary summary is already discovered
-        bool checkLocationDiscovered(ContentReader.MapSummary summary)
+        public bool CheckLocationDiscovered(ContentReader.MapSummary summary)
         {
             if (GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) ||
                 summary.Discovered ||
@@ -1026,7 +1026,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             ContentReader.MapSummary summary;
                             if (DaggerfallUnity.Instance.ContentReader.HasLocation(originX + x, originY + y, out summary))
                             {
-                                if (!checkLocationDiscovered(summary))
+                                if (!CheckLocationDiscovered(summary))
                                     continue;
 
                                 int index = GetPixelColorIndex(summary.LocationType);
@@ -1127,7 +1127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         return;
 
                     // only make location selectable if it is already discovered
-                    if (!checkLocationDiscovered(locationSummary))
+                    if (!CheckLocationDiscovered(locationSummary))
                         return;
 
                     locationSelected = true;
@@ -1379,7 +1379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
                     {
                         // only make location searchable if it is already discovered
-                        if (!checkLocationDiscovered(locationSummary))
+                        if (!CheckLocationDiscovered(locationSummary))
                             continue;
 
                         return true;
@@ -1403,7 +1403,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
                     {
                         // only make location searchable if it is already discovered
-                        if (!checkLocationDiscovered(locationSummary))
+                        if (!CheckLocationDiscovered(locationSummary))
                             continue;
 
                         return true;
