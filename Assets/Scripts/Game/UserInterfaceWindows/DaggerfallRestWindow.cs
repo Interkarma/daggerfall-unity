@@ -183,7 +183,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if ((currentRestMode != RestModes.FullRest) && hoursRemaining < 1)
                     EndRest();
                 else if (TickRest())
+                {
+                    ShowStatus();
                     EndRest();
+                }
             }
         }
 
@@ -455,9 +458,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
 
-            bool inTown = playerGPS.IsPlayerInTown(true);
-
-            if (inTown && !playerEnterExit.IsPlayerInside)
+            if (playerGPS.IsPlayerInTown(true, true))
             {
                 CloseWindow();
                 DaggerfallUI.MessageBox(cityCampingIllegal);
@@ -468,14 +469,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 return false;
             }
-            else if ((inTown || !playerGPS.HasCurrentLocation) && playerEnterExit.IsPlayerInsideBuilding)
+            else if (playerGPS.IsPlayerInTown() && playerEnterExit.IsPlayerInsideBuilding)
             {
-                // Check for guild hall rest privileges
-                if (GameManager.Instance.GuildManager.GetGuild(playerEnterExit.BuildingDiscoveryData.factionID).CanRest())
-                {
-                    playerEnterExit.Interior.FindMarker(out allocatedBed, DaggerfallInterior.InteriorMarkerTypes.Rest);
-                    return true;
-                }
                 // Check owned locations
                 string sceneName = DaggerfallInterior.GetSceneName(playerGPS.CurrentLocation.MapTableData.MapId, playerEnterExit.BuildingDiscoveryData.buildingKey);
                 if (SaveLoadManager.StateManager.ContainsPermanentScene(sceneName))
@@ -492,6 +487,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     allocatedBed = room.allocatedBed;
                     if (remainingHoursRented > 0)
                         return true;
+                }
+                // Check for guild hall rest privileges (exclude taverns since they are all marked as fighters guilds in data)
+                if (playerEnterExit.BuildingDiscoveryData.buildingType != DFLocation.BuildingTypes.Tavern &&
+                    GameManager.Instance.GuildManager.GetGuild(playerEnterExit.BuildingDiscoveryData.factionID).CanRest())
+                {
+                    playerEnterExit.Interior.FindMarker(out allocatedBed, DaggerfallInterior.InteriorMarkerTypes.Rest);
+                    return true;
                 }
                 CloseWindow();
                 DaggerfallUI.MessageBox(HardStrings.haveNotRentedRoom);
