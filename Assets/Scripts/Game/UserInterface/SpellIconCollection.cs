@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string spellIconsFile = "ICON00I0.IMG";
         const string spellTargetAndElementIconsFile = "MASK04I0.IMG";
         const int spellIconsRowCount = 20;
-        const int spellIconsCount = 116;
+        const int spellIconsCount = 69;
         const int spellTargetIconsCount = 5;
         const int spellElementIconsCount = 5;
 
