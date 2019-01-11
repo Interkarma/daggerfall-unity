@@ -12,9 +12,9 @@
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallWorkshop.Game.Player;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -73,6 +73,8 @@ namespace DaggerfallWorkshop.Game.Entity
             set { pickpocketByPlayerAttempted = value; }
         }
 
+        public bool SoulTrapActive { get; set; }
+
         #endregion
 
         #region Constructors
@@ -91,6 +93,78 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public override void SetEntityDefaults()
         {
+        }
+
+        /// <summary>
+        /// Custom handling of SetHealth() for enemies to support soul trap.
+        /// </summary>
+        public override int SetHealth(int amount, bool restoreMode = false)
+        {
+            // Just do base if no soul trap active
+            if (!SoulTrapActive)
+                return base.SetHealth(amount, restoreMode);
+
+            // Reduce health
+            currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
+            if (currentHealth <= 0)
+            {
+                // Attempt soul trap and allow entity to die based on outcome
+                if (AttemptSoulTrap())
+                    return base.SetHealth(amount, restoreMode);
+            }
+
+            return currentHealth;
+        }
+
+        /// <summary>
+        /// Attempt to trap a soul.
+        /// </summary>
+        /// <returns>True if entity is allowed to die after trap attempt.</returns>
+        bool AttemptSoulTrap()
+        {
+            // Must have a peered DaggerfallEntityBehaviour and EntityEffectManager
+            EntityEffectManager manager = (EntityBehaviour) ? EntityBehaviour.GetComponent<EntityEffectManager>() : null;
+            if (!manager)
+                return true;
+
+            // Find the soul trap incumbent
+            SoulTrap soulTrapEffect = (SoulTrap)manager.FindIncumbentEffect<SoulTrap>();
+            if (soulTrapEffect == null)
+                return true;
+
+            // Roll chance for trap
+            // If trap fails then entity should die as normal without trapping a soul
+            // If trap succeeds and player has a free soul gem then entity should die after storing soul
+            // If trap succeeds and player has no free soul gems then entity will not die until effect expires or fails
+            if (soulTrapEffect.RollTrapChance())
+            {
+                // Attempt to fill an empty soul trap
+                if (soulTrapEffect.FillEmptyTrapItem((MobileTypes)mobileEnemy.ID))
+                {
+                    // Trap filled, allow entity to die normally
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapSuccess"), 1.5f);
+                    return true;
+                }
+                else
+                {
+                    // No empty gems, keep entity tethered to life - player is alerted so they know what's happening
+                    currentHealth = 1;
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapNoneEmpty"));
+                    return false;
+                }
+            }
+            else
+            {
+                // Trap failed
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapFail"), 1.5f);
+                return true;
+            }
+        }
+
+        public override void ClearConstantEffects()
+        {
+            base.ClearConstantEffects();
+            SoulTrapActive = false;
         }
 
         /// <summary>

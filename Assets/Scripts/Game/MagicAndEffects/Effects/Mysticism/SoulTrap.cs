@@ -9,8 +9,10 @@
 // Notes:
 //
 
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -39,6 +41,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ChanceCosts = MakeEffectCosts(40, 68);
         }
 
+        public override bool ChanceSuccess
+        {
+            // Always return true so that effect is always attached to entity
+            // Chance will be re-rolled using RollTrapChance() when entity is slain to see if soul is trapped
+            get { return true; }
+        }
+
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
@@ -49,6 +58,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             base.Resume(effectData, manager, caster);
         }
 
+        protected override void BecomeIncumbent()
+        {
+            base.BecomeIncumbent();
+
+            // Output trap start message
+            string messageID = string.Empty;
+            switch (manager.EntityBehaviour.EntityType)
+            {
+                case EntityTypes.CivilianNPC:
+                case EntityTypes.EnemyClass:
+                    messageID = "trapHumanoid";
+                    ResignAsIncumbent();
+                    End();
+                    break;
+                case EntityTypes.EnemyMonster:
+                    messageID = "trapActive";
+                    break;
+                default:
+                    ResignAsIncumbent();
+                    End();
+                    return;
+            }
+            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, messageID));
+        }
+
         protected override bool IsLikeKind(IncumbentEffect other)
         {
             return other is SoulTrap;
@@ -57,6 +91,48 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected override void AddState(IncumbentEffect incumbent)
         {
             incumbent.RoundsRemaining += RoundsRemaining;
+        }
+
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Raise soul trap active flag
+            (entityBehaviour.Entity as EnemyEntity).SoulTrapActive = true;
+        }
+
+        public bool RollTrapChance()
+        {
+            return RollChance();
+        }
+
+        public bool FillEmptyTrapItem(MobileTypes soulType)
+        {
+            // Get all soul traps and find first empty
+            DaggerfallUnityItem emptyTrap = null;
+            List<DaggerfallUnityItem> traps = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+            foreach(DaggerfallUnityItem trap in traps)
+            {
+                if (trap.TrappedSoulType == MobileTypes.None)
+                {
+                    emptyTrap = trap;
+                    break;
+                }
+            }
+
+            // Fill the empty trap
+            if (emptyTrap != null)
+            {
+                emptyTrap.TrappedSoulType = soulType;
+                return true;
+            }
+            
+            return false;
         }
     }
 }
