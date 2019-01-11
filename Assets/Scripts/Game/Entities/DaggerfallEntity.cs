@@ -84,11 +84,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsEnhancedJumping { get; set; }
         public bool IsSlowFalling { get; set; }
         public bool IsAbsorbingSpells { get; set; }
-
-        // This property allows individual effects to increase/decrease global multiplier for maximum magicka
-        // Note: This property is intentionally not serialized and should only be set by live effects
-        private float maxMagickaMultiplier = 1.0f;
-        public float MaxMagickaMultiplier { get { return maxMagickaMultiplier; } }
+        public int MaxMagickaModifier { get; private set; }
 
 
         /// <summary>
@@ -257,6 +253,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
         public int CurrentFatigue { get { return GetCurrentFatigue(); } set { SetFatigue(value); } }
         public int MaxMagicka { get { return GetMaxMagicka(); } set { maxMagicka = value; } }
+        public int RawMaxMagicka { get { return GetRawMaxMagicka(); } }
         public int CurrentMagicka { get { return GetCurrentMagicka(); } set { SetMagicka(value); } }
         public int MaxBreath { get { return stats.LiveEndurance / 2; } }
         public int CurrentBreath { get { return currentBreath; } set { SetBreath(value); } }
@@ -365,9 +362,9 @@ namespace DaggerfallWorkshop.Game.Entity
             return currentMagicka;
         }
 
-        public void ChangeMaxMagickaMultiplier(float amount)
+        public void ChangeMaxMagickaModifier(int amount)
         {
-            maxMagickaMultiplier += amount;
+            MaxMagickaModifier += amount;
             if (CurrentMagicka > MaxMagicka)
                 CurrentMagicka = MaxMagicka;
         }
@@ -401,17 +398,24 @@ namespace DaggerfallWorkshop.Game.Entity
             return currentMagicka;
         }
 
+        // Gets maximum magicka with effect modifier
         int GetMaxMagicka()
         {
-            // Maximum magicka multiplier cannot go below 0
-            float effectiveMultiplier = (maxMagickaMultiplier < 0) ? 0 : maxMagickaMultiplier;
+            int effectiveMagicka = GetRawMaxMagicka() + MaxMagickaModifier;
+            if (effectiveMagicka < 0)
+                effectiveMagicka = 0;
 
+            return effectiveMagicka;
+        }
+
+        // Gets raw maximum magicka without modifier
+        int GetRawMaxMagicka()
+        {
             // Player's maximum magicka determined by career and intelligence, enemies are set by level elsewhere
-            // The global multiplier can apply to either player or enemies without changing permanent maximum
             if (career != null && this == GameManager.Instance.PlayerEntity)
-                return (int)(effectiveMultiplier * FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue));
+                return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue);
             else
-                return (int)(effectiveMultiplier * maxMagicka);
+                return maxMagicka;
         }
 
         #endregion
@@ -722,7 +726,7 @@ namespace DaggerfallWorkshop.Game.Entity
             IsEnhancedJumping = false;
             IsSlowFalling = false;
             IsAbsorbingSpells = false;
-            maxMagickaMultiplier = 1.0f;
+            MaxMagickaModifier = 0;
             IsResistingFire = false;
             IsResistingFrost = false;
             IsResistingDiseaseOrPoison = false;

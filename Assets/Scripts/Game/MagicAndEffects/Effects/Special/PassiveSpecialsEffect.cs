@@ -226,11 +226,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 switch (entityBehaviour.Entity.Career.LightPoweredMagery)
                 {
                     case DFCareer.LightMageryFlags.ReducedPowerInDarkness:
-                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-0.33f);      // 33% less magicka in darkness
+                        entityBehaviour.Entity.ChangeMaxMagickaModifier((int)(entityBehaviour.Entity.RawMaxMagicka * -0.33f));  // 33% less magicka in darkness
                         break;
 
                     case DFCareer.LightMageryFlags.UnableToCastInDarkness:
-                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-1.0f);       // 100% less magicka in darkness
+                        entityBehaviour.Entity.ChangeMaxMagickaModifier(-10000000);                                             // 0 magicka in light
                         break;
                 }
             }
@@ -246,11 +246,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 switch (entityBehaviour.Entity.Career.DarknessPoweredMagery)
                 {
                     case DFCareer.DarknessMageryFlags.ReducedPowerInLight:
-                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-0.33f);      // 33% less magicka in light
+                        entityBehaviour.Entity.ChangeMaxMagickaModifier((int)(entityBehaviour.Entity.RawMaxMagicka * -0.33f));  // 33% less magicka in light
                         break;
 
                     case DFCareer.DarknessMageryFlags.UnableToCastInLight:
-                        entityBehaviour.Entity.ChangeMaxMagickaMultiplier(-1.0f);       // 100% less magicka in light
+                        entityBehaviour.Entity.ChangeMaxMagickaModifier(-10000000);                                             // 0 magicka in light
                         break;
                 }
             }
