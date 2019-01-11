@@ -29,6 +29,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// This ensures icons are extracted in the same order as classic at new size without any further metadata.
     /// Current design does not allow for adding any more or less than 69 icons to collection.
     /// This could be an enhancement added later but would need to be carefully considered as it crosses multiple UIs.
+    /// Note by Alyndiar : Double-checked everywhere and number of spell icons is solely decided by the SpellIconCollection
+    /// class. All information is self contained and no part of the engine makes any assumption about the number of icons.
+    /// Accordingly, this enhancement can be added without worries.
     /// </summary>
     public class SpellIconCollection : IEnumerable
     {
@@ -37,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string spellIconsFile = "ICON00I0.IMG";
         const string spellTargetAndElementIconsFile = "MASK04I0.IMG";
         const int spellIconsRowCount = 20;
-        const int spellIconsCount = 69;
+        const int spellIconsCount = 116;
         const int spellTargetIconsCount = 5;
         const int spellElementIconsCount = 5;
 
@@ -95,10 +98,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public Texture2D GetSpellIcon(int index)
         {
-            if (index < 0 || index >= spellIcons.Count)
+            if (index < 0)
                 return null;
 
-            return spellIcons[index];
+            return spellIcons[index % spellIcons.Count];
         }
 
         /// <summary>
@@ -217,9 +220,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoadSpellTargetAndElementIcons()
         {
-            const int targetIconWidth = 24;
-            const int elementIconWidth = 16;
-            const int height = 16;
 
             // Clear existing collections
             spellTargetIcons.Clear();
@@ -230,6 +230,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (spellTargetAndElementIconAtlas == null)
             {
                 Debug.LogWarning("SpellIconCollection: Could not load spell target and element icons atlas texture.  Arena2 path might not be set yet.");
+                return;
+            }
+
+            // Derive dimension of each icon from atlas width
+            const int columnCount = 5;
+            int height = spellTargetAndElementIconAtlas.height / columnCount;
+            int elementIconWidth = height;
+            int targetIconWidth = height * 3 / 2;
+
+            // Checks texture imported from mods
+            if (spellTargetAndElementIconAtlas.format == TextureFormat.DXT5 && height % 4 != 0 && targetIconWidth % 4 != 0)
+            {
+                Debug.LogErrorFormat("{0} is compressed with a block-based format but icons are not multiple of 4.", spellIconsFile);
                 return;
             }
 
