@@ -1059,6 +1059,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string notebookDataJson = ReadSaveFile(Path.Combine(path, notebookDataFilename));
 
             // Load backstory text
+            playerEntity.BackStory = new List<string>();
             if (File.Exists(Path.Combine(path, bioFileName)))
             {
                 StreamReader file = new StreamReader(Path.Combine(path, bioFileName).ToString());
