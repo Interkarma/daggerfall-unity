@@ -16,9 +16,8 @@ confirmMove,        Do you want to change the position of this entry?
 confirmMove2,       (It will be moved to before the next entry clicked)
 confirmRemove,      Are you sure you want to remove this entry?
 confirmRemove2,     (It will be deleted permanently and cannot be restored)
-selectedPlace,      Selected location:
-confirmFind,        Do you want to open the world map and prepare to travel to this place?
-confirmFind2,       (Note: you can still cancel the travel from the map)
+selectedPlace,      Do you want to open the world map to
+selectedPlace2,     in {0} region?
 enterNote,          Enter your note below:
 completedQuest,     completed
 failedQuest,        failed

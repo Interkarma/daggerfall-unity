@@ -361,8 +361,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (DaggerfallUI.Instance.DfTravelMapWindow.CanFindPlace(place.SiteDetails.regionName, findPlaceName))
                     {
                         findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
-                        string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
-                        DaggerfallMessageBox dialogBox = CreateDialogBox(GetDialogText(entryStr, "selectedPlace", "confirmFind"));
+                        DaggerfallMessageBox dialogBox = CreateDialogBox(
+                            new string[] {
+                                TextManager.Instance.GetText(textDatabase, "selectedPlace"),
+                                "",
+                                "  " + findPlaceName,
+                                "  " + string.Format(TextManager.Instance.GetText(textDatabase, "selectedPlace2"), place.SiteDetails.regionName),
+                                ""
+                                });
                         dialogBox.OnButtonClick += FindPlace_OnButtonClick;
                         DaggerfallUI.UIManager.PushWindow(dialogBox);
                     }
@@ -407,7 +413,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return new string[] {
                 TextManager.Instance.GetText(textDatabase, preKey),
                 "", "    " + entryStr, "",
-                TextManager.Instance.GetText(textDatabase, postKey), "",
+                TextManager.Instance.GetText(textDatabase, postKey),
                 TextManager.Instance.GetText(textDatabase, postKey + "2"),
             };
         }
