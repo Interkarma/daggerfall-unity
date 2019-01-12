@@ -153,10 +153,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool ShowIcon(LiveEffectBundle bundle)
         {
             // At least one effect with remaining rounds must want to show an icon, or be from an equipped item
+            // Never show passive items specials icon, this is an internal system effect only
             foreach (IEntityEffect effect in bundle.liveEffects)
             {
-                if ((effect.Properties.ShowSpellIcon && effect.RoundsRemaining > 0) || bundle.fromEquippedItem != null)
+                if ((effect.Properties.ShowSpellIcon && effect.RoundsRemaining > 0) ||
+                    (bundle.fromEquippedItem != null && !(effect is MagicAndEffects.MagicEffects.PassiveItemSpecialsEffect)))
+                {
                     return true;
+                }
             }
 
             return false;

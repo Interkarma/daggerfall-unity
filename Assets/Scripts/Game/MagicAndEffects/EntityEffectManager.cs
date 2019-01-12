@@ -735,7 +735,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         /// <summary>
         /// Handles any magic-related work of equipping an item to this entity.
-        /// Does nothing if item contains no "cast when held" enchantments.
         /// </summary>
         /// <param name="item">Item just equipped.</param>
         public void StartEquippedItem(DaggerfallUnityItem item)
@@ -744,7 +743,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (item == null || !item.IsEnchanted)
                 return;
 
-            // Equipped items must have "cast when held" enchantments
+            // All equipped magic items add a passive item specials effect
+            // This may or may not deliver any payload based on passive enchanment settings
+            EffectBundleSettings passiveItemSpecialsSettings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.HeldMagicItem,
+                TargetType = TargetTypes.None,
+                ElementType = ElementTypes.None,
+                Name = "Item Specials",
+                Effects = new EffectEntry[] { new EffectEntry(PassiveItemSpecialsEffect.EffectKey) },
+            };
+            EntityEffectBundle passiveItemSpecialsBundle = new EntityEffectBundle(passiveItemSpecialsSettings, entityBehaviour);
+            passiveItemSpecialsBundle.FromEquippedItem = item;
+            AssignBundle(passiveItemSpecialsBundle);
+
+            // Some equipped magic items have "cast when held" enchantments
             DaggerfallEnchantment[] enchantments = item.Enchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
