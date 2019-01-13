@@ -585,7 +585,6 @@ namespace DaggerfallWorkshop
 
 #if SHOW_LAYOUT_TIMES
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            long startTime = stopwatch.ElapsedMilliseconds;
 #endif
 
             CollectLooseObjects(true);
@@ -597,13 +596,13 @@ namespace DaggerfallWorkshop
             UpdateTerrainNature(terrainArray[playerTerrainIndex]);
             terrainArray[playerTerrainIndex].updateNature = false;
 
+#if SHOW_LAYOUT_TIMES
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to init player terrain: {0}ms", stopwatch.ElapsedMilliseconds), true);
+#endif
+
             StartCoroutine(UpdateLocation(playerTerrainIndex, false));
             terrainArray[playerTerrainIndex].updateLocation = false;
-
-#if SHOW_LAYOUT_TIMES
-            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            DaggerfallUnity.LogMessage(string.Format("Time to init player terrain: {0}ms", totalTime), true);
-#endif
         }
 
         private IEnumerator UpdateTerrains()
@@ -613,7 +612,6 @@ namespace DaggerfallWorkshop
 
 #if SHOW_LAYOUT_TIMES
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            long startTime = stopwatch.ElapsedMilliseconds;
 #endif
 
             // Update terrain heights and nature billboards
@@ -648,8 +646,8 @@ namespace DaggerfallWorkshop
             UpdateNeighbours();
 
 #if SHOW_LAYOUT_TIMES
-            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            DaggerfallUnity.LogMessage(string.Format("Time to update terrains: {0}ms", totalTime), true);
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to update terrains: {0}ms", stopwatch.ElapsedMilliseconds), true);
 #endif
 
             terrainUpdateRunning = false;
@@ -677,6 +675,9 @@ namespace DaggerfallWorkshop
         {
             if (terrainArray[index].active && terrainArray[index].hasLocation && terrainArray[index].updateLocation)
             {
+#if SHOW_LAYOUT_TIMES
+                System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+#endif
                 // Disable update flag
                 terrainArray[index].updateLocation = false;
 
@@ -773,7 +774,8 @@ namespace DaggerfallWorkshop
                             go.hideFlags = defaultHideFlags;
                             go.transform.parent = locationObject.transform;
                             go.transform.localPosition = blockOrigin;
-                            dfLocation.ApplyClimateSettings();
+                            if (allowYield)
+                                dfLocation.ApplyClimateSettings();
 
                             // Set navigation info for this block
                             cityNavigation.SetRMBData(ref blockData, x, y);
@@ -783,6 +785,9 @@ namespace DaggerfallWorkshop
                                 yield return new WaitForEndOfFrame();
                         }
                     }
+                    // Only apply climate settings after entire location updated if not spanning multiple frames.
+                    if (!allowYield)
+                        dfLocation.ApplyClimateSettings();
 
                     // Apply billboard batches
                     natureBillboardBatch.Apply();
@@ -796,6 +801,11 @@ namespace DaggerfallWorkshop
                     //string filename = string.Format("{0} [{1}x{2}].raw", location.Name, cityNavigation.CityWidth * 64, cityNavigation.CityHeight * 64);
                     //cityNavigation.SaveTestRawImage(Path.Combine(@"d:\test\navgrids\", filename));
                 }
+
+#if SHOW_LAYOUT_TIMES
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to update location {1}: {0}ms", stopwatch.ElapsedMilliseconds, index), true);
+#endif
             }
         }
 
