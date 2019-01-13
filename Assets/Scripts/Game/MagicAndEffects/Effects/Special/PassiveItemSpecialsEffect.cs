@@ -120,7 +120,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 switch (enchantedItem.Enchantments[i].type)
                 {
                     case EnchantmentTypes.ExtraSpellPts:
-                        ExtraSpellPoints(enchantedItem.Enchantments[0]);
+                        ExtraSpellPoints(enchantedItem.Enchantments[i]);
                         break;
                 }
             }
