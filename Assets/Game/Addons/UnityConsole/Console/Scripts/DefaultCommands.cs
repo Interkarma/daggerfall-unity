@@ -57,6 +57,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(ResetAssets.name, ResetAssets.description, ResetAssets.usage, ResetAssets.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(RetryAssetImports.name, RetryAssetImports.description, RetryAssetImports.usage, RetryAssetImports.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
@@ -351,6 +352,21 @@ namespace Wenzil.Console
                 SaveLoadManager.Instance.QuickSave(true);
 
                 return "Cleared cache and reloaded world.";
+            }
+        }
+
+        private static class RetryAssetImports
+        {
+            public static readonly string name = "retry_assets";
+            public static readonly string error = "Could not retry asset imports";
+            public static readonly string description = "Clears records of import attempts for assets from loose files and mods.";
+            public static readonly string usage = "retry_assets";
+
+            public static string Execute(params string[] args)
+            {
+                MeshReplacement.RetryAssetImports();
+
+                return "Cleared records of import attempts for assets from loose files and mods.";
             }
         }
 
