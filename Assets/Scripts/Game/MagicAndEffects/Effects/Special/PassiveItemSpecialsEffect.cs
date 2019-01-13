@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "Passive-Item-Specials";
 
         const float nearbyRadius = 18f;             // Reasonably matched to classic with testing
+        const int potentVsDamage = 5;               // Setting this to a small amount for now
 
         DaggerfallUnityItem enchantedItem;
         DaggerfallEntityBehaviour entityBehaviour;
@@ -52,6 +53,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             NearDaedra = 8,
             NearHumanoids = 9,
             NearAnimals = 10,
+        }
+
+        enum PotentVsTypes
+        {
+            Undead = 0,
+            Daedra = 1,
+            Humanoid = 2,
+            Animals = 3,
         }
 
         #endregion
@@ -166,14 +175,50 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         private void OnWeaponStrikeEnchantments(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver)
         {
-            Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+            // Must have an item and receiver
+            if (item == null || !receiver)
+                return;
 
             // TODO: Weapon strike enchantments tick whenever owning item hits a target entity
             for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
             {
-                //switch (enchantedItem.Enchantments[i].type)
-                //{
-                //}
+                switch (enchantedItem.Enchantments[i].type)
+                {
+                    case EnchantmentTypes.PotentVs:
+                        PotentVs(enchantedItem.Enchantments[i], receiver);
+                        break;
+                }
+            }
+
+            //Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+        }
+
+        #endregion
+
+        #region Potent Vs
+
+        /// <summary>
+        /// UESP states this power has no effect in classic.
+        /// This implementation simply adds +5 damage to receiving entity on strike.
+        /// Minor potency is better than nothing. Can be researched and improved later.
+        /// </summary>
+        void PotentVs(DaggerfallEnchantment enchantment, DaggerfallEntityBehaviour receiver)
+        {
+            // Check this is an enemy type
+            EnemyEntity enemyEntity = null;
+            if (receiver.EntityType == EntityTypes.EnemyMonster || receiver.EntityType == EntityTypes.EnemyClass)
+                enemyEntity = receiver.Entity as EnemyEntity;
+            else
+                return;
+
+            PotentVsTypes type = (PotentVsTypes)enchantment.param;
+            if (type == PotentVsTypes.Undead && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Undead ||
+                type == PotentVsTypes.Daedra && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Daedra ||
+                type == PotentVsTypes.Humanoid && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Human ||
+                type == PotentVsTypes.Animals && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Animal)
+            {
+                receiver.Entity.CurrentHealth -= potentVsDamage;
+                //Debug.LogFormat("Applied +{0} potent vs damage to {1}.", potentVsDamage, type.ToString());
             }
         }
 
