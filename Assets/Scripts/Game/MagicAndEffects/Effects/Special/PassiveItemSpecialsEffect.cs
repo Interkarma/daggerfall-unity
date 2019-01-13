@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         const float nearbyRadius = 18f;             // Reasonably matched to classic with testing
         const int potentVsDamage = 5;               // Setting this to a small amount for now
+        const float vampiricDrainRange = 2.25f;     // Testing classic shows range of vampiric effect items is approx. melee distance
         const int regenerateAmount = 1;
         const int regeneratePerRounds = 4;
 
@@ -70,6 +71,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             AllTheTime = 0,
             InSunlight = 1,
             InDarkness = 2,
+        }
+
+        enum VampiricEffectTypes
+        {
+            AtRange = 0,
+            WhenStrikes = 1,
         }
 
         #endregion
@@ -181,6 +188,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     case EnchantmentTypes.RegensHealth:
                         RegenerateHealth(enchantedItem.Enchantments[i]);
                         break;
+                    case EnchantmentTypes.VampiricEffect:
+                        VampiricEffectRanged(enchantedItem.Enchantments[i]);
+                        break;
                 }
             }
         }
@@ -203,6 +213,45 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             //Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+        }
+
+        #endregion
+
+        #region Vampiric Effect
+
+        /// <summary>
+        /// Vampirically drains health from nearby enemies.
+        /// Classic seems to follow the 15 health per hour rule (or 1 health per 4 game minutes) at very close range.
+        /// While exact range is unknown, testing in classic shows that player needs to be roughly within melee distance or no effect.
+        /// </summary>
+        void VampiricEffectRanged(DaggerfallEnchantment enchantment)
+        {
+            // Must be correct vampiric effect type
+            VampiricEffectTypes type = (VampiricEffectTypes)enchantment.param;
+            if (type != VampiricEffectTypes.AtRange)
+                return;
+
+            // This special only triggers once every regeneratePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
+                return;
+
+            // Drain all enemies in range
+            List<PlayerGPS.NearbyObject> nearby = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Enemy, vampiricDrainRange);
+            if (nearby != null && nearby.Count > 0)
+            {
+                foreach(PlayerGPS.NearbyObject enemy in nearby)
+                {
+                    // Get entity behaviour from found object
+                    DaggerfallEntityBehaviour enemyBehaviour = (enemy.gameObject) ? enemy.gameObject.GetComponent<DaggerfallEntityBehaviour>() : null;
+                    if (!enemyBehaviour)
+                        continue;
+
+                    // Transfer health from remote entity to this one
+                    enemyBehaviour.Entity.CurrentHealth -= regenerateAmount;
+                    entityBehaviour.Entity.CurrentHealth += regenerateAmount;
+                    Debug.LogFormat("Entity {0} drained {1} health from nearby {2}", entityBehaviour.Entity.Name, regenerateAmount, enemyBehaviour.Entity.Name);
+                }
+            }
         }
 
         #endregion
