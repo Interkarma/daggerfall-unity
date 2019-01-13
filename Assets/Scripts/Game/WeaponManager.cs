@@ -557,7 +557,7 @@ namespace DaggerfallWorkshop.Game
                         EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
                         if (enemyEffectManager)
                             enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
-                        strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour);
+                        strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
                     }
 
                     // Make foe attack their aggressor

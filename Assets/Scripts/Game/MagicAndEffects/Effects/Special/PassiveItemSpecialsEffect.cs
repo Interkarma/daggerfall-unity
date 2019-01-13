@@ -195,19 +195,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
         }
 
-        private void OnWeaponStrikeEnchantments(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver)
+        private void OnWeaponStrikeEnchantments(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver, int damage)
         {
             // Must have an item and receiver
             if (item == null || !receiver)
                 return;
 
-            // TODO: Weapon strike enchantments tick whenever owning item hits a target entity
+            // Weapon strike enchantments tick whenever owning item hits a target entity
             for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
             {
                 switch (enchantedItem.Enchantments[i].type)
                 {
                     case EnchantmentTypes.PotentVs:
                         PotentVs(enchantedItem.Enchantments[i], receiver);
+                        break;
+                    case EnchantmentTypes.VampiricEffect:
+                        VampiricEffectWhenStrikes(enchantedItem.Enchantments[i], receiver, damage);
                         break;
                 }
             }
@@ -249,9 +252,33 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     // Transfer health from remote entity to this one
                     enemyBehaviour.Entity.CurrentHealth -= regenerateAmount;
                     entityBehaviour.Entity.CurrentHealth += regenerateAmount;
-                    Debug.LogFormat("Entity {0} drained {1} health from nearby {2}", entityBehaviour.Entity.Name, regenerateAmount, enemyBehaviour.Entity.Name);
+                    //Debug.LogFormat("Entity {0} drained {1} health from nearby {2}", entityBehaviour.Entity.Name, regenerateAmount, enemyBehaviour.Entity.Name);
                 }
             }
+        }
+
+        /// <summary>
+        /// Vampirically drain health from target equal to damage delivered.
+        /// Was not able to fully confirm this how effect works, but seems close from observation alone.
+        /// Not sure if only base weapon should be delivered (e.g. exclude factors like critical strike).
+        /// TODO: This will likely need more research and refinement.
+        /// </summary>
+        void VampiricEffectWhenStrikes(DaggerfallEnchantment enchantment, DaggerfallEntityBehaviour receiver, int damage)
+        {
+            // Must be correct vampiric effect type
+            VampiricEffectTypes type = (VampiricEffectTypes)enchantment.param;
+            if (type != VampiricEffectTypes.WhenStrikes)
+                return;
+
+            // Check this is an enemy type
+            EnemyEntity enemyEntity = null;
+            if (receiver.EntityType == EntityTypes.EnemyMonster || receiver.EntityType == EntityTypes.EnemyClass)
+                enemyEntity = receiver.Entity as EnemyEntity;
+
+            // Drain target entity by damage amount and heal this entity by same amount
+            enemyEntity.CurrentHealth -= damage;
+            entityBehaviour.Entity.CurrentHealth += damage;
+            //Debug.LogFormat("Entity {0} drained {1} health by striking {2}", entityBehaviour.Entity.Name, damage, enemyEntity.Name);
         }
 
         #endregion
