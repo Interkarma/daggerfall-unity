@@ -1542,5 +1542,18 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         #endregion
+
+        #region Events
+
+        // OnWeaponStrike
+        public delegate void OnWeaponStrikeEventHandler(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver);
+        public event OnWeaponStrikeEventHandler OnWeaponStrike;
+        public void RaiseOnWeaponStrikeEvent(DaggerfallEntityBehaviour receiver)
+        {
+            if (OnWeaponStrike != null)
+                OnWeaponStrike(this, receiver);
+        }
+
+        #endregion
     }
 }

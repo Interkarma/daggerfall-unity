@@ -68,12 +68,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.Start(manager, caster);
             CacheReferences();
+            SubscribeEvents();
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
             CacheReferences();
+            SubscribeEvents();
+        }
+
+        public override void End()
+        {
+            base.End();
+            UnsubscribeEvents();
         }
 
         public override void ConstantEffect()
@@ -109,6 +117,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 entityBehaviour = GetPeeredEntityBehaviour(manager);
         }
 
+        void SubscribeEvents()
+        {
+            if (enchantedItem != null)
+            {
+                enchantedItem.OnWeaponStrike += OnWeaponStrikeEnchantments;
+            }
+        }
+
+        void UnsubscribeEvents()
+        {
+            if (enchantedItem != null)
+            {
+                enchantedItem.OnWeaponStrike -= OnWeaponStrikeEnchantments;
+            }
+        }
+
         void ConstantEnchantments()
         {
             //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -138,6 +162,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //    {
             //    }
             //}
+        }
+
+        private void OnWeaponStrikeEnchantments(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver)
+        {
+            Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+
+            // TODO: Weapon strike enchantments tick whenever owning item hits a target entity
+            for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
+            {
+                //switch (enchantedItem.Enchantments[i].type)
+                //{
+                //}
+            }
         }
 
         #endregion

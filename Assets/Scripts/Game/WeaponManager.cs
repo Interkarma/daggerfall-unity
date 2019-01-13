@@ -551,12 +551,13 @@ namespace DaggerfallWorkshop.Game
                     // Remove health
                     enemyEntity.DecreaseHealth(damage);
 
-                    // Assign "cast when strikes" to target entity
+                    // Assign "cast when strikes" to target entity and raise special strike handling event
                     if (strikingWeapon != null && strikingWeapon.IsEnchanted)
                     {
                         EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
                         if (enemyEffectManager)
                             enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
+                        strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour);
                     }
 
                     // Make foe attack their aggressor
