@@ -1291,8 +1291,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bool hasRemainingEffectRounds = false;
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
-                    // Update effects with remaining rounds
-                    if (effect.RoundsRemaining > 0)
+                    // Update effects with remaining rounds, item effects are always ticked
+                    if (effect.RoundsRemaining > 0 || bundle.fromEquippedItem != null)
                     {
                         effect.MagicRound();
                         if (effect.RoundsRemaining > 0)

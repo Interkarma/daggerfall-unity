@@ -32,6 +32,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         const float nearbyRadius = 18f;             // Reasonably matched to classic with testing
         const int potentVsDamage = 5;               // Setting this to a small amount for now
+        const int regenerateAmount = 1;
+        const int regeneratePerRounds = 4;
 
         DaggerfallUnityItem enchantedItem;
         DaggerfallEntityBehaviour entityBehaviour;
@@ -61,6 +63,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             Daedra = 1,
             Humanoid = 2,
             Animals = 3,
+        }
+
+        enum RegenerateTypes
+        {
+            AllTheTime = 0,
+            InSunlight = 1,
+            InDarkness = 2,
         }
 
         #endregion
@@ -164,13 +173,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void RoundBasedEnchantments()
         {
-            // TODO: Round-based enchantments tick once every magic round (game minute)
-            //for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
-            //{
-            //    switch (enchantedItem.Enchantments[i].type)
-            //    {
-            //    }
-            //}
+            // Round-based enchantments tick once every magic round (game minute)
+            for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
+            {
+                switch (enchantedItem.Enchantments[i].type)
+                {
+                    case EnchantmentTypes.RegensHealth:
+                        RegenerateHealth(enchantedItem.Enchantments[i]);
+                        break;
+                }
+            }
         }
 
         private void OnWeaponStrikeEnchantments(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver)
@@ -191,6 +203,41 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             //Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+        }
+
+        #endregion
+
+        #region Regeneration
+
+        /// <summary>
+        /// Regenerates health in a manner similar to career special.
+        /// Classic will regenerate 15 health per hour, stacked per item with enchanement.
+        /// </summary>
+        void RegenerateHealth(DaggerfallEnchantment enchantment)
+        {
+            // This special only triggers once every regeneratePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
+                return;
+
+            // Check for regenerate conditions
+            bool regenerate = false;
+            RegenerateTypes type = (RegenerateTypes)enchantment.param;
+            switch (type)
+            {
+                case RegenerateTypes.AllTheTime:
+                    regenerate = true;
+                    break;
+                case RegenerateTypes.InDarkness:
+                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Dungeon;
+                    break;
+                case RegenerateTypes.InSunlight:
+                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsDay && GameManager.Instance.PlayerEnterExit.WorldContext != WorldContext.Dungeon;
+                    break;
+            }
+
+            // Tick regeneration when conditions are right
+            if (regenerate)
+                entityBehaviour.Entity.IncreaseHealth(regenerateAmount);
         }
 
         #endregion
