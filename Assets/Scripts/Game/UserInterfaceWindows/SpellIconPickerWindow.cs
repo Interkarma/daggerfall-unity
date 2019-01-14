@@ -140,6 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO: Add suggested icons (if any)
 
             // Add spell icon collections
+            int packsAdded = 0;
             foreach (var kvp in iconCollection.SpellIconPacks)
             {
                 string key = kvp.Key;
@@ -154,11 +155,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     AddIcon(iconCollection, pack, key, i, parent, ref rowCount, ref startX, ref xpos, ref ypos);
                 }
+
+                packsAdded++;
             }
 
-            // Add classic icons starting from a new row
+            // Start from a new row if we added any icon packs
+            if (packsAdded > 0)
+                ypos += iconSpacing;
+
+            // Add classic icons
             xpos = startX;
-            ypos += iconSpacing;
             AddHeaderLabel(parent, ref xpos, ref ypos, TextManager.Instance.GetText(textDatabase, "classicIcons"));
             rowCount = 0;
             for (int i = 0; i < iconCollection.SpellIconCount; i++)
