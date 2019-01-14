@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ElementTypes allowedElements = defaultElementFlags;
         TargetTypes selectedTarget = TargetTypes.CasterOnly;
         ElementTypes selectedElement = ElementTypes.Magic;
-        SpellIconCollection.SelectedIcon selectedIcon;
+        SpellIcon selectedIcon;
 
         int totalGoldCost = 0;
         int totalSpellPointCost = 0;
@@ -204,7 +204,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             allowedTargets = defaultTargetFlags;
             allowedElements = defaultElementFlags;
-            selectedIcon = new SpellIconCollection.SelectedIcon()
+            selectedIcon = new SpellIcon()
             {
                 index = defaultSpellIcon,
             };
@@ -640,7 +640,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetIcon(SpellIconCollection.SelectedIcon icon)
+        void SetIcon(SpellIcon icon)
         {
             // Fallback to classic index if no valid icon pack key
             if (string.IsNullOrEmpty(icon.key) || !DaggerfallUI.Instance.SpellIconCollection.HasPack(icon.key))
@@ -778,6 +778,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spell.ElementType = selectedElement;
             spell.Name = spellNameLabel.Text;
             spell.IconIndex = selectedIcon.index;
+            spell.Icon = selectedIcon;
             spell.Effects = effects.ToArray();
 
             // Add to player entity spellbook
@@ -796,6 +797,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SpellHasBeenInscribed_OnClose()
         {
             SetDefaults();
+            iconPicker.ResetScrollPosition();
         }
 
         private void NewSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -873,7 +875,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             int index = selectedIcon.index + 1;
-            if (index >= DaggerfallUI.Instance.SpellIconCollection.GetPackCount(selectedIcon.key))
+            if (index >= DaggerfallUI.Instance.SpellIconCollection.GetIconCount(selectedIcon.key))
                 index = 0;
 
             selectedIcon.index = index;
@@ -890,7 +892,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             int index = selectedIcon.index - 1;
             if (index < 0)
-                index = DaggerfallUI.Instance.SpellIconCollection.GetPackCount(selectedIcon.key) - 1;
+                index = DaggerfallUI.Instance.SpellIconCollection.GetIconCount(selectedIcon.key) - 1;
 
             selectedIcon.index = index;
             SetIcon(selectedIcon);

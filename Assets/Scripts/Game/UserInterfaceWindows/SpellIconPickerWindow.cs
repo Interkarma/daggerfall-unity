@@ -13,6 +13,7 @@ using System;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -45,13 +46,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        SpellIconCollection.SelectedIcon? selectedIcon = null;
+        SpellIcon? selectedIcon = null;
 
         #endregion
 
         #region Properties
 
-        public SpellIconCollection.SelectedIcon? SelectedIcon
+        public SpellIcon? SelectedIcon
         {
             get { return selectedIcon; }
         }
@@ -104,13 +105,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             base.OnPush();
-            scroller.ScrollIndex = 0;
         }
 
         public override void CancelWindow()
         {
             selectedIcon = null;
             base.CancelWindow();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void ResetScrollPosition()
+        {
+            scroller.ScrollIndex = 0;
         }
 
         #endregion
@@ -187,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Tag panel for selection, a null key will fallback to classic using index
-            panel.Tag = new SpellIconCollection.SelectedIcon()
+            panel.Tag = new SpellIcon()
             {
                 key = key,
                 index = index,
@@ -222,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (rect.Contains(mousePos))
                     {
                         (component as Panel).Outline.Enabled = true;
-                        selectedIcon = (SpellIconCollection.SelectedIcon)component.Tag;
+                        selectedIcon = (SpellIcon)component.Tag;
                         mouseOverIcon = true;
                     }
                     else

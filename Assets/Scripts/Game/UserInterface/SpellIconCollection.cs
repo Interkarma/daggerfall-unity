@@ -62,12 +62,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             [NonSerialized]public Texture2D texture;        // Actual texture displayed
         }
 
-        public struct SelectedIcon
-        {
-            public string key;                              // Key of pack matching source filename without extension
-            public int index;                               // Index of key within pack
-        }
-
         #endregion
 
         #region Properties
@@ -121,10 +115,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public bool HasPack(string key)
         {
-            return spellIconPacks.ContainsKey(key);
+            return (!string.IsNullOrEmpty(key)) ? spellIconPacks.ContainsKey(key) : false;
         }
 
-        public int GetPackCount(string key)
+        public int GetIconCount(string key)
         {
             // Fallback to classic pack count
             if (!HasPack(key))
@@ -133,7 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return spellIconPacks[key].iconCount;
         }
 
-        public Texture2D GetSpellIcon(SelectedIcon icon)
+        public Texture2D GetSpellIcon(SpellIcon icon)
         {
             // Fallback to classic icons
             if (string.IsNullOrEmpty(icon.key) || !HasPack(icon.key))

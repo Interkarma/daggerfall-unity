@@ -696,6 +696,14 @@ namespace DaggerfallWorkshop.Game.Entity
             if (otherSpellbook == null || otherSpellbook.Length == 0)
                 return;
 
+            // Migrate from old spell icon index
+            // The old icon index will be changed into a SpellIcon with a null pack key
+            for (int i = 0; i < otherSpellbook.Length; i++)
+            {
+                if (string.IsNullOrEmpty(otherSpellbook[i].Icon.key) && otherSpellbook[i].Icon.index == 0)
+                    otherSpellbook[i].Icon.index = otherSpellbook[i].IconIndex;
+            }
+
             spellbook.AddRange(otherSpellbook);
         }
 

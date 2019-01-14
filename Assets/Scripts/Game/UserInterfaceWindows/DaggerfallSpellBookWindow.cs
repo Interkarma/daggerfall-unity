@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Update spell icons
-            spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.IconIndex);
+            spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.Icon);
             spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
             spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
         }
@@ -532,9 +532,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return labels;
         }
 
-        Texture2D GetSpellIcon(int index)
+        Texture2D GetSpellIcon(SpellIcon icon)
         {
-            return DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(index);
+            return DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(icon);
         }
 
         Texture2D GetSpellTargetIcon(TargetTypes targetType)
@@ -766,9 +766,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EffectBundleSettings spellSettings;
             if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                 return;
-            spellSettings.IconIndex++;
-            if (spellSettings.IconIndex >= DaggerfallUI.Instance.SpellIconCollection.SpellIconCount)
-                spellSettings.IconIndex = 0;
+            spellSettings.Icon.index++;
+            if (spellSettings.Icon.index >= DaggerfallUI.Instance.SpellIconCollection.GetIconCount(spellSettings.Icon.key))
+                spellSettings.Icon.index = 0;
 
             GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
             UpdateSelection();
@@ -780,9 +780,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EffectBundleSettings spellSettings;
             if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                 return;
-            spellSettings.IconIndex--;
-            if (spellSettings.IconIndex < 0)
-                spellSettings.IconIndex = DaggerfallUI.Instance.SpellIconCollection.SpellIconCount - 1;
+            spellSettings.Icon.index--;
+            if (spellSettings.Icon.index < 0)
+                spellSettings.Icon.index = DaggerfallUI.Instance.SpellIconCollection.GetIconCount(spellSettings.Icon.key) - 1;
 
             GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
             UpdateSelection();
