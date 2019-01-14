@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel spellCostLabel;
         TextLabel[] spellEffectLabels;
 
+        SpellIconPickerWindow iconPicker;
+
         #endregion
 
         #region UI Textures
@@ -135,6 +137,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupButtons();
             SetupIcons();
             SetupLabels();
+
+            // Setup icon picker
+            iconPicker = new SpellIconPickerWindow(uiManager, this);
+            iconPicker.OnClose += IconPicker_OnClose;
 
             RefreshSpellsList(false);
             SetDefaults();
@@ -372,7 +378,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellIconPanel.BackgroundColor = Color.black;
             spellIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             spellIconPanel.OnMouseClick += SpellIconPanel_OnMouseClick;
-            spellIconPanel.OnRightMouseClick += SpellIconPanel_OnRightMouseClick;
 
             spellTargetIconPanel = DaggerfallUI.AddPanel(spellTargetPanelRect, mainPanel);
             spellTargetIconPanel.BackgroundColor = Color.black;
@@ -763,30 +768,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SpellIconPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            EffectBundleSettings spellSettings;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
-                return;
-            spellSettings.Icon.index++;
-            if (spellSettings.Icon.index >= DaggerfallUI.Instance.SpellIconCollection.GetIconCount(spellSettings.Icon.key))
-                spellSettings.Icon.index = 0;
-
-            GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
-            UpdateSelection();
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            uiManager.PushWindow(iconPicker);
         }
 
-        private void SpellIconPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void IconPicker_OnClose()
         {
             EffectBundleSettings spellSettings;
             if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                 return;
-            spellSettings.Icon.index--;
-            if (spellSettings.Icon.index < 0)
-                spellSettings.Icon.index = DaggerfallUI.Instance.SpellIconCollection.GetIconCount(spellSettings.Icon.key) - 1;
 
-            GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
-            UpdateSelection();
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            if (iconPicker.SelectedIcon != null)
+            {
+                spellSettings.Icon = iconPicker.SelectedIcon.Value;
+                GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
+                UpdateSelection();
+            }
         }
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
