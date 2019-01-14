@@ -1,7 +1,8 @@
 {
-    "displayName": "VMBlast Test",
+    "displayName": "VMBlast Test Pack",
     "rowCount": 20,
     "iconCount": 69,
+    "filterMode": "Bilinear",
     "icons": [
         {
             "index": 0,

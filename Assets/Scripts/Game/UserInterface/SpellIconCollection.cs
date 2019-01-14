@@ -40,21 +40,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
         List<Texture2D> spellTargetIcons = new List<Texture2D>();
         List<Texture2D> spellElementIcons = new List<Texture2D>();
 
-        Dictionary<string, SpellIconPack> spellIconPacks = new Dictionary<string, SpellIconPack>();
+        readonly Dictionary<string, SpellIconPack> spellIconPacks = new Dictionary<string, SpellIconPack>();
 
         #endregion
 
         #region Structs
 
-        class SpellIconPack
+        public class SpellIconPack
         {
             public string displayName;                      // Display name of icon pack
             public int rowCount;                            // Total number of icons per row in atlas
             public int iconCount;                           // Total number of icons in entire atlas
+            public FilterMode filterMode;                   // Preferred filter mode of loaded icon textures
             public SpellIconSettings[] icons;               // Individual icons
         }
 
-        class SpellIconSettings
+        public class SpellIconSettings
         {
             public int index;                               // Actual index for human readability
             public string[] suggestedEffects;               // List of effect keys this icon could be suggested for
@@ -87,6 +88,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int ElementIconCount
         {
             get { return spellElementIconsCount; }
+        }
+
+        public Dictionary<string, SpellIconPack> SpellIconPacks
+        {
+            get { return spellIconPacks; }
         }
 
         #endregion
@@ -250,6 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 displayName = Path.GetFileNameWithoutExtension(path),
                 rowCount = 0,
                 iconCount = 0,
+                filterMode = FilterMode.Bilinear,
             };
 
             WriteMetadata(pack, path);
@@ -290,7 +297,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Extract texture
                 Texture2D iconTexture = new Texture2D(dim, dim, atlas.format, false);
                 Graphics.CopyTexture(atlas, 0, 0, srcX, srcY, dim, dim, iconTexture, 0, 0, 0, 0);
-                iconTexture.filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
+                iconTexture.filterMode = pack.filterMode;
                 pack.icons[i].texture = iconTexture;
 
                 // Step to next source icon position and wrap to next row

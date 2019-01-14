@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallListPickerWindow effectGroupPicker;
         DaggerfallListPickerWindow effectSubGroupPicker;
         DaggerfallEffectSettingsEditorWindow effectEditor;
+        SpellIconPickerWindow iconPicker;
 
         Button selectIconButton;
 
@@ -186,6 +187,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
             effectEditor.OnSettingsChanged += EffectEditor_OnSettingsChanged;
             effectEditor.OnClose += EffectEditor_OnClose;
+
+            // Setup icon picker
+            iconPicker = new SpellIconPickerWindow(uiManager, this);
         }
 
         public override void OnPush()
@@ -329,8 +333,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Icons
             AddTipButton(nextIconButtonRect, "nextIcon", NextIconButton_OnMouseClick);
             AddTipButton(previousIconButtonRect, "previousIcon", PreviousIconButton_OnMouseClick);
-            selectIconButton = AddTipButton(selectIconButtonRect, "selectIcon", NextIconButton_OnMouseClick);
-            selectIconButton.OnRightMouseClick += PreviousIconButton_OnMouseClick;
+            selectIconButton = AddTipButton(selectIconButtonRect, "selectIcon", SelectIconButton_OnMouseClick);
+            //selectIconButton.OnRightMouseClick += PreviousIconButton_OnMouseClick;
 
             // Select default buttons
             UpdateAllowedButtons();
@@ -862,6 +866,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             SetIcon(index);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+        }
+
+        private void SelectIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PushWindow(iconPicker);
         }
 
         private void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
