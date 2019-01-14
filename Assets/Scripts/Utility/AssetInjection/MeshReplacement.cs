@@ -31,8 +31,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static Func<Color32> getTreeColorCallback = () => Color.Lerp(Color.white, Color.grey, Random.value);
         static Action<Terrain> setTreesSettingsCallback = SetTreesSettings;
 
-        static HashSet<string> triedBillboards = new HashSet<string>();
-        static HashSet<string[]> triedModels = new HashSet<string[]>();
+        static HashSet<Vector2Int> triedBillboards = new HashSet<Vector2Int>();
+        static HashSet<uint> triedModels = new HashSet<uint>();
 
         #endregion
 
@@ -206,12 +206,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 if (ModManager.Instance != null)
                 {
-                    string[] names = GetName(modelID);
-                    if (!triedModels.Contains(names))
+                    if (!triedModels.Contains(modelID))
                     {
-                        bool found = ModManager.Instance.TryGetAsset(names, clone, out go);
+                        bool found = ModManager.Instance.TryGetAsset(GetName(modelID), clone, out go);
                         if (!found)
-                            triedModels.Add(names);
+                            triedModels.Add(modelID);
                         return found;
                     }
                 }
@@ -230,12 +229,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 if (ModManager.Instance != null)
                 {
-                    string name = GetName(archive, record);
-                    if (!triedBillboards.Contains(name))
+                    Vector2Int billboardIdx = new Vector2Int(archive, record);
+                    if (!triedBillboards.Contains(billboardIdx))
                     {
-                        bool found = ModManager.Instance.TryGetAsset(name, clone, out go);
+                        bool found = ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go);
                         if (!found)
-                            triedBillboards.Add(name);
+                            triedBillboards.Add(billboardIdx);
                         return found;
                     }
                 }
