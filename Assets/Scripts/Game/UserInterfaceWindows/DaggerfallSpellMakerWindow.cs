@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ElementTypes allowedElements = defaultElementFlags;
         TargetTypes selectedTarget = TargetTypes.CasterOnly;
         ElementTypes selectedElement = ElementTypes.Magic;
-        int selectedIcon = defaultSpellIcon;
+        SpellIconCollection.SelectedIcon selectedIcon;
 
         int totalGoldCost = 0;
         int totalSpellPointCost = 0;
@@ -190,6 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup icon picker
             iconPicker = new SpellIconPickerWindow(uiManager, this);
+            iconPicker.OnClose += IconPicker_OnClose;
         }
 
         public override void OnPush()
@@ -203,7 +204,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             allowedTargets = defaultTargetFlags;
             allowedElements = defaultElementFlags;
-            selectedIcon = defaultSpellIcon;
+            selectedIcon = new SpellIconCollection.SelectedIcon()
+            {
+                index = defaultSpellIcon,
+            };
             editOrDeleteSlot = -1;
 
             for (int i = 0; i < maxEffectsPerSpell; i++)
@@ -636,9 +640,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetIcon(int index)
+        void SetIcon(SpellIconCollection.SelectedIcon icon)
         {
-            selectedIcon = index;
+            // Fallback to classic index if no valid icon pack key
+            if (string.IsNullOrEmpty(icon.key) || !DaggerfallUI.Instance.SpellIconCollection.HasPack(icon.key))
+            {
+                icon.key = string.Empty;
+                icon.index = icon.index % DaggerfallUI.Instance.SpellIconCollection.SpellIconCount;
+            }
+
+            // Set icon
+            selectedIcon = icon;
             selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(selectedIcon);
         }
 
@@ -765,7 +777,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spell.TargetType = selectedTarget;
             spell.ElementType = selectedElement;
             spell.Name = spellNameLabel.Text;
-            spell.IconIndex = selectedIcon;
+            spell.IconIndex = selectedIcon.index;
             spell.Effects = effects.ToArray();
 
             // Add to player entity spellbook
@@ -860,11 +872,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void NextIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            int index = selectedIcon + 1;
-            if (index >= DaggerfallUI.Instance.SpellIconCollection.SpellIconCount)
+            int index = selectedIcon.index + 1;
+            if (index >= DaggerfallUI.Instance.SpellIconCollection.GetPackCount(selectedIcon.key))
                 index = 0;
 
-            SetIcon(index);
+            selectedIcon.index = index;
+            SetIcon(selectedIcon);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
@@ -875,11 +888,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            int index = selectedIcon - 1;
+            int index = selectedIcon.index - 1;
             if (index < 0)
-                index = DaggerfallUI.Instance.SpellIconCollection.SpellIconCount - 1;
+                index = DaggerfallUI.Instance.SpellIconCollection.GetPackCount(selectedIcon.key) - 1;
 
-            SetIcon(index);
+            selectedIcon.index = index;
+            SetIcon(selectedIcon);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
@@ -983,6 +997,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void EffectEditor_OnSettingsChanged()
         {
             UpdateSpellCosts();
+        }
+
+        private void IconPicker_OnClose()
+        {
+            if (iconPicker.SelectedIcon != null)
+                SetIcon(iconPicker.SelectedIcon.Value);
         }
 
         private void Effect1NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)

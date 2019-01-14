@@ -43,6 +43,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Fields
+
+        SpellIconCollection.SelectedIcon? selectedIcon = null;
+
+        #endregion
+
+        #region Properties
+
+        public SpellIconCollection.SelectedIcon? SelectedIcon
+        {
+            get { return selectedIcon; }
+        }
+
+        #endregion
+
         #region Constructors
 
         public SpellIconPickerWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
@@ -72,6 +87,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             scrollingPanel.OnMouseScrollUp += ScrollingPanel_OnMouseScrollUp;
             scrollingPanel.OnMouseScrollDown += ScrollingPanel_OnMouseScrollDown;
             scrollingPanel.OnMouseMove += ScrollingPanel_OnMouseMove;
+            scrollingPanel.OnMouseClick += ScrollingPanel_OnMouseClick;
             mainPanel.Components.Add(scrollingPanel);
 
             // Scroller
@@ -83,6 +99,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TEST
             int xpos = 2, ypos = 2;
             AddIconPacks(scrollingPanel, ref xpos, ref ypos);
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+            scroller.ScrollIndex = 0;
+        }
+
+        public override void CancelWindow()
+        {
+            selectedIcon = null;
+            base.CancelWindow();
         }
 
         #endregion
@@ -103,8 +131,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO: Add suggested icons (if any)
 
             // Add spell icon collections
-            foreach (SpellIconCollection.SpellIconPack pack in iconCollection.SpellIconPacks.Values)
+            foreach (var kvp in iconCollection.SpellIconPacks)
             {
+                string key = kvp.Key;
+                SpellIconCollection.SpellIconPack pack = kvp.Value;
                 if (pack.icons == null || pack.iconCount == 0)
                     continue;
 
@@ -113,18 +143,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 rowCount = 0;
                 for (int i = 0; i < pack.iconCount; i++)
                 {
-                    Panel panel = new Panel();
-                    panel.BackgroundTexture = pack.icons[i].texture;
-                    panel.Position = new Vector2(xpos, ypos);
-                    panel.Size = new Vector2(iconSize, iconSize);
-                    parent.Components.Add(panel);
-                    xpos += iconSpacing;
-                    if (++rowCount >= iconsPerRow)
-                    {
-                        xpos = startX;
-                        ypos += iconSpacing;
-                        rowCount = 0;
-                    }
+                    AddIcon(iconCollection, pack, key, i, parent, ref rowCount, ref startX, ref xpos, ref ypos);
                 }
             }
 
@@ -135,24 +154,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rowCount = 0;
             for (int i = 0; i < iconCollection.SpellIconCount; i++)
             {
-                Panel panel = new Panel();
-                panel.BackgroundTexture = iconCollection.GetSpellIcon(i);
-                panel.Position = new Vector2(xpos, ypos);
-                panel.Size = new Vector2(iconSize, iconSize);
-                parent.Components.Add(panel);
-                xpos += iconSpacing;
-                if (++rowCount >= iconsPerRow)
-                {
-                    xpos = startX;
-                    ypos += iconSpacing;
-                    rowCount = 0;
-                }
+                AddIcon(iconCollection, null, null, i, parent, ref rowCount, ref startX, ref xpos, ref ypos);
             }
 
             // Assign total scroll steps in scrolling panel
             parent.ScrollSteps = ypos / iconSpacing + 1;
             scroller.DisplayUnits = parent.InteriorHeight / iconSpacing;
             scroller.TotalUnits = parent.ScrollSteps;
+        }
+
+        void AddIcon(SpellIconCollection iconCollection, SpellIconCollection.SpellIconPack pack, string key, int index, Panel parent, ref int rowCount, ref int startX, ref int xpos, ref int ypos)
+        {
+            // Get pack or classic texture
+            Texture2D texture;
+            if (pack == null)
+                texture = iconCollection.GetSpellIcon(index);
+            else
+                texture = pack.icons[index].texture;
+
+            // Add image panel
+            Panel panel = new Panel();
+            panel.BackgroundTexture = texture;
+            panel.Position = new Vector2(xpos, ypos);
+            panel.Size = new Vector2(iconSize, iconSize);
+            parent.Components.Add(panel);
+            xpos += iconSpacing;
+            if (++rowCount >= iconsPerRow)
+            {
+                xpos = startX;
+                ypos += iconSpacing;
+                rowCount = 0;
+            }
+
+            // Tag panel for selection, a null key will fallback to classic using index
+            panel.Tag = new SpellIconCollection.SelectedIcon()
+            {
+                key = key,
+                index = index,
+            };
         }
 
         void AddHeaderLabel(Panel parent, ref int xpos, ref int ypos, string text)
@@ -169,8 +208,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ypos += iconSpacing;
         }
 
-        void UpdateIconOutline()
+        void UpdateSelectedIcon()
         {
+            bool mouseOverIcon = false;
+
             Vector2 mousePos = scrollingPanel.ScaledMousePosition;
             Vector2 srollOffset = new Vector2(0, -scrollingPanel.ScrollIndex * scrollingPanel.ScrollTransform);
             foreach (BaseScreenComponent component in scrollingPanel.Components)
@@ -179,11 +220,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     Rect rect = new Rect(component.Position + srollOffset, component.Size);
                     if (rect.Contains(mousePos))
+                    {
                         (component as Panel).Outline.Enabled = true;
+                        selectedIcon = (SpellIconCollection.SelectedIcon)component.Tag;
+                        mouseOverIcon = true;
+                    }
                     else
+                    {
                         (component as Panel).Outline.Enabled = false;
+                    }
                 }
             }
+
+            if (!mouseOverIcon)
+                selectedIcon = null;
         }
 
         void SetBackground(BaseScreenComponent panel, Color color, string textureName)
@@ -198,24 +248,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Scroller_OnScroll()
         {
             scrollingPanel.ScrollIndex = scroller.ScrollIndex;
-            UpdateIconOutline();
+            UpdateSelectedIcon();
         }
 
         private void ScrollingPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             scroller.ScrollIndex++;
-            UpdateIconOutline();
+            UpdateSelectedIcon();
         }
 
         private void ScrollingPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             scroller.ScrollIndex--;
-            UpdateIconOutline();
+            UpdateSelectedIcon();
         }
 
         private void ScrollingPanel_OnMouseMove(int x, int y)
         {
-            UpdateIconOutline();
+            UpdateSelectedIcon();
+        }
+
+        private void ScrollingPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            UpdateSelectedIcon();
+            if (selectedIcon != null)
+                CloseWindow();
         }
 
         #endregion
