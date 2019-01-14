@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public struct ActiveSpellIcon
         {
             public int iconIndex;
+            public SpellIcon icon;
             public string displayName;
             public bool expiring;
             public int poolIndex;
@@ -234,6 +235,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ActiveSpellIcon item = new ActiveSpellIcon();
                 item.displayName = bundle.name;
                 item.iconIndex = bundle.iconIndex;
+                item.icon = bundle.icon;
                 item.poolIndex = poolIndex++;
                 item.expiring = (GetMaxRoundsRemaining(bundle) <= 2) ? true : false;
                 item.isItem = (effectBundles[i].fromEquippedItem != null);
@@ -255,7 +257,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if(spell.poolIndex < maxIconPool)
                 {
                     iconPool[spell.poolIndex].Enabled = true;
-                    iconPool[spell.poolIndex].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.iconIndex);
+                    iconPool[spell.poolIndex].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.icon);
                     iconPool[spell.poolIndex].Position = new Vector2(xpos, ypos);
                     iconPool[spell.poolIndex].Size = new Vector2(width, height);
                     iconPool[spell.poolIndex].ToolTipText = spell.displayName;
