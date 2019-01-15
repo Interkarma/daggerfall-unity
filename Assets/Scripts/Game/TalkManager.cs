@@ -666,7 +666,7 @@ namespace DaggerfallWorkshop.Game
             DFRandom.Seed = (uint)target.GetHashCode(); // Roll result should be the same every time for a given NPC
             reactionToPlayer += DFRandom.random_range_inclusive(0, reactionRollMax);
 
-            if ((int)socialGroup < player.SGroupReputations.Length) // one of the five general social groups
+            if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // one of the five general social groups
                 reactionToPlayer += player.SGroupReputations[(int)socialGroup];
 
             return (reactionToPlayer);
