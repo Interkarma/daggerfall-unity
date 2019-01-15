@@ -420,10 +420,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 catch (Exception ex)
                 {
-                    LogFormat(quest, "Error in quest follows. Terminating quest runtime.");
-                    LogFormat(ex.Message);
-                    RaiseOnQuestErrorTerminationEvent(quest);
-                    questsToRemove.Add(quest);
+                    if (IsProtectedQuest(quest))
+                    {
+                        LogFormat(quest, "Exception in protected quest. Logging only.");
+                        LogFormat(ex.Message);
+                    }
+                    else
+                    {
+                        LogFormat(quest, "Error in quest follows. Terminating quest runtime.");
+                        LogFormat(ex.Message);
+                        RaiseOnQuestErrorTerminationEvent(quest);
+                        questsToRemove.Add(quest);
+                    }
                 }
 
                 // Schedule completed quests for tombstoning
@@ -452,6 +460,17 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Fire tick event
             RaiseOnTickEvent();
+        }
+
+        /// <summary>
+        /// Checks if a quest is protected from ending prematurely.
+        /// </summary>
+        /// <returns>True if quest is protected.</returns>
+        public static bool IsProtectedQuest(Quest quest)
+        {
+            return string.Compare(quest.QuestName, "S0000999", true) == 0 ||
+                   string.Compare(quest.QuestName, "S0000977", true) == 0 ||
+                   string.Compare(quest.QuestName, "_BRISIEN", true) == 0;
         }
 
         /// <summary>
