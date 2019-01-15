@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -48,6 +48,8 @@ namespace DaggerfallWorkshop
         // Will improve this at later date to use a wider range of transitions.
         public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, bool march = true)
         {
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             // Cache tile data to minimise noise sampling
             CacheTileData(terrainSampler, ref mapData);
 
@@ -85,6 +87,8 @@ namespace DaggerfallWorkshop
                     }
                 }
             }
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to assignTiles for ({0},{1}): {2}ms", mapData.mapPixelX, mapData.mapPixelY, stopwatch.ElapsedMilliseconds), true);
         }
 
         void CacheTileData(ITerrainSampler terrainSampler, ref MapPixelData mapData)

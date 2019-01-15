@@ -9,7 +9,7 @@
 // Notes:
 //
 
-//#define SHOW_LAYOUT_TIMES
+#define SHOW_LAYOUT_TIMES
 
 using UnityEngine;
 using System;
@@ -93,6 +93,7 @@ namespace DaggerfallWorkshop
         DFPosition mapOrigin;
         double worldX, worldZ;
         TerrainTexturing terrainTexturing = new TerrainTexturing();
+        TerrainTexturingJobs ttj = new TerrainTexturingJobs();
         bool isReady = false;
 
         Vector3 autoRepositionOffset = Vector3.zero;
@@ -1168,7 +1169,8 @@ namespace DaggerfallWorkshop
             }
 
             // Update data for terrain
-            dfTerrain.UpdateMapPixelData(terrainTexturing);
+            //dfTerrain.UpdateMapPixelData(terrainTexturing);
+            dfTerrain.UpdateMapPixelDataJobs(ttj);
 
             dfTerrain.UpdateTileMapData();
 

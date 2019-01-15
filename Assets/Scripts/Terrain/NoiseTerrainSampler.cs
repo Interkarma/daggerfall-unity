@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -69,6 +69,11 @@ namespace DaggerfallWorkshop
             // Average and max heights are passed back for flattening location areas
             mapPixel.averageHeight = averageHeight /= (float)(HeightmapDimension * HeightmapDimension);
             mapPixel.maxHeight = maxHeight;
+        }
+
+        public override void GenerateSamplesJobs(ref MapPixelDataJobs mapPixel)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

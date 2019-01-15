@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using Unity.Collections;
 
 namespace DaggerfallWorkshop
 {
@@ -47,6 +48,7 @@ namespace DaggerfallWorkshop
 
         // Data for this terrain
         public MapPixelData MapData;
+        public MapPixelDataJobs MapDataJobs;
 
         // Neighbours of this terrain
         public Terrain LeftNeighbour;
@@ -183,12 +185,15 @@ namespace DaggerfallWorkshop
             if (!ReadyCheck())
                 return;
 
-            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             // Get basic terrain data
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
             dfUnity.TerrainSampler.GenerateSamples(ref MapData);
+
+            Debug.LogFormat("y=0: {0} {1} {2} {3}, y=1: {4} {5} {6} {7}",
+                MapData.heightmapSamples[0, 0], MapData.heightmapSamples[1, 0], MapData.heightmapSamples[2, 0], MapData.heightmapSamples[3, 0],
+                MapData.heightmapSamples[0, 1], MapData.heightmapSamples[1, 1], MapData.heightmapSamples[2, 1], MapData.heightmapSamples[3, 1]);
 
             // Handle terrain with location
             if (MapData.hasLocation)
@@ -203,9 +208,101 @@ namespace DaggerfallWorkshop
                 terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             }
 
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", totalTime), true);
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
         }
+
+        public void UpdateMapPixelDataJobs(TerrainTexturingJobs ttj = null)
+        {
+            if (!ReadyCheck())
+                return;
+
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            // Get basic terrain data
+            MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
+
+            // Convert to Jobs data structure - TODO remove once jobs are finished.
+            MapDataJobs = new MapPixelDataJobs()
+            {
+                inWorld = true,
+                mapPixelX = MapData.mapPixelX,
+                mapPixelY = MapData.mapPixelY,
+                worldHeight = MapData.worldHeight,
+                worldClimate = MapData.worldClimate,
+                worldPolitic = MapData.worldPolitic,
+                hasLocation = MapData.hasLocation,
+                mapRegionIndex = MapData.mapRegionIndex,
+                mapLocationIndex = MapData.mapLocationIndex,
+                locationID = MapData.locationID,
+                locationName = MapData.locationName,
+            };
+
+            // Create samples arrays
+            int hDim = dfUnity.TerrainSampler.HeightmapDimension;
+            MapDataJobs.heightmapSamples = new NativeArray<float>(hDim * hDim, Allocator.Persistent);
+            int tDim = MapsFile.WorldMapTileDim;
+            MapDataJobs.tilemapSamples = new NativeArray<TilemapSampleJobs>(tDim * tDim, Allocator.Persistent);
+
+            dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapDataJobs);
+
+            // Set textures
+            if (ttj != null)
+            {
+                ttj.AssignTiles(dfUnity.TerrainSampler, ref MapDataJobs);
+            }
+
+            // Convert back to standard managed 2d arrays
+            MapData.heightmapSamples = new float[hDim, hDim];
+            MapData.tilemapSamples = new TilemapSample[tDim, tDim];
+            for (int i = 0; i < MapDataJobs.tilemapSamples.Length; i++)
+            {
+                TilemapSampleJobs tile = MapDataJobs.tilemapSamples[i];
+                MapData.tilemapSamples[JobA.GetX(i, tDim), JobA.GetY(i, tDim)] = new TilemapSample()
+                {
+                    record = tile.record,
+                    flip = (tile.flip == 1),
+                    rotate = (tile.rotate == 1),
+                };
+            }
+
+            // Calc average and max height. TODO - move into a separate job
+            float averageHeight = 0;
+            float maxHeight = float.MinValue;
+            for (int i = 0; i < MapDataJobs.heightmapSamples.Length; i++)
+            {
+                float height = MapDataJobs.heightmapSamples[i];
+                MapData.heightmapSamples[JobA.GetX(i, hDim), JobA.GetY(i, hDim)] = height;
+
+                // Accumulate average height
+                averageHeight += height;
+                // Update max height
+                if (height > maxHeight)
+                    maxHeight = height;
+            }
+            // Average and max heights are passed back for locations
+            MapData.averageHeight = (averageHeight /= (float)(hDim * hDim));
+            MapData.maxHeight = maxHeight;
+
+            Debug.LogFormat("y=0: {0} {1} {2} {3}, y=1: {4} {5} {6} {7}",
+                MapData.heightmapSamples[0, 0], MapData.heightmapSamples[1, 0], MapData.heightmapSamples[2, 0], MapData.heightmapSamples[3, 0],
+                MapData.heightmapSamples[0, 1], MapData.heightmapSamples[1, 1], MapData.heightmapSamples[2, 1], MapData.heightmapSamples[3, 1]);
+
+            // Dispose native arrays now data extracted
+            MapDataJobs.heightmapSamples.Dispose();
+            MapDataJobs.tilemapSamples.Dispose();
+
+            // Handle terrain with location
+            if (MapData.hasLocation)
+            {
+                TerrainHelper.SetLocationTiles(ref MapData);
+                TerrainHelper.BlendLocationTerrain(ref MapData);
+            }
+
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
+        }
+
 
         /// <summary>
         /// Update tile map based on current samples.

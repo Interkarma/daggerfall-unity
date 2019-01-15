@@ -55,32 +55,17 @@ namespace DaggerfallWorkshop
             tileData.Dispose();
         }
 
-        public static int GetIndex(int x, int y, int dim)
-        {
-            return (y * dim) + x;
-        }
-
-        public static int GetX(int index, int dim)
-        {
-            return index % dim;
-        }
-
-        public static int GetY(int index, int dim)
-        {
-            return index / dim;
-        }
-
         struct GenerateTileDataJob : IJobParallelFor
         {
-            public NativeArray<int> tileData;
-
             [ReadOnly]
             public NativeArray<byte> lookupTable;
             [ReadOnly]
             public NativeArray<float> heightmapSamples;
 
-            public int dim;
-            public int heightmapDimension;
+            public NativeArray<int> tileData;
+
+            public int tDim;
+            public int hDim;
             public float maxTerrainHeight;
             public float oceanElevation;
             public float beachElevation;
@@ -127,14 +112,13 @@ namespace DaggerfallWorkshop
 
             public void Execute(int index)
             {
-                int x = GetX(index, dim);
-                int y = GetY(index, dim);
+                int x = JobA.GetX(index, tDim);
+                int y = JobA.GetY(index, tDim);
 
                 // Height sample for ocean and beach tiles
-                int hx = (int)Mathf.Clamp(heightmapDimension * ((float)x / dim), 0, heightmapDimension - 1);
-                int hy = (int)Mathf.Clamp(heightmapDimension * ((float)y / dim), 0, heightmapDimension - 1);
-                float height = heightmapSamples[GetIndex(hy, hx, heightmapDimension)] * maxTerrainHeight;  // Why are x & y swapped here?
-
+                int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
+                int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
+                float height = heightmapSamples[JobA.Idx(hy, hx, hDim)] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
                 // Ocean texture
                 if (height <= oceanElevation)
                 {
@@ -142,8 +126,8 @@ namespace DaggerfallWorkshop
                     return;
                 }
                 // Get latitude and longitude of this tile
-                int latitude = mapPixelX * MapsFile.WorldMapTileDim + x;
-                int longitude = MapsFile.MaxWorldTileCoordZ - mapPixelY * MapsFile.WorldMapTileDim + y;
+                int latitude = (int)(mapPixelX * MapsFile.WorldMapTileDim + x);
+                int longitude = (int)(MapsFile.MaxWorldTileCoordZ - mapPixelY * MapsFile.WorldMapTileDim + y);
 
                 // Beach texture
                 // Adds a little +/- randomness to threshold so beach line isn't too regular
@@ -168,15 +152,15 @@ namespace DaggerfallWorkshop
             [ReadOnly]
             public NativeArray<byte> lookupTable;
 
-            public NativeArray<TilemapSampleTmp> tilemapSamples;
+            public NativeArray<TilemapSampleJobs> tilemapSamples;
 
             public int dim;
             public bool march;
 
             public void Execute(int index)
             {
-                int x = GetX(index, dim);
-                int y = GetY(index, dim);
+                int x = JobA.GetX(index, dim);
+                int y = JobA.GetY(index, dim);
 
                 // Do nothing if location tile as texture already set
 //                if (tilemapSamples[index].location)
@@ -196,7 +180,7 @@ namespace DaggerfallWorkshop
                     int tileID = shape | ring << 4;
 
                     byte val = lookupTable[tileID];
-                    tilemapSamples[index] = new TilemapSampleTmp()
+                    tilemapSamples[index] = new TilemapSampleJobs()
                     {
                         record = val & 63,
                         rotate = (byte)((val & 64) == 64 ? 1 : 0),
@@ -205,7 +189,7 @@ namespace DaggerfallWorkshop
                 }
                 else
                 {
-                    tilemapSamples[index] = new TilemapSampleTmp()
+                    tilemapSamples[index] = new TilemapSampleJobs()
                     {
                         record = tileData[index],
                     };
@@ -225,28 +209,29 @@ namespace DaggerfallWorkshop
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
-        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, bool march = true)
+        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelDataJobs mapData, bool march = true)
         {
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             // Flatten heightmap samples into native array.. TODO replace by generating directly into native array later.
+            /*
             NativeArray<float> heightmapSamples = new NativeArray<float>(mapData.heightmapSamples.Length, Allocator.TempJob);
             for (int y = 0; y < terrainSampler.HeightmapDimension; y++)
             {
                 for (int x = 0; x < terrainSampler.HeightmapDimension; x++)
                 {
-                    heightmapSamples[GetIndex(x, y, terrainSampler.HeightmapDimension)] = mapData.heightmapSamples[x, y];
+                    heightmapSamples[JobA.Idx(x, y, terrainSampler.HeightmapDimension)] = mapData.heightmapSamples[x, y];
                 }
-            }
+            }*/
 
             // Cache tile data to minimise noise sampling
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
-                tileData = tileData,
-                heightmapSamples = heightmapSamples,
                 lookupTable = lookupTable,
-                dim = tileDataDim,
-                heightmapDimension = terrainSampler.HeightmapDimension,
+                heightmapSamples = mapData.heightmapSamples,
+                tileData = tileData,
+                tDim = tileDataDim,
+                hDim = terrainSampler.HeightmapDimension,
                 maxTerrainHeight = terrainSampler.MaxTerrainHeight,
                 oceanElevation = terrainSampler.OceanElevation,
                 beachElevation = terrainSampler.BeachElevation,
@@ -254,30 +239,31 @@ namespace DaggerfallWorkshop
                 mapPixelY = mapData.mapPixelY,
             };
 
-            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 32);
+            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64);
 //            tileDataHandle.Complete();
 
-            NativeArray<TilemapSampleTmp> tilemapSamples = new NativeArray<TilemapSampleTmp>(assignTilesDim2, Allocator.TempJob);
+            //NativeArray<TilemapSampleTmp> tilemapSamples = new NativeArray<TilemapSampleTmp>(assignTilesDim2, Allocator.TempJob);
 
             // Assign tile data to terrain
             AssignTilesJob assignTilesJob = new AssignTilesJob
             {
                 tileData = tileData,
-                tilemapSamples = tilemapSamples,
                 lookupTable = lookupTable,
+                tilemapSamples = mapData.tilemapSamples,
                 dim = assignTilesDim,
                 march = march,
             };
 
-            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 32, tileDataHandle);
+            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 64, tileDataHandle);
             assignTilesHandle.Complete();
 
+            /*
             int dim = MapsFile.WorldMapTileDim;
             for (int y = 0; y < dim; y++)
             {
                 for (int x = 0; x < dim; x++)
                 {
-                    int idx = GetIndex(x, y, dim);
+                    int idx = JobA.Idx(x, y, dim);
                     mapData.tilemapSamples[x, y] = new TilemapSample()
                     {
                         record = tilemapSamples[idx].record,
@@ -288,7 +274,7 @@ namespace DaggerfallWorkshop
             }
             heightmapSamples.Dispose();
             tilemapSamples.Dispose();
-
+            */
             stopwatch.Stop();
             DaggerfallUnity.LogMessage(string.Format("Time to assignTiles for ({0},{1}): {2}ms", mapData.mapPixelX, mapData.mapPixelY, stopwatch.ElapsedMilliseconds), true);
         }
