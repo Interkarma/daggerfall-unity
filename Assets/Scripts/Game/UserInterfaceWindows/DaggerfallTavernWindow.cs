@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.Position = new Vector2(0, 50);
-            mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
+            mainPanel.Size = new Vector2(130, 44);
 
             // Room button
             roomButton = DaggerfallUI.AddButton(roomButtonRect, mainPanel);
