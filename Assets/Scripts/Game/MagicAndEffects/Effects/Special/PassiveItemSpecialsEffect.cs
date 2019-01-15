@@ -79,6 +79,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             WhenStrikes = 1,
         }
 
+        enum IncreasedWeightAllowanceTypes
+        {
+            OneQuarterExtra = 0,
+            OneHalfExtra = 1,
+        }
+
         #endregion
 
         #region Overrides
@@ -171,6 +177,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     case EnchantmentTypes.ExtraSpellPts:
                         ExtraSpellPoints(enchantedItem.Enchantments[i]);
                         break;
+                    case EnchantmentTypes.IncreasedWeightAllowance:
+                        IncreasedWeightAllowance(enchantedItem.Enchantments[i]);
+                        break;
                 }
             }
 
@@ -216,6 +225,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             //Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+        }
+
+        #endregion
+
+        #region Increased Weight Allowance
+
+        void IncreasedWeightAllowance(DaggerfallEnchantment enchantment)
+        {
+            switch((IncreasedWeightAllowanceTypes)enchantment.param)
+            {
+                case IncreasedWeightAllowanceTypes.OneQuarterExtra:
+                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.25f);
+                    break;
+                case IncreasedWeightAllowanceTypes.OneHalfExtra:
+                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.5f);
+                    break;
+            }
         }
 
         #endregion
