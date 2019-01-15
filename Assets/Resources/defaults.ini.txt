@@ -67,6 +67,7 @@ CameraRecoilStrength = 3
 SoundVolume = 1.0
 MusicVolume = 1.0
 InstantRepairs = False
+AllowMagicRepairs = False
 
 [Map]
 AutomapNumberOfDungeons=5
