@@ -11,14 +11,9 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using Unity.Jobs;
 using Unity.Collections;
-using System.Linq;
 
 namespace DaggerfallWorkshop
 {
@@ -39,6 +34,9 @@ namespace DaggerfallWorkshop
         static int tileDataDim = MapsFile.WorldMapTileDim + 1;
         static int tileDataDim2 = tileDataDim * tileDataDim;
 
+        static int assignTilesDim = MapsFile.WorldMapTileDim;
+        static int assignTilesDim2 = assignTilesDim * assignTilesDim;
+
         //byte[] lookupTable;
         //int[,] tileData;
         NativeArray<byte> lookupTable;
@@ -49,7 +47,6 @@ namespace DaggerfallWorkshop
             CreateLookupTable();
 
             tileData = new NativeArray<int>(tileDataDim2, Allocator.Persistent);
-
         }
 
         ~TerrainTexturingJobs()
@@ -58,19 +55,19 @@ namespace DaggerfallWorkshop
             tileData.Dispose();
         }
 
-        private static int GetIndex(int x, int y)
+        public static int GetIndex(int x, int y, int dim)
         {
-            return (y * tileDataDim) + x;
+            return (y * dim) + x;
         }
 
-        private static int GetX(int index)
+        public static int GetX(int index, int dim)
         {
-            return index % tileDataDim;
+            return index % dim;
         }
 
-        private static int GetY(int index)
+        public static int GetY(int index, int dim)
         {
-            return index / tileDataDim;
+            return index / dim;
         }
 
         struct GenerateTileDataJob : IJobParallelFor
@@ -130,14 +127,13 @@ namespace DaggerfallWorkshop
 
             public void Execute(int index)
             {
-                int x = GetX(index);
-                int y = GetY(index);
-                //tileData[index] = GetIndex(x, y);
+                int x = GetX(index, dim);
+                int y = GetY(index, dim);
 
                 // Height sample for ocean and beach tiles
                 int hx = (int)Mathf.Clamp(heightmapDimension * ((float)x / dim), 0, heightmapDimension - 1);
                 int hy = (int)Mathf.Clamp(heightmapDimension * ((float)y / dim), 0, heightmapDimension - 1);
-                float height = heightmapSamples[GetIndex(hx, hy)] * maxTerrainHeight;
+                float height = heightmapSamples[GetIndex(hy, hx, heightmapDimension)] * maxTerrainHeight;  // Why are x & y swapped here?
 
                 // Ocean texture
                 if (height <= oceanElevation)
@@ -160,30 +156,90 @@ namespace DaggerfallWorkshop
                 float weight = 0;
                 weight += NoiseWeight(latitude, longitude);
                 // TODO: Add other weights to influence texture tile generation
+
                 tileData[index] = GetWeightedRecord(weight);
             }
         }
 
+        struct AssignTilesJob : IJobParallelFor
+        {
+            [ReadOnly]
+            public NativeArray<int> tileData;
+            [ReadOnly]
+            public NativeArray<byte> lookupTable;
+
+            public NativeArray<TilemapSampleTmp> tilemapSamples;
+
+            public int dim;
+            public bool march;
+
+            public void Execute(int index)
+            {
+                int x = GetX(index, dim);
+                int y = GetY(index, dim);
+
+                // Do nothing if location tile as texture already set
+//                if (tilemapSamples[index].location)
+//                    return;
+
+                // Assign tile texture
+                if (march)
+                {
+                    // Get sample points
+                    int b0 = tileData[index];             // tileData[x, y]
+                    int b1 = tileData[index + 1];         // tileData[x + 1, y]
+                    int b2 = tileData[index + dim];       // tileData[x, y + 1]
+                    int b3 = tileData[index + dim + 1];   // tileData[x + 1, y + 1]
+
+                    int shape = (b0 & 1) | (b1 & 1) << 1 | (b2 & 1) << 2 | (b3 & 1) << 3;
+                    int ring = (b0 + b1 + b2 + b3) >> 2;
+                    int tileID = shape | ring << 4;
+
+                    byte val = lookupTable[tileID];
+                    tilemapSamples[index] = new TilemapSampleTmp()
+                    {
+                        record = val & 63,
+                        rotate = (byte)((val & 64) == 64 ? 1 : 0),
+                        flip = (byte)((val & 128) == 128 ? 1 : 0),
+                    };
+                }
+                else
+                {
+                    tilemapSamples[index] = new TilemapSampleTmp()
+                    {
+                        record = tileData[index],
+                    };
+                }
+            }
+        }
+
+        public struct TilemapSampleTmp
+        {
+            public int record;                          // Record index into texture atlas
+            public byte flip;                           // Flip texture UVs
+            public byte rotate;                         // Rotate texture UVs
+        }
+
         #region Marching Squares - WIP
 
-        private float[] FlattenSamples(float[,] heightmapSamples)
-        {
-            // MUST REMOVE - slow!
-            Debug.Log("flatten");
-            return heightmapSamples.Cast<float>().ToArray();
-        }
-        
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
         public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, bool march = true)
         {
-            Debug.LogFormat("assignTiles for ({0},{1})", mapData.mapPixelX, mapData.mapPixelY);
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            // Flatten heightmap samples into native array.. TODO replace by generating directly into native array later.
+            NativeArray<float> heightmapSamples = new NativeArray<float>(mapData.heightmapSamples.Length, Allocator.TempJob);
+            for (int y = 0; y < terrainSampler.HeightmapDimension; y++)
+            {
+                for (int x = 0; x < terrainSampler.HeightmapDimension; x++)
+                {
+                    heightmapSamples[GetIndex(x, y, terrainSampler.HeightmapDimension)] = mapData.heightmapSamples[x, y];
+                }
+            }
 
             // Cache tile data to minimise noise sampling
-            //CacheTileData(terrainSampler, ref mapData);
-
-            NativeArray<float> heightmapSamples = new NativeArray<float>(FlattenSamples(mapData.heightmapSamples), Allocator.TempJob);
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
                 tileData = tileData,
@@ -198,89 +254,44 @@ namespace DaggerfallWorkshop
                 mapPixelY = mapData.mapPixelY,
             };
 
-            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 1);
-            tileDataHandle.Complete();
+            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 32);
+//            tileDataHandle.Complete();
 
-            heightmapSamples.Dispose();
+            NativeArray<TilemapSampleTmp> tilemapSamples = new NativeArray<TilemapSampleTmp>(assignTilesDim2, Allocator.TempJob);
 
             // Assign tile data to terrain
+            AssignTilesJob assignTilesJob = new AssignTilesJob
+            {
+                tileData = tileData,
+                tilemapSamples = tilemapSamples,
+                lookupTable = lookupTable,
+                dim = assignTilesDim,
+                march = march,
+            };
+
+            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 32, tileDataHandle);
+            assignTilesHandle.Complete();
+
             int dim = MapsFile.WorldMapTileDim;
             for (int y = 0; y < dim; y++)
             {
                 for (int x = 0; x < dim; x++)
                 {
-                    // Do nothing if location tile as texture already set
-                    if (mapData.tilemapSamples[x, y].location)
-                        continue;
-
-                    // Assign tile texture
-                    if (march)
+                    int idx = GetIndex(x, y, dim);
+                    mapData.tilemapSamples[x, y] = new TilemapSample()
                     {
-                        // Get sample points
-                        int idx = GetIndex(x, y);
-                        int b0 = tileData[idx];             // tileData[x, y]
-                        int b1 = tileData[idx + 1];         // tileData[x + 1, y]
-                        int b2 = tileData[idx + dim];       // tileData[x, y + 1]
-                        int b3 = tileData[idx + dim + 1];   // tileData[x + 1, y + 1]
-
-                        int shape = (b0 & 1) | (b1 & 1) << 1 | (b2 & 1) << 2 | (b3 & 1) << 3;
-                        int ring = (b0 + b1 + b2 + b3) >> 2;
-                        int tileID = shape | ring << 4;
-
-                        byte val = lookupTable[tileID];
-                        mapData.tilemapSamples[x, y].record = val & 63;
-                        mapData.tilemapSamples[x, y].rotate = ((val & 64) == 64);
-                        mapData.tilemapSamples[x, y].flip = ((val & 128) == 128);
-                    }
-                    else
-                    {
-                        mapData.tilemapSamples[x, y].record = tileData[GetIndex(x, y)];
-                    }
+                        record = tilemapSamples[idx].record,
+                        rotate = tilemapSamples[idx].rotate == 1,
+                        flip = tilemapSamples[idx].flip == 1,
+                    };
                 }
             }
+            heightmapSamples.Dispose();
+            tilemapSamples.Dispose();
+
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to assignTiles for ({0},{1}): {2}ms", mapData.mapPixelX, mapData.mapPixelY, stopwatch.ElapsedMilliseconds), true);
         }
-        /*
-        void CacheTileData(ITerrainSampler terrainSampler, ref MapPixelData mapData)
-        {
-            // Populate array with tile metadata
-            for (int y = 0; y < dim; y++)
-            {
-                for (int x = 0; x < dim; x++)
-                {
-                    // Height sample for ocean and beach tiles
-                    float height = TerrainHelper.GetClampedHeight(
-                        ref mapData,
-                        terrainSampler.HeightmapDimension,
-                        (float)x / (float)dim,
-                        (float)y / (float)dim) * terrainSampler.MaxTerrainHeight;
-
-                    // Ocean texture
-                    if (height <= terrainSampler.OceanElevation)
-                    {
-                        tileData[x, y] = water;
-                        continue;
-                    }
-
-                    // Get latitude and longitude of this tile
-                    int latitude = (int)(mapData.mapPixelX * MapsFile.WorldMapTileDim + x);
-                    int longitude = (int)(MapsFile.MaxWorldTileCoordZ - mapData.mapPixelY * MapsFile.WorldMapTileDim + y);
-
-                    // Beach texture
-                    // Adds a little +/- randomness to threshold so beach line isn't too regular
-                    if (height <= terrainSampler.BeachElevation + UnityEngine.Random.Range(-1.5f, 1.5f))
-                    {
-                        tileData[x, y] = dirt;
-                        continue;
-                    }
-
-                    // Set texture tile using weighted noise
-                    float weight = 0;
-                    weight += NoiseWeight(latitude, longitude);
-                    // TODO: Add other weights to influence texture tile generation
-                    tileData[x, y] = GetWeightedRecord(weight);
-                }
-            }
-        }*/
 
         // Creates lookup table
         void CreateLookupTable()
