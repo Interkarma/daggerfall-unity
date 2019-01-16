@@ -40,13 +40,13 @@ namespace DaggerfallWorkshop
         //byte[] lookupTable;
         //int[,] tileData;
         NativeArray<byte> lookupTable;
-        NativeArray<int> tileData;
+        NativeArray<byte> tileData;
 
         public TerrainTexturingJobs()
         {
             CreateLookupTable();
-
-            tileData = new NativeArray<int>(tileDataDim2, Allocator.Persistent);
+            // Keep memory allocation for tileData for re-use.
+            tileData = new NativeArray<byte>(tileDataDim2, Allocator.Persistent);
         }
 
         ~TerrainTexturingJobs()
@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop
             [ReadOnly]
             public NativeArray<float> heightmapSamples;
 
-            public NativeArray<int> tileData;
+            public NativeArray<byte> tileData;
 
             public int tDim;
             public int hDim;
@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop
             }
 
             // Sets texture by range
-            private int GetWeightedRecord(float weight, float lowerGrassSpread = 0.5f, float upperGrassSpread = 0.95f)
+            private byte GetWeightedRecord(float weight, float lowerGrassSpread = 0.5f, float upperGrassSpread = 0.95f)
             {
                 if (weight < lowerGrassSpread)
                     return dirt;
@@ -145,14 +145,20 @@ namespace DaggerfallWorkshop
             }
         }
 
+        #region Marching Squares - WIP
+
+        // Very basic marching squares for water > dirt > grass > stone transitions.
+        // Cannot handle water > grass or water > stone, etc.
+        // Will improve this at later date to use a wider range of transitions.
+
         struct AssignTilesJob : IJobParallelFor
         {
             [ReadOnly]
-            public NativeArray<int> tileData;
+            public NativeArray<byte> tileData;
             [ReadOnly]
             public NativeArray<byte> lookupTable;
 
-            public NativeArray<TilemapSampleJobs> tilemapSamples;
+            public NativeArray<byte> tilemapSamples;
 
             public int tDim;
             public int dim;
@@ -181,41 +187,20 @@ namespace DaggerfallWorkshop
                     int ring = (b0 + b1 + b2 + b3) >> 2;
                     int tileID = shape | ring << 4;
 
-                    byte val = lookupTable[tileID];
-                    tilemapSamples[index] = new TilemapSampleJobs()
-                    {
-                        record = val & 63,
-                        rotate = (byte)((val & 64) == 64 ? 1 : 0),
-                        flip = (byte)((val & 128) == 128 ? 1 : 0),
-                    };
+                    tilemapSamples[index] = lookupTable[tileID];
                 }
                 else
                 {
-                    tilemapSamples[index] = new TilemapSampleJobs()
-                    {
-                        record = tileData[JobA.Idx(x, y, tDim)],
-                    };
+                    tilemapSamples[index] = tileData[JobA.Idx(x, y, tDim)];
                 }
             }
         }
 
-        public struct TilemapSampleTmp
-        {
-            public int record;                          // Record index into texture atlas
-            public byte flip;                           // Flip texture UVs
-            public byte rotate;                         // Rotate texture UVs
-        }
-
-        #region Marching Squares - WIP
-
-        // Very basic marching squares for water > dirt > grass > stone transitions.
-        // Cannot handle water > grass or water > stone, etc.
-        // Will improve this at later date to use a wider range of transitions.
         public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelDataJobs mapData, bool march = true)
         {
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            // Cache tile data to minimise noise sampling
+            // Cache tile data to minimise noise sampling during march.
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
                 lookupTable = lookupTable,

@@ -398,7 +398,7 @@ namespace DaggerfallWorkshop
         public Rect locationRect;                   // Rect of location tiles in sample are
 
         [HideInInspector, NonSerialized]
-        public NativeArray<TilemapSampleJobs> tilemapSamples;     // Tilemap samples for terrain
+        public NativeArray<byte> tilemapSamples;     // Tilemap samples for terrain
 
         [HideInInspector, NonSerialized]
         public NativeArray<float> heightmapSamples;           // Heightmap samples for terrain - indexed [y,x] for Terrain.SetHeights

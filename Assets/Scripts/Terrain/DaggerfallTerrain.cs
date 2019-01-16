@@ -239,15 +239,16 @@ namespace DaggerfallWorkshop
             int hDim = dfUnity.TerrainSampler.HeightmapDimension;
             MapDataJobs.heightmapSamples = new NativeArray<float>(hDim * hDim, Allocator.Persistent);
             int tDim = MapsFile.WorldMapTileDim;
-            MapDataJobs.tilemapSamples = new NativeArray<TilemapSampleJobs>(tDim * tDim, Allocator.Persistent);
+            MapDataJobs.tilemapSamples = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
+            //MapDataJobs.tilemapSamples = new NativeArray<TilemapSampleJobs>(tDim * tDim, Allocator.Persistent);
 
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapDataJobs);
 
-            //terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             // Set textures
             if (ttj != null)
             {
                 ttj.AssignTiles(dfUnity.TerrainSampler, ref MapDataJobs);
+                //terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             }
 
             // Convert back to standard managed 2d arrays
@@ -255,12 +256,12 @@ namespace DaggerfallWorkshop
             MapData.tilemapSamples = new TilemapSample[tDim, tDim];
             for (int i = 0; i < MapDataJobs.tilemapSamples.Length; i++)
             {
-                TilemapSampleJobs tile = MapDataJobs.tilemapSamples[i];
+                byte tile = MapDataJobs.tilemapSamples[i];
                 MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
                 {
-                    record = tile.record,
-                    flip = (tile.flip == 1),
-                    rotate = (tile.rotate == 1),
+                    record = tile & 0x3f,
+                    rotate = (tile & 0x40) != 0,
+                    flip = (tile & 0x80) != 0,
                 };
             }
 
