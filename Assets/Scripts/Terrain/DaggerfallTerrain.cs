@@ -191,10 +191,6 @@ namespace DaggerfallWorkshop
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
             dfUnity.TerrainSampler.GenerateSamples(ref MapData);
 
-            Debug.LogFormat("y=0: {0} {1} {2} {3}, y=1: {4} {5} {6} {7}",
-                MapData.heightmapSamples[0, 0], MapData.heightmapSamples[1, 0], MapData.heightmapSamples[2, 0], MapData.heightmapSamples[3, 0],
-                MapData.heightmapSamples[0, 1], MapData.heightmapSamples[1, 1], MapData.heightmapSamples[2, 1], MapData.heightmapSamples[3, 1]);
-
             // Handle terrain with location
             if (MapData.hasLocation)
             {
@@ -212,7 +208,7 @@ namespace DaggerfallWorkshop
             DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
         }
 
-        public void UpdateMapPixelDataJobs(TerrainTexturingJobs ttj = null)
+        public void UpdateMapPixelDataJobs(TerrainTexturingJobs ttj = null, TerrainTexturing terrainTexturing = null)
         {
             if (!ReadyCheck())
                 return;
@@ -221,6 +217,7 @@ namespace DaggerfallWorkshop
 
             // Get basic terrain data
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
+            //dfUnity.TerrainSampler.GenerateSamples(ref MapData);
 
             // Convert to Jobs data structure - TODO remove once jobs are finished.
             MapDataJobs = new MapPixelDataJobs()
@@ -246,6 +243,7 @@ namespace DaggerfallWorkshop
 
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapDataJobs);
 
+            //terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             // Set textures
             if (ttj != null)
             {
@@ -258,7 +256,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < MapDataJobs.tilemapSamples.Length; i++)
             {
                 TilemapSampleJobs tile = MapDataJobs.tilemapSamples[i];
-                MapData.tilemapSamples[JobA.GetX(i, tDim), JobA.GetY(i, tDim)] = new TilemapSample()
+                MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
                 {
                     record = tile.record,
                     flip = (tile.flip == 1),
@@ -272,7 +270,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < MapDataJobs.heightmapSamples.Length; i++)
             {
                 float height = MapDataJobs.heightmapSamples[i];
-                MapData.heightmapSamples[JobA.GetX(i, hDim), JobA.GetY(i, hDim)] = height;
+                MapData.heightmapSamples[JobA.Row(i, hDim), JobA.Col(i, hDim)] = height;
 
                 // Accumulate average height
                 averageHeight += height;
@@ -283,10 +281,6 @@ namespace DaggerfallWorkshop
             // Average and max heights are passed back for locations
             MapData.averageHeight = (averageHeight /= (float)(hDim * hDim));
             MapData.maxHeight = maxHeight;
-
-            Debug.LogFormat("y=0: {0} {1} {2} {3}, y=1: {4} {5} {6} {7}",
-                MapData.heightmapSamples[0, 0], MapData.heightmapSamples[1, 0], MapData.heightmapSamples[2, 0], MapData.heightmapSamples[3, 0],
-                MapData.heightmapSamples[0, 1], MapData.heightmapSamples[1, 1], MapData.heightmapSamples[2, 1], MapData.heightmapSamples[3, 1]);
 
             // Dispose native arrays now data extracted
             MapDataJobs.heightmapSamples.Dispose();

@@ -244,9 +244,9 @@ namespace DaggerfallWorkshop
 
             public void Execute(int index)
             {
-                // Swap x and y for height data
-                int y = JobA.GetX(index, dim);
-                int x = JobA.GetY(index, dim);
+                // Use cols=x and rows=y for height data
+                int x = JobA.Col(index, dim);
+                int y = JobA.Row(index, dim);
 
                 float rx = (float)x / div;
                 float ry = (float)y / div;

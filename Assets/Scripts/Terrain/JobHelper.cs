@@ -13,17 +13,17 @@ namespace DaggerfallWorkshop
 {
     public static class JobA
     {
-        public static int Idx(int x, int y, int dim)
+        public static int Idx(int r, int c, int dim)
         {
-            return x + (y * dim);
+            return r + (c * dim);
         }
 
-        public static int GetX(int index, int dim)
+        public static int Row(int index, int dim)
         {
             return index % dim;
         }
 
-        public static int GetY(int index, int dim)
+        public static int Col(int index, int dim)
         {
             return index / dim;
         }
