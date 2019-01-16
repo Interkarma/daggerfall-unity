@@ -182,6 +182,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     case EnchantmentTypes.IncreasedWeightAllowance:
                         IncreasedWeightAllowance(enchantedItem.Enchantments[i]);
                         break;
+                    case EnchantmentTypes.AbsorbsSpells:
+                        entityBehaviour.Entity.IsAbsorbingSpells = true;
+                        break;
                 }
             }
 
