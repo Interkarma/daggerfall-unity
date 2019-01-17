@@ -456,8 +456,8 @@ namespace DaggerfallConnect.Arena2
                     settings.GroundArchive = 102;
                     settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
-                    settings.People = FactionFile.FactionRaces.Nord;
-                    settings.Names = FactionFile.FactionRaces.Nord;
+                    settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Breton;
                     break;
                 case (int)Climates.Woodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
