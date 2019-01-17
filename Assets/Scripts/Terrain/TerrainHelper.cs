@@ -36,6 +36,14 @@ namespace DaggerfallWorkshop
         public const float defaultTerrainScale = 1.5f;
 
         /// <summary>
+        /// Gets the Terrain name for a given map pixel
+        /// </summary>
+        public static string GetTerrainName(int mapPixelX, int mapPixelY)
+        {
+            return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
+        }
+
+        /// <summary>
         /// Gets map pixel data for any location in world.
         /// </summary>
         public static MapPixelData GetMapPixelData(ContentReader contentReader, int mapPixelX, int mapPixelY)

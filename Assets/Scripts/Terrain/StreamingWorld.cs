@@ -1097,7 +1097,7 @@ namespace DaggerfallWorkshop
         {
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(StreamingTarget);
-            terrainObject.name = GetTerrainName(mapPixelX, mapPixelY);
+            terrainObject.name = TerrainHelper.GetTerrainName(mapPixelX, mapPixelY);
             terrainObject.hideFlags = defaultHideFlags;
 
             // Create new billboard batch object parented to terrain
@@ -1107,12 +1107,6 @@ namespace DaggerfallWorkshop
             billboardBatchObject.transform.parent = terrainObject.transform;
             billboardBatchObject.transform.localPosition = Vector3.zero;
             billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
-        }
-
-        // TODO move to TerrainHelper
-        public static string GetTerrainName(int mapPixelX, int mapPixelY)
-        {
-            return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
         }
 
         // Create new location game object
@@ -1193,7 +1187,7 @@ namespace DaggerfallWorkshop
 
                 // Only set active again once complete
                 terrainDesc.terrainObject.SetActive(true);
-                terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+                terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
             }
         }
 
