@@ -258,6 +258,12 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void SetPlayerClicked()
         {
+            if (this is Person && (this as Person).IsMuted)
+            {
+                QuestMachine.LogFormat("Ignoring click on muted Person {0}.", Symbol.Original);
+                return;
+            }
+
             hasPlayerClicked = true;
         }
 

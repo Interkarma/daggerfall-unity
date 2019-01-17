@@ -379,10 +379,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new CastEffectDo(null));
             RegisterAction(new RemoveFoe(null));
             RegisterAction(new LegalRepute(null));
-
-            // Stubs - these actions are not complete yet
-            // Just setting up so certain quests compile for now
-            //RegisterAction(new MuteNpc(null));
+            RegisterAction(new MuteNpc(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();

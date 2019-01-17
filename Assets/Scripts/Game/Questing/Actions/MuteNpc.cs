@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,13 +15,18 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Incomplete. Just stubbing out action for now so quest will compile.
+    /// NPC will no longer respond to mouse clicks once muted.
     /// </summary>
     public class MuteNpc : ActionTemplate
     {
+        Symbol npcSymbol;
+
         public override string Pattern
         {
-            get { return @"mute npc"; }
+            get
+            {
+                return @"mute npc (?<anNPC>[a-zA-Z0-9_.-]+)";
+            }
         }
 
         public MuteNpc(Quest parentQuest)
@@ -38,13 +43,23 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Factory new action
             MuteNpc action = new MuteNpc(parentQuest);
+            action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // TODO: Perform action changes
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(npcSymbol);
+            if (person == null)
+            {
+                SetComplete();
+                return;
+            }
+
+            // Perform action changes
+            person.IsMuted = true;
 
             SetComplete();
         }
@@ -54,21 +69,24 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
+            public Symbol npcSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
+            data.npcSymbol = npcSymbol;
 
             return data;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
-            //if (dataIn == null)
-            //    return;
+            if (dataIn == null)
+                return;
 
-            //SaveData_v1 data = (SaveData_v1)dataIn;
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            npcSymbol = data.npcSymbol;
         }
 
         #endregion
