@@ -285,9 +285,14 @@ namespace DaggerfallWorkshop.Game
                     target = null;
                 }
 
-                // NoTarget mode
-                if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && target == Player)
-                    target = null;
+                // Non-hostile mode
+                if (GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile)
+                {
+                    if (target == Player)
+                        target = null;
+                    if (lastTarget == Player)
+                        lastTarget = null;
+                }
 
                 // Reset these values if no target
                 if (target == null)
