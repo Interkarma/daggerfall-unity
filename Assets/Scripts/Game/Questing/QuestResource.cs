@@ -332,12 +332,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void SetHidden(bool value)
         {
-            // Do not allow this for Foes
-            // They are a one-to-many virtual resource unlike Items and NPCs which are one-to-one once instantiated in world
-            if (this is Foe)
-                return;
-
-            // Set hidden flag for other resources
+            // Set hidden flag
+            // NOTE: Foes are a one-to-many resource - hiding a Foe will remove ALL spawned instances of that Foe
             isHidden = value;
         }
 
