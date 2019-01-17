@@ -240,9 +240,14 @@ namespace DaggerfallWorkshop
             MapDataJobs.heightmapSamples = new NativeArray<float>(hDim * hDim, Allocator.Persistent);
             int tDim = MapsFile.WorldMapTileDim;
             MapDataJobs.tilemapSamples = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
-            //MapDataJobs.tilemapSamples = new NativeArray<TilemapSampleJobs>(tDim * tDim, Allocator.Persistent);
 
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapDataJobs);
+
+            // Handle terrain with location
+            if (MapData.hasLocation)
+            {
+                TerrainHelper.SetLocationTilesJobs(ref MapDataJobs);
+            }
 
             // Set textures
             if (ttj != null)
@@ -257,6 +262,8 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < MapDataJobs.tilemapSamples.Length; i++)
             {
                 byte tile = MapDataJobs.tilemapSamples[i];
+                if (tile == byte.MaxValue)
+                    tile = 0;
                 MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
                 {
                     record = tile & 0x3f,
@@ -264,6 +271,7 @@ namespace DaggerfallWorkshop
                     flip = (tile & 0x80) != 0,
                 };
             }
+            MapData.locationRect = MapDataJobs.locationRect;
 
             // Calc average and max height. TODO - move into a separate job
             float averageHeight = 0;
@@ -290,7 +298,7 @@ namespace DaggerfallWorkshop
             // Handle terrain with location
             if (MapData.hasLocation)
             {
-                TerrainHelper.SetLocationTiles(ref MapData);
+                //TerrainHelper.SetLocationTiles(ref MapData);
                 TerrainHelper.BlendLocationTerrain(ref MapData);
             }
 

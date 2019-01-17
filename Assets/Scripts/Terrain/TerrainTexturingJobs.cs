@@ -31,29 +31,70 @@ namespace DaggerfallWorkshop
         const byte grass = 2;
         const byte stone = 3;
 
-        static int tileDataDim = MapsFile.WorldMapTileDim + 1;
-        static int tileDataDim2 = tileDataDim * tileDataDim;
+        static readonly int tileDataDim = MapsFile.WorldMapTileDim + 1;
+        static readonly int tileDataDim2 = tileDataDim * tileDataDim;
 
-        static int assignTilesDim = MapsFile.WorldMapTileDim;
-        static int assignTilesDim2 = assignTilesDim * assignTilesDim;
+        static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
+        static readonly int assignTilesDim2 = assignTilesDim * assignTilesDim;
 
-        //byte[] lookupTable;
-        //int[,] tileData;
         NativeArray<byte> lookupTable;
-        NativeArray<byte> tileData;
 
         public TerrainTexturingJobs()
         {
             CreateLookupTable();
-            // Keep memory allocation for tileData for re-use.
-            tileData = new NativeArray<byte>(tileDataDim2, Allocator.Persistent);
         }
 
         ~TerrainTexturingJobs()
         {
             lookupTable.Dispose();
-            tileData.Dispose();
         }
+
+        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelDataJobs mapData, bool march = true)
+        {
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            // Cache tile data to minimise noise sampling during march.
+            NativeArray<byte> tileData = new NativeArray<byte>(tileDataDim2, Allocator.Persistent);
+            GenerateTileDataJob tileDataJob = new GenerateTileDataJob
+            {
+                lookupTable = lookupTable,
+                heightmapSamples = mapData.heightmapSamples,
+                tileData = tileData,
+                tDim = tileDataDim,
+                hDim = terrainSampler.HeightmapDimension,
+                maxTerrainHeight = terrainSampler.MaxTerrainHeight,
+                oceanElevation = terrainSampler.OceanElevation,
+                beachElevation = terrainSampler.BeachElevation,
+                mapPixelX = mapData.mapPixelX,
+                mapPixelY = mapData.mapPixelY,
+            };
+
+            //tileDataJob.Run(tileDataDim2);
+            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64);
+            //tileDataHandle.Complete();
+
+            // Assign tile data to terrain
+            AssignTilesJob assignTilesJob = new AssignTilesJob
+            {
+                tileData = tileData,
+                lookupTable = lookupTable,
+                tilemapSamples = mapData.tilemapSamples,
+                tDim = tileDataDim,
+                dim = assignTilesDim,
+                march = march,
+                locationRect = mapData.locationRect,
+            };
+
+            //assignTilesJob.Run(assignTilesDim2);
+            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 64, tileDataHandle);
+            assignTilesHandle.Complete();
+
+            tileData.Dispose();
+
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to assignTiles for ({0},{1}): {2}ms", mapData.mapPixelX, mapData.mapPixelY, stopwatch.ElapsedMilliseconds), true);
+        }
+
 
         struct GenerateTileDataJob : IJobParallelFor
         {
@@ -163,15 +204,16 @@ namespace DaggerfallWorkshop
             public int tDim;
             public int dim;
             public bool march;
+            public Rect locationRect;
 
             public void Execute(int index)
             {
                 int x = JobA.Row(index, dim);
                 int y = JobA.Col(index, dim);
 
-                // Do nothing if location tile as texture already set
-//                if (tilemapSamples[index].location)
-//                    return;
+                // Do nothing if in location rect as texture already set, to 0xFF if zero
+                if (tilemapSamples[index] != 0)
+                    return;
 
                 // Assign tile texture
                 if (march)
@@ -194,48 +236,6 @@ namespace DaggerfallWorkshop
                     tilemapSamples[index] = tileData[JobA.Idx(x, y, tDim)];
                 }
             }
-        }
-
-        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelDataJobs mapData, bool march = true)
-        {
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-            // Cache tile data to minimise noise sampling during march.
-            GenerateTileDataJob tileDataJob = new GenerateTileDataJob
-            {
-                lookupTable = lookupTable,
-                heightmapSamples = mapData.heightmapSamples,
-                tileData = tileData,
-                tDim = tileDataDim,
-                hDim = terrainSampler.HeightmapDimension,
-                maxTerrainHeight = terrainSampler.MaxTerrainHeight,
-                oceanElevation = terrainSampler.OceanElevation,
-                beachElevation = terrainSampler.BeachElevation,
-                mapPixelX = mapData.mapPixelX,
-                mapPixelY = mapData.mapPixelY,
-            };
-
-            //tileDataJob.Run(tileDataDim2);
-            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64);
-            //tileDataHandle.Complete();
-
-            // Assign tile data to terrain
-            AssignTilesJob assignTilesJob = new AssignTilesJob
-            {
-                tileData = tileData,
-                lookupTable = lookupTable,
-                tilemapSamples = mapData.tilemapSamples,
-                tDim = tileDataDim,
-                dim = assignTilesDim,
-                march = march,
-            };
-
-            //assignTilesJob.Run(assignTilesDim2);
-            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 64, tileDataHandle);
-            assignTilesHandle.Complete();
-
-            stopwatch.Stop();
-            DaggerfallUnity.LogMessage(string.Format("Time to assignTiles for ({0},{1}): {2}ms", mapData.mapPixelX, mapData.mapPixelY, stopwatch.ElapsedMilliseconds), true);
         }
 
         // Creates lookup table
