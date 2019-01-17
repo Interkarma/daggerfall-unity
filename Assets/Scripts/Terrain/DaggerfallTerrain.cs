@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using Unity.Collections;
+using Unity.Jobs;
 
 namespace DaggerfallWorkshop
 {
@@ -243,10 +244,23 @@ namespace DaggerfallWorkshop
 
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapDataJobs);
 
+            NativeArray<float> avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+            CalcAverageMaxHeightJob calcAverageMaxHeightJob = new CalcAverageMaxHeightJob()
+            {
+                heightmapSamples = MapDataJobs.heightmapSamples,
+                avgMaxHeight = avgMaxHeight,
+            };
+            JobHandle calcAverageMaxHeightJobHandle = calcAverageMaxHeightJob.Schedule();
+            calcAverageMaxHeightJobHandle.Complete();
+            MapDataJobs.averageHeight = (calcAverageMaxHeightJob.avgMaxHeight[0] /= (float)(hDim * hDim));
+            MapDataJobs.maxHeight = calcAverageMaxHeightJob.avgMaxHeight[1];
+            avgMaxHeight.Dispose();
+
             // Handle terrain with location
             if (MapData.hasLocation)
             {
                 TerrainHelper.SetLocationTilesJobs(ref MapDataJobs);
+                TerrainHelper.BlendLocationTerrainJobs(ref MapDataJobs);
             }
 
             // Set textures
@@ -258,6 +272,9 @@ namespace DaggerfallWorkshop
 
             // Convert back to standard managed 2d arrays
             MapData.heightmapSamples = new float[hDim, hDim];
+            for (int i = 0; i < MapDataJobs.heightmapSamples.Length; i++)
+                MapData.heightmapSamples[JobA.Row(i, hDim), JobA.Col(i, hDim)] = MapDataJobs.heightmapSamples[i];
+
             MapData.tilemapSamples = new TilemapSample[tDim, tDim];
             for (int i = 0; i < MapDataJobs.tilemapSamples.Length; i++)
             {
@@ -272,24 +289,8 @@ namespace DaggerfallWorkshop
                 };
             }
             MapData.locationRect = MapDataJobs.locationRect;
-
-            // Calc average and max height. TODO - move into a separate job
-            float averageHeight = 0;
-            float maxHeight = float.MinValue;
-            for (int i = 0; i < MapDataJobs.heightmapSamples.Length; i++)
-            {
-                float height = MapDataJobs.heightmapSamples[i];
-                MapData.heightmapSamples[JobA.Row(i, hDim), JobA.Col(i, hDim)] = height;
-
-                // Accumulate average height
-                averageHeight += height;
-                // Update max height
-                if (height > maxHeight)
-                    maxHeight = height;
-            }
-            // Average and max heights are passed back for locations
-            MapData.averageHeight = (averageHeight /= (float)(hDim * hDim));
-            MapData.maxHeight = maxHeight;
+            MapData.averageHeight = MapDataJobs.averageHeight;
+            MapData.maxHeight = MapDataJobs.maxHeight;
 
             // Dispose native arrays now data extracted
             MapDataJobs.heightmapSamples.Dispose();
@@ -299,13 +300,33 @@ namespace DaggerfallWorkshop
             if (MapData.hasLocation)
             {
                 //TerrainHelper.SetLocationTiles(ref MapData);
-                TerrainHelper.BlendLocationTerrain(ref MapData);
+                //TerrainHelper.BlendLocationTerrain(ref MapData);
             }
 
             stopwatch.Stop();
             DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
         }
 
+        struct CalcAverageMaxHeightJob : IJob
+        {
+            [ReadOnly]
+            public NativeArray<float> heightmapSamples;
+            
+            public NativeArray<float> avgMaxHeight;
+
+            public void Execute()
+            {
+                for (int i = 0; i < heightmapSamples.Length; i++)
+                {
+                    float height = heightmapSamples[i];
+                    // Accumulate average height
+                    avgMaxHeight[0] += height;
+                    // Update max height
+                    if (height > avgMaxHeight[1])
+                        avgMaxHeight[1] = height;
+                }
+            }
+        }
 
         /// <summary>
         /// Update tile map based on current samples.

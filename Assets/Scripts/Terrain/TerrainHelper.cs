@@ -321,6 +321,68 @@ namespace DaggerfallWorkshop
             }
         }
 
+        // Flattens location terrain and blends with surrounding terrain
+        public static void BlendLocationTerrainJobs(ref MapPixelDataJobs mapPixel, float noiseStrength = 4f)
+        {
+            int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+
+            // Convert from rect in tilemap space to interior corners in 0-1 range
+            float xMin = mapPixel.locationRect.xMin / MapsFile.WorldMapTileDim;
+            float xMax = mapPixel.locationRect.xMax / MapsFile.WorldMapTileDim;
+            float yMin = mapPixel.locationRect.yMin / MapsFile.WorldMapTileDim;
+            float yMax = mapPixel.locationRect.yMax / MapsFile.WorldMapTileDim;
+
+            // Scale values for converting blend space into 0-1 range
+            float leftScale = 1 / xMin;
+            float rightScale = 1 / (1 - xMax);
+            float topScale = 1 / yMin;
+            float bottomScale = 1 / (1 - yMax);
+
+            // Flatten location area and blend with surrounding heights
+            float strength = 0;
+            float targetHeight = mapPixel.averageHeight;
+            for (int y = 0; y < heightmapDimension; y++)
+            {
+                float v = (float)y / (float)(heightmapDimension - 1);
+                bool insideY = (v >= yMin && v <= yMax);
+
+                for (int x = 0; x < heightmapDimension; x++)
+                {
+                    float u = (float)x / (float)(heightmapDimension - 1);
+                    bool insideX = (u >= xMin && u <= xMax);
+
+                    int idx = JobA.Idx(y, x, heightmapDimension);
+                    float height = mapPixel.heightmapSamples[idx];
+
+                    if (insideX || insideY)
+                    {
+                        if (insideY && u <= xMin)
+                            strength = u * leftScale;
+                        else if (insideY && u >= xMax)
+                            strength = (1 - u) * rightScale;
+                        else if (insideX && v <= yMin)
+                            strength = v * topScale;
+                        else if (insideX && v >= yMax)
+                            strength = (1 - v) * bottomScale;
+                    }
+                    else
+                    {
+                        float xs = 0, ys = 0;
+                        if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
+                        if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
+                        strength = BilinearInterpolator(0, 0, 0, 1, xs, ys);
+                    }
+
+                    if (insideX && insideY)
+                        height = targetHeight;
+                    else
+                        height = Mathf.Lerp(height, targetHeight, strength);
+
+                    mapPixel.heightmapSamples[idx] = height;
+                }
+            }
+        }
+
         /// <summary>
         /// Terrain interpolation causes Daggerfall's square coastline to become nicely raised and curvy.
         /// A side effect of this is that underwater climate areas are raised above sea-level.
