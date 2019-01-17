@@ -160,6 +160,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (this is Foe)
                     return;
 
+                // A destroyed NPC is always hidden
+                if (this is Person && (this as Person).IsDestroyed)
+                    (this as Person).IsHidden = true;
+
                 // Show or hide GameObject mapped to this QuestResource based on hidden flag
                 // This can conflict with other code that has disabled GameObject for other reasons
                 questResourceBehaviour.gameObject.SetActive(!IsHidden);
@@ -258,9 +262,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void SetPlayerClicked()
         {
-            if (this is Person && (this as Person).IsMuted)
+            if (this is Person && ((this as Person).IsMuted || (this as Person).IsDestroyed))
             {
-                QuestMachine.LogFormat("Ignoring click on muted Person {0}.", Symbol.Original);
+                QuestMachine.LogFormat("Ignoring click on muted or destroyed Person {0}.", Symbol.Original);
                 return;
             }
 

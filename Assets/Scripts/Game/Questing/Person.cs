@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game.Questing
         StaticNPC.NPCData questorData;
         bool discoveredThroughTalkManager = false;
         bool isMuted = false;
+        bool isDestroyed = false;
 
         #endregion
 
@@ -140,6 +141,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return isMuted; }
             set { isMuted = value; }
+        }
+
+        public bool IsDestroyed
+        {
+            get { return isDestroyed; }
         }
 
         #endregion
@@ -428,6 +434,15 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Set Person.IsDestroyed=true.
+        /// Person can no longer be placed or clicked.
+        /// </summary>
+        public void DestroyNPC()
+        {
+            isDestroyed = true;
         }
 
         #endregion
@@ -1183,6 +1198,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public StaticNPC.NPCData questorData;
             public bool discoveredThroughTalkManager;
             public bool isMuted;
+            public bool isDestroyed;
         }
 
         public override object GetSaveData()
@@ -1206,6 +1222,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questorData = questorData;
             data.discoveredThroughTalkManager = discoveredThroughTalkManager;
             data.isMuted = isMuted;
+            data.isDestroyed = isDestroyed;
 
             return data;
         }
@@ -1239,6 +1256,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questorData = data.questorData;
             discoveredThroughTalkManager = data.discoveredThroughTalkManager;
             isMuted = data.isMuted;
+            isDestroyed = data.isDestroyed;
         }
 
         #endregion
