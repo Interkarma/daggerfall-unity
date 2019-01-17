@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(AudioSource))]
     public class DaggerfallAudioSource : MonoBehaviour
     {
-        const float audioClipMaxDelay = 0.150f; //give up if sound takes longer to load
+        public const float audioClipMaxDelay = 0.150f; //give up if sound takes longer to load
 
         const int minIndex = 0;
         const int maxIndex = 458;

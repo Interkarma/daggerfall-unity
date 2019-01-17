@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -32,6 +33,9 @@ namespace DaggerfallWorkshop.Game
 
         System.Random random;
         DaggerfallAudioSource dfAudioSource;
+        AudioSource loopAudioSource;
+        AudioSource ambientAudioSource;
+
         SoundClips[] ambientSounds;
         AudioClip rainLoop;
         AudioClip cricketsLoop;
@@ -41,6 +45,7 @@ namespace DaggerfallWorkshop.Game
         AmbientSoundPresets lastPresets;
         Entity.DaggerfallEntityBehaviour playerBehaviour;
         PlayerEnterExit playerEnterExit;
+        private DaggerfallUnity dfUnity;
 
         public enum AmbientSoundPresets
         {
@@ -56,7 +61,10 @@ namespace DaggerfallWorkshop.Game
         {
             random = new System.Random(System.DateTime.Now.Millisecond);
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
-            dfAudioSource.Preset = AudioPresets.OnDemand;
+            loopAudioSource = GetNewAudioSource();
+            ambientAudioSource = GetNewAudioSource();
+
+            // dfAudioSource.Preset = AudioPresets.OnDemand;
             ApplyPresets();
             StartWaiting();
             playerBehaviour = GameManager.Instance.PlayerEntityBehaviour;
@@ -86,38 +94,27 @@ namespace DaggerfallWorkshop.Game
                 cricketsLoop = null;
 
                 // Stop playing any loops
-                if (dfAudioSource.AudioSource.isPlaying)
+                if (loopAudioSource.isPlaying)
                 {
-                    dfAudioSource.AudioSource.Stop();
-                    dfAudioSource.AudioSource.clip = null;
-                    dfAudioSource.AudioSource.loop = false;
+                    loopAudioSource.Stop();
+                    loopAudioSource.clip = null;
+                    loopAudioSource.loop = false;
                 }
 
                 ApplyPresets();
                 StartWaiting();
             }
 
-            // Update sound volume
-            dfAudioSource.AudioSource.volume = DaggerfallUnity.Settings.SoundVolume;
-
             // Start rain loop if not running
             if ((Presets == AmbientSoundPresets.Rain || Presets == AmbientSoundPresets.Storm) && rainLoop == null)
             {
-                rainLoop = dfAudioSource.GetAudioClip((int)SoundClips.AmbientRaining);
-                dfAudioSource.AudioSource.clip = rainLoop;
-                dfAudioSource.AudioSource.loop = true;
-                dfAudioSource.AudioSource.spatialBlend = 0;
-                dfAudioSource.AudioSource.Play();
+                rainLoop = PlayLoop(SoundClips.AmbientRaining, 1f);
             }
 
             // Start crickets loop if not running
             if ((Presets == AmbientSoundPresets.ClearNight) && cricketsLoop == null)
             {
-                cricketsLoop = dfAudioSource.GetAudioClip((int)SoundClips.AmbientCrickets);
-                dfAudioSource.AudioSource.clip = cricketsLoop;
-                dfAudioSource.AudioSource.loop = true;
-                dfAudioSource.AudioSource.spatialBlend = 0;
-                dfAudioSource.AudioSource.Play();
+                cricketsLoop = PlayLoop(SoundClips.AmbientCrickets, 1f);
             }
 
             // Tick counters
@@ -141,14 +138,13 @@ namespace DaggerfallWorkshop.Game
                         waterSoundPosition.y = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
                         waterSoundPosition.x += Random.Range(-3, 3);
                         waterSoundPosition.y += Random.Range(-3, 3);
-                        dfAudioSource.transform.position = waterSoundPosition;
-                        dfAudioSource.PlayOneShot((int)SoundClips.WaterGentle, 1, 3f);
+                        SpatializedPlayOneShot(SoundClips.WaterGentle, waterSoundPosition, 3f);
                     }
 
                     // Chance to play water bubbles sound if player is underwater
                     if (playerEnterExit.IsPlayerSubmerged && DFRandom.rand() < 100)
                     {
-                        dfAudioSource.PlayOneShot((int)SoundClips.AmbientWaterBubbles, 0);
+                        AmbientPlayOneShot(SoundClips.AmbientWaterBubbles, 1f);
                     }
                 }
                 waterWaitCounter = 0;
@@ -157,10 +153,78 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        private AudioSource GetNewAudioSource()
+        {
+            AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.hideFlags = HideFlags.HideInInspector;
+            audioSource.playOnAwake = false;
+            audioSource.loop = false;
+            audioSource.dopplerLevel = 0f;
+            audioSource.spatialBlend = 0f;
+            audioSource.volume = DaggerfallUnity.Settings.SoundVolume;
+            Debug.Log("GetNewAudioSource:" + audioSource);
+            return audioSource;
+        }
+
+        private IEnumerator PlayWhenReady(AudioClip audioClip, float volume)
+        {
+            float loadWaitTimer = 0f;
+            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
+                   audioClip.loadState == AudioDataLoadState.Loading)
+            {
+                loadWaitTimer += Time.deltaTime;
+                if (loadWaitTimer > DaggerfallAudioSource.audioClipMaxDelay)
+                    yield break;
+                yield return null;
+            }
+            loopAudioSource.volume = volume;
+            loopAudioSource.Play();
+        }
+
+        private IEnumerator PlayOneShotWhenReady(AudioClip audioClip, float volume)
+        {
+            float loadWaitTimer = 0f;
+            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
+                   audioClip.loadState == AudioDataLoadState.Loading)
+            {
+                loadWaitTimer += Time.deltaTime;
+                if (loadWaitTimer > DaggerfallAudioSource.audioClipMaxDelay)
+                    yield break;
+                yield return null;
+            }
+            ambientAudioSource.volume = volume;
+            ambientAudioSource.PlayOneShot(audioClip);
+        }
+
+        private AudioClip PlayLoop(SoundClips clip, float volumeScale)
+        {
+            AudioClip loopClip = dfAudioSource.GetAudioClip((int)clip);
+            loopAudioSource.clip = loopClip;
+            loopAudioSource.loop = true;
+            loopAudioSource.spatialBlend = 0;
+            DaggerfallUnity.Instance.StartCoroutine(PlayWhenReady(loopClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+            return loopClip;
+        }
+
+        private void AmbientPlayOneShot(SoundClips clip, float volumeScale)
+        {
+            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
+            ambientAudioSource.spatialBlend = 0;
+            DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(audioClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+        }
+
+        private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale)
+        {
+            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
+            ambientAudioSource.transform.position = position;
+            ambientAudioSource.spatialBlend = 1f;
+            DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(audioClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+        }
+
         private void PlayEffects()
         {
             // Do nothing if audio not setup
-            if (dfAudioSource == null || ambientSounds == null)
+            if (ambientAudioSource == null || ambientSounds == null)
                 return;
 
             // Get next sound index
@@ -207,8 +271,7 @@ namespace DaggerfallWorkshop.Game
                 else
                     randomPos.z += -3;
 
-                dfAudioSource.transform.position = randomPos;
-                dfAudioSource.PlayOneShot((int)clip, 1, 5f);
+                SpatializedPlayOneShot(clip, randomPos, 5f);
                 RaiseOnPlayEffectEvent(clip);
             }
         }
@@ -251,7 +314,7 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 // Unknown clip, just play as one-shot and exit
-                dfAudioSource.PlayOneShot((int)clip, 0);
+                AmbientPlayOneShot(clip, 1f);
                 RaiseOnPlayEffectEvent(clip);
                 yield break;
             }
@@ -284,7 +347,7 @@ namespace DaggerfallWorkshop.Game
                 yield return new WaitForSeconds(1f / soundDelay);
 
             // Play sound effect
-            dfAudioSource.PlayOneShot((int)clip, 0);
+            AmbientPlayOneShot(clip, 1f);
 
             // Raise event
             RaiseOnPlayEffectEvent(clip);
@@ -342,7 +405,27 @@ namespace DaggerfallWorkshop.Game
             }
 
             lastPresets = Presets;
-            dfAudioSource.SetSound(-1, AudioPresets.OnDemand, 0);
+            //dfAudioSource.SetSound(-1, AudioPresets.OnDemand, 0);
+            //if (!ReadyCheck() || !ambientAudioSource.enabled)
+                //return;
+        }
+
+        private bool ReadyCheck()
+        {
+            // Ensure we have a DaggerfallUnity reference
+            if (dfUnity == null)
+                dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return false;
+
+            // Get audio source
+            if (ambientAudioSource == null)
+            {
+                DaggerfallUnity.LogMessage("ambientAudioSource: not ready.");
+                return false;
+            }
+
+            return true;
         }
 
         #endregion
