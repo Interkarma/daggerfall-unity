@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop
             [ReadOnly]
             public NativeArray<byte> lhm;
 
-            public NativeArray<float> heightmapSamples;
+            public NativeArray<float> heightmapData;
 
             public byte sd;
             public byte ld;
@@ -287,11 +287,11 @@ namespace DaggerfallWorkshop
 
                 // Set sample
                 float height = Mathf.Clamp01(scaledHeight / maxTerrainHeight);
-                heightmapSamples[index] = height;
+                heightmapData[index] = height;
             }
         }
 
-        public override void GenerateSamplesJobs(ref MapPixelDataJobs mapPixel)
+        public override void GenerateSamplesJobs(ref MapPixelData mapPixel)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop
             {
                 shm = shm,
                 lhm = lhm,
-                heightmapSamples = mapPixel.heightmapSamples,
+                heightmapData = mapPixel.heightmapData,
                 sd = sd,
                 ld = ld,
                 dim = dim,

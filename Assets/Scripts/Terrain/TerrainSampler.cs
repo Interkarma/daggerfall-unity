@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop
         /// <param name="mapPixel">MapPixelData struct.</param>
         void GenerateSamples(ref MapPixelData mapPixel);
 
-        void GenerateSamplesJobs(ref MapPixelDataJobs mapPixel);
+        void GenerateSamplesJobs(ref MapPixelData mapPixel);
     }
 
     /// <summary>
@@ -95,6 +95,6 @@ namespace DaggerfallWorkshop
         public virtual float TerrainHeightScale(int x, int y) { return MeanTerrainHeightScale; } // default implementation returns MeanTerrainHeightScale for every world map position
 
         public abstract void GenerateSamples(ref MapPixelData mapPixel);
-        public abstract void GenerateSamplesJobs(ref MapPixelDataJobs mapPixel);
+        public abstract void GenerateSamplesJobs(ref MapPixelData mapPixel);
     }
 }

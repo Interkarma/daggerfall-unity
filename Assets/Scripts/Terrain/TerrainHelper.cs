@@ -198,7 +198,7 @@ namespace DaggerfallWorkshop
         }
 
         // Set location tilemap data
-        public static void SetLocationTilesJobs(ref MapPixelDataJobs mapPixel)
+        public static void SetLocationTilesJobs(ref MapPixelData mapPixel)
         {
             // Get location
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop
                                 if (ypos > ymax) ymax = ypos;
 
                                 // Store texture data from block
-                                mapPixel.tilemapSamples[JobA.Idx(xpos, ypos, MapsFile.WorldMapTileDim)] = tile.TileBitfield == 0 ? byte.MaxValue : tile.TileBitfield;
+                                mapPixel.tilemapData[JobA.Idx(xpos, ypos, MapsFile.WorldMapTileDim)] = tile.TileBitfield == 0 ? byte.MaxValue : tile.TileBitfield;
                             }
                         }
                     }
@@ -322,7 +322,7 @@ namespace DaggerfallWorkshop
         }
 
         // Flattens location terrain and blends with surrounding terrain
-        public static void BlendLocationTerrainJobs(ref MapPixelDataJobs mapPixel, float noiseStrength = 4f)
+        public static void BlendLocationTerrainJobs(ref MapPixelData mapPixel, float noiseStrength = 4f)
         {
             int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
 
@@ -352,7 +352,7 @@ namespace DaggerfallWorkshop
                     bool insideX = (u >= xMin && u <= xMax);
 
                     int idx = JobA.Idx(y, x, heightmapDimension);
-                    float height = mapPixel.heightmapSamples[idx];
+                    float height = mapPixel.heightmapData[idx];
 
                     if (insideX || insideY)
                     {
@@ -378,7 +378,7 @@ namespace DaggerfallWorkshop
                     else
                         height = Mathf.Lerp(height, targetHeight, strength);
 
-                    mapPixel.heightmapSamples[idx] = height;
+                    mapPixel.heightmapData[idx] = height;
                 }
             }
         }

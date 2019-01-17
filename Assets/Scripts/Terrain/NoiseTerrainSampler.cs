@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop
             mapPixel.maxHeight = maxHeight;
         }
 
-        public override void GenerateSamplesJobs(ref MapPixelDataJobs mapPixel)
+        public override void GenerateSamplesJobs(ref MapPixelData mapPixel)
         {
             throw new System.NotImplementedException();
         }

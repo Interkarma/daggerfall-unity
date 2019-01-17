@@ -11,12 +11,8 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using Unity.Collections;
 using Unity.Jobs;
@@ -49,7 +45,6 @@ namespace DaggerfallWorkshop
 
         // Data for this terrain
         public MapPixelData MapData;
-        public MapPixelDataJobs MapDataJobs;
 
         // Neighbours of this terrain
         public Terrain LeftNeighbour;
@@ -92,6 +87,107 @@ namespace DaggerfallWorkshop
         {
             UpdateNeighbours();
             ready = false;
+        }
+
+        public void UpdateTerrain(bool init, TerrainTexturingJobs terrainTexturingJobs)
+        {
+            if (!ReadyCheck())
+                return;
+
+            // Instantiate Daggerfall terrain
+            InstantiateTerrain();
+
+            // Update data for terrain:
+
+            // Get basic terrain data
+            MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
+
+            // Create data arrays for heightmap and tilemap
+            int hDim = dfUnity.TerrainSampler.HeightmapDimension;
+            MapData.heightmapData = new NativeArray<float>(hDim * hDim, Allocator.Persistent);
+            int tDim = MapsFile.WorldMapTileDim;
+            MapData.tilemapData = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
+
+            // Generate heightmap samples
+            dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapData);
+
+            // Calculate average & max heights
+            NativeArray<float> avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+            CalcAverageMaxHeightJob calcAverageMaxHeightJob = new CalcAverageMaxHeightJob()
+            {
+                heightmapData = MapData.heightmapData,
+                avgMaxHeight = avgMaxHeight,
+            };
+            JobHandle calcAverageMaxHeightJobHandle = calcAverageMaxHeightJob.Schedule();
+            calcAverageMaxHeightJobHandle.Complete();
+            MapData.averageHeight = (calcAverageMaxHeightJob.avgMaxHeight[0] /= (float)(hDim * hDim));
+            MapData.maxHeight = calcAverageMaxHeightJob.avgMaxHeight[1];
+            avgMaxHeight.Dispose();
+
+            // Handle location if present on terrain
+            if (MapData.hasLocation)
+            {
+                TerrainHelper.SetLocationTilesJobs(ref MapData);
+                TerrainHelper.BlendLocationTerrainJobs(ref MapData);
+            }
+
+            // Assign tiles
+            if (terrainTexturingJobs != null)
+                terrainTexturingJobs.AssignTiles(dfUnity.TerrainSampler, ref MapData);
+
+            // Convert back to standard managed 2d arrays
+            MapData.heightmapSamples = new float[hDim, hDim];
+            for (int i = 0; i < MapData.heightmapData.Length; i++)
+                MapData.heightmapSamples[JobA.Row(i, hDim), JobA.Col(i, hDim)] = MapData.heightmapData[i];
+
+            MapData.tilemapSamples = new TilemapSample[tDim, tDim];
+            for (int i = 0; i < MapData.tilemapData.Length; i++)
+            {
+                byte tile = MapData.tilemapData[i];
+                if (tile == byte.MaxValue)
+                    tile = 0;
+                MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
+                {
+                    record = tile & 0x3f,
+                    rotate = (tile & 0x40) != 0,
+                    flip = (tile & 0x80) != 0,
+                };
+            }
+
+            // Dispose native arrays now data extracted
+            MapData.heightmapData.Dispose();
+            MapData.tilemapData.Dispose();
+
+            UpdateTileMapData();
+
+            // Promote data to live terrain
+            UpdateClimateMaterial(init);
+            PromoteTerrainData();
+
+            // Only set active again once complete
+            transform.gameObject.SetActive(true);
+            transform.gameObject.name = StreamingWorld.GetTerrainName(MapPixelX, MapPixelY);
+        }
+
+        struct CalcAverageMaxHeightJob : IJob
+        {
+            [ReadOnly]
+            public NativeArray<float> heightmapData;
+
+            public NativeArray<float> avgMaxHeight;
+
+            public void Execute()
+            {
+                for (int i = 0; i < heightmapData.Length; i++)
+                {
+                    float height = heightmapData[i];
+                    // Accumulate average height
+                    avgMaxHeight[0] += height;
+                    // Update max height
+                    if (height > avgMaxHeight[1])
+                        avgMaxHeight[1] = height;
+                }
+            }
         }
 
         /// <summary>
@@ -186,7 +282,7 @@ namespace DaggerfallWorkshop
             if (!ReadyCheck())
                 return;
 
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             // Get basic terrain data
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
@@ -205,127 +301,8 @@ namespace DaggerfallWorkshop
                 terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             }
 
-            stopwatch.Stop();
-            DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
-        }
-
-        public void UpdateMapPixelDataJobs(TerrainTexturingJobs ttj = null, TerrainTexturing terrainTexturing = null)
-        {
-            if (!ReadyCheck())
-                return;
-
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-            // Get basic terrain data
-            MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
-            //dfUnity.TerrainSampler.GenerateSamples(ref MapData);
-
-            // Convert to Jobs data structure - TODO remove once jobs are finished.
-            MapDataJobs = new MapPixelDataJobs()
-            {
-                inWorld = true,
-                mapPixelX = MapData.mapPixelX,
-                mapPixelY = MapData.mapPixelY,
-                worldHeight = MapData.worldHeight,
-                worldClimate = MapData.worldClimate,
-                worldPolitic = MapData.worldPolitic,
-                hasLocation = MapData.hasLocation,
-                mapRegionIndex = MapData.mapRegionIndex,
-                mapLocationIndex = MapData.mapLocationIndex,
-                locationID = MapData.locationID,
-                locationName = MapData.locationName,
-            };
-
-            // Create samples arrays
-            int hDim = dfUnity.TerrainSampler.HeightmapDimension;
-            MapDataJobs.heightmapSamples = new NativeArray<float>(hDim * hDim, Allocator.Persistent);
-            int tDim = MapsFile.WorldMapTileDim;
-            MapDataJobs.tilemapSamples = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
-
-            dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapDataJobs);
-
-            NativeArray<float> avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
-            CalcAverageMaxHeightJob calcAverageMaxHeightJob = new CalcAverageMaxHeightJob()
-            {
-                heightmapSamples = MapDataJobs.heightmapSamples,
-                avgMaxHeight = avgMaxHeight,
-            };
-            JobHandle calcAverageMaxHeightJobHandle = calcAverageMaxHeightJob.Schedule();
-            calcAverageMaxHeightJobHandle.Complete();
-            MapDataJobs.averageHeight = (calcAverageMaxHeightJob.avgMaxHeight[0] /= (float)(hDim * hDim));
-            MapDataJobs.maxHeight = calcAverageMaxHeightJob.avgMaxHeight[1];
-            avgMaxHeight.Dispose();
-
-            // Handle terrain with location
-            if (MapData.hasLocation)
-            {
-                TerrainHelper.SetLocationTilesJobs(ref MapDataJobs);
-                TerrainHelper.BlendLocationTerrainJobs(ref MapDataJobs);
-            }
-
-            // Set textures
-            if (ttj != null)
-            {
-                ttj.AssignTiles(dfUnity.TerrainSampler, ref MapDataJobs);
-                //terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
-            }
-
-            // Convert back to standard managed 2d arrays
-            MapData.heightmapSamples = new float[hDim, hDim];
-            for (int i = 0; i < MapDataJobs.heightmapSamples.Length; i++)
-                MapData.heightmapSamples[JobA.Row(i, hDim), JobA.Col(i, hDim)] = MapDataJobs.heightmapSamples[i];
-
-            MapData.tilemapSamples = new TilemapSample[tDim, tDim];
-            for (int i = 0; i < MapDataJobs.tilemapSamples.Length; i++)
-            {
-                byte tile = MapDataJobs.tilemapSamples[i];
-                if (tile == byte.MaxValue)
-                    tile = 0;
-                MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
-                {
-                    record = tile & 0x3f,
-                    rotate = (tile & 0x40) != 0,
-                    flip = (tile & 0x80) != 0,
-                };
-            }
-            MapData.locationRect = MapDataJobs.locationRect;
-            MapData.averageHeight = MapDataJobs.averageHeight;
-            MapData.maxHeight = MapDataJobs.maxHeight;
-
-            // Dispose native arrays now data extracted
-            MapDataJobs.heightmapSamples.Dispose();
-            MapDataJobs.tilemapSamples.Dispose();
-
-            // Handle terrain with location
-            if (MapData.hasLocation)
-            {
-                //TerrainHelper.SetLocationTiles(ref MapData);
-                //TerrainHelper.BlendLocationTerrain(ref MapData);
-            }
-
-            stopwatch.Stop();
-            DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
-        }
-
-        struct CalcAverageMaxHeightJob : IJob
-        {
-            [ReadOnly]
-            public NativeArray<float> heightmapSamples;
-            
-            public NativeArray<float> avgMaxHeight;
-
-            public void Execute()
-            {
-                for (int i = 0; i < heightmapSamples.Length; i++)
-                {
-                    float height = heightmapSamples[i];
-                    // Accumulate average height
-                    avgMaxHeight[0] += height;
-                    // Update max height
-                    if (height > avgMaxHeight[1])
-                        avgMaxHeight[1] = height;
-                }
-            }
+            //stopwatch.Stop();
+            //DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
         }
 
         /// <summary>

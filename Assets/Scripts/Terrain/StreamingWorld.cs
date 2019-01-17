@@ -15,7 +15,6 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -73,6 +72,7 @@ namespace DaggerfallWorkshop
         public GameObject streamingTarget = null;
         public bool suppressWorld = false;
         public bool ShowDebugString = false;
+        public bool UseJobsSystem = true;
 
         // List of terrain objects
         // Terrains all have the same format and will be endlessly recycled
@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop
         DFPosition mapOrigin;
         double worldX, worldZ;
         TerrainTexturing terrainTexturing = new TerrainTexturing();
-        TerrainTexturingJobs ttj = new TerrainTexturingJobs();
+        TerrainTexturingJobs terrainTexturingJobs = new TerrainTexturingJobs();
         bool isReady = false;
 
         Vector3 autoRepositionOffset = Vector3.zero;
@@ -1110,7 +1110,8 @@ namespace DaggerfallWorkshop
             billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
         }
 
-        public string GetTerrainName(int mapPixelX, int mapPixelY)
+        // TODO move to TerrainHelper
+        public static string GetTerrainName(int mapPixelX, int mapPixelY)
         {
             return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
         }
@@ -1158,29 +1159,43 @@ namespace DaggerfallWorkshop
         // Update terrain data
         public void UpdateTerrainData(TerrainDesc terrainDesc)
         {
-            // Instantiate Daggerfall terrain
-            DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-            if (dfTerrain)
+            if (UseJobsSystem)
             {
-                dfTerrain.TerrainScale = TerrainScale;
-                dfTerrain.MapPixelX = terrainDesc.mapPixelX;
-                dfTerrain.MapPixelY = terrainDesc.mapPixelY;
-                dfTerrain.InstantiateTerrain();
+                // Instantiate Daggerfall terrain
+                DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (dfTerrain)
+                {
+                    dfTerrain.TerrainScale = TerrainScale;
+                    dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                    dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                    dfTerrain.UpdateTerrain(init, terrainTexturingJobs);
+                }
             }
+            else
+            {
+                // Instantiate Daggerfall terrain
+                DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (dfTerrain)
+                {
+                    dfTerrain.TerrainScale = TerrainScale;
+                    dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                    dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                    dfTerrain.InstantiateTerrain();
+                }
 
-            // Update data for terrain
-            //dfTerrain.UpdateMapPixelData(terrainTexturing);
-            dfTerrain.UpdateMapPixelDataJobs(ttj);
+                // Update data for terrain
+                dfTerrain.UpdateMapPixelData(terrainTexturing);
 
-            dfTerrain.UpdateTileMapData();
+                dfTerrain.UpdateTileMapData();
 
-            // Promote data to live terrain
-            dfTerrain.UpdateClimateMaterial(init);
-            dfTerrain.PromoteTerrainData();
+                // Promote data to live terrain
+                dfTerrain.UpdateClimateMaterial(init);
+                dfTerrain.PromoteTerrainData();
 
-            // Only set active again once complete
-            terrainDesc.terrainObject.SetActive(true);
-            terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+                // Only set active again once complete
+                terrainDesc.terrainObject.SetActive(true);
+                terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            }
         }
 
         // Update terrain nature
