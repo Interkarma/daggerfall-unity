@@ -1066,7 +1066,6 @@ namespace DaggerfallWorkshop
                     dfTerrain.RightNeighbour = GetTerrain(dfTerrain.MapPixelX + 1, dfTerrain.MapPixelY);
                     dfTerrain.TopNeighbour = GetTerrain(dfTerrain.MapPixelX, dfTerrain.MapPixelY - 1);
                     dfTerrain.BottomNeighbour = GetTerrain(dfTerrain.MapPixelX, dfTerrain.MapPixelY + 1);
-                    dfTerrain.UpdateNeighbours();
                 }
                 else
                 {

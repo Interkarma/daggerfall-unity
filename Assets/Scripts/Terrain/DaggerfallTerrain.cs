@@ -113,15 +113,15 @@ namespace DaggerfallWorkshop
 
             // Calculate average & max heights
             NativeArray<float> avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
-            CalcAverageMaxHeightJob calcAverageMaxHeightJob = new CalcAverageMaxHeightJob()
+            CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
             {
                 heightmapData = MapData.heightmapData,
                 avgMaxHeight = avgMaxHeight,
             };
-            JobHandle calcAverageMaxHeightJobHandle = calcAverageMaxHeightJob.Schedule();
-            calcAverageMaxHeightJobHandle.Complete();
-            MapData.averageHeight = (calcAverageMaxHeightJob.avgMaxHeight[0] /= (float)(hDim * hDim));
-            MapData.maxHeight = calcAverageMaxHeightJob.avgMaxHeight[1];
+            JobHandle calcAvgMaxHeightJobHandle = calcAvgMaxHeightJob.Schedule();
+            calcAvgMaxHeightJobHandle.Complete();
+            MapData.averageHeight = (calcAvgMaxHeightJob.avgMaxHeight[0] /= (float)(hDim * hDim));
+            MapData.maxHeight = calcAvgMaxHeightJob.avgMaxHeight[1];
             avgMaxHeight.Dispose();
 
             // Handle location if present on terrain
@@ -131,9 +131,12 @@ namespace DaggerfallWorkshop
                 TerrainHelper.BlendLocationTerrainJobs(ref MapData);
             }
 
-            // Assign tiles
+            // Assign tiles for terrain texturing
             if (terrainTexturingJobs != null)
                 terrainTexturingJobs.AssignTiles(dfUnity.TerrainSampler, ref MapData);
+
+            // Update tile map for shader
+
 
             // Convert back to standard managed 2d arrays
             MapData.heightmapSamples = new float[hDim, hDim];
@@ -153,7 +156,6 @@ namespace DaggerfallWorkshop
                     flip = (tile & 0x80) != 0,
                 };
             }
-
             // Dispose native arrays now data extracted
             MapData.heightmapData.Dispose();
             MapData.tilemapData.Dispose();
@@ -169,7 +171,7 @@ namespace DaggerfallWorkshop
             transform.gameObject.name = StreamingWorld.GetTerrainName(MapPixelX, MapPixelY);
         }
 
-        struct CalcAverageMaxHeightJob : IJob
+        struct CalcAvgMaxHeightJob : IJob
         {
             [ReadOnly]
             public NativeArray<float> heightmapData;
