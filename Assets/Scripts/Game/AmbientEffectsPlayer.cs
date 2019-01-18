@@ -186,6 +186,21 @@ namespace DaggerfallWorkshop.Game
             ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
         }
 
+        private void PlaySomewhereAround(SoundClips clip, float volumeScale)
+        {
+            Vector3 randomPos = playerBehaviour.transform.position +
+                Random.onUnitSphere * 5.2f;
+            SpatializedPlayOneShot(clip, randomPos, volumeScale);
+        }
+
+        private void PlaySomewhereOnHorizon(SoundClips clip, float volumeScale)
+        {
+            // Somewhere around, 20° above horizon
+            Vector3 randomPos = playerBehaviour.transform.position +
+                Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up) * new Vector3(0.94f, 0.34f, 0f);
+            SpatializedPlayOneShot(clip, randomPos, volumeScale);
+        }
+
         private void PlayEffects()
         {
             // Do nothing if audio not setup
@@ -196,10 +211,22 @@ namespace DaggerfallWorkshop.Game
             int index = random.Next(0, ambientSounds.Length);
 
             // Play effect
-            if (Presets == AmbientSoundPresets.Storm && PlayLightningEffect)
+            if (Presets == AmbientSoundPresets.Storm)
             {
-                // Play lightning effects together with appropriate sounds
-                StartCoroutine(PlayLightningEffects(index));
+                if (PlayLightningEffect)
+                {
+                    // Play lightning effects together with appropriate sounds
+                    StartCoroutine(PlayLightningEffects(index));
+                }
+                else
+                {
+                    // Play ambient sound as a one-shot 3D sound
+                    SoundClips clip = ambientSounds[index];
+                    PlaySomewhereOnHorizon(clip, 5f);
+
+                    // AmbientPlayOneShot(clip, 5f);
+                    RaiseOnPlayEffectEvent(clip);
+                }
             }
             else
             {
@@ -216,27 +243,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Play ambient sound as a one-shot 3D sound
                 SoundClips clip = ambientSounds[index];
-                Vector3 randomPos = playerBehaviour.transform.position;
-                bool positiveChange = Random.Range(0, 1) == 0;
-                if (positiveChange)
-                    randomPos.x += 3;
-                else
-                    randomPos.x += -3;
-
-                positiveChange = Random.Range(0, 1) == 0;
-
-                if (positiveChange)
-                    randomPos.y += 3;
-                else
-                    randomPos.y += -3;
-
-                positiveChange = Random.Range(0, 1) == 0;
-                if (positiveChange)
-                    randomPos.z += 3;
-                else
-                    randomPos.z += -3;
-
-                SpatializedPlayOneShot(clip, randomPos, 5f);
+                PlaySomewhereAround(clip, 5f);
                 RaiseOnPlayEffectEvent(clip);
             }
         }
@@ -312,7 +319,7 @@ namespace DaggerfallWorkshop.Game
                 yield return new WaitForSeconds(soundDelay);
 
             // Play sound effect
-            AmbientPlayOneShot(clip, 1f);
+            PlaySomewhereOnHorizon(clip, 5f);
 
             // Raise event
             RaiseOnPlayEffectEvent(clip);
