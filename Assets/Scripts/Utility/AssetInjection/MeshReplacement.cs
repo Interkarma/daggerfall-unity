@@ -208,10 +208,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     if (!triedModels.Contains(modelID))
                     {
-                        bool found = ModManager.Instance.TryGetAsset(GetName(modelID), clone, out go);
-                        if (!found)
+                        if (ModManager.Instance.TryGetAsset(GetName(modelID), clone, out go))
+                            return true;
+                        else
                             triedModels.Add(modelID);
-                        return found;
                     }
                 }
             }
@@ -232,10 +232,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     Vector2Int billboardIdx = new Vector2Int(archive, record);
                     if (!triedBillboards.Contains(billboardIdx))
                     {
-                        bool found = ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go);
-                        if (!found)
+                        if (ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go))
+                            return true;
+                        else
                             triedBillboards.Add(billboardIdx);
-                        return found;
                     }
                 }
             }
