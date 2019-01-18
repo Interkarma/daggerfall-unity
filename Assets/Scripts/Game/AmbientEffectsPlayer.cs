@@ -44,7 +44,6 @@ namespace DaggerfallWorkshop.Game
         AmbientSoundPresets lastPresets;
         Entity.DaggerfallEntityBehaviour playerBehaviour;
         PlayerEnterExit playerEnterExit;
-        private DaggerfallUnity dfUnity;
 
         public enum AmbientSoundPresets
         {
@@ -63,7 +62,6 @@ namespace DaggerfallWorkshop.Game
             loopAudioSource = GetNewAudioSource();
             ambientAudioSource = GetNewAudioSource();
 
-            // dfAudioSource.Preset = AudioPresets.OnDemand;
             ApplyPresets();
             StartWaiting();
             playerBehaviour = GameManager.Instance.PlayerEntityBehaviour;
@@ -161,7 +159,6 @@ namespace DaggerfallWorkshop.Game
             audioSource.dopplerLevel = 0f;
             audioSource.spatialBlend = 0f;
             audioSource.volume = DaggerfallUnity.Settings.SoundVolume;
-            Debug.Log("GetNewAudioSource:" + audioSource);
             return audioSource;
         }
 
