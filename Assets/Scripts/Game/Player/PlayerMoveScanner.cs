@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop.Game
         public float HeadHitRadius { get; private set; }
         public float StepHitDistance { get; private set; }
         public float HeadHitDistance { get; private set; }
+        public RaycastHit HeadRaycastHit { get; private set; }
         public bool HitSomethingInFront { get; private set; }
         /// <summary>
         /// Saved WallGrab vector after detaching from a wall.  
@@ -175,10 +176,12 @@ namespace DaggerfallWorkshop.Game
                 if (hit.collider.GetComponent<MeshCollider>())
                 {
                     HeadHitDistance = hit.distance;
+                    HeadRaycastHit = hit;
                     //Debug.Log(HeadHitDistance + "\n");
                     return true;
                 }
             }
+            HeadRaycastHit = hit;
             return false;
         }
         

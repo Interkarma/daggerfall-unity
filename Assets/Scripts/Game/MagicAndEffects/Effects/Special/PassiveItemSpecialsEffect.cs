@@ -35,6 +35,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const float vampiricDrainRange = 2.25f;     // Testing classic shows range of vampiric effect items is approx. melee distance
         const int regenerateAmount = 1;
         const int regeneratePerRounds = 4;
+        const int conditionAmount = 1;
+        const int conditionPerRounds = 4;
 
         DaggerfallUnityItem enchantedItem;
         DaggerfallEntityBehaviour entityBehaviour;
@@ -77,6 +79,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             AtRange = 0,
             WhenStrikes = 1,
+        }
+
+        enum IncreasedWeightAllowanceTypes
+        {
+            OneQuarterExtra = 0,
+            OneHalfExtra = 1,
         }
 
         #endregion
@@ -171,6 +179,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     case EnchantmentTypes.ExtraSpellPts:
                         ExtraSpellPoints(enchantedItem.Enchantments[i]);
                         break;
+                    case EnchantmentTypes.IncreasedWeightAllowance:
+                        IncreasedWeightAllowance(enchantedItem.Enchantments[i]);
+                        break;
+                    case EnchantmentTypes.AbsorbsSpells:
+                        entityBehaviour.Entity.IsAbsorbingSpells = true;
+                        break;
                 }
             }
 
@@ -190,6 +204,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         break;
                     case EnchantmentTypes.VampiricEffect:
                         VampiricEffectRanged(enchantedItem.Enchantments[i]);
+                        break;
+                    case EnchantmentTypes.RepairsObjects:
+                        RepairItems(enchantedItem.Enchantments[i]);
                         break;
                 }
             }
@@ -216,6 +233,71 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             //Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
+        }
+
+        #endregion
+
+        #region Repairs Objects
+
+        /// <summary>
+        /// Testing classic yields the following results:
+        ///  - Only equipped items will receive repairs, items just stored in inventory are not repaired.
+        ///  - Repair will happen whether player is resting or just standing around while game time passes.
+        ///  - Repair does not happen when player is fast travelling (possibly game balance reasons?).
+        /// The following assumptions have been made from observation:
+        ///  - Items are repaired 1 hit point every 4 minutes. Takes around 8-9 hours for a Dwarven Dagger to go from "battered" to "new" in classic and DFU with this timing.
+        ///  - Uncertain if not repairing during travel is intended or not - it doesn't seem to make sense for a passive enchantment that works all other times.
+        ///  - Not doing anything around this right now so that repair ticks work consistently with other passive enchantment effects.
+        ///  - Assuming only a single item is repaired per tick. Priority is based on equip order enumeration.
+        /// </summary>
+        void RepairItems(DaggerfallEnchantment enchantment)
+        {
+            // Only works on player entity
+            if (entityBehaviour.EntityType != EntityTypes.Player)
+                return;
+
+            // This special only triggers once every conditionPerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % conditionPerRounds != 0)
+                return;
+
+            // Get equipped items
+            DaggerfallUnityItem[] equippedItems = GameManager.Instance.PlayerEntity.ItemEquipTable.EquipTable;
+            if (equippedItems == null || equippedItems.Length == 0)
+                return;
+
+            // Improve condition of a single items not at max condition
+            for (int i = 0; i < equippedItems.Length; i++)
+            {
+                DaggerfallUnityItem item = equippedItems[i];
+                if (item != null && equippedItems[i].currentCondition < equippedItems[i].maxCondition)
+                {
+                    // Do not repair magic items unless settings allow it
+                    if (item.IsEnchanted && !DaggerfallUnity.Settings.AllowMagicRepairs)
+                        continue;
+
+                    // Improve condition of item and exit
+                    item.currentCondition += conditionAmount;
+                    //Debug.LogFormat("Improved condition of item {0} by {1} points", item.LongName, conditionAmount);
+                    return;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Increased Weight Allowance
+
+        void IncreasedWeightAllowance(DaggerfallEnchantment enchantment)
+        {
+            switch((IncreasedWeightAllowanceTypes)enchantment.param)
+            {
+                case IncreasedWeightAllowanceTypes.OneQuarterExtra:
+                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.25f);
+                    break;
+                case IncreasedWeightAllowanceTypes.OneHalfExtra:
+                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.5f);
+                    break;
+            }
         }
 
         #endregion

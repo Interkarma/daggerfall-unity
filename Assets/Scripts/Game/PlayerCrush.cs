@@ -38,6 +38,12 @@ namespace DaggerfallWorkshop.Game
             
             if (moveScanner.HeadHitDistance < distance && moveScanner.HeadHitDistance > 0)
             {
+                // Do nothing if move scanner has detected a static gameobject
+                // This prevents player from being crushed under sloping non-moving geometry found on boat and inside buildings
+                // Also stops player being forced into a crouch from just brushing up against sloping geometry
+                if (moveScanner.HeadRaycastHit.transform && moveScanner.HeadRaycastHit.transform.gameObject.isStatic)
+                    return;
+
                 // If player is standing, crushing object forces them into a crouch, 
                 if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
                 {

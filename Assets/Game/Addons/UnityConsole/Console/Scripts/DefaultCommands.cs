@@ -1094,6 +1094,12 @@ namespace Wenzil.Console
                 if (currentQuest.QuestTombstoned)
                     return "Quest is already tombstoned";
 
+                // Disallow ending main quest backbone
+                if (QuestMachine.IsProtectedQuest(currentQuest))
+                {
+                    return "Cannot end main quest backbone with 'enddebugquest'. Use 'clearmqstate' instead. Not this will clear ALL quests and ALL global variables.";
+                }
+
                 QuestMachine.Instance.TombstoneQuest(currentQuest);
 
                 return string.Format("Tombstoned quest {0}", currentQuest.UID);

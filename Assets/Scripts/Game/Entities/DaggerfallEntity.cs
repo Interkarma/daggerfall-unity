@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Properties
 
-        // Entity magic effect flags
+        // Entity magic effect properties
         // Note: These properties are intentionally not serialized. They should only be set by live effects.
         public bool IsImmuneToParalysis { get; set; }
         public bool IsImmuneToDisease { get; set; }
@@ -85,6 +85,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsSlowFalling { get; set; }
         public bool IsAbsorbingSpells { get; set; }
         public int MaxMagickaModifier { get; private set; }
+        public float IncreasedWeightAllowanceMultiplier { get; private set; }
 
 
         /// <summary>
@@ -260,7 +261,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public WeaponMaterialTypes MinMetalToHit { get { return minMetalToHit; } set { minMetalToHit = value; } }
         public sbyte[] ArmorValues { get { return armorValues; } set { armorValues = value; } }
         public int DamageModifier { get { return FormulaHelper.DamageModifier(stats.LiveStrength); } }
-        public int MaxEncumbrance { get { return FormulaHelper.MaxEncumbrance(stats.LiveStrength); } }
+        public int MaxEncumbrance { get { return GetMaxEncumbrance(); } }
         public int MagicResist { get { return FormulaHelper.MagicResist(stats.LiveWillpower); } }
         public int ToHitModifier { get { return FormulaHelper.ToHitModifier(stats.LiveAgility); } }
         public int HitPointsModifier { get { return FormulaHelper.HitPointsModifier(stats.LiveEndurance); } }
@@ -367,6 +368,13 @@ namespace DaggerfallWorkshop.Game.Entity
             MaxMagickaModifier += amount;
         }
 
+        public void SetIncreasedWeightAllowanceMultiplier(float amount)
+        {
+            // Increased weight allowance does not stack, only effect with the highest multiplier used
+            if (IncreasedWeightAllowanceMultiplier < amount)
+                IncreasedWeightAllowanceMultiplier = amount;
+        }
+
         public virtual int SetBreath(int amount)
         {
             currentBreath = Mathf.Clamp(amount, 0, MaxBreath);
@@ -417,6 +425,16 @@ namespace DaggerfallWorkshop.Game.Entity
                 return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue);
             else
                 return maxMagicka;
+        }
+
+        // Get standard encumbrance and add any increased weight allowance multiplier from effects
+        int GetMaxEncumbrance()
+        {
+            int amount = FormulaHelper.MaxEncumbrance(stats.LiveStrength);
+            if (IncreasedWeightAllowanceMultiplier > 0)
+                amount += (int)(amount * IncreasedWeightAllowanceMultiplier);
+
+            return amount;
         }
 
         #endregion
@@ -736,6 +754,7 @@ namespace DaggerfallWorkshop.Game.Entity
             IsSlowFalling = false;
             IsAbsorbingSpells = false;
             MaxMagickaModifier = 0;
+            IncreasedWeightAllowanceMultiplier = 0;
             IsResistingFire = false;
             IsResistingFrost = false;
             IsResistingDiseaseOrPoison = false;
