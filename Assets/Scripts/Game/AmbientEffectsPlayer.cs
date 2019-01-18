@@ -162,43 +162,12 @@ namespace DaggerfallWorkshop.Game
             return audioSource;
         }
 
-        private IEnumerator PlayWhenReady(AudioClip audioClip, float volume)
-        {
-            float loadWaitTimer = 0f;
-            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
-                   audioClip.loadState == AudioDataLoadState.Loading)
-            {
-                loadWaitTimer += Time.deltaTime;
-                if (loadWaitTimer > DaggerfallAudioSource.audioClipMaxDelay)
-                    yield break;
-                yield return null;
-            }
-            loopAudioSource.volume = volume;
-            loopAudioSource.Play();
-        }
-
-        private IEnumerator PlayOneShotWhenReady(AudioClip audioClip, float volume)
-        {
-            float loadWaitTimer = 0f;
-            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
-                   audioClip.loadState == AudioDataLoadState.Loading)
-            {
-                loadWaitTimer += Time.deltaTime;
-                if (loadWaitTimer > DaggerfallAudioSource.audioClipMaxDelay)
-                    yield break;
-                yield return null;
-            }
-            ambientAudioSource.volume = volume;
-            ambientAudioSource.PlayOneShot(audioClip);
-        }
-
         private AudioClip PlayLoop(SoundClips clip, float volumeScale)
         {
             AudioClip loopClip = dfAudioSource.GetAudioClip((int)clip);
-            loopAudioSource.clip = loopClip;
             loopAudioSource.loop = true;
             loopAudioSource.spatialBlend = 0;
-            DaggerfallUnity.Instance.StartCoroutine(PlayWhenReady(loopClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+            loopAudioSource.PlayWhenReady(loopClip, volumeScale);
             return loopClip;
         }
 
@@ -206,7 +175,7 @@ namespace DaggerfallWorkshop.Game
         {
             AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
             ambientAudioSource.spatialBlend = 0;
-            DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(audioClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
         }
 
         private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale)
@@ -214,7 +183,7 @@ namespace DaggerfallWorkshop.Game
             AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
             ambientAudioSource.transform.position = position;
             ambientAudioSource.spatialBlend = 1f;
-            DaggerfallUnity.Instance.StartCoroutine(PlayOneShotWhenReady(audioClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
         }
 
         private void PlayEffects()
