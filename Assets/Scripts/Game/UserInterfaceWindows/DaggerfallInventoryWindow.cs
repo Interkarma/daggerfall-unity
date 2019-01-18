@@ -187,7 +187,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
         KeyCode toggleClosedBinding;
-        bool controlPressed = false;
         private int maxAmount;
 
         #endregion
@@ -323,10 +322,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
-            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
-                controlPressed = true;
-            else if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
-                controlPressed = false;
 
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
@@ -1347,6 +1342,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             bool splitRequired = maxAmount < item.stackCount;
+            bool controlPressed = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
             if (splitRequired || controlPressed)
             {
                 if (allowSplitting && item.IsAStack())
@@ -1356,9 +1352,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     stackTo = to;
                     stackEquip = equip;
                     string defaultValue = controlPressed ? "0" : this.maxAmount.ToString();
-
-                    // Key will probably be released while messagebox is open
-                    controlPressed = false;
 
                     // Show message box
                     DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);

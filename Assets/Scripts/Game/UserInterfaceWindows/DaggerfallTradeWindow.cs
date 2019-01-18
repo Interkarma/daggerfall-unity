@@ -604,7 +604,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems);
+                            TransferItem(item, localItems, remoteItems, blockTransport: true);
                         break;
 
                     case WindowModes.Buy:

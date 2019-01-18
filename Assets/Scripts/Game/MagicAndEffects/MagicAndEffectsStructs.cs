@@ -65,6 +65,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Reference a spell icon within an icon pack.
+    /// A null, empty, or invalid key value will fallback to a classic icon.
+    /// </summary>
+    [Serializable]
+    public struct SpellIcon
+    {
+        public string key;                                          // Key of icon pack matching source filename without extension
+        public int index;                                           // Index of key within pack
+    }
+
+    /// <summary>
     /// Duration, Chance, Magnitude settings for an effect.
     /// </summary>
     [Serializable]
@@ -133,6 +144,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public ElementTypes ElementType;
         public string Name;
         public int IconIndex;
+        public SpellIcon Icon;
         public bool MinimumCastingCost;
         public string Tag;
         public EffectEntry[] Effects;

@@ -377,6 +377,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.elementType = sourceBundle.Settings.ElementType;
             instancedBundle.name = sourceBundle.Settings.Name;
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
+            instancedBundle.icon = sourceBundle.Settings.Icon;
             instancedBundle.fromEquippedItem = sourceBundle.FromEquippedItem;
             instancedBundle.liveEffects = new List<IEntityEffect>();
             if (sourceBundle.CasterEntityBehaviour)
@@ -735,7 +736,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         /// <summary>
         /// Handles any magic-related work of equipping an item to this entity.
-        /// Does nothing if item contains no "cast when held" enchantments.
         /// </summary>
         /// <param name="item">Item just equipped.</param>
         public void StartEquippedItem(DaggerfallUnityItem item)
@@ -744,7 +744,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (item == null || !item.IsEnchanted)
                 return;
 
-            // Equipped items must have "cast when held" enchantments
+            // All equipped magic items add a passive item specials effect
+            // This may or may not deliver any payload based on passive enchanment settings
+            EffectBundleSettings passiveItemSpecialsSettings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.HeldMagicItem,
+                TargetType = TargetTypes.None,
+                ElementType = ElementTypes.None,
+                Name = "Item Specials",
+                Effects = new EffectEntry[] { new EffectEntry(PassiveItemSpecialsEffect.EffectKey) },
+            };
+            EntityEffectBundle passiveItemSpecialsBundle = new EntityEffectBundle(passiveItemSpecialsSettings, entityBehaviour);
+            passiveItemSpecialsBundle.FromEquippedItem = item;
+            AssignBundle(passiveItemSpecialsBundle);
+
+            // Some equipped magic items have "cast when held" enchantments
             DaggerfallEnchantment[] enchantments = item.Enchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
@@ -1277,8 +1292,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bool hasRemainingEffectRounds = false;
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
-                    // Update effects with remaining rounds
-                    if (effect.RoundsRemaining > 0)
+                    // Update effects with remaining rounds, item effects are always ticked
+                    if (effect.RoundsRemaining > 0 || bundle.fromEquippedItem != null)
                     {
                         effect.MagicRound();
                         if (effect.RoundsRemaining > 0)
@@ -1646,6 +1661,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public ElementTypes elementType;
             public string name;
             public int iconIndex;
+            public SpellIcon icon;
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
             public ulong fromEquippedItemID;
@@ -1684,6 +1700,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.elementType = bundle.elementType;
                 bundleData.name = bundle.name;
                 bundleData.iconIndex = bundle.iconIndex;
+                bundleData.icon = bundle.icon;
                 bundleData.casterEntityType = bundle.casterEntityType;
                 bundleData.casterLoadID = bundle.casterLoadID;
                 if (bundle.fromEquippedItem != null) bundleData.fromEquippedItemID = bundle.fromEquippedItem.UID;
@@ -1742,6 +1759,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.elementType = bundleData.elementType;
                 instancedBundle.name = bundleData.name;
                 instancedBundle.iconIndex = bundleData.iconIndex;
+                instancedBundle.icon = bundleData.icon;
                 instancedBundle.casterEntityType = bundleData.casterEntityType;
                 instancedBundle.casterLoadID = bundleData.casterLoadID;
                 instancedBundle.liveEffects = new List<IEntityEffect>();
@@ -1752,6 +1770,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // If bundle is supposed to be an equipped item, and we did not find that item, then do not restore bundle
                 if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.fromEquippedItem == null)
                     continue;
+
+                // Migrate from old spell icon index
+                // The old icon index will be changed into a SpellIcon with a null pack key
+                if (string.IsNullOrEmpty(instancedBundle.icon.key) && instancedBundle.icon.index == 0)
+                    instancedBundle.icon.index = instancedBundle.iconIndex;
 
                 // Resume effects
                 foreach (EffectSaveData_v1 effectData in bundleData.liveEffects)

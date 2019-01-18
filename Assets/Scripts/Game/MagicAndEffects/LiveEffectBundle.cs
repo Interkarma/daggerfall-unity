@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public ElementTypes elementType;
         public string name;
         public int iconIndex;
+        public SpellIcon icon;
         public DaggerfallEntityBehaviour caster;
         public EntityTypes casterEntityType;
         public ulong casterLoadID;

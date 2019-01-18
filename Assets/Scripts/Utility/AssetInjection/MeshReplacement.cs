@@ -31,6 +31,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static Func<Color32> getTreeColorCallback = () => Color.Lerp(Color.white, Color.grey, Random.value);
         static Action<Terrain> setTreesSettingsCallback = SetTreesSettings;
 
+        static HashSet<Vector2Int> triedBillboards = new HashSet<Vector2Int>();
+        static HashSet<uint> triedModels = new HashSet<uint>();
+
         #endregion
 
         #region Properties
@@ -53,6 +56,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #endregion
 
         #region Public Methods
+
+        public static void RetryAssetImports()
+        {
+            triedBillboards.Clear();
+            triedModels.Clear();
+        }
 
         /// <summary>
         /// Seek and import a GameObject from mods to replace a Daggerfall mesh.
@@ -196,7 +205,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 if (ModManager.Instance != null)
-                    return ModManager.Instance.TryGetAsset(GetName(modelID), clone, out go);
+                {
+                    if (!triedModels.Contains(modelID))
+                    {
+                        bool found = ModManager.Instance.TryGetAsset(GetName(modelID), clone, out go);
+                        if (!found)
+                            triedModels.Add(modelID);
+                        return found;
+                    }
+                }
             }
 
             go = null;
@@ -211,7 +228,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 if (ModManager.Instance != null)
-                    return ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go);
+                {
+                    Vector2Int billboardIdx = new Vector2Int(archive, record);
+                    if (!triedBillboards.Contains(billboardIdx))
+                    {
+                        bool found = ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go);
+                        if (!found)
+                            triedBillboards.Add(billboardIdx);
+                        return found;
+                    }
+                }
             }
 
             go = null;

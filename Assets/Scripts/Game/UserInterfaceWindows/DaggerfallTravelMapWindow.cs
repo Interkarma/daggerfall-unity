@@ -992,6 +992,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
+
+        // Check if place is discovered, so it can be found on map.
+        public bool CanFindPlace(string regionName, string name)
+        {
+            DFLocation location;
+            if (DaggerfallUnity.Instance.ContentReader.GetLocation(regionName, name, out location))
+            {
+                DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(location.MapTableData.Longitude, location.MapTableData.Latitude);
+                ContentReader.MapSummary summary;
+                if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out summary))
+                    return checkLocationDiscovered(summary);
+            }
+            return false;
+        }
+
         // Sets pixels for selected region
         void SetLocationPixels()
         {
