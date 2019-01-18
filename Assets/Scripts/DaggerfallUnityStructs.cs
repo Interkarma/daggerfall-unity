@@ -381,6 +381,9 @@ namespace DaggerfallWorkshop
 
         [HideInInspector, NonSerialized]
         public NativeArray<float> heightmapData;    // Heightmap data samples for terrain
+
+        [HideInInspector, NonSerialized]
+        public NativeArray<float> avgMaxHeight;     // Average and max height of terrain for location placement
     }
 
     /// <summary>

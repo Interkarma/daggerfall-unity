@@ -113,44 +113,37 @@ namespace DaggerfallWorkshop
             int tDim = MapsFile.WorldMapTileDim;
             MapData.tilemapData = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
             // Create data array for average & max heights.
-            //MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
 
-            // Generate heightmap samples. (waits for complete if implemented with jobs)
+            // Generate heightmap samples. (returns when complete)
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapData);
 
             // Handle location if one is present on terrain.
-            JobHandle blendLocationTerrainJobHandle;
+            JobHandle blendLocationTerrainJobHandle = new JobHandle();
             if (MapData.hasLocation)
             {
                 // Schedule job to calc average & max heights.
-                NativeArray<float> avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
                 CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
                 {
                     heightmapData = MapData.heightmapData,
-                    avgMaxHeight = avgMaxHeight,
+                    avgMaxHeight = MapData.avgMaxHeight,
                 };
                 JobHandle calcAvgMaxHeightJobHandle = calcAvgMaxHeightJob.Schedule();
+                JobHandle.ScheduleBatchedJobs();
 
                 // Set location tiles.
                 TerrainHelper.SetLocationTilesJobs(ref MapData);
 
-                // Wait for averages job to complete.
-                calcAvgMaxHeightJobHandle.Complete();
-                MapData.averageHeight = avgMaxHeight[avgHeightIdx];
-                MapData.maxHeight = avgMaxHeight[maxHeightIdx];
-                avgMaxHeight.Dispose();
-
-                // Schedule job to blend & flattening location heights.
-                //TerrainHelper.BlendLocationTerrainJobs(ref MapData);
+                // Schedule job to blend and flatten location heights.
                 BlendLocationTerrainJob blendLocationTerrainJob = InitBlendLocationTerrainJob();
-                blendLocationTerrainJob.Run(hDim * hDim);
-                //blendLocationTerrainJobHandle = blendLocationTerrainJob.Schedule(hDim * hDim, 64);
-                //blendLocationTerrainJobHandle.Complete();
-            }
+                blendLocationTerrainJobHandle = blendLocationTerrainJob.Schedule(calcAvgMaxHeightJobHandle); // Also depends on SetLocationTiles
+                JobHandle.ScheduleBatchedJobs();
 
-            // Assign tiles for terrain texturing
+            }
+ 
+            // Assign tiles for terrain texturing. (returns when complete)
             if (terrainTexturingJobs != null)
-                terrainTexturingJobs.AssignTiles(dfUnity.TerrainSampler, ref MapData);
+                terrainTexturingJobs.AssignTiles(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
 
             // Update tile map for shader
 
@@ -173,9 +166,12 @@ namespace DaggerfallWorkshop
                     flip = (tile & 0x80) != 0,
                 };
             }
+            //MapData.averageHeight = avgMaxHeight[avgHeightIdx];
+            //MapData.maxHeight = avgMaxHeight[maxHeightIdx];
             // Dispose native array memory now data has been extracted.
             MapData.heightmapData.Dispose();
             MapData.tilemapData.Dispose();
+            MapData.avgMaxHeight.Dispose();
 
             UpdateTileMapData();
 
@@ -188,30 +184,14 @@ namespace DaggerfallWorkshop
             transform.gameObject.name = TerrainHelper.GetTerrainName(MapPixelX, MapPixelY);
         }
 
-        BlendLocationTerrainJob InitBlendLocationTerrainJob(float noiseStrength = 4f)
+        BlendLocationTerrainJob InitBlendLocationTerrainJob()
         {
-            int hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
-
-            // Convert from rect in tilemap space to interior corners in 0-1 range
-            float xMin = MapData.locationRect.xMin / MapsFile.WorldMapTileDim;
-            float xMax = MapData.locationRect.xMax / MapsFile.WorldMapTileDim;
-            float yMin = MapData.locationRect.yMin / MapsFile.WorldMapTileDim;
-            float yMax = MapData.locationRect.yMax / MapsFile.WorldMapTileDim;
-
             return new BlendLocationTerrainJob()
             {
                 heightmapData = MapData.heightmapData,
-                hDim = hDim,
-                targetHeight = MapData.averageHeight,
-                xMin = xMin,
-                xMax = xMax,
-                yMin = yMin,
-                yMax = yMax,
-                // Scale values for converting blend space into 0-1 range
-                leftScale = 1 / xMin,
-                rightScale = 1 / (1 - xMax),
-                topScale = 1 / yMin,
-                bottomScale = 1 / (1 - yMax),
+                avgMaxHeight = MapData.avgMaxHeight,
+                hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension,
+                locationRect = MapData.locationRect,
             };
         }
 
@@ -324,56 +304,73 @@ namespace DaggerfallWorkshop
         }
 
         // Flattens location terrain and blends with surrounding terrain
-        struct BlendLocationTerrainJob : IJobParallelFor
+        struct BlendLocationTerrainJob : IJob
         {
             public NativeArray<float> heightmapData;
+            [ReadOnly]
+            public NativeArray<float> avgMaxHeight;
 
             public int hDim;
-            public float targetHeight;
-            public float xMin, xMax;
-            public float yMin, yMax;
-            public float leftScale, rightScale;
-            public float topScale, bottomScale;
+            public Rect locationRect;
 
-            public void Execute(int index)
+            public void Execute()
             {
-                int x = JobA.Row(index, hDim);
-                int y = JobA.Col(index, hDim);
+                // Convert from rect in tilemap space to interior corners in 0-1 range
+                float xMin = locationRect.xMin / MapsFile.WorldMapTileDim;
+                float xMax = locationRect.xMax / MapsFile.WorldMapTileDim;
+                float yMin = locationRect.yMin / MapsFile.WorldMapTileDim;
+                float yMax = locationRect.yMax / MapsFile.WorldMapTileDim;
 
-                float v = (float)y / (float)(hDim - 1);
-                float u = (float)x / (float)(hDim - 1);
-                bool insideY = (v >= yMin && v <= yMax);
-                bool insideX = (u >= xMin && u <= xMax);
+                // Scale values for converting blend space into 0-1 range
+                float leftScale = 1 / xMin;
+                float rightScale = 1 / (1 - xMax);
+                float topScale = 1 / yMin;
+                float bottomScale = 1 / (1 - yMax);
+
+                // Flatten location area and blend with surrounding heights
                 float strength = 0;
-
-                if (insideX || insideY)
+                float targetHeight = avgMaxHeight[avgHeightIdx];
+                for (int y = 0; y < hDim; y++)
                 {
-                    if (insideY && u <= xMin)
-                        strength = u * leftScale;
-                    else if (insideY && u >= xMax)
-                        strength = (1 - u) * rightScale;
-                    else if (insideX && v <= yMin)
-                        strength = v * topScale;
-                    else if (insideX && v >= yMax)
-                        strength = (1 - v) * bottomScale;
+                    float v = (float)y / (float)(hDim - 1);
+                    bool insideY = (v >= yMin && v <= yMax);
+
+                    for (int x = 0; x < hDim; x++)
+                    {
+                        float u = (float)x / (float)(hDim - 1);
+                        bool insideX = (u >= xMin && u <= xMax);
+
+
+                        if (insideX || insideY)
+                        {
+                            if (insideY && u <= xMin)
+                                strength = u * leftScale;
+                            else if (insideY && u >= xMax)
+                                strength = (1 - u) * rightScale;
+                            else if (insideX && v <= yMin)
+                                strength = v * topScale;
+                            else if (insideX && v >= yMax)
+                                strength = (1 - v) * bottomScale;
+                        }
+                        else
+                        {
+                            float xs = 0, ys = 0;
+                            if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
+                            if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
+                            strength = TerrainHelper.BilinearInterpolator(0, 0, 0, 1, xs, ys);
+                        }
+
+                        int idx = JobA.Idx(x, y, hDim);
+                        float height = heightmapData[idx];
+
+                        if (insideX && insideY)
+                            height = targetHeight;
+                        else
+                            height = Mathf.Lerp(height, targetHeight, strength);
+
+                        heightmapData[idx] = height;
+                    }
                 }
-                else
-                {
-                    float xs = 0, ys = 0;
-                    if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
-                    if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
-                    strength = TerrainHelper.BilinearInterpolator(0, 0, 0, 1, xs, ys);
-                }
-
-                int idx = JobA.Idx(x, y, hDim);
-                float height = heightmapData[idx];
-
-                if (insideX && insideY)
-                    height = targetHeight;
-                else
-                    height = Mathf.Lerp(height, targetHeight, strength);
-
-                heightmapData[idx] = height;
             }
         }
 

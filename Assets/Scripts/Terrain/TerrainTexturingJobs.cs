@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop
             lookupTable.Dispose();
         }
 
-        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, bool march = true)
+        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle blendLocationTerrainJobHandle, bool march = true)
         {
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop
             };
 
             //tileDataJob.Run(tileDataDim2);
-            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64);
+            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64, blendLocationTerrainJobHandle);
             //tileDataHandle.Complete();
 
             // Assign tile data to terrain
