@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Read icons to their own texture (remembering Unity textures are flipped vertically)
             int srcX = 0, srcY = atlas.height - dim;
-            for (int i = 0; i < SpellIconCount; i++)
+            for (int i = 0; i < pack.iconCount; i++)
             {
                 // Extract texture
                 Texture2D iconTexture = new Texture2D(dim, dim, atlas.format, false);
