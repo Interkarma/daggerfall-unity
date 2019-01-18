@@ -343,7 +343,7 @@ namespace DaggerfallWorkshop.Game
 
             // Delay for sound effect
             if (soundDelay > 0)
-                yield return new WaitForSeconds(1f / soundDelay);
+                yield return new WaitForSeconds(soundDelay);
 
             // Play sound effect
             AmbientPlayOneShot(clip, 1f);
