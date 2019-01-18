@@ -23,20 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// <summary>
     /// Stores spell icon packs for use in game UI (e.g. HUD, Spellbook, Spellmaker).
     /// The classic spell icon file "ICON00I0.IMG" is a 320x64 atlas of 69 textures.
-<<<<<<< HEAD
-    /// There are three rows of 20 icons each and a fourth row of 9 icons.
-    /// Icons are numbered 0-68 and tightly packed left-to-right top-to-bottom.
-    /// When loading atlas image this class assumes each icon has a dimension 1/20th of source width.
-    /// This means default file results in 16x16 pixels per icon (320/20=16).
-    /// If injecting a new spell icon atlas use exact multiples of 320x64 (e.g. 640x128, 1280x256, 2560x512).
-    /// This ensures icons are extracted in the same order as classic at new size without any further metadata.
-    /// Current design does not allow for adding any more or less than 69 icons to collection.
-    /// This could be an enhancement added later but would need to be carefully considered as it crosses multiple UIs.
-    /// Note by Alyndiar : Double-checked everywhere and number of spell icons is solely decided by the SpellIconCollection
-    /// class. All information is self contained and no part of the engine makes any assumption about the number of icons.
-    /// Accordingly, this enhancement can be added without worries.
-=======
->>>>>>> upstream/master
     /// </summary>
     public class SpellIconCollection
     {
@@ -160,10 +146,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public Texture2D GetSpellIcon(int index)
         {
-            if (index < 0)
+            if (index < 0 || index >= spellIcons.Count)
                 return null;
 
-            return spellIcons[index % spellIcons.Count];
+            return spellIcons[index];
         }
 
         /// <summary>
@@ -334,7 +320,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Read icons to their own texture (remembering Unity textures are flipped vertically)
             int srcX = 0, srcY = atlas.height - dim;
-            for (int i = 0; i < SpellIconCount; i++)
+            for (int i = 0; i < pack.iconCount; i++)
             {
                 // Extract texture
                 Texture2D iconTexture = new Texture2D(dim, dim, atlas.format, false);
@@ -416,6 +402,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoadClassicSpellTargetAndElementIcons()
         {
+            const int targetIconWidth = 24;
+            const int elementIconWidth = 16;
+            const int height = 16;
 
             // Clear existing collections
             spellTargetIcons.Clear();
@@ -426,19 +415,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (spellTargetAndElementIconAtlas == null)
             {
                 Debug.LogWarning("SpellIconCollection: Could not load spell target and element icons atlas texture.  Arena2 path might not be set yet.");
-                return;
-            }
-
-            // Derive dimension of each icon from atlas width
-            const int columnCount = 5;
-            int height = spellTargetAndElementIconAtlas.height / columnCount;
-            int elementIconWidth = height;
-            int targetIconWidth = height * 3 / 2;
-
-            // Checks texture imported from mods
-            if (spellTargetAndElementIconAtlas.format == TextureFormat.DXT5 && height % 4 != 0 && targetIconWidth % 4 != 0)
-            {
-                Debug.LogErrorFormat("{0} is compressed with a block-based format but icons are not multiple of 4.", spellIconsFile);
                 return;
             }
 
