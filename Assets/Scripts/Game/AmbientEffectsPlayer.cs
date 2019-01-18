@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using System.Collections;
-using System;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -405,27 +404,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             lastPresets = Presets;
-            //dfAudioSource.SetSound(-1, AudioPresets.OnDemand, 0);
-            //if (!ReadyCheck() || !ambientAudioSource.enabled)
-                //return;
-        }
-
-        private bool ReadyCheck()
-        {
-            // Ensure we have a DaggerfallUnity reference
-            if (dfUnity == null)
-                dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
-                return false;
-
-            // Get audio source
-            if (ambientAudioSource == null)
-            {
-                DaggerfallUnity.LogMessage("ambientAudioSource: not ready.");
-                return false;
-            }
-
-            return true;
         }
 
         #endregion
