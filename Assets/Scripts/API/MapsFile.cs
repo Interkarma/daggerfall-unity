@@ -452,7 +452,7 @@ namespace DaggerfallConnect.Arena2
                     settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
                 case (int)Climates.MountainWoods:
-                    settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
+                    settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 102;
                     settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
