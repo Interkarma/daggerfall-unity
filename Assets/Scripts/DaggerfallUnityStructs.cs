@@ -377,10 +377,13 @@ namespace DaggerfallWorkshop
         public float[,] heightmapSamples;           // Heightmap samples for terrain - indexed [y,x] for Terrain.SetHeights
 
         [HideInInspector, NonSerialized]
+        public NativeArray<float> heightmapData;    // Heightmap data samples for terrain
+
+        [HideInInspector, NonSerialized]
         public NativeArray<byte> tilemapData;       // Tilemap data samples for terrain
 
         [HideInInspector, NonSerialized]
-        public NativeArray<float> heightmapData;    // Heightmap data samples for terrain
+        public NativeArray<Color32> tileMap;        // Tilemap color data for shader
 
         [HideInInspector, NonSerialized]
         public NativeArray<float> avgMaxHeight;     // Average and max height of terrain for location placement

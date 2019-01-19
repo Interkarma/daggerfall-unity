@@ -32,10 +32,8 @@ namespace DaggerfallWorkshop
         const byte stone = 3;
 
         static readonly int tileDataDim = MapsFile.WorldMapTileDim + 1;
-        static readonly int tileDataDim2 = tileDataDim * tileDataDim;
 
         static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
-        static readonly int assignTilesDim2 = assignTilesDim * assignTilesDim;
 
         NativeArray<byte> lookupTable;
         NativeArray<byte> tileData;
@@ -58,12 +56,12 @@ namespace DaggerfallWorkshop
         public JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
         {
             // Cache tile data to minimise noise sampling during march.
-            tileData = new NativeArray<byte>(tileDataDim2, Allocator.Persistent);
+            tileData = new NativeArray<byte>(tileDataDim * tileDataDim, Allocator.Persistent);
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
                 heightmapData = mapData.heightmapData,
                 tileData = tileData,
-                tDim = tileDataDim,
+                tdDim = tileDataDim,
                 hDim = terrainSampler.HeightmapDimension,
                 maxTerrainHeight = terrainSampler.MaxTerrainHeight,
                 oceanElevation = terrainSampler.OceanElevation,
@@ -71,10 +69,7 @@ namespace DaggerfallWorkshop
                 mapPixelX = mapData.mapPixelX,
                 mapPixelY = mapData.mapPixelY,
             };
-
-            //tileDataJob.Run(tileDataDim2);
-            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64, dependencies);
-            //tileDataHandle.Complete();
+            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim * tileDataDim, 64, dependencies);
 
             // Assign tile data to terrain
             AssignTilesJob assignTilesJob = new AssignTilesJob
@@ -82,14 +77,13 @@ namespace DaggerfallWorkshop
                 lookupTable = lookupTable,
                 tileData = tileData,
                 tilemapData = mapData.tilemapData,
-                tDim = tileDataDim,
-                dim = assignTilesDim,
+                tdDim = tileDataDim,
+                tDim = assignTilesDim,
                 march = march,
                 locationRect = mapData.locationRect,
             };
+            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim * assignTilesDim, 64, tileDataHandle);
 
-            //assignTilesJob.Run(assignTilesDim2);
-            JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 64, tileDataHandle);
             return assignTilesHandle;
         }
 
@@ -101,8 +95,8 @@ namespace DaggerfallWorkshop
 
             public NativeArray<byte> tileData;
 
-            public int tDim;
             public int hDim;
+            public int tdDim;
             public float maxTerrainHeight;
             public float oceanElevation;
             public float beachElevation;
@@ -149,12 +143,12 @@ namespace DaggerfallWorkshop
 
             public void Execute(int index)
             {
-                int x = JobA.Row(index, tDim);
-                int y = JobA.Col(index, tDim);
+                int x = JobA.Row(index, tdDim);
+                int y = JobA.Col(index, tdDim);
 
                 // Height sample for ocean and beach tiles
-                int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
-                int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
+                int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tdDim), 0, hDim - 1);
+                int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tdDim), 0, hDim - 1);
                 float height = heightmapData[JobA.Idx(hy, hx, hDim)] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
                 // Ocean texture
                 if (height <= oceanElevation)
@@ -187,7 +181,6 @@ namespace DaggerfallWorkshop
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
-
         struct AssignTilesJob : IJobParallelFor
         {
             [ReadOnly]
@@ -197,15 +190,15 @@ namespace DaggerfallWorkshop
 
             public NativeArray<byte> tilemapData;
 
+            public int tdDim;
             public int tDim;
-            public int dim;
             public bool march;
             public Rect locationRect;
 
             public void Execute(int index)
             {
-                int x = JobA.Row(index, dim);
-                int y = JobA.Col(index, dim);
+                int x = JobA.Row(index, tDim);
+                int y = JobA.Col(index, tDim);
 
                 // Do nothing if in location rect as texture already set, to 0xFF if zero
                 if (tilemapData[index] != 0)
@@ -215,11 +208,11 @@ namespace DaggerfallWorkshop
                 if (march)
                 {
                     // Get sample points
-                    int tdIdx = JobA.Idx(x, y, tDim);
+                    int tdIdx = JobA.Idx(x, y, tdDim);
                     int b0 = tileData[tdIdx];               // tileData[x, y]
                     int b1 = tileData[tdIdx + 1];           // tileData[x + 1, y]
-                    int b2 = tileData[tdIdx + tDim];        // tileData[x, y + 1]
-                    int b3 = tileData[tdIdx + tDim + 1];    // tileData[x + 1, y + 1]
+                    int b2 = tileData[tdIdx + tdDim];       // tileData[x, y + 1]
+                    int b3 = tileData[tdIdx + tdDim + 1];   // tileData[x + 1, y + 1]
 
                     int shape = (b0 & 1) | (b1 & 1) << 1 | (b2 & 1) << 2 | (b3 & 1) << 3;
                     int ring = (b0 + b1 + b2 + b3) >> 2;
@@ -229,7 +222,7 @@ namespace DaggerfallWorkshop
                 }
                 else
                 {
-                    tilemapData[index] = tileData[JobA.Idx(x, y, tDim)];
+                    tilemapData[index] = tileData[JobA.Idx(x, y, tdDim)];
                 }
             }
         }

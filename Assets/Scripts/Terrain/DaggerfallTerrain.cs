@@ -30,13 +30,13 @@ namespace DaggerfallWorkshop
     public class DaggerfallTerrain : MonoBehaviour
     {
         // Settings are tuned for Daggerfall and fast procedural layout
-        const int tilemapDimension = MapsFile.WorldMapTileDim;
+        const int tilemapDim = MapsFile.WorldMapTileDim;
         const int resolutionPerPatch = 16;
 
         const byte avgHeightIdx = 0;
         const byte maxHeightIdx = 1;
-        private const int rotBit = 0x40;
-        private const int flipBit = 0x80;
+        const int rotBit = 0x40;
+        const int flipBit = 0x80;
 
         // This controls which map pixel the terrain will represent
         [Range(TerrainHelper.minMapPixelX, TerrainHelper.maxMapPixelX)]
@@ -61,8 +61,6 @@ namespace DaggerfallWorkshop
         // The tile map
         [NonSerialized]
         public Color32[] TileMap;
-        [NonSerialized]
-        NativeArray<Color32> tileMap;
 
         // Required for material properties
         [SerializeField, HideInInspector]
@@ -73,6 +71,7 @@ namespace DaggerfallWorkshop
         public Material TerrainMaterial { get { return terrainMaterial; } set { terrainMaterial = value; } }
 
         DaggerfallUnity dfUnity;
+        int heightmapDim;
         int currentWorldClimate = -1;
         DaggerfallDateTime.Seasons season = DaggerfallDateTime.Seasons.Summer;
         bool ready;
@@ -98,21 +97,22 @@ namespace DaggerfallWorkshop
         }
 
         // Update data for terrain using jobs system.
-        public void UpdateTerrainData(bool init, TerrainTexturingJobs terrainTexturingJobs)
+        public JobHandle BeginMapPixelDataUpdate(bool init, TerrainTexturingJobs terrainTexturing = null)
         {
             // Get basic terrain data.
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
 
             // Create data array for heightmap.
-            int hDim = dfUnity.TerrainSampler.HeightmapDimension;
-            MapData.heightmapData = new NativeArray<float>(hDim * hDim, Allocator.Persistent);
-            // Create data array for tilemap.
-            int tDim = MapsFile.WorldMapTileDim;
-            MapData.tilemapData = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
+            MapData.heightmapData = new NativeArray<float>(heightmapDim * heightmapDim, Allocator.Persistent);
+
+            // Create data array for tilemap data.
+            MapData.tilemapData = new NativeArray<byte>(tilemapDim * tilemapDim, Allocator.Persistent);
+
+            // Create data array for shader tile map data.
+            MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.Persistent);
+
             // Create data array for average & max heights.
             MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
-            // Create data array for shader tile map data.
-            tileMap = new NativeArray<Color32>(tilemapDimension * tilemapDimension, Allocator.Persistent);
 
             // Generate heightmap samples. (returns when complete)
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapData);
@@ -133,29 +133,34 @@ namespace DaggerfallWorkshop
             }
 
             // Assign tiles for terrain texturing.
-            JobHandle assignTilesJobHandle = new JobHandle();
-            if (terrainTexturingJobs != null)
-            {
-                assignTilesJobHandle = terrainTexturingJobs.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
-                assignTilesJobHandle.Complete();
-            }
+            JobHandle assignTilesJobHandle = (terrainTexturing == null) ? new JobHandle() :
+                terrainTexturing.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
 
-            // Update tile map for shader
-            UpdateTileMapDataJobs();
+            // Update tile map for shader.
+            JobHandle updateTileMapJobHandle = ScheduleUpdateTileMapDataJob(assignTilesJobHandle);
+            return updateTileMapJobHandle;
+        }
 
+        public void CompleteMapPixelDataUpdate(bool init, TerrainTexturingJobs terrainTexturing = null)
+         {
+            // Create tileMap array or resize if needed and copy native array
+            if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
+                TileMap = new Color32[MapData.tileMap.Length];
+            MapData.tileMap.CopyTo(TileMap);
 
             // Convert back to standard managed 2d arrays
-            MapData.heightmapSamples = new float[hDim, hDim];
+            MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
             for (int i = 0; i < MapData.heightmapData.Length; i++)
-                MapData.heightmapSamples[JobA.Row(i, hDim), JobA.Col(i, hDim)] = MapData.heightmapData[i];
+                MapData.heightmapSamples[JobA.Row(i, heightmapDim), JobA.Col(i, heightmapDim)] = MapData.heightmapData[i];
 
-            MapData.tilemapSamples = new TilemapSample[tDim, tDim];
+            // TODO: currently still needed for nature layout... will remove!
+            MapData.tilemapSamples = new TilemapSample[tilemapDim, tilemapDim];
             for (int i = 0; i < MapData.tilemapData.Length; i++)
             {
                 byte tile = MapData.tilemapData[i];
                 if (tile == byte.MaxValue)
                     tile = 0;
-                MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
+                MapData.tilemapSamples[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = new TilemapSample()
                 {
                     record = tile & 0x3f,
                     rotate = (tile & rotBit) != 0,
@@ -170,11 +175,12 @@ namespace DaggerfallWorkshop
             MapData.heightmapData.Dispose();
             MapData.tilemapData.Dispose();
             MapData.avgMaxHeight.Dispose();
-            if (terrainTexturingJobs != null)
-                terrainTexturingJobs.Dispose();
-
-            //UpdateTileMapData();
+            if (terrainTexturing != null)
+                terrainTexturing.Dispose();
+            MapData.tileMap.Dispose();
         }
+
+        #region Terrain Job Schedulers
 
         JobHandle ScheduleCalcAvgMaxHeightJob()
         {
@@ -192,130 +198,24 @@ namespace DaggerfallWorkshop
             {
                 heightmapData = MapData.heightmapData,
                 avgMaxHeight = MapData.avgMaxHeight,
-                hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension,
+                hDim = heightmapDim,
                 locationRect = MapData.locationRect,
             };
             return blendLocationTerrainJob.Schedule(dependencies);
         }
 
-        /// <summary>
-        /// Update tile map based on current samples.
-        /// </summary>
-        public void UpdateTileMapDataJobs()
+        JobHandle ScheduleUpdateTileMapDataJob(JobHandle dependencies)
         {
-            int tDim = tilemapDimension;
-            // Assign tile data to tilemap
-            Color32 tileColor = new Color32(0, 0, 0, 0);
-            for (int y = 0; y < tilemapDimension; y++)
+            UpdateTileMapDataJob updateTileMapDataJob = new UpdateTileMapDataJob()
             {
-                for (int x = 0; x < tilemapDimension; x++)
-                {
-                    // Get sample tile data
-                    byte tile = MapData.tilemapData[JobA.Idx(x, y, tDim)];
-
-                    // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
-                    // TODO: test speed difference with cast here:
-                    int record = tile * 4;
-                    if ((tile & rotBit) != 0) record += 1;
-                    if ((tile & flipBit) != 0) record += 2;
-
-                    // Assign to tileMap
-                    tileColor.r = (byte) record;
-                    tileMap[y * tilemapDimension + x] = tileColor;
-                }
-            }
-            // Create tileMap array or resize if needed and copy native array
-            if (TileMap == null || TileMap.Length != tileMap.Length)
-                TileMap = new Color32[tileMap.Length];
-
-            tileMap.CopyTo(TileMap);
+                tilemapData = MapData.tilemapData,
+                tileMap = MapData.tileMap,
+                tDim = tilemapDim,
+            };
+            return updateTileMapDataJob.Schedule(tilemapDim * tilemapDim, 1, dependencies);
         }
 
-
-        /* Cannot jobify because data structs used in jobs cannot contain ref types like bool or string!
-
-                        SetLocationTilesJob InitSetLocationTilesJob()
-                        {
-                            // Get location
-                            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(MapData.mapRegionIndex, MapData.mapLocationIndex);
-                            // Position tiles inside terrain area
-                            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
-
-                            return new SetLocationTilesJob()
-                            {
-                                tilemapData = MapData.tilemapData,
-                                locationRectData = MapData.locationRectData,
-                                location = location,
-                                tilePos = tilePos,
-                            };
-                        }
-
-                        struct SetLocationTilesJob : IJob
-                        {
-                            [WriteOnly]
-                            public NativeArray<byte> tilemapData;
-                            [WriteOnly]
-                            public NativeArray<Rect> locationRectData;
-
-                            public DFLocation location;
-                            public DFPosition tilePos;
-
-                            public void Execute()
-                            {
-                                // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
-                                // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.
-                                // We need to know rect of actual city area so we can use blend space outside walls.
-                                int xmin = int.MaxValue, ymin = int.MaxValue;
-                                int xmax = 0, ymax = 0;
-
-                                // Iterate blocks of this location
-                                for (int blockY = 0; blockY < location.Exterior.ExteriorData.Height; blockY++)
-                                {
-                                    for (int blockX = 0; blockX < location.Exterior.ExteriorData.Width; blockX++)
-                                    {
-                                        // Get block data
-                                        DFBlock block;
-                                        string blockName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
-                                        if (!DaggerfallUnity.Instance.ContentReader.GetBlock(blockName, out block))
-                                            continue;
-
-                                        // Copy ground tile info
-                                        for (int tileY = 0; tileY < RMBLayout.RMBTilesPerBlock; tileY++)
-                                        {
-                                            for (int tileX = 0; tileX < RMBLayout.RMBTilesPerBlock; tileX++)
-                                            {
-                                                DFBlock.RmbGroundTiles tile = block.RmbBlock.FldHeader.GroundData.GroundTiles[tileX, (RMBLayout.RMBTilesPerBlock - 1) - tileY];
-                                                int xpos = tilePos.X + blockX * RMBLayout.RMBTilesPerBlock + tileX;
-                                                int ypos = tilePos.Y + blockY * RMBLayout.RMBTilesPerBlock + tileY;
-
-                                                int record = tile.TextureRecord;
-                                                if (tile.TextureRecord < 56)
-                                                {
-                                                    // Track interior bounds of location tiled area
-                                                    if (xpos < xmin) xmin = xpos;
-                                                    if (xpos > xmax) xmax = xpos;
-                                                    if (ypos < ymin) ymin = ypos;
-                                                    if (ypos > ymax) ymax = ypos;
-
-                                                    // Store texture data from block
-                                                    tilemapData[JobA.Idx(xpos, ypos, MapsFile.WorldMapTileDim)] = tile.TileBitfield == 0 ? byte.MaxValue : tile.TileBitfield;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                // Update location rect with extra clearance
-                                const int extraClearance = 2;
-                                Rect locRect = new Rect();
-                                locRect.xMin = xmin - extraClearance;
-                                locRect.xMax = xmax + extraClearance;
-                                locRect.yMin = ymin - extraClearance;
-                                locRect.yMax = ymax + extraClearance;
-                                locationRectData[0] = locRect;
-                            }
-                        }
-                        */
-
+        #endregion
         #region Terrain Jobs
 
         struct CalcAvgMaxHeightJob : IJob
@@ -411,6 +311,38 @@ namespace DaggerfallWorkshop
             }
         }
 
+        struct UpdateTileMapDataJob : IJobParallelFor
+        {
+            [ReadOnly]
+            public NativeArray<byte> tilemapData;
+            [WriteOnly]
+            public NativeArray<Color32> tileMap;
+
+            public int tDim;
+
+            public void Execute(int index)
+            {
+                int x = JobA.Row(index, tDim);
+                int y = JobA.Col(index, tDim);
+
+                // Assign tile data to tilemap
+                Color32 tileColor = new Color32(0, 0, 0, 0);
+
+                // Get sample tile data
+                byte tile = tilemapData[JobA.Idx(x, y, tDim)];
+
+                // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
+                // TODO: test speed difference with cast here:
+                int record = tile * 4;
+                if ((tile & rotBit) != 0) record += 1;
+                if ((tile & flipBit) != 0) record += 2;
+
+                // Assign to tileMap
+                tileColor.r = (byte)record;
+                tileMap[y * tilemapDim + x] = tileColor;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -425,7 +357,7 @@ namespace DaggerfallWorkshop
             // Create tileMap texture
             if (tileMapTexture == null)
             {
-                tileMapTexture = new Texture2D(tilemapDimension, tilemapDimension, TextureFormat.ARGB32, false);
+                tileMapTexture = new Texture2D(tilemapDim, tilemapDim, TextureFormat.ARGB32, false);
                 tileMapTexture.filterMode = FilterMode.Point;
                 tileMapTexture.wrapMode = TextureWrapMode.Clamp;
             }
@@ -491,7 +423,7 @@ namespace DaggerfallWorkshop
                     // Assign textures
                     terrainMaterial.SetTexture(TileUniforms.TileAtlasTex, tileSetMaterial.GetTexture(TileUniforms.TileAtlasTex));
                     terrainMaterial.SetTexture(TileUniforms.TilemapTex, tileMapTexture);
-                    terrainMaterial.SetInt(TileUniforms.TilemapDim, tilemapDimension);
+                    terrainMaterial.SetInt(TileUniforms.TilemapDim, tilemapDim);
                 }
             }
         }
@@ -535,17 +467,17 @@ namespace DaggerfallWorkshop
         {
             // Create tileMap array if not present
             if (TileMap == null)
-                TileMap = new Color32[tilemapDimension * tilemapDimension];
+                TileMap = new Color32[tilemapDim * tilemapDim];
 
             // Also recreate if not sized appropriately
-            if (TileMap.Length != tilemapDimension * tilemapDimension)
-                TileMap = new Color32[tilemapDimension * tilemapDimension];
+            if (TileMap.Length != tilemapDim * tilemapDim)
+                TileMap = new Color32[tilemapDim * tilemapDim];
 
             // Assign tile data to tilemap
             Color32 tileColor = new Color32(0, 0, 0, 0);
-            for (int y = 0; y < tilemapDimension; y++)
+            for (int y = 0; y < tilemapDim; y++)
             {
-                for (int x = 0; x < tilemapDimension; x++)
+                for (int x = 0; x < tilemapDim; x++)
                 {
                     // Get sample tile data
                     TilemapSample sample = MapData.tilemapSamples[x, y];
@@ -561,7 +493,7 @@ namespace DaggerfallWorkshop
 
                     // Assign to tileMap
                     tileColor.r = record;
-                    TileMap[y * tilemapDimension + x] = tileColor;
+                    TileMap[y * tilemapDim + x] = tileColor;
                 }
             }
         }
@@ -667,6 +599,7 @@ namespace DaggerfallWorkshop
             if (dfUnity == null)
             {
                 dfUnity = DaggerfallUnity.Instance;
+                heightmapDim = dfUnity.TerrainSampler.HeightmapDimension;
             }
 
             // Do nothing if DaggerfallUnity not ready

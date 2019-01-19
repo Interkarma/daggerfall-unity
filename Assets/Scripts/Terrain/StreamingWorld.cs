@@ -21,6 +21,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using Unity.Jobs;
 
 namespace DaggerfallWorkshop
 {
@@ -1164,7 +1165,10 @@ namespace DaggerfallWorkshop
 
             if (UseJobsSystem)
             {
-                dfTerrain.UpdateTerrainData(init, terrainTexturingJobs);
+                JobHandle updateTileMapJobHandle = dfTerrain.BeginMapPixelDataUpdate(init, terrainTexturingJobs);
+                updateTileMapJobHandle.Complete();
+
+                dfTerrain.CompleteMapPixelDataUpdate(init, terrainTexturingJobs);
             }
             else
             {
