@@ -98,10 +98,13 @@ namespace DaggerfallWorkshop.Game
         const int minVeryLikeReaction = 30;
 
         readonly short[] questionTypeReactionMods = { 10, -5,  0, 0, 0, -10, -5, -5 };
-        readonly ushort[] answersToDirections =     { 7250, 7265, 7280, 7251, 7266, 7281, 7252, 7267, 7282, 7253, 7268, 7283, 7254, 7269, 7284,
-                                                      7255, 7270, 7285, 7256, 7271, 7286, 7257, 7272, 7287, 7258, 7273, 7288, 7259, 7274, 7289};
-        readonly ushort[] answersToNonDirections =  { 7250, 7265, 7280, 7251, 7266, 7281, 7252, 7267, 7282, 7253, 7268, 7283, 7254, 7269, 7284,
-                                                      7260, 7275, 7290, 7261, 7276, 7291, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
+
+        // From FALL.EXE. In classic the answers for sgroup 0 (commoners) and sgroup 1 (merchants) are reversed, and classic flips reference to these sgroups
+        // during dialogue to compensate, but it's cleaner to just fix the data. It is fixed to the correct order here.
+        readonly ushort[] answersToDirections =     { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7254, 7269, 7284,
+                                                      7256, 7271, 7286, 7255, 7270, 7285, 7257, 7272, 7287, 7258, 7273, 7288, 7259, 7274, 7289};
+        readonly ushort[] answersToNonDirections =  { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7254, 7269, 7284,
+                                                      7261, 7276, 7291, 7260, 7275, 7290, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
 
         public static List<FactionFile.FactionIDs> factionsUsedForFactionInNews = new List<FactionFile.FactionIDs>()
         {
@@ -760,6 +763,16 @@ namespace DaggerfallWorkshop.Game
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC;
             npcData.isSpyMaster = false;
+
+            // Social group assignment. Matched to classic.
+            if (factionData.sgroup >= 5)
+            {
+                npcData.socialGroup = FactionFile.SocialGroups.Merchants;
+            }
+            else
+            {
+                npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+            }
 
             this.reactionToPlayer = reactionToPlayer;
 
