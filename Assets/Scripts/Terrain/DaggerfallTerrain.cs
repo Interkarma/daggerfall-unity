@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop
             MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.Persistent);
 
             // Create data array for average & max heights.
-            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.Persistent);
 
             // Generate heightmap samples. (returns when complete)
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapData);
@@ -138,6 +138,7 @@ namespace DaggerfallWorkshop
 
             // Update tile map for shader.
             JobHandle updateTileMapJobHandle = ScheduleUpdateTileMapDataJob(assignTilesJobHandle);
+            JobHandle.ScheduleBatchedJobs();
             return updateTileMapJobHandle;
         }
 
@@ -171,13 +172,21 @@ namespace DaggerfallWorkshop
             MapData.averageHeight = MapData.avgMaxHeight[avgHeightIdx];
             MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
 
-            // Dispose native array memory allocationsnow data has been extracted.
+            // Dispose native array memory allocations now data has been extracted.
             MapData.heightmapData.Dispose();
             MapData.tilemapData.Dispose();
             MapData.avgMaxHeight.Dispose();
             if (terrainTexturing != null)
                 terrainTexturing.Dispose();
             MapData.tileMap.Dispose();
+
+            // Promote data to live terrain
+            UpdateClimateMaterial(init);
+            PromoteTerrainData();
+
+            // Only set active again once complete
+            transform.gameObject.SetActive(true);
+            transform.gameObject.name = TerrainHelper.GetTerrainName(MapPixelX, MapPixelY);
         }
 
         #region Terrain Job Schedulers

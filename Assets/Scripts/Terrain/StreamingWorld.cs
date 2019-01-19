@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop
                 return;
 
 #if SHOW_LAYOUT_TIMES
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 #endif
 
             CollectLooseObjects(true);
@@ -624,9 +624,13 @@ namespace DaggerfallWorkshop
                 {
                     if (terrainArray[i].updateData)
                     {
-                        UpdateTerrainData(terrainArray[i]);
+                        if (!init && UseJobsSystem)
+                            // Decouple from FPS.
+                            yield return StartCoroutine(UpdateTerrainDataCoroutine(terrainArray[i]));
+                        else
+                            UpdateTerrainData(terrainArray[i]);
                         terrainArray[i].updateData = false;
-                        if (!init)
+                        if (!init && !UseJobsSystem)
                             yield return new WaitForEndOfFrame();
                     }
                     if (terrainArray[i].updateNature)
@@ -805,8 +809,8 @@ namespace DaggerfallWorkshop
                 }
 
 #if SHOW_LAYOUT_TIMES
-            stopwatch.Stop();
-            DaggerfallUnity.LogMessage(string.Format("Time to update location {1}: {0}ms", stopwatch.ElapsedMilliseconds, index), true);
+                stopwatch.Stop();
+                DaggerfallUnity.LogMessage(string.Format("Time to update location {1}: {0}ms", stopwatch.ElapsedMilliseconds, index), true);
 #endif
             }
         }
@@ -991,7 +995,7 @@ namespace DaggerfallWorkshop
         private void CollectLooseObjects(bool collectAll = false)
         {
             // Walk list backward to RemoveAt doesn't shift unprocessed items
-            for (int i = looseObjectsList.Count; i-- > 0; )
+            for (int i = looseObjectsList.Count; i-- > 0;)
             {
                 if (!IsInRange(looseObjectsList[i].mapPixelX, looseObjectsList[i].mapPixelY) || collectAll)
                 {
@@ -1077,7 +1081,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Update Unity Terrain
-                dfTerrain.UpdateNeighbours();                
+                dfTerrain.UpdateNeighbours();
             }
         }
 
@@ -1163,29 +1167,50 @@ namespace DaggerfallWorkshop
                 dfTerrain.InstantiateTerrain();
             }
 
+            // Update data for terrain
             if (UseJobsSystem)
             {
                 JobHandle updateTileMapJobHandle = dfTerrain.BeginMapPixelDataUpdate(init, terrainTexturingJobs);
                 updateTileMapJobHandle.Complete();
-
                 dfTerrain.CompleteMapPixelDataUpdate(init, terrainTexturingJobs);
             }
             else
             {
-                // Update data for terrain
                 dfTerrain.UpdateMapPixelData(terrainTexturing);
-
                 dfTerrain.UpdateTileMapData();
+
+                // Promote data to live terrain
+                dfTerrain.UpdateClimateMaterial(init);
+                dfTerrain.PromoteTerrainData();
+
+                // Only set active again once complete
+                terrainDesc.terrainObject.SetActive(true);
+                terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            }
+        }
+
+        // Update terrain data using coroutine.
+        public IEnumerator UpdateTerrainDataCoroutine(TerrainDesc terrainDesc)
+        {
+            // Instantiate Daggerfall terrain
+            DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+            if (dfTerrain)
+            {
+                dfTerrain.TerrainScale = TerrainScale;
+                dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                dfTerrain.InstantiateTerrain();
             }
 
-            // Promote data to live terrain
-            dfTerrain.UpdateClimateMaterial(init);
-            dfTerrain.PromoteTerrainData();
+            JobHandle updateTerrainDataHandle = dfTerrain.BeginMapPixelDataUpdate(init, terrainTexturingJobs);
+            Debug.LogFormat("Terrain update jobs scheduled for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
+            if (!init)
+                yield return new WaitUntil(() => updateTerrainDataHandle.IsCompleted);
 
-            // Only set active again once complete
-            terrainDesc.terrainObject.SetActive(true);
-            terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            updateTerrainDataHandle.Complete();
+            Debug.LogFormat("Terrain update jobs complete for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
 
+            dfTerrain.CompleteMapPixelDataUpdate(init, terrainTexturingJobs);
         }
 
         // Update terrain nature
@@ -1311,7 +1336,7 @@ namespace DaggerfallWorkshop
             float lowestHeight = float.MaxValue;
             DaggerfallStaticDoors foundCollection = null;
             Vector3 foundDoorNormal = Vector3.zero;
-            foreach(var collection in doors)
+            foreach (var collection in doors)
             {
                 for (int i = 0; i < collection.Doors.Length; i++)
                 {
