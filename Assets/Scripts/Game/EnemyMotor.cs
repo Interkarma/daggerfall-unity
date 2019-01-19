@@ -469,7 +469,7 @@ namespace DaggerfallWorkshop.Game
             }
             // Back away from combat target if right next to it, or if decided to retreat and enemy is too close.
             // Classic AI never backs awwy.
-            else if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetInSight && (distance < stopDistance * .50 ||
+            else if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetInSight && (distance < stopDistance * .8f ||
                 (!moveInForAttack && distance < (stopDistance * retreatDistanceMultiplier))))
             {
                 // If state change timer is done, or we are already executing a retreat, we can move immediately
