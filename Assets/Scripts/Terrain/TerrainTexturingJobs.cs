@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop
                 }
                 // Beach texture
                 // Adds a little +/- randomness to threshold so beach line isn't too regular
-                if (height <= beachElevation) // + UnityEngine.Random.Range(-1.5f, 1.5f))
+                if (height <= beachElevation) // + UnityEngine.Random.Range(-1.5f, 1.5f))  NOTE: I think it looks better without this, letting heights give the variation in beach line.
                 {
                     tileData[index] = dirt;
                     return;
