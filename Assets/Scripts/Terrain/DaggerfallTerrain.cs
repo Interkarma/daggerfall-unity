@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop
             ready = false;
         }
 
-        public void UpdateTerrain(bool init, TerrainTexturingJobs terrainTexturingJobs)
+        public void UpdateTerrainData(bool init, TerrainTexturingJobs terrainTexturingJobs)
         {
             if (!ReadyCheck())
                 return;
@@ -123,27 +123,23 @@ namespace DaggerfallWorkshop
             if (MapData.hasLocation)
             {
                 // Schedule job to calc average & max heights.
-                CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
-                {
-                    heightmapData = MapData.heightmapData,
-                    avgMaxHeight = MapData.avgMaxHeight,
-                };
-                JobHandle calcAvgMaxHeightJobHandle = calcAvgMaxHeightJob.Schedule();
+                JobHandle calcAvgMaxHeightJobHandle = ScheduleCalcAvgMaxHeightJob();
                 JobHandle.ScheduleBatchedJobs();
 
                 // Set location tiles.
                 TerrainHelper.SetLocationTilesJobs(ref MapData);
 
-                // Schedule job to blend and flatten location heights.
-                BlendLocationTerrainJob blendLocationTerrainJob = InitBlendLocationTerrainJob();
-                blendLocationTerrainJobHandle = blendLocationTerrainJob.Schedule(calcAvgMaxHeightJobHandle); // Also depends on SetLocationTiles
-                JobHandle.ScheduleBatchedJobs();
-
+                // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
+                blendLocationTerrainJobHandle = ScheduleBlendLocationTerrainJob(calcAvgMaxHeightJobHandle);
             }
- 
-            // Assign tiles for terrain texturing. (returns when complete)
+
+            // Assign tiles for terrain texturing.
+            JobHandle assignTilesJobHandle = new JobHandle();
             if (terrainTexturingJobs != null)
-                terrainTexturingJobs.AssignTiles(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
+            {
+                assignTilesJobHandle = terrainTexturingJobs.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
+                assignTilesJobHandle.Complete();
+            }
 
             // Update tile map for shader
 
@@ -168,10 +164,13 @@ namespace DaggerfallWorkshop
             }
             //MapData.averageHeight = avgMaxHeight[avgHeightIdx];
             //MapData.maxHeight = avgMaxHeight[maxHeightIdx];
+
             // Dispose native array memory now data has been extracted.
             MapData.heightmapData.Dispose();
             MapData.tilemapData.Dispose();
             MapData.avgMaxHeight.Dispose();
+            if (terrainTexturingJobs != null)
+                terrainTexturingJobs.Dispose();
 
             UpdateTileMapData();
 
@@ -184,100 +183,111 @@ namespace DaggerfallWorkshop
             transform.gameObject.name = TerrainHelper.GetTerrainName(MapPixelX, MapPixelY);
         }
 
-        BlendLocationTerrainJob InitBlendLocationTerrainJob()
+        JobHandle ScheduleCalcAvgMaxHeightJob()
         {
-            return new BlendLocationTerrainJob()
+            CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
+            {
+                heightmapData = MapData.heightmapData,
+                avgMaxHeight = MapData.avgMaxHeight,
+            };
+            return calcAvgMaxHeightJob.Schedule();
+        }
+
+        JobHandle ScheduleBlendLocationTerrainJob(JobHandle dependencies)
+        {
+            BlendLocationTerrainJob blendLocationTerrainJob = new BlendLocationTerrainJob()
             {
                 heightmapData = MapData.heightmapData,
                 avgMaxHeight = MapData.avgMaxHeight,
                 hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension,
                 locationRect = MapData.locationRect,
             };
+            return blendLocationTerrainJob.Schedule(dependencies);
         }
 
-/* Cannot jobify because data structs used in jobs cannot contain ref types like bool or string!
+        /* Cannot jobify because data structs used in jobs cannot contain ref types like bool or string!
 
-        SetLocationTilesJob InitSetLocationTilesJob()
-        {
-            // Get location
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(MapData.mapRegionIndex, MapData.mapLocationIndex);
-            // Position tiles inside terrain area
-            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
-
-            return new SetLocationTilesJob()
-            {
-                tilemapData = MapData.tilemapData,
-                locationRectData = MapData.locationRectData,
-                location = location,
-                tilePos = tilePos,
-            };
-        }
-
-        struct SetLocationTilesJob : IJob
-        {
-            [WriteOnly]
-            public NativeArray<byte> tilemapData;
-            [WriteOnly]
-            public NativeArray<Rect> locationRectData;
-
-            public DFLocation location;
-            public DFPosition tilePos;
-
-            public void Execute()
-            {
-                // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
-                // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.
-                // We need to know rect of actual city area so we can use blend space outside walls.
-                int xmin = int.MaxValue, ymin = int.MaxValue;
-                int xmax = 0, ymax = 0;
-
-                // Iterate blocks of this location
-                for (int blockY = 0; blockY < location.Exterior.ExteriorData.Height; blockY++)
-                {
-                    for (int blockX = 0; blockX < location.Exterior.ExteriorData.Width; blockX++)
-                    {
-                        // Get block data
-                        DFBlock block;
-                        string blockName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
-                        if (!DaggerfallUnity.Instance.ContentReader.GetBlock(blockName, out block))
-                            continue;
-
-                        // Copy ground tile info
-                        for (int tileY = 0; tileY < RMBLayout.RMBTilesPerBlock; tileY++)
+                        SetLocationTilesJob InitSetLocationTilesJob()
                         {
-                            for (int tileX = 0; tileX < RMBLayout.RMBTilesPerBlock; tileX++)
+                            // Get location
+                            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(MapData.mapRegionIndex, MapData.mapLocationIndex);
+                            // Position tiles inside terrain area
+                            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
+
+                            return new SetLocationTilesJob()
                             {
-                                DFBlock.RmbGroundTiles tile = block.RmbBlock.FldHeader.GroundData.GroundTiles[tileX, (RMBLayout.RMBTilesPerBlock - 1) - tileY];
-                                int xpos = tilePos.X + blockX * RMBLayout.RMBTilesPerBlock + tileX;
-                                int ypos = tilePos.Y + blockY * RMBLayout.RMBTilesPerBlock + tileY;
+                                tilemapData = MapData.tilemapData,
+                                locationRectData = MapData.locationRectData,
+                                location = location,
+                                tilePos = tilePos,
+                            };
+                        }
 
-                                int record = tile.TextureRecord;
-                                if (tile.TextureRecord < 56)
+                        struct SetLocationTilesJob : IJob
+                        {
+                            [WriteOnly]
+                            public NativeArray<byte> tilemapData;
+                            [WriteOnly]
+                            public NativeArray<Rect> locationRectData;
+
+                            public DFLocation location;
+                            public DFPosition tilePos;
+
+                            public void Execute()
+                            {
+                                // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
+                                // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.
+                                // We need to know rect of actual city area so we can use blend space outside walls.
+                                int xmin = int.MaxValue, ymin = int.MaxValue;
+                                int xmax = 0, ymax = 0;
+
+                                // Iterate blocks of this location
+                                for (int blockY = 0; blockY < location.Exterior.ExteriorData.Height; blockY++)
                                 {
-                                    // Track interior bounds of location tiled area
-                                    if (xpos < xmin) xmin = xpos;
-                                    if (xpos > xmax) xmax = xpos;
-                                    if (ypos < ymin) ymin = ypos;
-                                    if (ypos > ymax) ymax = ypos;
+                                    for (int blockX = 0; blockX < location.Exterior.ExteriorData.Width; blockX++)
+                                    {
+                                        // Get block data
+                                        DFBlock block;
+                                        string blockName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
+                                        if (!DaggerfallUnity.Instance.ContentReader.GetBlock(blockName, out block))
+                                            continue;
 
-                                    // Store texture data from block
-                                    tilemapData[JobA.Idx(xpos, ypos, MapsFile.WorldMapTileDim)] = tile.TileBitfield == 0 ? byte.MaxValue : tile.TileBitfield;
+                                        // Copy ground tile info
+                                        for (int tileY = 0; tileY < RMBLayout.RMBTilesPerBlock; tileY++)
+                                        {
+                                            for (int tileX = 0; tileX < RMBLayout.RMBTilesPerBlock; tileX++)
+                                            {
+                                                DFBlock.RmbGroundTiles tile = block.RmbBlock.FldHeader.GroundData.GroundTiles[tileX, (RMBLayout.RMBTilesPerBlock - 1) - tileY];
+                                                int xpos = tilePos.X + blockX * RMBLayout.RMBTilesPerBlock + tileX;
+                                                int ypos = tilePos.Y + blockY * RMBLayout.RMBTilesPerBlock + tileY;
+
+                                                int record = tile.TextureRecord;
+                                                if (tile.TextureRecord < 56)
+                                                {
+                                                    // Track interior bounds of location tiled area
+                                                    if (xpos < xmin) xmin = xpos;
+                                                    if (xpos > xmax) xmax = xpos;
+                                                    if (ypos < ymin) ymin = ypos;
+                                                    if (ypos > ymax) ymax = ypos;
+
+                                                    // Store texture data from block
+                                                    tilemapData[JobA.Idx(xpos, ypos, MapsFile.WorldMapTileDim)] = tile.TileBitfield == 0 ? byte.MaxValue : tile.TileBitfield;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
+                                // Update location rect with extra clearance
+                                const int extraClearance = 2;
+                                Rect locRect = new Rect();
+                                locRect.xMin = xmin - extraClearance;
+                                locRect.xMax = xmax + extraClearance;
+                                locRect.yMin = ymin - extraClearance;
+                                locRect.yMax = ymax + extraClearance;
+                                locationRectData[0] = locRect;
                             }
                         }
-                    }
-                }
-                // Update location rect with extra clearance
-                const int extraClearance = 2;
-                Rect locRect = new Rect();
-                locRect.xMin = xmin - extraClearance;
-                locRect.xMax = xmax + extraClearance;
-                locRect.yMin = ymin - extraClearance;
-                locRect.yMax = ymax + extraClearance;
-                locationRectData[0] = locRect;
-            }
-        }
-        */
+                        */
 
         #region Terrain Jobs
 

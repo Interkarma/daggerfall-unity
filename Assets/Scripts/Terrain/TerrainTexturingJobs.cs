@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop
     /// Generates texture tiles for terrains and uses marching squares for tile transitions.
     /// These features are very much in early stages of development.
     /// </summary>
-    public class TerrainTexturingJobs
+    public class TerrainTexturingJobs : IDisposable
     {
         // Use same seed to ensure continuous tiles
         const int seed = 417028;
@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop
         static readonly int assignTilesDim2 = assignTilesDim * assignTilesDim;
 
         NativeArray<byte> lookupTable;
+        NativeArray<byte> tileData;
 
         public TerrainTexturingJobs()
         {
@@ -49,12 +50,15 @@ namespace DaggerfallWorkshop
             lookupTable.Dispose();
         }
 
-        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle blendLocationTerrainJobHandle, bool march = true)
+        public void Dispose()
         {
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            tileData.Dispose();
+        }
 
+        public JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
+        {
             // Cache tile data to minimise noise sampling during march.
-            NativeArray<byte> tileData = new NativeArray<byte>(tileDataDim2, Allocator.Persistent);
+            tileData = new NativeArray<byte>(tileDataDim2, Allocator.Persistent);
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
                 heightmapData = mapData.heightmapData,
@@ -69,7 +73,7 @@ namespace DaggerfallWorkshop
             };
 
             //tileDataJob.Run(tileDataDim2);
-            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64, blendLocationTerrainJobHandle);
+            JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim2, 64, dependencies);
             //tileDataHandle.Complete();
 
             // Assign tile data to terrain
@@ -86,12 +90,7 @@ namespace DaggerfallWorkshop
 
             //assignTilesJob.Run(assignTilesDim2);
             JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim2, 64, tileDataHandle);
-            assignTilesHandle.Complete();
-
-            tileData.Dispose();
-
-            stopwatch.Stop();
-            DaggerfallUnity.LogMessage(string.Format("Time to assignTiles for ({0},{1}): {2}ms", mapData.mapPixelX, mapData.mapPixelY, stopwatch.ElapsedMilliseconds), true);
+            return assignTilesHandle;
         }
 
 
