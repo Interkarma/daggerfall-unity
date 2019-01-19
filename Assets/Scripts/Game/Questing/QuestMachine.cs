@@ -377,11 +377,10 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new CurePcDisease(null));
             RegisterAction(new CastSpellDo(null));
             RegisterAction(new CastEffectDo(null));
-
-            // Stubs - these actions are not complete yet
-            // Just setting up so certain quests compile for now
-            //RegisterAction(new MuteNpc(null));
-            //RegisterAction(new LegalRepute(null));
+            RegisterAction(new RemoveFoe(null));
+            RegisterAction(new LegalRepute(null));
+            RegisterAction(new MuteNpc(null));
+            RegisterAction(new DestroyNpc(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();

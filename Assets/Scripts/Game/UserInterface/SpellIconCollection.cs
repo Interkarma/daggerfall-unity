@@ -4,14 +4,13 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Alyndiar
 // 
 // Notes:
 //
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
@@ -320,7 +319,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Read icons to their own texture (remembering Unity textures are flipped vertically)
             int srcX = 0, srcY = atlas.height - dim;
-            for (int i = 0; i < SpellIconCount; i++)
+            for (int i = 0; i < pack.iconCount; i++)
             {
                 // Extract texture
                 Texture2D iconTexture = new Texture2D(dim, dim, atlas.format, false);
