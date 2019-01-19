@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Game
         private bool MeleeAnimation()
         {
             // Are we in range and facing target? Then start attack.
-            if (senses.TargetInSight && senses.DetectedTarget)
+            if (senses.DetectedTarget && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
             {
                 // Take the rate of target approach into account when deciding if to attack
                 if (senses.DistanceToTarget >= MeleeDistance + senses.TargetRateOfApproach)
