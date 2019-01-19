@@ -35,6 +35,8 @@ namespace DaggerfallWorkshop
 
         const byte avgHeightIdx = 0;
         const byte maxHeightIdx = 1;
+        private const int rotBit = 0x40;
+        private const int flipBit = 0x80;
 
         // This controls which map pixel the terrain will represent
         [Range(TerrainHelper.minMapPixelX, TerrainHelper.maxMapPixelX)]
@@ -59,6 +61,8 @@ namespace DaggerfallWorkshop
         // The tile map
         [NonSerialized]
         public Color32[] TileMap;
+        [NonSerialized]
+        NativeArray<Color32> tileMap;
 
         // Required for material properties
         [SerializeField, HideInInspector]
@@ -93,16 +97,9 @@ namespace DaggerfallWorkshop
             ready = false;
         }
 
+        // Update data for terrain using jobs system.
         public void UpdateTerrainData(bool init, TerrainTexturingJobs terrainTexturingJobs)
         {
-            if (!ReadyCheck())
-                return;
-
-            // Instantiate Daggerfall terrain
-            InstantiateTerrain();
-
-            // Update data for terrain:
-
             // Get basic terrain data.
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
 
@@ -114,6 +111,8 @@ namespace DaggerfallWorkshop
             MapData.tilemapData = new NativeArray<byte>(tDim * tDim, Allocator.Persistent);
             // Create data array for average & max heights.
             MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+            // Create data array for shader tile map data.
+            tileMap = new NativeArray<Color32>(tilemapDimension * tilemapDimension, Allocator.Persistent);
 
             // Generate heightmap samples. (returns when complete)
             dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapData);
@@ -142,6 +141,7 @@ namespace DaggerfallWorkshop
             }
 
             // Update tile map for shader
+            UpdateTileMapDataJobs();
 
 
             // Convert back to standard managed 2d arrays
@@ -158,29 +158,22 @@ namespace DaggerfallWorkshop
                 MapData.tilemapSamples[JobA.Row(i, tDim), JobA.Col(i, tDim)] = new TilemapSample()
                 {
                     record = tile & 0x3f,
-                    rotate = (tile & 0x40) != 0,
-                    flip = (tile & 0x80) != 0,
+                    rotate = (tile & rotBit) != 0,
+                    flip = (tile & flipBit) != 0,
                 };
             }
-            //MapData.averageHeight = avgMaxHeight[avgHeightIdx];
-            //MapData.maxHeight = avgMaxHeight[maxHeightIdx];
+            // TODO: Are these needed? Seem to not be used anywhere
+            MapData.averageHeight = MapData.avgMaxHeight[avgHeightIdx];
+            MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
 
-            // Dispose native array memory now data has been extracted.
+            // Dispose native array memory allocationsnow data has been extracted.
             MapData.heightmapData.Dispose();
             MapData.tilemapData.Dispose();
             MapData.avgMaxHeight.Dispose();
             if (terrainTexturingJobs != null)
                 terrainTexturingJobs.Dispose();
 
-            UpdateTileMapData();
-
-            // Promote data to live terrain
-            UpdateClimateMaterial(init);
-            PromoteTerrainData();
-
-            // Only set active again once complete
-            transform.gameObject.SetActive(true);
-            transform.gameObject.name = TerrainHelper.GetTerrainName(MapPixelX, MapPixelY);
+            //UpdateTileMapData();
         }
 
         JobHandle ScheduleCalcAvgMaxHeightJob()
@@ -204,6 +197,40 @@ namespace DaggerfallWorkshop
             };
             return blendLocationTerrainJob.Schedule(dependencies);
         }
+
+        /// <summary>
+        /// Update tile map based on current samples.
+        /// </summary>
+        public void UpdateTileMapDataJobs()
+        {
+            int tDim = tilemapDimension;
+            // Assign tile data to tilemap
+            Color32 tileColor = new Color32(0, 0, 0, 0);
+            for (int y = 0; y < tilemapDimension; y++)
+            {
+                for (int x = 0; x < tilemapDimension; x++)
+                {
+                    // Get sample tile data
+                    byte tile = MapData.tilemapData[JobA.Idx(x, y, tDim)];
+
+                    // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
+                    // TODO: test speed difference with cast here:
+                    int record = tile * 4;
+                    if ((tile & rotBit) != 0) record += 1;
+                    if ((tile & flipBit) != 0) record += 2;
+
+                    // Assign to tileMap
+                    tileColor.r = (byte) record;
+                    tileMap[y * tilemapDimension + x] = tileColor;
+                }
+            }
+            // Create tileMap array or resize if needed and copy native array
+            if (TileMap == null || TileMap.Length != tileMap.Length)
+                TileMap = new Color32[tileMap.Length];
+
+            tileMap.CopyTo(TileMap);
+        }
+
 
         /* Cannot jobify because data structs used in jobs cannot contain ref types like bool or string!
 

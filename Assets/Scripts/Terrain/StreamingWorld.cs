@@ -1152,43 +1152,36 @@ namespace DaggerfallWorkshop
         // Update terrain data
         public void UpdateTerrainData(TerrainDesc terrainDesc)
         {
+            // Instantiate Daggerfall terrain
+            DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+            if (dfTerrain)
+            {
+                dfTerrain.TerrainScale = TerrainScale;
+                dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                dfTerrain.InstantiateTerrain();
+            }
+
             if (UseJobsSystem)
             {
-                // Instantiate Daggerfall terrain
-                DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-                if (dfTerrain)
-                {
-                    dfTerrain.TerrainScale = TerrainScale;
-                    dfTerrain.MapPixelX = terrainDesc.mapPixelX;
-                    dfTerrain.MapPixelY = terrainDesc.mapPixelY;
-                    dfTerrain.UpdateTerrain(init, terrainTexturingJobs);
-                }
+                dfTerrain.UpdateTerrainData(init, terrainTexturingJobs);
             }
             else
             {
-                // Instantiate Daggerfall terrain
-                DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-                if (dfTerrain)
-                {
-                    dfTerrain.TerrainScale = TerrainScale;
-                    dfTerrain.MapPixelX = terrainDesc.mapPixelX;
-                    dfTerrain.MapPixelY = terrainDesc.mapPixelY;
-                    dfTerrain.InstantiateTerrain();
-                }
-
                 // Update data for terrain
                 dfTerrain.UpdateMapPixelData(terrainTexturing);
 
                 dfTerrain.UpdateTileMapData();
-
-                // Promote data to live terrain
-                dfTerrain.UpdateClimateMaterial(init);
-                dfTerrain.PromoteTerrainData();
-
-                // Only set active again once complete
-                terrainDesc.terrainObject.SetActive(true);
-                terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
             }
+
+            // Promote data to live terrain
+            dfTerrain.UpdateClimateMaterial(init);
+            dfTerrain.PromoteTerrainData();
+
+            // Only set active again once complete
+            terrainDesc.terrainObject.SetActive(true);
+            terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+
         }
 
         // Update terrain nature
