@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -240,7 +241,7 @@ namespace DaggerfallWorkshop.Game
                     if (doors && playerEnterExit)
                     {
                         StaticDoor door;
-                        if (doors.HasHit(hit.point, out door))
+                        if (doors.HasHit(hit.point, out door) || CustomDoor.HasHit(hit, out door))
                         {
                             // Check if close enough to activate
                             if (hit.distance > DoorActivationDistance)
