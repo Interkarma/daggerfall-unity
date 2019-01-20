@@ -342,10 +342,17 @@ namespace DaggerfallWorkshop
                 byte tile = tilemapData[JobA.Idx(x, y, tDim)];
 
                 // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
-                // TODO: test speed difference with cast here:
-                int record = tile * 4;
-                if ((tile & rotBit) != 0) record += 1;
-                if ((tile & flipBit) != 0) record += 2;
+                int record;
+                if (tile == byte.MaxValue)
+                {   // Zeros are converted to FF so assign tiles doesn't overwrite location tiles, convert back.
+                    record = 0;
+                }
+                else
+                {
+                    record = tile * 4;
+                    if ((tile & rotBit) != 0) record += 1;
+                    if ((tile & flipBit) != 0) record += 2;
+                }
 
                 // Assign to tileMap
                 tileColor.r = (byte)record;
