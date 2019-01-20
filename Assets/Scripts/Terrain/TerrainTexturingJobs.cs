@@ -35,7 +35,9 @@ namespace DaggerfallWorkshop
 
         static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
 
-        NativeArray<byte> lookupTable;
+        byte[] lookupTable;
+
+        NativeArray<byte> lookupData;
         NativeArray<byte> tileData;
 
         public TerrainTexturingJobs()
@@ -43,13 +45,9 @@ namespace DaggerfallWorkshop
             CreateLookupTable();
         }
 
-        ~TerrainTexturingJobs()
-        {
-            lookupTable.Dispose();
-        }
-
         public void Dispose()
         {
+            lookupData.Dispose();
             tileData.Dispose();
         }
 
@@ -72,9 +70,10 @@ namespace DaggerfallWorkshop
             JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim * tileDataDim, 64, dependencies);
 
             // Assign tile data to terrain
+            lookupData = new NativeArray<byte>(lookupTable, Allocator.TempJob);
             AssignTilesJob assignTilesJob = new AssignTilesJob
             {
-                lookupTable = lookupTable,
+                lookupTable = lookupData,
                 tileData = tileData,
                 tilemapData = mapData.tilemapData,
                 tdDim = tileDataDim,
@@ -86,7 +85,6 @@ namespace DaggerfallWorkshop
 
             return assignTilesHandle;
         }
-
 
         struct GenerateTileDataJob : IJobParallelFor
         {
@@ -230,7 +228,7 @@ namespace DaggerfallWorkshop
         // Creates lookup table
         void CreateLookupTable()
         {
-            lookupTable = new NativeArray<byte>(64, Allocator.Persistent);
+            lookupTable = new byte[64];
             AddLookupRange(0, 1, 5, 48, false, 0);
             AddLookupRange(2, 1, 10, 51, true, 16);
             AddLookupRange(2, 3, 15, 53, false, 32);

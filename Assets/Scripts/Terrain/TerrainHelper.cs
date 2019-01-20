@@ -15,6 +15,8 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using Unity.Jobs;
+using Unity.Collections;
 
 namespace DaggerfallWorkshop
 {
@@ -564,7 +566,7 @@ namespace DaggerfallWorkshop
                     // Rect is expanded slightly to give extra clearance around locations
                     tilePos.x = x;
                     tilePos.y = y;
-                    if (rect.Contains(tilePos))
+                    if (rect.x > 0 && rect.y > 0 && rect.Contains(tilePos))
                         continue;
 
                     // Chance also determined by tile type
@@ -613,6 +615,467 @@ namespace DaggerfallWorkshop
             // Apply new batch
             dfBillboardBatch.Apply();
         }
+
+        // Integrated to jobs terrain data - matches original
+        public static void LayoutNatureBillboards1(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale)
+        {
+            const float maxSteepness = 50f;         // 50
+            const float baseChanceOnDirt = 0.2f;        // 0.2
+            const float baseChanceOnGrass = 0.9f;       // 0.4
+            const float baseChanceOnStone = 0.05f;      // 0.05
+
+            // Location Rect is expanded slightly to give extra clearance around locations
+            const int natureClearance = 4;
+            Rect rect = dfTerrain.MapData.locationRect;
+            if (rect.x > 0 && rect.y > 0)
+            {
+                rect.xMin -= natureClearance;
+                rect.xMax += natureClearance;
+                rect.yMin -= natureClearance;
+                rect.yMax += natureClearance;
+            }
+            // Chance scaled based on map pixel height
+            // This tends to produce sparser lowlands and denser highlands
+            // Adjust or remove clamp range to influence nature generation
+            float elevationScale = (dfTerrain.MapData.worldHeight / 128f);
+            elevationScale = Mathf.Clamp(elevationScale, 0.4f, 1.0f);
+
+            // Chance scaled by base climate type
+            float climateScale = 1.0f;
+            DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
+            switch (climate.ClimateType)
+            {
+                case DFLocation.ClimateBaseType.Desert:         // Just lower desert for now
+                    climateScale = 0.25f;
+                    break;
+            }
+            float chanceOnDirt = baseChanceOnDirt * elevationScale * climateScale;
+            float chanceOnGrass = baseChanceOnGrass * elevationScale * climateScale;
+            float chanceOnStone = baseChanceOnStone * elevationScale * climateScale;
+
+            // Get terrain
+            Terrain terrain = dfTerrain.gameObject.GetComponent<Terrain>();
+            if (!terrain)
+                return;
+
+            // Get terrain data
+            TerrainData terrainData = terrain.terrainData;
+            if (!terrainData)
+                return;
+
+            // Remove exiting billboards
+            dfBillboardBatch.Clear();
+            MeshReplacement.ClearNatureGameObjects(terrain);
+
+            // Seed random with terrain key
+            Random.InitState(MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
+
+            // Just layout some random flats spread evenly across entire map pixel area
+            // Flats are aligned with tiles, max 16129 billboards per batch
+            Vector2 tilePos = Vector2.zero;
+            int tDim = MapsFile.WorldMapTileDim;
+            int hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+            float scale = terrainData.heightmapScale.x * (float)hDim / (float)tDim;
+            float maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
+            float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation;
+
+            for (int y = 0; y < tDim; y++)
+            {
+                for (int x = 0; x < tDim; x++)
+                {
+                    // Reject based on steepness
+                    float steepness = terrainData.GetSteepness((float)x / tDim, (float)y / tDim);
+                    if (steepness > maxSteepness)
+                        continue;
+
+                    // Reject if inside location rect (expanded slightly to give extra clearance around locations)
+                    tilePos.x = x;
+                    tilePos.y = y;
+                    if (rect.x > 0 && rect.y > 0 && rect.Contains(tilePos))
+                        continue;
+
+                    // Chance also determined by tile type
+                    int tile = dfTerrain.MapData.tilemapData[JobA.Idx(x, y, tDim)] & 0x3F;
+                    if (tile == 1)
+                    {   // Dirt
+                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt)
+                            continue;
+                    }
+                    else if (tile == 2)
+                    {   // Grass
+                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnGrass)
+                            continue;
+                    }
+                    else if (tile == 3)
+                    {   // Stone
+                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnStone)
+                            continue;
+                    }
+                    else
+                    {   // Anything else
+                        continue;
+                    }
+
+                    int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
+                    int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
+                    float height = dfTerrain.MapData.heightmapData[JobA.Idx(hy, hx, hDim)] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
+
+                    // Reject if too close to water
+                    if (height < beachLine)
+                        continue;
+
+                    // Sample height and position billboard
+                    Vector3 pos = new Vector3(x * scale, 0, y * scale);
+                    float height2 = terrain.SampleHeight(pos + terrain.transform.position);
+                    pos.y = height2;
+
+                    // Add to batch
+                    int record = UnityEngine.Random.Range(1, 32);
+                    if (!MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                        dfBillboardBatch.AddItem(record, pos);
+                }
+            }
+            dfTerrain.MapData.heightmapData.Dispose();
+            dfTerrain.MapData.tilemapData.Dispose();
+
+            // Apply new batch
+            dfBillboardBatch.Apply();
+        }
+
+        // Integrated to jobs terrain data and fully converted to be jobifiable - doesn't match original
+        public static void LayoutNatureBillboards2(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale)
+        {
+            const float maxSteepness = 50f;         // 50
+            const float baseChanceOnDirt = 0.2f;        // 0.2
+            const float baseChanceOnGrass = 0.9f;       // 0.4
+            const float baseChanceOnStone = 0.05f;      // 0.05
+
+            // Location Rect is expanded slightly to give extra clearance around locations
+            const int natureClearance = 4;
+            Rect rect = dfTerrain.MapData.locationRect;
+            if (rect.x > 0 && rect.y > 0)
+            {
+                rect.xMin -= natureClearance;
+                rect.xMax += natureClearance;
+                rect.yMin -= natureClearance;
+                rect.yMax += natureClearance;
+            }
+            // Chance scaled based on map pixel height
+            // This tends to produce sparser lowlands and denser highlands
+            // Adjust or remove clamp range to influence nature generation
+            float elevationScale = (dfTerrain.MapData.worldHeight / 128f);
+            elevationScale = Mathf.Clamp(elevationScale, 0.4f, 1.0f);
+
+            // Chance scaled by base climate type
+            float climateScale = 1.0f;
+            DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
+            switch (climate.ClimateType)
+            {
+                case DFLocation.ClimateBaseType.Desert:         // Just lower desert for now
+                    climateScale = 0.25f;
+                    break;
+            }
+            int chanceIntScale = 1000;
+            int chanceOnDirt = (int)(baseChanceOnDirt * elevationScale * climateScale * chanceIntScale);
+            int chanceOnGrass = (int)(baseChanceOnGrass * elevationScale * climateScale * chanceIntScale);
+            int chanceOnStone = (int)(baseChanceOnStone * elevationScale * climateScale * chanceIntScale);
+
+            // Get terrain
+            Terrain terrain = dfTerrain.gameObject.GetComponent<Terrain>();
+            if (!terrain)
+                return;
+
+            // Get terrain data
+            TerrainData terrainData = terrain.terrainData;
+            if (!terrainData)
+                return;
+
+            // Remove exiting billboards
+            dfBillboardBatch.Clear();
+            MeshReplacement.ClearNatureGameObjects(terrain);
+
+            // Seed random with terrain key
+            Random.InitState(MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
+
+            // Just layout some random flats spread evenly across entire map pixel area
+            // Flats are aligned with tiles, max 16129 billboards per batch
+            Vector2 tilePos = Vector2.zero;
+            int tDim = MapsFile.WorldMapTileDim;
+            int hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+            float maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
+            float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation;
+
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            NativeArray<Vector2Int> posData = new NativeArray<Vector2Int>(tDim * tDim, Allocator.Persistent);
+            System.Random rand = new System.Random(MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
+            int posIdx = 0;
+            for (int y = 0; y < tDim; y++)
+            {
+                for (int x = 0; x < tDim; x++)
+                {
+                    // Reject if inside location rect
+                    // Rect is expanded slightly to give extra clearance around locations
+                    tilePos.x = x;
+                    tilePos.y = y;
+                    if (rect.x > 0 && rect.y > 0 && rect.Contains(tilePos))
+                        continue;
+
+                    // Chance also determined by tile type
+                    //TilemapSample sample = dfTerrain.MapData.tilemapSamples[x, y];
+                    int tile = dfTerrain.MapData.tilemapData[JobA.Idx(x, y, tDim)] & 0x3F;
+                    if (tile == 1)
+                    {   // Dirt
+                        if (rand.Next(0, chanceIntScale) > chanceOnDirt)
+                            continue;
+                    }
+                    else if (tile == 2)
+                    {   // Grass
+                        if (rand.Next(0, chanceIntScale) > chanceOnGrass)
+                            continue;
+                    }
+                    else if (tile == 3)
+                    {   // Stone
+                        if (rand.Next(0, chanceIntScale) > chanceOnStone)
+                            continue;
+                    }
+                    else
+                    {   // Anything else
+                        continue;
+                    }
+
+                    int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
+                    int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
+                    float height = dfTerrain.MapData.heightmapData[JobA.Idx(hy, hx, hDim)] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
+
+                    // Reject if too close to water
+                    if (height < beachLine)
+                        continue;
+
+                    // Add to batch
+                    Vector2Int pos = new Vector2Int(x, y);
+                    posData[posIdx++] = pos;
+                }
+                posData[posIdx] = Vector2Int.down;
+            }
+
+            // Add to batch
+            float scale = terrainData.heightmapScale.x * (float)hDim / (float)tDim;
+            for (int i = 0; i < posData.Length; i++)
+            {
+                Vector2Int pos2 = posData[i];
+                if (pos2 == Vector2Int.down)
+                    break;
+
+                // Reject based on steepness
+                float steepness = terrainData.GetSteepness((float)pos2.x / tDim, (float)pos2.y / tDim);
+                if (steepness > maxSteepness)
+                    continue;
+
+                // Sample height and position billboard
+                Vector3 pos = new Vector3(pos2.x * scale, 0, pos2.y * scale);
+                float height = terrain.SampleHeight(pos + terrain.transform.position);
+                pos.y = height;
+
+                int record = UnityEngine.Random.Range(1, 32);
+                //if (!MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                dfBillboardBatch.AddItem(record, pos);
+            }
+            posData.Dispose();
+            dfTerrain.MapData.heightmapData.Dispose();
+            dfTerrain.MapData.tilemapData.Dispose();
+
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to layout natures: {0}ms", stopwatch.ElapsedMilliseconds), true);
+
+            // Apply new batch
+            dfBillboardBatch.Apply();
+        }
+
+        // Integrated to jobs terrain data and fully converted to run in a Job - doesn't match original
+        public static void LayoutNatureBillboardsJobs(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale)
+        {
+            const float maxSteepness = 50f;         // 50
+            const float baseChanceOnDirt = 0.2f;        // 0.2
+            const float baseChanceOnGrass = 0.9f;       // 0.4
+            const float baseChanceOnStone = 0.05f;      // 0.05
+
+            // Location Rect is expanded slightly to give extra clearance around locations
+            const int natureClearance = 4;
+            Rect rect = dfTerrain.MapData.locationRect;
+            if (rect.x > 0 && rect.y > 0)
+            {
+                rect.xMin -= natureClearance;
+                rect.xMax += natureClearance;
+                rect.yMin -= natureClearance;
+                rect.yMax += natureClearance;
+            }
+            // Chance scaled based on map pixel height
+            // This tends to produce sparser lowlands and denser highlands
+            // Adjust or remove clamp range to influence nature generation
+            float elevationScale = (dfTerrain.MapData.worldHeight / 128f);
+            elevationScale = Mathf.Clamp(elevationScale, 0.4f, 1.0f);
+
+            // Chance scaled by base climate type
+            float climateScale = 1.0f;
+            DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
+            switch (climate.ClimateType)
+            {
+                case DFLocation.ClimateBaseType.Desert:         // Just lower desert for now
+                    climateScale = 0.25f;
+                    break;
+            }
+            int chanceIntScale = 1000;
+            int chanceOnDirt = (int)(baseChanceOnDirt * elevationScale * climateScale * chanceIntScale);
+            int chanceOnGrass = (int)(baseChanceOnGrass * elevationScale * climateScale * chanceIntScale);
+            int chanceOnStone = (int)(baseChanceOnStone * elevationScale * climateScale * chanceIntScale);
+
+            // Get terrain
+            Terrain terrain = dfTerrain.gameObject.GetComponent<Terrain>();
+            if (!terrain)
+                return;
+
+            // Get terrain data
+            TerrainData terrainData = terrain.terrainData;
+            if (!terrainData)
+                return;
+
+            // Remove exiting billboards
+            dfBillboardBatch.Clear();
+            MeshReplacement.ClearNatureGameObjects(terrain);
+
+            // Seed random with terrain key
+            Random.InitState(MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
+
+            // Just layout some random flats spread evenly across entire map pixel area
+            // Flats are aligned with tiles, max 16129 billboards per batch
+            Vector2 tilePos = Vector2.zero;
+            int tDim = MapsFile.WorldMapTileDim;
+            int hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+            NativeArray<Vector2Int> posData = new NativeArray<Vector2Int>(tDim * tDim, Allocator.Persistent);
+            LayoutNatureBillboardsJob layoutNatureBillboardsJob = new LayoutNatureBillboardsJob()
+            {
+                tilemapData = dfTerrain.MapData.tilemapData,
+                heightmapData = dfTerrain.MapData.heightmapData,
+                posData = posData,
+                tDim = tDim,
+                hDim = hDim,
+                terrainKey = MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY),
+                rect = rect,
+                chanceIntScale = chanceIntScale,
+                chanceOnDirt = chanceOnDirt,
+                chanceOnGrass = chanceOnGrass,
+                chanceOnStone = chanceOnStone,
+                maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight,
+                beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation,
+            };
+            //layoutNatureBillboardsJob.Run();
+            JobHandle job = layoutNatureBillboardsJob.Schedule();
+            job.Complete();
+
+            // Add to batch
+            float scale = terrainData.heightmapScale.x * (float)hDim / (float)tDim;
+            for (int i = 0; i < posData.Length; i++)
+            {
+                Vector2Int pos2 = posData[i];
+                if (pos2 == Vector2Int.down)
+                    break;
+
+                // Reject based on steepness
+                float steepness = terrainData.GetSteepness((float)pos2.x / tDim, (float)pos2.y / tDim);
+                if (steepness > maxSteepness)
+                    continue;
+
+                // Sample height and position billboard
+                Vector3 pos = new Vector3(pos2.x * scale, 0, pos2.y * scale);
+                float height = terrain.SampleHeight(pos + terrain.transform.position);
+                pos.y = height;
+
+                int record = UnityEngine.Random.Range(1, 32);
+                //if (!MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                dfBillboardBatch.AddItem(record, pos);
+            }
+            posData.Dispose();
+            dfTerrain.MapData.heightmapData.Dispose();
+            dfTerrain.MapData.tilemapData.Dispose();
+
+            // Apply new batch
+            dfBillboardBatch.Apply();
+        }
+
+        struct LayoutNatureBillboardsJob : IJob
+        {
+            [ReadOnly]
+            public NativeArray<byte> tilemapData;
+            [ReadOnly]
+            public NativeArray<float> heightmapData;
+            [WriteOnly]
+            public NativeArray<Vector2Int> posData;
+
+            public int tDim;
+            public int hDim;
+            public int terrainKey;
+            public Rect rect;
+            public int chanceIntScale;
+            public int chanceOnDirt;
+            public int chanceOnGrass;
+            public int chanceOnStone;
+            public float maxTerrainHeight;
+            public float beachLine;
+
+            public void Execute()
+            {
+                System.Random rand = new System.Random(terrainKey);
+                Vector2 tilePos = Vector2.zero; // int?
+                int posIdx = 0;
+                for (int y = 0; y < tDim; y++)
+                {
+                    for (int x = 0; x < tDim; x++)
+                    {
+                        // Reject if inside location rect
+                        // Rect is expanded slightly to give extra clearance around locations
+                        tilePos.x = x;
+                        tilePos.y = y;
+                        if (rect.x > 0 && rect.y > 0 && rect.Contains(tilePos))
+                            continue;
+
+                        // Chance also determined by tile type
+                        int tile = tilemapData[JobA.Idx(x, y, tDim)] & 0x3F;
+                        if (tile == 1)
+                        {   // Dirt
+                            if (rand.Next(0, chanceIntScale) > chanceOnDirt)
+                                continue;
+                        }
+                        else if (tile == 2)
+                        {   // Grass
+                            if (rand.Next(0, chanceIntScale) > chanceOnGrass)
+                                continue;
+                        }
+                        else if (tile == 3)
+                        {   // Stone
+                            if (rand.Next(0, chanceIntScale) > chanceOnStone)
+                                continue;
+                        }
+                        else
+                        {   // Anything else
+                            continue;
+                        }
+
+                        // Reject if too close to water
+                        int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
+                        int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
+                        float height = heightmapData[JobA.Idx(hy, hx, hDim)] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
+                        if (height < beachLine)
+                            continue;
+
+                        // Add to batch
+                        posData[posIdx++] = new Vector2Int(x, y);
+                    }
+                }
+                posData[posIdx] = Vector2Int.down;
+            }
+        }
+
 
         // Gets terrain key based on map pixel coordinates
         public static int MakeTerrainKey(int mapPixelX, int mapPixelY)

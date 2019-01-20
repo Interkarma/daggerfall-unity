@@ -155,6 +155,7 @@ namespace DaggerfallWorkshop
                 MapData.heightmapSamples[JobA.Row(i, heightmapDim), JobA.Col(i, heightmapDim)] = MapData.heightmapData[i];
 
             // TODO: currently still needed for nature layout... will remove!
+            /*
             MapData.tilemapSamples = new TilemapSample[tilemapDim, tilemapDim];
             for (int i = 0; i < MapData.tilemapData.Length; i++)
             {
@@ -167,14 +168,14 @@ namespace DaggerfallWorkshop
                     rotate = (tile & rotBit) != 0,
                     flip = (tile & flipBit) != 0,
                 };
-            }
+            }*/
             // TODO: Are these needed? Seem to not be used anywhere
             MapData.averageHeight = MapData.avgMaxHeight[avgHeightIdx];
             MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
 
             // Dispose native array memory allocations now data has been extracted.
-            MapData.heightmapData.Dispose();
-            MapData.tilemapData.Dispose();
+            //MapData.heightmapData.Dispose();
+            //MapData.tilemapData.Dispose();
             MapData.avgMaxHeight.Dispose();
             if (terrainTexturing != null)
                 terrainTexturing.Dispose();

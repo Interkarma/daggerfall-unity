@@ -10,6 +10,7 @@
 //
 
 #define SHOW_LAYOUT_TIMES
+//#define SHOW_LAYOUT_TIMES_NAT
 
 using UnityEngine;
 using System;
@@ -74,6 +75,7 @@ namespace DaggerfallWorkshop
         public bool suppressWorld = false;
         public bool ShowDebugString = false;
         public bool UseJobsSystem = true;
+        public bool UseOrigNature = true;
 
         // List of terrain objects
         // Terrains all have the same format and will be endlessly recycled
@@ -1216,6 +1218,9 @@ namespace DaggerfallWorkshop
         // Update terrain nature
         public void UpdateTerrainNature(TerrainDesc terrainDesc)
         {
+#if SHOW_LAYOUT_TIMES_NAT
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+#endif
             // Setup billboards
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
             DaggerfallBillboardBatch dfBillboardBatch = terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
@@ -1224,11 +1229,21 @@ namespace DaggerfallWorkshop
                 // Get current climate and nature archive
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
-                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
+                if (UseJobsSystem)
+                    if (UseOrigNature)
+                        TerrainHelper.LayoutNatureBillboards1(dfTerrain, dfBillboardBatch, TerrainScale);
+                    else
+                        TerrainHelper.LayoutNatureBillboardsJobs(dfTerrain, dfBillboardBatch, TerrainScale);
+                else
+                    TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
             }
 
             // Only set active again once complete
             terrainDesc.billboardBatchObject.SetActive(true);
+#if SHOW_LAYOUT_TIMES_NAT
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to update terrain natures for ({1},{2}): {0}ms", stopwatch.ElapsedMilliseconds, terrainDesc.mapPixelX, terrainDesc.mapPixelY), true);
+#endif
         }
 
         // Gets terrain at map pixel coordinates, or null if not found
