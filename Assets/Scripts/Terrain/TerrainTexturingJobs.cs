@@ -47,8 +47,10 @@ namespace DaggerfallWorkshop
 
         public void Dispose()
         {
-            lookupData.Dispose();
-            tileData.Dispose();
+            if (lookupData.IsCreated)
+                lookupData.Dispose();
+            if (tileData.IsCreated)
+                tileData.Dispose();
         }
 
         public JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
@@ -70,7 +72,7 @@ namespace DaggerfallWorkshop
             JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim * tileDataDim, 64, dependencies);
 
             // Assign tile data to terrain
-            lookupData = new NativeArray<byte>(lookupTable, Allocator.TempJob);
+            lookupData = new NativeArray<byte>(lookupTable, Allocator.Persistent);
             AssignTilesJob assignTilesJob = new AssignTilesJob
             {
                 lookupTable = lookupData,

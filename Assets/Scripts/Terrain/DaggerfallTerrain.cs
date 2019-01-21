@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop
         }
 
         // Update data for terrain using jobs system.
-        public JobHandle BeginMapPixelDataUpdate(bool init, TerrainTexturingJobs terrainTexturing = null)
+        public JobHandle BeginMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
         {
             // Get basic terrain data.
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
@@ -144,8 +144,8 @@ namespace DaggerfallWorkshop
             return updateTileMapJobHandle;
         }
 
-        public void CompleteMapPixelDataUpdate(bool init, TerrainTexturingJobs terrainTexturing = null)
-         {
+        public void CompleteMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
+        {
             // Create tileMap array or resize if needed and copy native array
             if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
                 TileMap = new Color32[MapData.tileMap.Length];
@@ -179,18 +179,16 @@ namespace DaggerfallWorkshop
             dfUnity.TerrainSampler.Dispose();
             //MapData.heightmapData.Dispose();  // Done later after nature layout
             //MapData.tilemapData.Dispose();
-            MapData.avgMaxHeight.Dispose();
+            if (MapData.avgMaxHeight.IsCreated)
+                MapData.avgMaxHeight.Dispose();
             if (terrainTexturing != null)
                 terrainTexturing.Dispose();
-            MapData.tileMap.Dispose();
+            if (MapData.tileMap.IsCreated)
+                MapData.tileMap.Dispose();
 
             // Promote data to live terrain
             UpdateClimateMaterial(init);
             PromoteTerrainData();
-
-            // Only set active again once complete
-            transform.gameObject.SetActive(true);
-            transform.gameObject.name = TerrainHelper.GetTerrainName(MapPixelX, MapPixelY);
         }
 
         #region Terrain Job Schedulers

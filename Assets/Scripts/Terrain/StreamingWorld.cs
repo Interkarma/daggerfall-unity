@@ -164,6 +164,10 @@ namespace DaggerfallWorkshop
         {
             get { return terrainTexturing; }
         }
+        public TerrainTexturingJobs TerrainTexturingJobs
+        {
+            get { return terrainTexturingJobs; }
+        }
 
         /// <summary>
         /// Gets current DaggerfallLocation (if any) for player's current map pixel.
@@ -1172,9 +1176,9 @@ namespace DaggerfallWorkshop
             // Update data for terrain
             if (UseJobsSystem)
             {
-                JobHandle updateTileMapJobHandle = dfTerrain.BeginMapPixelDataUpdate(init, terrainTexturingJobs);
+                JobHandle updateTileMapJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturingJobs, init);
                 updateTileMapJobHandle.Complete();
-                dfTerrain.CompleteMapPixelDataUpdate(init, terrainTexturingJobs);
+                dfTerrain.CompleteMapPixelDataUpdate(terrainTexturingJobs, init);
             }
             else
             {
@@ -1184,11 +1188,11 @@ namespace DaggerfallWorkshop
                 // Promote data to live terrain
                 dfTerrain.UpdateClimateMaterial(init);
                 dfTerrain.PromoteTerrainData();
-
-                // Only set active again once complete
-                terrainDesc.terrainObject.SetActive(true);
-                terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
             }
+
+            // Only set active again once complete
+            terrainDesc.terrainObject.SetActive(true);
+            terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
         }
 
         // Update terrain data using coroutine.
@@ -1204,7 +1208,7 @@ namespace DaggerfallWorkshop
                 dfTerrain.InstantiateTerrain();
             }
 
-            JobHandle updateTerrainDataHandle = dfTerrain.BeginMapPixelDataUpdate(init, terrainTexturingJobs);
+            JobHandle updateTerrainDataHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturingJobs, init);
             //Debug.LogFormat("Terrain update jobs scheduled for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
             if (!init)
                 yield return new WaitUntil(() => updateTerrainDataHandle.IsCompleted);
@@ -1212,7 +1216,11 @@ namespace DaggerfallWorkshop
             updateTerrainDataHandle.Complete();
             //Debug.LogFormat("Terrain update jobs complete for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
 
-            dfTerrain.CompleteMapPixelDataUpdate(init, terrainTexturingJobs);
+            dfTerrain.CompleteMapPixelDataUpdate(terrainTexturingJobs, init);
+
+            // Only set active again once complete
+            terrainDesc.terrainObject.SetActive(true);
+            terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
         }
 
         // Update terrain nature

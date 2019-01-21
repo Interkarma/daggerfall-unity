@@ -673,8 +673,11 @@ namespace DaggerfallWorkshop
                         dfBillboardBatch.AddItem(record, pos);
                 }
             }
-            dfTerrain.MapData.heightmapData.Dispose();
-            dfTerrain.MapData.tilemapData.Dispose();
+            //Debug.LogFormat("Disposing of heightmap & tilemap data for ({0},{1}).", dfTerrain.MapData.mapPixelX, dfTerrain.MapData.mapPixelY);
+            if (dfTerrain.MapData.heightmapData.IsCreated)
+                dfTerrain.MapData.heightmapData.Dispose();
+            if (dfTerrain.MapData.tilemapData.IsCreated)
+                dfTerrain.MapData.tilemapData.Dispose();
 
             // Apply new batch
             dfBillboardBatch.Apply();

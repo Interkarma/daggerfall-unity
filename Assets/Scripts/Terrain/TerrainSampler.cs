@@ -9,12 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
-using DaggerfallWorkshop.Utility;
 using System;
 using Unity.Jobs;
 

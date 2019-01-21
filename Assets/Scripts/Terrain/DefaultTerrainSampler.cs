@@ -242,8 +242,10 @@ namespace DaggerfallWorkshop
 
         public override void Dispose()
         {
-            shm.Dispose();
-            lhm.Dispose();
+            if (shm.IsCreated)
+                shm.Dispose();
+            if (lhm.IsCreated)
+                lhm.Dispose();
         }
     }
 }
