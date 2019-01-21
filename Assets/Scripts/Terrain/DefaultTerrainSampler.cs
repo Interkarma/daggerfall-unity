@@ -31,6 +31,10 @@ namespace DaggerfallWorkshop
         // Max terrain height of this sampler implementation
         const float maxTerrainHeight = 1539f;
 
+        // References to small & large heightmap source data.
+        NativeArray<byte> shm;
+        NativeArray<byte> lhm;
+
         public override int Version
         {
             get { return 1; }
@@ -195,7 +199,7 @@ namespace DaggerfallWorkshop
             }
         }
 
-        public override void GenerateSamplesJobs(ref MapPixelData mapPixel)
+        public override JobHandle ScheduleGenerateSamplesJob(ref MapPixelData mapPixel)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
@@ -206,10 +210,10 @@ namespace DaggerfallWorkshop
             int mx = mapPixel.mapPixelX;
             int my = mapPixel.mapPixelY;
             byte sDim = 4;
-            NativeArray<byte> shm = new NativeArray<byte>(dfUnity.ContentReader.WoodsFileReader.GetHeightMapValuesRangeJobs(mx - 2, my - 2, sDim), Allocator.TempJob);
+            shm = new NativeArray<byte>(dfUnity.ContentReader.WoodsFileReader.GetHeightMapValuesRangeJobs(mx - 2, my - 2, sDim), Allocator.TempJob);
             // TODO - shortcut conversion & flattening.
             byte[,] lhm2 = dfUnity.ContentReader.WoodsFileReader.GetLargeHeightMapValuesRange(mx - 1, my, 3);
-            NativeArray<byte> lhm = new NativeArray<byte>(lhm2.Length, Allocator.TempJob);
+            lhm = new NativeArray<byte>(lhm2.Length, Allocator.TempJob);
             byte lDim = (byte)lhm2.GetLength(0);
             int i = 0;
             for (int y = 0; y < lDim; y++)
@@ -232,12 +236,14 @@ namespace DaggerfallWorkshop
                 maxTerrainHeight = MaxTerrainHeight,
             };
 
-            JobHandle generateSamplesHandle = generateSamplesJob.Schedule(hDim * hDim, 16);     // Batch = 1 breaks it since shm not copied... test again later
-            generateSamplesHandle.Complete();
+            JobHandle generateSamplesHandle = generateSamplesJob.Schedule(hDim * hDim, 64);     // Batch = 1 breaks it since shm not copied... test again later
+            return generateSamplesHandle;
+        }
 
+        public override void Dispose()
+        {
             shm.Dispose();
             lhm.Dispose();
         }
-
     }
 }

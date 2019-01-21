@@ -115,14 +115,14 @@ namespace DaggerfallWorkshop
             MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.Persistent);
 
             // Generate heightmap samples. (returns when complete)
-            dfUnity.TerrainSampler.GenerateSamplesJobs(ref MapData);
+            JobHandle generateHeightmapSamplesJobHandle = dfUnity.TerrainSampler.ScheduleGenerateSamplesJob(ref MapData);
 
             // Handle location if one is present on terrain.
-            JobHandle blendLocationTerrainJobHandle = new JobHandle();
+            JobHandle blendLocationTerrainJobHandle;
             if (MapData.hasLocation)
             {
                 // Schedule job to calc average & max heights.
-                JobHandle calcAvgMaxHeightJobHandle = ScheduleCalcAvgMaxHeightJob();
+                JobHandle calcAvgMaxHeightJobHandle = ScheduleCalcAvgMaxHeightJob(generateHeightmapSamplesJobHandle);
                 JobHandle.ScheduleBatchedJobs();
 
                 // Set location tiles.
@@ -131,9 +131,11 @@ namespace DaggerfallWorkshop
                 // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
                 blendLocationTerrainJobHandle = ScheduleBlendLocationTerrainJob(calcAvgMaxHeightJobHandle);
             }
+            else
+                blendLocationTerrainJobHandle = generateHeightmapSamplesJobHandle;
 
             // Assign tiles for terrain texturing.
-            JobHandle assignTilesJobHandle = (terrainTexturing == null) ? new JobHandle() :
+            JobHandle assignTilesJobHandle = (terrainTexturing == null) ? blendLocationTerrainJobHandle :
                 terrainTexturing.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
 
             // Update tile map for shader.
@@ -174,7 +176,8 @@ namespace DaggerfallWorkshop
             MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
 
             // Dispose native array memory allocations now data has been extracted.
-            //MapData.heightmapData.Dispose();
+            dfUnity.TerrainSampler.Dispose();
+            //MapData.heightmapData.Dispose();  // Done later after nature layout
             //MapData.tilemapData.Dispose();
             MapData.avgMaxHeight.Dispose();
             if (terrainTexturing != null)
@@ -192,14 +195,14 @@ namespace DaggerfallWorkshop
 
         #region Terrain Job Schedulers
 
-        JobHandle ScheduleCalcAvgMaxHeightJob()
+        JobHandle ScheduleCalcAvgMaxHeightJob(JobHandle dependencies)
         {
             CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
             {
                 heightmapData = MapData.heightmapData,
                 avgMaxHeight = MapData.avgMaxHeight,
             };
-            return calcAvgMaxHeightJob.Schedule();
+            return calcAvgMaxHeightJob.Schedule(dependencies);
         }
 
         JobHandle ScheduleBlendLocationTerrainJob(JobHandle dependencies)
@@ -222,7 +225,7 @@ namespace DaggerfallWorkshop
                 tileMap = MapData.tileMap,
                 tDim = tilemapDim,
             };
-            return updateTileMapDataJob.Schedule(tilemapDim * tilemapDim, 1, dependencies);
+            return updateTileMapDataJob.Schedule(tilemapDim * tilemapDim, 64, dependencies);
         }
 
         #endregion

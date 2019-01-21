@@ -1205,12 +1205,12 @@ namespace DaggerfallWorkshop
             }
 
             JobHandle updateTerrainDataHandle = dfTerrain.BeginMapPixelDataUpdate(init, terrainTexturingJobs);
-            Debug.LogFormat("Terrain update jobs scheduled for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
+            //Debug.LogFormat("Terrain update jobs scheduled for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
             if (!init)
                 yield return new WaitUntil(() => updateTerrainDataHandle.IsCompleted);
 
             updateTerrainDataHandle.Complete();
-            Debug.LogFormat("Terrain update jobs complete for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
+            //Debug.LogFormat("Terrain update jobs complete for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
 
             dfTerrain.CompleteMapPixelDataUpdate(init, terrainTexturingJobs);
         }

@@ -70,10 +70,5 @@ namespace DaggerfallWorkshop
             mapPixel.averageHeight = averageHeight /= (float)(HeightmapDimension * HeightmapDimension);
             mapPixel.maxHeight = maxHeight;
         }
-
-        public override void GenerateSamplesJobs(ref MapPixelData mapPixel)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
