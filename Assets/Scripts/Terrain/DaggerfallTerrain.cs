@@ -146,49 +146,43 @@ namespace DaggerfallWorkshop
 
         public void CompleteMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
         {
-            // Create tileMap array or resize if needed and copy native array
-            if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
-                TileMap = new Color32[MapData.tileMap.Length];
-            MapData.tileMap.CopyTo(TileMap);
-
-            // Convert back to standard managed 2d arrays
+            // Convert heightmap data back to standard managed 2d array.
             MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
             for (int i = 0; i < MapData.heightmapData.Length; i++)
                 MapData.heightmapSamples[JobA.Row(i, heightmapDim), JobA.Col(i, heightmapDim)] = MapData.heightmapData[i];
 
-            // TODO: currently still needed for nature layout... will remove!
-            /*
-            MapData.tilemapSamples = new TilemapSample[tilemapDim, tilemapDim];
+            // Convert tilemap data back to standard managed 2d array.
+            // (Still needed for nature layout so it can be called again without requiring terrain data generation)
+            MapData.tilemapSamples2 = new byte[tilemapDim, tilemapDim];
             for (int i = 0; i < MapData.tilemapData.Length; i++)
             {
                 byte tile = MapData.tilemapData[i];
                 if (tile == byte.MaxValue)
                     tile = 0;
-                MapData.tilemapSamples[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = new TilemapSample()
-                {
-                    record = tile & 0x3f,
-                    rotate = (tile & rotBit) != 0,
-                    flip = (tile & flipBit) != 0,
-                };
-            }*/
-            // TODO: Are these needed? Seem to not be used anywhere
+                MapData.tilemapSamples2[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = tile;
+            }
+
+            // Create tileMap array or resize if needed and copy native array.
+            if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
+                TileMap = new Color32[MapData.tileMap.Length];
+            MapData.tileMap.CopyTo(TileMap);
+
+            // Copy max and avg heights. (TODO: Are these needed? Seem to not be used anywhere)
             MapData.averageHeight = MapData.avgMaxHeight[avgHeightIdx];
             MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
 
             // Dispose native array memory allocations now data has been extracted.
             dfUnity.TerrainSampler.Dispose();
-            //MapData.heightmapData.Dispose();  // Done later after nature layout
-            //MapData.tilemapData.Dispose();
-            if (MapData.avgMaxHeight.IsCreated)
-                MapData.avgMaxHeight.Dispose();
             if (terrainTexturing != null)
                 terrainTexturing.Dispose();
+            if (MapData.heightmapData.IsCreated)
+               MapData.heightmapData.Dispose();
+            if (MapData.tilemapData.IsCreated)
+                MapData.tilemapData.Dispose();
+            if (MapData.avgMaxHeight.IsCreated)
+                MapData.avgMaxHeight.Dispose();
             if (MapData.tileMap.IsCreated)
                 MapData.tileMap.Dispose();
-
-            // Promote data to live terrain
-            UpdateClimateMaterial(init);
-            PromoteTerrainData();
         }
 
         #region Terrain Job Schedulers

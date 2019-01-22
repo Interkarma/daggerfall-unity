@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop
         DFPosition mapOrigin;
         double worldX, worldZ;
         TerrainTexturing terrainTexturing = new TerrainTexturing();
-        TerrainTexturingJobs terrainTexturingJobs = new TerrainTexturingJobs();
+        readonly TerrainTexturingJobs terrainTexturingJobs = new TerrainTexturingJobs();
         bool isReady = false;
 
         Vector3 autoRepositionOffset = Vector3.zero;
@@ -163,10 +163,6 @@ namespace DaggerfallWorkshop
         public TerrainTexturing TerrainTexturing
         {
             get { return terrainTexturing; }
-        }
-        public TerrainTexturingJobs TerrainTexturingJobs
-        {
-            get { return terrainTexturingJobs; }
         }
 
         /// <summary>
@@ -1184,11 +1180,11 @@ namespace DaggerfallWorkshop
             {
                 dfTerrain.UpdateMapPixelData(terrainTexturing);
                 dfTerrain.UpdateTileMapData();
-
-                // Promote data to live terrain
-                dfTerrain.UpdateClimateMaterial(init);
-                dfTerrain.PromoteTerrainData();
             }
+
+            // Promote data to live terrain
+            dfTerrain.UpdateClimateMaterial(init);
+            dfTerrain.PromoteTerrainData();
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
@@ -1218,6 +1214,10 @@ namespace DaggerfallWorkshop
 
             dfTerrain.CompleteMapPixelDataUpdate(terrainTexturingJobs, init);
 
+            // Promote data to live terrain
+            dfTerrain.UpdateClimateMaterial(init);
+            dfTerrain.PromoteTerrainData();
+
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
             terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
@@ -1239,9 +1239,9 @@ namespace DaggerfallWorkshop
                 dfBillboardBatch.SetMaterial(natureArchive);
                 if (UseJobsSystem)
                     if (UseOrigNature)
-                        TerrainHelper.LayoutNatureBillboards1(dfTerrain, dfBillboardBatch, TerrainScale);
+                        TerrainHelper.LayoutNatureBillboards2(dfTerrain, dfBillboardBatch, TerrainScale);
                     else
-                        TerrainHelper.LayoutNatureBillboardsJobs(dfTerrain, dfBillboardBatch, TerrainScale);
+                        TerrainHelper.LayoutNatureBillboards3(dfTerrain, dfBillboardBatch, TerrainScale);
                 else
                     TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
             }
