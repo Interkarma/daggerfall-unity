@@ -308,7 +308,7 @@ namespace DaggerfallWorkshop
                             strength = TerrainHelper.BilinearInterpolator(0, 0, 0, 1, xs, ys);
                         }
 
-                        int idx = JobA.Idx(x, y, hDim);
+                        int idx = JobA.Idx(y, x, hDim);
                         float height = heightmapData[idx];
 
                         if (insideX && insideY)
