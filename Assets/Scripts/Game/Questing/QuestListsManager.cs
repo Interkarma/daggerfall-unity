@@ -87,10 +87,8 @@ namespace DaggerfallWorkshop.Game.Questing
         public void QuestMachine_OnQuestStarted(Quest quest)
         {
             // Record that this quest was accepted so it doesn't get offered again.
-            if (quest.OneTime)
+            if (quest.OneTime && oneTimeQuestsAccepted != null)
             {
-                if (oneTimeQuestsAccepted == null)
-                     oneTimeQuestsAccepted = new List<string>();
                 oneTimeQuestsAccepted.Add(quest.QuestName);
             }
         }
@@ -303,6 +301,11 @@ namespace DaggerfallWorkshop.Game.Questing
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
 #endif
+
+            // Create one-time quest list if not already created
+            if (oneTimeQuestsAccepted == null)
+                oneTimeQuestsAccepted = new List<string>();
+
             List<QuestData> guildQuests;
             if (guilds.TryGetValue(guildGroup, out guildQuests))
             {
