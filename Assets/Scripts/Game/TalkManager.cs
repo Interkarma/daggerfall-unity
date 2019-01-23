@@ -93,129 +93,20 @@ namespace DaggerfallWorkshop.Game
 
         const string textDatabase = "ConversationText";
 
-        // dislike answer set (doesn't tell)
-        const int dislikePlayerAnswerWhereIsDefault = 7256;
-        const int dislikePlayerAnswerWhereIsGuildMembers = 7255;
-        const int dislikePlayerAnswerWhereIsMerchants = 7256;
-        const int dislikePlayerAnswerWhereIsNobility = 7258;
-        const int dislikePlayerAnswerWhereIsScholars = 7257;
-        const int dislikePlayerAnswerWhereIsUnderworld = 7259;
-        // neutral answer set
-        const int neutralToPlayerAnswerWhereIsDefault = 7271;
-        const int neutralToPlayerAnswerWhereIsGuildMembers = 7270;
-        const int neutralToPlayerAnswerWhereIsMerchants = 7271;
-        const int neutralToPlayerAnswerWhereIsScholars = 7272;
-        const int neutralToPlayerAnswerWhereIsNobility = 7273;
-        const int neutralToPlayerAnswerWhereIsUnderworld = 7274;
-        // like answer set
-        const int likePlayerAnswerWhereIsDefault = 7291;
-        const int likePlayerAnswerWhereIsGuildMembers = 7290;
-        const int likePlayerAnswerWhereIsMerchants = 7291;
-        const int likePlayerAnswerWhereIsScholars = 7292;
-        const int likePlayerAnswerWhereIsNobility = 7293;
-        const int likePlayerAnswerWhereIsUnderworld = 7294;
-        // very like answer set
-        const int veryLikePlayerAnswerWhereIsDefault = 7286;
-        const int veryLikePlayerAnswerWhereIsGuildMembers = 7285;
-        const int veryLikePlayerAnswerWhereIsMerchants = 7286;
-        const int veryLikePlayerAnswerWhereIsScholars = 7287;
-        const int veryLikePlayerAnswerWhereIsNobility = 7288;
-        const int veryLikePlayerAnswerWhereIsUnderworld = 7289;
-
-        // dislike does not know set
-        const int dislikePlayerDoesNotKnowWhereIsDefault = 7251;
-        const int dislikePlayerDoesNotKnowWhereIsGuildMembers = 7250;
-        const int dislikePlayerDoesNotKnowWhereIsMerchants = 7251;
-        const int dislikePlayerDoesNotKnowWhereIsNobility = 7252;
-        const int dislikePlayerDoesNotKnowWhereIsScholars = 7253;
-        const int dislikePlayerDoesNotKnowWhereIsUnderworld = 7304; // no matching underworld set (7254 is empty), used 7304 since it seems to fit (note: not in list of uesp)
-        // neutral does not know set
-        const int neutralToPlayerDoesNotKnowWhereIsDefault = 7266;
-        const int neutralToPlayerDoesNotKnowWhereIsGuildMembers = 7265;
-        const int neutralToPlayerDoesNotKnowWhereIsMerchants = 7266;
-        const int neutralToPlayerDoesNotKnowWhereIsScholars = 7267;
-        const int neutralToPlayerDoesNotKnowWhereIsNobility = 7268;
-        const int neutralToPlayerDoesNotKnowWhereIsUnderworld = 7269;
-        // like does not know set
-        const int likePlayerDoesNotKnowWhereIsDefault = 7281;
-        const int likePlayerDoesNotKnowWhereIsGuildMembers = 7280;
-        const int likePlayerDoesNotKnowWhereIsMerchants = 7281;
-        const int likePlayerDoesNotKnowWhereIsScholars = 7282;
-        const int likePlayerDoesNotKnowWhereIsNobility = 7283;
-        const int likePlayerDoesNotKnowWhereIsUnderworld = 7284;
-        // very like does not know set
-        const int veryLikePlayerDoesNotKnowWhereIsDefault = 7281;
-        const int veryLikePlayerDoesNotKnowWhereIsGuildMembers = 7280;
-        const int veryLikePlayerDoesNotKnowWhereIsMerchants = 7281;
-        const int veryLikePlayerDoesNotKnowWhereIsScholars = 7282;
-        const int veryLikePlayerDoesNotKnowWhereIsNobility = 7283;
-        const int veryLikePlayerDoesNotKnowWhereIsUnderworld = 7284;
-
-        // dislike answer set (doesn't tell)
-        const int dislikePlayerAnswerTellMeAboutDefault = 7261;
-        const int dislikePlayerAnswerTellMeAboutGuildMembers = 7260;
-        const int dislikePlayerAnswerTellMeAboutMerchants = 7261;
-        const int dislikePlayerAnswerTellMeAboutNobility = 7262;
-        const int dislikePlayerAnswerTellMeAboutScholars = 7263;
-        const int dislikePlayerAnswerTellMeAboutUnderworld = 7264;
-        // neutral answer set
-        const int neutralToPlayerAnswerTellMeAboutDefault = 7276;
-        const int neutralToPlayerAnswerTellMeAboutGuildMembers = 7275;
-        const int neutralToPlayerAnswerTellMeAboutMerchants = 7276;
-        const int neutralToPlayerAnswerTellMeAboutScholars = 7277;
-        const int neutralToPlayerAnswerTellMeAboutNobility = 7278;
-        const int neutralToPlayerAnswerTellMeAboutUnderworld = 7279;
-        // like answer set
-        const int likePlayerAnswerTellMeAboutDefault = 7291;
-        const int likePlayerAnswerTellMeAboutGuildMembers = 7290;
-        const int likePlayerAnswerTellMeAboutMerchants = 7291;
-        const int likePlayerAnswerTellMeAboutScholars = 7292;
-        const int likePlayerAnswerTellMeAboutNobility = 7293;
-        const int likePlayerAnswerTellMeAboutUnderworld = 7294;
-        // very like answer set
-        const int veryLikePlayerAnswerTellMeAboutDefault = 7286;
-        const int veryLikePlayerAnswerTellMeAboutGuildMembers = 7285;
-        const int veryLikePlayerAnswerTellMeAboutMerchants = 7286;
-        const int veryLikePlayerAnswerTellMeAboutScholars = 7287;
-        const int veryLikePlayerAnswerTellMeAboutNobility = 7288;
-        const int veryLikePlayerAnswerTellMeAboutUnderworld = 7289;
-
-        // dislike does not know set
-        const int dislikePlayerDoesNotKnowTellMeAboutDefault = 7251;
-        const int dislikePlayerDoesNotKnowTellMeAboutGuildMembers = 7250;
-        const int dislikePlayerDoesNotKnowTellMeAboutMerchants = 7251;
-        const int dislikePlayerDoesNotKnowTellMeAboutNobility = 7252;
-        const int dislikePlayerDoesNotKnowTellMeAboutScholars = 7253;
-        const int dislikePlayerDoesNotKnowTellMeAboutUnderworld = 7304; // no matching underworld set (7254 is empty), used 7304 since it seems to fit (note: not in list of uesp)
-        // neutral does not know set
-        const int neutralToPlayerDoesNotKnowTellMeAboutDefault = 7266;
-        const int neutralToPlayerDoesNotKnowTellMeAboutGuildMembers = 7265;
-        const int neutralToPlayerDoesNotKnowTellMeAboutMerchants = 7266;
-        const int neutralToPlayerDoesNotKnowTellMeAboutScholars = 7267;
-        const int neutralToPlayerDoesNotKnowTellMeAboutNobility = 7268;
-        const int neutralToPlayerDoesNotKnowTellMeAboutUnderworld = 7269;
-        // like does not know set
-        const int likePlayerDoesNotKnowTellMeAboutDefault = 7281;
-        const int likePlayerDoesNotKnowTellMeAboutGuildMembers = 7280;
-        const int likePlayerDoesNotKnowTellMeAboutMerchants = 7281;
-        const int likePlayerDoesNotKnowTellMeAboutScholars = 7282;
-        const int likePlayerDoesNotKnowTellMeAboutNobility = 7283;
-        const int likePlayerDoesNotKnowTellMeAboutUnderworld = 7284;
-        // very like does not know set
-        const int veryLikePlayerDoesNotKnowTellMeAboutDefault = 7281;
-        const int veryLikePlayerDoesNotKnowTellMeAboutGuildMembers = 7280;
-        const int veryLikePlayerDoesNotKnowTellMeAboutMerchants = 7281;
-        const int veryLikePlayerDoesNotKnowTellMeAboutScholars = 7282;
-        const int veryLikePlayerDoesNotKnowTellMeAboutNobility = 7283;
-        const int veryLikePlayerDoesNotKnowTellMeAboutUnderworld = 7284;
-
         const int minNeutralReaction = 0;
         const int minLikeReaction = 10;
         const int minVeryLikeReaction = 30;
-        // Lower reaction thresholds for info requests
-        const int minInfoNeutralReaction = minNeutralReaction - 5;
-        const int minInfoLikeReaction = minLikeReaction - 5;
-        const int minInfoVeryLikeReaction = minVeryLikeReaction - 5;
+
+        readonly short[] questionTypeReactionMods = { 10, -5,  0, 0, 0, -10, -5, -5 };
+
+        // From FALL.EXE. In classic the answers for sgroup 0 (commoners) and sgroup 1 (merchants) are reversed, and classic flips reference to these sgroups
+        // during dialogue to compensate, but it's cleaner to just fix the data. It is fixed to the correct order here.
+        // For Underworld social group "dislike player + don't know answer" combination, classic points to 7254 but this is empty. Using 7304 instead, which
+        // seems to be where those responses actually are.
+        readonly ushort[] answersToDirections =     { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7304, 7269, 7284,
+                                                      7256, 7271, 7286, 7255, 7270, 7285, 7257, 7272, 7287, 7258, 7273, 7288, 7259, 7274, 7289};
+        readonly ushort[] answersToNonDirections =  { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7304, 7269, 7284,
+                                                      7261, 7276, 7291, 7260, 7275, 7290, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
 
         public static List<FactionFile.FactionIDs> factionsUsedForFactionInNews = new List<FactionFile.FactionIDs>()
         {
@@ -361,7 +252,9 @@ namespace DaggerfallWorkshop.Game
         KeySubjectType currentKeySubjectType = KeySubjectType.Unset; 
         int currentKeySubjectBuildingKey = -1; // building key of building if key subject is building, also used when person's location is determined if person is in a building
         int reactionToPlayer = 0;
-
+        int reactionToPlayer_0_1_2 = 0;
+        int[] toneReactionForTalkSession = { 0, 0, 0 };
+        int lastToneIndex = -1;
 
         //The lists that contain the topics to select
         List<ListItem> listTopicTellMeAbout;
@@ -637,10 +530,9 @@ namespace DaggerfallWorkshop.Game
             ResetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
         }
 
-        public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup, MonoBehaviour target)
+        public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
         {
             int reactionToPlayer = 0;
-            const int reactionRollMax = 15;
 
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
@@ -663,13 +555,91 @@ namespace DaggerfallWorkshop.Game
             reactionToPlayer = NPCfaction.rep;
             reactionToPlayer += player.BiographyReactionMod;
 
-            DFRandom.Seed = (uint)target.GetHashCode(); // Roll result should be the same every time for a given NPC
-            reactionToPlayer += DFRandom.random_range_inclusive(0, reactionRollMax);
-
             if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // one of the five general social groups
                 reactionToPlayer += player.SGroupReputations[(int)socialGroup];
 
             return (reactionToPlayer);
+        }
+
+        int GetReactionToPlayer_0_1_2(QuestionType qt)
+        {
+            int toneModifier = 0;
+            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(currentTalkTone);
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            short skillValue = 0;
+
+            if (toneIndex == 0)
+            {
+                skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Etiquette);
+                if (toneReactionForTalkSession[0] == 0)
+                    player.TallySkill(DFCareer.Skills.Etiquette, 1);
+            }
+            else if (toneIndex == 2)
+            {
+                skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Streetwise);
+                if (toneReactionForTalkSession[2] == 0)
+                    player.TallySkill(DFCareer.Skills.Streetwise, 1);
+            }
+
+            // Make roll result be the same every time for a given NPC.
+            if (currentNPCType == NPCType.Mobile)
+                DFRandom.Seed = (uint)lastTargetMobileNPC.GetHashCode();
+            else if (currentNPCType == NPCType.Static)
+                DFRandom.Seed = (uint)lastTargetStaticNPC.GetHashCode();
+
+            if (toneIndex != 1)
+                toneModifier = DFRandom.random_range_inclusive(1, 100) >= skillValue ? -5 : 10;
+
+            // Convert question type to index to classic data
+            int classicDataIndex = 2; // Using as default, as this gives no bonus or penalty.
+
+            switch (qt)
+            {
+                case QuestionType.LocalBuilding:
+                case QuestionType.Regional:
+                    classicDataIndex = 0; // == Where is Location
+                    break;
+                case QuestionType.Person:
+                    classicDataIndex = 1; // == Where is Person
+                    break;
+                case QuestionType.Thing: // Not used
+                    classicDataIndex = 2; // == Where is Thing
+                    break;
+                case QuestionType.Work:
+                    classicDataIndex = 3; // == Where is Work
+                    break;
+                case QuestionType.QuestLocation:
+                case QuestionType.OrganizationInfo:
+                    classicDataIndex = 4; // == Tell me about Location (Also sticking OrganizationInfo here. In classic I think "OrganizationInfo" might just
+                                          // take whichever of location, person, item or work buttons you've last clicked on for the reaction roll.)
+                    break;
+                case QuestionType.QuestPerson:
+                    classicDataIndex = 5; // == Tell me about Person
+                    break;
+                case QuestionType.QuestItem:
+                    classicDataIndex = 6; // == Tell me about Thing
+                    break;
+                // 7 == Tell me about Work (not used)
+            }
+
+            int reaction = player.Stats.LivePersonality / 5
+               + questionTypeReactionMods[classicDataIndex]
+               + toneModifier;
+
+            int rollToBeat = DFRandom.random_range_inclusive(0, 20);
+            if (toneReactionForTalkSession[toneIndex] != 0)
+                reaction = toneReactionForTalkSession[toneIndex];
+            else
+                toneReactionForTalkSession[toneIndex] = reaction;
+
+            // Store that we've done the reaction check for this tone this talk session
+            lastToneIndex = toneIndex;
+
+            if (reaction < rollToBeat)
+                return 0;
+            if (reaction < rollToBeat + 30)
+                return 1;
+            return 2;
         }
 
         // Player has clicked on a mobile talk target
@@ -678,7 +648,7 @@ namespace DaggerfallWorkshop.Game
             currentNPCType = NPCType.Mobile;
 
             // Get reaction to player
-            int reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners, targetNPC); // All mobile NPCs are commoners
+            int reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners); // All mobile NPCs are commoners
 
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
@@ -709,7 +679,7 @@ namespace DaggerfallWorkshop.Game
             currentNPCType = NPCType.Static;
 
             // Get reaction to player
-            int reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup, targetNPC);
+            int reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup);
 
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, reactionToPlayer, ref sameTalkTargetAsBefore);
@@ -795,6 +765,16 @@ namespace DaggerfallWorkshop.Game
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC;
             npcData.isSpyMaster = false;
+
+            // Social group assignment. Matched to classic.
+            if (factionData.sgroup >= 5)
+            {
+                npcData.socialGroup = FactionFile.SocialGroups.Merchants;
+            }
+            else
+            {
+                npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+            }
 
             this.reactionToPlayer = reactionToPlayer;
 
@@ -1447,18 +1427,10 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
             {
-                // messages if npc does not know
-                if (reactionToPlayer >= minInfoVeryLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowWhereIsDefault, veryLikePlayerDoesNotKnowWhereIsGuildMembers, veryLikePlayerDoesNotKnowWhereIsMerchants, veryLikePlayerDoesNotKnowWhereIsScholars, veryLikePlayerDoesNotKnowWhereIsNobility, veryLikePlayerDoesNotKnowWhereIsUnderworld);
-                else if (reactionToPlayer >= minInfoLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowWhereIsDefault, likePlayerDoesNotKnowWhereIsGuildMembers, likePlayerDoesNotKnowWhereIsMerchants, likePlayerDoesNotKnowWhereIsScholars, likePlayerDoesNotKnowWhereIsNobility, likePlayerDoesNotKnowWhereIsUnderworld);
-                else if (reactionToPlayer >= minInfoNeutralReaction)
-                    return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowWhereIsDefault, neutralToPlayerDoesNotKnowWhereIsGuildMembers, neutralToPlayerDoesNotKnowWhereIsMerchants, neutralToPlayerDoesNotKnowWhereIsScholars, neutralToPlayerDoesNotKnowWhereIsNobility, neutralToPlayerDoesNotKnowWhereIsUnderworld);
-                else
-                    return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowWhereIsDefault, dislikePlayerDoesNotKnowWhereIsGuildMembers, dislikePlayerDoesNotKnowWhereIsMerchants, dislikePlayerDoesNotKnowWhereIsScholars, dislikePlayerDoesNotKnowWhereIsNobility, dislikePlayerDoesNotKnowWhereIsUnderworld);
+                // Messages if NPC doesn't know answer to give directions
+                return ExpandRandomTextRecord(answersToDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
             }
             else
             {
@@ -1485,16 +1457,8 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-
-                // location related messages if npc knows
-                if (reactionToPlayer >= minInfoVeryLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerWhereIsDefault, veryLikePlayerAnswerWhereIsGuildMembers, veryLikePlayerAnswerWhereIsMerchants, veryLikePlayerAnswerWhereIsScholars, veryLikePlayerAnswerWhereIsNobility, veryLikePlayerAnswerWhereIsUnderworld);
-                else if (reactionToPlayer >= minInfoLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(likePlayerAnswerWhereIsDefault, likePlayerAnswerWhereIsGuildMembers, likePlayerAnswerWhereIsMerchants, likePlayerAnswerWhereIsScholars, likePlayerAnswerWhereIsNobility, likePlayerAnswerWhereIsUnderworld);
-                else if (reactionToPlayer >= minInfoNeutralReaction)
-                    return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerWhereIsDefault, neutralToPlayerAnswerWhereIsGuildMembers, neutralToPlayerAnswerWhereIsMerchants, neutralToPlayerAnswerWhereIsScholars, neutralToPlayerAnswerWhereIsNobility, neutralToPlayerAnswerWhereIsUnderworld);
-                else
-                    return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerWhereIsDefault, dislikePlayerAnswerWhereIsGuildMembers, dislikePlayerAnswerWhereIsMerchants, dislikePlayerAnswerWhereIsScholars, dislikePlayerAnswerWhereIsNobility, dislikePlayerAnswerWhereIsUnderworld);
+                // Messages if NPC does know answer to give directions
+                return ExpandRandomTextRecord(answersToDirections[15 + 3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
             }
         }
 
@@ -1622,6 +1586,9 @@ namespace DaggerfallWorkshop.Game
 
         public string GetAnswerText(TalkManager.ListItem listItem)
         {
+            if (lastToneIndex != DaggerfallTalkWindow.TalkToneToIndex(currentTalkTone))
+                reactionToPlayer_0_1_2 = GetReactionToPlayer_0_1_2(listItem.questionType);
+
             string answer = "";
             currentQuestionListItem = listItem;
             switch (listItem.questionType)
@@ -1658,15 +1625,20 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.Work:
                     if (!WorkAvailable)
                     {
-                        answer = ExpandRandomTextRecord(8078); // TODO: find when 8075 should be used
+                        answer = ExpandRandomTextRecord(8078);
                         break;
                     }
-                    else
+                    if (reactionToPlayer_0_1_2 == 0)
                     {
-                        SetRandomQuestor(); // Pick a random Work questor from the pool
-                        answer = ExpandRandomTextRecord(8076); // TODO: find when 8077 should be used
+                        answer = ExpandRandomTextRecord(8075);
                         break;
                     }
+                    if (reactionToPlayer_0_1_2 == 1)
+                        answer = ExpandRandomTextRecord(8076);
+                    else if (reactionToPlayer_0_1_2 == 2)
+                        answer = ExpandRandomTextRecord(8077);
+                    SetRandomQuestor(); // Pick a random Work questor from the pool
+                    break;
             }
 
             numQuestionsAsked++;
@@ -1688,29 +1660,15 @@ namespace DaggerfallWorkshop.Game
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
             {
-                // messages if npc does not know
-                if (reactionToPlayer >= minInfoVeryLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(veryLikePlayerDoesNotKnowTellMeAboutDefault, veryLikePlayerDoesNotKnowTellMeAboutGuildMembers, veryLikePlayerDoesNotKnowTellMeAboutMerchants, veryLikePlayerDoesNotKnowTellMeAboutScholars, veryLikePlayerDoesNotKnowTellMeAboutNobility, veryLikePlayerDoesNotKnowTellMeAboutUnderworld);
-                else if (reactionToPlayer >= minInfoLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(likePlayerDoesNotKnowTellMeAboutDefault, likePlayerDoesNotKnowTellMeAboutGuildMembers, likePlayerDoesNotKnowTellMeAboutMerchants, likePlayerDoesNotKnowTellMeAboutScholars, likePlayerDoesNotKnowTellMeAboutNobility, likePlayerDoesNotKnowTellMeAboutUnderworld);
-                else if (reactionToPlayer >= minInfoNeutralReaction)
-                    return getRecordIdByNpcsSocialGroup(neutralToPlayerDoesNotKnowTellMeAboutDefault, neutralToPlayerDoesNotKnowTellMeAboutGuildMembers, neutralToPlayerDoesNotKnowTellMeAboutMerchants, neutralToPlayerDoesNotKnowTellMeAboutScholars, neutralToPlayerDoesNotKnowTellMeAboutNobility, neutralToPlayerDoesNotKnowTellMeAboutUnderworld);
-                else
-                    return getRecordIdByNpcsSocialGroup(dislikePlayerDoesNotKnowTellMeAboutDefault, dislikePlayerDoesNotKnowTellMeAboutGuildMembers, dislikePlayerDoesNotKnowTellMeAboutMerchants, dislikePlayerDoesNotKnowTellMeAboutScholars, dislikePlayerDoesNotKnowTellMeAboutNobility, dislikePlayerDoesNotKnowTellMeAboutUnderworld);
+                // Messages if NPC doesn't know answer to non-directions question
+                return ExpandRandomTextRecord(answersToNonDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
             }
             else
             {
                 npcData.numAnswersGivenTellMeAboutOrRumors++;
 
-                // location related messages if npc knows
-                if (reactionToPlayer >= minInfoVeryLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(veryLikePlayerAnswerTellMeAboutDefault, veryLikePlayerAnswerTellMeAboutGuildMembers, veryLikePlayerAnswerTellMeAboutMerchants, veryLikePlayerAnswerTellMeAboutScholars, veryLikePlayerAnswerTellMeAboutNobility, veryLikePlayerAnswerTellMeAboutUnderworld);
-                else if (reactionToPlayer >= minInfoLikeReaction)
-                    return getRecordIdByNpcsSocialGroup(likePlayerAnswerTellMeAboutDefault, likePlayerAnswerTellMeAboutGuildMembers, likePlayerAnswerTellMeAboutMerchants, likePlayerAnswerTellMeAboutScholars, likePlayerAnswerTellMeAboutNobility, likePlayerAnswerTellMeAboutUnderworld);
-                else if (reactionToPlayer >= minInfoNeutralReaction)
-                    return getRecordIdByNpcsSocialGroup(neutralToPlayerAnswerTellMeAboutDefault, neutralToPlayerAnswerTellMeAboutGuildMembers, neutralToPlayerAnswerTellMeAboutMerchants, neutralToPlayerAnswerTellMeAboutScholars, neutralToPlayerAnswerTellMeAboutNobility, neutralToPlayerAnswerTellMeAboutUnderworld);
-                else
-                    return getRecordIdByNpcsSocialGroup(dislikePlayerAnswerTellMeAboutDefault, dislikePlayerAnswerTellMeAboutGuildMembers, dislikePlayerAnswerTellMeAboutMerchants, dislikePlayerAnswerTellMeAboutScholars, dislikePlayerAnswerTellMeAboutNobility, dislikePlayerAnswerTellMeAboutUnderworld);
+                // Messages if NPC does know answer to non-directions question
+                return ExpandRandomTextRecord(answersToNonDirections[15 + 3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
             }
         }
 
@@ -2240,6 +2198,12 @@ namespace DaggerfallWorkshop.Game
                 // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
                 if (!sameTalkTargetAsBefore)
                     ResetNPCKnowledge();
+
+                // Reset last checked tone index for NPC reaction and tone results
+                lastToneIndex = -1;
+                toneReactionForTalkSession[0] = 0;
+                toneReactionForTalkSession[1] = 0;
+                toneReactionForTalkSession[2] = 0;
             }
             else
             {
@@ -3087,33 +3051,6 @@ namespace DaggerfallWorkshop.Game
 
             return (tokens[0].text);
         }
-
-        private string getRecordIdByNpcsSocialGroup(int textRecordIdDefault, int textRecordIdGuildMembers, int textRecordIdMerchants, int textRecordIdScholars, int textRecordIdNobility, int textRecordIdUnderworld)
-        {
-            switch (npcData.socialGroup)
-            {
-                case FactionFile.SocialGroups.None:
-                case FactionFile.SocialGroups.Commoners:
-                case FactionFile.SocialGroups.SGroup10:
-                case FactionFile.SocialGroups.SGroup5:
-                case FactionFile.SocialGroups.SGroup8:
-                case FactionFile.SocialGroups.SGroup9:
-                case FactionFile.SocialGroups.SupernaturalBeings:
-                default:
-                    return ExpandRandomTextRecord(textRecordIdDefault);
-                case FactionFile.SocialGroups.GuildMembers:
-                    return ExpandRandomTextRecord(textRecordIdGuildMembers);
-                case FactionFile.SocialGroups.Merchants:
-                    return ExpandRandomTextRecord(textRecordIdMerchants);
-                case FactionFile.SocialGroups.Nobility:
-                    return ExpandRandomTextRecord(textRecordIdNobility);
-                case FactionFile.SocialGroups.Scholars:
-                    return ExpandRandomTextRecord(textRecordIdScholars);
-                case FactionFile.SocialGroups.Underworld:
-                    return ExpandRandomTextRecord(textRecordIdUnderworld); // todo: this needs to be tested with a npc of social group underworld in vanilla df
-            }
-        }
-
 
         #endregion
 
