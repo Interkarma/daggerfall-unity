@@ -114,6 +114,9 @@ namespace DaggerfallWorkshop
             // Create data array for average & max heights.
             MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.Persistent);
 
+            // Create list for recording native arrays that need disposal after jobs complete.
+            MapData.nativeArrayList = new System.Collections.ArrayList();
+
             // Generate heightmap samples. (returns when complete)
             JobHandle generateHeightmapSamplesJobHandle = dfUnity.TerrainSampler.ScheduleGenerateSamplesJob(ref MapData);
 
@@ -146,6 +149,11 @@ namespace DaggerfallWorkshop
 
         public void CompleteMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
         {
+            // Dispose any temp working native array memory.
+            foreach (IDisposable nativeArray in MapData.nativeArrayList)
+                nativeArray.Dispose();
+            MapData.nativeArrayList = null;
+
             // Convert heightmap data back to standard managed 2d array.
             MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
             for (int i = 0; i < MapData.heightmapData.Length; i++)
@@ -172,11 +180,8 @@ namespace DaggerfallWorkshop
             MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
 
             // Dispose native array memory allocations now data has been extracted.
-            dfUnity.TerrainSampler.Dispose();
-            if (terrainTexturing != null)
-                terrainTexturing.Dispose();
             if (MapData.heightmapData.IsCreated)
-               MapData.heightmapData.Dispose();
+                MapData.heightmapData.Dispose();
             if (MapData.tilemapData.IsCreated)
                 MapData.tilemapData.Dispose();
             if (MapData.avgMaxHeight.IsCreated)

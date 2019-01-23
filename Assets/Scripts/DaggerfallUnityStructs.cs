@@ -10,15 +10,16 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Items;
-using Unity.Collections;
 
 namespace DaggerfallWorkshop
 {
@@ -390,6 +391,9 @@ namespace DaggerfallWorkshop
 
         [HideInInspector, NonSerialized]
         public NativeArray<float> avgMaxHeight;     // Average and max height of terrain for location placement
+
+        [HideInInspector, NonSerialized]
+        public ArrayList nativeArrayList;           // List of temp working native array for disposal when jobs complete
     }
 
     /// <summary>

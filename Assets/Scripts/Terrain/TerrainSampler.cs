@@ -17,7 +17,7 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Interface to TerrainSampler.
     /// </summary>
-    public interface ITerrainSampler : IDisposable
+    public interface ITerrainSampler
     {
         /// <summary>
         /// Version of terrain sampler implementation.
@@ -115,10 +115,6 @@ namespace DaggerfallWorkshop
                 }
             }
             return new JobHandle();
-        }
-
-        public virtual void Dispose()
-        {
         }
     }
 }

@@ -164,6 +164,10 @@ namespace DaggerfallWorkshop
         {
             get { return terrainTexturing; }
         }
+        public TerrainTexturingJobs TerrainTexturingJobs
+        {
+            get { return terrainTexturingJobs; }
+        }
 
         /// <summary>
         /// Gets current DaggerfallLocation (if any) for player's current map pixel.

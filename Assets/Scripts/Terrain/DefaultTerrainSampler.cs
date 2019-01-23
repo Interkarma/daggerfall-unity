@@ -31,10 +31,6 @@ namespace DaggerfallWorkshop
         // Max terrain height of this sampler implementation
         const float maxTerrainHeight = 1539f;
 
-        // References to small & large heightmap source data.
-        NativeArray<byte> shm;
-        NativeArray<byte> lhm;
-
         public override int Version
         {
             get { return 1; }
@@ -210,15 +206,19 @@ namespace DaggerfallWorkshop
             int mx = mapPixel.mapPixelX;
             int my = mapPixel.mapPixelY;
             byte sDim = 4;
-            shm = new NativeArray<byte>(dfUnity.ContentReader.WoodsFileReader.GetHeightMapValuesRangeJobs(mx - 2, my - 2, sDim), Allocator.TempJob);
+            NativeArray<byte> shm = new NativeArray<byte>(dfUnity.ContentReader.WoodsFileReader.GetHeightMapValuesRangeJobs(mx - 2, my - 2, sDim), Allocator.TempJob);
             // TODO - shortcut conversion & flattening.
             byte[,] lhm2 = dfUnity.ContentReader.WoodsFileReader.GetLargeHeightMapValuesRange(mx - 1, my, 3);
-            lhm = new NativeArray<byte>(lhm2.Length, Allocator.TempJob);
+            NativeArray<byte> lhm = new NativeArray<byte>(lhm2.Length, Allocator.TempJob);
             byte lDim = (byte)lhm2.GetLength(0);
             int i = 0;
             for (int y = 0; y < lDim; y++)
                 for (int x = 0; x < lDim; x++)
                     lhm[i++] = lhm2[x, y];
+
+            // Add both working native arrays to list.
+            mapPixel.nativeArrayList.Add(shm);
+            mapPixel.nativeArrayList.Add(lhm);
 
             // Extract height samples for all chunks
             int hDim = HeightmapDimension;
@@ -238,14 +238,6 @@ namespace DaggerfallWorkshop
 
             JobHandle generateSamplesHandle = generateSamplesJob.Schedule(hDim * hDim, 64);     // Batch = 1 breaks it since shm not copied... test again later
             return generateSamplesHandle;
-        }
-
-        public override void Dispose()
-        {
-            if (shm.IsCreated)
-                shm.Dispose();
-            if (lhm.IsCreated)
-                lhm.Dispose();
         }
     }
 }

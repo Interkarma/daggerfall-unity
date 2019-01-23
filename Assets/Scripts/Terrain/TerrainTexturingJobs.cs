@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop
     /// Generates texture tiles for terrains and uses marching squares for tile transitions.
     /// These features are very much in early stages of development.
     /// </summary>
-    public class TerrainTexturingJobs : IDisposable
+    public class TerrainTexturingJobs
     {
         // Use same seed to ensure continuous tiles
         const int seed = 417028;
@@ -37,26 +37,16 @@ namespace DaggerfallWorkshop
 
         byte[] lookupTable;
 
-        NativeArray<byte> lookupData;
-        NativeArray<byte> tileData;
-
         public TerrainTexturingJobs()
         {
             CreateLookupTable();
         }
 
-        public void Dispose()
-        {
-            if (lookupData.IsCreated)
-                lookupData.Dispose();
-            if (tileData.IsCreated)
-                tileData.Dispose();
-        }
-
         public JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
         {
             // Cache tile data to minimise noise sampling during march.
-            tileData = new NativeArray<byte>(tileDataDim * tileDataDim, Allocator.Persistent);
+            NativeArray<byte> tileData = new NativeArray<byte>(tileDataDim * tileDataDim, Allocator.TempJob);
+            mapData.nativeArrayList.Add(tileData);
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
                 heightmapData = mapData.heightmapData,
@@ -72,7 +62,8 @@ namespace DaggerfallWorkshop
             JobHandle tileDataHandle = tileDataJob.Schedule(tileDataDim * tileDataDim, 64, dependencies);
 
             // Assign tile data to terrain
-            lookupData = new NativeArray<byte>(lookupTable, Allocator.Persistent);
+            NativeArray<byte> lookupData = new NativeArray<byte>(lookupTable, Allocator.TempJob);
+            mapData.nativeArrayList.Add(lookupData);
             AssignTilesJob assignTilesJob = new AssignTilesJob
             {
                 lookupTable = lookupData,
@@ -159,7 +150,7 @@ namespace DaggerfallWorkshop
                 // Beach texture
                 // Adds a little +/- randomness to threshold so beach line isn't too regular
                 // + UnityEngine.Random.Range(-1.5f, 1.5f))  NOTE: I think it looks better without this, letting heights give the variation in beach line.
-                if (height <= beachElevation)// + (JobRand.Next(-1500, 1500) / 1000f))
+                if (height <= beachElevation + (JobRand.Next(-15000, 15000) / 10000f))
                 {
                     tileData[index] = dirt;
                     return;
