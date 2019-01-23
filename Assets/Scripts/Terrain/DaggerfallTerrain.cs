@@ -84,6 +84,11 @@ namespace DaggerfallWorkshop
             set { heightMapPixelError = value; }
         }
 
+        // Dispose any native memory if class is destroyed.
+        ~DaggerfallTerrain()
+        {
+            DisposeNativeMemory();
+        }
 
         void Awake()
         {
@@ -149,11 +154,6 @@ namespace DaggerfallWorkshop
 
         public void CompleteMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
         {
-            // Dispose any temp working native array memory.
-            foreach (IDisposable nativeArray in MapData.nativeArrayList)
-                nativeArray.Dispose();
-            MapData.nativeArrayList = null;
-
             // Convert heightmap data back to standard managed 2d array.
             MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
             for (int i = 0; i < MapData.heightmapData.Length; i++)
@@ -178,6 +178,16 @@ namespace DaggerfallWorkshop
             // Copy max and avg heights. (TODO: Are these needed? Seem to not be used anywhere)
             MapData.averageHeight = MapData.avgMaxHeight[avgHeightIdx];
             MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
+
+            DisposeNativeMemory();
+        }
+
+        private void DisposeNativeMemory()
+        {
+            // Dispose any temp working native array memory.
+            foreach (IDisposable nativeArray in MapData.nativeArrayList)
+                nativeArray.Dispose();
+            MapData.nativeArrayList = null;
 
             // Dispose native array memory allocations now data has been extracted.
             if (MapData.heightmapData.IsCreated)
