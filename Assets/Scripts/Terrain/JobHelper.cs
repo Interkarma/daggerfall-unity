@@ -9,6 +9,8 @@
 // Notes:
 //
 
+using System;
+
 namespace DaggerfallWorkshop
 {
     public static class JobA
@@ -28,4 +30,43 @@ namespace DaggerfallWorkshop
             return index / dim;
         }
     }
+
+    public class JobRand
+    {
+        private static readonly Random Global = new Random();
+        [ThreadStatic]
+        private static Random threadRandom;
+
+        public static int Next()
+        {
+            Random localRand = GetLocalRandom();
+            return localRand.Next();
+        }
+
+        public static int Next(int max)
+        {
+            Random localRand = GetLocalRandom();
+            return localRand.Next(max);
+        }
+
+        public static int Next(int min, int max)
+        {
+            Random localRand = GetLocalRandom();
+            return localRand.Next(min, max);
+        }
+
+        private static Random GetLocalRandom()
+        {
+            var localRand = threadRandom;
+            if (localRand == null)
+            {
+                int seed;
+                lock (Global) seed = Global.Next();
+                localRand = new Random(seed);
+                threadRandom = localRand;
+            }
+            return localRand;
+        }
+    }
+
 }
