@@ -384,10 +384,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             if (summary.ImportedTextures.HasImportedTextures = hasImportedTextures)
             {
-                // Set texture on material
+                // Set textures on material; emission is always overriden, with actual texture or null.
                 meshRenderer.material.SetTexture(Uniforms.MainTex, albedo);
-                if (isEmissive)
-                    meshRenderer.material.SetTexture(Uniforms.EmissionMap, emission);
+                meshRenderer.material.SetTexture(Uniforms.EmissionMap, emission);
+                if (!isEmissive)
+                    meshRenderer.material.DisableKeyword(KeyWords.Emission);
 
                 // Import animation frames
                 var albedoTextures = new List<Texture2D>();
