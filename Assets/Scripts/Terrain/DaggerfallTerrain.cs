@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using Unity.Collections;
 using Unity.Jobs;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop
 {
@@ -179,7 +180,10 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Schedules terrain data update using jobs system.
+        /// Update map pixel data based on current coordinates. (first of a two stage process)
+        /// 
+        /// 1) BeginMapPixelDataUpdate - Schedules terrain data update using jobs system.
+        /// 2) CompleteMapPixelDataUpdate - Completes terrain data update using jobs system.
         /// </summary>
         /// <param name="terrainTexturing">Instance of TerrainTexturing class to use.</param>
         /// <returns>JobHandle of the scheduled jobs</returns>
@@ -201,7 +205,7 @@ namespace DaggerfallWorkshop
             MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
 
             // Create list for recording native arrays that need disposal after jobs complete.
-            MapData.nativeArrayList = new System.Collections.ArrayList();
+            MapData.nativeArrayList = new List<IDisposable>();
 
             // Generate heightmap samples. (returns when complete)
             JobHandle generateHeightmapSamplesJobHandle = dfUnity.TerrainSampler.ScheduleGenerateSamplesJob(ref MapData);
@@ -234,7 +238,7 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Complete terrain data update using jobs system.
+        /// Complete terrain data update using jobs system. (second of a two stage process)
         /// </summary>
         /// <param name="terrainTexturing">Instance of TerrainTexturing class to use.</param>
         public void CompleteMapPixelDataUpdate(TerrainTexturing terrainTexturing = null)

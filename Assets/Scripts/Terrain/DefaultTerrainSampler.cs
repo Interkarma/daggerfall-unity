@@ -131,8 +131,9 @@ namespace DaggerfallWorkshop
             int mx = mapPixel.mapPixelX;
             int my = mapPixel.mapPixelY;
             byte sDim = 4;
-            NativeArray<byte> shm = new NativeArray<byte>(dfUnity.ContentReader.WoodsFileReader.GetHeightMapValuesRangeJobs(mx - 2, my - 2, sDim), Allocator.TempJob);
-            // TODO - shortcut conversion & flattening.
+            NativeArray<byte> shm = new NativeArray<byte>(dfUnity.ContentReader.WoodsFileReader.GetHeightMapValuesRange1Dim(mx - 2, my - 2, sDim), Allocator.TempJob);
+
+            // Convert & flatten large height samples 2d array into 1d native array.
             byte[,] lhm2 = dfUnity.ContentReader.WoodsFileReader.GetLargeHeightMapValuesRange(mx - 1, my, 3);
             NativeArray<byte> lhm = new NativeArray<byte>(lhm2.Length, Allocator.TempJob);
             byte lDim = (byte)lhm2.GetLength(0);

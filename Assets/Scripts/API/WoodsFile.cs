@@ -258,8 +258,8 @@ namespace DaggerfallConnect.Arena2
         /// <param name="mapPixelX">X position in heightmap. 0 to MapWidth-1.</param>
         /// <param name="mapPixelY">Y position in heightmap. 0 to MapHeight-1.</param>
         /// <param name="dim">Dimension of heightmap samples to read.</param>
-        /// <returns>Byte array dim,dim in size.</returns>
-        public Byte[] GetHeightMapValuesRangeJobs(int mapPixelX, int mapPixelY, int dim)
+        /// <returns>Byte 1D array dim * dim in size.</returns>
+        public Byte[] GetHeightMapValuesRange1Dim(int mapPixelX, int mapPixelY, int dim)
         {
             Byte[] dstData = new Byte[dim * dim];
             for (int y = 0; y < dim; y++)
