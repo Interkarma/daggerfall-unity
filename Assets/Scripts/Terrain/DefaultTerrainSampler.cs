@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop
                 for (int x = 0; x < lDim; x++)
                     lhm[i++] = lhm2[x, y];
 
-            // Add both working native arrays to list.
+            // Add both working native arrays to disposal list.
             mapPixel.nativeArrayList.Add(shm);
             mapPixel.nativeArrayList.Add(lhm);
 

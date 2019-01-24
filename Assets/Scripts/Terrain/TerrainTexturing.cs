@@ -46,7 +46,6 @@ namespace DaggerfallWorkshop
         {
             // Cache tile data to minimise noise sampling during march.
             NativeArray<byte> tileData = new NativeArray<byte>(tileDataDim * tileDataDim, Allocator.TempJob);
-            mapData.nativeArrayList.Add(tileData);
             GenerateTileDataJob tileDataJob = new GenerateTileDataJob
             {
                 heightmapData = mapData.heightmapData,
@@ -63,7 +62,6 @@ namespace DaggerfallWorkshop
 
             // Assign tile data to terrain
             NativeArray<byte> lookupData = new NativeArray<byte>(lookupTable, Allocator.TempJob);
-            mapData.nativeArrayList.Add(lookupData);
             AssignTilesJob assignTilesJob = new AssignTilesJob
             {
                 lookupTable = lookupData,
@@ -75,6 +73,10 @@ namespace DaggerfallWorkshop
                 locationRect = mapData.locationRect,
             };
             JobHandle assignTilesHandle = assignTilesJob.Schedule(assignTilesDim * assignTilesDim, 64, tileDataHandle);
+
+            // Add both working native arrays to disposal list.
+            mapData.nativeArrayList.Add(tileData);
+            mapData.nativeArrayList.Add(lookupData);
 
             return assignTilesHandle;
         }
