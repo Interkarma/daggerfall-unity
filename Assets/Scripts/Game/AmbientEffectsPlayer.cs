@@ -134,7 +134,7 @@ namespace DaggerfallWorkshop.Game
                         Vector3 waterSoundPosition = playerBehaviour.transform.position;
                         waterSoundPosition.y = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
                         waterSoundPosition.x += Random.Range(-3, 3);
-                        waterSoundPosition.y += Random.Range(-3, 3);
+                        waterSoundPosition.z += Random.Range(-3, 3);
                         SpatializedPlayOneShot(SoundClips.WaterGentle, waterSoundPosition, 3f);
                     }
 
