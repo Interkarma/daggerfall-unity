@@ -10,7 +10,7 @@
 //
 
 #define SHOW_LAYOUT_TIMES
-//#define SHOW_LAYOUT_TIMES_NAT
+//#define SHOW_LAYOUT_TIMES_NATURE
 
 using UnityEngine;
 using System;
@@ -585,7 +585,7 @@ namespace DaggerfallWorkshop
                 return;
 
 #if SHOW_LAYOUT_TIMES
-                System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 #endif
 
             CollectLooseObjects(true);
@@ -1206,7 +1206,7 @@ namespace DaggerfallWorkshop
         // Update terrain nature
         public void UpdateTerrainNature(TerrainDesc terrainDesc)
         {
-#if SHOW_LAYOUT_TIMES_NAT
+#if SHOW_LAYOUT_TIMES_NATURE
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 #endif
             // Setup billboards
@@ -1222,7 +1222,7 @@ namespace DaggerfallWorkshop
 
             // Only set active again once complete
             terrainDesc.billboardBatchObject.SetActive(true);
-#if SHOW_LAYOUT_TIMES_NAT
+#if SHOW_LAYOUT_TIMES_NATURE
             stopwatch.Stop();
             DaggerfallUnity.LogMessage(string.Format("Time to update terrain natures for ({1},{2}): {0}ms", stopwatch.ElapsedMilliseconds, terrainDesc.mapPixelX, terrainDesc.mapPixelY), true);
 #endif

@@ -79,6 +79,57 @@ namespace DaggerfallWorkshop
             return assignTilesHandle;
         }
 
+        #region Marching Squares - WIP
+
+        // Very basic marching squares for water > dirt > grass > stone transitions.
+        // Cannot handle water > grass or water > stone, etc.
+        // Will improve this at later date to use a wider range of transitions.
+        struct AssignTilesJob : IJobParallelFor
+        {
+            [ReadOnly]
+            public NativeArray<byte> tileData;
+            [ReadOnly]
+            public NativeArray<byte> lookupTable;
+
+            public NativeArray<byte> tilemapData;
+
+            public int tdDim;
+            public int tDim;
+            public bool march;
+            public Rect locationRect;
+
+            public void Execute(int index)
+            {
+                int x = JobA.Row(index, tDim);
+                int y = JobA.Col(index, tDim);
+
+                // Do nothing if in location rect as texture already set, to 0xFF if zero
+                if (tilemapData[index] != 0)
+                    return;
+
+                // Assign tile texture
+                if (march)
+                {
+                    // Get sample points
+                    int tdIdx = JobA.Idx(x, y, tdDim);
+                    int b0 = tileData[tdIdx];               // tileData[x, y]
+                    int b1 = tileData[tdIdx + 1];           // tileData[x + 1, y]
+                    int b2 = tileData[tdIdx + tdDim];       // tileData[x, y + 1]
+                    int b3 = tileData[tdIdx + tdDim + 1];   // tileData[x + 1, y + 1]
+
+                    int shape = (b0 & 1) | (b1 & 1) << 1 | (b2 & 1) << 2 | (b3 & 1) << 3;
+                    int ring = (b0 + b1 + b2 + b3) >> 2;
+                    int tileID = shape | ring << 4;
+
+                    tilemapData[index] = lookupTable[tileID];
+                }
+                else
+                {
+                    tilemapData[index] = tileData[JobA.Idx(x, y, tdDim)];
+                }
+            }
+        }
+
         struct GenerateTileDataJob : IJobParallelFor
         {
             [ReadOnly]
@@ -164,57 +215,6 @@ namespace DaggerfallWorkshop
                 weight += NoiseWeight(latitude, longitude);
                 // TODO: Add other weights to influence texture tile generation
                 tileData[index] = GetWeightedRecord(weight);
-            }
-        }
-
-        #region Marching Squares - WIP
-
-        // Very basic marching squares for water > dirt > grass > stone transitions.
-        // Cannot handle water > grass or water > stone, etc.
-        // Will improve this at later date to use a wider range of transitions.
-        struct AssignTilesJob : IJobParallelFor
-        {
-            [ReadOnly]
-            public NativeArray<byte> tileData;
-            [ReadOnly]
-            public NativeArray<byte> lookupTable;
-
-            public NativeArray<byte> tilemapData;
-
-            public int tdDim;
-            public int tDim;
-            public bool march;
-            public Rect locationRect;
-
-            public void Execute(int index)
-            {
-                int x = JobA.Row(index, tDim);
-                int y = JobA.Col(index, tDim);
-
-                // Do nothing if in location rect as texture already set, to 0xFF if zero
-                if (tilemapData[index] != 0)
-                    return;
-
-                // Assign tile texture
-                if (march)
-                {
-                    // Get sample points
-                    int tdIdx = JobA.Idx(x, y, tdDim);
-                    int b0 = tileData[tdIdx];               // tileData[x, y]
-                    int b1 = tileData[tdIdx + 1];           // tileData[x + 1, y]
-                    int b2 = tileData[tdIdx + tdDim];       // tileData[x, y + 1]
-                    int b3 = tileData[tdIdx + tdDim + 1];   // tileData[x + 1, y + 1]
-
-                    int shape = (b0 & 1) | (b1 & 1) << 1 | (b2 & 1) << 2 | (b3 & 1) << 3;
-                    int ring = (b0 + b1 + b2 + b3) >> 2;
-                    int tileID = shape | ring << 4;
-
-                    tilemapData[index] = lookupTable[tileID];
-                }
-                else
-                {
-                    tilemapData[index] = tileData[JobA.Idx(x, y, tdDim)];
-                }
             }
         }
 
