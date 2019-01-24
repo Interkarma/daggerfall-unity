@@ -202,7 +202,7 @@ namespace DaggerfallWorkshop
                 }
                 // Beach texture
                 // Adds a little +/- randomness to threshold so beach line isn't too regular
-                if (height <= beachElevation + (JobRand.Next(-15000, 15000) / 10000f))
+                if (height <= beachElevation + (JobRand.Next(-15000000, 15000000) / 10000000f))
                 {
                     tileData[index] = dirt;
                     return;
