@@ -370,18 +370,22 @@ namespace DaggerfallWorkshop
         public float averageHeight;                 // Average height of terrain for location placement
         public float maxHeight;                     // Max height of terrain for location placement
         public Rect locationRect;                   // Rect of location tiles in sample are
-        
+
+        // TODO: remove, only present for mountains & hills mod backwards compatability since it creates and array and assigns it here. Need UV to appear again since code is unavailiable!
         [HideInInspector, NonSerialized]
-        public byte[,] tilemapSamples;              // Tilemap samples for terrain
+        public TilemapSample[,] tilemapSamples;      
+
+        [HideInInspector, NonSerialized]
+        public byte[,] tilemapSamples2;              // Tilemap samples for terrain
 
         [HideInInspector, NonSerialized]
         public float[,] heightmapSamples;           // Heightmap samples for terrain - indexed [y,x] for Terrain.SetHeights
 
         [HideInInspector, NonSerialized]
-        public NativeArray<float> heightmapData;    // Heightmap data samples for terrain data (unmanaged memory)
+        public NativeArray<float> heightmapData;    // Heightmap data for terrain jobs (unmanaged memory)
 
         [HideInInspector, NonSerialized]
-        public NativeArray<byte> tilemapData;       // Tilemap data samples for terrain data (unmanaged memory)
+        public NativeArray<byte> tilemapData;       // Tilemap data for terrain jobs (unmanaged memory)
 
         [HideInInspector, NonSerialized]
         public NativeArray<Color32> tileMap;        // Tilemap color data for shader (unmanaged memory)
@@ -468,6 +472,7 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Describes a single tilemap sample.
     /// </summary>
+    // TODO: remove, only present for mountains & hills mod backwards compatability
     public struct TilemapSample
     {
         public int record;                          // Record index into texture atlas

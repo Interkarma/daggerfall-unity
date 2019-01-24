@@ -540,7 +540,7 @@ namespace DaggerfallWorkshop
                         continue;
 
                     // Chance also determined by tile type
-                    int tile = dfTerrain.MapData.tilemapSamples[x, y] & 0x3F;
+                    int tile = dfTerrain.MapData.tilemapSamples2[x, y] & 0x3F;
                     if (tile == 1)
                     {   // Dirt
                         if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt)

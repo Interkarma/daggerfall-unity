@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop
 
         public override void GenerateSamples(ref MapPixelData mapPixel)
         {
+            mapPixel.heightmapSamples = new float[HeightmapDimension, HeightmapDimension];
         }
     }
 }

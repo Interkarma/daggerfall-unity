@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop
 
         public override void GenerateSamples(ref MapPixelData mapPixel)
         {
+            mapPixel.heightmapSamples = new float[HeightmapDimension, HeightmapDimension];
+
             // Populate heightmap
             float averageHeight = 0;
             float maxHeight = float.MinValue;
