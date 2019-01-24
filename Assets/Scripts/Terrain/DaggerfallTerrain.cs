@@ -246,13 +246,13 @@ namespace DaggerfallWorkshop
 
             // Convert tilemap data back to standard managed 2d array.
             // (Still needed for nature layout so it can be called again without requiring terrain data generation)
-            MapData.tilemapSamples2 = new byte[tilemapDim, tilemapDim];
+            MapData.tilemapSamples = new byte[tilemapDim, tilemapDim];
             for (int i = 0; i < MapData.tilemapData.Length; i++)
             {
                 byte tile = MapData.tilemapData[i];
                 if (tile == byte.MaxValue)
                     tile = 0;
-                MapData.tilemapSamples2[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = tile;
+                MapData.tilemapSamples[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = tile;
             }
 
             // Create tileMap array or resize if needed and copy native array.

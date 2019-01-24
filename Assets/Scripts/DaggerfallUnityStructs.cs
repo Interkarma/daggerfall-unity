@@ -371,12 +371,8 @@ namespace DaggerfallWorkshop
         public float maxHeight;                     // Max height of terrain for location placement
         public Rect locationRect;                   // Rect of location tiles in sample are
 
-        // TODO: remove, only present for mountains & hills mod backwards compatability since it creates and array and assigns it here. Need UV to appear again since code is unavailiable!
         [HideInInspector, NonSerialized]
-        public TilemapSample[,] tilemapSamples;      
-
-        [HideInInspector, NonSerialized]
-        public byte[,] tilemapSamples2;              // Tilemap samples for terrain
+        public byte[,] tilemapSamples;              // Tilemap samples for terrain
 
         [HideInInspector, NonSerialized]
         public float[,] heightmapSamples;           // Heightmap samples for terrain - indexed [y,x] for Terrain.SetHeights
@@ -467,19 +463,6 @@ namespace DaggerfallWorkshop
         public int dungeonZ;                        // Dungeon block Z position in location
         public int buildingKey;                     // Building key if a building site
         public ulong markerID;                      // Marker ID for dungeon markers
-    }
-
-    /// <summary>
-    /// Describes a single tilemap sample.
-    /// </summary>
-    // TODO: remove, only present for mountains & hills mod backwards compatability
-    public struct TilemapSample
-    {
-        public int record;                          // Record index into texture atlas
-        public bool flip;                           // Flip texture UVs
-        public bool rotate;                         // Rotate texture UVs
-        public bool location;                       // True if location tile present
-        public int nature;                          // Index of nature flat at this point (0 is nothing)
     }
 
     /// <summary>
