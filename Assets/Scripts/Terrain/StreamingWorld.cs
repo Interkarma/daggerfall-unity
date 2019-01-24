@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    LypyL
+// Contributors:    LypyL, Hazelnut
 // 
 // Notes:
 //
@@ -74,8 +74,6 @@ namespace DaggerfallWorkshop
         public GameObject streamingTarget = null;
         public bool suppressWorld = false;
         public bool ShowDebugString = false;
-        public bool UseJobsSystem = true;
-        public bool UseOrigNature = true;
 
         // List of terrain objects
         // Terrains all have the same format and will be endlessly recycled
@@ -95,8 +93,7 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         DFPosition mapOrigin;
         double worldX, worldZ;
-        TerrainTexturing terrainTexturing = new TerrainTexturing();
-        readonly TerrainTexturingJobs terrainTexturingJobs = new TerrainTexturingJobs();
+        readonly TerrainTexturing terrainTexturing = new TerrainTexturing();
         bool isReady = false;
 
         Vector3 autoRepositionOffset = Vector3.zero;
@@ -163,10 +160,6 @@ namespace DaggerfallWorkshop
         public TerrainTexturing TerrainTexturing
         {
             get { return terrainTexturing; }
-        }
-        public TerrainTexturingJobs TerrainTexturingJobs
-        {
-            get { return terrainTexturingJobs; }
         }
 
         /// <summary>
@@ -630,14 +623,11 @@ namespace DaggerfallWorkshop
                 {
                     if (terrainArray[i].updateData)
                     {
-                        if (!init && UseJobsSystem)
-                            // Decouple from FPS.
-                            yield return StartCoroutine(UpdateTerrainDataCoroutine(terrainArray[i]));
-                        else
+                        if (init)
                             UpdateTerrainData(terrainArray[i]);
+                        else
+                            yield return StartCoroutine(UpdateTerrainDataCoroutine(terrainArray[i]));
                         terrainArray[i].updateData = false;
-                        if (!init && !UseJobsSystem)
-                            yield return new WaitForEndOfFrame();
                     }
                     if (terrainArray[i].updateNature)
                     {
@@ -1160,7 +1150,7 @@ namespace DaggerfallWorkshop
             return locationObject;
         }
 
-        // Update terrain data
+        // Update terrain data.
         public void UpdateTerrainData(TerrainDesc terrainDesc)
         {
             // Instantiate Daggerfall terrain
@@ -1174,17 +1164,16 @@ namespace DaggerfallWorkshop
             }
 
             // Update data for terrain
-            if (UseJobsSystem)
-            {
-                JobHandle updateTileMapJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturingJobs, init);
-                updateTileMapJobHandle.Complete();
-                dfTerrain.CompleteMapPixelDataUpdate(terrainTexturingJobs, init);
-            }
-            else
-            {
-                dfTerrain.UpdateMapPixelData(terrainTexturing);
-                dfTerrain.UpdateTileMapData();
-            }
+            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturing);
+
+            CompleteUpdateTerrainDataJobs(terrainDesc, dfTerrain, updateTerrainDataJobHandle);
+        }
+
+        private void CompleteUpdateTerrainDataJobs(TerrainDesc terrainDesc, DaggerfallTerrain dfTerrain, JobHandle updateTerrainDataJobHandle)
+        {
+            // Ensure jobs have completed.
+            updateTerrainDataJobHandle.Complete();
+            dfTerrain.CompleteMapPixelDataUpdate(terrainTexturing);
 
             // Promote data to live terrain
             dfTerrain.UpdateClimateMaterial(init);
@@ -1195,8 +1184,8 @@ namespace DaggerfallWorkshop
             terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
         }
 
-        // Update terrain data using coroutine.
-        public IEnumerator UpdateTerrainDataCoroutine(TerrainDesc terrainDesc)
+        // Update terrain data using coroutine to decouple from main thread & FPS.
+        private IEnumerator UpdateTerrainDataCoroutine(TerrainDesc terrainDesc)
         {
             // Instantiate Daggerfall terrain
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
@@ -1208,23 +1197,10 @@ namespace DaggerfallWorkshop
                 dfTerrain.InstantiateTerrain();
             }
 
-            JobHandle updateTerrainDataHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturingJobs, init);
-            //Debug.LogFormat("Terrain update jobs scheduled for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
-            if (!init)
-                yield return new WaitUntil(() => updateTerrainDataHandle.IsCompleted);
+            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturing);
+            yield return new WaitUntil(() => updateTerrainDataJobHandle.IsCompleted);
 
-            updateTerrainDataHandle.Complete();
-            //Debug.LogFormat("Terrain update jobs complete for map pixel ({1},{2}): frame {0}", Time.frameCount, terrainDesc.mapPixelX, terrainDesc.mapPixelY);
-
-            dfTerrain.CompleteMapPixelDataUpdate(terrainTexturingJobs, init);
-
-            // Promote data to live terrain
-            dfTerrain.UpdateClimateMaterial(init);
-            dfTerrain.PromoteTerrainData();
-
-            // Only set active again once complete
-            terrainDesc.terrainObject.SetActive(true);
-            terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            CompleteUpdateTerrainDataJobs(terrainDesc, dfTerrain, updateTerrainDataJobHandle);
         }
 
         // Update terrain nature
@@ -1241,13 +1217,7 @@ namespace DaggerfallWorkshop
                 // Get current climate and nature archive
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
-                if (UseJobsSystem)
-                    if (UseOrigNature)
-                        TerrainHelper.LayoutNatureBillboards2(dfTerrain, dfBillboardBatch, TerrainScale);
-                    else
-                        TerrainHelper.LayoutNatureBillboards3(dfTerrain, dfBillboardBatch, TerrainScale);
-                else
-                    TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
+                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
             }
 
             // Only set active again once complete
@@ -1619,6 +1589,7 @@ namespace DaggerfallWorkshop
                 TerrainHelper.DilateCoastalClimate(dfUnity.ContentReader, 2);
 
                 // Smooth steep location on steep gradients
+                // TODO: What is this supposed to be doing? It doesn't seem to change any data that's used anywhere..
                 TerrainHelper.SmoothLocationNeighbourhood(dfUnity.ContentReader);
             }
 

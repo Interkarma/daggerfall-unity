@@ -1,9 +1,9 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Original Author: Hazelnut
 // Contributors:    
 // 
 // Notes:
@@ -13,6 +13,7 @@ using System;
 
 namespace DaggerfallWorkshop
 {
+    // Static helper class for IJobParallelFor jobs convering index to/from rows & columns.
     public static class JobA
     {
         public static int Idx(int r, int c, int dim)
@@ -31,6 +32,7 @@ namespace DaggerfallWorkshop
         }
     }
 
+    // Static helper class for jobs providing basic thread safe access to system random.
     public class JobRand
     {
         private static readonly Random Global = new Random();

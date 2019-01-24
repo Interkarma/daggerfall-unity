@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -16,7 +16,6 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using Unity.Collections;
 using Unity.Jobs;
-using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -32,11 +31,6 @@ namespace DaggerfallWorkshop
         // Settings are tuned for Daggerfall and fast procedural layout
         const int tilemapDim = MapsFile.WorldMapTileDim;
         const int resolutionPerPatch = 16;
-
-        const byte avgHeightIdx = 0;
-        const byte maxHeightIdx = 1;
-        const int rotBit = 0x40;
-        const int flipBit = 0x80;
 
         // This controls which map pixel the terrain will represent
         [Range(TerrainHelper.minMapPixelX, TerrainHelper.maxMapPixelX)]
@@ -101,277 +95,6 @@ namespace DaggerfallWorkshop
             ready = false;
         }
 
-        // Update data for terrain using jobs system.
-        public JobHandle BeginMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
-        {
-            // Get basic terrain data.
-            MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
-
-            // Create data array for heightmap.
-            MapData.heightmapData = new NativeArray<float>(heightmapDim * heightmapDim, Allocator.TempJob);
-
-            // Create data array for tilemap data.
-            MapData.tilemapData = new NativeArray<byte>(tilemapDim * tilemapDim, Allocator.TempJob);
-
-            // Create data array for shader tile map data.
-            MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.TempJob);
-
-            // Create data array for average & max heights.
-            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
-
-            // Create list for recording native arrays that need disposal after jobs complete.
-            MapData.nativeArrayList = new System.Collections.ArrayList();
-
-            // Generate heightmap samples. (returns when complete)
-            JobHandle generateHeightmapSamplesJobHandle = dfUnity.TerrainSampler.ScheduleGenerateSamplesJob(ref MapData);
-
-            // Handle location if one is present on terrain.
-            JobHandle blendLocationTerrainJobHandle;
-            if (MapData.hasLocation)
-            {
-                // Schedule job to calc average & max heights.
-                JobHandle calcAvgMaxHeightJobHandle = ScheduleCalcAvgMaxHeightJob(generateHeightmapSamplesJobHandle);
-                JobHandle.ScheduleBatchedJobs();
-
-                // Set location tiles.
-                TerrainHelper.SetLocationTilesJobs(ref MapData);
-
-                // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
-                blendLocationTerrainJobHandle = ScheduleBlendLocationTerrainJob(calcAvgMaxHeightJobHandle);
-            }
-            else
-                blendLocationTerrainJobHandle = generateHeightmapSamplesJobHandle;
-
-            // Assign tiles for terrain texturing.
-            JobHandle assignTilesJobHandle = (terrainTexturing == null) ? blendLocationTerrainJobHandle :
-                terrainTexturing.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
-
-            // Update tile map for shader.
-            JobHandle updateTileMapJobHandle = ScheduleUpdateTileMapDataJob(assignTilesJobHandle);
-            JobHandle.ScheduleBatchedJobs();
-            return updateTileMapJobHandle;
-        }
-
-        public void CompleteMapPixelDataUpdate(TerrainTexturingJobs terrainTexturing = null, bool init = false)
-        {
-            // Convert heightmap data back to standard managed 2d array.
-            MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
-            for (int i = 0; i < MapData.heightmapData.Length; i++)
-                MapData.heightmapSamples[JobA.Row(i, heightmapDim), JobA.Col(i, heightmapDim)] = MapData.heightmapData[i];
-
-            // Convert tilemap data back to standard managed 2d array.
-            // (Still needed for nature layout so it can be called again without requiring terrain data generation)
-            MapData.tilemapSamples2 = new byte[tilemapDim, tilemapDim];
-            for (int i = 0; i < MapData.tilemapData.Length; i++)
-            {
-                byte tile = MapData.tilemapData[i];
-                if (tile == byte.MaxValue)
-                    tile = 0;
-                MapData.tilemapSamples2[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = tile;
-            }
-
-            // Create tileMap array or resize if needed and copy native array.
-            if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
-                TileMap = new Color32[MapData.tileMap.Length];
-            MapData.tileMap.CopyTo(TileMap);
-
-            // Copy max and avg heights. (TODO: Are these needed? Seem to not be used anywhere)
-            MapData.averageHeight = MapData.avgMaxHeight[avgHeightIdx];
-            MapData.maxHeight = MapData.avgMaxHeight[maxHeightIdx];
-
-            DisposeNativeMemory();
-        }
-
-        private void DisposeNativeMemory()
-        {
-            // Dispose any temp working native array memory.
-            foreach (IDisposable nativeArray in MapData.nativeArrayList)
-                nativeArray.Dispose();
-            MapData.nativeArrayList = null;
-
-            // Dispose native array memory allocations now data has been extracted.
-            if (MapData.heightmapData.IsCreated)
-                MapData.heightmapData.Dispose();
-            if (MapData.tilemapData.IsCreated)
-                MapData.tilemapData.Dispose();
-            if (MapData.avgMaxHeight.IsCreated)
-                MapData.avgMaxHeight.Dispose();
-            if (MapData.tileMap.IsCreated)
-                MapData.tileMap.Dispose();
-        }
-
-        #region Terrain Job Schedulers
-
-        JobHandle ScheduleCalcAvgMaxHeightJob(JobHandle dependencies)
-        {
-            CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
-            {
-                heightmapData = MapData.heightmapData,
-                avgMaxHeight = MapData.avgMaxHeight,
-            };
-            return calcAvgMaxHeightJob.Schedule(dependencies);
-        }
-
-        JobHandle ScheduleBlendLocationTerrainJob(JobHandle dependencies)
-        {
-            BlendLocationTerrainJob blendLocationTerrainJob = new BlendLocationTerrainJob()
-            {
-                heightmapData = MapData.heightmapData,
-                avgMaxHeight = MapData.avgMaxHeight,
-                hDim = heightmapDim,
-                locationRect = MapData.locationRect,
-            };
-            return blendLocationTerrainJob.Schedule(dependencies);
-        }
-
-        JobHandle ScheduleUpdateTileMapDataJob(JobHandle dependencies)
-        {
-            UpdateTileMapDataJob updateTileMapDataJob = new UpdateTileMapDataJob()
-            {
-                tilemapData = MapData.tilemapData,
-                tileMap = MapData.tileMap,
-                tDim = tilemapDim,
-            };
-            return updateTileMapDataJob.Schedule(tilemapDim * tilemapDim, 64, dependencies);
-        }
-
-        #endregion
-        #region Terrain Jobs
-
-        struct CalcAvgMaxHeightJob : IJob
-        {
-            [ReadOnly]
-            public NativeArray<float> heightmapData;
-
-            public NativeArray<float> avgMaxHeight;
-
-            public void Execute()
-            {
-                for (int i = 0; i < heightmapData.Length; i++)
-                {
-                    float height = heightmapData[i];
-                    // Accumulate average height
-                    avgMaxHeight[avgHeightIdx] += height;
-                    // Update max height
-                    if (height > avgMaxHeight[maxHeightIdx])
-                        avgMaxHeight[maxHeightIdx] = height;
-                }
-                avgMaxHeight[avgHeightIdx] = avgMaxHeight[avgHeightIdx] / heightmapData.Length;
-            }
-        }
-
-        // Flattens location terrain and blends with surrounding terrain
-        struct BlendLocationTerrainJob : IJob
-        {
-            public NativeArray<float> heightmapData;
-            [ReadOnly]
-            public NativeArray<float> avgMaxHeight;
-
-            public int hDim;
-            public Rect locationRect;
-
-            public void Execute()
-            {
-                // Convert from rect in tilemap space to interior corners in 0-1 range
-                float xMin = locationRect.xMin / MapsFile.WorldMapTileDim;
-                float xMax = locationRect.xMax / MapsFile.WorldMapTileDim;
-                float yMin = locationRect.yMin / MapsFile.WorldMapTileDim;
-                float yMax = locationRect.yMax / MapsFile.WorldMapTileDim;
-
-                // Scale values for converting blend space into 0-1 range
-                float leftScale = 1 / xMin;
-                float rightScale = 1 / (1 - xMax);
-                float topScale = 1 / yMin;
-                float bottomScale = 1 / (1 - yMax);
-
-                // Flatten location area and blend with surrounding heights
-                float strength = 0;
-                float targetHeight = avgMaxHeight[avgHeightIdx];
-                for (int y = 0; y < hDim; y++)
-                {
-                    float v = (float)y / (float)(hDim - 1);
-                    bool insideY = (v >= yMin && v <= yMax);
-
-                    for (int x = 0; x < hDim; x++)
-                    {
-                        float u = (float)x / (float)(hDim - 1);
-                        bool insideX = (u >= xMin && u <= xMax);
-
-
-                        if (insideX || insideY)
-                        {
-                            if (insideY && u <= xMin)
-                                strength = u * leftScale;
-                            else if (insideY && u >= xMax)
-                                strength = (1 - u) * rightScale;
-                            else if (insideX && v <= yMin)
-                                strength = v * topScale;
-                            else if (insideX && v >= yMax)
-                                strength = (1 - v) * bottomScale;
-                        }
-                        else
-                        {
-                            float xs = 0, ys = 0;
-                            if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
-                            if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
-                            strength = TerrainHelper.BilinearInterpolator(0, 0, 0, 1, xs, ys);
-                        }
-
-                        int idx = JobA.Idx(y, x, hDim);
-                        float height = heightmapData[idx];
-
-                        if (insideX && insideY)
-                            height = targetHeight;
-                        else
-                            height = Mathf.Lerp(height, targetHeight, strength);
-
-                        heightmapData[idx] = height;
-                    }
-                }
-            }
-        }
-
-        struct UpdateTileMapDataJob : IJobParallelFor
-        {
-            [ReadOnly]
-            public NativeArray<byte> tilemapData;
-            [WriteOnly]
-            public NativeArray<Color32> tileMap;
-
-            public int tDim;
-
-            public void Execute(int index)
-            {
-                int x = JobA.Row(index, tDim);
-                int y = JobA.Col(index, tDim);
-
-                // Assign tile data to tilemap
-                Color32 tileColor = new Color32(0, 0, 0, 0);
-
-                // Get sample tile data
-                byte tile = tilemapData[JobA.Idx(x, y, tDim)];
-
-                // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
-                int record;
-                if (tile == byte.MaxValue)
-                {   // Zeros are converted to FF so assign tiles doesn't overwrite location tiles, convert back.
-                    record = 0;
-                }
-                else
-                {
-                    record = tile * 4;
-                    if ((tile & rotBit) != 0) record += 1;
-                    if ((tile & flipBit) != 0) record += 2;
-                }
-
-                // Assign to tileMap
-                tileColor.r = (byte)record;
-                tileMap[y * tilemapDim + x] = tileColor;
-            }
-        }
-
-        #endregion
-
         /// <summary>
         /// This must be called when first creating terrain or before updating terrain.
         /// Safe to call multiple times. Recreates expired volatile objects on subsequent calls.
@@ -405,6 +128,116 @@ namespace DaggerfallWorkshop
 
             // Raise event
             RaiseOnInstantiateTerrainEvent();
+        }
+
+        /// <summary>
+        /// Schedules terrain data update using jobs system.
+        /// </summary>
+        /// <param name="terrainTexturing">Instance of TerrainTexturing class to use.</param>
+        /// <returns>JobHandle of the scheduled jobs</returns>
+        public JobHandle BeginMapPixelDataUpdate(TerrainTexturing terrainTexturing = null)
+        {
+            // Get basic terrain data.
+            MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
+
+            // Create data array for heightmap.
+            MapData.heightmapData = new NativeArray<float>(heightmapDim * heightmapDim, Allocator.TempJob);
+
+            // Create data array for tilemap data.
+            MapData.tilemapData = new NativeArray<byte>(tilemapDim * tilemapDim, Allocator.TempJob);
+
+            // Create data array for shader tile map data.
+            MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.TempJob);
+
+            // Create data array for average & max heights.
+            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+
+            // Create list for recording native arrays that need disposal after jobs complete.
+            MapData.nativeArrayList = new System.Collections.ArrayList();
+
+            // Generate heightmap samples. (returns when complete)
+            JobHandle generateHeightmapSamplesJobHandle = dfUnity.TerrainSampler.ScheduleGenerateSamplesJob(ref MapData);
+
+            // Handle location if one is present on terrain.
+            JobHandle blendLocationTerrainJobHandle;
+            if (MapData.hasLocation)
+            {
+                // Schedule job to calc average & max heights.
+                JobHandle calcAvgMaxHeightJobHandle = TerrainHelper.ScheduleCalcAvgMaxHeightJob(ref MapData, generateHeightmapSamplesJobHandle);
+                JobHandle.ScheduleBatchedJobs();
+
+                // Set location tiles.
+                TerrainHelper.SetLocationTiles(ref MapData);
+
+                // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
+                blendLocationTerrainJobHandle = TerrainHelper.ScheduleBlendLocationTerrainJob(ref MapData, calcAvgMaxHeightJobHandle);
+            }
+            else
+                blendLocationTerrainJobHandle = generateHeightmapSamplesJobHandle;
+
+            // Assign tiles for terrain texturing.
+            JobHandle assignTilesJobHandle = (terrainTexturing == null) ? blendLocationTerrainJobHandle :
+                terrainTexturing.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
+
+            // Update tile map for shader.
+            JobHandle updateTileMapJobHandle = TerrainHelper.ScheduleUpdateTileMapDataJob(ref MapData, assignTilesJobHandle);
+            JobHandle.ScheduleBatchedJobs();
+            return updateTileMapJobHandle;
+        }
+
+        /// <summary>
+        /// Complete terrain data update using jobs system.
+        /// </summary>
+        /// <param name="terrainTexturing">Instance of TerrainTexturing class to use.</param>
+        public void CompleteMapPixelDataUpdate(TerrainTexturing terrainTexturing = null)
+        {
+            // Convert heightmap data back to standard managed 2d array.
+            MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
+            for (int i = 0; i < MapData.heightmapData.Length; i++)
+                MapData.heightmapSamples[JobA.Row(i, heightmapDim), JobA.Col(i, heightmapDim)] = MapData.heightmapData[i];
+
+            // Convert tilemap data back to standard managed 2d array.
+            // (Still needed for nature layout so it can be called again without requiring terrain data generation)
+            MapData.tilemapSamples = new byte[tilemapDim, tilemapDim];
+            for (int i = 0; i < MapData.tilemapData.Length; i++)
+            {
+                byte tile = MapData.tilemapData[i];
+                if (tile == byte.MaxValue)
+                    tile = 0;
+                MapData.tilemapSamples[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = tile;
+            }
+
+            // Create tileMap array or resize if needed and copy native array.
+            if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
+                TileMap = new Color32[MapData.tileMap.Length];
+            MapData.tileMap.CopyTo(TileMap);
+
+            // Copy max and avg heights. (TODO: Are these needed? Seem to not be used anywhere)
+            MapData.averageHeight = MapData.avgMaxHeight[TerrainHelper.avgHeightIdx];
+            MapData.maxHeight = MapData.avgMaxHeight[TerrainHelper.maxHeightIdx];
+
+            DisposeNativeMemory();
+        }
+
+        /// <summary>
+        /// Disposes the native arrays used in jobs system terrain data update.
+        /// </summary>
+        private void DisposeNativeMemory()
+        {
+            // Dispose any temp working native array memory.
+            foreach (IDisposable nativeArray in MapData.nativeArrayList)
+                nativeArray.Dispose();
+            MapData.nativeArrayList = null;
+
+            // Dispose native array memory allocations now data has been extracted.
+            if (MapData.heightmapData.IsCreated)
+                MapData.heightmapData.Dispose();
+            if (MapData.tilemapData.IsCreated)
+                MapData.tilemapData.Dispose();
+            if (MapData.avgMaxHeight.IsCreated)
+                MapData.avgMaxHeight.Dispose();
+            if (MapData.tileMap.IsCreated)
+                MapData.tileMap.Dispose();
         }
 
         /// <summary>
@@ -451,76 +284,6 @@ namespace DaggerfallWorkshop
                     terrainMaterial.SetTexture(TileUniforms.TileAtlasTex, tileSetMaterial.GetTexture(TileUniforms.TileAtlasTex));
                     terrainMaterial.SetTexture(TileUniforms.TilemapTex, tileMapTexture);
                     terrainMaterial.SetInt(TileUniforms.TilemapDim, tilemapDim);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates map pixel data based on current coordinates.
-        /// Must be called before other data update methods.
-        /// </summary>
-        public void UpdateMapPixelData(TerrainTexturing terrainTexturing = null)
-        {
-            if (!ReadyCheck())
-                return;
-
-            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-            // Get basic terrain data
-            MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
-            dfUnity.TerrainSampler.GenerateSamples(ref MapData);
-
-            // Handle terrain with location
-            if (MapData.hasLocation)
-            {
-                TerrainHelper.SetLocationTiles(ref MapData);
-                TerrainHelper.BlendLocationTerrain(ref MapData);
-            }
-
-            // Set textures
-            if (terrainTexturing != null)
-            {
-                terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
-            }
-
-            //stopwatch.Stop();
-            //DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", stopwatch.ElapsedMilliseconds), true);
-        }
-
-        /// <summary>
-        /// Update tile map based on current samples.
-        /// </summary>
-        public void UpdateTileMapData()
-        {
-            // Create tileMap array if not present
-            if (TileMap == null)
-                TileMap = new Color32[tilemapDim * tilemapDim];
-
-            // Also recreate if not sized appropriately
-            if (TileMap.Length != tilemapDim * tilemapDim)
-                TileMap = new Color32[tilemapDim * tilemapDim];
-
-            // Assign tile data to tilemap
-            Color32 tileColor = new Color32(0, 0, 0, 0);
-            for (int y = 0; y < tilemapDim; y++)
-            {
-                for (int x = 0; x < tilemapDim; x++)
-                {
-                    // Get sample tile data
-                    TilemapSample sample = MapData.tilemapSamples[x, y];
-
-                    // Calculate tile index
-                    byte record = (byte)(sample.record * 4);
-                    if (sample.rotate && !sample.flip)
-                        record += 1;
-                    if (!sample.rotate && sample.flip)
-                        record += 2;
-                    if (sample.rotate && sample.flip)
-                        record += 3;
-
-                    // Assign to tileMap
-                    tileColor.r = record;
-                    TileMap[y * tilemapDim + x] = tileColor;
                 }
             }
         }

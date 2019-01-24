@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -372,28 +372,25 @@ namespace DaggerfallWorkshop
         public Rect locationRect;                   // Rect of location tiles in sample are
         
         [HideInInspector, NonSerialized]
-        public TilemapSample[,] tilemapSamples;     // Tilemap samples for terrain
+        public byte[,] tilemapSamples;              // Tilemap samples for terrain
 
         [HideInInspector, NonSerialized]
         public float[,] heightmapSamples;           // Heightmap samples for terrain - indexed [y,x] for Terrain.SetHeights
 
         [HideInInspector, NonSerialized]
-        public byte[,] tilemapSamples2;             // Tilemap samples for terrain (temp for dual code paths)
+        public NativeArray<float> heightmapData;    // Heightmap data samples for terrain data (unmanaged memory)
 
         [HideInInspector, NonSerialized]
-        public NativeArray<float> heightmapData;    // Heightmap data samples for terrain
+        public NativeArray<byte> tilemapData;       // Tilemap data samples for terrain data (unmanaged memory)
 
         [HideInInspector, NonSerialized]
-        public NativeArray<byte> tilemapData;       // Tilemap data samples for terrain
+        public NativeArray<Color32> tileMap;        // Tilemap color data for shader (unmanaged memory)
 
         [HideInInspector, NonSerialized]
-        public NativeArray<Color32> tileMap;        // Tilemap color data for shader
+        public NativeArray<float> avgMaxHeight;     // Average and max height of terrain for location placement (unmanaged memory)
 
         [HideInInspector, NonSerialized]
-        public NativeArray<float> avgMaxHeight;     // Average and max height of terrain for location placement
-
-        [HideInInspector, NonSerialized]
-        public ArrayList nativeArrayList;           // List of temp working native array for disposal when jobs complete
+        public ArrayList nativeArrayList;           // List of temp working native arrays (unmanaged memory) for disposal when jobs complete
     }
 
     /// <summary>

@@ -42,10 +42,6 @@ namespace DaggerfallWorkshop
 
         public override void GenerateSamples(ref MapPixelData mapPixel)
         {
-            // Create samples arrays
-            mapPixel.tilemapSamples = new TilemapSample[MapsFile.WorldMapTileDim, MapsFile.WorldMapTileDim];
-            mapPixel.heightmapSamples = new float[HeightmapDimension, HeightmapDimension];
-
             // Populate heightmap
             float averageHeight = 0;
             float maxHeight = float.MinValue;
