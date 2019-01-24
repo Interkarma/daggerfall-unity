@@ -108,16 +108,16 @@ namespace DaggerfallWorkshop
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
 
             // Create data array for heightmap.
-            MapData.heightmapData = new NativeArray<float>(heightmapDim * heightmapDim, Allocator.Persistent);
+            MapData.heightmapData = new NativeArray<float>(heightmapDim * heightmapDim, Allocator.TempJob);
 
             // Create data array for tilemap data.
-            MapData.tilemapData = new NativeArray<byte>(tilemapDim * tilemapDim, Allocator.Persistent);
+            MapData.tilemapData = new NativeArray<byte>(tilemapDim * tilemapDim, Allocator.TempJob);
 
             // Create data array for shader tile map data.
-            MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.Persistent);
+            MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.TempJob);
 
             // Create data array for average & max heights.
-            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.Persistent);
+            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
 
             // Create list for recording native arrays that need disposal after jobs complete.
             MapData.nativeArrayList = new System.Collections.ArrayList();
