@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         AudioSource loopAudioSource;
         AudioSource ambientAudioSource;
+        private Coroutine relativePositionCoroutine = null;
 
         SoundClips[] ambientSounds;
         AudioClip rainLoop;
@@ -191,7 +192,9 @@ namespace DaggerfallWorkshop.Game
             AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
             ambientAudioSource.spatialBlend = 1f;
             ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
-            StartCoroutine(UpdateAmbientSoundRelativePosition(relativePosition));
+            if (relativePositionCoroutine != null)
+                StopCoroutine(relativePositionCoroutine);
+            relativePositionCoroutine = StartCoroutine(UpdateAmbientSoundRelativePosition(relativePosition));
         }
 
         private IEnumerator UpdateAmbientSoundRelativePosition(Vector3 relativePosition)
