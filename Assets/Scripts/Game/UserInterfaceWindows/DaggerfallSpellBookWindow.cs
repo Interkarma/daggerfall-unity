@@ -250,6 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Add player spells to list
                 EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
+                int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
                 if (spellbook != null)
                 {
                     for (int i = 0; i < spellbook.Length; i++)
@@ -258,7 +259,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         // Costs can change based on player skills and stats so must be calculated each time
                         int goldCost, spellPointCost;
                         FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost, null, spellbook[i].MinimumCastingCost);
-                        spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name));
+                        ListBox.ListItem listItem;
+                        spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name), out listItem);
+                        if (curSpellPoints < spellPointCost)
+                        {
+                            // Desaturate unavailable spells
+                            float desaturation = 0.75f;
+                            listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
+                            listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
+                            listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
+                            listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
+                        }
                     }
                 }
             }
