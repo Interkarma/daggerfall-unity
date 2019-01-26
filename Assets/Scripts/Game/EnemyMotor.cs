@@ -342,7 +342,7 @@ namespace DaggerfallWorkshop.Game
 
             // Get location to move towards. Either the combat target's position or, if trying to avoid an obstacle or fall,
             // a location to try to detour around the obstacle/fall.
-            if (avoidObstaclesTimer == 0 && (senses.PredictedTargetPos.y > transform.position.y || ClearPathToPosition(senses.PredictedTargetPos)))
+            if (avoidObstaclesTimer == 0 && ClearPathToPosition(senses.PredictedTargetPos))
             {
                 targetPos = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
@@ -359,6 +359,11 @@ namespace DaggerfallWorkshop.Game
                 }
                 tempMovePos = targetPos;
                 targetPosIsEnemyPos = true;
+            }
+            else if (avoidObstaclesTimer == 0 && ClearPathToPosition(senses.LastKnownTargetPos))
+            {
+                targetPos = senses.LastKnownTargetPos + (senses.LastPositionDiff * 2);
+                tempMovePos = targetPos;
             }
             // If detouring, use the detour position
             else if (avoidObstaclesTimer > 0)
@@ -495,10 +500,17 @@ namespace DaggerfallWorkshop.Game
         /// Returns whether there is a clear path to move the given distance from the current location towards the given location. True if clear
         /// or if combat target is the first obstacle hit.
         /// </summary>
-        bool ClearPathToPosition(Vector3 location, float dist = 2)
+        bool ClearPathToPosition(Vector3 location, float dist = 30)
         {
             Vector3 sphereCastDir = (location - transform.position).normalized;
             RaycastHit hit;
+
+            Vector3 sphereCastDir2d = sphereCastDir;
+            sphereCastDir2d.y = 0;
+            RayCheckForFall(sphereCastDir2d);
+
+            if (fallDetected)
+                return false;
 
             if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist))
             {
@@ -738,7 +750,6 @@ namespace DaggerfallWorkshop.Game
             // Check if there is something to collide with directly in movement direction, such as upward sloping ground.
             Vector3 motion2d = motion.normalized;
             motion2d.y = 0;
-
             RayCheckForObstacle(motion2d);
             RayCheckForFall(motion2d);
 
@@ -814,7 +825,7 @@ namespace DaggerfallWorkshop.Game
                             // Both 45 degrees checks failed, pick clockwise/counterclockwise based on angle to target
                             Vector3 toTarget = targetPos - transform.position;
                             Vector3 directionToTarget = toTarget.normalized;
-                            angle = Vector3.SignedAngle(directionToTarget, motion, Vector3.up);
+                            angle = Vector3.SignedAngle(directionToTarget, motion2d, Vector3.up);
 
                             if (angle > 0)
                             {
@@ -875,14 +886,13 @@ namespace DaggerfallWorkshop.Game
         {
             obstacleDetected = false;
             RaycastHit hit;
-            int checkDistance = 2;
+            int checkDistance = 1;
             Vector3 rayOrigin = transform.position + controller.center;
             rayOrigin.y -= controller.height / 3;
             foundUpwardSlope = false;
             foundDoor = false;
 
             Ray ray = new Ray(rayOrigin, direction);
-
             if (Physics.Raycast(ray, out hit, checkDistance))
             {
                 obstacleDetected = true;
@@ -929,7 +939,7 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            int checkDistance = 2;
+            int checkDistance = 1;
             Vector3 rayOrigin = transform.position;
 
             direction *= checkDistance;
