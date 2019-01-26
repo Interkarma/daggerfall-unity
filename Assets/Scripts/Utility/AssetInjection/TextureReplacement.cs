@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         Albedo,
         Normal,
+        Height,
         Emission,
         MetallicGloss
     }
@@ -343,6 +344,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 metallicGloss.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.MetallicGlossMap);
                 material.SetTexture(Uniforms.MetallicGlossMap, metallicGloss);
+            }
+
+            // Height Map
+            Texture2D height;
+            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.Height, out height))
+            {
+                height.filterMode = MainFilterMode;
+                material.EnableKeyword(KeyWords.HeightMap);
+                material.SetTexture(Uniforms.HeightMap, height);
             }
 
             // Properties
