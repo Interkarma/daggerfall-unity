@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,11 +10,9 @@
 //
 
 using UnityEngine;
-using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
@@ -102,7 +100,7 @@ namespace DaggerfallWorkshop
             // Get map width and height
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
-             
+
             // Centring works nearly all the time
             DFPosition result = new DFPosition();
             result.X = (RMBLayout.RMBTilesPerTerrain - width * RMBLayout.RMBTilesPerBlock) / 2;
@@ -363,9 +361,38 @@ namespace DaggerfallWorkshop
         public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale)
         {
             const float maxSteepness = 50f;         // 50
-            const float chanceOnDirt = 0.2f;        // 0.2
-            const float chanceOnGrass = 0.9f;       // 0.4
-            const float chanceOnStone = 0.05f;      // 0.05
+            const float baseChanceOnDirt = 0.2f;        // 0.2
+            const float baseChanceOnGrass = 0.9f;       // 0.4
+            const float baseChanceOnStone = 0.05f;      // 0.05
+
+            // Location Rect is expanded slightly to give extra clearance around locations
+            const int natureClearance = 4;
+            Rect rect = dfTerrain.MapData.locationRect;
+            if (rect.x > 0 && rect.y > 0)
+            {
+                rect.xMin -= natureClearance;
+                rect.xMax += natureClearance;
+                rect.yMin -= natureClearance;
+                rect.yMax += natureClearance;
+            }
+            // Chance scaled based on map pixel height
+            // This tends to produce sparser lowlands and denser highlands
+            // Adjust or remove clamp range to influence nature generation
+            float elevationScale = (dfTerrain.MapData.worldHeight / 128f);
+            elevationScale = Mathf.Clamp(elevationScale, 0.4f, 1.0f);
+
+            // Chance scaled by base climate type
+            float climateScale = 1.0f;
+            DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
+            switch (climate.ClimateType)
+            {
+                case DFLocation.ClimateBaseType.Desert:         // Just lower desert for now
+                    climateScale = 0.25f;
+                    break;
+            }
+            float chanceOnDirt = baseChanceOnDirt * elevationScale * climateScale;
+            float chanceOnGrass = baseChanceOnGrass * elevationScale * climateScale;
+            float chanceOnStone = baseChanceOnStone * elevationScale * climateScale;
 
             int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
 
@@ -404,52 +431,27 @@ namespace DaggerfallWorkshop
                     // Rect is expanded slightly to give extra clearance around locations
                     tilePos.x = x;
                     tilePos.y = y;
-                    const int natureClearance = 4;
-                    Rect rect = dfTerrain.MapData.locationRect;
-                    if (rect.x > 0 && rect.y > 0)
-                    {
-                        rect.xMin -= natureClearance;
-                        rect.xMax += natureClearance;
-                        rect.yMin -= natureClearance;
-                        rect.yMax += natureClearance;
-                        if (rect.Contains(tilePos))
-                            continue;
-                    }
-
-                    // Chance scaled based on map pixel height
-                    // This tends to produce sparser lowlands and denser highlands
-                    // Adjust or remove clamp range to influence nature generation
-                    float elevationScale = (dfTerrain.MapData.worldHeight / 128f);
-                    elevationScale = Mathf.Clamp(elevationScale, 0.4f, 1.0f);
-
-                    // Chance scaled by base climate type
-                    float climateScale = 1.0f;
-                    DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
-                    switch (climate.ClimateType)
-                    {
-                        case DFLocation.ClimateBaseType.Desert:         // Just lower desert for now
-                            climateScale = 0.25f;
-                            break;
-                    }
+                    if (rect.Contains(tilePos))
+                        continue;
 
                     // Chance also determined by tile type
                     TilemapSample sample = dfTerrain.MapData.tilemapSamples[x, y];
                     if (sample.record == 1)
                     {
                         // Dirt
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt * elevationScale * climateScale)
+                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt)
                             continue;
                     }
                     else if (sample.record == 2)
                     {
                         // Grass
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnGrass * elevationScale * climateScale)
+                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnGrass)
                             continue;
                     }
                     else if (sample.record == 3)
                     {
                         // Stone
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnStone * elevationScale * climateScale)
+                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnStone)
                             continue;
                     }
                     else

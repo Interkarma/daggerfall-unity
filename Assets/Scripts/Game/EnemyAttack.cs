@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Game
         private bool MeleeAnimation()
         {
             // Are we in range and facing target? Then start attack.
-            if (senses.TargetInSight && senses.DetectedTarget)
+            if (senses.DetectedTarget && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
             {
                 // Take the rate of target approach into account when deciding if to attack
                 if (senses.DistanceToTarget >= MeleeDistance + senses.TargetRateOfApproach)
@@ -180,8 +180,9 @@ namespace DaggerfallWorkshop.Game
 
                 damage = 0;
 
-                // Are we still in range and facing target? Then apply melee damage.
-                if (senses.Target != null && senses.DistanceToTarget <= MeleeDistance && senses.TargetInSight)
+                // Melee hit detection, matched to classic
+                if (senses.Target != null && senses.TargetInSight && senses.DistanceToTarget <= 0.25f
+                    || (senses.DistanceToTarget <= MeleeDistance && senses.TargetIsWithinYawAngle(35.156f, senses.Target.transform.position)))
                 {
                     if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);

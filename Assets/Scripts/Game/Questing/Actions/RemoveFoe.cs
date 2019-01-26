@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -10,26 +10,24 @@
 //
 
 using System.Text.RegularExpressions;
+using System;
 using FullSerializer;
 
-namespace DaggerfallWorkshop.Game.Questing
+namespace DaggerfallWorkshop.Game.Questing.Actions
 {
-    /// <summary>
-    /// NPC will no longer respond to mouse clicks once muted.
-    /// </summary>
-    public class MuteNpc : ActionTemplate
+    public class RemoveFoe : ActionTemplate
     {
-        Symbol npcSymbol;
+        Symbol foeSymbol;
 
         public override string Pattern
         {
             get
             {
-                return @"mute npc (?<anNPC>[a-zA-Z0-9_.-]+)";
+                return @"remove foe (?<aFoe>[a-zA-Z0-9_.-]+)";
             }
         }
 
-        public MuteNpc(Quest parentQuest)
+        public RemoveFoe(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -42,25 +40,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            MuteNpc action = new MuteNpc(parentQuest);
-            action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
+            RemoveFoe action = new RemoveFoe(parentQuest);
+            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // Get related Person resource
-            Person person = ParentQuest.GetPerson(npcSymbol);
-            if (person == null)
+            base.Update(caller);
+
+            // Attempt to get Foe resource
+            Foe foe = ParentQuest.GetFoe(foeSymbol);
+            if (foe == null)
             {
                 SetComplete();
-                return;
+                throw new Exception(string.Format("Could not find Foe resource symbol {0}", foeSymbol));
             }
 
-            // Perform action changes
-            person.IsMuted = true;
-
+            foe.IsHidden = true;
             SetComplete();
         }
 
@@ -69,13 +67,13 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public Symbol npcSymbol;
+            public Symbol foeSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.npcSymbol = npcSymbol;
+            data.foeSymbol = foeSymbol;
 
             return data;
         }
@@ -86,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            npcSymbol = data.npcSymbol;
+            foeSymbol = data.foeSymbol;
         }
 
         #endregion

@@ -95,14 +95,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 Dictionary<string, fsData> children = null;
                 if (gameObject.transform.childCount > 0)
                 {
-                    children = new Dictionary<string, fsData>();
                     for (int i = 0; i < gameObject.transform.childCount; i++)
                     {
                         Transform transform = gameObject.transform.GetChild(i);
                         fsData childData;
                         if ((fsResult += SerializeImportedComponents(transform.gameObject, out childData)).Failed) return fsResult;
                         if (!childData.IsNull)
-                            children.Add(transform.gameObject.name, childData);
+                            (children ?? (children = new Dictionary<string, fsData>())).Add(transform.gameObject.name, childData);
                     }
                 }
 
@@ -129,18 +128,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 // Restore components on this gameobject
                 fsData components;
                 if ((fsResult += CheckKey(dict, "Components", out components)).Failed) return fsResult;
-                if ((fsResult += CheckType(components, fsDataType.Array)).Failed) return fsResult;
-                foreach (fsData componentData in components.AsList)
+                if (!components.IsNull)
                 {
-                    // Get type name
-                    string typeName;
-                    if ((fsResult += DeserializeMember(componentData.AsDictionary, null, "$type", out typeName)).Failed) return fsResult;
+                    if ((fsResult += CheckType(components, fsDataType.Array)).Failed) return fsResult;
+                    foreach (fsData componentData in components.AsList)
+                    {
+                        // Get type name
+                        string typeName;
+                        if ((fsResult += DeserializeMember(componentData.AsDictionary, null, "$type", out typeName)).Failed) return fsResult;
 
-                    // Add component and deserialize
-                    Type type = FindType(mod, typeName);
-                    if (type == null) return fsResult += fsResult.Fail(string.Format("Failed to find type {0}.", typeName));
-                    object instance = gameObject.AddComponent(type);
-                    if ((fsResult += fsSerializer.TryDeserialize(componentData, type, ref instance)).Failed) return fsResult;
+                        // Add component and deserialize
+                        Type type = FindType(mod, typeName);
+                        if (type == null) return fsResult += fsResult.Fail(string.Format("Failed to find type {0}.", typeName));
+                        object instance = gameObject.AddComponent(type);
+                        if ((fsResult += fsSerializer.TryDeserialize(componentData, type, ref instance)).Failed) return fsResult;
+                    }
                 }
 
                 // Restore components on children

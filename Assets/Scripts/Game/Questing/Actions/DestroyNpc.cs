@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -15,9 +15,11 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// NPC will no longer respond to mouse clicks once muted.
+    /// NPC will be be soft destroyed (permanently removed from world but othwerwise available for macro resolution).
+    /// This is different to classic that will return BLANK once NPC is destroyed (probably beause resource is hard deleted).
+    /// If there are any emulation issue with soft destruction then will change to hard destruction instead.
     /// </summary>
-    public class MuteNpc : ActionTemplate
+    public class DestroyNpc : ActionTemplate
     {
         Symbol npcSymbol;
 
@@ -25,11 +27,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get
             {
-                return @"mute npc (?<anNPC>[a-zA-Z0-9_.-]+)";
+                return @"destroy npc (?<anNPC>[a-zA-Z0-9_.-]+)";
             }
         }
 
-        public MuteNpc(Quest parentQuest)
+        public DestroyNpc(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -42,7 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            MuteNpc action = new MuteNpc(parentQuest);
+            DestroyNpc action = new DestroyNpc(parentQuest);
             action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
 
             return action;
@@ -59,7 +61,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Perform action changes
-            person.IsMuted = true;
+            person.DestroyNPC();
 
             SetComplete();
         }

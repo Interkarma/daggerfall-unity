@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -307,6 +307,14 @@ namespace DaggerfallWorkshop
                 // Set back to idle (which every enemy has in one form or another)
                 summary.EnemyState = MobileStates.Idle;
                 summary.StateAnims = GetStateAnims(summary.EnemyState);
+            }
+
+            // One of the frost daedra's sets of attack frames starts with the hit frame (-1), so we need to check for that right away before updating orientation.
+            if (currentFrame == -1 && summary.EnemyState == MobileStates.PrimaryAttack)
+            {
+                doMeleeDamage = true;
+                if (frameIterator < summary.StateAnimFrames.Length)
+                    currentFrame = summary.StateAnimFrames[frameIterator++];
             }
 
             // Orient enemy relative to camera

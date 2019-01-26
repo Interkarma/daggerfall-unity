@@ -48,6 +48,8 @@ namespace DaggerfallWorkshop.Game.Questing
         FactionFile.FactionData factionData;
         StaticNPC.NPCData questorData;
         bool discoveredThroughTalkManager = false;
+        bool isMuted = false;
+        bool isDestroyed = false;
 
         #endregion
 
@@ -133,6 +135,17 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return discoveredThroughTalkManager; }
             set { discoveredThroughTalkManager = value; }
+        }
+
+        public bool IsMuted
+        {
+            get { return isMuted; }
+            set { isMuted = value; }
+        }
+
+        public bool IsDestroyed
+        {
+            get { return isDestroyed; }
         }
 
         #endregion
@@ -421,6 +434,15 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Set Person.IsDestroyed=true.
+        /// Person can no longer be placed or clicked.
+        /// </summary>
+        public void DestroyNPC()
+        {
+            isDestroyed = true;
         }
 
         #endregion
@@ -1175,6 +1197,8 @@ namespace DaggerfallWorkshop.Game.Questing
             public string factionTableKey;
             public StaticNPC.NPCData questorData;
             public bool discoveredThroughTalkManager;
+            public bool isMuted;
+            public bool isDestroyed;
         }
 
         public override object GetSaveData()
@@ -1197,6 +1221,8 @@ namespace DaggerfallWorkshop.Game.Questing
             data.factionTableKey = factionTableKey;
             data.questorData = questorData;
             data.discoveredThroughTalkManager = discoveredThroughTalkManager;
+            data.isMuted = isMuted;
+            data.isDestroyed = isDestroyed;
 
             return data;
         }
@@ -1229,6 +1255,8 @@ namespace DaggerfallWorkshop.Game.Questing
             factionTableKey = data.factionTableKey;
             questorData = data.questorData;
             discoveredThroughTalkManager = data.discoveredThroughTalkManager;
+            isMuted = data.isMuted;
+            isDestroyed = data.isDestroyed;
         }
 
         #endregion

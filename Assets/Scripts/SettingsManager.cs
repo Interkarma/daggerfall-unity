@@ -129,6 +129,7 @@ namespace DaggerfallWorkshop
         public float MusicVolume { get; set; }
         public float SoundVolume { get; set; }
         public bool InstantRepairs { get; set; }
+        public bool AllowMagicRepairs { get; set; }
 
         // [Map]
         public int AutomapNumberOfDungeons { get; set; }
@@ -237,6 +238,7 @@ namespace DaggerfallWorkshop
             SoundVolume = GetFloat(sectionControls, "SoundVolume", 0f, 1.0f);
             MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
             InstantRepairs = GetBool(sectionControls, "InstantRepairs");
+            AllowMagicRepairs = GetBool(sectionControls, "AllowMagicRepairs");
 
             AutomapNumberOfDungeons = GetInt(sectionMap, "AutomapNumberOfDungeons", 0, 100);
             ExteriorMapDefaultZoomLevel = GetFloat(sectionMap, "ExteriorMapDefaultZoomLevel", 4, 31);
@@ -335,6 +337,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionControls, "SoundVolume", SoundVolume);
             SetFloat(sectionControls, "MusicVolume", MusicVolume);
             SetBool(sectionControls, "InstantRepairs", InstantRepairs);
+            SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
 
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
