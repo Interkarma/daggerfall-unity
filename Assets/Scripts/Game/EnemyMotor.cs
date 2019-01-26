@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop.Game
         bool moveInForAttack;                       // False = retreat. True = pursue.
         float retreatDistanceMultiplier;            // How far to back off while retreating
         float changeStateTimer;                     // Time until next change in behavior. Padding to prevent instant reflexes.
+        bool doStrafe;
+        float strafeTimer;
         bool pursuing;                              // Is pursuing
         bool retreating;                            // Is retreating
         bool fallDetected;                          // Detected a fall in front of us, so don't move there
@@ -63,6 +65,9 @@ namespace DaggerfallWorkshop.Game
         float centerChange;
         bool resetHeight;
         float heightChangeTimer;
+        bool strafeLeft;
+        float strafeAngle;
+        Vector3 strafeDest;
 
         EnemySenses senses;
         Vector3 destination;
@@ -132,6 +137,28 @@ namespace DaggerfallWorkshop.Game
             Move();
             OpenDoors();
             HeightAdjust();
+
+            // Update timers
+            if (moveInForAttackTimer > 0)
+                moveInForAttackTimer -= Time.deltaTime;
+
+            if (avoidObstaclesTimer > 0 && senses.TargetIsWithinYawAngle(5.625f, destination))
+                avoidObstaclesTimer -= Time.deltaTime;
+            if (avoidObstaclesTimer < 0)
+                avoidObstaclesTimer = 0;
+
+            if (checkingClockwiseTimer > 0)
+                checkingClockwiseTimer -= Time.deltaTime;
+            if (checkingClockwiseTimer < 0)
+            {
+                checkingClockwiseTimer = 0;
+            }
+
+            if (changeStateTimer > 0)
+                changeStateTimer -= Time.deltaTime;
+
+            if (strafeTimer > 0)
+                strafeTimer -= Time.deltaTime;
         }
 
         // Limits maximum controller height
@@ -416,6 +443,15 @@ namespace DaggerfallWorkshop.Game
 
                 if (hasBowAttack || rangedMagicAvailable)
                 {
+                    if (senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos) && strafeTimer <= 0)
+                    {
+                        StrafeDecision();
+                    }
+                    if (doStrafe && strafeTimer > 0)
+                    {
+                        AttemptMove(direction, moveSpeed / 4, false, true, distance);
+                    }
+
                     if (GameManager.ClassicUpdate && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
                     {
                         if (!isPlayingOneShot)
@@ -461,25 +497,6 @@ namespace DaggerfallWorkshop.Game
             if (moveInForAttackTimer <= 0 && avoidObstaclesTimer == 0)
                 EvaluateMoveInForAttack();
 
-            // Update timers
-            if (moveInForAttackTimer > 0)
-                moveInForAttackTimer -= Time.deltaTime;
-
-            if (avoidObstaclesTimer > 0 && senses.TargetIsWithinYawAngle(5.625f, destination))
-                avoidObstaclesTimer -= Time.deltaTime;
-            if (avoidObstaclesTimer < 0)
-                avoidObstaclesTimer = 0;
-
-            if (checkingClockwiseTimer > 0)
-                checkingClockwiseTimer -= Time.deltaTime;
-            if (checkingClockwiseTimer < 0)
-            {
-                checkingClockwiseTimer = 0;
-            }
-
-            if (changeStateTimer > 0)
-                changeStateTimer -= Time.deltaTime;
-
             // If detouring, attempt to move
             if (avoidObstaclesTimer > 0)
             {
@@ -497,17 +514,22 @@ namespace DaggerfallWorkshop.Game
                 else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
                     TurnToTarget(direction);
             }
+            else if (strafeTimer <= 0)
+            {
+                StrafeDecision();
+            }
+            else if (doStrafe && strafeTimer > 0 && (distance >= stopDistance * .8f))
+            {
+                AttemptMove(direction, moveSpeed / 4, false, true, distance);
+            }
             // Back away from combat target if right next to it, or if decided to retreat and enemy is too close.
-            // Classic AI never backs awwy.
+            // Classic AI never backs away.
             else if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetInSight && (distance < stopDistance * .8f ||
-                (!moveInForAttack && distance < (stopDistance * retreatDistanceMultiplier))))
+                !moveInForAttack && distance < stopDistance * retreatDistanceMultiplier && (changeStateTimer <= 0 || retreating)))
             {
                 // If state change timer is done, or we are already executing a retreat, we can move immediately
                 if (changeStateTimer <= 0 || retreating)
                     AttemptMove(direction, moveSpeed / 2, true);
-                // Otherwise, look at target until timer finishes
-                else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
-                    TurnToTarget(direction);
             }
             // Not moving, just look at target
             else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
@@ -518,6 +540,33 @@ namespace DaggerfallWorkshop.Game
                 pursuing = false;
                 retreating = false;
             }
+        }
+
+        void StrafeDecision()
+        {
+            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
+                return;
+
+            doStrafe = Random.Range(0, 4) == 0;
+            strafeTimer = Random.Range(1f, 2f);
+            if (doStrafe)
+            {
+                if (Random.Range(0, 2) == 0)
+                    strafeLeft = true;
+                else
+                    strafeLeft = false;
+            }
+
+            Vector3 north = destination;
+            north.z++; // Adding 1 to z so this Vector3 will be north of the destination Vector3.
+
+            // Get angle between vector from destination to the north of it, and vector from destination to this enemy's position
+            strafeAngle = Vector3.SignedAngle(destination - north, destination - transform.position, Vector3.up);
+            if (strafeAngle < 0)
+                strafeAngle = 360 + strafeAngle;
+
+            // Convert to radians
+            strafeAngle *= Mathf.PI / 180;
         }
 
         /// <summary>
@@ -699,10 +748,10 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Try to move in given direction
         /// </summary>
-        void AttemptMove(Vector3 direction, float moveSpeed, bool backAway = false)
+        void AttemptMove(Vector3 direction, float moveSpeed, bool backAway = false, bool strafe = false, float strafeDist = 0)
         {
             // Set whether pursuing or retreating, for bypassing changeStateTimer delay when continuing these actions
-            if (!backAway)
+            if (!backAway && !strafe)
             {
                 pursuing = true;
                 retreating = false;
@@ -715,7 +764,7 @@ namespace DaggerfallWorkshop.Game
 
             if (!senses.TargetIsWithinYawAngle(5.625f, destination))
             {
-                TurnToTarget(direction.normalized);
+                TurnToTarget(direction);
                 // Classic always turns in place. Enhanced only does so if enemy is not in sight,
                 // for more natural-looking movement while pursuing.
                 if (!DaggerfallUnity.Settings.EnhancedCombatAI || !senses.TargetInSight)
@@ -724,6 +773,20 @@ namespace DaggerfallWorkshop.Game
 
             if (backAway)
                 direction *= -1;
+
+            if (strafe)
+            {
+                strafeDest = new Vector3(destination.x + (Mathf.Sin(strafeAngle) * strafeDist), transform.position.y, destination.z + (Mathf.Cos(strafeAngle) * strafeDist));
+                direction = (strafeDest - transform.position).normalized;
+
+                if ((strafeDest - transform.position).magnitude <= 0.2f)
+                {
+                    if (strafeLeft)
+                        strafeAngle++;
+                    else
+                        strafeAngle--;
+                }
+            }
 
             // Move downward some to eliminate bouncing down inclines
             if (!flies && !swims && !isLevitating && controller.isGrounded)
@@ -779,7 +842,8 @@ namespace DaggerfallWorkshop.Game
 
             if (fallDetected || obstacleDetected)
             {
-                FindDetour(motion2d);
+                if (!strafe && !backAway)
+                    FindDetour(motion2d);
             }
             else
             // Clear to move
@@ -1040,7 +1104,28 @@ namespace DaggerfallWorkshop.Game
 
             // Chose to retreat
             if (!moveInForAttack)
+            {
                 retreatDistanceMultiplier = (float)(retreatDistanceBaseMult + (retreatDistanceBaseMult * (0.25 * (2 - roll))));
+
+                if (!DaggerfallUnity.Settings.EnhancedCombatAI)
+                    return;
+
+                if (Random.Range(0, 2) == 0)
+                    strafeLeft = true;
+                else
+                    strafeLeft = false;
+
+                Vector3 north = destination;
+                north.z++; // Adding 1 to z so this Vector3 will be north of the destination Vector3.
+
+                // Get angle between vector from destination to the north of it, and vector from destination to this enemy's position
+                strafeAngle = Vector3.SignedAngle(destination - north, destination - transform.position, Vector3.up);
+                if (strafeAngle < 0)
+                    strafeAngle = 360 + strafeAngle;
+
+                // Convert to radians
+                strafeAngle *= Mathf.PI / 180;
+            }
         }
 
         /// <summary>
