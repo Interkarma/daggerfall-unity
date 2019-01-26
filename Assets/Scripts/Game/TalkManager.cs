@@ -108,36 +108,6 @@ namespace DaggerfallWorkshop.Game
         readonly ushort[] answersToNonDirections =  { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7304, 7269, 7284,
                                                       7261, 7276, 7291, 7260, 7275, 7290, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
 
-        public static List<FactionFile.FactionIDs> factionsUsedForFactionInNews = new List<FactionFile.FactionIDs>()
-        {
-            FactionFile.FactionIDs.Abibon_Gora, FactionFile.FactionIDs.Alcaire, FactionFile.FactionIDs.Alikra, FactionFile.FactionIDs.Anticlere,
-            FactionFile.FactionIDs.Antiphyllos, FactionFile.FactionIDs.Ayasofya, FactionFile.FactionIDs.Bergama, FactionFile.FactionIDs.Betony,
-            FactionFile.FactionIDs.Bhoraine, FactionFile.FactionIDs.Cybiades, FactionFile.FactionIDs.Daenia, FactionFile.FactionIDs.Daggerfall,
-            FactionFile.FactionIDs.Dakfron, FactionFile.FactionIDs.Dragontail, FactionFile.FactionIDs.Dwynnen, FactionFile.FactionIDs.Ephesus,
-            FactionFile.FactionIDs.Gavaudon, FactionFile.FactionIDs.Glenpoint, FactionFile.FactionIDs.Ilessan_Hills, FactionFile.FactionIDs.Isle_of_Balfiera,
-            FactionFile.FactionIDs.Kairou, FactionFile.FactionIDs.Kambria, FactionFile.FactionIDs.Koegria, FactionFile.FactionIDs.Kozanset,
-            FactionFile.FactionIDs.Lainlyn, FactionFile.FactionIDs.Menevia, FactionFile.FactionIDs.Mournoth, FactionFile.FactionIDs.Myrkwasa,
-            FactionFile.FactionIDs.Northmoor, FactionFile.FactionIDs.Orsinium, FactionFile.FactionIDs.Phrygia, FactionFile.FactionIDs.Pothago,
-            FactionFile.FactionIDs.Santaki, FactionFile.FactionIDs.Satakalaam, FactionFile.FactionIDs.Sentinel, FactionFile.FactionIDs.Shalgora,
-            FactionFile.FactionIDs.Tigonus, FactionFile.FactionIDs.Totambu, FactionFile.FactionIDs.Tulune, FactionFile.FactionIDs.Urvaius,
-            FactionFile.FactionIDs.Wayrest, FactionFile.FactionIDs.Wrothgaria, FactionFile.FactionIDs.Ykalon
-        };
-
-        public static List<FactionFile.FactionIDs> factionsUsedForRulers = new List<FactionFile.FactionIDs>()
-        {
-            FactionFile.FactionIDs.Abibon_Gora, FactionFile.FactionIDs.Alcaire, FactionFile.FactionIDs.Alikra,
-            FactionFile.FactionIDs.Antiphyllos, FactionFile.FactionIDs.Ayasofya, FactionFile.FactionIDs.Bergama, FactionFile.FactionIDs.Betony,
-            FactionFile.FactionIDs.Bhoraine, FactionFile.FactionIDs.Cybiades, FactionFile.FactionIDs.Daenia,
-            FactionFile.FactionIDs.Dakfron, FactionFile.FactionIDs.Dragontail, FactionFile.FactionIDs.Dwynnen, FactionFile.FactionIDs.Ephesus,
-            FactionFile.FactionIDs.Gavaudon, FactionFile.FactionIDs.Glenpoint, FactionFile.FactionIDs.Ilessan_Hills,
-            FactionFile.FactionIDs.Kairou, FactionFile.FactionIDs.Kambria, FactionFile.FactionIDs.Koegria, FactionFile.FactionIDs.Kozanset,
-            FactionFile.FactionIDs.Lainlyn, FactionFile.FactionIDs.Menevia, FactionFile.FactionIDs.Mournoth, FactionFile.FactionIDs.Myrkwasa,
-            FactionFile.FactionIDs.Northmoor, FactionFile.FactionIDs.Phrygia, FactionFile.FactionIDs.Pothago,
-            FactionFile.FactionIDs.Santaki, FactionFile.FactionIDs.Satakalaam, FactionFile.FactionIDs.Shalgora,
-            FactionFile.FactionIDs.Tigonus, FactionFile.FactionIDs.Totambu, FactionFile.FactionIDs.Tulune, FactionFile.FactionIDs.Urvaius,
-            FactionFile.FactionIDs.Wrothgaria, FactionFile.FactionIDs.Ykalon
-        };
-
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.5f; // chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.5f; // chances unknown
         const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.5f; // chances unknown
@@ -361,6 +331,11 @@ namespace DaggerfallWorkshop.Game
             public List<TextFile.Token[]> listRumorVariants;
             public ulong questID; // questID used for RumorType::QuestProgressRumor and RumorType::QuestRumorMill, otherwise not set
             public ulong timeLimit; // Classic game minute after which this rumor expires
+            public int faction1; // First faction ID involved
+            public int faction2; // Second faction ID involved
+            public int regionID; // ID of region involved.
+            public int flags; // Rumor flags
+            public int type; // Rumor type
         }
         // list of rumors in rumor mill
         List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
@@ -458,7 +433,7 @@ namespace DaggerfallWorkshop.Game
         {
             get { return consoleCommandFlag_npcsKnowEverything; }
             set { consoleCommandFlag_npcsKnowEverything = value; }
-        }        
+        }
 
         #endregion
 
@@ -1036,16 +1011,33 @@ namespace DaggerfallWorkshop.Game
             if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
             {
                 string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
-                int randomIndex = UnityEngine.Random.Range(0, listRumorMill.Count);
-                RumorMillEntry entry = listRumorMill[randomIndex];
+                List<RumorMillEntry> validRumors = GetValidRumors();
+
+                if (validRumors.Count == 0)
+                    return ExpandRandomTextRecord(outOfNewsRecordIndex);
+
+                int randomIndex = UnityEngine.Random.Range(0, validRumors.Count);
+                RumorMillEntry entry = validRumors[randomIndex];
                 if (entry.rumorType == RumorType.CommonRumor)
                 {
                     if (entry.listRumorVariants != null)
                     {
                         TextFile.Token[] tokens = entry.listRumorVariants[0];
-                        MacroHelper.ResetFactionAndRulerIds(); // reset so that a new set of rulers and factions can be generated
+                        int regionID = -1;
+                        FactionFile.FactionData factionData;
+
+                        if (entry.regionID != -1)
+                            regionID = entry.regionID;
+                        else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData) && factionData.region != -1)
+                            regionID = factionData.region;
+                        else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData) && factionData.region != -1)
+                            regionID = factionData.region;
+                        else // Classic uses a random region in this case, but that can create odd results for the witches rumor and maybe more. Using current region.
+                            regionID = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+
+                        MacroHelper.SetFactionIdsAndRegionID(entry.faction1, entry.faction2, regionID);
                         MacroHelper.ExpandMacros(ref tokens, this);
-                        MacroHelper.ResetFactionAndRulerIds(); // reset again so %reg macro may resolve to current region if needed
+                        MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // reset again so %reg macro may resolve to current region if needed
                         news = TokensToString(tokens, false);
                     }
                 }
@@ -1066,6 +1058,44 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 return ExpandRandomTextRecord(outOfNewsRecordIndex);
+        }
+
+        private List<RumorMillEntry> GetValidRumors()
+        {
+            List<RumorMillEntry> validRumors = new List<RumorMillEntry>();
+
+            foreach (RumorMillEntry entry in listRumorMill)
+            {
+                if (entry.rumorType == RumorType.CommonRumor)
+                {
+                    // Note: Classic only checks that regionID matches for sign messages. Because of this, some rumors that seem they were supposed to
+                    // show only in affected regions (crime wave, new ruler) are seen everywhere, and their regionID data goes unused.
+                    // The ruler messages seem relevant for everyone to say, and are commonly seen in classic, so for DFU the regionID component is removed.
+                    // Crime waves, though, should only be talked about for the affected regions.
+                    if (entry.regionID != -1 && entry.regionID != GameManager.Instance.PlayerGPS.CurrentRegionIndex)
+                        continue;
+
+                    // TODO: For now, only spoken rumors, no sign messages
+                    if ((entry.flags & 1) == 1)
+                        continue;
+
+                    if (entry.faction1 != 0 || entry.faction2 != 0 || entry.type != 100)
+                    {
+                        FactionFile.FactionData factionData1;
+                        FactionFile.FactionData factionData2;
+
+                        // Flag 1 being set makes faction's rumors less likely to appear in conversation.
+                        if ((entry.faction1 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData1) && (factionData1.flags & 1) == 1
+                            || entry.faction2 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData2) && (factionData2.flags & 1) == 1)
+                            && UnityEngine.Random.Range(1, 101) <= 75)
+                            continue;
+                    }
+                }
+
+                validRumors.Add(entry);
+            }
+
+            return validRumors;
         }
 
         public string GetAnswerWhereAmI()
@@ -2253,11 +2283,16 @@ namespace DaggerfallWorkshop.Game
             entry.rumorType = RumorType.CommonRumor;
             entry.listRumorVariants = new List<TextFile.Token[]>();
             entry.listRumorVariants.Add(tokens);
-
+            entry.faction1 = rumor.Faction1;
+            entry.faction2 = rumor.Faction2;
+            entry.type = (int)rumor.Type;
+            entry.regionID = rumor.RegionID;
+            entry.flags = rumor.Flags;
+            entry.timeLimit = rumor.TimeLimit;
             listRumorMill.Add(entry);
         }
 
-        public void AddCommonRumor(int textID)
+        public void AddNonQuestRumor(int faction1, int faction2, int regionID, int type, int textID)
         {
             if (listRumorMill == null)
                 listRumorMill = new List<RumorMillEntry>();
@@ -2268,40 +2303,61 @@ namespace DaggerfallWorkshop.Game
             entry.rumorType = RumorType.CommonRumor;
             entry.listRumorVariants = new List<TextFile.Token[]>();
             entry.listRumorVariants.Add(tokens);
+            entry.faction1 = faction1;
+            entry.faction2 = faction2;
+            entry.type = type;
+            entry.regionID = regionID;
+            entry.flags = GetFlagsForNewRumor(type);
             entry.timeLimit = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + 43140;
 
             listRumorMill.Add(entry);
+        }
+
+        private int GetFlagsForNewRumor(int type)
+        {
+            int flags = 0;
+
+            switch (type)
+            {
+                case 10: // Witch burnings
+                case 18: // Persecuted temple
+                case 7:  // Famine
+                case 4:  // Plague
+                case 28: // War started
+                case 27: // Enemy faction
+                case 26: // Alliance started
+                    flags = 1; // Sign message
+                    break;
+
+                default:
+                    flags = 8; // Spoken rumor
+                    break;
+            }
+
+            return flags;
+        }
+
+        public void RefreshRumorMill()
+        {
+            if (listRumorMill == null)
+                listRumorMill = new List<RumorMillEntry>();
+
+            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+            uint nowClassic = now.ToClassicDaggerfallTime();
+
+            for (int i = listRumorMill.Count - 1; i >= 0; i--)
+            {
+                if (listRumorMill[i].timeLimit < nowClassic)
+                {
+                    listRumorMill.RemoveAt(i);
+                }
+            }
         }
 
         private void SetupRumorMill()
         {
             if (listRumorMill == null)
                 listRumorMill = new List<RumorMillEntry>();
-            if (listRumorMill.Count == 0)
-            {
-                for (int i = 0; i < 10; i++) // setup 10 random common rumors (this is very early work in progress)
-                {
-                    RumorMillEntry entry = new RumorMillEntry();
-
-                    TextFile.Token[] tokens;
-                    int randomNum = UnityEngine.Random.Range(0, 20);
-                    if (randomNum >= 0 && randomNum <= 9)
-                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1400 + randomNum);
-                    else if (randomNum == 10)
-                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1456);
-                    else if (randomNum >= 11 && randomNum <= 15)
-                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1480);
-                    else if (randomNum >= 16 && randomNum <= 20)
-                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1481);
-                    else
-                        tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(1457);
-                    entry.rumorType = RumorType.CommonRumor;
-                    entry.listRumorVariants = new List<TextFile.Token[]>();
-                    entry.listRumorVariants.Add(tokens);
-
-                    listRumorMill.Add(entry);
-                }
-            }
         }
 
         private void GetBuildingList()

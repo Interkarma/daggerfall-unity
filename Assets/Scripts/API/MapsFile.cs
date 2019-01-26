@@ -44,7 +44,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// All region names.
         /// </summary>
-        private readonly string[] regionNames = {
+        private static readonly string[] regionNames = {
             "Alik'r Desert", "Dragontail Mountains", "Glenpoint Foothills", "Daggerfall Bluffs",
             "Yeorth Burrowland", "Dwynnen", "Ravennian Forest", "Devilrock",
             "Malekna Forest", "Isle of Balfiera", "Bantha", "Dak'fron",
@@ -209,7 +209,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets all region names as string array.
         /// </summary>
-        public string[] RegionNames
+        public static string[] RegionNames
         {
             get { return regionNames; }
         }

@@ -247,17 +247,19 @@ namespace DaggerfallWorkshop.Utility
 
         #region fields (some macros need state (e.g. %fn2 depends on %fn1)
 
-        static int idFaction1InNews = -1;
-        static int idFaction1Ruler = -1;
+        static int idFaction1 = -1;
+        static int idFaction2 = -1;
+        static int idRegion = -1;
 
         #endregion
 
         #region Public Utility Functions
 
-        public static void ResetFactionAndRulerIds()
+        public static void SetFactionIdsAndRegionID(int faction1, int faction2, int region)
         {
-            idFaction1InNews = -1;
-            idFaction1Ruler = -1;
+            idFaction1 = faction1;
+            idFaction2 = faction2;
+            idRegion = region;
         }
 
         public static string GetFirstname(string name)
@@ -827,30 +829,16 @@ namespace DaggerfallWorkshop.Utility
         public static string AFactionInNews(IMacroContextProvider mcp)
         {   // %fx1
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
-            int id;
-            if (idFaction1Ruler == -1) // no previous %ol1
-            {
-                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForFactionInNews.Count - 1);
-                idFaction1InNews = id;
-            }
-            else
-            {
-                id = idFaction1Ruler;
-            }
             FactionFile.FactionData fd;
-            factions.GetFactionData((int)TalkManager.factionsUsedForFactionInNews[id], out fd);
+            factions.GetFactionData(idFaction1, out fd);
             return fd.name;
         }
 
         public static string AnotherFactionInNews(IMacroContextProvider mcp)
         {   // %fx2
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
-            // get random number between 0 and factionsUsedForFactionInNews.Count - 2 now since we might add a + 1 for an id >= idFaction1InNews later to prevent same faction as for %fx1
-            int id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForFactionInNews.Count - 1);
             FactionFile.FactionData fd;
-            if (id >= idFaction1InNews) // make sure to create an id != idFaction1InNews
-                id += 1; // by just adding 1 if id >= idFaction1InNews -> so we will end up with an id in ranges [0, idFaction1InNews) union (idFaction1InNews, factionsUsedForFactionInNews.Count]
-            factions.GetFactionData((int)TalkManager.factionsUsedForFactionInNews[id], out fd);
+            factions.GetFactionData(idFaction2, out fd);
             return fd.name;
         }
 
@@ -862,59 +850,24 @@ namespace DaggerfallWorkshop.Utility
 
         public static string OldLordOfFaction1(IMacroContextProvider mcp)
         {   // %ol1
-            int id;
-            if (idFaction1Ruler == -1)
-            {
-                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 1);
-                idFaction1Ruler = id;
-            }
-            else
-            {
-                id = idFaction1Ruler;
-            }
-            return GetLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+            return GetLordNameForFaction(idFaction1);
         }
 
         public static string LordOfFaction1(IMacroContextProvider mcp)
         {   // %fl1
-            int id;
-            if (idFaction1Ruler == -1)
-            {
-                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 1);
-                idFaction1Ruler = id;
-            }
-            else
-            {
-                id = idFaction1Ruler;
-            }
-            return GetLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+            return GetLordNameForFaction(idFaction1);
         }
 
         public static string LordOfFaction2(IMacroContextProvider mcp)
         {   // %fl2
-            // get random number between 0 and factionsUsedForRulers.Count - 2 now since we might add a + 1 for an id >= idFaction1Ruler later to prevent same faction as for %fl1
-            int id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 2);
-            if (id >= idFaction1Ruler) // make sure to create an id != idFaction1Ruler
-                id += 1; // by just adding 1 if id >= idFaction1InNews -> so we will end up with an id in ranges [0, idFaction1Ruler) union (idFaction1InNews, factionsUsedForFactionRulers.Count]
-            return GetLordNameForFaction((int)TalkManager.factionsUsedForRulers[id]);
+            return GetLordNameForFaction(idFaction2);
         }
 
         public static string TitleOfLordOfFaction1(IMacroContextProvider mcp)
         {   // %lt1
-            int id;
-            if (idFaction1Ruler == -1)
-            {
-                id = UnityEngine.Random.Range(0, TalkManager.factionsUsedForRulers.Count - 1);
-                idFaction1Ruler = id;
-            }
-            else
-            {
-                id = idFaction1Ruler;
-            }
-
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.FactionData fd;
-            factions.GetFactionData((int)TalkManager.factionsUsedForRulers[id], out fd);
+            factions.GetFactionData(idFaction1, out fd);
 
             switch (fd.ruler)
             {
@@ -949,13 +902,9 @@ namespace DaggerfallWorkshop.Utility
 
         public static string RegionInContext(IMacroContextProvider mcp)
         {   // %reg
-            if (idFaction1Ruler != -1)
+            if (idRegion != -1)
             {
-                //return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName((int)TalkManager.factionsUsedForRulers[idFaction1Ruler]); // not mapping to same regions for some reason as FactionFile.FactionIDs enum
-                string regionName = Enum.GetName(typeof(FactionFile.FactionIDs), (FactionFile.FactionIDs)TalkManager.factionsUsedForRulers[idFaction1Ruler]);
-                regionName = regionName.Replace('_', ' ');
-                return regionName;
-
+                return MapsFile.RegionNames[idRegion];
             }
             else
                 return CurrentRegion(mcp);
