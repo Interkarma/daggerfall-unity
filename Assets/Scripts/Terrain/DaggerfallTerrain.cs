@@ -276,10 +276,13 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void DisposeNativeMemory()
         {
-            // Dispose any temp working native array memory.
-            foreach (IDisposable nativeArray in MapData.nativeArrayList)
-                nativeArray.Dispose();
-            MapData.nativeArrayList = null;
+            if (MapData.nativeArrayList != null)
+            {
+                // Dispose any temp working native array memory.
+                foreach (IDisposable nativeArray in MapData.nativeArrayList)
+                    nativeArray.Dispose();
+                MapData.nativeArrayList = null;
+            }
 
             // Dispose native array memory allocations now data has been extracted.
             if (MapData.heightmapData.IsCreated)
