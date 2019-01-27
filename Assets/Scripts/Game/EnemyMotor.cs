@@ -360,7 +360,7 @@ namespace DaggerfallWorkshop.Game
                 tempMovePos = targetPos;
                 targetPosIsEnemyPos = true;
             }
-            else if (avoidObstaclesTimer == 0 && ClearPathToPosition(senses.LastKnownTargetPos))
+            else if (DaggerfallUnity.Settings.EnhancedCombatAI && avoidObstaclesTimer == 0 && ClearPathToPosition(senses.LastKnownTargetPos))
             {
                 targetPos = senses.LastKnownTargetPos + (senses.LastPositionDiff * 2);
                 tempMovePos = targetPos;
@@ -373,7 +373,7 @@ namespace DaggerfallWorkshop.Game
             // Otherwise, go straight
             else
             {
-                tempMovePos = transform.position + transform.forward * 2;
+                tempMovePos = transform.position + transform.forward * (stopDistance + .3f); // Move position needs to be a little further away (adding .3f) than stop distance so that AI will move, not stop
                 targetPos = tempMovePos;
             }
 
