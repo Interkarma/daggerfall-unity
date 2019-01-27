@@ -204,24 +204,30 @@ namespace DaggerfallWorkshop
             if (yAngle >= 0f)
             {
                 float percent = 1.0f - yAngle / 180f;
-                scrollX = width * percent;
+                scrollX = width * (percent - 1.0f);
 
+                // westRect center
+                westOffset = halfScreenWidth;
                 if (yAngle < 90f)
-                    eastOffset = halfScreenWidth - width * 2;
+                    // eastRect to the left of westRect
+                    eastOffset = halfScreenWidth - width;
                 else
-                    eastOffset = halfScreenWidth;
-                westOffset = halfScreenWidth - width;
+                    // eastRect to the right of westRect
+                    eastOffset = halfScreenWidth + width;
             }
             else
             {
                 float percent = -yAngle / 180f;
-                scrollX = width * percent;
+                scrollX = width * (percent - 1.0f);
 
-                eastOffset = halfScreenWidth - width;
+                // eastRect center
+                eastOffset = halfScreenWidth;
                 if (yAngle < -90f)
-                    westOffset = halfScreenWidth - width * 2;
+                    // westRect to the left of eastRect
+                    westOffset = halfScreenWidth - width;
                 else
-                    westOffset = halfScreenWidth;
+                    // westRect to the right of eastRect
+                    westOffset = halfScreenWidth + width;
             }
 
             // Scroll up-down
