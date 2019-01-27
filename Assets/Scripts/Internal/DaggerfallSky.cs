@@ -196,45 +196,32 @@ namespace DaggerfallWorkshop
             float halfScreenWidth = Screen.width * 0.5f;
 
             // Scroll left-right
-            float percent = 0;
-            float scrollX = 0;
-            float westOffset = 0;
-            float eastOffset = 0;
-            if (angles.y >= 90f && angles.y < 180f)
+            float westOffset;
+            float eastOffset;
+            float scrollX;
+            // -180f <= yAngle < 180f
+            float yAngle = angles.y < 180f ? angles.y : angles.y - 360f;
+            if (yAngle >= 0f)
             {
-                percent = 1.0f - ((360f - angles.y) / 180f);
-                scrollX = -width * percent;
-
-                westOffset = -width + halfScreenWidth;
-                eastOffset = halfScreenWidth;
-            }
-            else if (angles.y >= 0f && angles.y < 90f)
-            {
-                percent = 1.0f - ((360f - angles.y) / 180f);
-                scrollX = -width * percent;
-
-                westOffset = -width + halfScreenWidth;
-                eastOffset = westOffset - width;
-            }
-            else if (angles.y >= 180f && angles.y < 270f)
-            {
-                percent = 1.0f - (angles.y / 180f);
+                float percent = 1.0f - yAngle / 180f;
                 scrollX = width * percent;
 
-                westOffset = -width + halfScreenWidth;
-                eastOffset = halfScreenWidth;
-            }
-            else// if (angles.y >= 270f && angles.y < 360f)
-            {
-                // Unity can return a small negative value for angles.y
-                if (angles.y >= 0)
-                    percent = 1.0f - (angles.y / 180f);
+                if (yAngle < 90f)
+                    eastOffset = halfScreenWidth - width * 2;
                 else
-                    percent = -1.0f - (angles.y / 180f);
+                    eastOffset = halfScreenWidth;
+                westOffset = halfScreenWidth - width;
+            }
+            else
+            {
+                float percent = -yAngle / 180f;
                 scrollX = width * percent;
 
-                eastOffset = halfScreenWidth;
-                westOffset = eastOffset + width;
+                eastOffset = halfScreenWidth - width;
+                if (yAngle < -90f)
+                    westOffset = halfScreenWidth - width * 2;
+                else
+                    westOffset = halfScreenWidth;
             }
 
             // Scroll up-down
