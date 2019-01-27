@@ -226,7 +226,11 @@ namespace DaggerfallWorkshop
             }
             else// if (angles.y >= 270f && angles.y < 360f)
             {
-                percent = 1.0f - (angles.y / 180f);
+                // Unity can return a small negative value for angles.y
+                if (angles.y >= 0)
+                    percent = 1.0f - (angles.y / 180f);
+                else
+                    percent = -1.0f - (angles.y / 180f);
                 scrollX = width * percent;
 
                 eastOffset = halfScreenWidth;
