@@ -877,7 +877,8 @@ namespace DaggerfallWorkshop.Game
             tempMovePos = transform.position + testMove.normalized * 2;
             tempMovePos.y = transform.position.y;
 
-            avoidObstaclesTimer = 0.25f;
+            if (avoidObstaclesTimer == 0)
+                avoidObstaclesTimer = 0.25f;
             lastTimeWasStuck = Time.time;
             moveInForAttack = true;
         }
