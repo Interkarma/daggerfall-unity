@@ -553,7 +553,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="minMonsterSpawnerDistance">Monster spawners must be at least this close.</param>
         /// <returns>True if enemies are nearby.</returns>
-        public bool AreEnemiesNearby(float minMonsterSpawnerDistance = 12f)
+        public bool AreEnemiesNearby(float minMonsterSpawnerDistance = 12f, bool includingPacified = false)
         {
             bool areEnemiesNearby = false;
             DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
@@ -568,8 +568,13 @@ namespace DaggerfallWorkshop.Game
                         // Can enemy see player or is close enough they would be spawned in classic?
                         if ((enemySenses.Target == Instance.PlayerEntityBehaviour && enemySenses.TargetInSight) || enemySenses.WouldBeSpawnedInClassic)
                         {
-                            areEnemiesNearby = true;
-                            break;
+                            // Is it hostile or pacified?
+                            EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
+                            if (includingPacified || enemyMotor.IsHostile)
+                            {
+                                areEnemiesNearby = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -596,7 +601,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="type">Enemy type to search for.</param>
         /// <param name="stopLookingIfFound">Return as soon as an enemy of given type is found.</param>
         /// <returns>Number of this enemy type.</returns>
-        public int HowManyEnemiesOfType(MobileTypes type, bool stopLookingIfFound = false)
+        public int HowManyEnemiesOfType(MobileTypes type, bool stopLookingIfFound = false, bool includingPacified = false)
         {
             int numberOfEnemies = 0;
             DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
@@ -608,9 +613,14 @@ namespace DaggerfallWorkshop.Game
                     EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
                     if (entity.MobileEnemy.ID == (int)type)
                     {
-                        numberOfEnemies++;
-                        if (stopLookingIfFound)
-                            return numberOfEnemies;
+                        // Is it hostile or pacified?
+                        EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
+                        if (includingPacified || enemyMotor.IsHostile)
+                        {
+                            numberOfEnemies++;
+                            if (stopLookingIfFound)
+                                return numberOfEnemies;
+                        }
                     }
                 }
             }
