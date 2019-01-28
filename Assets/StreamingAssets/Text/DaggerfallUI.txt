@@ -11,14 +11,15 @@ finishedQuests,     Finished Quests
 finishedQuestsInfo, Click on an entry to move it. Right click to delete.
 notebook,           Notebook
 notebookInfo,       Click a note to move. Right click to delete. Click in-between to add a new note.
-selectedEntry,      Selected entry:
+confirmMoveHead,    Move entry.
 confirmMove,        Do you want to change the position of this entry?
 confirmMove2,       (It will be moved to before the next entry clicked)
+confirmRemoveHead,  Delete entry.
 confirmRemove,      Are you sure you want to remove this entry?
 confirmRemove2,     (It will be deleted permanently and cannot be restored)
-selectedPlace,      Selected location:
-confirmFind,        Do you want to open the world map and prepare to travel to this place?
-confirmFind2,       (Note: you can still cancel the travel from the map)
+confirmFindHead,    Travel to location.
+confirmFind,        Do you want to open the world map to travel to:
+confirmFind2,       (Note: you can cancel travel from the world map)
 enterNote,          Enter your note below:
 completedQuest,     completed
 failedQuest,        failed

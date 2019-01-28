@@ -304,6 +304,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetTextTokens(tokens, mcp);
         }
 
+        /// <summary>
+        /// Must be set before text otherwise layout has already occurred.
+        /// </summary>
+        public void SetHighlightColor(Color highlightColor)
+        {
+            label.HighlightColor = highlightColor;
+        }
+
         #endregion
 
         #region Private Methods
