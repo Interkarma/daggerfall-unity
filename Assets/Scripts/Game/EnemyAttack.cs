@@ -181,8 +181,8 @@ namespace DaggerfallWorkshop.Game
                 damage = 0;
 
                 // Melee hit detection, matched to classic
-                if (senses.Target != null && senses.TargetInSight && senses.DistanceToTarget <= 0.25f
-                    || (senses.DistanceToTarget <= MeleeDistance && senses.TargetIsWithinYawAngle(35.156f, senses.Target.transform.position)))
+                if (senses.Target != null && (senses.TargetInSight && senses.DistanceToTarget <= 0.25f
+                    || senses.DistanceToTarget <= MeleeDistance && senses.TargetIsWithinYawAngle(35.156f, senses.Target.transform.position)))
                 {
                     if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
                         damage = ApplyDamageToPlayer(weapon);
