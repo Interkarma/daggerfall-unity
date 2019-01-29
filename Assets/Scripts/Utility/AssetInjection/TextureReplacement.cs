@@ -296,9 +296,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
+        [Obsolete("Use overload that accepts readOnly flag.")]
         public static bool TryImportTextureFromLooseFiles(string relPath, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex)
         {
-            return TryImportTextureFromDisk(Path.Combine(texturesPath, relPath), mipMaps, encodeAsNormalMap, out tex);
+            return TryImportTextureFromLooseFiles(Path.Combine(texturesPath, relPath), mipMaps, encodeAsNormalMap, false, out tex);
+        }
+
+        /// <summary>
+        /// Seeks a texture from loose files using a full path or a relative path from <see cref="TexturesPath"/>.
+        /// </summary>
+        /// <param name="path">Path to texture file, full or relative to <see cref="TexturesPath"/>.</param>
+        /// <param name="mipMaps">Enable mipmaps?</param>
+        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture exists and has been imported.</returns>
+        public static bool TryImportTextureFromLooseFiles(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
+        {
+            return TryImportTextureFromDisk(Path.IsPathRooted(path) ? path : Path.Combine(texturesPath, path), mipMaps, encodeAsNormalMap, out tex, readOnly);
         }
 
         /// <summary>
