@@ -843,7 +843,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
 #if DEBUG_TEXTURE_FORMAT
-            Debug.LogFormat("{0}: {1} - mipmaps requested: {2}, mipmaps count : {3}", fileName, tex.format, mipMaps, tex.mipmapCount);
+            Debug.LogFormat("{0}: format: {1}, mipmaps: {2}, mipmaps count: {3}", Path.GetFileName(path), tex.format, mipMaps, tex.mipmapCount);
 #endif
 
             return tex;
