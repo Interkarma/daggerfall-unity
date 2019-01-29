@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop
         internal const string Fade                                  = "_ALPHABLEND_ON";
         internal const string Transparent                           = "_ALPHAPREMULTIPLY_ON";
         internal const string NormalMap                             = "_NORMALMAP";
+        internal const string HeightMap                             = "_PARALLAXMAP";
         internal const string Emission                              = "_EMISSION";
         internal const string MetallicGlossMap                      = "_METALLICGLOSSMAP";
     }
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop
         internal static readonly int Metallic                       = Shader.PropertyToID("_Metallic");    
         internal static readonly int MetallicGlossMap               = Shader.PropertyToID("_MetallicGlossMap");
         internal static readonly int BumpMap                        = Shader.PropertyToID("_BumpMap");
+        internal static readonly int HeightMap                      = Shader.PropertyToID("_ParallaxMap");
         internal static readonly int EmissionColor                  = Shader.PropertyToID("_EmissionColor");
         internal static readonly int EmissionMap                    = Shader.PropertyToID("_EmissionMap");
         internal static readonly int Mode                           = Shader.PropertyToID("_Mode");
@@ -54,7 +56,7 @@ namespace DaggerfallWorkshop
 
         internal static readonly int[] Textures = new int[]
         {
-            MainTex, EmissionMap, BumpMap, MetallicGlossMap
+            MainTex, EmissionMap, BumpMap, HeightMap, MetallicGlossMap
         };
     }
 
