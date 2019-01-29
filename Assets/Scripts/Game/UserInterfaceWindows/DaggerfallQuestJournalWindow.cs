@@ -413,7 +413,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] tokens = new TextFile.Token[] {
                 TextFile.CreateTextToken(heading), TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter), TextFile.NewLineToken,
                 TextFile.CreateTextToken(action), TextFile.NewLineToken, TextFile.NewLineToken,
-                new TextFile.Token() { text = entryStr, formatting = TextFile.Formatting.TextHighlight }, TextFile.NewLineToken, TextFile.NewLineToken,
+                new TextFile.Token() { text = entryStr, formatting = TextFile.Formatting.TextHighlight }, TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter), TextFile.NewLineToken,
                 TextFile.CreateTextToken(explanation), TextFile.CreateFormatToken(TextFile.Formatting.EndOfRecord)
             };
 
