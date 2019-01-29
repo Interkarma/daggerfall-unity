@@ -11,8 +11,10 @@
 
 /*
  * TODO:
- * - PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
- *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
+ * - Support for World map (TRAV0I00.IMG)
+ * - Support for Local maps (FMAPxxxx.IMG)
+ * - Support for Paperdoll (BODY00I0.IMG)
+ * - Support for Sky (SKYxx.DAT)
  */
 
 //#define DEBUG_TEXTURE_FORMAT
