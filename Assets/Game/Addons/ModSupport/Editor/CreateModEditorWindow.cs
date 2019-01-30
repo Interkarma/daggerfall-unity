@@ -318,7 +318,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             GUILayout.Label("Compression Type:\n", titleStyle);
             compressionOption = (ModCompressionOptions)EditorGUILayout.EnumPopup("", compressionOption, GUILayout.MaxWidth(125));
-
             EditorGUILayout.EndVertical();
 
             if(GUILayout.Button("Collect Dependencies", GUILayout.MaxWidth(200)) && ModInfoReady)

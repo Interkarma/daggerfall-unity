@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     public enum ModCompressionOptions
     {
         LZ4=0,
-        LZA=1,
+        LZMA=1,
         Uncompressed=2,
     }
 
