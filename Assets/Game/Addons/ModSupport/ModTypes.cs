@@ -125,6 +125,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         void RestoreSaveData(object saveData);          // Apply deserialized data.
     }
 
+    //used by mod builder window
+    public enum ModCompressionOptions
+    {
+        LZ4=0,
+        LZA=1,
+        Uncompressed=2,
+    }
+
     public delegate void DFModMessageReceiver(string message, object data, DFModMessageCallback callBack);
     public delegate void DFModMessageCallback(string message, object data);
 }
