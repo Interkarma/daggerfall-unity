@@ -453,7 +453,10 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenUseMagicItemWindow:
-                    uiManager.PushWindow(dfUseMagicItemWindow);
+                    if (dfUseMagicItemWindow.HasUsableMagicItems)
+                        uiManager.PushWindow(dfUseMagicItemWindow);
+                    else
+                        DaggerfallUI.SetMidScreenText(TextManager.Instance.GetText("SpellmakerUI", "noItemToActivate"));
                     break;
                 case DaggerfallUIMessages.dfuiOpenCourtWindow:
                     uiManager.PushWindow(dfCourtWindow);

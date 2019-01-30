@@ -9,11 +9,11 @@
 // Notes:
 //
 
-using UnityEngine;
-using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Items;
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.UserInterface;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -23,6 +23,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         KeyCode toggleClosedBinding;
 
         List<DaggerfallUnityItem> magicUseItems = new List<DaggerfallUnityItem>();
+
+        public bool HasUsableMagicItems { get { return GetUsableMagicItems().Count > 0; } }
 
         #region Constructors
 
@@ -71,35 +73,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void Refresh()
         {
+            magicUseItems = GetUsableMagicItems();
+
+            ListBox.ClearItems();
+            foreach (DaggerfallUnityItem magicUseItem in magicUseItems)
+            {
+                ListBox.AddItem(magicUseItem.LongName);
+            }
+        }
+
+        private List<DaggerfallUnityItem> GetUsableMagicItems()
+        {
+            List<DaggerfallUnityItem> result = new List<DaggerfallUnityItem>();
             ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
             for (int i = 0; i < playerItems.Count; i++)
             {
                 DaggerfallUnityItem item = playerItems.GetItem(i);
                 if (item.IsEnchanted)
                 {
-                    foreach(DaggerfallEnchantment enchantment in item.Enchantments)
+                    foreach (DaggerfallEnchantment enchantment in item.Enchantments)
                         if (enchantment.type == EnchantmentTypes.CastWhenUsed)
                         {
-                            magicUseItems.Add(item);
+                            result.Add(item);
                             break;
                         }
                 }
                 else if (item.IsPotion)
                 {
-                    magicUseItems.Add(item);
+                    result.Add(item);
                 }
             }
-
-            if (magicUseItems.Count > 0)
-            {
-                ListBox.ClearItems();
-                foreach (DaggerfallUnityItem magicUseItem in magicUseItems)
-                {
-                    ListBox.AddItem(magicUseItem.LongName);
-                }
-            }
-            else
-                CloseWindow();
+            return result;
         }
 
         #endregion
