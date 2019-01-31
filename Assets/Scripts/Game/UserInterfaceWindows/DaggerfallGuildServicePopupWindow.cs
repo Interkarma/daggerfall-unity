@@ -307,6 +307,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.BuySpells:
+                case GuildServices.BuySpellsMages:
                     CloseWindow();
                     uiManager.PushWindow(new DaggerfallSpellBookWindow(uiManager, this, true));
                     break;
