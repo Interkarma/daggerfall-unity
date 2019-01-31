@@ -24,8 +24,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         List<DaggerfallUnityItem> magicUseItems = new List<DaggerfallUnityItem>();
 
-        public bool HasUsableMagicItems { get { return GetUsableMagicItems().Count > 0; } }
-
         #region Constructors
 
         public DaggerfallUseMagicItemWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
@@ -73,8 +71,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void Refresh()
         {
-            magicUseItems = GetUsableMagicItems();
-
             ListBox.ClearItems();
             foreach (DaggerfallUnityItem magicUseItem in magicUseItems)
             {
@@ -82,9 +78,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private List<DaggerfallUnityItem> GetUsableMagicItems()
+        public int UpdateUsableMagicItems()
         {
-            List<DaggerfallUnityItem> result = new List<DaggerfallUnityItem>();
+            magicUseItems.Clear();
             ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
             for (int i = 0; i < playerItems.Count; i++)
             {
@@ -94,16 +90,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     foreach (DaggerfallEnchantment enchantment in item.Enchantments)
                         if (enchantment.type == EnchantmentTypes.CastWhenUsed)
                         {
-                            result.Add(item);
+                            magicUseItems.Add(item);
                             break;
                         }
                 }
                 else if (item.IsPotion)
                 {
-                    result.Add(item);
+                    magicUseItems.Add(item);
                 }
             }
-            return result;
+            return magicUseItems.Count;
         }
 
         #endregion
