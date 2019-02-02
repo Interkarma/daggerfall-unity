@@ -9,6 +9,12 @@
 // Notes:
 //
 
+/*
+ * TODO:
+ * - Support for first person weapons
+ * - Support for town NPCs and enemies
+ */
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;

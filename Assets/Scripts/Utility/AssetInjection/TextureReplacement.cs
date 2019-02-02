@@ -11,8 +11,10 @@
 
 /*
  * TODO:
- * - PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
- *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
+ * - Support for World map (TRAV0I00.IMG)
+ * - Support for Local maps (FMAPxxxx.IMG)
+ * - Support for Paperdoll (BODY00I0.IMG)
+ * - Support for Sky (SKYxx.DAT)
  */
 
 //#define DEBUG_TEXTURE_FORMAT
@@ -279,7 +281,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
-                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, out tex);
+                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, false, out tex);
             }
 
             tex = null;
@@ -294,9 +296,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
+        [Obsolete("Use overload that accepts readOnly flag.")]
         public static bool TryImportTextureFromLooseFiles(string relPath, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex)
         {
-            return TryImportTextureFromDisk(Path.Combine(texturesPath, relPath), mipMaps, encodeAsNormalMap, out tex);
+            return TryImportTextureFromLooseFiles(Path.Combine(texturesPath, relPath), mipMaps, encodeAsNormalMap, false, out tex);
+        }
+
+        /// <summary>
+        /// Seeks a texture from loose files using a full path or a relative path from <see cref="TexturesPath"/>.
+        /// </summary>
+        /// <param name="path">Path to texture file, full or relative to <see cref="TexturesPath"/>.</param>
+        /// <param name="mipMaps">Enable mipmaps?</param>
+        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture exists and has been imported.</returns>
+        public static bool TryImportTextureFromLooseFiles(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
+        {
+            return TryImportTextureFromDisk(Path.IsPathRooted(path) ? path : Path.Combine(texturesPath, path), mipMaps, encodeAsNormalMap, readOnly, out tex);
         }
 
         /// <summary>
@@ -309,19 +326,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="tex">Imported texture.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <returns>True if texture exists and has been imported.</returns>
+        [Obsolete("Use TryImportTextureFromLooseFiles()")]
         public static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex, bool readOnly = true)
         {
-            if (!path.EndsWith(extension))
-                path += extension;
-
-            if (File.Exists(path))
-            {
-                tex = ImportTextureFromDisk(path, mipMaps, encodeAsNormalMap, readOnly);
-                return true;
-            }
-
-            tex = null;
-            return false;
+            return TryImportTextureFromLooseFiles(path, mipMaps, encodeAsNormalMap, readOnly, out tex);
         }
 
         #endregion
@@ -775,7 +783,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
-                if (TryImportTextureFromDisk(Path.Combine(path, name), false, false, out tex, readOnly))
+                if (TryImportTextureFromDisk(Path.Combine(path, name), false, false, readOnly, out tex))
                     return true;
 
                 // Seek from mods
@@ -812,39 +820,49 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import data from a file on disk as a texture.
+        /// Import texture data from disk with a full path to file.
         /// </summary>
-        /// <param name="path">Location of texture file.</param>
+        /// <param name="directory">Full path to texture file.</param>
         /// <param name="fileName">Name of texture file.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
         /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
-        /// <returns>Imported texture2D.</returns>
-        private static Texture2D ImportTextureFromDisk(string path, bool mipMaps = false, bool encodeAsNormalMap = false, bool readOnly = true)
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture exists and has been imported.</returns>
+        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
         {
-            // Load texture file
-            Texture2D tex = new Texture2D(4, 4, TextureFormat, mipMaps);
-            if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
-                Debug.LogErrorFormat("Failed to import texture data at {0}", path);
+            if (!path.EndsWith(extension))
+                path += extension;
 
-            if (encodeAsNormalMap)
+            if (File.Exists(path))
             {
-                // RGBA to DXTnm
-                Color32[] colours = tex.GetPixels32();
-                for (int i = 0; i < colours.Length; i++)
+                // Load texture file
+                tex = new Texture2D(4, 4, TextureFormat, mipMaps);
+                if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
+                    Debug.LogErrorFormat("Failed to import texture data at {0}", path);
+
+                if (encodeAsNormalMap)
                 {
-                    colours[i].a = colours[i].r;
-                    colours[i].r = colours[i].b = colours[i].g;
+                    // RGBA to DXTnm
+                    Color32[] colours = tex.GetPixels32();
+                    for (int i = 0; i < colours.Length; i++)
+                    {
+                        colours[i].a = colours[i].r;
+                        colours[i].r = colours[i].b = colours[i].g;
+                    }
+                    tex.SetPixels32(colours);
+                    tex.Apply(true, readOnly);
                 }
-                tex.SetPixels32(colours);
-                tex.Apply(true, readOnly);
-            }
 
 #if DEBUG_TEXTURE_FORMAT
-            Debug.LogFormat("{0}: {1} - mipmaps requested: {2}, mipmaps count : {3}", fileName, tex.format, mipMaps, tex.mipmapCount);
+                Debug.LogFormat("{0}: format: {1}, mipmaps: {2}, mipmaps count: {3}", Path.GetFileName(path), tex.format, mipMaps, tex.mipmapCount);
 #endif
 
-            return tex;
+                return true;
+            }
+
+            tex = null;
+            return false;
         }
 
         /// <summary>
