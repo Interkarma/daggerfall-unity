@@ -11,8 +11,6 @@
 
 /*
  * TODO:
- * - Support for World map (TRAV0I00.IMG)
- * - Support for Local maps (FMAPxxxx.IMG)
  * - Support for Paperdoll (BODY00I0.IMG)
  * - Support for Sky (SKYxx.DAT)
  */
