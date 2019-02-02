@@ -1436,6 +1436,10 @@ namespace DaggerfallWorkshop.Game.Entity
                                                         0, 0, 0, 0, 88, 94, 36, 94, 106, 84, 106, 106, 88, 98, 82, 98, 84, 94, 36, 88, 94, 36, 98, 84, 106,
                                                        88, 106, 88, 92, 84, 98, 88, 82, 94};
 
+            // Note: For some reason rumor updating is disabled in classic while the player is serving jail time. There's no clear reason for this,
+            // so not replicating that here.
+            GameManager.Instance.TalkManager.RefreshRumorMill();
+
             List<int> keys = new List<int>(factionData.FactionDict.Keys);
             foreach (int key in keys)
             {
@@ -1507,7 +1511,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, allies[i]) * 3) / 5 + 70 < UnityEngine.Random.Range(0, 100 + 1))
                                 {
                                     factionData.EndFactionAllies(factionData.FactionDict[key].id, allies[i]);
-                                    // AddNewRumor 1402
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, allies[i], -1, 100, 1402); // End faction allies
                                 }
                             }
                         }
@@ -1527,7 +1531,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, enemies[i]) * 3) / 5 > UnityEngine.Random.Range(0, 100 + 1))
                                 {
                                     factionData.EndFactionEnemies(factionData.FactionDict[key].id, enemies[i]);
-                                    // AddNewRumor 1403
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, enemies[i], -1, 100, 1403); // End faction enemies
                                 }
                             }
                         }
@@ -1571,12 +1575,12 @@ namespace DaggerfallWorkshop.Game.Entity
                                     int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
                                     if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 > UnityEngine.Random.Range(0, 100 + 1))
                                     {
-                                        //if (factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province && factionData.FactionDict[key].region != -1)
-                                        //AddNewRumor 1481
-                                        //if (random.type == (int)FactionFile.FactionTypes.Province && random.region != -1)
-                                        //AddNewRumor 1481
+                                        if (factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province && factionData.FactionDict[key].region != -1)
+                                            GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, factionData.FactionDict[key].region, 26, 1481); // Factions start alliance sign message
+                                        if (random.type == (int)FactionFile.FactionTypes.Province && random.region != -1)
+                                            GameManager.Instance.TalkManager.AddNonQuestRumor(random.id, factionData.FactionDict[key].id, random.region, 26, 1481); // Factions start alliance sign message
                                         factionData.StartFactionAllies(factionData.FactionDict[key].id, i, random.id);
-                                        //AddNewRumor 1400
+                                        GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, -1, 100, 1400); // Factions start alliance
                                     }
                                 }
                                 break;
@@ -1610,8 +1614,8 @@ namespace DaggerfallWorkshop.Game.Entity
                                 }
                                 else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WarBeginning])
                                 {
-                                    //AddNewRumor 1479
-                                    //AddNewRumor 1479
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, warEnemyID, factionData.FactionDict[key].region, 0, 1479); // War started sign message
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(warEnemyID, factionData.FactionDict[key].id, warEnemy.region, 0, 1479); // War started sign message
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarOngoing);
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarOngoing);
                                 }
@@ -1644,20 +1648,20 @@ namespace DaggerfallWorkshop.Game.Entity
 
                                         if (combinedPower - combinedEnemyPower > combinedEnemyPower)
                                         {
-                                            // AddNewRumor 1408
+                                            GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, warEnemy.id, -1, 100, 1408); // War over
                                             factionData.ChangePower(factionData.FactionDict[key].id, warEnemy.power / 2);
                                             TurnOnConditionFlag(warEnemy.region, RegionDataFlags.WarLost);
                                             TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarWon);
                                         }
                                         else if (combinedEnemyPower - combinedPower > combinedPower)
                                         {
-                                            // AddNewRumor 1408
+                                            GameManager.Instance.TalkManager.AddNonQuestRumor(warEnemy.id, factionData.FactionDict[key].id, -1, 100, 1408); // War over
                                             factionData.ChangePower(warEnemy.id, factionData.FactionDict[key].power / 2);
                                             TurnOnConditionFlag(warEnemy.region, RegionDataFlags.WarWon);
                                             TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarLost);
                                         }
-                                        //else
-                                        //AddNewRumor 1407
+                                        else
+                                            GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, warEnemy.id, -1, 100, 1407); // War started/ongoing
                                     }
                                     else
                                     {
@@ -1712,18 +1716,19 @@ namespace DaggerfallWorkshop.Game.Entity
                                         int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
                                         if (mod + (powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 + 70 < UnityEngine.Random.Range(0, 100 + 1))
                                         {
-                                            //if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
-                                            //AddNewRumor 1482
-                                            //if (random.region != -1 && random.type == (int)FactionFile.FactionTypes.Province)
-                                            //AddNewRumor 1482
+                                            if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
+                                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, factionData.FactionDict[key].region, 27, 1482); // War started sign message
+                                            if (random.region != -1 && random.type == (int)FactionFile.FactionTypes.Province)
+                                                GameManager.Instance.TalkManager.AddNonQuestRumor(random.id, factionData.FactionDict[key].id, random.region, 27, 1482); // Enemy faction sign message
                                             factionData.StartFactionEnemies(factionData.FactionDict[key].id, i, random.id);
+                                            GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, -1, 100, 1401); // Faction rivalry started
                                             if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province
                                                 && random.region != -1 && random.type == (int)FactionFile.FactionTypes.Province
                                                 && factionData.IsEnemyStatePermanentUntilWarOver(factionData.FactionDict[key], random))
                                             {
-                                                // AddNewRumor 1407
-                                                // AddNewRumor 1479
-                                                // AddNewRumor 1479
+                                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, -1, 100, 1407); // War started/ongoing
+                                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, factionData.FactionDict[key].region, 28, 1479); // War started sign message
+                                                GameManager.Instance.TalkManager.AddNonQuestRumor(random.id, factionData.FactionDict[key].id, random.region, 28, 1479); // War started sign message
                                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WarBeginning);
                                                 TurnOnConditionFlag(random.region, RegionDataFlags.WarBeginning);
                                             }
@@ -1740,11 +1745,11 @@ namespace DaggerfallWorkshop.Game.Entity
                             int mod = factionData.FactionDict[key].rulerPowerBonus / 3;
                             if (UnityEngine.Random.Range(0, 100 + 1) > mod + 70)
                             {
-                                //if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
-                                // AddNewRumor 1480
+                                if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, -1, 12, 1480); // New ruler. Although unused, a regionID is defined for this rumor in classic.
                                 factionData.SetNewRulerData(factionData.FactionDict[key].id);
                                 // if ( PlayerIsRelatedToFaction(factionData.FactionDict[key]) )
-                                // AddNewRumor 1406
+                                // AddNewRumor 1406 // New faction leader
                             }
                         }
 
@@ -1767,12 +1772,21 @@ namespace DaggerfallWorkshop.Game.Entity
                             else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.FamineOngoing])
                             {
                                 if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod + factionData.FactionDict[key].power / 5)
+                                {
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineEnding);
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 7, 1477); // Famine sign message
+                                }
                             }
                             else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.FamineBeginning])
+                            {
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineOngoing);
+                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 7, 1477); // Famine sign message
+                            }
                             else if (UnityEngine.Random.Range(1, 100 + 1) <= 2 && UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
+                            {
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineBeginning);
+                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 7, 1477); // Famine sign message
+                            }
 
                             // Plague
                             FactionFile.FactionData temple;
@@ -1786,13 +1800,17 @@ namespace DaggerfallWorkshop.Game.Entity
                                     factionData.ChangePower(temple.id, -1);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
                                 if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].power / 5 + factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod)
+                                {
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueEnding);
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 4, 1478); // Plague sign message
+                                }
                             }
                             else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PlagueBeginning])
                             {
                                 if (temple.id != 0)
                                     factionData.ChangePower(temple.id, -1);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 4, 1478); // Plague sign message
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueOngoing);
                             }
                             else if (UnityEngine.Random.Range(1, 100 + 1) <= 2 && UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
@@ -1800,6 +1818,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 if (temple.id != 0)
                                     factionData.ChangePower(temple.id, -1);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                                GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 4, 1478); // Plague sign message
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueBeginning);
                             }
 
@@ -1815,6 +1834,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                     regionData[factionData.FactionDict[key].region].IDOfPersecutedTemple = (ushort)temple.id;
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
                                     factionData.ChangePower(temple.id, -1);
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 18, 1476); // Persecuted temple sign message
                                 }
                             }
 
@@ -1834,6 +1854,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             {
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.CrimeWave);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
+                                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, factionData.FactionDict[key].region, 11, 1410); // Crime wave
                             }
 
                             // Witch burnings
@@ -1849,6 +1870,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 {
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WitchBurnings);
                                     factionData.ChangePower(witches.id, -1);
+                                    GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 10, 1475); // Witch burnings sign message
                                 }
                             }
                         }
@@ -1896,6 +1918,18 @@ namespace DaggerfallWorkshop.Game.Entity
                             factionData.ChangePower(merchants.id, 1);
                     }
                 }
+            }
+
+            if (updateConditions)
+            {
+                // These rumors are always available
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1450);
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1451);
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1452);
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1453);
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1454);
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1455);
+                GameManager.Instance.TalkManager.AddNonQuestRumor(0, 0, -1, 100, 1456);
             }
         }
 

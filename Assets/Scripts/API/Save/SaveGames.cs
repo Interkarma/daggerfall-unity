@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -248,6 +248,9 @@ namespace DaggerfallConnect.Save
             rumorFile = new RumorFile();
             if (!rumorFile.Load(Path.Combine(saveGameDict[save], "RUMOR.DAT"), FileUsage.UseMemory, true))
                 UnityEngine.Debug.Log("Could not open RUMOR.DAT for index " + save);
+
+            for (int i = 0; i < rumorFile.rumors.Count; i++)
+                GameManager.Instance.TalkManager.ImportClassicRumor(rumorFile.rumors[i]);
 
             bioFile = new BioFile();
             if (!bioFile.Load(Path.Combine(saveGameDict[save], "BIO.DAT")))
