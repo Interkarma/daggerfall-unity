@@ -992,12 +992,6 @@ namespace DaggerfallWorkshop.Game.Items
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
                 }
             }
-
-            // Player should now have a valid spellbook, otherwise create one
-            if (!items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
-            {
-                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
-            }
         }
 
         /// <summary>
