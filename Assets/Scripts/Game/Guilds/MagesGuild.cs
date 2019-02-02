@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return true;
                 case GuildServices.Identify:
                     return true;
-                case GuildServices.BuySpells:
+                case GuildServices.BuySpellsMages:
                     return true;
                 case GuildServices.MakeSpells:
                     return IsMember();

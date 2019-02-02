@@ -310,6 +310,39 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        private static string GetRulerTitle(int factionRuler)
+        {
+            switch (factionRuler)
+            {
+                case 1:
+                    return HardStrings.King;
+                case 2:
+                    return HardStrings.Queen;
+                case 3:
+                    return HardStrings.Duke;
+                case 4:
+                    return HardStrings.Duchess;
+                case 5:
+                    return HardStrings.Marquis;
+                case 6:
+                    return HardStrings.Marquise;
+                case 7:
+                    return HardStrings.Count;
+                case 8:
+                    return HardStrings.Countess;
+                case 9:
+                    return HardStrings.Baron;
+                case 10:
+                    return HardStrings.Baroness;
+                case 11:
+                    return HardStrings.Lord;
+                case 12:
+                    return HardStrings.Lady;
+                default:
+                    return HardStrings.Lord;
+            }
+        }
+
         #endregion
 
         #region Macro Expansion Code
@@ -555,36 +588,7 @@ namespace DaggerfallWorkshop.Utility
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
             GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex, out regionFaction);
-
-            switch (regionFaction.ruler)
-            {
-                case 1:
-                    return HardStrings.King;
-                case 2:
-                    return HardStrings.Queen;
-                case 3:
-                    return HardStrings.Duke;
-                case 4:
-                    return HardStrings.Duchess;
-                case 5:
-                    return HardStrings.Marquis;
-                case 6:
-                    return HardStrings.Marquise;
-                case 7:
-                    return HardStrings.Count;
-                case 8:
-                    return HardStrings.Countess;
-                case 9:
-                    return HardStrings.Baron;
-                case 10:
-                    return HardStrings.Baroness;
-                case 11:
-                    return HardStrings.Lord;
-                case 12:
-                    return HardStrings.Lady;
-                default:
-                    return HardStrings.Lord;
-            }
+            return GetRulerTitle(regionFaction.ruler);
         }
 
         private static string Crime(IMacroContextProvider mcp)
@@ -869,35 +873,7 @@ namespace DaggerfallWorkshop.Utility
             FactionFile.FactionData fd;
             factions.GetFactionData(idFaction1, out fd);
 
-            switch (fd.ruler)
-            {
-                case 1:
-                    return HardStrings.King;
-                case 2:
-                    return HardStrings.Queen;
-                case 3:
-                    return HardStrings.Duke;
-                case 4:
-                    return HardStrings.Duchess;
-                case 5:
-                    return HardStrings.Marquis;
-                case 6:
-                    return HardStrings.Marquise;
-                case 7:
-                    return HardStrings.Count;
-                case 8:
-                    return HardStrings.Countess;
-                case 9:
-                    return HardStrings.Baron;
-                case 10:
-                    return HardStrings.Baroness;
-                case 11:
-                    return HardStrings.Lord;
-                case 12:
-                    return HardStrings.Lady;
-                default:
-                    return HardStrings.Lord;
-            }
+            return GetRulerTitle(fd.ruler);
         }
 
         public static string RegionInContext(IMacroContextProvider mcp)

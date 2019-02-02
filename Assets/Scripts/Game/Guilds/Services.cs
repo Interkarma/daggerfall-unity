@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         MakePotions,
 
         BuySpells,
+        BuySpellsMages,
         MakeSpells,
 
         BuyMagicItems,
@@ -233,6 +234,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return GuildServices.MakePotions;
 
                 case GuildNpcServices.MG_BuySpells:
+                    return GuildServices.BuySpellsMages;
+
                 case GuildNpcServices.TKy_BuySpells:
                     return GuildServices.BuySpells;
 
@@ -312,6 +315,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 case GuildServices.MakePotions:
                     return HardStrings.serviceMakePotions;
                 case GuildServices.BuySpells:
+                case GuildServices.BuySpellsMages:
                     return HardStrings.serviceBuySpells;
                 case GuildServices.MakeSpells:
                     return HardStrings.serviceMakeSpells;
