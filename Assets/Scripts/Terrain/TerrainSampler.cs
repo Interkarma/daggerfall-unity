@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,12 +9,8 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
-using DaggerfallWorkshop.Utility;
+using System;
+using Unity.Jobs;
 
 namespace DaggerfallWorkshop
 {
@@ -72,6 +68,16 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="mapPixel">MapPixelData struct.</param>
         void GenerateSamples(ref MapPixelData mapPixel);
+
+        /// <summary>
+        /// Populates a MapPixelData struct using custom height sample generator implemented using Unity Jobs system.
+        /// The Dispose() method should be called after the jobs are completed to free any allocated memory.
+        /// NOTE: Backwards compatible with implementations that only implement GenerateSamples, and will call that then
+        /// convert the output before returning. (reduces performance a little)
+        /// </summary>
+        /// <param name="mapPixel">MapPixelData struct.</param>
+        /// <returns>JobHandle of the scheduled job.</returns>
+        JobHandle ScheduleGenerateSamplesJob(ref MapPixelData mapPixel);
     }
 
     /// <summary>
@@ -93,5 +99,22 @@ namespace DaggerfallWorkshop
         public virtual float TerrainHeightScale(int x, int y) { return MeanTerrainHeightScale; } // default implementation returns MeanTerrainHeightScale for every world map position
 
         public abstract void GenerateSamples(ref MapPixelData mapPixel);
+
+        // Makes terrain sampler implementations backwards compatible with jobs system terrain data generation.
+        public virtual JobHandle ScheduleGenerateSamplesJob(ref MapPixelData mapPixel)
+        {
+            GenerateSamples(ref mapPixel);
+
+            // Convert generated samples to the flattened native array used by jobs.
+            int hDim = HeightmapDimension;
+            for (int y = 0; y < hDim; y++)
+            {
+                for (int x = 0; x < hDim; x++)
+                {
+                    mapPixel.heightmapData[JobA.Idx(y, x, hDim)] = mapPixel.heightmapSamples[y, x];
+                }
+            }
+            return new JobHandle();
+        }
     }
 }

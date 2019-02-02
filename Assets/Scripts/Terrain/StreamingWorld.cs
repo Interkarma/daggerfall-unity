@@ -4,24 +4,25 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    LypyL
+// Contributors:    LypyL, Hazelnut
 // 
 // Notes:
 //
 
-//#define SHOW_LAYOUT_TIMES
+#define SHOW_LAYOUT_TIMES
+//#define SHOW_LAYOUT_TIMES_NATURE
 
 using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using Unity.Jobs;
 
 namespace DaggerfallWorkshop
 {
@@ -92,7 +93,7 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         DFPosition mapOrigin;
         double worldX, worldZ;
-        TerrainTexturing terrainTexturing = new TerrainTexturing();
+        readonly TerrainTexturing terrainTexturing = new TerrainTexturing();
         bool isReady = false;
 
         Vector3 autoRepositionOffset = Vector3.zero;
@@ -622,10 +623,11 @@ namespace DaggerfallWorkshop
                 {
                     if (terrainArray[i].updateData)
                     {
-                        UpdateTerrainData(terrainArray[i]);
+                        if (init)
+                            UpdateTerrainData(terrainArray[i]);
+                        else
+                            yield return StartCoroutine(UpdateTerrainDataCoroutine(terrainArray[i]));
                         terrainArray[i].updateData = false;
-                        if (!init)
-                            yield return new WaitForEndOfFrame();
                     }
                     if (terrainArray[i].updateNature)
                     {
@@ -803,8 +805,8 @@ namespace DaggerfallWorkshop
                 }
 
 #if SHOW_LAYOUT_TIMES
-            stopwatch.Stop();
-            DaggerfallUnity.LogMessage(string.Format("Time to update location {1}: {0}ms", stopwatch.ElapsedMilliseconds, index), true);
+                stopwatch.Stop();
+                DaggerfallUnity.LogMessage(string.Format("Time to update location {1}: {0}ms", stopwatch.ElapsedMilliseconds, index), true);
 #endif
             }
         }
@@ -989,7 +991,7 @@ namespace DaggerfallWorkshop
         private void CollectLooseObjects(bool collectAll = false)
         {
             // Walk list backward to RemoveAt doesn't shift unprocessed items
-            for (int i = looseObjectsList.Count; i-- > 0; )
+            for (int i = looseObjectsList.Count; i-- > 0;)
             {
                 if (!IsInRange(looseObjectsList[i].mapPixelX, looseObjectsList[i].mapPixelY) || collectAll)
                 {
@@ -1065,7 +1067,6 @@ namespace DaggerfallWorkshop
                     dfTerrain.RightNeighbour = GetTerrain(dfTerrain.MapPixelX + 1, dfTerrain.MapPixelY);
                     dfTerrain.TopNeighbour = GetTerrain(dfTerrain.MapPixelX, dfTerrain.MapPixelY - 1);
                     dfTerrain.BottomNeighbour = GetTerrain(dfTerrain.MapPixelX, dfTerrain.MapPixelY + 1);
-                    dfTerrain.UpdateNeighbours();
                 }
                 else
                 {
@@ -1076,7 +1077,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Update Unity Terrain
-                dfTerrain.UpdateNeighbours();                
+                dfTerrain.UpdateNeighbours();
             }
         }
 
@@ -1097,7 +1098,7 @@ namespace DaggerfallWorkshop
         {
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(StreamingTarget);
-            terrainObject.name = GetTerrainName(mapPixelX, mapPixelY);
+            terrainObject.name = TerrainHelper.GetTerrainName(mapPixelX, mapPixelY);
             terrainObject.hideFlags = defaultHideFlags;
 
             // Create new billboard batch object parented to terrain
@@ -1107,11 +1108,6 @@ namespace DaggerfallWorkshop
             billboardBatchObject.transform.parent = terrainObject.transform;
             billboardBatchObject.transform.localPosition = Vector3.zero;
             billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
-        }
-
-        public string GetTerrainName(int mapPixelX, int mapPixelY)
-        {
-            return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
         }
 
         // Create new location game object
@@ -1154,7 +1150,7 @@ namespace DaggerfallWorkshop
             return locationObject;
         }
 
-        // Update terrain data
+        // Update terrain data.
         public void UpdateTerrainData(TerrainDesc terrainDesc)
         {
             // Instantiate Daggerfall terrain
@@ -1168,9 +1164,16 @@ namespace DaggerfallWorkshop
             }
 
             // Update data for terrain
-            dfTerrain.UpdateMapPixelData(terrainTexturing);
+            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturing);
 
-            dfTerrain.UpdateTileMapData();
+            CompleteUpdateTerrainDataJobs(terrainDesc, dfTerrain, updateTerrainDataJobHandle);
+        }
+
+        private void CompleteUpdateTerrainDataJobs(TerrainDesc terrainDesc, DaggerfallTerrain dfTerrain, JobHandle updateTerrainDataJobHandle)
+        {
+            // Ensure jobs have completed.
+            updateTerrainDataJobHandle.Complete();
+            dfTerrain.CompleteMapPixelDataUpdate(terrainTexturing);
 
             // Promote data to live terrain
             dfTerrain.UpdateClimateMaterial(init);
@@ -1178,12 +1181,34 @@ namespace DaggerfallWorkshop
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
-            terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            terrainDesc.terrainObject.name = TerrainHelper.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+        }
+
+        // Update terrain data using coroutine to decouple from main thread & FPS.
+        private IEnumerator UpdateTerrainDataCoroutine(TerrainDesc terrainDesc)
+        {
+            // Instantiate Daggerfall terrain
+            DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+            if (dfTerrain)
+            {
+                dfTerrain.TerrainScale = TerrainScale;
+                dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                dfTerrain.InstantiateTerrain();
+            }
+
+            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturing);
+            yield return new WaitUntil(() => updateTerrainDataJobHandle.IsCompleted);
+
+            CompleteUpdateTerrainDataJobs(terrainDesc, dfTerrain, updateTerrainDataJobHandle);
         }
 
         // Update terrain nature
         public void UpdateTerrainNature(TerrainDesc terrainDesc)
         {
+#if SHOW_LAYOUT_TIMES_NATURE
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+#endif
             // Setup billboards
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
             DaggerfallBillboardBatch dfBillboardBatch = terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
@@ -1197,6 +1222,10 @@ namespace DaggerfallWorkshop
 
             // Only set active again once complete
             terrainDesc.billboardBatchObject.SetActive(true);
+#if SHOW_LAYOUT_TIMES_NATURE
+            stopwatch.Stop();
+            DaggerfallUnity.LogMessage(string.Format("Time to update terrain natures for ({1},{2}): {0}ms", stopwatch.ElapsedMilliseconds, terrainDesc.mapPixelX, terrainDesc.mapPixelY), true);
+#endif
         }
 
         // Gets terrain at map pixel coordinates, or null if not found
@@ -1304,7 +1333,7 @@ namespace DaggerfallWorkshop
             float lowestHeight = float.MaxValue;
             DaggerfallStaticDoors foundCollection = null;
             Vector3 foundDoorNormal = Vector3.zero;
-            foreach(var collection in doors)
+            foreach (var collection in doors)
             {
                 for (int i = 0; i < collection.Doors.Length; i++)
                 {
@@ -1560,6 +1589,7 @@ namespace DaggerfallWorkshop
                 TerrainHelper.DilateCoastalClimate(dfUnity.ContentReader, 2);
 
                 // Smooth steep location on steep gradients
+                // TODO: What is this supposed to be doing? It doesn't seem to change any data that's used anywhere..
                 TerrainHelper.SmoothLocationNeighbourhood(dfUnity.ContentReader);
             }
 

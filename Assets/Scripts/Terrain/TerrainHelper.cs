@@ -15,6 +15,8 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using Unity.Jobs;
+using Unity.Collections;
 
 namespace DaggerfallWorkshop
 {
@@ -23,6 +25,11 @@ namespace DaggerfallWorkshop
     /// </summary>
     public static class TerrainHelper
     {
+        public const byte avgHeightIdx = 0;
+        public const byte maxHeightIdx = 1;
+        public const int rotBit = 0x40;
+        public const int flipBit = 0x80;
+
         // Ranges and defaults for editor
         // Map pixel ranges are slightly smaller to allow for interpolation of neighbours
         public const int minMapPixelX = 3;
@@ -34,6 +41,14 @@ namespace DaggerfallWorkshop
         public const float minTerrainScale = 1.0f;
         public const float maxTerrainScale = 10.0f;
         public const float defaultTerrainScale = 1.5f;
+
+        /// <summary>
+        /// Gets the Terrain name for a given map pixel
+        /// </summary>
+        public static string GetTerrainName(int mapPixelX, int mapPixelY)
+        {
+            return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
+        }
 
         /// <summary>
         /// Gets map pixel data for any location in world.
@@ -78,18 +93,6 @@ namespace DaggerfallWorkshop
             return mapPixel;
         }
 
-        // Set all sample tiles to same base index
-        public static void FillTilemapSamples(ref MapPixelData mapPixel, byte record)
-        {
-            for (int y = 0; y < MapsFile.WorldMapTileDim; y++)
-            {
-                for (int x = 0; x < MapsFile.WorldMapTileDim; x++)
-                {
-                    mapPixel.tilemapSamples[x, y].record = record;
-                }
-            }
-        }
-
         // Determines tile origin of location inside terrain area.
         // This is not always centred precisely but rather seems to follow some other
         // logic/formula for locations of certain RMB dimensions (e.g. 1x1).
@@ -124,21 +127,11 @@ namespace DaggerfallWorkshop
         // Set location tilemap data
         public static void SetLocationTiles(ref MapPixelData mapPixel)
         {
-            //const int tileDim = 16;
-            //const int chunkDim = 8;
-
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-
             // Get location
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(mapPixel.mapRegionIndex, mapPixel.mapLocationIndex);
 
-            // Centre location tiles inside terrain area
-            //int startX = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Width * tileDim) / 2;
-            //int startY = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Height * tileDim) / 2;
-
             // Position tiles inside terrain area
-            //int width = location.Exterior.ExteriorData.Width;
-            //int height = location.Exterior.ExteriorData.Height;
             DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
 
             // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
@@ -167,7 +160,6 @@ namespace DaggerfallWorkshop
                             int xpos = tilePos.X + blockX * RMBLayout.RMBTilesPerBlock + tileX;
                             int ypos = tilePos.Y + blockY * RMBLayout.RMBTilesPerBlock + tileY;
 
-                            int record = tile.TextureRecord;
                             if (tile.TextureRecord < 56)
                             {
                                 // Track interior bounds of location tiled area
@@ -177,10 +169,7 @@ namespace DaggerfallWorkshop
                                 if (ypos > ymax) ymax = ypos;
 
                                 // Store texture data from block
-                                mapPixel.tilemapSamples[xpos, ypos].record = record;
-                                mapPixel.tilemapSamples[xpos, ypos].flip = tile.IsFlipped;
-                                mapPixel.tilemapSamples[xpos, ypos].rotate = tile.IsRotated;
-                                mapPixel.tilemapSamples[xpos, ypos].location = true;
+                                mapPixel.tilemapData[JobA.Idx(xpos, ypos, MapsFile.WorldMapTileDim)] = tile.TileBitfield == 0 ? byte.MaxValue : tile.TileBitfield;
                             }
                         }
                     }
@@ -197,66 +186,181 @@ namespace DaggerfallWorkshop
             mapPixel.locationRect = locationRect;
         }
 
-        // Flattens location terrain and blends with surrounding terrain
-        public static void BlendLocationTerrain(ref MapPixelData mapPixel, float noiseStrength = 4f)
+        #region Terrain Jobs - Schedulers
+
+        public static JobHandle ScheduleCalcAvgMaxHeightJob(ref MapPixelData mapPixel, JobHandle dependencies)
         {
-            int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
-
-            // Convert from rect in tilemap space to interior corners in 0-1 range
-            float xMin = mapPixel.locationRect.xMin / MapsFile.WorldMapTileDim;
-            float xMax = mapPixel.locationRect.xMax / MapsFile.WorldMapTileDim;
-            float yMin = mapPixel.locationRect.yMin / MapsFile.WorldMapTileDim;
-            float yMax = mapPixel.locationRect.yMax / MapsFile.WorldMapTileDim;
-
-            // Scale values for converting blend space into 0-1 range
-            float leftScale = 1 / xMin;
-            float rightScale = 1 / (1 - xMax);
-            float topScale = 1 / yMin;
-            float bottomScale = 1 / (1 - yMax);
-
-            // Flatten location area and blend with surrounding heights
-            float strength = 0;
-            float targetHeight = mapPixel.averageHeight;
-            for (int y = 0; y < heightmapDimension; y++)
+            CalcAvgMaxHeightJob calcAvgMaxHeightJob = new CalcAvgMaxHeightJob()
             {
-                float v = (float)y / (float)(heightmapDimension - 1);
-                bool insideY = (v >= yMin && v <= yMax);
+                heightmapData = mapPixel.heightmapData,
+                avgMaxHeight = mapPixel.avgMaxHeight,
+            };
+            return calcAvgMaxHeightJob.Schedule(dependencies);
+        }
 
-                for (int x = 0; x < heightmapDimension; x++)
+        public static JobHandle ScheduleBlendLocationTerrainJob(ref MapPixelData mapPixel, JobHandle dependencies)
+        {
+            BlendLocationTerrainJob blendLocationTerrainJob = new BlendLocationTerrainJob()
+            {
+                heightmapData = mapPixel.heightmapData,
+                avgMaxHeight = mapPixel.avgMaxHeight,
+                hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension,
+                locationRect = mapPixel.locationRect,
+            };
+            return blendLocationTerrainJob.Schedule(dependencies);
+        }
+
+        public static JobHandle ScheduleUpdateTileMapDataJob(ref MapPixelData mapPixel, JobHandle dependencies)
+        {
+            int tilemapDim = MapsFile.WorldMapTileDim;
+            UpdateTileMapDataJob updateTileMapDataJob = new UpdateTileMapDataJob()
+            {
+                tilemapData = mapPixel.tilemapData,
+                tileMap = mapPixel.tileMap,
+                tDim = tilemapDim,
+            };
+            return updateTileMapDataJob.Schedule(tilemapDim * tilemapDim, 64, dependencies);
+        }
+
+        #endregion
+
+        #region Terrain Jobs
+
+        // Calculates average and maximum heights of terrain data
+        struct CalcAvgMaxHeightJob : IJob
+        {
+            [ReadOnly]
+            public NativeArray<float> heightmapData;
+
+            public NativeArray<float> avgMaxHeight;
+
+            public void Execute()
+            {
+                for (int i = 0; i < heightmapData.Length; i++)
                 {
-                    float u = (float)x / (float)(heightmapDimension - 1);
-                    bool insideX = (u >= xMin && u <= xMax);
+                    float height = heightmapData[i];
+                    // Accumulate average height
+                    avgMaxHeight[avgHeightIdx] += height;
+                    // Update max height
+                    if (height > avgMaxHeight[maxHeightIdx])
+                        avgMaxHeight[maxHeightIdx] = height;
+                }
+                avgMaxHeight[avgHeightIdx] = avgMaxHeight[avgHeightIdx] / heightmapData.Length;
+            }
+        }
 
-                    float height = mapPixel.heightmapSamples[y, x];
+        // Flattens location terrain and blends with surrounding terrain
+        struct BlendLocationTerrainJob : IJob
+        {
+            public NativeArray<float> heightmapData;
+            [ReadOnly]
+            public NativeArray<float> avgMaxHeight;
 
-                    if (insideX || insideY)
+            public int hDim;
+            public Rect locationRect;
+
+            public void Execute()
+            {
+                // Convert from rect in tilemap space to interior corners in 0-1 range
+                float xMin = locationRect.xMin / MapsFile.WorldMapTileDim;
+                float xMax = locationRect.xMax / MapsFile.WorldMapTileDim;
+                float yMin = locationRect.yMin / MapsFile.WorldMapTileDim;
+                float yMax = locationRect.yMax / MapsFile.WorldMapTileDim;
+
+                // Scale values for converting blend space into 0-1 range
+                float leftScale = 1 / xMin;
+                float rightScale = 1 / (1 - xMax);
+                float topScale = 1 / yMin;
+                float bottomScale = 1 / (1 - yMax);
+
+                // Flatten location area and blend with surrounding heights
+                float strength = 0;
+                float targetHeight = avgMaxHeight[avgHeightIdx];
+                for (int y = 0; y < hDim; y++)
+                {
+                    float v = (float)y / (float)(hDim - 1);
+                    bool insideY = (v >= yMin && v <= yMax);
+
+                    for (int x = 0; x < hDim; x++)
                     {
-                        if (insideY && u <= xMin)
-                            strength = u * leftScale;
-                        else if (insideY && u >= xMax)
-                            strength = (1 - u) * rightScale;
-                        else if (insideX && v <= yMin)
-                            strength = v * topScale;
-                        else if (insideX && v >= yMax)
-                            strength = (1 - v) * bottomScale;
-                    }
-                    else
-                    {
-                        float xs = 0, ys = 0;
-                        if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
-                        if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
-                        strength = BilinearInterpolator(0, 0, 0, 1, xs, ys);
-                    }
+                        float u = (float)x / (float)(hDim - 1);
+                        bool insideX = (u >= xMin && u <= xMax);
 
-                    if (insideX && insideY)
-                        height = targetHeight;
-                    else
-                        height = Mathf.Lerp(height, targetHeight, strength);
 
-                    mapPixel.heightmapSamples[y, x] = height;
+                        if (insideX || insideY)
+                        {
+                            if (insideY && u <= xMin)
+                                strength = u * leftScale;
+                            else if (insideY && u >= xMax)
+                                strength = (1 - u) * rightScale;
+                            else if (insideX && v <= yMin)
+                                strength = v * topScale;
+                            else if (insideX && v >= yMax)
+                                strength = (1 - v) * bottomScale;
+                        }
+                        else
+                        {
+                            float xs = 0, ys = 0;
+                            if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
+                            if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
+                            strength = TerrainHelper.BilinearInterpolator(0, 0, 0, 1, xs, ys);
+                        }
+
+                        int idx = JobA.Idx(y, x, hDim);
+                        float height = heightmapData[idx];
+
+                        if (insideX && insideY)
+                            height = targetHeight;
+                        else
+                            height = Mathf.Lerp(height, targetHeight, strength);
+
+                        heightmapData[idx] = height;
+                    }
                 }
             }
         }
+
+        // Converts tileMap data to color array for use by shader
+        struct UpdateTileMapDataJob : IJobParallelFor
+        {
+            [ReadOnly]
+            public NativeArray<byte> tilemapData;
+            [WriteOnly]
+            public NativeArray<Color32> tileMap;
+
+            public int tDim;
+
+            public void Execute(int index)
+            {
+                int x = JobA.Row(index, tDim);
+                int y = JobA.Col(index, tDim);
+
+                // Assign tile data to tilemap
+                Color32 tileColor = new Color32(0, 0, 0, 0);
+
+                // Get sample tile data
+                byte tile = tilemapData[JobA.Idx(x, y, tDim)];
+
+                // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
+                int record;
+                if (tile == byte.MaxValue)
+                {   // Zeros are converted to FF so assign tiles doesn't overwrite location tiles, convert back.
+                    record = 0;
+                }
+                else
+                {
+                    record = tile * 4;
+                    if ((tile & rotBit) != 0) record += 1;
+                    if ((tile & flipBit) != 0) record += 2;
+                }
+
+                // Assign to tileMap
+                tileColor.r = (byte)record;
+                tileMap[y * tDim + x] = tileColor;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Terrain interpolation causes Daggerfall's square coastline to become nicely raised and curvy.
@@ -394,8 +498,6 @@ namespace DaggerfallWorkshop
             float chanceOnGrass = baseChanceOnGrass * elevationScale * climateScale;
             float chanceOnStone = baseChanceOnStone * elevationScale * climateScale;
 
-            int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
-
             // Get terrain
             Terrain terrain = dfTerrain.gameObject.GetComponent<Terrain>();
             if (!terrain)
@@ -416,59 +518,61 @@ namespace DaggerfallWorkshop
             // Just layout some random flats spread evenly across entire map pixel area
             // Flats are aligned with tiles, max 16129 billboards per batch
             Vector2 tilePos = Vector2.zero;
-            int dim = MapsFile.WorldMapTileDim;
-            float scale = terrainData.heightmapScale.x * (float)heightmapDimension / (float)dim;
-            for (int y = 0; y < dim; y++)
+            int tDim = MapsFile.WorldMapTileDim;
+            int hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+            float scale = terrainData.heightmapScale.x * (float)hDim / (float)tDim;
+            float maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
+            float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation;
+
+            for (int y = 0; y < tDim; y++)
             {
-                for (int x = 0; x < dim; x++)
+                for (int x = 0; x < tDim; x++)
                 {
                     // Reject based on steepness
-                    float steepness = terrainData.GetSteepness((float)x / dim, (float)y / dim);
+                    float steepness = terrainData.GetSteepness((float)x / tDim, (float)y / tDim);
                     if (steepness > maxSteepness)
                         continue;
 
-                    // Reject if inside location rect
-                    // Rect is expanded slightly to give extra clearance around locations
+                    // Reject if inside location rect (expanded slightly to give extra clearance around locations)
                     tilePos.x = x;
                     tilePos.y = y;
-                    if (rect.Contains(tilePos))
+                    if (rect.x > 0 && rect.y > 0 && rect.Contains(tilePos))
                         continue;
 
                     // Chance also determined by tile type
-                    TilemapSample sample = dfTerrain.MapData.tilemapSamples[x, y];
-                    if (sample.record == 1)
-                    {
-                        // Dirt
+                    int tile = dfTerrain.MapData.tilemapSamples[x, y] & 0x3F;
+                    if (tile == 1)
+                    {   // Dirt
                         if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt)
                             continue;
                     }
-                    else if (sample.record == 2)
-                    {
-                        // Grass
+                    else if (tile == 2)
+                    {   // Grass
                         if (UnityEngine.Random.Range(0f, 1f) > chanceOnGrass)
                             continue;
                     }
-                    else if (sample.record == 3)
-                    {
-                        // Stone
+                    else if (tile == 3)
+                    {   // Stone
                         if (UnityEngine.Random.Range(0f, 1f) > chanceOnStone)
                             continue;
                     }
                     else
-                    {
-                        // Anything else
+                    {   // Anything else
                         continue;
                     }
 
-                    // Sample height and position billboard
-                    Vector3 pos = new Vector3(x * scale, 0, y * scale);
-                    float height = terrain.SampleHeight(pos + terrain.transform.position);
-                    pos.y = height;
+                    int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
+                    int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
+                    float height = dfTerrain.MapData.heightmapSamples[hy, hx] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
 
                     // Reject if too close to water
-                    float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation * terrainScale;
                     if (height < beachLine)
                         continue;
+
+                    // Sample height and position billboard
+                    Vector3 pos = new Vector3(x * scale, 0, y * scale);
+                    float height2 = terrain.SampleHeight(pos + terrain.transform.position);
+                    pos.y = height2;
 
                     // Add to batch
                     int record = UnityEngine.Random.Range(1, 32);
@@ -527,14 +631,6 @@ namespace DaggerfallWorkshop
                     heightArray[y * WoodsFile.mapWidthValue + x] = (byte)average;
                 }
             }
-        }
-
-        public static float GetClampedHeight(ref MapPixelData mapPixel, int heightmapDimension, float u, float v)
-        {
-            int x = (int)Mathf.Clamp(heightmapDimension * u, 0, heightmapDimension - 1);
-            int y = (int)Mathf.Clamp(heightmapDimension * v, 0, heightmapDimension - 1);
-
-            return mapPixel.heightmapSamples[y, x];
         }
 
         #region Helper Methods
