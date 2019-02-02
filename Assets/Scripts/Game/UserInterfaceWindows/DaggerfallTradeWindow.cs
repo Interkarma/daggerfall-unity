@@ -271,8 +271,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void SetupActionButtons()
         {
-            wagonButton = DaggerfallUI.AddButton(wagonButtonRect, actionButtonsPanel);
-            wagonButton.OnMouseClick += WagonButton_OnMouseClick;
+            // Can happen using Identify spell https://forums.dfworkshop.net/viewtopic.php?f=24&t=1756
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+            {
+                wagonButton = DaggerfallUI.AddButton(wagonButtonRect, actionButtonsPanel);
+                wagonButton.OnMouseClick += WagonButton_OnMouseClick;
+            }
 
             infoButton = DaggerfallUI.AddButton(infoButtonRect, actionButtonsPanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
