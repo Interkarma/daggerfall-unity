@@ -131,6 +131,12 @@ namespace DaggerfallWorkshop.Game
             set { oldLastKnownTargetPos = value; }
         }
 
+        public Vector3 LastPositionDiff
+        {
+            get { return lastPositionDiff; }
+            set { lastPositionDiff = value; }
+        }
+
         public Vector3 PredictedTargetPos
         {
             get { return predictedTargetPos; }
