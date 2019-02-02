@@ -591,7 +591,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public void SpawnCityGuards(bool immediateSpawn)
         {
             // Only spawn if player is not in a dungeon, and if there are 10 or fewer existing guards
-            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) <= 10)
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= 10)
             {
                 DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
                 PopulationManager populationManager = dfLocation.GetComponent<PopulationManager>();
@@ -710,7 +710,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         void MakeNPCGuardsIntoEnemiesIfGuardsSpawned()
         {
-            if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch) > 0)
+            if (GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, true) > 0)
             {
                 DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
                 if (dfLocation == null)
