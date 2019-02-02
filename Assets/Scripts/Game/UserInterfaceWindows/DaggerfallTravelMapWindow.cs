@@ -24,6 +24,7 @@ using Wenzil.Console;
 using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -71,6 +72,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel borderPanel;
         Panel regionTextureOverlayPanel;
+        Panel playerRegionOverlayPanel;
 
         TextLabel regionLabel;
 
@@ -267,6 +269,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Region overlay panel
             regionTextureOverlayPanel = DaggerfallUI.AddPanel(regionTextureOverlayPanelRect, NativePanel);
             regionTextureOverlayPanel.Enabled = false;
+
+            // Current region overly panel
+            playerRegionOverlayPanel = DaggerfallUI.AddPanel(new Rect(0, 0, 320, 200), NativePanel);
+            playerRegionOverlayPanel.Enabled = false;
 
             //borders around the region maps
             borderTexture = DaggerfallUI.GetTextureFromImg(regionBorderImgName);
@@ -640,9 +646,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Create a texture map overlay for the region area
                 int width = regionPickerBitmap.Width;
                 int height = regionPickerBitmap.Height;
-
-                if (pixelBuffer == null)
-                    pixelBuffer = new Color32[width * height];
+                var pixelBuffer = new Color32[width * height];
 
                 // note by Nystul: check necessary to prevent exception which could happen if pixelBuffer is 320x160 instead of 320x200 -
                 // otherwise marked line below will throw exception (e.g. after fast travel to a location in Wrothgarian Mountains and reopening map)
@@ -661,6 +665,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             pixelBuffer[dstOffset] = identifyFlashColor; // this is the line that might throw exception sometimes
                     }
                 }
+
+                // Make texture
+                Texture2D overlay = new Texture2D(width, height, TextureFormat.ARGB32, false);
+                overlay.SetPixels32(pixelBuffer);
+                overlay.filterMode = filterMode;
+                overlay.Apply(false, true);
+                playerRegionOverlayPanel.BackgroundTexture = overlay;
             }
             catch (Exception ex)
             {
@@ -683,8 +694,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SetColorsFromImg();
             }
 
-            texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-            texture.SetPixels32(pixelBuffer);
+            // Toggle region overly
+            playerRegionOverlayPanel.Enabled = !RegionSelected && identifyState;
+
+            // Make base texture
+            if (RegionSelected || !TextureReplacement.TryImportImage(nativeImgName, false, out texture))
+            {
+                texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+                texture.SetPixels32(pixelBuffer);
+            }      
 
             if (RegionSelected && zoom)
             {
