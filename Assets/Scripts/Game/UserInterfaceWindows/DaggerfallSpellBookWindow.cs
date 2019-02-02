@@ -377,15 +377,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellIconPanel = DaggerfallUI.AddPanel(spellIconPanelRect, mainPanel);
             spellIconPanel.BackgroundColor = Color.black;
             spellIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+            spellIconPanel.ToolTip = defaultToolTip;
+            spellIconPanel.ToolTipText = TextManager.Instance.GetText(textDatabase, "selectIcon");
             spellIconPanel.OnMouseClick += SpellIconPanel_OnMouseClick;
 
             spellTargetIconPanel = DaggerfallUI.AddPanel(spellTargetPanelRect, mainPanel);
             spellTargetIconPanel.BackgroundColor = Color.black;
             spellTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+            spellTargetIconPanel.ToolTip = defaultToolTip;
 
             spellElementIconPanel = DaggerfallUI.AddPanel(spellElementIconPanelRect, mainPanel);
             spellElementIconPanel.BackgroundColor = Color.black;
             spellElementIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+            spellElementIconPanel.ToolTip = defaultToolTip;
         }
 
         void SetupLabels()
@@ -480,7 +484,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update spell icons
             spellIconPanel.BackgroundTexture = GetSpellIcon(spellSettings.Icon);
             spellTargetIconPanel.BackgroundTexture = GetSpellTargetIcon(spellSettings.TargetType);
+            spellTargetIconPanel.ToolTipText = GetTargetTypeDescription(spellSettings.TargetType);
             spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
+            spellElementIconPanel.ToolTipText = GetElementDescription(spellSettings.ElementType);
+        }
+
+        private string GetTargetTypeDescription(TargetTypes targetType)
+        {
+            switch (targetType)
+            {
+                case TargetTypes.CasterOnly:
+                    return TextManager.Instance.GetText(textDatabase, "casterOnly");
+                case TargetTypes.ByTouch:
+                    return TextManager.Instance.GetText(textDatabase, "byTouch");
+                case TargetTypes.SingleTargetAtRange:
+                    return TextManager.Instance.GetText(textDatabase, "singleTargetAtRange");
+                case TargetTypes.AreaAroundCaster:
+                    return TextManager.Instance.GetText(textDatabase, "areaAroundCaster");
+                case TargetTypes.AreaAtRange:
+                    return TextManager.Instance.GetText(textDatabase, "areaAtRange");
+                default:
+                    return null;
+            }
+        }
+
+        private string GetElementDescription(ElementTypes elementType)
+        {
+            switch (elementType)
+            {
+                case ElementTypes.Fire:
+                    return TextManager.Instance.GetText(textDatabase, "fireBased");
+                case ElementTypes.Cold:
+                    return TextManager.Instance.GetText(textDatabase, "coldBased");
+                case ElementTypes.Poison:
+                    return TextManager.Instance.GetText(textDatabase, "poisonBased");
+                case ElementTypes.Shock:
+                    return TextManager.Instance.GetText(textDatabase, "shockBased");
+                case ElementTypes.Magic:
+                    return TextManager.Instance.GetText(textDatabase, "magicBased");
+                default:
+                    return null;
+            }
         }
 
         void ClearEffectLabels()
