@@ -395,14 +395,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             CreateCrossHair(TravelTimeCalculator.GetPlayerTravelPosition(), selectedRegion);
                     }
 
-                    Draw(regionTextureOverlayPanel);
+                    Draw(regionTextureOverlayPanel, regionMapOverlayPanel);
                 }
                 else
                 {
                     if (identifyState)
                         SetPlayerRegionOverlay();
 
-                    Draw(NativePanel);
+                    Draw(NativePanel, playerRegionOverlayPanel);
                 }
                 draw = false;
             }
@@ -681,7 +681,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void Draw(Panel target, Texture2D texture = null)
+        void Draw(Panel target, Panel targetOverlay, Texture2D texture = null)
         {
             if (target == null)
                 return;
@@ -704,7 +704,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Make overlay texture
             Texture2D overlay = null;
-            if ((playerRegionOverlayPanel.Enabled = !RegionSelected && identifyState) | (regionMapOverlayPanel.Enabled = RegionSelected))
+            if (RegionSelected || identifyState)
             {
                 overlay = new Texture2D(width, height, TextureFormat.ARGB32, false);
                 overlay.SetPixels32(overlayPixelBuffer);
@@ -749,11 +749,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             texture.Apply();
             target.BackgroundTexture = texture;
 
-            if (overlay)
+            if (targetOverlay.Enabled = overlay)
             {
                 overlay.filterMode = filterMode;
                 overlay.Apply();
-                (RegionSelected ? regionMapOverlayPanel : playerRegionOverlayPanel).BackgroundTexture = overlay;
+                targetOverlay.BackgroundTexture = overlay;
             }
         }
 
@@ -986,6 +986,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedRegionMapNames = mapNames;
             regionTextureOverlayPanel.Enabled = true;
             borderPanel.Enabled = true;
+            playerRegionOverlayPanel.Enabled = false;
+            regionMapOverlayPanel.Enabled = true;
             pixelBuffer = null;
             overlayPixelBuffer = null;
             loadNewImage = true;
@@ -1005,6 +1007,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mapIndex = 0;
             regionTextureOverlayPanel.Enabled = false;
             borderPanel.Enabled = false;
+            playerRegionOverlayPanel.Enabled = true;
+            regionMapOverlayPanel.Enabled = false;
             horizontalArrowButton.Enabled = false;
             verticalArrowButton.Enabled = false;
             findButton.Enabled = false;
