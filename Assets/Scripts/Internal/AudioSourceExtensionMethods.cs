@@ -6,6 +6,7 @@ namespace UnityEngine
     public static class AudioSourceExtensionMethods
     {
         private const float audioClipMaxDelay = 0.150f; //give up if sound takes longer to load
+        private const float audioLoopMaxDelay = 2.0f; // don't care as much about loops accuracy
 
         public static void PlayWhenReady(this AudioSource audioSource, AudioClip audioClip, float volumeScale)
         {
@@ -19,7 +20,7 @@ namespace UnityEngine
                    audioClip.loadState == AudioDataLoadState.Loading)
             {
                 loadWaitTimer += Time.deltaTime;
-                if (loadWaitTimer > audioClipMaxDelay)
+                if (loadWaitTimer > audioLoopMaxDelay)
                     yield break;
                 yield return null;
             }
