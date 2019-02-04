@@ -64,6 +64,22 @@ namespace DaggerfallWorkshop.Game.Questing
             SetComplete();
         }
 
+        public override void RearmAction()
+        {
+            base.RearmAction();
+
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(npcSymbol);
+            if (person == null)
+            {
+                SetComplete();
+                return;
+            }
+
+            // Perform action changes
+            person.IsMuted = false;
+        }
+
         #region Serialization
 
         [fsObject("v1")]
