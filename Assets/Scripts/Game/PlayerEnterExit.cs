@@ -391,6 +391,10 @@ namespace DaggerfallWorkshop.Game
             // Wait for end of frame so existing world data can be removed
             yield return new WaitForEndOfFrame();
 
+            // Store if player was inside a dungeon or building before respawning
+            bool playerWasInDungeon = IsPlayerInsideDungeon;
+            bool playerWasInBuilding = IsPlayerInsideBuilding;
+
             // Reset dungeon block on new spawn
             lastPlayerDungeonBlockIndex = -1;
             playerDungeonBlockData = new DFLocation.DungeonBlock();
@@ -432,6 +436,13 @@ namespace DaggerfallWorkshop.Game
                 // Wait until world is ready
                 while (world.IsInit)
                     yield return new WaitForEndOfFrame();
+
+                // Raise transition exterior event if player was inside a dungeon or building
+                // This helps inform other systems player has transitioned to exterior without clicking a door or reloading game
+                if (playerWasInDungeon)
+                    RaiseOnTransitionDungeonExteriorEvent();
+                else if (playerWasInBuilding)
+                    RaiseOnTransitionExteriorEvent();
             }
             else if (hasLocation && insideDungeon)
             {
