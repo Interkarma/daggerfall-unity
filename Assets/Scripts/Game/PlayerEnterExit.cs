@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 bool overEncumbered = (GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250);
-                if ((overEncumbered && levitateMotor.IsSwimming) && !displayAfloatMessage)
+                if ((overEncumbered && levitateMotor.IsSwimming) && !displayAfloatMessage && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 {
                     DaggerfallUI.AddHUDText(HardStrings.cannotFloat, 1.75f);
                     displayAfloatMessage = true;
