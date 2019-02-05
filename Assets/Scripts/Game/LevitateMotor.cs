@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game
             // Up/down
             Vector3 upDownVector = new Vector3 (0, 0, 0);
 
-            if (playerSwimming && GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250 && !climbingMotor.IsClimbing && !GameManager.Instance.PlayerEntity.GodMode)
+            if (playerSwimming && GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250 && !climbingMotor.IsClimbing && !GameManager.Instance.PlayerEntity.GodMode && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 upDownVector += Vector3.down;
             else if (InputManager.Instance.HasAction(InputManager.Actions.Jump) || InputManager.Instance.HasAction(InputManager.Actions.FloatUp))
                 upDownVector += Vector3.up;
