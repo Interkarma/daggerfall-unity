@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop
             //for (int i = 0; i < Doors.Length; i++)
             //{
             //    GameObject go = new GameObject();
+            //    go.name = "DoorTrigger";
             //    go.transform.parent = transform;
             //    go.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
             //    go.transform.position += transform.position;
@@ -43,8 +44,10 @@ namespace DaggerfallWorkshop
 
             //    BoxCollider c = go.AddComponent<BoxCollider>();
             //    c.size = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix) * Doors[i].size;
+            //    c.size = new Vector3(Mathf.Abs(c.size.x), Mathf.Abs(c.size.y), Mathf.Abs(c.size.z)); // Abs size components so not negative for collider
             //    c.isTrigger = true;
             //}
+            //Debug.LogFormat("Added {0} door triggers to scene", Doors.Length);
         }
 
         /// <summary>
