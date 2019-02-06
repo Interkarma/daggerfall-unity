@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -557,6 +557,7 @@ namespace DaggerfallWorkshop
             const int BuildingDoors = 74;
             const int DungeonEnterDoors = 56;
             const int DungeonRuinEnterDoors = 331;
+            const int ScourgExterior = 156;
             const int DungeonExitDoors = 95;
             //const int dungeonFloorRecord = 2;
 
@@ -583,9 +584,9 @@ namespace DaggerfallWorkshop
                 int baseTextureArchive = (submeshTextureArchive - (submeshTextureArchive / 100) * 100);
 
                 // Get base climate archive for door check
-                // All base door textures are > 100, except dungeon ruins doors
+                // All base door textures are > 100 with some exceptions
                 int doorArchive = submeshTextureArchive;
-                if (doorArchive > 100 && doorArchive != DungeonRuinEnterDoors)
+                if (doorArchive > 100 && doorArchive != DungeonRuinEnterDoors && doorArchive != ScourgExterior)
                     doorArchive = baseTextureArchive;
 
                 // Check if this is a door archive
