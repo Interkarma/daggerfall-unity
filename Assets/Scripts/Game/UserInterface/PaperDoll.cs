@@ -214,6 +214,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Update player background panel
         void RefreshBackground(PlayerEntity entity)
         {
+            // Allow racial override background (vampire / transformed were-creature)
+            // If racial override is not present or returns null then standard racial background will be used
+            // The racial override has full control over which texture is displayed, such as when were-creature transformed or not
+            Texture2D customBackground;
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null && racialOverride.GetCustomPaperDollBackgroundTexture(entity, out customBackground))
+            {
+                backgroundPanel.BackgroundTexture = customBackground;
+                backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
+                lastBackgroundName = string.Empty;
+                return;
+            }
+
+            // Use standard racial background
             string backgroundName = GetPaperDollBackground(entity);
             if (lastBackgroundName != backgroundName)
             {
@@ -230,8 +244,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         string GetPaperDollBackground(PlayerEntity entity)
         {
-            // TODO: If player is were-creature and has transformed, use entity.RaceTemplate.TransformedPaperDollBackground regardless of geo backgrounds
-
             if (DaggerfallUnity.Settings.EnableGeographicBackgrounds)
             {
                 PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;

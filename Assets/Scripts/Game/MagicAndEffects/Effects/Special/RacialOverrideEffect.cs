@@ -60,6 +60,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #region Public Methods
 
         /// <summary>
+        /// Gets custom paper doll background texture for this override.
+        /// Return false to use standard background for race.
+        /// </summary>
+        public virtual bool GetCustomPaperDollBackgroundTexture(PlayerEntity playerEntity, out Texture2D textureOut)
+        {
+            textureOut = null;
+            return false;
+        }
+
+        /// <summary>
         /// Gets custom head ImageData for this override.
         /// Return false to just use standard head.
         /// </summary>

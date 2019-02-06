@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using UnityEngine;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -17,6 +18,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
+using DaggerfallConnect.Utility;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -32,10 +34,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public const string VampirismCurseKey = "Vampirism-Curse";
 
+        const int paperDollWidth = 110;
+        const int paperDollHeight = 184;
+
         RaceTemplate compoundRace;
         VampireClans vampireClan = VampireClans.Lyrezi;
         uint lastTimeFed;
         bool hasStartedInitialVampireQuest;
+
+        DFSize backgroundFullSize = new DFSize(125, 198);
+        Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
+        Texture2D backgroundTexture;
 
         #endregion
 
@@ -107,6 +116,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.MagicRound();
             ApplyVampireAdvantages();
+        }
+
+        public override bool GetCustomPaperDollBackgroundTexture(PlayerEntity playerEntity, out Texture2D textureOut)
+        {
+            const string vampBackground = "SCBG08I0.IMG";
+
+            // Background is cut into sub-texture and cached on first call
+            if (!backgroundTexture)
+            {
+                Texture2D texture = ImageReader.GetTexture(vampBackground, 0, 0, false);
+                backgroundTexture = ImageReader.GetSubTexture(texture, backgroundSubRect, backgroundFullSize);
+            }
+
+            textureOut = backgroundTexture;
+            return true;
         }
 
         public override bool GetCustomHeadImageData(PlayerEntity entity, out ImageData imageDataOut)
