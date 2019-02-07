@@ -83,6 +83,12 @@ namespace DaggerfallWorkshop.Game
             set { target = value; }
         }
 
+        public DaggerfallEntityBehaviour LastTarget
+        {
+            get { return lastTarget; }
+            set { lastTarget = value; }
+        }
+
         DaggerfallEntityBehaviour Player
         {
             get { return GameManager.Instance.PlayerEntityBehaviour; }
