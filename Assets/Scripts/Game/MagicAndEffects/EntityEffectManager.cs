@@ -425,9 +425,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
 
                     // Spell Reflection
-                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(effect, sourceBundle))
+                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
                         continue;
                 }
+
+                // Spell Resistance
+                if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
+                    continue;
 
                 // Start effect
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
@@ -979,10 +983,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Tests incoming effect for spell reflection.
         /// </summary>
-        /// <param name="effect">Incoming effect.</param>
         /// <param name="casterEntity">Source caster entity behaviour for spell reflect.</param>
         /// <returns>True if reflected.</returns>
-        bool TryReflection(IEntityEffect effect, EntityEffectBundle sourceBundle)
+        bool TryReflection(EntityEffectBundle sourceBundle)
         {
             // Cannot reflect bundle more than once
             // Could increase this later to allow for limited "reflect volleys" with two reflecting entities and first one to fail save cops the spell
@@ -1006,6 +1009,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Output "Spell was reflected." when player is the one reflecting spell
                 if (IsPlayerEntity)
                     DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellReflected"));
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Tests incoming effect for spell resistance.
+        /// </summary>
+        /// <returns>True if resisted.</returns>
+        bool TryResistance()
+        {
+            // Entity must be resisting
+            SpellResistance resistEffect = FindIncumbentEffect<SpellResistance>() as SpellResistance;
+            if (resistEffect == null)
+                return false;
+
+            // Roll for resistance chance
+            if (resistEffect.RollChance())
+            {
+                // Output "Spell was resisted." when player is the one resisting spell
+                if (IsPlayerEntity)
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellResisted"));
 
                 return true;
             }
