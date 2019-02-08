@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectBundleSettings settings;
         DaggerfallEntityBehaviour casterEntityBehaviour = null;
         DaggerfallUnityItem fromEquippedItem = null;
+        int reflectedCount = 0;
 
         #endregion
 
@@ -65,6 +66,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return fromEquippedItem; }
             set { fromEquippedItem = value; }
+        }
+
+        /// <summary>
+        /// Gets the number of times this bundle has been reflected.
+        /// </summary>
+        public int ReflectedCount
+        {
+            get { return reflectedCount; }
         }
 
         #endregion
@@ -109,6 +118,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Increments reflection count.
+        /// </summary>
+        public void IncrementReflectionCount()
+        {
+            reflectedCount++;
         }
 
         #endregion

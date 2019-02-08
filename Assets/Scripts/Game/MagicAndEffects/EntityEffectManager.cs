@@ -408,11 +408,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Set parent bundle
                 effect.ParentBundle = instancedBundle;
 
-                // Spell absorption - must have a caster entity set
+                // Spell Absorption and Reflection - must have a caster entity set
                 if (sourceBundle.CasterEntityBehaviour)
                 {
+                    // Spell Absorption
                     int absorbSpellPoints;
-                    if (TryAbsorption(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour.Entity, out absorbSpellPoints))
+                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryAbsorption(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour.Entity, out absorbSpellPoints))
                     {
                         // Spell passed all checks and was absorbed - return cost output to target
                         entityBehaviour.Entity.IncreaseMagicka(absorbSpellPoints);
@@ -422,6 +423,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                         continue;
                     }
+
+                    // Spell Reflection
+                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(effect, sourceBundle))
+                        continue;
                 }
 
                 // Start effect
@@ -971,11 +976,53 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
+        /// <summary>
+        /// Tests incoming effect for spell reflection.
+        /// </summary>
+        /// <param name="effect">Incoming effect.</param>
+        /// <param name="casterEntity">Source caster entity behaviour for spell reflect.</param>
+        /// <returns>True if reflected.</returns>
+        bool TryReflection(IEntityEffect effect, EntityEffectBundle sourceBundle)
+        {
+            // Cannot reflect bundle more than once
+            // Could increase this later to allow for limited "reflect volleys" with two reflecting entities and first one to fail save cops the spell
+            if (sourceBundle.ReflectedCount > 0)
+                return false;
+
+            // Entity must be reflecting
+            SpellReflection reflectEffect = FindIncumbentEffect<SpellReflection>() as SpellReflection;
+            if (reflectEffect == null)
+                return false;
+
+            // Roll for reflection chance
+            if (reflectEffect.RollChance())
+            {
+                // Redirect source bundle back on caster entity
+                // They will have all their usual processes to absorb or resist spell on arrival
+                sourceBundle.IncrementReflectionCount();
+                EntityEffectManager casterEffectManager = sourceBundle.CasterEntityBehaviour.GetComponent<EntityEffectManager>();
+                casterEffectManager.AssignBundle(sourceBundle);
+
+                // Output "Spell was reflected." when player is the one reflecting spell
+                if (IsPlayerEntity)
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellReflected"));
+
+                return true;
+            }
+
+            return false;
+        }
+
         int GetEffectCastingCost(IEntityEffect effect, TargetTypes targetType, DaggerfallEntity casterEntity)
         {
             int goldCost, spellPointCost;
             FormulaHelper.CalculateEffectCosts(effect, effect.Settings, out goldCost, out spellPointCost, casterEntity);
             spellPointCost = FormulaHelper.ApplyTargetCostMultiplier(spellPointCost, targetType);
+
+            // Spells always cost at least 5 spell points
+            // Otherwise it's possible for absorbs to make spell point pool go down as spell costs 5 but caster absorbs 0
+            if (spellPointCost < 5)
+                spellPointCost = 5;
 
             //Debug.LogFormat("Calculated {0} spell point cost for effect {1}", spellPointCost, effect.Key);
 
