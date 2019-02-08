@@ -34,10 +34,13 @@ namespace DaggerfallWorkshop.Game
     public class GameManager : MonoBehaviour
     {
         #region Fields
+        public const float classicUpdateInterval = 0.0625f;        // Update every 1/16 of a second. An approximation of classic's update loop, which varies with framerate.
 
         public bool Verbose = false;
         bool isGamePaused = false;
         float savedTimeScale;
+        float classicUpdateTimer = 0;                       // Timer for matching classic's update loop
+        bool classicUpdate = false;                         // True when reached a classic update
         //Texture2D pauseScreenshot;
 
         GameObject playerObject = null;
@@ -93,6 +96,11 @@ namespace DaggerfallWorkshop.Game
         public static bool IsGamePaused
         {
             get { return Instance.isGamePaused; }
+        }
+
+        public static bool ClassicUpdate
+        {
+            get { return Instance.classicUpdate; }
         }
 
         public StateManager StateManager
@@ -442,6 +450,16 @@ namespace DaggerfallWorkshop.Game
         {
             if (!IsPlayingGame())
                 return;
+
+            // Update timer that approximates the timing of original Daggerfall's game update loop
+            classicUpdateTimer += Time.deltaTime;
+            if (classicUpdateTimer >= classicUpdateInterval)
+            {
+                classicUpdateTimer = 0;
+                classicUpdate = true;
+            }
+            else
+                classicUpdate = false;
 
             // Post message to open options dialog on escape during gameplay
             if (Input.GetKeyDown(KeyCode.Escape))

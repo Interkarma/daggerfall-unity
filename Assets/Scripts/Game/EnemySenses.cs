@@ -62,8 +62,6 @@ namespace DaggerfallWorkshop.Game
         bool blockedByIllusionEffect = false;
         float lastHadLOSTimer = 0f;
 
-        float classicUpdateTimer = 0f;
-        bool classicUpdate = false;
         float targetPosPredictTimer = 0f;
         bool targetPosPredict = false;
 
@@ -211,15 +209,6 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
-            classicUpdateTimer += Time.deltaTime;
-            if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
-            {
-                classicUpdateTimer = 0;
-                classicUpdate = true;
-            }
-            else
-                classicUpdate = false;
-
             targetPosPredictTimer += Time.deltaTime;
             if (targetPosPredictTimer >= predictionInterval)
             {
@@ -230,12 +219,12 @@ namespace DaggerfallWorkshop.Game
                 targetPosPredict = false;
 
             // Reset whether enemy would be spawned or not in classic.
-            if (classicUpdate)
+            if (GameManager.ClassicUpdate)
                 wouldBeSpawnedInClassic = false;
 
             // Update whether enemy would be spawned or not in classic.
             // Only check if within the maximum possible distance (Just under 1094 classic units)
-            if (classicUpdate && distanceToPlayer < 1094 * MeshReader.GlobalScale)
+            if (GameManager.ClassicUpdate && distanceToPlayer < 1094 * MeshReader.GlobalScale)
             {
                 float upperXZ = 0;
                 float upperY = 0;
@@ -282,7 +271,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            if (classicUpdate)
+            if (GameManager.ClassicUpdate)
             {
                 classicTargetUpdateTimer += Time.deltaTime / systemTimerUpdatesDivisor;
 
@@ -404,7 +393,7 @@ namespace DaggerfallWorkshop.Game
                 // to detect the player during one of the many AI updates. Here, the enemy has to
                 // successfully see through the illusion spell each classic update to continue
                 // to know where the player is.
-                if (classicUpdate)
+                if (GameManager.ClassicUpdate)
                 {
                     blockedByIllusionEffect = BlockedByIllusionEffect();
                     if (lastHadLOSTimer > 0)

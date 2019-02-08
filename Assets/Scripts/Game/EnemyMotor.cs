@@ -36,8 +36,6 @@ namespace DaggerfallWorkshop.Game
         bool swims;                                 // The enemy can swim
         bool pausePursuit;                          // pause to wait for the player to come closer to ground
         bool isLevitating;                          // Allow non-flying enemy to levitate
-        float classicUpdateTimer;                   // Timer for matching classic's update loop
-        bool classicUpdate;                         // True when reached a classic update
         float knockBackSpeed;                       // While non-zero, this enemy will be knocked backwards at this speed
         Vector3 knockBackDirection;                 // Direction to travel while being knocked back
         float moveInForAttackTimer;                 // Time until next pursue/retreat decision
@@ -121,15 +119,6 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
-            classicUpdateTimer += Time.deltaTime;
-            if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
-            {
-                classicUpdateTimer = 0;
-                classicUpdate = true;
-            }
-            else
-                classicUpdate = false;
-
             Move();
             OpenDoors();
         }
@@ -234,7 +223,7 @@ namespace DaggerfallWorkshop.Game
                     controller.SimpleMove(motion);
 
                 // Remove remaining knockback and restore animation
-                if (classicUpdate)
+                if (GameManager.ClassicUpdate)
                 {
                     knockBackSpeed -= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
                     if (knockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
@@ -281,14 +270,14 @@ namespace DaggerfallWorkshop.Game
                 giveUpTimer = 200;
 
             // GiveUpTimer value is from classic, so decrease at the speed of classic's update loop
-            if (classicUpdate && !senses.DetectedTarget && giveUpTimer > 0)
+            if (GameManager.ClassicUpdate && !senses.DetectedTarget && giveUpTimer > 0)
                 giveUpTimer--;
 
             // Change to idle animation if haven't moved or rotated
             if (!mobile.IsPlayingOneShot())
             {
                 // Rotation is done at classic update rate, so check at classic update rate
-                if (classicUpdate)
+                if (GameManager.ClassicUpdate)
                 {
                     Vector3 currentDirection = transform.forward;
                     currentDirection.y = 0;
@@ -328,7 +317,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     int speed = entity.Stats.LiveSpeed;
-                    if (classicUpdate && DFRandom.rand() % speed >= (speed >> 3) + 6 && attack.MeleeTimer == 0)
+                    if (GameManager.ClassicUpdate && DFRandom.rand() % speed >= (speed >> 3) + 6 && attack.MeleeTimer == 0)
                     {
                         mobile.ChangeEnemyState(MobileStates.PrimaryAttack);
                         attack.ResetMeleeTimer();
@@ -391,7 +380,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (evaluateBow || evaluateRangedMagic)
                 {
-                    if (classicUpdate && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
+                    if (GameManager.ClassicUpdate && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
                     {
                         if (!isPlayingOneShot)
                         {
@@ -1060,7 +1049,7 @@ namespace DaggerfallWorkshop.Game
             const float turnSpeed = 20f;
             //Classic speed is 11.25f, too slow for Daggerfall Unity's agile player movement
 
-            if (classicUpdate)
+            if (GameManager.ClassicUpdate)
             {
                 transform.forward = Vector3.RotateTowards(transform.forward, targetDirection, turnSpeed * Mathf.Deg2Rad, 0.0f);
                 rotating = true;

@@ -109,8 +109,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int SwimmingFatigueLoss = 44;
         public const int JumpingFatigueLoss = 11;
 
-        private float classicUpdateTimer = 0f;
-        public const float ClassicUpdateInterval = 0.0625f; // Update every 1/16 of a second. An approximation of classic's update loop, which varies with framerate.
         private int breathUpdateTally = 0;
         private int runningTallyCounter = 0;
         private float guardsArriveCountdown = 0;
@@ -244,16 +242,6 @@ namespace DaggerfallWorkshop.Game.Entity
             if (CurrentHealth <= 0)
                 return;
 
-            bool classicUpdate = false;
-
-            if (classicUpdateTimer < ClassicUpdateInterval)
-                classicUpdateTimer += Time.deltaTime;
-            else
-            {
-                classicUpdateTimer = 0;
-                classicUpdate = true;
-            }
-
             if (guardsArriveCountdown > 0)
             {
                 guardsArriveCountdown -= Time.deltaTime;
@@ -306,7 +294,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 }
 
                 // Handle events that are called by classic's update loop
-                if (classicUpdate)
+                if (GameManager.ClassicUpdate)
                 {
                     // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
                     // Here we use a rate of 1/4 that observed for classic.

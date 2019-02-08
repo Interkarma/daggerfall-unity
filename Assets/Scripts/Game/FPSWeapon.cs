@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop.Game
                 if (player != null)
                 {
                     if (WeaponType == WeaponTypes.Bow)
-                        time = Entity.PlayerEntity.ClassicUpdateInterval;
+                        time = GameManager.classicUpdateInterval;
                     else
                     {
                         speed = 3 * (115 - player.Stats.LiveSpeed);
