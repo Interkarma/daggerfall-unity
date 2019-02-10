@@ -29,10 +29,6 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Running quests can perform actions in the world (e.g. spawn enemies and play sounds).
     /// Or they can provide data to external systems like the NPC dialog interface (e.g. 'tell me about' and 'rumors').
     /// Quest support is considered to be in very early prototype stages and may change at any time.
-    /// 
-    /// Notes:
-    ///  * Quests are not serialized at this time.
-    ///  * Some data, such as reserved sites, need to be serialized from QuestMachine.
     /// </summary>
     public class QuestMachine : MonoBehaviour
     {
