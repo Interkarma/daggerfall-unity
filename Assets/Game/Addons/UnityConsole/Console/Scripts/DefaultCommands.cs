@@ -91,6 +91,8 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(UnmuteQuestNPCs.name, UnmuteQuestNPCs.description, UnmuteQuestNPCs.usage, UnmuteQuestNPCs.Execute);
+
         }
 
         private static class DumpBlock
@@ -1877,6 +1879,19 @@ namespace Wenzil.Console
                 }
 
                 return output;
+            }
+        }
+
+        private static class UnmuteQuestNPCs
+        {
+            public static readonly string name = "unmutequestnpcs";
+            public static readonly string description = "Unmutes all quest npcs when 'mute npc' is stuck from a bug. Has no effect on NPCs not muted by an active quest script.";
+            public static readonly string usage = "unmutequestnpcs";
+
+            public static string Execute(params string[] args)
+            {
+                int count = QuestMachine.Instance.UnmuteQuestNPCs();
+                return string.Format("Unmuted {0} active quest NPCs", count);
             }
         }
 

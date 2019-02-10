@@ -1154,6 +1154,32 @@ namespace DaggerfallWorkshop.Game.Questing
             return stage;
         }
 
+        /// <summary>
+        /// Unmutes all quest NPCs.
+        /// Supports console command workaround for "mute npc" bug present up to 0.7.36.
+        /// </summary>
+        public int UnmuteQuestNPCs()
+        {
+            int count = 0;
+            foreach (Quest quest in quests.Values)
+            {
+                QuestResource[] persons = quest.GetAllResources(typeof(Person));
+                if (persons == null || persons.Length == 0)
+                    continue;
+
+                foreach (Person person in persons)
+                {
+                    if (person.IsMuted)
+                    {
+                        person.IsMuted = false;
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
         #endregion
 
         #region Site Links
