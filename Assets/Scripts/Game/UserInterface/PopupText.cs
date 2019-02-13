@@ -27,7 +27,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int maxRows = 7;
 
         LinkedList<TextLabel> textRows = new LinkedList<TextLabel>();
-        float timer = 0;
+        // Text scrolls away when timer becomes negative
+        float timer;
         float nextPopDelay = popDelay;
 
         public PopupText()
@@ -41,16 +42,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            // Remove item from front of list
-            timer += Time.deltaTime;
-            if (timer > nextPopDelay)
+            if (textRows.Count > 0)
             {
-                timer = 0;
-                if (textRows.Count > 0)
+                timer -= Time.deltaTime;
+                if (timer < -popDelay)
+                {
+                    timer += nextPopDelay;
+                    // Remove item from front of list
                     textRows.RemoveFirst();
 
-                // Reset pop delay to default
-                nextPopDelay = popDelay;
+                    // Reset pop delay to default
+                    nextPopDelay = popDelay;
+                }
+
             }
         }
 
@@ -61,6 +65,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw text
             int count = 0;
             float y = 4;
+            if (textRows.Count > 0 && timer < 0)
+                y += (textRows.First.Value.TextHeight + textSpacing) * timer / popDelay;
             int maxCount = (textRows.Count > maxRows) ? maxRows : textRows.Count;
             IEnumerator enumerator = textRows.GetEnumerator();
             while (enumerator.MoveNext())
@@ -77,15 +83,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        public void AddText(string text)
-        {
-            TextLabel label = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, text);
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.Parent = Parent;
-            textRows.AddLast(label);
-            timer = 0;
-        }
-
         /// <summary>
         /// Adds text with custom delay.
         /// Delay affects this item only. Subsequent text items can override delay.
@@ -93,10 +90,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         /// <param name="text">Text to display.</param>
         /// <param name="delayInSeconds">Time in seconds before removing text.</param>
-        public void AddText(string text, float delayInSeconds)
+        public void AddText(string text, float delayInSeconds = popDelay)
         {
-            AddText(text);
-            nextPopDelay = delayInSeconds;
+            if (textRows.Count == 0)
+                // set no-scroll delay
+                timer = delayInSeconds;
+            else if (timer >= 0)
+                // retrigger no-scroll delay
+                timer = Mathf.Max(timer, delayInSeconds);
+            else
+                // set next no-scroll delay
+                nextPopDelay = delayInSeconds;
+            TextLabel label = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, text);
+            label.HorizontalAlignment = HorizontalAlignment.Center;
+            label.Parent = Parent;
+            textRows.AddLast(label);
         }
 
         /// <summary>
