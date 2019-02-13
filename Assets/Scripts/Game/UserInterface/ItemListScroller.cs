@@ -433,6 +433,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Set stack count
                 if (item.stackCount > 1)
                     itemStackLabels[i].Text = item.stackCount.ToString();
+                else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Letter_of_credit)
+                {
+                    // Reuse stack counts for letters of credit values
+                    if (item.value < 10000)
+                        itemStackLabels[i].Text = item.value.ToString();
+                    else if (item.value < 10000000)
+                        itemStackLabels[i].Text = (item.value / 1000).ToString() + "K";
+                    else
+                        itemStackLabels[i].Text = (item.value / 1000000).ToString() + "M";
+                }
 
                 // Handle context specific background colour, animations & label
                 if (backgroundColourHandler != null)
