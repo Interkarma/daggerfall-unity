@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Debug.Log("Find " + findPlaceName + findPlaceRegion);
                 this.CloseWindow();
-                DaggerfallUI.Instance.DfTravelMapWindow.GotoLocation(findPlaceName, findPlaceRegion);
+                DaggerfallUI.Instance.DfTravelMapWindow.SetGotoLocation(findPlaceName, findPlaceRegion);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
         }
