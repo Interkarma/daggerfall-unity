@@ -1745,6 +1745,24 @@ MonoBehaviour:
     startDistance: 0
     endDistance: 0
     excludeSkybox: 0
+  InteriorFogSettings:
+    fogMode: 2
+    density: 0.001
+    startDistance: 0
+    endDistance: 0
+    excludeSkybox: 0
+  DungeonFogSettings:
+    fogMode: 2
+    density: 0.005
+    startDistance: 0
+    endDistance: 0
+    excludeSkybox: 0
+  currentOutdoorFogSettings:
+    fogMode: 0
+    density: 0
+    startDistance: 0
+    endDistance: 0
+    excludeSkybox: 0
 --- !u!1 &1437448953
 GameObject:
   m_ObjectHideFlags: 0

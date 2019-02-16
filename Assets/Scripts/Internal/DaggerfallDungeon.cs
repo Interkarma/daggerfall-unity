@@ -159,6 +159,7 @@ namespace DaggerfallWorkshop
                 case 9570447:           // Daggerfall/Castle Necromoghan
                 case 2352284:           // Betony/Tristore Laboratory
                 case 336619236:         // Ykalon/Castle Llugwych
+                case 43196334:          // Isle of Balfiera/Direnni Tower
                     mainStoryDungeon = true;
                     break;
                 default:
