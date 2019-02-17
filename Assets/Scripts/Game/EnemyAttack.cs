@@ -36,8 +36,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         int damage = 0;
-        float classicUpdateTimer = 0f;
-        bool classicUpdate = false;
 
         void Start()
         {
@@ -46,18 +44,6 @@ namespace DaggerfallWorkshop.Game
             sounds = GetComponent<EnemySounds>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
-        }
-
-        void FixedUpdate()
-        {
-            classicUpdateTimer += Time.deltaTime;
-            if (classicUpdateTimer >= PlayerEntity.ClassicUpdateInterval)
-            {
-                classicUpdateTimer = 0;
-                classicUpdate = true;
-            }
-            else
-                classicUpdate = false;
         }
 
         void Update()
@@ -90,7 +76,7 @@ namespace DaggerfallWorkshop.Game
 
             // Note: Speed comparison here is reversed from classic. Classic's way makes fewer attack
             // attempts at higher speeds, so it seems backwards.
-            if (classicUpdate && (DFRandom.rand() % speed >= (speed >> 3) + 6 && MeleeTimer == 0))
+            if (GameManager.ClassicUpdate && (DFRandom.rand() % speed >= (speed >> 3) + 6 && MeleeTimer == 0))
             {
                 if (!MeleeAnimation())
                     return;

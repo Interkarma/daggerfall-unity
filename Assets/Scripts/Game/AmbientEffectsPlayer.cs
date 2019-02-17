@@ -125,7 +125,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Play water sound effects. Timing based on classic.
-            if (waterWaitCounter > Entity.PlayerEntity.ClassicUpdateInterval)
+            if (waterWaitCounter > GameManager.classicUpdateInterval)
             {
                 if (playerEnterExit && playerEnterExit.blockWaterLevel != 10000)
                 {
