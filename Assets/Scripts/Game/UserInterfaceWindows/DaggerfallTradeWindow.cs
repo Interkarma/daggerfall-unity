@@ -729,6 +729,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
+            bool receivedLetterOfCredit = false;
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Proceed with trade.
@@ -747,6 +748,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             DaggerfallUnityItem loc = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
                             loc.value = tradePrice;
                             GameManager.Instance.PlayerEntity.Items.AddItem(loc, Items.ItemCollection.AddPosition.Front);
+                            receivedLetterOfCredit = true;
                         }
                         RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         remoteItems.Clear();
@@ -802,11 +804,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         break;
                 }
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
+                if (receivedLetterOfCredit)
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ParchmentScratching);
+                else
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
                 PlayerEntity.TallySkill(DFCareer.Skills.Mercantile, 1);
                 Refresh();
             }
             CloseWindow();
+            if (receivedLetterOfCredit)
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "letterOfCredit"));
         }
 
         #endregion
