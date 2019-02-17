@@ -191,7 +191,7 @@ Message:  1040
 
 Message:  1041
 <ce>         Fast travel is done by pressing the W key. The region
-<ce>          that you are (Daggerfall) in is highlighted in red.
+<ce>          that you are in (Daggerfall) is highlighted in red.
 <ce>         Click on that region and you get a blow up map. There
 <ce>        are a lot of places on this map! Lets find the city of
 <ce>            Daggerfall. Click FIND and type in DAGGERFALL.
@@ -282,7 +282,7 @@ Message:  1055
 Message:  1056
 <ce>        This is the last of the tutorial lessons. There is much
 <ce>       more to learn about Tamriel and about the game. However,
-<ce>        you now have the basics to be able to expore and learn
+<ce>        you now have the basics to be able to explore and learn
 <ce>                       these things on your own.
 <ce>                                    
 <ce>                       Good luck, and have fun!
