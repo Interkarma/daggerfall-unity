@@ -395,47 +395,77 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit an enemy entity
-        public bool WeaponDamage(RaycastHit hit, Vector3 direction, bool arrowHit = false)
+        public bool WeaponDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
         {
             DaggerfallUnityItem strikingWeapon = null;
 
-            // Check if hit has an DaggerfallAction component
-            DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
-            if (action)
+            if (!arrowHit)
             {
-                action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
-            }
+                // Check if hit has an DaggerfallAction component
+                DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
+                if (action)
+                {
+                    action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
+                }
 
-            // Check if hit has an DaggerfallActionDoor component
-            DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-            if (actionDoor)
-            {
-                actionDoor.AttemptBash(true);
-                return false;
-            }
+                // Check if hit has an DaggerfallActionDoor component
+                DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
+                if (actionDoor)
+                {
+                    actionDoor.AttemptBash(true);
+                    return false;
+                }
 
-            // Check if player hit a static exterior door
-            if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
-            {
-                return false;
+                // Check if player hit a static exterior door
+                if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
+                {
+                    return false;
+                }
             }
 
             // Set up for use below
-            DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-            DaggerfallMobileUnit entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
-            EnemyMotor enemyMotor = hit.transform.GetComponent<EnemyMotor>();
-            EnemySounds enemySounds = hit.transform.GetComponent<EnemySounds>();
+            DaggerfallEntityBehaviour entityBehaviour = null;
+            DaggerfallMobileUnit entityMobileUnit = null;
+            EnemyMotor enemyMotor = null;
+            EnemySounds enemySounds = null;
+            if (!arrowHit)
+            {
+                entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
+                enemyMotor = hit.transform.GetComponent<EnemyMotor>();
+                enemySounds = hit.transform.GetComponent<EnemySounds>();
+            }
+            else if (arrowHitCollider != null)
+            {
+                entityBehaviour = arrowHitCollider.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
+                entityMobileUnit = arrowHitCollider.gameObject.transform.GetComponentInChildren<DaggerfallMobileUnit>();
+                enemyMotor = arrowHitCollider.gameObject.transform.GetComponent<EnemyMotor>();
+                enemySounds = arrowHitCollider.gameObject.transform.GetComponent<EnemySounds>();
+            }
 
             // Check if hit a mobile NPC
-            MobilePersonNPC mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
+            MobilePersonNPC mobileNpc = null;
+            if (!arrowHit)
+                mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
+            else if (arrowHitCollider != null)
+                mobileNpc = arrowHitCollider.gameObject.transform.GetComponent<MobilePersonNPC>();
+
             if (mobileNpc)
             {
                 if (!mobileNpc.Billboard.IsUsingGuardTexture)
                 {
-                    EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                    EnemyBlood blood = null;
+                    if (!arrowHit)
+                        blood = hit.transform.GetComponent<EnemyBlood>();
+                    else if (arrowHitCollider != null)
+                        blood = arrowHitCollider.gameObject.transform.GetComponent<EnemyBlood>();
+
                     if (blood)
                     {
-                        blood.ShowBloodSplash(0, hit.point);
+                        if (!arrowHit)
+                            blood.ShowBloodSplash(0, hit.point);
+                        else
+                            blood.ShowBloodSplash(0, arrowHitCollider.gameObject.transform.position);
                     }
                     mobileNpc.Motor.gameObject.SetActive(false);
                     playerEntity.TallyCrimeGuildRequirements(false, 5);
@@ -500,7 +530,12 @@ namespace DaggerfallWorkshop.Game
                         else
                             enemySounds.PlayHitSound(currentLeftHandWeapon);
 
-                        EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                        EnemyBlood blood = null;
+                        if (!arrowHit)
+                            blood = hit.transform.GetComponent<EnemyBlood>();
+                        else if (arrowHitCollider != null)
+                            blood = arrowHitCollider.gameObject.transform.GetComponent<EnemyBlood>();
+
                         if (blood)
                         {
                             blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);

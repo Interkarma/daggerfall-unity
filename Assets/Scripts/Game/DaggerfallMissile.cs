@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(Light))]
     [RequireComponent(typeof(SphereCollider))]
+    [RequireComponent(typeof(MeshCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallMissile : MonoBehaviour
@@ -63,6 +64,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 direction;
         Light myLight;
         SphereCollider myCollider;
+        MeshCollider arrowCollider;
         DaggerfallAudioSource audioSource;
         Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
@@ -83,7 +85,6 @@ namespace DaggerfallWorkshop.Game
         EnemySenses enemySenses;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
-        RaycastHit arrowHit;
 
         #endregion
 
@@ -206,9 +207,11 @@ namespace DaggerfallWorkshop.Game
             {
                 // Create and orient 3d arrow
                 goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
+                arrowCollider = GetComponent<MeshCollider>();
+                arrowCollider.sharedMesh = goModel.GetComponent<MeshFilter>().sharedMesh;
 
-                Vector3 adjust;
                 // Offset up so it comes from same place LOS check is done from
+                Vector3 adjust;
                 if (caster != GameManager.Instance.PlayerEntityBehaviour)
                 {
                     CharacterController controller = caster.transform.GetComponent<CharacterController>();
@@ -281,34 +284,9 @@ namespace DaggerfallWorkshop.Game
                 {
                     PlayImpactSound();
                     RaiseOnCompleteEvent();
-                    AssignPayloadToTargets();
+                    if (!isArrow)
+                        AssignPayloadToTargets();
                     impactAssigned = true;
-
-                    // Handle arrow
-                    if (isArrow)
-                    {
-                        // Disable 3d arrow
-                        goModel.gameObject.SetActive(false);
-
-                        if (caster != GameManager.Instance.PlayerEntityBehaviour)
-                        {
-                            DaggerfallEntityBehaviour entityBehaviour = null;
-                            if (arrowHit.transform)
-                                entityBehaviour = arrowHit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                            if (entityBehaviour == caster.GetComponent<EnemySenses>().Target)
-                            {
-                                EnemyAttack attack = caster.GetComponent<EnemyAttack>();
-                                if (attack)
-                                {
-                                    attack.BowDamage(goModel.transform.forward);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            GameManager.Instance.WeaponManager.WeaponDamage(arrowHit, goModel.transform.forward, true);
-                        }
-                    }
                 }
 
                 // Track post impact lifespan and allow impact clip to finish playing
@@ -323,24 +301,6 @@ namespace DaggerfallWorkshop.Game
 
             // Update light
             UpdateLight();
-        }
-
-        private void FixedUpdate()
-        {
-            if (isArrow && missileReleased && goModel)
-            {
-                // Check for arrow hit. For enemies, ray-casting in direction of the target works well.
-                // Otherwise it is easy for the target to ride on top of the arrow if it doesn't hit exactly head-on.
-                // Using a collider would probably be better.
-                Vector3 sphereCastDir;
-                if (enemySenses && enemySenses.LastKnownTargetPos != EnemySenses.ResetPlayerPos)
-                    sphereCastDir = (enemySenses.LastKnownTargetPos - goModel.transform.position).normalized;
-                else
-                    sphereCastDir = goModel.transform.forward;
-
-                if (Physics.SphereCast(goModel.transform.position, 0.05f, sphereCastDir, out arrowHit, 1f))
-                    impactDetected = true;
-            }
         }
 
         #endregion
@@ -391,6 +351,15 @@ namespace DaggerfallWorkshop.Game
             {
                 targetEntities.Add(entityBehaviour);
                 //Debug.LogFormat("Missile hit target {0} by range", entityBehaviour.name);
+            }
+
+            if (isArrow)
+            {
+                if (other != null)
+                AssignBowDamageToTarget(other);
+                // Destroy 3d arrow
+                Destroy(goModel.gameObject);
+                impactDetected = true;
             }
 
             // If missile is area at range
@@ -580,6 +549,31 @@ namespace DaggerfallWorkshop.Game
 
                 // Instantiate payload bundle on target
                 effectManager.AssignBundle(payload);
+            }
+        }
+
+        void AssignBowDamageToTarget(Collider arrowHitCollider)
+        {
+            if (!isArrow || targetEntities.Count == 0)
+            {
+                return;
+            }
+
+            if (caster != GameManager.Instance.PlayerEntityBehaviour)
+            {
+                if (targetEntities[0] == caster.GetComponent<EnemySenses>().Target)
+                {
+                    EnemyAttack attack = caster.GetComponent<EnemyAttack>();
+                    if (attack)
+                    {
+                        attack.BowDamage(goModel.transform.forward);
+                    }
+                }
+            }
+            else
+            {
+                RaycastHit unused = new RaycastHit();
+                GameManager.Instance.WeaponManager.WeaponDamage(unused, goModel.transform.forward, arrowHitCollider, true);
             }
         }
 
