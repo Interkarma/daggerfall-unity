@@ -98,6 +98,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             scrollBar.Size = new Vector2(5, 82);
             scrollBar.OnScroll += ScrollBar_OnScroll;
             pickerPanel.Components.Add(scrollBar);
+
+            // Adjust row count for font size
+            if (Font == DaggerfallUI.SmallFont)
+            {
+                RowsDisplayed = 11;
+            }
         }
 
         public override void Update()
