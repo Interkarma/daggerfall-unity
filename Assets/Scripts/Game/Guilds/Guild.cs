@@ -77,13 +77,14 @@ namespace DaggerfallWorkshop.Game.Guilds
                 int newRank = CalculateNewRank(playerEntity);
                 if (newRank != rank)
                 {
-                    if (newRank > rank)         // Promotion
+                    if (newRank > rank) {           // Promotion
                         tokens = TokensPromotion(newRank);
-                    else if (newRank < 0)       // Expulsion
+                    } else if (newRank < 0) {       // Expulsion
                         tokens = TokensExpulsion();
-                    else if (newRank < rank)    // Demotion
+                        GameManager.Instance.GuildManager.RemoveMembership(this);
+                    } else if (newRank < rank) {    // Demotion
                         tokens = TokensDemotion();
-
+                    }
                     rank = newRank;
                     lastRankChange = CalculateDaySinceZero(DaggerfallUnity.Instance.WorldTime.Now);
                 }

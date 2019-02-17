@@ -115,6 +115,21 @@ namespace DaggerfallWorkshop.Game.Guilds
             memberships[guildGroup] = guild;
         }
 
+        public void RemoveMembership(Guild guild)
+        {
+            FactionFile.GuildGroups guildGroup = FactionFile.GuildGroups.None;
+            foreach (FactionFile.GuildGroups group in memberships.Keys)
+            {
+                if (memberships[group] == guild)
+                {
+                    guildGroup = group;
+                    break;
+                }
+            }
+            if (guildGroup != FactionFile.GuildGroups.None)
+                memberships.Remove(guildGroup);
+        }
+
         public bool HasJoined(FactionFile.GuildGroups guildGroup)
         {
             return memberships.ContainsKey(guildGroup);
