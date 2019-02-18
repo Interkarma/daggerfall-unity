@@ -59,6 +59,10 @@ namespace DaggerfallWorkshop.Game
         bool bashing;
         bool hasBowAttack;
         bool hasSpells;
+        float realHeight;
+        float centerChange;
+        bool resetHeight;
+        float heightChangeTimer;
 
         EnemySenses senses;
         Vector3 destination;
@@ -127,6 +131,43 @@ namespace DaggerfallWorkshop.Game
         {
             Move();
             OpenDoors();
+            HeightAdjust();
+        }
+
+        // Limits maximum controller height
+        // Some particularly tall sprites (e.g. giants) require this hack to get through doors
+        void HeightAdjust()
+        {
+            // If enemy bumps into something, temporarily reduce their height to 1.65, which should be short enough to fit through most if not all doorways.
+            // Unfortunately, while the enemy is shortened, projectiles will not collide with the top of the enemy for the difference in height.
+            if (!resetHeight && controller && ((controller.collisionFlags & CollisionFlags.CollidedSides) != 0) && controller.height > 1.65f)
+            {
+                // Adjust the center of the controller so that sprite doesn't sink into the ground
+                realHeight = controller.height;
+                centerChange = (1.65f - controller.height) / 2;
+                Vector3 newCenter = controller.center;
+                newCenter.y += centerChange;
+                controller.center = newCenter;
+                // Adjust the height
+                controller.height = 1.65f;
+                resetHeight = true;
+                heightChangeTimer = 0.5f;
+            }
+            else if (resetHeight && heightChangeTimer <= 0)
+            {
+                // Restore the original center
+                Vector3 newCenter = controller.center;
+                newCenter.y -= centerChange;
+                controller.center = newCenter;
+                // Restore the original height
+                controller.height = realHeight;
+                resetHeight = false;
+            }
+
+            if (resetHeight && heightChangeTimer > 0)
+            {
+                heightChangeTimer -= Time.deltaTime;
+            }
         }
 
         #region Public Methods
