@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -245,7 +246,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         protected static string Join<T>(params T[] args)
         {
-            return string.Join(",", args.Select(x => x.ToString()).ToArray());
+            return string.Join(",", args.Select(x => Convert.ToString(x, CultureInfo.InvariantCulture)).ToArray());
         }
 
         /// <summary>
@@ -304,7 +305,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         protected virtual string Serialize()
         {
-            return Value.ToString();
+            return Convert.ToString(Value, CultureInfo.InvariantCulture);
         }
 
         protected abstract void TryDeserialize(string text);
