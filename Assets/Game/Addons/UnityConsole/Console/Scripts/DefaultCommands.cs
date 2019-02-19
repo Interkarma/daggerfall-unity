@@ -80,6 +80,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(AddArtifact.name, AddArtifact.description, AddArtifact.usage, AddArtifact.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddSpellBook.name, AddSpellBook.description, AddSpellBook.usage, AddSpellBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
@@ -1702,6 +1703,21 @@ namespace Wenzil.Console
             {
                 DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellMakerWindow);
                 return "Finished";
+            }
+        }
+
+        private static class AddSpellBook
+        {
+            public static readonly string name = "addspellbook";
+            public static readonly string description = "Gives player a new spellbook if they do not have one.";
+            public static readonly string usage = "addspellbook";
+
+            public static string Execute(params string[] args)
+            {
+                if (GameManager.Instance.ItemHelper.AddSpellbookItem(GameManager.Instance.PlayerEntity))
+                    return "Spellbook added";
+                else
+                    return "Player already has a spellbook";
             }
         }
 

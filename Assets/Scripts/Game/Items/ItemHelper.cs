@@ -995,6 +995,24 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gives a new spellbook item to player entity (if they don't already have one).
+        /// </summary>
+        /// <param name="playerEntity">Player entity to receive spellbook item.</param>
+        /// <returns>True if spellbook added, false is player already has a spellbook item.</returns>
+        public bool AddSpellbookItem(PlayerEntity playerEntity)
+        {
+            ItemCollection items = playerEntity.Items;
+            DaggerfallUnityItem spellbook = items.GetItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook);
+            if (spellbook == null)
+            {
+                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Assigns basic starting gear to a new character.
         /// </summary>
         public void AssignStartingGear(PlayerEntity playerEntity, int classIndex, bool isCustom)
