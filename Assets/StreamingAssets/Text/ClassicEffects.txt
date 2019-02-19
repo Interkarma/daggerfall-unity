@@ -124,3 +124,35 @@ curePoison,                 Cure Poison
 chameleonForm,              Chameleon Form
 shadowForm,                 Shadow Form
 purification,               Purification
+
+- Create Item:
+
+LeatherCuirass,             Leather Cuirass
+LeatherGauntlets,           Leather Gauntlets
+LeatherGreaves,             Leather Greaves
+LeatherLeftPauldron,        Leather Left Pauldron
+LeatherRightPauldron,       Leather Right Pauldron
+LeatherHelm,                Leather Helm
+LeatherBoots,               Leather Boots
+ChainCuirass,               Chain Cuirass
+ChainGauntlets,             Chain Gauntlets
+ChainGreaves,               Chain Greaves
+ChainLeftPauldron,          Chain Left Pauldron
+ChainRightPauldron,         Chain Right Pauldron
+ChainHelm,                  Chain Helm
+ChainBoots,                 Chain Boots
+SteelCuirass,               Steel Cuirass
+SteelGauntlets,             Steel Gauntlets
+SteelGreaves,               Steel Greaves
+SteelLeftPauldron,          Steel Left Pauldron
+SteelRightPauldron,         Steel Right Pauldron
+SteelHelm,                  Steel Helm
+SteelBoots,                 Steel Boots
+SteelBuckler,               Steel Buckler
+SteelDagger,                Steel Dagger
+SteelLongsword,             Steel Longsword
+SteelStaff,                 Steel Staff
+ShortBow,                   Short Bow
+Arrows,                     Arrows
+SteelBattleAxe,             Steel Battle Axe
+Robes,                      Robes
