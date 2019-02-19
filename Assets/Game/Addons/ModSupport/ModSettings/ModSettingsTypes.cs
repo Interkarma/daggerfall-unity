@@ -295,7 +295,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public sealed override string TextValue
         {
             get { return Serialize(); }
-            set { TryDeserialize(value); }
+            set { Deserialize(value); }
         }
 
         public sealed override object ToObject()
@@ -308,7 +308,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return Convert.ToString(Value, CultureInfo.InvariantCulture);
         }
 
-        protected abstract void TryDeserialize(string text);
+        protected abstract void Deserialize(string text);
     }
 
     /// <summary>
@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             bool value;
             if (bool.TryParse(textValue, out value))
@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             int value;
             if (int.TryParse(textValue, out value))
@@ -459,7 +459,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             int value;
             if (int.TryParse(textValue, out value))
@@ -507,7 +507,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             float value;
             if (float.TryParse(textValue, out value))
@@ -553,7 +553,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return Join(Value.First, Value.Second);
         }
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             int[] args;
             if (TrySplit(textValue, 2, out args))
@@ -599,7 +599,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return Join(Value.First, Value.Second);
         }
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             float[] args;
             if (TrySplit(textValue, 2, out args))
@@ -638,7 +638,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             Value = textValue;
         }
@@ -679,7 +679,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return ColorUtility.ToHtmlStringRGBA(Value);
         }
 
-        protected override void TryDeserialize(string textValue)
+        protected override void Deserialize(string textValue)
         {
             Color color;
             if (ColorUtility.TryParseHtmlString("#" + textValue, out color))
