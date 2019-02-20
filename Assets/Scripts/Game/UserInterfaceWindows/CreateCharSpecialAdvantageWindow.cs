@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxLabels = maxItems * 2;
         const int labelSpacing = 8;
         const int tandemLabelSpacing = 6;
-        const int advPickerItemCount = 11;
+        const int advPickerItemCount = 12;
         const float defaultSpellPointMod = .5f;
 
         DFCareer advantageData;
