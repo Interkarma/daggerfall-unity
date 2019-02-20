@@ -796,7 +796,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Identify:
-                        PlayerEntity.DeductGoldAmount(GetTradePrice());
+                        PlayerEntity.DeductGoldAmount(tradePrice);
                         for (int i = 0; i < remoteItems.Count; i++)
                         {
                             DaggerfallUnityItem item = remoteItems.GetItem(i);
