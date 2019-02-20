@@ -384,7 +384,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality);
                             break;
                         case WindowModes.Repair:
-                            cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition, guild) * item.stackCount;
+                            if (!item.RepairData.IsBeingRepaired())
+                                cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition, guild) * item.stackCount;
                             break;
                         case WindowModes.Identify:
                             if (!item.IsIdentified)
