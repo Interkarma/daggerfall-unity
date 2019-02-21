@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.Player
         List<TextFile.Token[]> finishedQuests = new List<TextFile.Token[]>();
 
         List<TextFile.Token[]> messages = new List<TextFile.Token[]>();
+        int nextMessageIndex = 0;
 
         #region Notes
 
@@ -139,7 +140,16 @@ namespace DaggerfallWorkshop.Game.Player
 
         public List<TextFile.Token[]> GetMessages()
         {
-            return new List<TextFile.Token[]>(messages);
+            List<TextFile.Token[]> result = new List<TextFile.Token[]>(messages.Count);
+            for (int current = nextMessageIndex; current < messages.Count; current++)
+            {
+                result.Add(messages[current]);
+            }
+            for (int current = 0; current < nextMessageIndex; current++)
+            {
+                result.Add(messages[current]);
+            }
+            return result;
         }
 
         public void AddMessage(string str)
@@ -147,11 +157,12 @@ namespace DaggerfallWorkshop.Game.Player
             if (!string.IsNullOrEmpty(str))
             {
                 List<TextFile.Token> message = CreateMessage(str);
-                messages.Add(message.ToArray());
-                // Use a circular buffer instead?
-                while (messages.Count > MaxMessageCount)
+                if (messages.Count < MaxMessageCount)
+                    messages.Add(message.ToArray());
+                else
                 {
-                    messages.RemoveAt(0);
+                    messages[nextMessageIndex] = message.ToArray();
+                    nextMessageIndex = (nextMessageIndex + 1) % MaxMessageCount;
                 }
             }
         }
