@@ -69,7 +69,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             ActiveQuests,
             FinshedQuests,
-            Notebook
+            Notebook,
+            Messages
         }
 
         #endregion
@@ -216,6 +217,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case JournalDisplay.Notebook:
                         SetTextNotebook();
                         break;
+                    case JournalDisplay.Messages:
+                        SetTextMessages();
+                        break;
                 }
             }
         }
@@ -235,6 +239,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DisplayMode = JournalDisplay.Notebook;
                     break;
                 case JournalDisplay.Notebook:
+                    DisplayMode = JournalDisplay.Messages;
+                    break;
+                case JournalDisplay.Messages:
                     DisplayMode = JournalDisplay.ActiveQuests;
                     break;
             }
@@ -545,6 +552,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
             titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "notebookInfo");
             SetTextWithListEntries(notes, maxLinesSmall);
+        }
+
+        private void SetTextMessages()
+        {
+            List<TextFile.Token[]> messages = GameManager.Instance.PlayerEntity.Notebook.GetMessages();
+            messageCount = messages.Count;
+            questLogLabel.TextScale = textScaleSmall;
+            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "messages");
+            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "messagesInfo");
+            SetTextWithListEntries(messages, maxLinesSmall);
         }
 
         private void SetTextWithListEntries(List<TextFile.Token[]> entries, int maxLines)

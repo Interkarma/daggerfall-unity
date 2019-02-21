@@ -105,6 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.Parent = Parent;
             textRows.AddLast(label);
+            GameManager.Instance.PlayerEntity.Notebook.AddMessage(text);
         }
 
         /// <summary>

@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Player
         private const string PrefixQuestion = "Q:";
         private const string PrefixAnswer = "A:";
         const string textDatabase = "DaggerfallUI";
+        const int MaxMessageCount = 50;
 
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
             formatting = TextFile.Formatting.Nothing,
@@ -37,6 +38,8 @@ namespace DaggerfallWorkshop.Game.Player
         List<TextFile.Token[]> notes = new List<TextFile.Token[]>();
 
         List<TextFile.Token[]> finishedQuests = new List<TextFile.Token[]>();
+
+        List<TextFile.Token[]> messages = new List<TextFile.Token[]>();
 
         #region Notes
 
@@ -132,6 +135,35 @@ namespace DaggerfallWorkshop.Game.Player
                 formatting = format,
             });
             note.Add(NothingToken);
+        }
+
+        public List<TextFile.Token[]> GetMessages()
+        {
+            return new List<TextFile.Token[]>(messages);
+        }
+
+        public void AddMessage(string str)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                List<TextFile.Token> message = CreateMessage(str);
+                messages.Add(message.ToArray());
+                // Use a circular buffer instead?
+                while (messages.Count > MaxMessageCount)
+                {
+                    messages.RemoveAt(0);
+                }
+            }
+        }
+
+        private static List<TextFile.Token> CreateMessage(string text)
+        {
+            List<TextFile.Token> message = new List<TextFile.Token>
+            {
+                TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter),
+                TextFile.CreateTextToken(text),
+            };
+            return message;
         }
 
         #endregion

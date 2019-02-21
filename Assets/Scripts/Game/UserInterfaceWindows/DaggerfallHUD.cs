@@ -244,6 +244,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             midScreenTextLabel.Text = message;
             midScreenTextTimer = 0;
             midScreenTextDelay = delay;
+            GameManager.Instance.PlayerEntity.Notebook.AddMessage(message);
         }
     }
 }
