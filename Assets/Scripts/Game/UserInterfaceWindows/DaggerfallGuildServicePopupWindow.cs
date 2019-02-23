@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Questing;
 using System;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -566,7 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.DeductGoldAmount(guild.GetTrainingPrice());
                 playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
                 int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-                short tallyAmount = (short)(UnityEngine.Random.Range(10, 21) * skillAdvancementMultiplier);
+                short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
                 playerEntity.TallySkill(skillToTrain, tallyAmount);
                 DaggerfallUI.MessageBox(TrainSkillId);
             }

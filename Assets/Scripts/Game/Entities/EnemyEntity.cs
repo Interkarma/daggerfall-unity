@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -444,7 +445,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (Dice100.SuccessRoll(chanceToPoison))
                     {
                         // Apply poison
-                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 136);
+                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 135 + 1);
                     }
                 }
             }
