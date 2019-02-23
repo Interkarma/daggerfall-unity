@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop.Game.Items
             unknown2 = 0;
             typeDependentData = 0;
             enchantmentPoints = itemTemplate.enchantmentPoints;
-            message = (itemGroup == ItemGroups.Paintings) ? UnityEngine.Random.Range(0, 65535) : 0;
+            message = (itemGroup == ItemGroups.Paintings) ? UnityEngine.Random.Range(0, 65536) : 0;
             stackCount = 1;
         }
 

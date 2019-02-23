@@ -442,7 +442,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             List<int> keys = new List<int>(bookIDNameMapping.Keys);
             int size = bookIDNameMapping.Count;
-            return keys[UnityEngine.Random.Range(0, size - 1)];
+            return keys[UnityEngine.Random.Range(0, size)];
         }
 
         /// <summary>

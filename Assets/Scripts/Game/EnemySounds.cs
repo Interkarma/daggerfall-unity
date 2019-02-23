@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game
         private void StartWaiting()
         {
             // Reset countdown to next sound
-            waitTime = Random.Range(MinAttractDelay, MaxAttractDelay);
+            waitTime = Random.Range(MinAttractDelay, MaxAttractDelay + 1);
             waitCounter = 0;
         }
 

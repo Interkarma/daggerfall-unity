@@ -575,7 +575,7 @@ namespace DaggerfallWorkshop.Utility
             if (buildingDirectory && buildingDirectory.BuildingCount > 0)
             {
                 List<BuildingSummary> taverns = buildingDirectory.GetBuildingsOfType(DFLocation.BuildingTypes.Tavern);
-                int i = UnityEngine.Random.Range(0, taverns.Count - 1);
+                int i = UnityEngine.Random.Range(0, taverns.Count);
                 PlayerGPS.DiscoveredBuilding tavern;
                 if (GameManager.Instance.PlayerGPS.GetAnyBuilding(taverns[i].buildingKey, out tavern))
                     return tavern.displayName;
