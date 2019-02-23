@@ -573,7 +573,7 @@ namespace DaggerfallWorkshop.Game
                 // Roll for chance to open
                 // TODO: Factor door lock value into chance to open
                 int chance = 20;
-                int roll = Random.Range(1, 101);
+                int roll = Random.Range(1, 100 + 1);
                 if (roll <= chance)
                 {
                     TransitionInterior(doorOwner, door, true);
@@ -1129,9 +1129,9 @@ namespace DaggerfallWorkshop.Game
 
             int chance = Formulas.FormulaHelper.CalculatePickpocketingChance(player, enemyEntity);
 
-            if (Random.Range(0, 101) <= chance)
+            if (Random.Range(0, 100 + 1) <= chance)
             {
-                if (Random.Range(0, 101) >= 33)
+                if (Random.Range(0, 100 + 1) >= 33)
                 {
                     int pinchedGoldPieces = Random.Range(0, 6) + 1;
                     player.GoldPieces += pinchedGoldPieces;

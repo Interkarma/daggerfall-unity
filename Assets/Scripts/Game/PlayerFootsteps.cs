@@ -296,7 +296,7 @@ namespace DaggerfallWorkshop.Game
         // Capture this message so we can play pain voice
         public void RemoveHealth(int amount)
         {
-            if (dfAudioSource && DaggerfallUnity.Settings.CombatVoices && Random.Range(1, 101) <= 40)
+            if (dfAudioSource && DaggerfallUnity.Settings.CombatVoices && Random.Range(1, 100 + 1) <= 40)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 bool heavyDamage = amount >= playerEntity.MaxHealth / 4;

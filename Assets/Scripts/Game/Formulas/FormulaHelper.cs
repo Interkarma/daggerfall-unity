@@ -269,8 +269,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return del(player);
 
             int minRoll = player.Career.HitPointsPerLevel / 2;
-            int maxRoll = player.Career.HitPointsPerLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
-            int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
+            int maxRoll = player.Career.HitPointsPerLevel;
+            int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll + 1); // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             addHitPoints += HitPointsModifier(player.Stats.LiveEndurance);
             if (addHitPoints < 1)
                 addHitPoints = 1;
@@ -298,7 +298,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
             chance += GameManager.Instance.WeaponManager.Sheathed ? 10 : -25;
 
-            int roll = UnityEngine.Random.Range(0, 200);
+            int roll = UnityEngine.Random.Range(0, 200 + 1);
             bool success = (roll < chance);
             if (success)
                 player.TallySkill(languageSkill, 1);
@@ -1485,7 +1485,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static void RandomizeInitialRegionalPrices(ref PlayerEntity.RegionDataRecord[] regionData)
         {
             for (int i = 0; i < regionData.Length; i++)
-                regionData[i].PriceAdjustment = (ushort)(UnityEngine.Random.Range(0, 501) + 750);
+                regionData[i].PriceAdjustment = (ushort)(UnityEngine.Random.Range(0, 500 + 1) + 750);
         }
 
         public static void UpdateRegionalPrices(ref PlayerEntity.RegionDataRecord[] regionData, int times)
@@ -1504,7 +1504,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     {
                         int chanceOfPriceRise = ((merchantsFaction.power) - (regionFaction.power)) / 5
                             + 50 - (regionData[i].PriceAdjustment - 1000) / 25;
-                        if (UnityEngine.Random.Range(0, 101) >= chanceOfPriceRise)
+                        if (UnityEngine.Random.Range(0, 100 + 1) >= chanceOfPriceRise)
                             regionData[i].PriceAdjustment = (ushort)(49 * regionData[i].PriceAdjustment / 50);
                         else
                             regionData[i].PriceAdjustment = (ushort)(51 * regionData[i].PriceAdjustment / 50);

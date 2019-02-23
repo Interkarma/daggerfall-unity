@@ -406,14 +406,14 @@ namespace DaggerfallWorkshop.Game.Entity
 
                     // Handle guards appearing for low-legal rep player
                     int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-                    if (regionData[regionIndex].LegalRep < -10 && UnityEngine.Random.Range(1, 101) < 5)
+                    if (regionData[regionIndex].LegalRep < -10 && UnityEngine.Random.Range(1, 100 + 1) < 5)
                     {
                         crimeCommitted = Crimes.Criminal_Conspiracy;
                         SpawnCityGuards(false);
                     }
 
                     // Handle guards appearing for banished player
-                    if ((regionData[regionIndex].SeverePunishmentFlags & 1) != 0 && UnityEngine.Random.Range(1, 101) < 10)
+                    if ((regionData[regionIndex].SeverePunishmentFlags & 1) != 0 && UnityEngine.Random.Range(1, 100 + 1) < 10)
                     {
                         crimeCommitted = Crimes.Criminal_Conspiracy;
                         SpawnCityGuards(false);
@@ -673,7 +673,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     // Player seen by a non-guard NPC but not by any guard NPCs. Start a countdown until guards arrive.
                     if (!seenByGuard && seen)
                     {
-                        guardsArriveCountdown = UnityEngine.Random.Range(5, 11);
+                        guardsArriveCountdown = UnityEngine.Random.Range(5, 10 + 1);
                         // Also track location so guards don't appear if player leaves during countdown
                         guardsArriveCountdownLocation = dfLocation;
                     }

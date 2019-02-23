@@ -504,7 +504,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (!Properties.SupportChance)
                 return false;
 
-            int roll = Random.Range(1, 100);
+            int roll = Random.Range(1, 100 + 1);
             bool outcome = (roll <= ChanceValue());
 
             //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, ChanceValue(), roll, (outcome) ? "success" : "fail");

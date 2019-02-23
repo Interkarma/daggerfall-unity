@@ -251,7 +251,7 @@ namespace DaggerfallWorkshop
             summary.StateAnims = GetStateAnims(summary.EnemyState);
             if (summary.EnemyState == MobileStates.PrimaryAttack)
             {
-                int random = UnityEngine.Random.Range(1, 101);
+                int random = UnityEngine.Random.Range(1, 100 + 1);
 
                 if (random <= summary.Enemy.ChanceForAttack2)
                     summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames2;

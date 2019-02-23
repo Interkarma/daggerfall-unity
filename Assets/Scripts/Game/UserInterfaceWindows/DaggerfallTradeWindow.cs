@@ -691,7 +691,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int chance = FormulaHelper.CalculateShopliftingChance(PlayerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
                 PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
-                if (UnityEngine.Random.Range(0, 101) > chance)
+                if (UnityEngine.Random.Range(0, 100 + 1) > chance)
                 {
                     DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreSuccessful"), 2);
                     RaiseOnTradeHandler(basketItems.GetNumItems(), 0);

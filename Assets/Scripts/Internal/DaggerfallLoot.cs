@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void RandomlyAddMap(int chance, ItemCollection collection)
         {
-            if (Random.Range(1, 101) <= chance)
+            if (Random.Range(1, 100 + 1) <= chance)
             {
                 DaggerfallUnityItem map = new DaggerfallUnityItem(ItemGroups.MiscItems, 8);
                 collection.AddItem(map);
@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void RandomlyAddPotion(int chance, ItemCollection collection)
         {
-            if (Random.Range(1, 101) < chance)
+            if (Random.Range(1, 100 + 1) < chance)
                 collection.AddItem(ItemBuilder.CreateRandomPotion());
         }
 
@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void RandomlyAddPotionRecipe(int chance, ItemCollection collection)
         {
-            if (Random.Range(1, 101) < chance)
+            if (Random.Range(1, 100 + 1) < chance)
             {
                 DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4);
                 byte recipe = (byte)Random.Range(0, 20);
@@ -192,7 +192,7 @@ namespace DaggerfallWorkshop
                             if (itemTemplate.rarity <= shopQuality)
                             {
                                 int stockChance = chanceMod * 5 * (21 - itemTemplate.rarity) / 100;
-                                if (Random.Range(1, 101) <= stockChance)
+                                if (Random.Range(1, 100 + 1) <= stockChance)
                                 {
                                     DaggerfallUnityItem item = null;
                                     if (itemGroup == ItemGroups.Weapons)
@@ -213,7 +213,7 @@ namespace DaggerfallWorkshop
                                     {
                                         item = new DaggerfallUnityItem(itemGroup, j);
                                         if (DaggerfallUnity.Settings.PlayerTorchFromItems && item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
-                                            item.stackCount = Random.Range(5, 21);  // Shops stock 5-20 bottles
+                                            item.stackCount = Random.Range(5, 20 + 1);  // Shops stock 5-20 bottles
                                     }
                                     items.AddItem(item);
                                 }

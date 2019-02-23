@@ -118,8 +118,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (threshold2 > 75)
                         threshold2 = 75;
                 }
-                if (UnityEngine.Random.Range(1, 101) > threshold2 &&
-                    UnityEngine.Random.Range(1, 101) > threshold1)
+                if (UnityEngine.Random.Range(1, 100 + 1) > threshold2 &&
+                    UnityEngine.Random.Range(1, 100 + 1) > threshold1)
                     punishmentType = 2; // fine/prison
                 else
                     punishmentType = 0; // banishment or execution
@@ -375,7 +375,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (chanceToGoFree < 5)
                 chanceToGoFree = 5;
 
-            if (UnityEngine.Random.Range(1, 101) > chanceToGoFree)
+            if (UnityEngine.Random.Range(1, 100 + 1) > chanceToGoFree)
             {
                 // Banishment
                 if (punishmentType == 0)
@@ -386,7 +386,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Prison/Fine
                 else
                 {
-                    int roll = playerEntity.RegionData[regionIndex].LegalRep + UnityEngine.Random.Range(1, 101);
+                    int roll = playerEntity.RegionData[regionIndex].LegalRep + UnityEngine.Random.Range(1, 100 + 1);
                     if (roll < 25)
                         fine *= 2;
                     else if (roll > 75)

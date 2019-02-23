@@ -1467,7 +1467,7 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            int random = UnityEngine.Random.Range(1, 101);
+            int random = UnityEngine.Random.Range(1, 100 + 1);
             int playerLevel = Game.GameManager.Instance.PlayerEntity.Level;
             int min;
             int max;

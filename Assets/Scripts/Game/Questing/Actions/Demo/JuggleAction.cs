@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             DaggerfallUI.AddHUDText(string.Format("Juggling {0} {1}...", thingsRemaining, thingName));
 
             // We might drop something!
-            int roll = Random.Range(1, 101);
+            int roll = Random.Range(1, 100 + 1);
             if (roll < dropPercent)
             {
                 thingsRemaining--;

@@ -574,7 +574,7 @@ namespace DaggerfallWorkshop.Game
 
             int stealthRoll = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
 
-            return Random.Range(1, 101) > stealthRoll;
+            return Random.Range(1, 100 + 1) > stealthRoll;
         }
 
         public bool BlockedByIllusionEffect()
@@ -601,7 +601,7 @@ namespace DaggerfallWorkshop.Game
             else // is a shade
                 chance = 4;
 
-            return Random.Range(1, 101) > chance;
+            return Random.Range(1, 100 + 1) > chance;
         }
 
         public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)

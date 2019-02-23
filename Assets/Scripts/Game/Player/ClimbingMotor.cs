@@ -587,7 +587,7 @@ namespace DaggerfallWorkshop.Game
             // Skill Check
             float percentRolled = Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor;
 
-            if (percentRolled < UnityEngine.Random.Range(1, 101)) // Failed Check?
+            if (percentRolled < UnityEngine.Random.Range(1, 100 + 1)) // Failed Check?
             {
                 // Don't allow skill check to break climbing while swimming
                 // Water makes it easier to climb

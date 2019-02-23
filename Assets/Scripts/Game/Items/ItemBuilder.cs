@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Items
         public static ArmorMaterialTypes RandomArmorMaterial(int playerLevel)
         {
             // Random armor material
-            int random = UnityEngine.Random.Range(1, 101);
+            int random = UnityEngine.Random.Range(1, 100 + 1);
 
             if (random >= 70)
             {
@@ -338,7 +338,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             if (weapon == Weapons.Arrow)
             {   // Handle arrows
-                newItem.stackCount = UnityEngine.Random.Range(1, 21);
+                newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
             else
@@ -372,7 +372,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Handle arrows
             if (groupIndex == 18)
             {
-                newItem.stackCount = UnityEngine.Random.Range(1, 21);
+                newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
 

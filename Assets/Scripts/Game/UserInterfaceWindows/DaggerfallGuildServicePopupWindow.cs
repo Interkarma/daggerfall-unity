@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
                     magicItem.value = 5000;
 
-                    if (UnityEngine.Random.Range(1, 101) >= 25)
+                    if (UnityEngine.Random.Range(1, 100 + 1) >= 25)
                         magicItem.TrappedSoulType = MobileTypes.None;
                     else
                     {
@@ -603,7 +603,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     // Change reputation
                     int rep = Math.Abs(playerEntity.FactionData.GetReputation(factionId));
-                    if (UnityEngine.Random.Range(1, 101) <= (2 * amount / rep + 1))
+                    if (UnityEngine.Random.Range(1, 100 + 1) <= (2 * amount / rep + 1))
                         playerEntity.FactionData.ChangeReputation(factionId, 1); // Does not propagate in classic
 
                     // Show thanks message
