@@ -349,7 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            messageBox.SetHighlightColor(Color.white);
+            messageBox.SetHighlightColor(DaggerfallUI.DaggerfallUnityStatIncreasedTextColor);
             messageBox.SetTextTokens(tokens.ToArray(), null, false);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
