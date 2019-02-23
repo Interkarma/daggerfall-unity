@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -333,7 +334,7 @@ namespace DaggerfallWorkshop.Game
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
                 // Chance to play attack voice
-                if (DaggerfallUnity.Settings.CombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && UnityEngine.Random.Range(1, 100 + 1) <= 20)
+                if (DaggerfallUnity.Settings.CombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && Dice100.SuccessRoll(20))
                     ScreenWeapon.PlayAttackVoice();
 
                 // Transfer damage.
@@ -528,7 +529,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
 
-                        if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && UnityEngine.Random.Range(1, 100 + 1) <= 40)
+                        if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(40))
                         {
                             Genders gender;
                             if (entityMobileUnit.Summary.Enemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)

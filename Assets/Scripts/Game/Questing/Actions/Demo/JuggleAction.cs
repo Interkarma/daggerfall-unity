@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Text.RegularExpressions;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Utility;
 
 // Place actions in this namespace
 namespace DaggerfallWorkshop.Game.Questing.Actions
@@ -150,8 +151,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             DaggerfallUI.AddHUDText(string.Format("Juggling {0} {1}...", thingsRemaining, thingName));
 
             // We might drop something!
-            int roll = Random.Range(1, 100 + 1);
-            if (roll < dropPercent)
+            if (Dice100.SuccessRoll(dropPercent))
             {
                 thingsRemaining--;
                 DaggerfallUI.AddHUDText("Oops, I dropped one!");

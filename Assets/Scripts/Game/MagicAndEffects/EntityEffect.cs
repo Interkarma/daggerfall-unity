@@ -14,6 +14,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -504,8 +505,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (!Properties.SupportChance)
                 return false;
 
-            int roll = Random.Range(1, 100 + 1);
-            bool outcome = (roll <= ChanceValue());
+            bool outcome = Dice100.SuccessRoll(ChanceValue());
 
             //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, ChanceValue(), roll, (outcome) ? "success" : "fail");
 

@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -185,7 +186,7 @@ namespace DaggerfallWorkshop.Game
                     sounds.PlayMissSound(weapon);
                 }
 
-                if (DaggerfallUnity.Settings.CombatVoices && entity.EntityType == EntityTypes.EnemyClass && Random.Range(1, 100 + 1) <= 20)
+                if (DaggerfallUnity.Settings.CombatVoices && entity.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(20))
                 {
                     Genders gender;
                     if (mobile.Summary.Enemy.Gender == MobileGender.Male || entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
@@ -317,7 +318,7 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                if (DaggerfallUnity.Settings.CombatVoices && senses.Target.EntityType == EntityTypes.EnemyClass && Random.Range(1, 100 + 1) <= 40)
+                if (DaggerfallUnity.Settings.CombatVoices && senses.Target.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(40))
                 {
                     DaggerfallMobileUnit targetMobileUnit = senses.Target.GetComponentInChildren<DaggerfallMobileUnit>();
                     Genders gender;

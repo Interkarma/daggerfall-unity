@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         amount = (int)(RunningFatigueLoss * fatigueLossMultiplier);
                     else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
                     {
-                        if (Race != Races.Argonian && UnityEngine.Random.Range(1, 100 + 1) > Skills.GetLiveSkillValue(DFCareer.Skills.Swimming))
+                        if (Race != Races.Argonian && Dice100.FailedRoll(Skills.GetLiveSkillValue(DFCareer.Skills.Swimming)))
                             amount = (int)(SwimmingFatigueLoss * fatigueLossMultiplier);
                         TallySkill(DFCareer.Skills.Swimming, 1);
                     }
@@ -406,14 +406,14 @@ namespace DaggerfallWorkshop.Game.Entity
 
                     // Handle guards appearing for low-legal rep player
                     int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-                    if (regionData[regionIndex].LegalRep < -10 && UnityEngine.Random.Range(1, 100 + 1) < 5)
+                    if (regionData[regionIndex].LegalRep < -10 && Dice100.SuccessRoll(5))
                     {
                         crimeCommitted = Crimes.Criminal_Conspiracy;
                         SpawnCityGuards(false);
                     }
 
                     // Handle guards appearing for banished player
-                    if ((regionData[regionIndex].SeverePunishmentFlags & 1) != 0 && UnityEngine.Random.Range(1, 100 + 1) < 10)
+                    if ((regionData[regionIndex].SeverePunishmentFlags & 1) != 0 && Dice100.SuccessRoll(10))
                     {
                         crimeCommitted = Crimes.Criminal_Conspiracy;
                         SpawnCityGuards(false);
@@ -1467,7 +1467,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
 
                     // Raise or lower power based on power of parent, allies, random power bonus and enemies
-                    if (parentPowerMod + alliesPowerMod + factionData.FactionDict[key].rulerPowerBonus - enemiesPowerMod <= UnityEngine.Random.Range(0, 100 + 1))
+                    if (Dice100.FailedRoll(parentPowerMod + alliesPowerMod + factionData.FactionDict[key].rulerPowerBonus - enemiesPowerMod))
                         factionData.ChangePower(factionData.FactionDict[key].id, -1);
                     else
                         factionData.ChangePower(factionData.FactionDict[key].id, 1);
@@ -1496,7 +1496,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             if (allies[i] != 0)
                             {
                                 int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
-                                if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, allies[i]) * 3) / 5 + 70 < UnityEngine.Random.Range(0, 100 + 1))
+                                if (Dice100.FailedRoll((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, allies[i]) * 3) / 5 + 70))
                                 {
                                     factionData.EndFactionAllies(factionData.FactionDict[key].id, allies[i]);
                                     GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, allies[i], -1, 100, 1402); // End faction allies
@@ -1516,7 +1516,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             if (FactionData.GetFactionData(enemies[i], out enemy) && !factionData.IsEnemyStatePermanentUntilWarOver(factionData.FactionDict[key], enemy))
                             {
                                 int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
-                                if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, enemies[i]) * 3) / 5 > UnityEngine.Random.Range(0, 100 + 1))
+                                if (Dice100.SuccessRoll((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, enemies[i]) * 3) / 5))
                                 {
                                     factionData.EndFactionEnemies(factionData.FactionDict[key].id, enemies[i]);
                                     GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, enemies[i], -1, 100, 1403); // End faction enemies
@@ -1561,7 +1561,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                       && factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id) == 0)
                                 {
                                     int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
-                                    if ((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 > UnityEngine.Random.Range(0, 100 + 1))
+                                    if (Dice100.SuccessRoll((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5))
                                     {
                                         if (factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province && factionData.FactionDict[key].region != -1)
                                             GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, factionData.FactionDict[key].region, 26, 1481); // Factions start alliance sign message
@@ -1609,7 +1609,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 }
                                 else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.WarOngoing])
                                 {
-                                    if (UnityEngine.Random.Range(1, 100 + 1) > 5)
+                                    if (Dice100.FailedRoll(5))
                                     {
                                         int combinedPower = factionData.FactionDict[key].power + alliesPower / 5;
 
@@ -1702,7 +1702,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                         if (relation == 2)
                                             mod = 10;
                                         int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
-                                        if (mod + (powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 + 70 < UnityEngine.Random.Range(0, 100 + 1))
+                                        if (Dice100.FailedRoll(mod + (powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5 + 70))
                                         {
                                             if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
                                                 GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, random.id, factionData.FactionDict[key].region, 27, 1482); // War started sign message
@@ -1731,7 +1731,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         if (!factionData.GetFlag(key, FactionFile.Flags.RulerImmune))
                         {
                             int mod = factionData.FactionDict[key].rulerPowerBonus / 3;
-                            if (UnityEngine.Random.Range(0, 100 + 1) > mod + 70)
+                            if (Dice100.FailedRoll(mod + 70))
                             {
                                 if (factionData.FactionDict[key].region != -1 && factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province)
                                     GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, -1, 12, 1480); // New ruler. Although unused, a regionID is defined for this rumor in classic.
@@ -1759,7 +1759,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineEnding);
                             else if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.FamineOngoing])
                             {
-                                if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod + factionData.FactionDict[key].power / 5)
+                                if (Dice100.SuccessRoll(factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod + factionData.FactionDict[key].power / 5))
                                 {
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineEnding);
                                     GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 7, 1477); // Famine sign message
@@ -1770,7 +1770,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineOngoing);
                                 GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 7, 1477); // Famine sign message
                             }
-                            else if (UnityEngine.Random.Range(1, 100 + 1) <= 2 && UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
+                            else if (Dice100.SuccessRoll(2) && Dice100.FailedRoll(factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod))
                             {
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.FamineBeginning);
                                 GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 7, 1477); // Famine sign message
@@ -1787,7 +1787,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 if (temple.id != 0)
                                     factionData.ChangePower(temple.id, -1);
                                 factionData.ChangePower(factionData.FactionDict[key].id, -1);
-                                if (UnityEngine.Random.Range(0, 100 + 1) < factionData.FactionDict[key].power / 5 + factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod)
+                                if (Dice100.SuccessRoll(factionData.FactionDict[key].power / 5 + factionData.FactionDict[key].rulerPowerBonus / 5 + alliesPowerMod))
                                 {
                                     TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueEnding);
                                     GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 4, 1478); // Plague sign message
@@ -1801,7 +1801,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 GameManager.Instance.TalkManager.AddNonQuestRumor(factionData.FactionDict[key].id, 0, factionData.FactionDict[key].region, 4, 1478); // Plague sign message
                                 TurnOnConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueOngoing);
                             }
-                            else if (UnityEngine.Random.Range(1, 100 + 1) <= 2 && UnityEngine.Random.Range(0, 100 + 1) > factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod)
+                            else if (Dice100.SuccessRoll(2) && Dice100.FailedRoll(factionData.FactionDict[key].rulerPowerBonus + alliesPowerMod))
                             {
                                 if (temple.id != 0)
                                     factionData.ChangePower(temple.id, -1);
@@ -1813,7 +1813,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             // Persecuted temple
                             if (TemplesAssociatedWithRegions[factionData.FactionDict[key].region] != 0)
                             {
-                                if (UnityEngine.Random.Range(0, 100 + 1) >= (temple.power - factionData.FactionDict[key].power + 5) / 5)
+                                if (Dice100.FailedRoll((temple.power - factionData.FactionDict[key].power + 5) / 5))
                                     TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
                                 else if (temple.power >= 2 * factionData.FactionDict[key].power)
                                     TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
@@ -1836,7 +1836,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             FactionFile.FactionData darkBrotherhood;
                             FactionData.GetFactionData((int)FactionFile.FactionIDs.The_Dark_Brotherhood, out darkBrotherhood);
 
-                            if (UnityEngine.Random.Range(0, 101) >= ((thievesGuild.power + darkBrotherhood.power) / 2 - factionData.FactionDict[key].power + 5) / 5)
+                            if (Dice100.FailedRoll(((thievesGuild.power + darkBrotherhood.power) / 2 - factionData.FactionDict[key].power + 5) / 5))
                                 TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.CrimeWave);
                             else
                             {
@@ -1852,7 +1852,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 factionData.ChangePower(witches.id, -1);
                             if (witches.id != 0)
                             {
-                                if (UnityEngine.Random.Range(0, 101) >= (witches.power - factionData.FactionDict[key].power + 5) / 5)
+                                if (Dice100.FailedRoll((witches.power - factionData.FactionDict[key].power + 5) / 5))
                                     TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.WitchBurnings);
                                 else
                                 {

@@ -18,6 +18,7 @@ using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -131,11 +132,11 @@ namespace DaggerfallWorkshop.Game.Items
         public static ArmorMaterialTypes RandomArmorMaterial(int playerLevel)
         {
             // Random armor material
-            int random = UnityEngine.Random.Range(1, 100 + 1);
+            int roll = Dice100.Roll();
 
-            if (random >= 70)
+            if (roll >= 70)
             {
-                if (random >= 90)
+                if (roll >= 90)
                 {
                     WeaponMaterialTypes plateMaterial = RandomMaterial(playerLevel);
                     return (ArmorMaterialTypes)(0x0200 + plateMaterial);
