@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPop();
             if (!leveling)
-                playerEntity.Skills.ResetSkillsRecentlyIncreased();
+                playerEntity.ResetSkillsRecentlyRaised();
             leveling = false;
         }
 
@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Creates formatting tokens for skill popups
         TextFile.Token[] CreateSkillTokens(DFCareer.Skills skill, bool twoColumn = false, int startPosition = 0)
         {
-            bool highlight = playerEntity.Skills.GetSkillRecentlyIncreased(skill);
+            bool highlight = playerEntity.GetSkillRecentlyIncreased(skill);
 
             List<TextFile.Token> tokens = new List<TextFile.Token>();
             TextFile.Formatting formatting = highlight ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;

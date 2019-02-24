@@ -64,8 +64,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected PlayerNotebook notebook = new PlayerNotebook();
 
         protected short[] skillUses;
-        protected uint skillsRaisedThisLevel1 = 0;
-        protected uint skillsRaisedThisLevel2 = 0;
+        protected uint[] skillsRecentlyRaised = new uint[2];
         protected uint timeOfLastSkillIncreaseCheck = 0;
         protected uint timeOfLastSkillTraining = 0;
 
@@ -144,6 +143,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public PersistentGlobalVars GlobalVars { get { return globalVars; } }
         public PlayerNotebook Notebook { get { return notebook; } }
         public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
+        public uint[] SkillsRecentlyRaised { get { return skillsRecentlyRaised; } set { skillsRecentlyRaised = value; } }
         public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
         public uint TimeOfLastSkillTraining { get { return timeOfLastSkillTraining; } set { timeOfLastSkillTraining = value; } }
         public uint TimeOfLastStealthCheck { get { return timeOfLastStealthCheck; } set { timeOfLastStealthCheck = value; } }
@@ -189,6 +189,21 @@ namespace DaggerfallWorkshop.Game.Entity
         #endregion
 
         #region Public Methods
+
+        public bool GetSkillRecentlyIncreased(DFCareer.Skills skill)
+        {
+            return (skillsRecentlyRaised[(int)skill / 32] & (1 << ((int)skill % 32))) != 0;
+        }
+
+        public void SetSkillRecentlyIncreased(int index)
+        {
+            skillsRecentlyRaised[index / 32] |= (uint)(1 << (index % 32));
+        }
+
+        public void ResetSkillsRecentlyRaised()
+        {
+            Array.Clear(skillsRecentlyRaised, 0, 2);
+        }
 
         public RaceTemplate GetLiveRaceTemplate()
         {
@@ -778,8 +793,8 @@ namespace DaggerfallWorkshop.Game.Entity
             this.sGroupReputations[4] = character.reputationUnderworld;
             this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
-            this.skillsRaisedThisLevel1 = character.skillsRaisedThisLevel1;
-            this.skillsRaisedThisLevel2 = character.skillsRaisedThisLevel2;
+            this.skillsRecentlyRaised[0] = character.skillsRaisedThisLevel1;
+            this.skillsRecentlyRaised[1] = character.skillsRaisedThisLevel2;
             this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
             this.minMetalToHit = (WeaponMaterialTypes)character.minMetalToHit;
             this.armorValues = character.armorValues;
@@ -1201,7 +1216,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (skills.GetPermanentSkillValue(i) < 100 && (skills.GetPermanentSkillValue(i) < 95 || !AlreadyMasteredASkill()))
                     {
                         skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
-                        skills.SetSkillRecentlyIncreased(i);
+                        SetSkillRecentlyIncreased(i);
                         SetCurrentLevelUpSkillSum();
                         DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
                         if (skills.GetPermanentSkillValue(i) == 100)

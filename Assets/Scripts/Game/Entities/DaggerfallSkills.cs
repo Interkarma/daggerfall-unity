@@ -72,9 +72,6 @@ namespace DaggerfallWorkshop.Game.Entity
         // This is designed so that effects are never operating on permanent skill values
         int[] mods = new int[Count];
 
-        // Skills to highlight
-        bool[] recentlyIncreased = new bool[Count];
-
         #endregion
 
         #region Constructors
@@ -98,7 +95,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 SetPermanentSkillValue(i, (short)UnityEngine.Random.Range(minDefaultValue, maxDefaultValue + 1));
             }
             Array.Clear(mods, 0, Count);
-            Array.Clear(recentlyIncreased, 0, Count);
         }
 
         /// <summary>
@@ -254,21 +250,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 default:
                     return 0;
             }
-        }
-
-        public bool GetSkillRecentlyIncreased(DFCareer.Skills skill)
-        {
-            return recentlyIncreased[(int)skill];
-        }
-
-        public void SetSkillRecentlyIncreased(int index)
-        {
-            recentlyIncreased[index] = true;
-        }
-
-        public void ResetSkillsRecentlyIncreased()
-        {
-            Array.Clear(recentlyIncreased, 0, Count);
         }
 
         #endregion
