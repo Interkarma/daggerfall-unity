@@ -197,12 +197,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (scope == Scopes.Local)
                 {
                     // Get a local site from same town quest was issued
-                    SetupLocalSite();
+                    SetupLocalSite(line);
                 }
                 else if (scope == Scopes.Remote)
                 {
                     // Get a remote site in same region quest was issued
-                    SetupRemoteSite();
+                    SetupRemoteSite(line);
                 }
                 else if (scope == Scopes.Fixed && p1 > 0x4500)
                 {
@@ -483,14 +483,14 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Example of how this can happen is issuing a quest to a local palace in a town with no palace.
         /// Use remote palace instead to ensure quest can select from entire region.
         /// </summary>
-        void SetupLocalSite()
+        void SetupLocalSite(string line)
         {
             // Daggerfall has no local dungeons but some quests (e.g. Sx007) can request one
             // This is used to stash a resource somewhere player cannot find it
             // Setup a remote dungeon instead
             if (p1 == 1)
             {
-                SetupRemoteSite();
+                SetupRemoteSite(line);
                 return;
             }
 
@@ -524,22 +524,27 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get a remote site in the same region as player.
         /// </summary>
-        void SetupRemoteSite()
+        void SetupRemoteSite(string line)
         {
+            bool result = false;
             switch(p1)
             {
                 case 0:
-                    SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
+                    result = SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
                     break;
                 case 1:
-                    SelectRemoteDungeonSite(p2);
+                    result = SelectRemoteDungeonSite(p2);
                     break;
                 case 2:
-                    SelectRemoteLocationExteriorSite(p2);
+                    result = SelectRemoteLocationExteriorSite(p2);
                     break;
                 default:
                     throw new Exception(string.Format("An unknown P1 value of {0} was encountered for Place {1}", p1, Symbol.Original));
             }
+
+            // Throw exception when remote place could not be selected, e.g. a dungeon of that type does not exist in this region
+            if (!result)
+                throw new Exception(string.Format("Search failed to locate matching remote site for Place {0} in region {1}. Resource source: '{2}'", Symbol.Original, GameManager.Instance.PlayerGPS.CurrentRegionName, line));
         }
 
         /// <summary>
