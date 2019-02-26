@@ -810,9 +810,10 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Assigns character items from classic save tree.
+        /// Assigns character items and spells from classic save tree.
+        /// Spells are stored as a child of spellbook item container, which is why they are imported along with items.
         /// </summary>
-        public void AssignItems(SaveTree saveTree)
+        public void AssignItemsAndSpells(SaveTree saveTree)
         {
             // Find character record, should always be a singleton
             CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
@@ -837,8 +838,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 if ((record as ItemRecord).ParsedData.image1 == 0 || (record as ItemRecord).ParsedData.image1 == 0xffff)
                     continue;
 
-                // Create item, grabbing trapped soul if needed
+                // Create item
                 DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
+
+                // Import spells if this is a spellbook record
+                if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 0)
+                    ImportSpells(containerRecord);
+
+                // Grabbed trapped soul if needed
                 if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 1)
                 {
                     if (record.Children.Count > 0)
@@ -868,6 +875,32 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (characterRecord.ParsedData.equippedItems[i] == record.RecordRoot.RecordID)
                         equipTable.EquipItem(newItem, true, false);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Assigns spells from spellbook item.
+        /// </summary>
+        void ImportSpells(ContainerRecord record)
+        {
+            // Must have a populated spellbook container with spells
+            if (record == null || record.Children.Count == 0 ||
+                record.Children[0].Children == null || record.Children[0].Children.Count == 0)
+            {
+                return;
+            }
+
+            // Read spell records in spellbook container
+            foreach(SpellRecord spell in record.Children[0].Children)
+            {
+                spell.ReadNativeSpellData();
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell.ParsedData, BundleTypes.Spell, out bundle))
+                {
+                    Debug.LogErrorFormat("Failed to create effect bundle while importing classic spell: {0}", spell.ParsedData.spellName);
+                    continue;
+                }
+                AddSpell(bundle);
             }
         }
 

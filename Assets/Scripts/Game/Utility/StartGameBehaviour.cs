@@ -551,8 +551,8 @@ namespace DaggerfallWorkshop.Game.Utility
             // Set time of last check for raising skills
             playerEntity.TimeOfLastSkillIncreaseCheck = saveVars.LastSkillCheckTime;
 
-            // Assign items to player entity
-            playerEntity.AssignItems(saveTree);
+            // Assign classic items and spells to player entity
+            playerEntity.AssignItemsAndSpells(saveTree);
 
             // Assign guild memberships
             playerEntity.AssignGuildMemberships(saveTree);
@@ -584,9 +584,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Get breath remaining if player was submerged (0 if they were not in the water)
             playerEntity.CurrentBreath = saveVars.BreathRemaining;
-
-            // TODO: Import classic spellbook
-            playerEntity.DeserializeSpellbook(null);
 
             // Get last type of crime committed
             playerEntity.CrimeCommitted = (PlayerEntity.Crimes)saveVars.CrimeCommitted;
