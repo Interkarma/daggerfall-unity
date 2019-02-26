@@ -897,7 +897,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 EffectBundleSettings bundle;
                 if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell.ParsedData, BundleTypes.Spell, out bundle))
                 {
-                    Debug.LogErrorFormat("Failed to create effect bundle while importing classic spell: {0}", spell.ParsedData.spellName);
+                    Debug.LogErrorFormat("Failed to create effect bundle while importing classic spell '{0}'.", spell.ParsedData.spellName);
                     continue;
                 }
                 AddSpell(bundle);

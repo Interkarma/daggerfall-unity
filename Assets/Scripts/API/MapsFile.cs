@@ -932,7 +932,7 @@ namespace DaggerfallConnect.Arena2
             for (int i = 0; i < regions[region].DFRegion.LocationCount; i++)
             {
                 // Read map name data
-                regions[region].DFRegion.MapNames[i] = regions[region].MapNames.ReadCStringSkip(reader, 0, 32);
+                regions[region].DFRegion.MapNames[i] = FileProxy.ReadCStringSkip(reader, 0, 32);
 
                 // Add to dictionary
                 if (!regions[region].DFRegion.MapNameLookup.ContainsKey(regions[region].DFRegion.MapNames[i]))
@@ -1041,7 +1041,7 @@ namespace DaggerfallConnect.Arena2
             }
 
             // Read ExteriorData
-            dfLocation.Exterior.ExteriorData.AnotherName = regions[region].MapPItem.ReadCStringSkip(reader, 0, 32);
+            dfLocation.Exterior.ExteriorData.AnotherName = FileProxy.ReadCStringSkip(reader, 0, 32);
             dfLocation.Exterior.ExteriorData.MapId = reader.ReadInt32();
             dfLocation.Exterior.ExteriorData.LocationId = reader.ReadUInt32();
             dfLocation.Exterior.ExteriorData.Width = reader.ReadByte();
@@ -1113,7 +1113,7 @@ namespace DaggerfallConnect.Arena2
             recordElement.Header.IsInterior = reader.ReadUInt16();
             recordElement.Header.ExteriorLocationId = reader.ReadUInt32();
             recordElement.Header.NullValue6 = reader.ReadBytes(26);
-            recordElement.Header.LocationName = regions[region].MapPItem.ReadCStringSkip(reader, 0, 32);
+            recordElement.Header.LocationName = FileProxy.ReadCStringSkip(reader, 0, 32);
             recordElement.Header.Unknown3 = reader.ReadBytes(9);
         }
 

@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Utility
                 if (!SetSpellMagnitudes(ref spellRecord, reader))
                     return false;
 
-                spellRecord.spellName   = DaggerfallConnect.Utility.FileProxy.ReadCString(reader, 25);
+                spellRecord.spellName   = DaggerfallConnect.Utility.FileProxy.ReadCStringSkip(reader, 0, 25);
                 //spellRecord.spellName   = spellRecord.spellName.TrimEnd(new char[] { '\0' });
                 spellRecord.icon        = reader.ReadByte();
                 spellRecord.index       = reader.ReadByte();

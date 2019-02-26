@@ -398,7 +398,7 @@ namespace DaggerfallConnect.Utility
         /// <param name="readLength">Number of bytes to read (0 for null-terminated).</param>
         /// <param name="skipLength">Number of bytes to skip from start position after read.</param>
         /// <returns>String composed from bytes read (all NULLs are discarded).</returns>
-        public string ReadCStringSkip(BinaryReader reader, int readLength, int skipLength)
+        public static string ReadCStringSkip(BinaryReader reader, int readLength, int skipLength)
         {
             long pos = reader.BaseStream.Position;
             string str = ReadCString(reader, readLength);

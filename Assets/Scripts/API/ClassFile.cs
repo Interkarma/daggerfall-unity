@@ -162,7 +162,7 @@ namespace DaggerfallConnect.Arena2
             cfg.MinorSkill6 = reader.ReadByte();
 
             // Read class name
-            cfg.Name = file.ReadCStringSkip(reader, 0, 16);
+            cfg.Name = FileProxy.ReadCStringSkip(reader, 0, 16);
 
             // Read 8 unknown bytes
             cfg.Unknown2 = reader.ReadBytes(8);
