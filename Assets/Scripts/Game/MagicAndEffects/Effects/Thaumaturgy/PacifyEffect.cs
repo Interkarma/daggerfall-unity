@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -23,7 +23,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #region Fields
 
         const int totalVariants = 4;
-        //const string textDatabase = "ClassicEffects";
         readonly string[] subGroupTextKeys = { "animal", "undead", "humanoid", "daedra" };
 
         readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
@@ -34,7 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         struct VariantProperties
         {
-            public MobileAffinity targetAffinity;
+            public DFCareer.EnemyGroups targetGroup;
             public EffectProperties effectProperties;
         }
 
@@ -47,9 +46,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return variantProperties[currentVariant].effectProperties; }
         }
 
-        public MobileAffinity TargetAffinity
+        public DFCareer.EnemyGroups TargetGroup
         {
-            get { return variantProperties[currentVariant].targetAffinity; }
+            get { return variantProperties[currentVariant].targetGroup; }
         }
 
         #endregion
@@ -68,10 +67,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Set unique variant properties
             variantCount = totalVariants;
-            SetVariantProperties(MobileAffinity.Animal, 0);
-            SetVariantProperties(MobileAffinity.Undead, 1);
-            SetVariantProperties(MobileAffinity.Human, 2);
-            SetVariantProperties(MobileAffinity.Daedra, 3);
+            SetVariantProperties(DFCareer.EnemyGroups.Animals, 0);
+            SetVariantProperties(DFCareer.EnemyGroups.Undead, 1);
+            SetVariantProperties(DFCareer.EnemyGroups.Humanoid, 2);
+            SetVariantProperties(DFCareer.EnemyGroups.Daedra, 3);
         }
 
         public override void MagicRound()
@@ -84,7 +83,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Set target non-hostile
-            if (IsAffinityMatch(entityBehaviour.Entity))
+            if (IsGroupMatch(entityBehaviour.Entity))
             {
                 EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
                 if (enemyMotor)
@@ -99,7 +98,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Private Methods
 
-        void SetVariantProperties(MobileAffinity affinity, int variantIndex)
+        void SetVariantProperties(DFCareer.EnemyGroups targetGroup, int variantIndex)
         {
             string name = TextManager.Instance.GetText("ClassicEffects", subGroupTextKeys[variantIndex]);
 
@@ -110,32 +109,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             vp.effectProperties.SubGroupName = name;
             vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1585 + variantIndex);
             vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1285 + variantIndex);
-            vp.targetAffinity = affinity;
+            vp.targetGroup = targetGroup;
 
-            if (affinity == MobileAffinity.Animal)
+            if (targetGroup == DFCareer.EnemyGroups.Animals)
                 properties.ChanceCosts = MakeEffectCosts(60, 100, 160);
-            else if (affinity == MobileAffinity.Daedra)
+            else if (targetGroup == DFCareer.EnemyGroups.Daedra)
                 properties.ChanceCosts = MakeEffectCosts(60, 120, 36);
-            else if (affinity == MobileAffinity.Human || affinity == MobileAffinity.Undead)
+            else if (targetGroup == DFCareer.EnemyGroups.Humanoid || targetGroup == DFCareer.EnemyGroups.Undead)
                 properties.ChanceCosts = MakeEffectCosts(80, 140, 60);
 
             variantProperties[variantIndex] = vp;
         }
 
-        bool IsAffinityMatch(DaggerfallEntity entity)
+        bool IsGroupMatch(DaggerfallEntity entity)
         {
             // Validate entity
             if (entity == null || !(entity is EnemyEntity))
                 return false;
 
-            // Check affinity match
-            EnemyEntity enemyEntity = entity as EnemyEntity;
-            if (TargetAffinity == enemyEntity.MobileEnemy.Affinity)
-                return true;
-
-            // TODO: Should orcs also be considered humanoid for purposes of pacify?
-
-            return false;
+            // Check target match
+            // Note: Pacify Humanoid only operates on humanoid monsters (not enemy classes)
+            DFCareer.EnemyGroups enemyGroup = (entity as EnemyEntity).GetEnemyGroup();
+            return TargetGroup == enemyGroup;
         }
 
         #endregion  
