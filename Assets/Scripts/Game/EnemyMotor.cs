@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game
             if (attacker && senses && (senses.Target == null || !senses.TargetInSight || senses.DistanceToTarget > 2f))
             {
                 senses.Target = attacker;
-                senses.LastTarget = senses.Target;
+                senses.SecondaryTarget = senses.Target;
                 senses.OldLastKnownTargetPos = attacker.transform.position;
                 senses.LastKnownTargetPos = attacker.transform.position;
                 senses.PredictedTargetPos = attacker.transform.position;

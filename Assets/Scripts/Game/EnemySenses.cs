@@ -43,7 +43,10 @@ namespace DaggerfallWorkshop.Game
         float distanceToPlayer;
         float distanceToTarget;
         DaggerfallEntityBehaviour target;
-        DaggerfallEntityBehaviour lastTarget;
+        DaggerfallEntityBehaviour targetOnLastUpdate;
+        DaggerfallEntityBehaviour secondaryTarget;
+        bool sawSecondaryTarget;
+        Vector3 secondaryTargetPos;
         EnemySenses targetSenses;
         float lastDistanceToTarget;
         float targetRateOfApproach;
@@ -81,10 +84,10 @@ namespace DaggerfallWorkshop.Game
             set { target = value; }
         }
 
-        public DaggerfallEntityBehaviour LastTarget
+        public DaggerfallEntityBehaviour SecondaryTarget
         {
-            get { return lastTarget; }
-            set { lastTarget = value; }
+            get { return secondaryTarget; }
+            set { secondaryTarget = value; }
         }
 
         DaggerfallEntityBehaviour Player
@@ -224,57 +227,58 @@ namespace DaggerfallWorkshop.Game
             else
                 targetPosPredict = false;
 
-            // Reset whether enemy would be spawned or not in classic.
-            if (GameManager.ClassicUpdate)
-                wouldBeSpawnedInClassic = false;
-
             // Update whether enemy would be spawned or not in classic.
             // Only check if within the maximum possible distance (Just under 1094 classic units)
-            if (GameManager.ClassicUpdate && distanceToPlayer < 1094 * MeshReader.GlobalScale)
+            if (GameManager.ClassicUpdate)
             {
-                float upperXZ = 0;
-                float upperY = 0;
-                float lowerY = 0;
-                bool playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
+                if (distanceToPlayer < 1094 * MeshReader.GlobalScale)
+                {
+                    float upperXZ = 0;
+                    float upperY = 0;
+                    float lowerY = 0;
+                    bool playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
 
-                if (!playerInside)
-                {
-                    upperXZ = classicSpawnDespawnExterior;
-                }
-                else
-                {
-                    if (!wouldBeSpawnedInClassic)
+                    if (!playerInside)
                     {
-                        upperXZ = classicSpawnXZDist;
-                        upperY = classicSpawnYDistUpper;
-                        lowerY = classicSpawnYDistLower;
+                        upperXZ = classicSpawnDespawnExterior;
                     }
                     else
                     {
-                        upperXZ = classicDespawnXZDist;
-                        upperY = classicDespawnYDist;
+                        if (!wouldBeSpawnedInClassic)
+                        {
+                            upperXZ = classicSpawnXZDist;
+                            upperY = classicSpawnYDistUpper;
+                            lowerY = classicSpawnYDistLower;
+                        }
+                        else
+                        {
+                            upperXZ = classicDespawnXZDist;
+                            upperY = classicDespawnYDist;
+                        }
                     }
-                }
 
-                float YDiffToPlayer = transform.position.y - Player.transform.position.y;
-                float YDiffToPlayerAbs = Mathf.Abs(YDiffToPlayer);
-                float distanceToPlayerXZ = Mathf.Sqrt(distanceToPlayer * distanceToPlayer - YDiffToPlayerAbs * YDiffToPlayerAbs);
+                    float YDiffToPlayer = transform.position.y - Player.transform.position.y;
+                    float YDiffToPlayerAbs = Mathf.Abs(YDiffToPlayer);
+                    float distanceToPlayerXZ = Mathf.Sqrt(distanceToPlayer * distanceToPlayer - YDiffToPlayerAbs * YDiffToPlayerAbs);
 
-                wouldBeSpawnedInClassic = true;
+                    wouldBeSpawnedInClassic = true;
 
-                if (distanceToPlayerXZ > upperXZ)
-                    wouldBeSpawnedInClassic = false;
+                    if (distanceToPlayerXZ > upperXZ)
+                        wouldBeSpawnedInClassic = false;
 
-                if (playerInside)
-                {
-                    if (lowerY == 0)
+                    if (playerInside)
                     {
-                        if (YDiffToPlayerAbs > upperY)
+                        if (lowerY == 0)
+                        {
+                            if (YDiffToPlayerAbs > upperY)
+                                wouldBeSpawnedInClassic = false;
+                        }
+                        else if (YDiffToPlayer < lowerY || YDiffToPlayer > upperY)
                             wouldBeSpawnedInClassic = false;
                     }
-                    else if (YDiffToPlayer < lowerY || YDiffToPlayer > upperY)
-                        wouldBeSpawnedInClassic = false;
                 }
+                else
+                    wouldBeSpawnedInClassic = false;
             }
 
             if (GameManager.ClassicUpdate)
@@ -291,8 +295,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (target == Player)
                         target = null;
-                    if (lastTarget == Player)
-                        lastTarget = null;
+                    if (secondaryTarget == Player)
+                        secondaryTarget = null;
                 }
 
                 // Reset these values if no target
@@ -306,35 +310,21 @@ namespace DaggerfallWorkshop.Game
                     distanceToTarget = 0;
                     targetSenses = null;
 
-                    // If had a valid target before, resume pursuing it. Looks better to first finish any attack animation.
-                    if (lastTarget != null && lastTarget.Entity.CurrentHealth > 0 && !mobile.IsPlayingOneShot())
-                        target = lastTarget;
-                }
-
-                if ((motor.IsHostile && target == null) || classicTargetUpdateTimer > 10) // Timing is 200 in classic, about 10 seconds.
-                {
-                    classicTargetUpdateTimer = 0f;
-
-                    // Is enemy in area around player or can see player?
-                    if (wouldBeSpawnedInClassic || playerInSight)
+                    // If we have a valid secondary target that we acquired when we got the primary, switch to it.
+                    // There will only be a secondary target if using enhanced combat AI.
+                    if (secondaryTarget != null && secondaryTarget.Entity.CurrentHealth > 0)
                     {
-                        target = GetTarget();
-                        if (target != null && target != Player)
-                            targetSenses = target.GetComponent<EnemySenses>();
-                        else
-                            targetSenses = null;
-                    }
+                        target = secondaryTarget;
 
-                    // Make targeted character also target this character if it doesn't have a target yet.
-                    if (target != null && targetSenses && targetSenses.Target == null)
-                    {
-                        targetSenses.Target = entityBehaviour;
+                        // If the secondary target was actually seen, use the last place we saw it to begin pursuit.
+                        if (sawSecondaryTarget)
+                            lastKnownTargetPos = secondaryTargetPos;
+                        awareOfTargetForLastPrediction = false;
                     }
                 }
 
                 // Compare change in target position to give AI some ability to read opponent's movements
-
-                if (target != null && target == lastTarget)
+                if (target != null && target == targetOnLastUpdate)
                 {
                     if (DaggerfallUnity.Settings.EnhancedCombatAI)
                         targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
@@ -348,7 +338,7 @@ namespace DaggerfallWorkshop.Game
                 if (target != null)
                 {
                     lastDistanceToTarget = distanceToTarget;
-                    lastTarget = target;
+                    targetOnLastUpdate = target;
                 }
             }
 
@@ -367,14 +357,26 @@ namespace DaggerfallWorkshop.Game
                     playerInSight = CanSeeTarget(Player);
                 }
 
-                Vector3 toTarget = ResetPlayerPos;
-                if (target != null)
-                    toTarget = target.transform.position - transform.position;
-
-                if (toTarget != ResetPlayerPos)
+                if (classicTargetUpdateTimer > 5)
                 {
-                    distanceToTarget = toTarget.magnitude;
-                    directionToTarget = toTarget.normalized;
+                    classicTargetUpdateTimer = 0f;
+
+                    // Is enemy in area around player or can see player?
+                    if (wouldBeSpawnedInClassic || playerInSight)
+                    {
+                        GetTargets();
+
+                        if (target != null && target != Player)
+                            targetSenses = target.GetComponent<EnemySenses>();
+                        else
+                            targetSenses = null;
+                    }
+
+                    // Make targeted character also target this character if it doesn't have a target yet.
+                    if (target != null && targetSenses && targetSenses.Target == null)
+                    {
+                        targetSenses.Target = entityBehaviour;
+                    }
                 }
 
                 if (target == null)
@@ -384,7 +386,24 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                targetInSight = CanSeeTarget(target);
+                if (!wouldBeSpawnedInClassic && target == Player)
+                {
+                    distanceToTarget = distanceToPlayer;
+                    directionToTarget = toPlayer.normalized;
+                    targetInSight = playerInSight;
+                }
+                else
+                {
+                    Vector3 toTarget = ResetPlayerPos;
+                    toTarget = target.transform.position - transform.position;
+
+                    if (toTarget != ResetPlayerPos)
+                    {
+                        distanceToTarget = toTarget.magnitude;
+                        directionToTarget = toTarget.normalized;
+                    }
+                    targetInSight = CanSeeTarget(target);
+                }
 
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
                 // hearing if the enemy has detected the target. If target is visible we can omit hearing.
@@ -432,7 +451,7 @@ namespace DaggerfallWorkshop.Game
                     predictedTargetPos = lastKnownTargetPos;
 
                 // Predict target's next position
-                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && predictedTargetPos != ResetPlayerPos && lastKnownTargetPos != ResetPlayerPos)
+                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && lastKnownTargetPos != ResetPlayerPos)
                 {
                     float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
                     predictedTargetPos = PredictNextTargetPos(moveSpeed);
@@ -607,21 +626,18 @@ namespace DaggerfallWorkshop.Game
         public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)
         {
             Vector3 toTarget = targetPos - transform.position;
-            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
-            directionToLastKnownTarget2D.y = 0;
+            toTarget.y = 0;
 
             Vector3 enemyDirection2D = transform.forward;
             enemyDirection2D.y = 0;
 
-            float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
-            return angle < targetAngle;
+            return Vector3.Angle(toTarget, enemyDirection2D) < targetAngle;
         }
 
         public bool TargetHasBackTurned()
         {
             Vector3 toTarget = predictedTargetPos - transform.position;
-            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
-            directionToLastKnownTarget2D.y = 0;
+            toTarget.y = 0;
 
             Vector3 targetDirection2D;
 
@@ -633,9 +649,7 @@ namespace DaggerfallWorkshop.Game
             else
                 targetDirection2D = -new Vector3(target.transform.forward.x, 0, target.transform.forward.z);
 
-            float angle = Vector3.Angle(directionToLastKnownTarget2D, targetDirection2D);
-
-            return angle > 157.5f;
+            return Vector3.Angle(toTarget, targetDirection2D) > 157.5f;
         }
 
         public bool TargetIsWithinPitchAngle(float targetAngle)
@@ -662,10 +676,12 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        DaggerfallEntityBehaviour GetTarget()
+        void GetTargets()
         {
             DaggerfallEntityBehaviour highestPriorityTarget = null;
+            DaggerfallEntityBehaviour secondHighestPriorityTarget = null;
             float highestPriority = -1;
+            float secondHighestPriority = -1;
             bool sawSelectedTarget = false;
             Vector3 directionToTargetHolder = directionToTarget;
             float distanceToTargetHolder = distanceToTarget;
@@ -741,11 +757,20 @@ namespace DaggerfallWorkshop.Game
                     priority += distancePriority;
                     if (priority > highestPriority)
                     {
+                        secondHighestPriority = highestPriority;
                         highestPriority = priority;
+                        secondHighestPriorityTarget = highestPriorityTarget;
                         highestPriorityTarget = targetBehaviour;
+                        sawSecondaryTarget = sawSelectedTarget;
                         sawSelectedTarget = see;
                         directionToTargetHolder = directionToTarget;
                         distanceToTargetHolder = distanceToTarget;
+                    }
+                    else if (priority > secondHighestPriority)
+                    {
+                        sawSecondaryTarget = see;
+                        secondHighestPriority = priority;
+                        secondHighestPriorityTarget = targetBehaviour;
                     }
                 }
             }
@@ -755,7 +780,13 @@ namespace DaggerfallWorkshop.Game
             distanceToTarget = distanceToTargetHolder;
 
             targetInSight = sawSelectedTarget;
-            return highestPriorityTarget;
+            target = highestPriorityTarget;
+            if (DaggerfallUnity.Settings.EnhancedCombatAI && secondHighestPriorityTarget)
+            {
+                secondaryTarget = secondHighestPriorityTarget;
+                if (sawSecondaryTarget)
+                    secondaryTargetPos = secondaryTarget.transform.position;
+            }
         }
 
         bool CanSeeTarget(DaggerfallEntityBehaviour target)
