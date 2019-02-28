@@ -353,21 +353,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpdateCostAndGold()
         {
+            bool modeActionEnabled = false;
             cost = 0;
-
-            // Identify spell remains free
-            if (usingIdentifySpell)
-            {
-                costLabel.Text = cost.ToString();
-                goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
-                return;
-            }
 
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
                 for (int i = 0; i < basketItems.Count; i++)
                 {
                     DaggerfallUnityItem item = basketItems.GetItem(i);
+                    modeActionEnabled = true;
                     cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
                 }
             }
@@ -379,33 +373,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     switch (windowMode)
                     {
                         case WindowModes.Sell:
+                            modeActionEnabled = true;
                             cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
                             break;
                         case WindowModes.SellMagic: // TODO: Fencing base price higher and guild rep affects it. Implement new formula or can this be used?
+                            modeActionEnabled = true;
                             cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality);
                             break;
                         case WindowModes.Repair:
-                            cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition, guild) * item.stackCount;
+                            if (!item.RepairData.IsBeingRepaired())
+                            {
+                                modeActionEnabled = true;
+                                cost += FormulaHelper.CalculateItemRepairCost(item.value, buildingDiscoveryData.quality, item.currentCondition, item.maxCondition, guild) * item.stackCount;
+                            }
                             break;
                         case WindowModes.Identify:
                             if (!item.IsIdentified)
-                                cost += FormulaHelper.CalculateItemIdentifyCost(item.value, guild);
+                            {
+                                modeActionEnabled = true;
+                                // Identify spell remains free
+                                if (!usingIdentifySpell)
+                                    cost += FormulaHelper.CalculateItemIdentifyCost(item.value, guild);
+                            }
                             break;
                     }
                 }
             }
             costLabel.Text = cost.ToString();
             goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
+            modeActionButton.Enabled = modeActionEnabled;
         }
 
         private int GetTradePrice()
         {
-            if (windowMode == WindowModes.Sell || windowMode == WindowModes.SellMagic)
-                return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true);
-            else if (windowMode == WindowModes.Identify)
-                return cost;
-            else
-                return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
+            switch (windowMode)
+            {
+                case WindowModes.Buy:
+                case WindowModes.Repair:
+                    return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, false);
+
+                case WindowModes.Sell:
+                case WindowModes.SellMagic:
+                    return FormulaHelper.CalculateTradePrice(cost, buildingDiscoveryData.quality, true);
+
+                case WindowModes.Identify:
+                    return cost;
+            }
+            throw new Exception("Unexpected windowMode");
         }
 
         #endregion
@@ -743,7 +757,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     remoteItems.GetItem(i).IdentifyItem();
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "itemsIdentified"));
             }
-            else if (cost > 0 || ((windowMode == WindowModes.Repair || windowMode == WindowModes.Identify) && remoteItems.Count > 0))
+            else
                 ShowTradePopup();
         }
 
@@ -821,7 +835,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Identify:
-                        PlayerEntity.DeductGoldAmount(GetTradePrice());
+                        PlayerEntity.DeductGoldAmount(tradePrice);
                         for (int i = 0; i < remoteItems.Count; i++)
                         {
                             DaggerfallUnityItem item = remoteItems.GetItem(i);
