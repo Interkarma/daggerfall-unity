@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool usingWagon = false;
         int cost = 0;
         bool usingIdentifySpell = false;
+        DaggerfallUnityItem itemBeingRepaired;
 
         static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
@@ -650,16 +651,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (windowMode == WindowModes.Buy)
                     TransferItem(item, remoteItems, basketItems, CanCarryAmount(item), equip: !item.IsAStack());
+                else if (windowMode == WindowModes.Repair)
+                {
+                    if (item.RepairData.IsBeingRepaired() && !item.RepairData.IsRepairFinished())
+                    {
+                        itemBeingRepaired = item;
+                        String strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
+                        DaggerfallMessageBox confirmInterruptRepairBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strInterruptRepair, this);
+                        confirmInterruptRepairBox.OnButtonClick += ConfirmInterruptRepairBox_OnButtonClick;
+                        confirmInterruptRepairBox.Show();
+                    }
+                    else
+                        TakeItemFromRepair(item);
+                }
                 else
                     TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
-
-                if (windowMode == WindowModes.Repair)
-                    item.RepairData.Collect();
             }
             else if (selectedActionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }
+        }
+
+        private void ConfirmInterruptRepairBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            sender.CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                TakeItemFromRepair(itemBeingRepaired);
+            }
+        }
+
+        private void TakeItemFromRepair(DaggerfallUnityItem item)
+        {
+            TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
+            item.RepairData.Collect();
         }
 
         #endregion
