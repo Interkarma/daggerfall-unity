@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxLabels = maxItems * 2;
         const int labelSpacing = 8;
         const int tandemLabelSpacing = 6;
+        const int advPickerItemCount = 12;
         const float defaultSpellPointMod = .5f;
 
         DFCareer advantageData;
@@ -289,8 +290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            DaggerfallListPickerWindow advantagePicker = new DaggerfallListPickerWindow(uiManager, this);
-            advantagePicker.ListBox.Font = DaggerfallUI.SmallFont;
+            DaggerfallListPickerWindow advantagePicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
             advantagePicker.OnItemPicked += AdvantagePicker_OnItemPicked;
 
             items = isDisadvantages ? disadvantageStrings : advantageStrings;
@@ -393,7 +393,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             } 
             else
             {
-                DaggerfallListPickerWindow secondaryPicker = new DaggerfallListPickerWindow(uiManager, this);
+                DaggerfallListPickerWindow secondaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
                 secondaryPicker.ListBox.Font = DaggerfallUI.SmallFont;
                 secondaryPicker.OnItemPicked += SecondaryPicker_OnItemPicked;
                 secondaryPicker.OnCancel += SecondaryPicker_OnCancel;
