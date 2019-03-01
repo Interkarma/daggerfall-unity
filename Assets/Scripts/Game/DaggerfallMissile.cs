@@ -319,8 +319,8 @@ namespace DaggerfallWorkshop.Game
 
         void DoCollision(Collision collision, Collider other)
         {
-            // Only allow arrow collisions to happen once
-            if (isArrow && impactDetected)
+            // Missile collision should only happen once
+            if (impactDetected)
                 return;
 
             // Set my collider to trigger and rigidbody to kinematic immediately after impact
