@@ -319,6 +319,10 @@ namespace DaggerfallWorkshop.Game
 
         void DoCollision(Collision collision, Collider other)
         {
+            // Only allow arrow collisions to happen once
+            if (isArrow && impactDetected)
+                return;
+
             // Set my collider to trigger and rigidbody to kinematic immediately after impact
             // This helps prevent mobiles from walking over low missiles or the missile bouncing off in some other direction
             // Seems to eliminate the combined worst-case scenario where mobile will "ride" a missile bounce, throwing them high into the air
