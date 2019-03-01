@@ -56,19 +56,22 @@ namespace DaggerfallWorkshop.Game
                     // Confirm dynamic object actually in motion, not just a stationary action object player happened to bump their head into
                     if (!action.IsMoving)
                         return;
+
+                    // This object fits criteria for a crushing object
+                    // Player will first be forced into a crouch then killed if they remain under crushing object past threshold height
+                    if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
+                    {
+                        // If player is standing then crushing object forces them into a crouch
+                        heightChanger.HeightAction = HeightChangeAction.DoCrouching;
+                    }
+                    else if (playerMotor.IsCrouching && playerMotor.IsGrounded)
+                    {
+                        // If player already crouching and on the ground, then kill
+                        if (previousHeightHit > 0 && previousHeightHit > moveScanner.HeadHitDistance)
+                            GameManager.Instance.PlayerEntity.SetHealth(0);
+                    }
                 }
 
-                // If player is standing, crushing object forces them into a crouch, 
-                if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
-                {
-                    heightChanger.HeightAction = HeightChangeAction.DoCrouching;
-                }
-                // if player already crouching and on the ground, then kill.
-                else if (playerMotor.IsCrouching && playerMotor.IsGrounded)
-                {
-                    if (previousHeightHit > 0 && previousHeightHit > moveScanner.HeadHitDistance)
-                        GameManager.Instance.PlayerEntity.SetHealth(0);
-                }
                 previousHeightHit = moveScanner.HeadHitDistance;
             }
             else
