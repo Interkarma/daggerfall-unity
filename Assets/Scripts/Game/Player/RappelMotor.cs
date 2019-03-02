@@ -133,6 +133,16 @@ namespace DaggerfallWorkshop.Game
             {
                 measure = null;
             }
+            else
+            {
+                // Player can become grounded with a partial rappel state based on object height
+                // If player is grounded then reset back to inactive state
+                if (GameManager.Instance.PlayerMotor.IsGrounded)
+                {
+                    ResetRappelState();
+                    return;
+                }
+            }
 
             InitialSetRappelType();
 
@@ -228,13 +238,18 @@ namespace DaggerfallWorkshop.Game
                 }
                 else // if we've moved past the distance limit
                 {
-                    rappelStage = RappelStage.Inactive;
-                    rappelDirection = RappelDirection.None;
-                    rappelTimer = 0f;
-                    measure = null;
-                    IsRappelling = false;
+                    ResetRappelState();
                 }
             }
+        }
+
+        void ResetRappelState()
+        {
+            rappelStage = RappelStage.Inactive;
+            rappelDirection = RappelDirection.None;
+            rappelTimer = 0f;
+            measure = null;
+            IsRappelling = false;
         }
 
         private void CurlDown(Vector3 lastPosition, Vector3 xzDirection)
