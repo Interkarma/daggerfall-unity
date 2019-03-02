@@ -751,7 +751,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Check if effect template is implemented for this slot - instant fail if effect not implemented
             int classicKey = BaseEntityEffect.MakeClassicKey((byte)type, (byte)subType);
 
-            return GameManager.Instance.EntityEffectBroker.GetEffectTemplate(classicKey);
+            // Attempt to find the effect template
+            IEntityEffect result = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(classicKey);
+            if (result == null)
+                Debug.LogErrorFormat("Could not find effect template for type={0} subType={1}", type, subType);
+
+            return result;
         }
 
         /// <summary>
