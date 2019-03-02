@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Guilds;
 using Wenzil.Console;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -1087,7 +1088,7 @@ namespace DaggerfallWorkshop.Game
                         // Flag 1 being set makes faction's rumors less likely to appear in conversation.
                         if ((entry.faction1 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData1) && (factionData1.flags & 1) == 1
                             || entry.faction2 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData2) && (factionData2.flags & 1) == 1)
-                            && UnityEngine.Random.Range(1, 101) <= 75)
+                            && Dice100.SuccessRoll(75))
                             continue;
                     }
                 }

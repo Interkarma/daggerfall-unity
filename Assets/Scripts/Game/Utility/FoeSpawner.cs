@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.Utility
             else
             {
                 // Don't care about player's field of view (e.g. at rest)
-                rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 361), 0);
+                rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0);
             }
 
             // Get direction vector and create a new ray

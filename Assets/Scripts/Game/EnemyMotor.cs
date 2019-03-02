@@ -811,7 +811,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Check 45 degrees in both ways first
                     // Pick first direction to check randomly
-                    if (Random.Range(0, 1) == 0)
+                    if (Random.Range(0, 2) == 0)
                         angle = 45;
                     else
                         angle = -45;

@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -573,8 +574,7 @@ namespace DaggerfallWorkshop.Game
                 // Roll for chance to open
                 // TODO: Factor door lock value into chance to open
                 int chance = 20;
-                int roll = Random.Range(1, 101);
-                if (roll <= chance)
+                if (Dice100.SuccessRoll(chance))
                 {
                     TransitionInterior(doorOwner, door, true);
                     return true;
@@ -1129,9 +1129,9 @@ namespace DaggerfallWorkshop.Game
 
             int chance = Formulas.FormulaHelper.CalculatePickpocketingChance(player, enemyEntity);
 
-            if (Random.Range(0, 101) <= chance)
+            if (Dice100.SuccessRoll(chance))
             {
-                if (Random.Range(0, 101) >= 33)
+                if (Dice100.FailedRoll(33))
                 {
                     int pinchedGoldPieces = Random.Range(0, 6) + 1;
                     player.GoldPieces += pinchedGoldPieces;

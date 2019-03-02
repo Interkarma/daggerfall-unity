@@ -512,8 +512,8 @@ namespace DaggerfallWorkshop.Game.Utility
             DFPosition testPosition = new DFPosition();
             while (!found)
             {
-                testPosition.X = origin.X + UnityEngine.Random.Range(-radius, radius);
-                testPosition.Y = origin.Y + UnityEngine.Random.Range(-radius, radius);
+                testPosition.X = origin.X + UnityEngine.Random.Range(-radius, radius + 1);
+                testPosition.Y = origin.Y + UnityEngine.Random.Range(-radius, radius + 1);
 
                 if (GetNavGridWeightLocal(testPosition) > 0)
                 {

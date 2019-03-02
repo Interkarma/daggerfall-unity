@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 // If we were waiting then add a small random delay so messages don't all arrive at once
                 if (waitingForTown)
                 {
-                    ticksUntilFire = UnityEngine.Random.Range(minDelay, maxDelay);
+                    ticksUntilFire = UnityEngine.Random.Range(minDelay, maxDelay + 1);
                     waitingForTown = false;
                     RaiseOnOfferPendingEvent(this);
                 }

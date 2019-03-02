@@ -22,6 +22,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -269,8 +270,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return del(player);
 
             int minRoll = player.Career.HitPointsPerLevel / 2;
-            int maxRoll = player.Career.HitPointsPerLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
-            int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
+            int maxRoll = player.Career.HitPointsPerLevel;
+            int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll + 1); // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             addHitPoints += HitPointsModifier(player.Stats.LiveEndurance);
             if (addHitPoints < 1)
                 addHitPoints = 1;
@@ -670,7 +671,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (formula_2i.TryGetValue("CalculateBackstabDamage", out del))
                 return del(damage, backstabbingLevel);
 
-            if (backstabbingLevel > 1 && UnityEngine.Random.Range(1, 100 + 1) <= backstabbingLevel)
+            if (backstabbingLevel > 1 && Dice100.SuccessRoll(backstabbingLevel))
             {
                 damage *= 3;
                 string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
@@ -760,12 +761,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Rat:
                     // In classic rat can only give plague (diseaseListA), but DF Chronicles says plague, stomach rot and brain fever (diseaseListB).
                     // Don't know which was intended. Using B since it has more variety.
-                    if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
+                    if (Dice100.SuccessRoll(5))
                         InflictDisease(target, diseaseListB);
                     break;
                 case (int)MonsterCareers.GiantBat:
                     // Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
-                    if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                    if (Dice100.SuccessRoll(2))
                         InflictDisease(target, diseaseListB);
                     break;
                 case (int)MonsterCareers.Spider:
@@ -808,11 +809,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Zombie:
                     // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
                     // Diseases listed in DF Chronicles match those of mummy (except missing cholera, probably a mistake)
-                    if (UnityEngine.Random.Range(1, 100 + 1) <= 2)
+                    if (Dice100.SuccessRoll(2))
                         InflictDisease(target, diseaseListC);
                     break;
                 case (int)MonsterCareers.Mummy:
-                    if (UnityEngine.Random.Range(1, 100 + 1) <= 5)
+                    if (Dice100.SuccessRoll(5))
                         InflictDisease(target, diseaseListC);
                     break;
                 case (int)MonsterCareers.Vampire:
@@ -895,7 +896,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             chanceToHit -= (target.Skills.GetLiveSkillValue(DFCareer.Skills.Dodging) / 4);
 
             // Apply critical strike modifier.
-            if (UnityEngine.Random.Range(0, 100 + 1) < attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike))
+            if (Dice100.SuccessRoll(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike)))
             {
                 chanceToHit += (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / 10);
             }
@@ -911,9 +912,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             Mathf.Clamp(chanceToHit, 3, 97);
 
-            int roll = UnityEngine.Random.Range(0, 100 + 1);
-
-            if (roll <= chanceToHit)
+            if (Dice100.SuccessRoll(chanceToHit))
                 return 1;
             else
                 return 0;
@@ -1020,7 +1019,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (target.HasResistanceFlag(elementType))
             {
                 int chance = target.GetResistanceChance(elementType);
-                if (UnityEngine.Random.Range(1, 100 + 1) <= chance)
+                if (Dice100.SuccessRoll(chance))
                     return 0;
             }
 
@@ -1087,7 +1086,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
             int percentDamageOrDuration = 0;
-            int roll = UnityEngine.Random.Range(1, 100 + 1);
+            int roll = Dice100.Roll();
 
             if (roll <= savingThrow)
             {
@@ -1485,7 +1484,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static void RandomizeInitialRegionalPrices(ref PlayerEntity.RegionDataRecord[] regionData)
         {
             for (int i = 0; i < regionData.Length; i++)
-                regionData[i].PriceAdjustment = (ushort)(UnityEngine.Random.Range(0, 501) + 750);
+                regionData[i].PriceAdjustment = (ushort)(UnityEngine.Random.Range(0, 500 + 1) + 750);
         }
 
         public static void UpdateRegionalPrices(ref PlayerEntity.RegionDataRecord[] regionData, int times)
@@ -1504,7 +1503,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     {
                         int chanceOfPriceRise = ((merchantsFaction.power) - (regionFaction.power)) / 5
                             + 50 - (regionData[i].PriceAdjustment - 1000) / 25;
-                        if (UnityEngine.Random.Range(0, 101) >= chanceOfPriceRise)
+                        if (Dice100.FailedRoll(chanceOfPriceRise))
                             regionData[i].PriceAdjustment = (ushort)(49 * regionData[i].PriceAdjustment / 50);
                         else
                             regionData[i].PriceAdjustment = (ushort)(51 * regionData[i].PriceAdjustment / 50);

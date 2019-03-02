@@ -18,6 +18,7 @@ using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -131,11 +132,11 @@ namespace DaggerfallWorkshop.Game.Items
         public static ArmorMaterialTypes RandomArmorMaterial(int playerLevel)
         {
             // Random armor material
-            int random = UnityEngine.Random.Range(1, 101);
+            int roll = Dice100.Roll();
 
-            if (random >= 70)
+            if (roll >= 70)
             {
-                if (random >= 90)
+                if (roll >= 90)
                 {
                     WeaponMaterialTypes plateMaterial = RandomMaterial(playerLevel);
                     return (ArmorMaterialTypes)(0x0200 + plateMaterial);
@@ -338,7 +339,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             if (weapon == Weapons.Arrow)
             {   // Handle arrows
-                newItem.stackCount = UnityEngine.Random.Range(1, 21);
+                newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
             else
@@ -372,7 +373,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Handle arrows
             if (groupIndex == 18)
             {
-                newItem.stackCount = UnityEngine.Random.Range(1, 21);
+                newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
 

@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -237,7 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
                     // Get summoning chance for selected daedra and roll.
                     int chance = FormulaHelper.CalculateDaedraSummoningChance(playerEntity.FactionData.GetReputation(daedraToSummon.factionId), bonus);
-                    int roll = Random.Range(1, 101);
+                    int roll = Dice100.Roll();
                     Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}, summoner rep = {4}, cost: {5}",
                         daedraToSummon.vidFile.Substring(0, daedraToSummon.vidFile.Length-4), chance, sheoChance, roll, summonerFactionData.rep, summonCost);
 

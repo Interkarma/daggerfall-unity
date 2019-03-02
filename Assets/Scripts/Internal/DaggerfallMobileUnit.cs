@@ -22,6 +22,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -251,7 +252,7 @@ namespace DaggerfallWorkshop
             summary.StateAnims = GetStateAnims(summary.EnemyState);
             if (summary.EnemyState == MobileStates.PrimaryAttack)
             {
-                int random = UnityEngine.Random.Range(1, 101);
+                int random = Dice100.Roll();
 
                 if (random <= summary.Enemy.ChanceForAttack2)
                     summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames2;

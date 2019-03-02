@@ -220,7 +220,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (DaggerfallSky)
             {
-                if (Random.Range(0, 1) > 0.5f)
+                if (Random.Range(0f, 1f) > 0.5f)
                     DaggerfallSky.WeatherStyle = WeatherStyle.Rain1;
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Rain2;
@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (DaggerfallSky)
             {
-                if (Random.Range(0, 1) > 0.5f)
+                if (Random.Range(0f, 1f) > 0.5f)
                     DaggerfallSky.WeatherStyle = WeatherStyle.Snow1;
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Snow2;

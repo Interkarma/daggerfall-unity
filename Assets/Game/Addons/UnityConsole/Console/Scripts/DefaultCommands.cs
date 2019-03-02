@@ -843,8 +843,8 @@ namespace Wenzil.Console
                                 int xpos, ypos;
                                 while (true)
                                 {
-                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX - 1);
-                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY - 1);
+                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX);
+                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY);
                                     DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
                                     if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
                                     {
@@ -1546,7 +1546,7 @@ namespace Wenzil.Console
             private static T RandomEnumValue<T>()
             {
                 var v = Enum.GetValues(typeof(T));
-                return (T)v.GetValue(UnityEngine.Random.Range(0, v.Length - 1));
+                return (T)v.GetValue(UnityEngine.Random.Range(0, v.Length));
             }
         }
 

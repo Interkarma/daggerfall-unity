@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Init spawn timer on first update
             if (lastSpawnTime == 0)
-                lastSpawnTime = gameSeconds + (uint)UnityEngine.Random.Range(0, spawnInterval);
+                lastSpawnTime = gameSeconds + (uint)UnityEngine.Random.Range(0, spawnInterval + 1);
 
             // Do nothing if max foes already spawned
             // This can be cleared on next set/rearm

@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         clockTimeInSeconds = GetTravelTimeInSeconds();
 
                     // Add range
-                    int randomDays = UnityEngine.Random.Range(minRange, maxRange);
+                    int randomDays = UnityEngine.Random.Range(minRange, maxRange + 1);
                     clockTimeInSeconds += randomDays * DaggerfallDateTime.SecondsPerDay;
                 }
 
@@ -379,7 +379,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         int FromRange(int minSeconds, int maxSeconds)
         {
-            return UnityEngine.Random.Range(minSeconds, maxSeconds);
+            return UnityEngine.Random.Range(minSeconds, maxSeconds + 1);
         }
 
         void InitialiseTimer(int clockTimeInSeconds)

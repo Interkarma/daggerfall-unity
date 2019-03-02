@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Questing;
 using System;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -209,7 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
                     magicItem.value = 5000;
 
-                    if (UnityEngine.Random.Range(1, 101) >= 25)
+                    if (Dice100.FailedRoll(25))
                         magicItem.TrappedSoulType = MobileTypes.None;
                     else
                     {
@@ -566,7 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.DeductGoldAmount(guild.GetTrainingPrice());
                 playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
                 int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-                short tallyAmount = (short)(UnityEngine.Random.Range(10, 21) * skillAdvancementMultiplier);
+                short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
                 playerEntity.TallySkill(skillToTrain, tallyAmount);
                 DaggerfallUI.MessageBox(TrainSkillId);
             }
@@ -603,7 +604,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     // Change reputation
                     int rep = Math.Abs(playerEntity.FactionData.GetReputation(factionId));
-                    if (UnityEngine.Random.Range(1, 101) <= (2 * amount / rep + 1))
+                    if (Dice100.SuccessRoll(2 * amount / rep + 1))
                         playerEntity.FactionData.ChangeReputation(factionId, 1); // Does not propagate in classic
 
                     // Show thanks message

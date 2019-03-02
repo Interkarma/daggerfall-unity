@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game
                 AttackSound = (SoundClips)mobile.Summary.Enemy.AttackSound;
             }
 
-            RaceForSounds = (Entity.Races)Random.Range(1, 6);
+            RaceForSounds = (Entity.Races)Random.Range(1, 5 + 1);
 
             // Start attract timer
             StartWaiting();
@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game
         private void StartWaiting()
         {
             // Reset countdown to next sound
-            waitTime = Random.Range(MinAttractDelay, MaxAttractDelay);
+            waitTime = Random.Range(MinAttractDelay, MaxAttractDelay + 1);
             waitCounter = 0;
         }
 

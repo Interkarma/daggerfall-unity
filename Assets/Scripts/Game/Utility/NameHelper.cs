@@ -289,7 +289,7 @@ namespace DaggerfallWorkshop.Game.Utility
         // Monster3: (if male, 25% +3 + " ")+0+1+2
         string GetRandomMonsterName(Genders gender)
         {
-            BankTypes type = (BankTypes)UnityEngine.Random.Range(8, 10); // Get random Monster1 or Monster2 for now.
+            BankTypes type = (BankTypes)UnityEngine.Random.Range(8, 9 + 1); // Get random Monster1 or Monster2 for now.
             NameBank nameBank = bankDict[type];
 
             // Get set parts

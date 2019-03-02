@@ -15,6 +15,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -176,7 +177,7 @@ namespace DaggerfallWorkshop
                 player.TallySkill(DFCareer.Skills.Lockpicking, 1);
                 chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking));
 
-                if (Random.Range(0, 101) > chance)
+                if (Dice100.FailedRoll(chance))
                 {
                     Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
                     FailedSkillLevel = player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking);
@@ -218,8 +219,7 @@ namespace DaggerfallWorkshop
                 {
                     // Roll for chance to open
                     int chance = 20 - CurrentLockValue;
-                    int roll = UnityEngine.Random.Range(1, 101);
-                    if (roll <= chance)
+                    if (Dice100.SuccessRoll(chance))
                     {
                         CurrentLockValue = 0;
                         ToggleDoor(true);

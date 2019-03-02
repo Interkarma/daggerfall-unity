@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -499,7 +500,7 @@ namespace DaggerfallWorkshop.Game.Items
             unknown2 = 0;
             typeDependentData = 0;
             enchantmentPoints = itemTemplate.enchantmentPoints;
-            message = (itemGroup == ItemGroups.Paintings) ? UnityEngine.Random.Range(0, 65535) : 0;
+            message = (itemGroup == ItemGroups.Paintings) ? UnityEngine.Random.Range(0, 65536) : 0;
             stackCount = 1;
         }
 
@@ -1115,7 +1116,7 @@ namespace DaggerfallWorkshop.Game.Items
         public void DamageThroughPhysicalHit(int damage, DaggerfallEntity owner)
         {
             int amount = (10 * damage + 50) / 100;
-            if ((amount == 0) && UnityEngine.Random.Range(1, 100 + 1) < 20)
+            if ((amount == 0) && Dice100.SuccessRoll(20))
                 amount = 1;
             currentCondition -= amount;
             if (currentCondition <= 0)

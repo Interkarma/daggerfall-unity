@@ -12,6 +12,7 @@
 using System;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -1467,15 +1468,15 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            int random = UnityEngine.Random.Range(1, 101);
+            int roll = Dice100.Roll();
             int playerLevel = Game.GameManager.Instance.PlayerEntity.Level;
             int min;
             int max;
 
             // Random/player level based adjustments from classic. These assume enemy lists of length 20.
-            if (random > 80)
+            if (roll > 80)
             {
-                if (random > 95)
+                if (roll > 95)
                 {
                     if (playerLevel <= 5)
                     {

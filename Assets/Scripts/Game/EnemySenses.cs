@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -591,9 +592,9 @@ namespace DaggerfallWorkshop.Game
 
             timeOfLastStealthCheck = gameMinutes;
 
-            int stealthRoll = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
+            int stealthChance = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
 
-            return Random.Range(1, 101) > stealthRoll;
+            return Dice100.FailedRoll(stealthChance);
         }
 
         public bool BlockedByIllusionEffect()
@@ -620,7 +621,7 @@ namespace DaggerfallWorkshop.Game
             else // is a shade
                 chance = 4;
 
-            return Random.Range(1, 101) > chance;
+            return Dice100.FailedRoll(chance);
         }
 
         public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)
