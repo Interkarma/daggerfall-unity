@@ -226,6 +226,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.CancelWindow();
         }
 
+        public override void OnPop()
+        {
+            base.OnPop();
+            if (!leveling)
+                playerEntity.ResetSkillsRecentlyRaised();
+            leveling = false;
+        }
+
         #endregion
 
         #region Private Methods
@@ -242,20 +250,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Creates formatting tokens for skill popups
         TextFile.Token[] CreateSkillTokens(DFCareer.Skills skill, bool twoColumn = false, int startPosition = 0)
         {
+            bool highlight = playerEntity.GetSkillRecentlyIncreased(skill);
+
             List<TextFile.Token> tokens = new List<TextFile.Token>();
+            TextFile.Formatting formatting = highlight ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;
 
             TextFile.Token skillNameToken = new TextFile.Token();
+            skillNameToken.formatting = formatting;
             skillNameToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
-            skillNameToken.formatting = TextFile.Formatting.Text;
 
             TextFile.Token skillValueToken = new TextFile.Token();
+            skillValueToken.formatting = formatting;
             skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetLiveSkillValue(skill));
-            skillValueToken.formatting = TextFile.Formatting.Text;
 
             DFCareer.Stats primaryStat = DaggerfallSkills.GetPrimaryStat(skill);
             TextFile.Token skillPrimaryStatToken = new TextFile.Token();
+            skillPrimaryStatToken.formatting = formatting;
             skillPrimaryStatToken.text = DaggerfallUnity.Instance.TextProvider.GetAbbreviatedStatName(primaryStat);
-            skillPrimaryStatToken.formatting = TextFile.Formatting.Text;
 
             TextFile.Token positioningToken = new TextFile.Token();
             positioningToken.formatting = TextFile.Formatting.PositionPrefix;
@@ -338,6 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+            messageBox.SetHighlightColor(DaggerfallUI.DaggerfallUnityStatIncreasedTextColor);
             messageBox.SetTextTokens(tokens.ToArray(), null, false);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
@@ -456,7 +468,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                leveling = false;
                 PlayerEntity.Stats = statsRollout.WorkingStats;
                 NativePanel.Components.Remove(statsRollout);
                 return true;

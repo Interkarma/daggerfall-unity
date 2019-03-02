@@ -80,6 +80,8 @@ namespace DaggerfallWorkshop.Game.Player
             startingLevelUpSkillSum = 0;
             faceIndex = 0;
             skillUses = new short[DaggerfallSkills.Count];
+            skillsRaisedThisLevel1 = 0;
+            skillsRaisedThisLevel2 = 0;
             for (int i = 0; i < armorValues.Length; i++)
             {
                 armorValues[i] = 100;
