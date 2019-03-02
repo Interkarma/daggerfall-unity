@@ -109,6 +109,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         variantEffect.CurrentVariant = i;
                         magicEffectTemplates.Add(variantEffect.Key, variantEffect);
                         IndexEffectRecipes(variantEffect);
+                        MapClassicKey(variantEffect);
                     }
                 }
                 else
@@ -116,24 +117,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Just store singleton effect
                     magicEffectTemplates.Add(effect.Key, effect);
                     IndexEffectRecipes(effect);
-                }
-
-                // Map classic key when defined - output error in case of classic key conflict
-                // NOTE: Mods should also be able to replace classic effect - will need to handle substitutions later
-                // NOTE: Not mapping effect keys for non spell effects at this time
-                byte groupIndex, subGroupIndex;
-                BaseEntityEffect.ClassicEffectFamily family;
-                BaseEntityEffect.ReverseClasicKey(effect.Properties.ClassicKey, out groupIndex, out subGroupIndex, out family);
-                if (effect.Properties.ClassicKey != 0 && family == BaseEntityEffect.ClassicEffectFamily.Spells)
-                {
-                    if (classicEffectMapping.ContainsKey(effect.Properties.ClassicKey))
-                    {
-                        Debug.LogErrorFormat("EntityEffectBroker: Detected duplicate classic effect key for {0} ({1}, {2})", effect.Key, groupIndex, subGroupIndex);
-                    }
-                    else
-                    {
-                        classicEffectMapping.Add(effect.Properties.ClassicKey, effect.Key);
-                    }
+                    MapClassicKey(effect);
                 }
             }
         }
@@ -536,6 +520,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     {
                         Debug.LogErrorFormat("EnityEffectBroker: Already contains potion recipe key {0} for ingredients: {1}", recipeKey, recipe.ToString());
                     }
+                }
+            }
+        }
+
+        void MapClassicKey(IEntityEffect effect)
+        {
+            byte groupIndex, subGroupIndex;
+            BaseEntityEffect.ClassicEffectFamily family;
+
+            // Map classic key when defined - output error in case of classic key conflict
+            // NOTE: Mods should also be able to replace classic effect - will need to handle substitutions later
+            // NOTE: Not mapping effect keys for non spell effects at this time
+            BaseEntityEffect.ReverseClasicKey(effect.Properties.ClassicKey, out groupIndex, out subGroupIndex, out family);
+            if (effect.Properties.ClassicKey != 0 && family == BaseEntityEffect.ClassicEffectFamily.Spells)
+            {
+                if (classicEffectMapping.ContainsKey(effect.Properties.ClassicKey))
+                {
+                    Debug.LogErrorFormat("EntityEffectBroker: Detected duplicate classic effect key for {0} ({1}, {2})", effect.Key, groupIndex, subGroupIndex);
+                }
+                else
+                {
+                    classicEffectMapping.Add(effect.Properties.ClassicKey, effect.Key);
                 }
             }
         }
