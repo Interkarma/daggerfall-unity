@@ -285,6 +285,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     spellsListBox.SelectedIndex = oldSelectedIndex;
             }
+
+            // Hide icons when there's nothing to select
+            ShowIcons(spellsListBox.Count > 0);
         }
 
         #endregion
@@ -401,6 +404,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellElementIconPanel.BackgroundColor = Color.black;
             spellElementIconPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             spellElementIconPanel.ToolTip = defaultToolTip;
+        }
+
+        void ShowIcons(bool show)
+        {
+            spellIconPanel.Enabled = show;
+            spellTargetIconPanel.Enabled = show;
+            spellElementIconPanel.Enabled = show;
         }
 
         void SetupLabels()
