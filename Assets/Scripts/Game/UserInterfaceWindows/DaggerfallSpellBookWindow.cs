@@ -182,18 +182,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 spellPointsLabel.Text = string.Format("{0}/{1}", curSpellPoints, maxSpellPoints);
             }
 
-            // Default selected spell info
-            spellNameLabel.Text = string.Empty;
-            spellIconPanel.BackgroundTexture = null;
-            spellTargetIconPanel.BackgroundTexture = null;
-            spellElementIconPanel.BackgroundTexture = null;
-            ClearEffectLabels();
-
             // Select default spell
             if (spellsListBox.Count > 0)
                 spellsListBox.SelectIndex(0);
             else
                 spellsListBox.SelectNone();
+
+            UpdateSelection();
         }
 
         public override void Update()
