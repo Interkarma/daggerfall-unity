@@ -1859,12 +1859,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         continue;
                     }
 
-                    if (instancedBundle.caster == null)
-                    {
-                        Debug.LogWarning("RestoreInstancedBundleSaveData() could not restore effect as caster was not found.");
-                        continue;
-                    }
-
                     // Resume effect
                     effect.ParentBundle = instancedBundle;
                     effect.Resume(effectData, this, instancedBundle.caster);
@@ -1904,7 +1898,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 SerializableEnemy serializableEnemy = SaveLoadManager.StateManager.GetEnemy(loadID);
                 if (!serializableEnemy)
                 {
-                    Debug.LogError(string.Format("EntityEffect.RestoreEffectSaveData() could not find SerializableEnemy for LoadID {0} in StateManager.", loadID));
+                    Debug.LogWarning(string.Format("EntityEffect.RestoreEffectSaveData() could not find SerializableEnemy for LoadID {0} in StateManager.", loadID));
                     return null;
                 }
 
