@@ -226,9 +226,12 @@ namespace DaggerfallWorkshop.Game.Items
             }
             else
             {
-                // Check duplicate key
+                // Log and exit if duplicate key found
                 if (items.Contains(item.UID))
-                    throw new Exception("AddItem() encountered a duplicate item UID for " + item.LongName);
+                {
+                    UnityEngine.Debug.LogError("AddItem() encountered a duplicate item UID for " + item.LongName);
+                    return;
+                }
 
                 // Add the item
                 switch (position)
