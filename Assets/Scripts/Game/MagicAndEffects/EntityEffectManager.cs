@@ -906,6 +906,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
                 }
+                else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
+                {
+                    EffectBundleSettings bundleSettings = new EffectBundleSettings
+                    {
+                        Effects = new EffectEntry[] { new EffectEntry("WabbajackEffect") }
+                    };
+                    EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                    bundle.CasterEntityBehaviour = caster;
+                    bundles.Add(bundle);
+                }
             }
 
             // Assign bundles to this entity
