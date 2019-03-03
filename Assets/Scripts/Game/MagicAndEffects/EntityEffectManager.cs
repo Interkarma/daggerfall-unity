@@ -885,6 +885,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             DaggerfallEnchantment[] enchantments = item.Enchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
+                EffectBundleSettings bundleSettings;
+                EntityEffectBundle bundle;
                 if (enchantment.type == EnchantmentTypes.CastWhenStrikes)
                 {
                     SpellRecord.SpellRecordData spell;
@@ -893,12 +895,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         //Debug.LogFormat("EntityEffectManager.StrikeWithItem: Found CastWhenStrikes enchantment '{0}'", spell.spellName);
 
                         // Create effect bundle settings from classic spell
-                        EffectBundleSettings bundleSettings;
                         if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                             continue;
 
                         // Assign bundle to list
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         bundle.CasterEntityBehaviour = caster;
                         bundles.Add(bundle);
 
@@ -908,11 +909,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
                 else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
                 {
-                    EffectBundleSettings bundleSettings = new EffectBundleSettings
-                    {
-                        Effects = new EffectEntry[] { new EffectEntry("WabbajackEffect") }
-                    };
-                    EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
+                        continue;
+                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                     bundle.CasterEntityBehaviour = caster;
                     bundles.Add(bundle);
                 }
