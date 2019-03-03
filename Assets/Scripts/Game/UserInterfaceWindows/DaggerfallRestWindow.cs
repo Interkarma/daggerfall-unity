@@ -481,7 +481,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int mapId = playerGPS.CurrentLocation.MapTableData.MapId;
                     RoomRental_v1 room = GameManager.Instance.PlayerEntity.GetRentedRoom(mapId, buildingKey);
                     remainingHoursRented = PlayerEntity.GetRemainingHours(room);
-                    allocatedBed = room.allocatedBed;
+
+                    // Get allocated bed marker - default to 0 if out of range
+                    // We relink marker position by index as building positions are not stable, they can move from terrain mods or floating Y
+                    Vector3[] restMarkers = playerEnterExit.Interior.FindMarkers(DaggerfallInterior.InteriorMarkerTypes.Rest);
+                    int bedIndex = (room.allocatedBedIndex >= 0 && room.allocatedBedIndex < restMarkers.Length) ? room.allocatedBedIndex : 0;
+                    allocatedBed = restMarkers[bedIndex];
                     if (remainingHoursRented > 0)
                         return true;
                 }

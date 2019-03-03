@@ -262,6 +262,22 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Find all marker positions of a specific type.
+        /// </summary>
+        public Vector3[] FindMarkers(InteriorMarkerTypes type)
+        {
+            List<Vector3> markerResults = new List<Vector3>();
+
+            for (int i = 0; i < markers.Count; i++)
+            {
+                if (markers[i].type == type)
+                    markerResults.Add(markers[i].gameObject.transform.position);
+            }
+
+            return markerResults.ToArray();
+        }
+
+        /// <summary>
         /// Finds closest marker to player position.
         /// </summary>
         /// <param name="closestMarkerOut">Closest marker of specified type to player if found.</param>

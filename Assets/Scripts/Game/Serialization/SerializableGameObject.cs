@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string name;
         public int mapID;
         public int buildingKey;
-        public Vector3 allocatedBed;
+        public int allocatedBedIndex;
         public ulong expiryTime;
     }
 

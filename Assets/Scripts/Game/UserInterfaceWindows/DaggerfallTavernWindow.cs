@@ -201,16 +201,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             string sceneName = DaggerfallInterior.GetSceneName(mapId, buildingData.buildingKey);
             if (rentedRoom == null)
             {
-                // Get rest marker
-                Vector3 restMarker;
-                playerEnterExit.Interior.FindMarker(out restMarker, DaggerfallInterior.InteriorMarkerTypes.Rest, true);
+                // Get rest markers and select a random marker index for allocated bed
+                // We store marker by index as building positions are not stable, they can move from terrain mods or floating Y
+                Vector3[] restMarkers = playerEnterExit.Interior.FindMarkers(DaggerfallInterior.InteriorMarkerTypes.Rest);
+                int markerIndex = Random.Range(0, restMarkers.Length);
+
                 // Create room rental and add it to player rooms
                 RoomRental_v1 room = new RoomRental_v1()
                 {
                     name = buildingData.displayName,
                     mapID = mapId,
                     buildingKey = buildingData.buildingKey,
-                    allocatedBed = restMarker,
+                    allocatedBedIndex = markerIndex,
                     expiryTime = DaggerfallUnity.Instance.WorldTime.Now.ToSeconds() + (ulong)(DaggerfallDateTime.SecondsPerDay * daysToRent)
                 };
                 playerEntity.RentedRooms.Add(room);
