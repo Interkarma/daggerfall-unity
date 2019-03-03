@@ -285,9 +285,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     spellsListBox.SelectedIndex = oldSelectedIndex;
             }
-
-            // Hide icons when there's nothing to select
-            ShowIcons(spellsListBox.Count > 0);
         }
 
         #endregion
@@ -487,7 +484,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Get spell and exit if spell index not found
                 if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                {
+                    spellNameLabel.Text = string.Empty;
+                    ClearEffectLabels();
+                    ShowIcons(false);
                     return;
+                }
             }
 
             // Update spell name label
@@ -508,6 +510,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellTargetIconPanel.ToolTipText = GetTargetTypeDescription(spellSettings.TargetType);
             spellElementIconPanel.BackgroundTexture = GetSpellElementIcon(spellSettings.ElementType);
             spellElementIconPanel.ToolTipText = GetElementDescription(spellSettings.ElementType);
+            ShowIcons(true);
         }
 
         private string GetTargetTypeDescription(TargetTypes targetType)
@@ -756,6 +759,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 GameManager.Instance.PlayerEntity.DeleteSpell(deleteSpellIndex);
                 deleteSpellIndex = -1;
                 RefreshSpellsList(true);
+                UpdateSelection();
             }
 
             CloseWindow();
