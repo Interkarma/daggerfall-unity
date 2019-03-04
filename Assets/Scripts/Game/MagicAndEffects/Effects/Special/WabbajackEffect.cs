@@ -10,6 +10,8 @@
 //
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -19,12 +21,50 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     public class WabbajackEffect : BaseEntityEffect
     {
         public static readonly string EffectKey = "WabbajackEffect";
+        public static readonly MobileTypes[] careerIDs = {
+                                                           MobileTypes.Rat,
+                                                           MobileTypes.Imp,
+                                                           MobileTypes.Spriggan,
+                                                           MobileTypes.GiantBat,
+                                                           MobileTypes.GrizzlyBear,
+                                                           MobileTypes.Spider,
+                                                           MobileTypes.Nymph,
+                                                           MobileTypes.Harpy,
+                                                           MobileTypes.SkeletalWarrior,
+                                                           MobileTypes.Giant,
+                                                           MobileTypes.Zombie,
+                                                           MobileTypes.GiantScorpion,
+                                                           MobileTypes.IronAtronach,
+                                                           MobileTypes.FleshAtronach,
+                                                           MobileTypes.IceAtronach,
+                                                           MobileTypes.FireAtronach,
+                                                           MobileTypes.Lich
+                                                          };
 
         public override void MagicRound()
         {
             base.MagicRound();
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+            if (entityBehaviour.Entity is EnemyEntity)
+            {
+                EnemyEntity enemy = (EnemyEntity)entityBehaviour.Entity;
+                if (enemy.WabbajackActive)
+                    return;
 
-            Debug.Log("WabbajackEffect activated.");
+                MobileTypes enemyType = careerIDs[Random.Range(0, careerIDs.Length)];
+                if ((int)enemyType == enemy.CareerIndex)
+                {
+                    enemyType = (MobileTypes)(((int)enemyType + 1) % careerIDs.Length);
+                }
+                Transform parentTransform = entityBehaviour.gameObject.transform.parent;
+                entityBehaviour.gameObject.SetActive(false);
+                GameObject gameObject = GameObjectHelper.CreateEnemy(HardStrings.enemyNames[(int)enemyType], enemyType, entityBehaviour.transform.localPosition, parentTransform);
+                DaggerfallEntityBehaviour newEnemyBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                EnemyEntity newEnemy = (EnemyEntity)newEnemyBehaviour.Entity;
+                newEnemy.WabbajackActive = true;
+            }
         }
 
         public override void SetProperties()
