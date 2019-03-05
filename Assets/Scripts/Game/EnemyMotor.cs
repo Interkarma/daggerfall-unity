@@ -1180,17 +1180,21 @@ namespace DaggerfallWorkshop.Game
         void OpenDoors()
         {
             // Try to open doors blocking way
-            if (mobile.Summary.Enemy.CanOpenDoors && senses.LastKnownDoor != null
-                && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen
-                && !senses.LastKnownDoor.IsLocked)
+            if (mobile.Summary.Enemy.CanOpenDoors)
             {
-                senses.LastKnownDoor.ToggleDoor();
-            }
+                if (senses.LastKnownDoor != null
+                    && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen
+                    && !senses.LastKnownDoor.IsLocked)
+                {
+                    senses.LastKnownDoor.ToggleDoor();
+                    return;
+                }
 
-            // If door didn't open, and we are trying to get to the target, bash
-            if (DaggerfallUnity.Settings.EnhancedCombatAI && moveInForAttack && senses.LastKnownDoor != null
-                && senses.DistanceToDoor < attack.MeleeDistance && senses.LastKnownDoor.IsLocked)
-                bashing = true;
+                // If door didn't open, and we are trying to get to the target, bash
+                if (DaggerfallUnity.Settings.EnhancedCombatAI && moveInForAttack && senses.LastKnownDoor != null
+                    && senses.DistanceToDoor < attack.MeleeDistance && senses.LastKnownDoor.IsLocked)
+                    bashing = true;
+            }
         }
 
         #endregion
