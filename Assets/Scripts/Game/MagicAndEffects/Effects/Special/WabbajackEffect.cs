@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallEntityBehaviour newEnemyBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
                 EnemyEntity newEnemy = (EnemyEntity)newEnemyBehaviour.Entity;
                 newEnemy.WabbajackActive = true;
+                newEnemy.CurrentHealth = enemy.MaxHealth - enemy.CurrentHealth; // carry over damage to new monster
             }
         }
 
