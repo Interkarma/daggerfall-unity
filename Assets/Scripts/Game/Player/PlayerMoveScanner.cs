@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game
         HangingMotor hangingMotor;
         ClimbingMotor climbingMotor;
         AcrobatMotor acrobatMotor;
-        PlayerMotor playerMotor;
+        //PlayerMotor playerMotor;
         private int turnCount = 0;
 
         public float HeadHitRadius { get; private set; }
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game
         {
             controller = GetComponent<CharacterController>();
             acrobatMotor = GetComponent<AcrobatMotor>();
-            playerMotor = GetComponent<PlayerMotor>();
+            //playerMotor = GetComponent<PlayerMotor>();
             hangingMotor = GetComponent<HangingMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             HeadHitRadius = controller.radius * 0.85f;
