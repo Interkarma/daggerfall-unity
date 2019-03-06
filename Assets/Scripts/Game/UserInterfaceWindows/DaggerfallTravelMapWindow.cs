@@ -470,7 +470,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Horizontal arrow button
             horizontalArrowButton.Position = new Vector2(231, 176);
-            horizontalArrowButton.Size = new Vector2(leftArrowTexture.width, leftArrowTexture.height);
+            horizontalArrowButton.Size = new Vector2(22, 20);
             horizontalArrowButton.Enabled = false;
             NativePanel.Components.Add(horizontalArrowButton);
             horizontalArrowButton.Name = "horizontalArrowButton";
@@ -478,7 +478,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Vertical arrow button
             verticalArrowButton.Position = new Vector2(254, 176);
-            verticalArrowButton.Size = new Vector2(upArrowTexture.width, upArrowTexture.height);
+            verticalArrowButton.Size = new Vector2(22, 20);
             verticalArrowButton.Enabled = false;
             NativePanel.Components.Add(verticalArrowButton);
             verticalArrowButton.Name = "verticalArrowButton";
