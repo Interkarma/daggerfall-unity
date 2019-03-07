@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
@@ -631,9 +632,10 @@ namespace DaggerfallWorkshop.Game
             {
                 interior.DoLayout(doorOwner, door, climateBase, buildingDiscoveryData);
             }
-            catch
+            catch (Exception e)
             {
                 DaggerfallUI.AddHUDText(HardStrings.thisHouseHasNothingOfValue);
+                Debug.LogException(e);
                 Destroy(newInterior);
                 return;
             }
