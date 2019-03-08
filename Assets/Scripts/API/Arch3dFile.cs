@@ -763,8 +763,6 @@ namespace DaggerfallConnect.Arena2
         /// Unpack special texture coordinates.
         /// </summary>
         /// <param name="u">The U or V coordinate</param>
-        /// <param name="flag"></param>
-        /// <returns></returns>
         private static void UVunpack(ref int u)
         {
             // A packed coordinate has to be a multiple of 1024
@@ -776,13 +774,9 @@ namespace DaggerfallConnect.Arena2
             const int threshold = 7167;
             const int delta = 8192;
             if (u > threshold)
-            {
                 u = n - (u + n) % delta;
-            }
             else if (u < -threshold)
-            {
                 u = n + (u - n) % delta;
-            }
         }
 
         /// <summary>
