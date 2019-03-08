@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             targetPath = EditorPrefs.GetString(Prefs.CurrentTarget, rootPath);
             textPath = Path.Combine(Path.Combine(Application.dataPath, "StreamingAssets"), "Text");
 
-            if (targetPath != rootPath)
+            if (!string.IsNullOrEmpty(targetPath) && targetPath != rootPath)
                 Load();
         }
 
@@ -142,8 +142,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                     saveOnExit = EditorGUILayout.ToggleLeft(new GUIContent("Save on Exit", "Save automatically when window is closed."), saveOnExit);
 
-                    if (modName == "None")
+                    if (data == null)
+                    {
                         EditorGUILayout.HelpBox("Select a folder to store settings.", MessageType.Info);
+                        return;
+                    }
+
                     if (duplicateSections)
                         EditorGUILayout.HelpBox("Multiple sections with the same name detected!", MessageType.Error);
                     if (duplicateKeys)
@@ -189,6 +193,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
                     EditorGUILayout.Space();
                 });
+
+                if (data == null)
+                    return;
 
                 float areaWidth = 5 * position.width / 8;
                 GUILayoutHelper.Area(new Rect(position.width - areaWidth, 0, areaWidth, position.height), () =>
@@ -242,7 +249,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void OnDisable()
         {
-            if (saveOnExit)
+            if (saveOnExit && data != null)
                 Save();
 
             EditorPrefs.SetBool(Prefs.SaveOnExit, saveOnExit);
