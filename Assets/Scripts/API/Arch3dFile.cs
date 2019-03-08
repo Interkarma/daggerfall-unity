@@ -164,7 +164,7 @@ namespace DaggerfallConnect.Arena2
             public Byte PlanePointCount;
             public Byte Unknown1;
             public UInt16 Texture;
-            public UInt32 Unknown2;
+            public int UVunpack;
         }
 
         /// <summary>
@@ -604,7 +604,7 @@ namespace DaggerfallConnect.Arena2
                 records[record].PureMesh.Planes[plane].Header.PlanePointCount = reader.ReadByte();
                 records[record].PureMesh.Planes[plane].Header.Unknown1 = reader.ReadByte();
                 records[record].PureMesh.Planes[plane].Header.Texture = reader.ReadUInt16();
-                records[record].PureMesh.Planes[plane].Header.Unknown2 = reader.ReadUInt32();
+                records[record].PureMesh.Planes[plane].Header.UVunpack = reader.ReadInt32();
 
                 // Read the normal data for this plane
                 Int32 nx = normalReader.ReadInt32();
@@ -644,32 +644,16 @@ namespace DaggerfallConnect.Arena2
                     int pointOffset = reader.ReadInt32();
 
                     // Read UV data
-                    Int16 u = reader.ReadInt16();
-                    Int16 v = reader.ReadInt16();
+                    int u = reader.ReadInt16();
+                    int v = reader.ReadInt16();
 
                     // Fix certain UV coordinates that are
                     // packed oddly, or aligned outside of poly.
-                    int threshold = 14335;
-                    while (u > threshold)
+                    if (records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
                     {
-                        u = (Int16)(0x4000 - u);
+                        UVunpack(ref u);
+                        UVunpack(ref v);
                     }
-                    while (u < -threshold)
-                    {
-                        u = (Int16)(0x4000 + u);
-                    }
-                    while (v > threshold)
-                    {
-                        v = (Int16)(0x4000 - v);
-                    }
-                    while (v < -threshold)
-                    {
-                        v = (Int16)(0x4000 + v);
-                    }
-
-                    // Fix some remaining special-case textures
-                    if (u == 7168) u = 1024;
-                    if (u == -7168) u = -1024;
 
                     // Store UV coordinates
                     records[record].PureMesh.Planes[plane].Points[point].u = u;
@@ -773,6 +757,32 @@ namespace DaggerfallConnect.Arena2
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Unpack special texture coordinates.
+        /// </summary>
+        /// <param name="u">The U or V coordinate</param>
+        /// <param name="flag"></param>
+        /// <returns></returns>
+        private static void UVunpack(ref int u)
+        {
+            // A packed coordinate has to be a multiple of 1024
+            const int n = 1024;
+            if (u % n != 0)
+                return;
+
+            // Values below or above those ones produce incorrect results
+            const int threshold = 7167;
+            const int delta = 8192;
+            if (u > threshold)
+            {
+                u = n - (u + n) % delta;
+            }
+            else if (u < -threshold)
+            {
+                u = n + (u - n) % delta;
+            }
         }
 
         /// <summary>
