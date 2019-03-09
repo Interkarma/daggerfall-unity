@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void DrawClassicGlyphWithShadow(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
         {
-            if (shadowPosition != Vector2.zero)
+            if (shadowPosition != Vector2.zero && shadowColor != Color.clear)
             {
                 Rect shadowRect = targetRect;
                 shadowRect.x += shadowPosition.x;
@@ -166,7 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void DrawSDFGlyphWithShadow(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
         {
-            if (shadowPosition != Vector2.zero)
+            if (shadowPosition != Vector2.zero && shadowColor != Color.clear)
             {
                 Rect shadowRect = targetRect;
                 shadowRect.x += shadowPosition.x / 2;           // Shadow position also hacked by half as classic offset scale too much for smoother fonts
