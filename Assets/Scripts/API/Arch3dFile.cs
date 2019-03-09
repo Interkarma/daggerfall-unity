@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2018 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -765,14 +765,16 @@ namespace DaggerfallConnect.Arena2
         /// <param name="u">The U or V coordinate</param>
         private static void UVunpack(ref int u)
         {
-            // A packed coordinate has to be a multiple of 1024
             const int n = 1024;
-            if (u % n != 0)
+            const int delta = n * 8;
+
+            // A packed coordinate has to be a multiple of 1024
+            // Also avoid unpacking 8192 or -8192
+            if (u % n != 0 || u == delta || u == -delta)
                 return;
 
-            // Values below or above those ones produce incorrect results
-            const int threshold = 7167;
-            const int delta = 8192;
+            // Values below or above this one produce incorrect results
+            const int threshold = delta - n - 1;
             if (u > threshold)
                 u = n - (u + n) % delta;
             else if (u < -threshold)
