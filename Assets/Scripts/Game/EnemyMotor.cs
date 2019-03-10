@@ -123,10 +123,6 @@ namespace DaggerfallWorkshop.Game
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
 
-            // Classic AI moves only as close as melee range
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
-                stopDistance = attack.MeleeDistance;
-
             // Only need to check for ability to shoot bow once, and if no spells, only need to check for spells once.
             hasBowAttack = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
             hasSpells = entity.GetSpells().Length > 0;
@@ -393,6 +389,15 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Classic AI moves only as close as melee range
+            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
+            {
+                if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
+                    stopDistance = attack.MeleeDistance;
+                else
+                    stopDistance = attack.ClassicMeleeDistanceVsAI;
+            }
+
             bool clearPathToShootAtPredictedPos = false;
 
             // Get location to move towards. Either the combat target's position or, if trying to avoid an obstacle or fall,
@@ -432,7 +437,13 @@ namespace DaggerfallWorkshop.Game
 
             // Get direction & distance.
             var direction = (destination - transform.position).normalized;
-            float distance = (destination - transform.position).magnitude;
+            float distance = 0f;
+
+            // If enemy sees the target, use the distance value from EnemySenses, as this is also used for the melee attack decision and we need to be consistent with that.
+            if (clearPathToShootAtPredictedPos)
+                distance = senses.DistanceToTarget;
+            else
+                distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
             if ((hasBowAttack || hasSpells) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
