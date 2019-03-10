@@ -463,7 +463,7 @@ namespace DaggerfallWorkshop.Game
                     hasEncounteredPlayer = true;
 
                     // Check appropriate language skill to see if player can pacify enemy
-                    if (entityBehaviour && motor &&
+                    if (!questBehaviour && entityBehaviour && motor &&
                         (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass))
                     {
                         DFCareer.Skills languageSkill = enemyEntity.GetLanguageSkill();
