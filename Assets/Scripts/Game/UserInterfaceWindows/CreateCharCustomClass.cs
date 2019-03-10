@@ -35,8 +35,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int maxHpPerLevel = 30;
         const int minHpPerLevel = 4;
         const int defaultHpPerLevel = 8;
-        private const int minDifficultyPoints = -12;
-        private const int maxDifficultyPoints = 40;
+        const int minDifficultyPoints = -12;
+        const int maxDifficultyPoints = 40;
 
         const int strNameYourClass = 301;
         const int strSetSkills = 300;
