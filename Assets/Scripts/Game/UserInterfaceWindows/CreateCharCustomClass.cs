@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int strNameYourClass = 301;
         const int strSetSkills = 300;
         const int strDistributeStats = 302;
+        const int strAdvancingDaggerInRed = 306;
 
         Texture2D nativeTexture;
         Texture2D nativeDaggerTexture;
@@ -405,6 +406,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(strDistributeStats);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return;
+            }
+
+            // Is AdvancementMultiplier off limits?
+            if (createdClass.AdvancementMultiplier < 0.3f || createdClass.AdvancementMultiplier > 3f)
+            {
+                messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strAdvancingDaggerInRed);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
                 return;
