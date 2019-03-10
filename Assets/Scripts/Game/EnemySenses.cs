@@ -842,7 +842,6 @@ namespace DaggerfallWorkshop.Game
 
         bool CanHearTarget(DaggerfallEntityBehaviour target)
         {
-            bool heard = false;
             float hearingScale = 1f;
 
             // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
@@ -853,17 +852,12 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit))
             {
                 DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                if (entity != target && hit.transform.gameObject.isStatic)
+                if (hit.transform.gameObject.isStatic)
                     return false;
             }
 
             // TODO: Modify this by how much noise the target is making
-            if (distanceToTarget < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier)
-            {
-                heard = true;
-            }
-
-            return heard;
+            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier;
         }
 
         #endregion
