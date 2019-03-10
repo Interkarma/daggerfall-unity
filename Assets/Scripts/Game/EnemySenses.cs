@@ -489,7 +489,7 @@ namespace DaggerfallWorkshop.Game
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {
             // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
-            if (targetInSight || targetInEarshot)
+            if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
             {
                 if (awareOfTargetForLastPrediction)
                     lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
@@ -505,7 +505,7 @@ namespace DaggerfallWorkshop.Game
             Vector3 assumedCurrentPosition;
 
             // If aware of target, use last known position as assumed current position
-            if (targetInSight || targetInEarshot)
+            if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
             {
                 assumedCurrentPosition = lastKnownTargetPos;
             }
