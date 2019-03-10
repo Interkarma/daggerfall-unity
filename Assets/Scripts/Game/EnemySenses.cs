@@ -452,10 +452,29 @@ namespace DaggerfallWorkshop.Game
                     predictedTargetPos = lastKnownTargetPos;
 
                 // Predict target's next position
-                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && lastKnownTargetPos != ResetPlayerPos)
+                if (targetPosPredict && lastKnownTargetPos != ResetPlayerPos)
                 {
-                    float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
-                    predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                    // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
+                    if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
+                    {
+                        if (awareOfTargetForLastPrediction)
+                            lastPositionDiff = oldLastKnownTargetPos - lastKnownTargetPos;
+
+                        // Store current last known target position for next prediction update
+                        oldLastKnownTargetPos = lastKnownTargetPos;
+
+                        awareOfTargetForLastPrediction = true;
+                    }
+                    else
+                    {
+                        awareOfTargetForLastPrediction = false;
+                    }
+
+                    if (DaggerfallUnity.Settings.EnhancedCombatAI)
+                    {
+                        float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
+                        predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                    }
                 }
 
                 if (detectedTarget && !hasEncounteredPlayer && target == Player)
@@ -488,24 +507,10 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {
-            // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
-            if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
-            {
-                if (awareOfTargetForLastPrediction)
-                    lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
-
-                // Store current last known target position for next prediction update
-                oldLastKnownTargetPos = lastKnownTargetPos;
-
-                awareOfTargetForLastPrediction = true;
-            }
-            else
-                awareOfTargetForLastPrediction = false;
-
             Vector3 assumedCurrentPosition;
 
             // If aware of target, use last known position as assumed current position
-            if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
+            if (targetInSight || targetInEarshot)
             {
                 assumedCurrentPosition = lastKnownTargetPos;
             }

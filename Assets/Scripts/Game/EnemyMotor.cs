@@ -68,6 +68,8 @@ namespace DaggerfallWorkshop.Game
         bool strafeLeft;
         float strafeAngle;
         Vector3 strafeDest;
+        bool searchedLastKnownPos;
+        int searchMult = 1;
 
         EnemySenses senses;
         Vector3 destination;
@@ -368,6 +370,8 @@ namespace DaggerfallWorkshop.Game
             {
                 SetChangeStateTimer();
                 bashing = false;
+                searchedLastKnownPos = false;
+                searchMult = 1;
 
                 return;
             }
@@ -419,20 +423,29 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 clearPathToShootAtPredictedPos = true;
-            }
-            else if (DaggerfallUnity.Settings.EnhancedCombatAI && avoidObstaclesTimer == 0 && ClearPathToPosition(senses.LastKnownTargetPos))
-            {
-                destination = senses.LastKnownTargetPos + (senses.LastPositionDiff * 2);
+                searchedLastKnownPos = false;
+                searchMult = 1;
             }
             // If detouring, use the detour position
             else if (avoidObstaclesTimer > 0)
             {
                 destination = detourDestination;
             }
-            // Otherwise, go straight
+            // Otherwise, search for target
             else
             {
-                destination = transform.position + transform.forward * (stopDistance + .3f); // Move position needs to be a little further away (adding .3f) than stop distance so that AI will move, not stop
+                Vector3 searchPosition = senses.LastKnownTargetPos - (senses.LastPositionDiff.normalized * searchMult);
+                if (!searchedLastKnownPos && (searchPosition - transform.position).magnitude <= stopDistance)
+                    searchedLastKnownPos = true;
+
+                if (!searchedLastKnownPos)
+                    destination = searchPosition;
+                else
+                {
+                    if ((searchPosition - transform.position).magnitude <= stopDistance)
+                        searchMult++;
+                    destination = searchPosition;
+                }
             }
 
             // Get direction & distance.
