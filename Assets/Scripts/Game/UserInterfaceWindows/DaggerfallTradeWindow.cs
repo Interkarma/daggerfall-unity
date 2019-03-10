@@ -254,8 +254,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string RepairItemLabelTextHandler(DaggerfallUnityItem item)
         {
-            return (item.RepairData.IsBeingRepaired() && item.RepairData.IsRepairFinished() || 
-                !item.RepairData.IsBeingRepaired() && item.currentCondition == item.maxCondition) ? 
+            bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
+            return repairDone ? 
                     TextManager.Instance.GetText(textDatabase, "repairDone") : 
                     TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
         }
