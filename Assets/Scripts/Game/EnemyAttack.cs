@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game
         private bool MeleeAnimation()
         {
             // Are we in range and facing target? Then start attack.
-            if (senses.DetectedTarget && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
+            if (senses.TargetInSight && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
             {
                 float distance = MeleeDistance;
                 // Classic uses separate melee distance for targeting player and for targeting other AI
