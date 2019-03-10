@@ -454,7 +454,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (hasBowAttack || rangedMagicAvailable)
                 {
-                    if (senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos) && strafeTimer <= 0)
+                    if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos) && strafeTimer <= 0)
                     {
                         StrafeDecision();
                     }
@@ -525,7 +525,7 @@ namespace DaggerfallWorkshop.Game
                 else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
                     TurnToTarget(direction);
             }
-            else if (strafeTimer <= 0)
+            else if (DaggerfallUnity.Settings.EnhancedCombatAI && strafeTimer <= 0)
             {
                 StrafeDecision();
             }
@@ -544,7 +544,9 @@ namespace DaggerfallWorkshop.Game
             }
             // Not moving, just look at target
             else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
+            {
                 TurnToTarget(direction);
+            }
             else // Not moving, and no need to turn
             {
                 SetChangeStateTimer();
@@ -555,9 +557,6 @@ namespace DaggerfallWorkshop.Game
 
         void StrafeDecision()
         {
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
-                return;
-
             doStrafe = Random.Range(0, 4) == 0;
             strafeTimer = Random.Range(1f, 2f);
             if (doStrafe)
