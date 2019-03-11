@@ -1329,7 +1329,12 @@ namespace DaggerfallWorkshop.Game
             string backupKeySubject = this.currentKeySubject; // backup current key subject
 
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
-            this.currentKeySubject = buildingInfo.name;
+
+            //this.currentKeySubject = buildingInfo.name;
+            PlayerGPS.DiscoveredBuilding discoveredBuilding;
+            GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
+            this.currentKeySubject = discoveredBuilding.displayName;
+
             this.currentKeySubjectBuildingKey = buildingKey;
 
             markLocationOnMap = true; // only reveal on purpose
