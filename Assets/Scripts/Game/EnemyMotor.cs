@@ -111,6 +111,12 @@ namespace DaggerfallWorkshop.Game
             get { return bashing; }
         }
 
+        public int GiveUpTimer
+        {
+            get { return giveUpTimer; }
+            set { giveUpTimer = value; }
+        }
+
         void Start()
         {
             senses = GetComponent<EnemySenses>();

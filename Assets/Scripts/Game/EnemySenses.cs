@@ -51,10 +51,10 @@ namespace DaggerfallWorkshop.Game
         EnemySenses targetSenses;
         float lastDistanceToTarget;
         float targetRateOfApproach;
-        Vector3 lastKnownTargetPos;
-        Vector3 oldLastKnownTargetPos;
-        Vector3 predictedTargetPos;
-        Vector3 predictedTargetPosWithoutLead;
+        Vector3 lastKnownTargetPos = ResetPlayerPos;
+        Vector3 oldLastKnownTargetPos = ResetPlayerPos;
+        Vector3 predictedTargetPos = ResetPlayerPos;
+        Vector3 predictedTargetPosWithoutLead = ResetPlayerPos;
         Vector3 lastPositionDiff;
         bool awareOfTargetForLastPrediction;
         DaggerfallActionDoor actionDoor;
@@ -194,9 +194,6 @@ namespace DaggerfallWorkshop.Game
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
             motor = GetComponent<EnemyMotor>();
             questBehaviour = GetComponent<QuestResourceBehaviour>();
-            lastKnownTargetPos = ResetPlayerPos;
-            oldLastKnownTargetPos = ResetPlayerPos;
-            predictedTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
             short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
