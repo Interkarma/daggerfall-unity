@@ -76,6 +76,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public bool SoulTrapActive { get; set; }
 
+        public bool WabbajackActive { get; set; }
+
         #endregion
 
         #region Constructors

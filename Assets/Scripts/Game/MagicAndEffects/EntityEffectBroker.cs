@@ -19,6 +19,7 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -465,6 +466,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             spellOut = new SpellRecord.SpellRecordData();
             return false;
+        }
+
+        /// <summary>
+        /// Generate EffectBundleSettings for an artifact of a specified SpecialArtifactEffect index
+        /// </summary>
+        /// <param name="settings">Settings for artifact effect (if found)</param>
+        /// <returns>True if spell found, otherwise false.</returns>
+        public bool GetArtifactBundleSettings(out EffectBundleSettings settings, int effectIndex)
+        {
+            string effectKey = string.Empty;
+            if (effectIndex == (int)ArtifactsSubTypes.Wabbajack)
+            {
+                effectKey = "WabbajackEffect";
+            }
+            settings = new EffectBundleSettings
+            {
+                Effects = new EffectEntry[] { new EffectEntry(effectKey) }
+            };
+
+            return effectKey != string.Empty;
         }
 
         #endregion

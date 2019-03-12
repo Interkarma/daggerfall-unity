@@ -885,6 +885,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             DaggerfallEnchantment[] enchantments = item.Enchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
+                EffectBundleSettings bundleSettings;
+                EntityEffectBundle bundle;
                 if (enchantment.type == EnchantmentTypes.CastWhenStrikes)
                 {
                     SpellRecord.SpellRecordData spell;
@@ -893,18 +895,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         //Debug.LogFormat("EntityEffectManager.StrikeWithItem: Found CastWhenStrikes enchantment '{0}'", spell.spellName);
 
                         // Create effect bundle settings from classic spell
-                        EffectBundleSettings bundleSettings;
                         if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                             continue;
 
                         // Assign bundle to list
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         bundle.CasterEntityBehaviour = caster;
                         bundles.Add(bundle);
 
                         // TODO: Apply durability loss to used item on strike
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
+                }
+                else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
+                {
+                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
+                        continue;
+                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                    bundle.CasterEntityBehaviour = caster;
+                    bundles.Add(bundle);
                 }
             }
 
