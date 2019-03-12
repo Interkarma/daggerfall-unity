@@ -13,7 +13,7 @@ QuestorOffer:  [1000]
 <ce>                          I am _questgiver_.
 <ce>              I am in need of an escort. Would you protect
 <ce>                  me on my journey to __destination_?
-<ce>            It's less less than =traveltime_ days from here.
+<ce>               It's less than =traveltime_ days from here.
                                      <--->
 <ce>                       My name is _questgiver_.
 <ce>                  I have to get out of ___questgiver_
