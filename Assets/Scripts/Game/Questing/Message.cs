@@ -163,7 +163,9 @@ namespace DaggerfallWorkshop.Game.Questing
             if (expandMacros)
             {
                 QuestMacroHelper macroHelper = new QuestMacroHelper();
-                macroHelper.ExpandQuestMessage(ParentQuest, ref tokens);
+
+                // note Nystul: reveal dialog linked resources here on purpose (quest popups should reveal them: see this issue: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1678&p=22069#p22069)                
+                macroHelper.ExpandQuestMessage(ParentQuest, ref tokens, true);
             }
 
             return tokens;
