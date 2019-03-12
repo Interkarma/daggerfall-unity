@@ -638,6 +638,11 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
         public void TalkToStaticNPC(StaticNPC targetNPC, bool menu = true, bool isSpyMaster = false)
         {
+            // Do not speak with static NPCs carrying action records as these usually have some bespoke task to perform
+            // One example is Benefactor in Mantellan Crux
+            if (targetNPC.GetComponent<DaggerfallAction>())
+                return;
+
             // Populate NPC faction data
             FactionFile.FactionData targetFactionData;
             PersistentFactionData factionsData;
