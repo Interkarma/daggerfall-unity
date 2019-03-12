@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Utility
                             }
 
                             // reveal dialog linked resources in talk window
-                            if (revealDialogLinks)
+                            if (revealDialogLinks && macro.type == MacroTypes.NameMacro1) // only resolve if their true name was expanded (given) which is MacroTypes.NameMacro1
                             {
                                 System.Type t = resource.GetType();
                                 if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Place)))
