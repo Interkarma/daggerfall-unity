@@ -853,7 +853,7 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(transform.position, directionToTarget);
             if (Physics.Raycast(ray, out hit))
             {
-                DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
                 if (hit.transform.gameObject.isStatic)
                     return false;
             }
