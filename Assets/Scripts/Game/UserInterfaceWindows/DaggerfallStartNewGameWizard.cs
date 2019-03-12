@@ -146,12 +146,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetCustomClassWindow()
         {
-            if (createCharCustomClassWindow == null)
-            {
-                createCharCustomClassWindow = new CreateCharCustomClass(uiManager);
-                createCharCustomClassWindow.OnClose += CreateCharCustomClassWindow_OnClose;
-            }
-
+            createCharCustomClassWindow = new CreateCharCustomClass(uiManager);
+            createCharCustomClassWindow.OnClose += CreateCharCustomClassWindow_OnClose;
             wizardStage = WizardStages.CustomClassBuilder;
             uiManager.PushWindow(createCharCustomClassWindow);
         }
