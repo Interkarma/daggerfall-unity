@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="parentQuest">Parent quest of message.</param>
         /// <param name="tokens">Array of message tokens to expand macros inside of.</param>
-        /// <param name="resolveDialogLinks">will reveal dialog linked resources in talk window (this must be false for all calls to this function except if caller is talk manager when expanding answers).</param>
+        /// <param name="resolveDialogLinks">will reveal dialog linked resources in talk window (this must be false for all calls to this function except if caller is talk manager when expanding answers or for quest popups).</param>
         public void ExpandQuestMessage(Quest parentQuest, ref TextFile.Token[] tokens, bool revealDialogLinks = false)
         {
             // Iterate message tokens
