@@ -235,6 +235,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
+            // UpdateRepairTimes(false);
             UpdateCostAndGold();
         }
 
@@ -253,14 +254,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string RepairItemLabelTextHandler(DaggerfallUnityItem item)
         {
-            if (item.RepairData.IsBeingRepaired())
-            {
-                if (item.RepairData.IsRepairFinished())
-                    return TextManager.Instance.GetText(textDatabase, "repairDone");
-                else
-                    return TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.DaysUntilRepaired().ToString());
-            }
-            return (item.currentCondition == item.maxCondition) ? TextManager.Instance.GetText(textDatabase, "repairDone") : String.Empty;
+            bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
+            return repairDone ? 
+                    TextManager.Instance.GetText(textDatabase, "repairDone") : 
+                    TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
         }
 
         void SetupCostAndGold()
@@ -345,6 +342,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             base.Refresh(refreshPaperDoll);
 
+            UpdateRepairTimes(false);
             UpdateCostAndGold();
         }
 
@@ -425,6 +423,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Repairs
+
+        private void UpdateRepairTimes(bool commit)
+        {
+            if (windowMode != WindowModes.Repair || DaggerfallUnity.Settings.InstantRepairs)
+                return;
+
+            Debug.Log("UpdateRepairTimes called");
+            int totalRepairTime = 0, longestRepairTime = 0;
+            DaggerfallUnityItem itemLongestTime = null;
+            foreach (DaggerfallUnityItem item in remoteItemsFiltered)
+            {
+                int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
+                if (commit && !item.RepairData.IsBeingRepaired())
+                {
+                    item.RepairData.LeaveForRepair(repairTime);
+                    string note = string.Format(TextManager.Instance.GetText(textDatabase, "repairNote"), item.LongName, buildingDiscoveryData.displayName);
+                    GameManager.Instance.PlayerEntity.Notebook.AddNote(note);
+                }
+                totalRepairTime += repairTime;
+                if (repairTime > longestRepairTime)
+                {
+                    longestRepairTime = repairTime;
+                    itemLongestTime = item;
+                }
+                if (commit)
+                    item.RepairData.RepairTime = repairTime;
+                else
+                    item.RepairData.EstimatedRepairTime = repairTime;
+            }
+            if (itemLongestTime != null)
+            {
+                int modifiedLongestTime = longestRepairTime + ((totalRepairTime - longestRepairTime) / 2);
+                if (commit)
+                    itemLongestTime.RepairData.RepairTime = modifiedLongestTime;
+                else
+                    itemLongestTime.RepairData.EstimatedRepairTime = modifiedLongestTime;
+            }
+        }
+
+        #endregion
+
         #region Helper Methods
 
         protected void SelectActionMode(ActionModes mode)
@@ -464,6 +504,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         item.RepairData.Collect();
                     }
                 }
+                // UpdateRepairTimes(false);
             }
             else
             {   // Return items to player inventory. 
@@ -566,6 +607,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             item.currentCondition = item.maxCondition;
                     }
                 }
+                UpdateRepairTimes(false);
             }
             else
                 base.FilterRemoteItems();
@@ -639,7 +681,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         if (item.IsEnchanted)
                             DaggerfallUI.MessageBox(magicItemsCannotBeRepairedTextId);
                         else if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
+                        {
                             TransferItem(item, localItems, remoteItems);
+                            // UpdateRepairTimes(false);
+                        }
                         else
                             DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
                         break;
@@ -701,6 +746,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
             item.RepairData.Collect();
+            // UpdateRepairTimes(false);
         }
 
         #endregion
@@ -810,27 +856,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         }
                         else
                         {
-                            int totalRepairTime = 0, longestRepairTime = 0;
-                            DaggerfallUnityItem itemLongestTime = null;
-                            foreach (DaggerfallUnityItem item in remoteItemsFiltered)
-                            {
-                                int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
-                                if (!item.RepairData.IsBeingRepaired())
-                                {
-                                    item.RepairData.LeaveForRepair(repairTime);
-                                    string note = string.Format(TextManager.Instance.GetText(textDatabase, "repairNote"), item.LongName, buildingDiscoveryData.displayName);
-                                    GameManager.Instance.PlayerEntity.Notebook.AddNote(note);
-                                }
-                                totalRepairTime += repairTime;
-                                if (repairTime > longestRepairTime)
-                                {
-                                    longestRepairTime = repairTime;
-                                    itemLongestTime = item;
-                                }
-                                item.RepairData.RepairTime = repairTime;
-                            }
-                            if (itemLongestTime != null)
-                                itemLongestTime.RepairData.RepairTime = longestRepairTime + ((totalRepairTime - longestRepairTime) / 2);
+                            UpdateRepairTimes(true);
                         }
                         RaiseOnTradeHandler(remoteItems.GetNumItems(), tradePrice);
                         break;
