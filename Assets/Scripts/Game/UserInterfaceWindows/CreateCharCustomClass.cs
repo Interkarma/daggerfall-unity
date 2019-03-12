@@ -31,13 +31,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const string nativeImgName = "CUST00I0.IMG";
         const string nativeDaggerImgName = "CUST08I0.IMG";
+
         const int maxHpPerLevel = 30;
         const int minHpPerLevel = 4;
         const int defaultHpPerLevel = 8;
+        const int minDifficultyPoints = -12;
+        const int maxDifficultyPoints = 40;
+
         const int strNameYourClass = 301;
         const int strSetSkills = 300;
         const int strDistributeStats = 302;
-
+        const int strAdvancingDaggerInRed = 306;
         Texture2D nativeTexture;
         Texture2D nativeDaggerTexture;
         DaggerfallFont font;
@@ -405,6 +409,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(strDistributeStats);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return;
+            }
+
+            // Is AdvancementMultiplier off limits?
+            if (difficultyPoints < minDifficultyPoints || difficultyPoints > maxDifficultyPoints)
+            {
+                messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strAdvancingDaggerInRed);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
                 return;
