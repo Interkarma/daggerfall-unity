@@ -439,7 +439,7 @@ namespace DaggerfallWorkshop.Game
                     Application.Quit();
             }
 
-            layerAutomap = LayerMask.NameToLayer("ExteriorAutomap");
+            layerAutomap = LayerMask.NameToLayer("Automap");
             if (layerAutomap == -1)
             {
                 DaggerfallUnity.LogMessage("Did not find Layer with name \"Automap\"! Defaulting to Layer 10\nIt is prefered that Layer \"Automap\" is set in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);

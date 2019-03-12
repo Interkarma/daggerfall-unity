@@ -166,7 +166,7 @@ namespace DaggerfallWorkshop
                 // Import options
                 var propAddMeshColliders = Prop("Option_AddMeshColliders");
                 var propRMBGroundPlane = Prop("Option_RMBGroundPlane");
-                var propCloseCityGates = Prop("Option_CloseCityGates");
+                //var propCloseCityGates = Prop("Option_CloseCityGates");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Import Options");
                 GUILayoutHelper.Indent(() =>

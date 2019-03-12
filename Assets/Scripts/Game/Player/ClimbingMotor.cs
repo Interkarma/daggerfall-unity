@@ -12,7 +12,7 @@ namespace DaggerfallWorkshop.Game
     public class ClimbingMotor : MonoBehaviour
     {
         private Entity.PlayerEntity player;
-        private PlayerGroundMotor groundMotor;
+        //private PlayerGroundMotor groundMotor;
         private RappelMotor rappelMotor;
         private HangingMotor hangingMotor;
         private PlayerMotor playerMotor;
@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
         {
             player = GameManager.Instance.PlayerEntity;
             playerMotor = GetComponent<PlayerMotor>();
-            groundMotor = GetComponent<PlayerGroundMotor>();
+            //groundMotor = GetComponent<PlayerGroundMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
             controller = GetComponent<CharacterController>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game
             bool horizontallyStationary = Vector2.Distance(lastHorizontalPosition, new Vector2(controller.transform.position.x, controller.transform.position.z)) < startClimbHorizontalTolerance;
             bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
             bool touchingGround = (playerMotor.CollisionFlags & CollisionFlags.Below) != 0;
-            bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
+            //bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
             bool slippedToGround = isSlipping && touchingGround;
             bool nonOrthogonalStart = !isClimbing && inputForward && !horizontallyStationary;
             bool forwardStationaryNearCeiling = inputForward && hangingMotor.IsWithinHangingDistance && horizontallyStationary;

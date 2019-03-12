@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.Entity
         bool preventNormalizingReputations = false;
         bool isResting = false;
 
-        bool hasStartedInitialVampireQuest = false;
+        //bool hasStartedInitialVampireQuest = false;
         //byte vampireClan = 0;
         //uint lastTimeVampireNeedToKillSatiated = 0;
 
@@ -805,7 +805,7 @@ namespace DaggerfallWorkshop.Game.Entity
             this.timeForDarkBrotherhoodLetter = character.timeForDarkBrotherhoodLetter;
             this.darkBrotherhoodRequirementTally = character.darkBrotherhoodRequirementTally;
             this.thievesGuildRequirementTally = character.thievesGuildRequirementTally;
-            this.hasStartedInitialVampireQuest = character.hasStartedInitialVampireQuest != 0;
+            //this.hasStartedInitialVampireQuest = character.hasStartedInitialVampireQuest != 0;
             //this.vampireClan = character.vampireClan;
             //this.lastTimeVampireNeedToKillSatiated = character.lastTimeVampireNeedToKillSatiated;
 

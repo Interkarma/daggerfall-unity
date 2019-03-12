@@ -13,9 +13,9 @@ namespace DaggerfallWorkshop.Game
         private RappelMotor rappelMotor;
         private ClimbingMotor climbingMotor;
         private PlayerMoveScanner scanner;
-        private Transform camTransform;
+        //private Transform camTransform;
         private PlayerMotor playerMotor;
-        private Entity.PlayerEntity player;
+        //private Entity.PlayerEntity player;
 
         private enum HangingTransitionState
         {
@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game
         private float hangingContinueTimer = 0;
         private float rappelTimer;
         private bool isLosingGrip = false;
-        private Vector3 lastPosition = Vector3.zero;
+        //private Vector3 lastPosition = Vector3.zero;
         private Vector2 lastHorizontalPosition = Vector2.zero;
         private bool showHangingModeMessage = true;
         private float startHangingHorizontalTolerance = 0.12f;
@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game
         public bool IsWithinHangingDistance { get; private set; }
         private void Start()
         {
-            player = GameManager.Instance.PlayerEntity;
+            //player = GameManager.Instance.PlayerEntity;
             playerMotor = GetComponent<PlayerMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             levitateMotor = GetComponent<LevitateMotor>();
@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game
             rappelMotor = GetComponent<RappelMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             scanner = GetComponent<PlayerMoveScanner>();
-            camTransform = GameManager.Instance.MainCamera.transform;
+            //camTransform = GameManager.Instance.MainCamera.transform;
         }
 
         public void HangingChecks()
@@ -70,10 +70,10 @@ namespace DaggerfallWorkshop.Game
 
             float continueHangingSkillCheckFrequency = 14f;
             float halfHeight = (controller.height / 2f);
-            bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
+            //bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
 
-            bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
+            //bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
             bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
             IsWithinHangingDistance = (scanner.HeadHitDistance > halfHeight - 0.17f && scanner.HeadHitDistance < halfHeight - 0.09f);
 
