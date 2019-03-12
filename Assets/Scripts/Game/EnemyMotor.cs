@@ -68,6 +68,8 @@ namespace DaggerfallWorkshop.Game
         bool strafeLeft;
         float strafeAngle;
         Vector3 strafeDest;
+        bool searchedLastKnownPos;
+        int searchMult = 1;
 
         EnemySenses senses;
         Vector3 destination;
@@ -109,6 +111,12 @@ namespace DaggerfallWorkshop.Game
             get { return bashing; }
         }
 
+        public int GiveUpTimer
+        {
+            get { return giveUpTimer; }
+            set { giveUpTimer = value; }
+        }
+
         void Start()
         {
             senses = GetComponent<EnemySenses>();
@@ -122,10 +130,6 @@ namespace DaggerfallWorkshop.Game
             entityEffectManager = GetComponent<EntityEffectManager>();
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
-
-            // Classic AI moves only as close as melee range
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
-                stopDistance = attack.MeleeDistance;
 
             // Only need to check for ability to shoot bow once, and if no spells, only need to check for spells once.
             hasBowAttack = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
@@ -372,6 +376,8 @@ namespace DaggerfallWorkshop.Game
             {
                 SetChangeStateTimer();
                 bashing = false;
+                searchedLastKnownPos = false;
+                searchMult = 1;
 
                 return;
             }
@@ -391,6 +397,15 @@ namespace DaggerfallWorkshop.Game
 
                     return;
                 }
+            }
+
+            // Classic AI moves only as close as melee range
+            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
+            {
+                if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
+                    stopDistance = attack.MeleeDistance;
+                else
+                    stopDistance = attack.ClassicMeleeDistanceVsAI;
             }
 
             bool clearPathToShootAtPredictedPos = false;
@@ -414,25 +429,40 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 clearPathToShootAtPredictedPos = true;
-            }
-            else if (DaggerfallUnity.Settings.EnhancedCombatAI && avoidObstaclesTimer == 0 && ClearPathToPosition(senses.LastKnownTargetPos))
-            {
-                destination = senses.LastKnownTargetPos + (senses.LastPositionDiff * 2);
+                searchedLastKnownPos = false;
+                searchMult = 1;
             }
             // If detouring, use the detour position
             else if (avoidObstaclesTimer > 0)
             {
                 destination = detourDestination;
             }
-            // Otherwise, go straight
+            // Otherwise, search for target
             else
             {
-                destination = transform.position + transform.forward * (stopDistance + .3f); // Move position needs to be a little further away (adding .3f) than stop distance so that AI will move, not stop
+                Vector3 searchPosition = senses.LastKnownTargetPos - (senses.LastPositionDiff.normalized * searchMult);
+                if (!searchedLastKnownPos && (searchPosition - transform.position).magnitude <= stopDistance)
+                    searchedLastKnownPos = true;
+
+                if (!searchedLastKnownPos)
+                    destination = searchPosition;
+                else
+                {
+                    if ((searchPosition - transform.position).magnitude <= stopDistance)
+                        searchMult++;
+                    destination = searchPosition;
+                }
             }
 
             // Get direction & distance.
             var direction = (destination - transform.position).normalized;
-            float distance = (destination - transform.position).magnitude;
+            float distance = 0f;
+
+            // If enemy sees the target, use the distance value from EnemySenses, as this is also used for the melee attack decision and we need to be consistent with that.
+            if (clearPathToShootAtPredictedPos)
+                distance = senses.DistanceToTarget;
+            else
+                distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
             if ((hasBowAttack || hasSpells) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
@@ -443,7 +473,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (hasBowAttack || rangedMagicAvailable)
                 {
-                    if (senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos) && strafeTimer <= 0)
+                    if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos) && strafeTimer <= 0)
                     {
                         StrafeDecision();
                     }
@@ -514,7 +544,7 @@ namespace DaggerfallWorkshop.Game
                 else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
                     TurnToTarget(direction);
             }
-            else if (strafeTimer <= 0)
+            else if (DaggerfallUnity.Settings.EnhancedCombatAI && strafeTimer <= 0)
             {
                 StrafeDecision();
             }
@@ -533,7 +563,9 @@ namespace DaggerfallWorkshop.Game
             }
             // Not moving, just look at target
             else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
+            {
                 TurnToTarget(direction);
+            }
             else // Not moving, and no need to turn
             {
                 SetChangeStateTimer();
@@ -544,9 +576,6 @@ namespace DaggerfallWorkshop.Game
 
         void StrafeDecision()
         {
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
-                return;
-
             doStrafe = Random.Range(0, 4) == 0;
             strafeTimer = Random.Range(1f, 2f);
             if (doStrafe)

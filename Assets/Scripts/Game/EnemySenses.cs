@@ -51,10 +51,10 @@ namespace DaggerfallWorkshop.Game
         EnemySenses targetSenses;
         float lastDistanceToTarget;
         float targetRateOfApproach;
-        Vector3 lastKnownTargetPos;
-        Vector3 oldLastKnownTargetPos;
-        Vector3 predictedTargetPos;
-        Vector3 predictedTargetPosWithoutLead;
+        Vector3 lastKnownTargetPos = ResetPlayerPos;
+        Vector3 oldLastKnownTargetPos = ResetPlayerPos;
+        Vector3 predictedTargetPos = ResetPlayerPos;
+        Vector3 predictedTargetPosWithoutLead = ResetPlayerPos;
         Vector3 lastPositionDiff;
         bool awareOfTargetForLastPrediction;
         DaggerfallActionDoor actionDoor;
@@ -194,9 +194,6 @@ namespace DaggerfallWorkshop.Game
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
             motor = GetComponent<EnemyMotor>();
             questBehaviour = GetComponent<QuestResourceBehaviour>();
-            lastKnownTargetPos = ResetPlayerPos;
-            oldLastKnownTargetPos = ResetPlayerPos;
-            predictedTargetPos = ResetPlayerPos;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
             short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
@@ -452,10 +449,29 @@ namespace DaggerfallWorkshop.Game
                     predictedTargetPos = lastKnownTargetPos;
 
                 // Predict target's next position
-                if (targetPosPredict && DaggerfallUnity.Settings.EnhancedCombatAI && lastKnownTargetPos != ResetPlayerPos)
+                if (targetPosPredict && lastKnownTargetPos != ResetPlayerPos)
                 {
-                    float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
-                    predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                    // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
+                    if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
+                    {
+                        if (awareOfTargetForLastPrediction)
+                            lastPositionDiff = oldLastKnownTargetPos - lastKnownTargetPos;
+
+                        // Store current last known target position for next prediction update
+                        oldLastKnownTargetPos = lastKnownTargetPos;
+
+                        awareOfTargetForLastPrediction = true;
+                    }
+                    else
+                    {
+                        awareOfTargetForLastPrediction = false;
+                    }
+
+                    if (DaggerfallUnity.Settings.EnhancedCombatAI)
+                    {
+                        float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
+                        predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                    }
                 }
 
                 if (detectedTarget && !hasEncounteredPlayer && target == Player)
@@ -463,7 +479,7 @@ namespace DaggerfallWorkshop.Game
                     hasEncounteredPlayer = true;
 
                     // Check appropriate language skill to see if player can pacify enemy
-                    if (entityBehaviour && motor &&
+                    if (!questBehaviour && entityBehaviour && motor &&
                         (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass))
                     {
                         DFCareer.Skills languageSkill = enemyEntity.GetLanguageSkill();
@@ -488,20 +504,6 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {
-            // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
-            if (targetInSight || targetInEarshot)
-            {
-                if (awareOfTargetForLastPrediction)
-                    lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
-
-                // Store current last known target position for next prediction update
-                oldLastKnownTargetPos = lastKnownTargetPos;
-
-                awareOfTargetForLastPrediction = true;
-            }
-            else
-                awareOfTargetForLastPrediction = false;
-
             Vector3 assumedCurrentPosition;
 
             // If aware of target, use last known position as assumed current position
@@ -842,7 +844,6 @@ namespace DaggerfallWorkshop.Game
 
         bool CanHearTarget(DaggerfallEntityBehaviour target)
         {
-            bool heard = false;
             float hearingScale = 1f;
 
             // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
@@ -853,17 +854,12 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit))
             {
                 DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                if (entity != target && hit.transform.gameObject.isStatic)
+                if (hit.transform.gameObject.isStatic)
                     return false;
             }
 
             // TODO: Modify this by how much noise the target is making
-            if (distanceToTarget < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier)
-            {
-                heard = true;
-            }
-
-            return heard;
+            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier;
         }
 
         #endregion

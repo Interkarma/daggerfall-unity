@@ -705,7 +705,13 @@ namespace DaggerfallWorkshop.Game.Entity
                 cityWatch[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
             cityWatch[0].transform.forward = direction;
             EnemyMotor enemyMotor = cityWatch[0].GetComponent<EnemyMotor>();
+
+            // Classic does not do anything special to make guards aware of the player, but since they're responding to a crime, standing around
+            // unaware of the player can be perceived as a bug.
             enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
+
+            // Set a longer giveUpTimer than usual in case it takes more than the usual timer to get to the player position
+            enemyMotor.GiveUpTimer *= 3;
             cityWatch[0].SetActive(true);
 
             return cityWatch[0];

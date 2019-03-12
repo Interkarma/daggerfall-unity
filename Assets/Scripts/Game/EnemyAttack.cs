@@ -26,9 +26,9 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(EnemySenses))]
     public class EnemyAttack : MonoBehaviour
     {
-        public float MeleeAttackSpeed = 1.25f;      // Number of seconds between melee attacks
-        public float MeleeDistance = 2.25f;          // Maximum distance for melee attack
-        public float MeleeTimer = 0;                // Must be 0 for a melee attack or touch spell to be done
+        public float MeleeDistance = 2.25f;                // Maximum distance for melee attack
+        public float ClassicMeleeDistanceVsAI = 1.5f;      // Maximum distance for melee attack vs other AI in classic AI mode
+        public float MeleeTimer = 0;                       // Must be 0 for a melee attack or touch spell to be done
         public DaggerfallMissile ArrowMissilePrefab;
 
         EnemyMotor motor;
@@ -126,10 +126,15 @@ namespace DaggerfallWorkshop.Game
         private bool MeleeAnimation()
         {
             // Are we in range and facing target? Then start attack.
-            if (senses.DetectedTarget && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
+            if (senses.TargetInSight && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
             {
+                float distance = MeleeDistance;
+                // Classic uses separate melee distance for targeting player and for targeting other AI
+                if (!DaggerfallUnity.Settings.EnhancedCombatAI && senses.Target != GameManager.Instance.PlayerEntityBehaviour)
+                    distance = ClassicMeleeDistanceVsAI;
+
                 // Take the rate of target approach into account when deciding if to attack
-                if (senses.DistanceToTarget >= MeleeDistance + senses.TargetRateOfApproach)
+                if (senses.DistanceToTarget > distance + senses.TargetRateOfApproach)
                     return false;
 
                 // Set melee animation state
