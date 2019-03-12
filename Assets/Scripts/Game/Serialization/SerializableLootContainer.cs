@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 }
 
                 // Restore appearance
-                if (MeshReplacement.ImportCustomFlatGameobject(data.textureArchive, data.textureRecord, Vector3.zero, loot.transform))
+                if (MeshReplacement.SwapCustomFlatGameobject(data.textureArchive, data.textureRecord, loot.transform, Vector3.zero, lootContext == WorldContext.Dungeon))
                 {
                     // Use imported model instead of billboard
                     if (billboard) Destroy(billboard);
