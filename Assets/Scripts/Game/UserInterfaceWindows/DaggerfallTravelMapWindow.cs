@@ -431,12 +431,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButtonClickHandler;
 
             // Find button
-            findButton = DaggerfallUI.AddButton(new Rect(3, 175, findButtonTexture.width, findButtonTexture.height), NativePanel);
+            findButton = DaggerfallUI.AddButton(new Rect(3, 175, findButtonRect.width, findButtonRect.height), NativePanel);
             findButton.BackgroundTexture = findButtonTexture;
             findButton.OnMouseClick += FindlocationButtonClickHandler;
 
             // I'm At button
-            atButton = DaggerfallUI.AddButton(new Rect(3, 186, atButtonTexture.width, atButtonTexture.height), NativePanel);
+            atButton = DaggerfallUI.AddButton(new Rect(3, 186, atButtonRect.width, atButtonRect.height), NativePanel);
             atButton.BackgroundTexture = atButtonTexture;
             atButton.OnMouseClick += AtButtonClickHandler;
 
@@ -470,7 +470,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Horizontal arrow button
             horizontalArrowButton.Position = new Vector2(231, 176);
-            horizontalArrowButton.Size = new Vector2(leftArrowTexture.width, leftArrowTexture.height);
+            horizontalArrowButton.Size = new Vector2(22, 20);
             horizontalArrowButton.Enabled = false;
             NativePanel.Components.Add(horizontalArrowButton);
             horizontalArrowButton.Name = "horizontalArrowButton";
@@ -478,7 +478,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Vertical arrow button
             verticalArrowButton.Position = new Vector2(254, 176);
-            verticalArrowButton.Size = new Vector2(upArrowTexture.width, upArrowTexture.height);
+            verticalArrowButton.Size = new Vector2(22, 20);
             verticalArrowButton.Enabled = false;
             NativePanel.Components.Add(verticalArrowButton);
             verticalArrowButton.Name = "verticalArrowButton";
