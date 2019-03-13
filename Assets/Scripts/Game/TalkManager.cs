@@ -638,9 +638,10 @@ namespace DaggerfallWorkshop.Game
         // Player has clicked or static talk target or clicked the talk button inside a popup-window
         public void TalkToStaticNPC(StaticNPC targetNPC, bool menu = true, bool isSpyMaster = false)
         {
-            // Do not speak with static NPCs carrying action records as these usually have some bespoke task to perform
-            // One example is Benefactor in Mantellan Crux
-            if (targetNPC.GetComponent<DaggerfallAction>())
+            // Do not speak with static NPCs carrying specific non-dialog actions as these usually have some bespoke task to perform
+            // Note: Currently only ShowTextWithInput NPCs are excluded. Examples are guard at entrance of Daggerfall castle and Benefactor in Mantellan Crux
+            DaggerfallAction action = targetNPC.GetComponent<DaggerfallAction>();
+            if (action && action.ActionFlag == DFBlock.RdbActionFlags.ShowTextWithInput)
                 return;
 
             // Populate NPC faction data
