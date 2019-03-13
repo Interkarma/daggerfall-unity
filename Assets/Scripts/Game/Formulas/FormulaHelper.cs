@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.Formulas
     public static class FormulaHelper
     {
         // Delegate method signatures for overriding default formula
+        public delegate int Formula_NoParams();
         public delegate int Formula_1i(int a);
         public delegate int Formula_2i(int a, int b);
         public delegate int Formula_3i(int a, int b, int c);
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public delegate bool Formula_1pe_1sk(PlayerEntity pe, DFCareer.Skills sk);
 
         // Registries for overridden formula
+        public static Dictionary<string, Formula_NoParams>  formula_noparams = new Dictionary<string, Formula_NoParams>();
         public static Dictionary<string, Formula_1i>        formula_1i = new Dictionary<string, Formula_1i>();
         public static Dictionary<string, Formula_2i>        formula_2i = new Dictionary<string, Formula_2i>();
         public static Dictionary<string, Formula_3i>        formula_3i = new Dictionary<string, Formula_3i>();
@@ -117,6 +119,15 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Original Daggerfall seems to have a bug where negative endurance modifiers on healing rate
             // are applied as modifier + 1. Not recreating that here.
             return (int)Mathf.Floor((float)endurance / 10f) - 5;
+        }
+
+        public static int MaxStatValue()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("MaxStatValue", out del))
+                return del();
+            else
+                return 100;
         }
 
         #endregion

@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -32,7 +33,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class StatsRollout : Panel
     {
         const int minWorkingValue = 0;
-        const int maxWorkingValue = 100;
         const int minBonusRoll = 0;         // The minimum number of points added to each base class stat
         const int maxBonusRoll = 10;        // The maximum number of points added to each base class stat
         const int minBonusPool = 6;         // The minimum number of free points to allocate
@@ -235,6 +235,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Get working stat value
             int workingValue = workingStats.GetPermanentStatValue(selectedStat);
+
+            // Get max working value
+            int maxWorkingValue = FormulaHelper.MaxStatValue();
 
             // Working value cannot rise above maxWorkingValue and bonus cannot fall below zero, unless freeEdit active
             if ((freeEdit && workingValue == maxFreeEditValue) ||
