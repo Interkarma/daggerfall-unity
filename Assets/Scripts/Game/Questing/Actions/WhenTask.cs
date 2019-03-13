@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -75,6 +75,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override bool CheckTrigger(Task caller)
         {
+            // If task is already triggered then further when conditions under same task should not deactivate it again
+            // This prevents emulation problems with quests that have mutually exclusive victory conditions on a single task
+            // An example is W0C00Y00 that has two possible when conditions for success in _pcgetsgold_ task:
+            if (caller.IsTriggered)
+                return true;
+
             return CheckEvals();
         }
 
