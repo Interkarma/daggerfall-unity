@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override string Pattern
         {
-            get { return @"legal repute (?<amount>\d+)"; }
+            get { return @"legal repute (?<amount>-?\d+)"; }
         }
 
         public LegalRepute(Quest parentQuest)
