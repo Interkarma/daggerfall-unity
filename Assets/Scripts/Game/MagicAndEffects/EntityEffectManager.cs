@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -464,8 +464,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Special handling for paralysis
-                if (effect is Paralyze)
+                // Saving throw handling for effects without magnitude
+                // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
+                // Self-cast spells (e.g. self heals and buffs) should never be saved against
+                if (!effect.BypassSavingThrows && !effect.Properties.SupportMagnitude && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
@@ -477,11 +479,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         }
                         continue;
                     }
-
-                    // Immune in god mode
-                    if (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode)
-                        continue;
                 }
+
+                // Player is immune to paralysis in god mode
+                if (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode && effect is Paralyze)
+                    continue;
 
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
