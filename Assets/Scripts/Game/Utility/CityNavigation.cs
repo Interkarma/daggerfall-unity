@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -109,6 +109,12 @@ namespace DaggerfallWorkshop.Game.Utility
             Dirt = 1,
             Grass = 2,
             Stone = 3,
+            WaterDirtEdge1 = 5,
+            WaterDirtEdge2 = 6,
+            WaterGrassEdge1 = 20,
+            WaterGrassEdge2 = 21,
+            WaterStoneEdge1 = 30,
+            WaterStoneEdge2 = 31,
             Road = 46,
             RoadCornerDirt = 47,
             RoadCornerGrass = 55,
@@ -572,7 +578,13 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             switch((TileTypes)tile)
             {
-                case TileTypes.Water:           // Never try to swim
+                case TileTypes.Water:           // Never try to walk on full or edge water tiles
+                case TileTypes.WaterDirtEdge1:
+                case TileTypes.WaterDirtEdge2:
+                case TileTypes.WaterGrassEdge1:
+                case TileTypes.WaterGrassEdge2:
+                case TileTypes.WaterStoneEdge1:
+                case TileTypes.WaterStoneEdge2:
                     return 0;
                 case TileTypes.Stone:           // Stone hurts our feet, but walkable
                     return 4;
