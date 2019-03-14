@@ -89,10 +89,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                if (!playerEnterExit.IsPlayerInside && dfUnity.WorldTime.Now.IsCityLightsOn)
-                    enableTorch = true;
-                if (playerEnterExit.IsPlayerInsideDungeon && !playerEnterExit.IsPlayerInsideDungeonCastle)
-                    enableTorch = true;
+                enableTorch = (!playerEnterExit.IsPlayerInside && dfUnity.WorldTime.Now.IsCityLightsOn) || playerEnterExit.IsPlayerInsideDungeon;
             }
             if (torchLight)
                 torchLight.intensity = torchIntensity * DaggerfallUnity.Settings.PlayerTorchLightScale * intensityMod;
