@@ -45,6 +45,12 @@ namespace DaggerfallConnect.Arena2
         private readonly DFSubMeshBuffer[] subMeshBuffer = new DFSubMeshBuffer[subMeshBufferLength];
         private FaceUVTool.DFPurePoint[] calculatedUVBuffer = new FaceUVTool.DFPurePoint[calculatedUVBufferLength];
 
+        // Special arrays containing UV coordinates fixes
+        private static readonly int[] uFirstTavernPillar = { 0, 0, 96 };
+        private static readonly int[] uSecondTavernPillar = { 1952, 0, 96 };
+        private static readonly int[] uDungeonCorridor989 = { 512, 0, 1024 };
+        private static readonly int[] vDungeonCorridor989 = { 3264, 2864, 704 };
+
         /// <summary>
         /// Index lookup dictionary.
         /// </summary>
@@ -647,12 +653,19 @@ namespace DaggerfallConnect.Arena2
                     int u = reader.ReadInt16();
                     int v = reader.ReadInt16();
 
-                    // Fix certain UV coordinates that are
-                    // packed oddly, or aligned outside of poly.
-                    if (records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
+                    // Fix some UV coordinates (process only the first 3 points as
+                    // coordinates from point 4 and above are ignored)
+                    if (point < 3)
                     {
-                        UVunpack(ref u);
-                        UVunpack(ref v);
+                        // Fix incorrect coordinates
+                        FixBadUVCoordinates(record, plane, point, ref u, ref v);
+
+                        // Fix coordinates which require specific unpacking
+                        if (records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
+                        {
+                            UVunpack(ref u);
+                            UVunpack(ref v);
+                        }
                     }
 
                     // Store UV coordinates
@@ -762,7 +775,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Unpack special texture coordinates.
         /// </summary>
-        /// <param name="u">The U or V coordinate</param>
+        /// <param name="u">The U or V coordinate.</param>
         private static void UVunpack(ref int u)
         {
             const int n = 1024;
@@ -779,6 +792,61 @@ namespace DaggerfallConnect.Arena2
                 u = n - (u + n) % delta;
             else if (u < -threshold)
                 u = n + (u - n) % delta;
+        }
+
+        /// <summary>
+        /// Fix some incorrect UV coordinates.
+        /// </summary>
+        /// <param name="record">Mesh record index.</param>
+        /// <param name="plane">Plane index.</param>
+        /// <param name="point">Point index.</param>
+        /// <param name="u">U texture coordinate.</param>
+        /// <param name="v">V texture coordinate.</param>
+        private static void FixBadUVCoordinates(int record, int plane, int point, ref int u, ref int v)
+        {
+            switch (record)
+            {
+                // Dungeon corridor floor
+                case 989:
+                    if (plane == 13)
+                    {
+                        u = uDungeonCorridor989[point];
+                        v = vDungeonCorridor989[point];
+                    }
+                    break;
+
+                // Tavern interior pillars (e.g. The King's Fairy, Daggerfall City)
+                case 2073:
+                    if (plane == 2)
+                        u = uFirstTavernPillar[point];
+                    else if (plane == 3)
+                        u = uSecondTavernPillar[point];
+                    break;
+                case 2086:
+                    if (plane == 6 || plane == 11)
+                        u = uFirstTavernPillar[point];
+                    else if (plane == 7 || plane == 12)
+                        u = uSecondTavernPillar[point];
+                    break;
+                case 2092:
+                    if (plane == 2)
+                        u = uSecondTavernPillar[point];
+                    else if (plane == 3)
+                        u = uFirstTavernPillar[point];
+                    break;
+                case 2093:
+                    if (plane == 1)
+                        u = uFirstTavernPillar[point];
+                    else if (plane == 2)
+                        u = uSecondTavernPillar[point];
+                    break;
+
+                // Weapon store exterior wall on the right side of the door (e.g. The Count's Arsenal, Newtale, Bhoriane)
+                case 5941:
+                    if (plane == 21 && point == 2)
+                        u = -1024;
+                    break;
+            }
         }
 
         /// <summary>
