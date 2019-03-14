@@ -65,8 +65,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected override void BecomeIncumbent()
         {
             lastMagnitudeIncreaseAmount = GetMagnitude(caster);
-            IncreaseMagnitude(lastMagnitudeIncreaseAmount);
-            ShowPlayerDrained();
+            if (lastMagnitudeIncreaseAmount > 0)
+            {
+                IncreaseMagnitude(lastMagnitudeIncreaseAmount);
+                ShowPlayerDrained();
+            }
         }
 
         protected override void AddState(IncumbentEffect incumbent)
@@ -75,8 +78,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             lastMagnitudeIncreaseAmount = GetMagnitude(caster);
-            (incumbent as DrainEffect).IncreaseMagnitude(lastMagnitudeIncreaseAmount);
-            ShowPlayerDrained();
+            if (lastMagnitudeIncreaseAmount > 0)
+            {
+                (incumbent as DrainEffect).IncreaseMagnitude(lastMagnitudeIncreaseAmount);
+                ShowPlayerDrained();
+            }
         }
 
         public override void HealAttributeDamage(DFCareer.Stats stat, int amount)
