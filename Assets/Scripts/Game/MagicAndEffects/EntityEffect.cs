@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -115,6 +115,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int CurrentVariant { get; set; }
 
         /// <summary>
+        /// True if spell effect always lands regardless of saving throws.
+        /// </summary>
+        bool BypassSavingThrows { get; }
+
+        /// <summary>
         /// Called by an EntityEffectManager when parent bundle is attached to host entity.
         /// Use this for setup or immediate work performed only once.
         /// </summary>
@@ -180,6 +185,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected EntityEffectManager manager = null;
         protected int variantCount = 1;
         protected int currentVariant = 0;
+        protected bool bypassSavingThrows = false;
 
         int roundsRemaining;
         bool chanceSuccess = false;
@@ -310,6 +316,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return currentVariant; }
             set { currentVariant = Mathf.Clamp(value, 0, variantCount - 1); }
+        }
+
+        public bool BypassSavingThrows
+        {
+            get { return bypassSavingThrows; }
         }
 
         #endregion

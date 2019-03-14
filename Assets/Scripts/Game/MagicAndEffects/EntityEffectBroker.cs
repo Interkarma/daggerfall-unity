@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -476,9 +476,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool GetArtifactBundleSettings(out EffectBundleSettings settings, int effectIndex)
         {
             string effectKey = string.Empty;
-            if (effectIndex == (int)ArtifactsSubTypes.Wabbajack)
+            switch (effectIndex)
             {
-                effectKey = "WabbajackEffect";
+                case (int)ArtifactsSubTypes.Wabbajack:
+                    effectKey = "WabbajackEffect";
+                    break;
+                case (int)ArtifactsSubTypes.Mehrunes_Razor:
+                    effectKey = "MehrunesRazorEffect";
+                    break;
             }
             settings = new EffectBundleSettings
             {
