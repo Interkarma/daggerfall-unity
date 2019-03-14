@@ -464,24 +464,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Saving throws
-                if (!effect.BypassSavingThrows && FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
+                // Saving throws are performed if bundle is not self-cast or originate from another entity
+                // Self-cast spells such as a heals and buffs are not checked for saving throws
+                // But player can still catch themselves in their own AoE spells and receive a chance to save
+                if (sourceBundle.Settings.TargetType != TargetTypes.CasterOnly || effect.Caster != EntityBehaviour)
                 {
-                    if (IsPlayerEntity || showNonPlayerFailures)
+                    if (!effect.BypassSavingThrows && FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
                     {
-                        // Output "Save versus spell made." for external contact spells
-                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                        if (IsPlayerEntity || showNonPlayerFailures)
+                        {
+                            // Output "Save versus spell made." for external contact spells
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                        }
+                        continue;
                     }
-                    continue;
                 }
 
-                // Special handling for paralysis
-                if (effect is Paralyze)
-                {
-                    // Immune in god mode
-                    if (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode)
-                        continue;
-                }
+                // Player is immune to paralysis in god mode
+                if (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode && effect is Paralyze)
+                    continue;
 
                 // Add effect
                 instancedBundle.liveEffects.Add(effect);
