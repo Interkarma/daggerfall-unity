@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop.Game
         float strafeAngle;
         Vector3 strafeDest;
         bool searchedLastKnownPos;
-        int searchMult = 1;
+        int searchMult = 0;
 
         EnemySenses senses;
         Vector3 destination;
@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop.Game
                 SetChangeStateTimer();
                 bashing = false;
                 searchedLastKnownPos = false;
-                searchMult = 1;
+                searchMult = 0;
 
                 return;
             }
@@ -430,7 +430,7 @@ namespace DaggerfallWorkshop.Game
 
                 clearPathToShootAtPredictedPos = true;
                 searchedLastKnownPos = false;
-                searchMult = 1;
+                searchMult = 0;
             }
             // If detouring, use the detour position
             else if (avoidObstaclesTimer > 0)
