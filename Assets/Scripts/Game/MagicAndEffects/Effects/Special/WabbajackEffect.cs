@@ -12,6 +12,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -59,6 +60,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     enemyType = (MobileTypes)(((int)enemyType + 1) % careerIDs.Length);
                 }
                 Transform parentTransform = entityBehaviour.gameObject.transform.parent;
+                // Do not disable enemy if in use by the quest system
+                QuestResourceBehaviour questResourceBehaviour = entityBehaviour.GetComponent<QuestResourceBehaviour>();
+                if (questResourceBehaviour)
+                {
+                    if (!questResourceBehaviour.IsFoeDead)
+                        return;
+                }
                 entityBehaviour.gameObject.SetActive(false);
                 GameObject gameObject = GameObjectHelper.CreateEnemy(HardStrings.enemyNames[(int)enemyType], enemyType, entityBehaviour.transform.localPosition, parentTransform);
                 DaggerfallEntityBehaviour newEnemyBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
@@ -71,6 +79,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
+            bypassSavingThrows = true;
         }
     }
 }

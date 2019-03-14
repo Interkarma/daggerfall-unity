@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -464,20 +464,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
+                // Saving throws
+                if (!effect.BypassSavingThrows && FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
+                {
+                    if (IsPlayerEntity || showNonPlayerFailures)
+                    {
+                        // Output "Save versus spell made." for external contact spells
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                    }
+                    continue;
+                }
+
                 // Special handling for paralysis
                 if (effect is Paralyze)
                 {
-                    // Immune if saving throw made
-                    if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
-                    {
-                        if (IsPlayerEntity || showNonPlayerFailures)
-                        {
-                            // Output "Save versus spell made." for external contact spells
-                            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
-                        }
-                        continue;
-                    }
-
                     // Immune in god mode
                     if (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode)
                         continue;
