@@ -710,12 +710,14 @@ namespace DaggerfallWorkshop.Game
                         continue;
 
                     // Can't target ally
-                    if (DaggerfallUnity.Settings.EnemyInfighting)
+                    if (targetBehaviour == Player && enemyEntity.Team == MobileTeams.PlayerAlly)
+                        continue;
+                    else if (DaggerfallUnity.Settings.EnemyInfighting)
                     {
-                        if (targetEntity != null && targetEntity.MobileEnemy.Team == enemyEntity.MobileEnemy.Team)
+                        if (targetEntity != null && targetEntity.Team == enemyEntity.Team)
                             continue;
                     }
-                    else // TODO: Support player-summoned allies, even without infighting option
+                    else
                     {
                         if (targetBehaviour != Player)
                             continue;

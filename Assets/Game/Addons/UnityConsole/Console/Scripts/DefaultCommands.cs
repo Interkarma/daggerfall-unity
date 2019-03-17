@@ -33,6 +33,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(LoadCommand.name, LoadCommand.description, LoadCommand.usage, LoadCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GodCommand.name, GodCommand.description, GodCommand.usage, GodCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(NoTargetCommand.name, NoTargetCommand.description, NoTargetCommand.usage, NoTargetCommand.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(CreateMobileCommand.name, CreateMobileCommand.description, CreateMobileCommand.usage, CreateMobileCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Suicide.name, Suicide.description, Suicide.usage, Suicide.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowDebugStrings.name, ShowDebugStrings.description, ShowDebugStrings.usage, ShowDebugStrings.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetWeather.name, SetWeather.description, SetWeather.usage, SetWeather.Execute);
@@ -274,6 +275,62 @@ namespace Wenzil.Console
                 {
                     playerEntity.NoTargetMode = !playerEntity.NoTargetMode;
                     return string.Format("NoTarget enabled: {0}", playerEntity.NoTargetMode);
+                }
+                else
+                    return error;
+            }
+        }
+
+        private static class CreateMobileCommand
+        {
+            public static readonly string name = "cm";
+            public static readonly string error = "Failed to create mobile";
+            public static readonly string usage = "cm [n] [team]";
+            public static readonly string description = "Creates a mobile of type [n] on [team]. Omit team argument for default team.";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length < 1) return "See usage.";
+
+                GameObject player = GameManager.Instance.PlayerObject;
+                if (player != null)
+                {
+                    int id = 0;
+                    if (!int.TryParse(args[0], out id))
+                        return "Invalid mobile ID.";
+
+                    if (!Enum.IsDefined(typeof(MobileTypes), id))
+                        return "Invalid mobile ID.";
+
+                    int team = 0;
+                    if (args.Length > 1)
+                    {
+                        if (!int.TryParse(args[1], out team))
+                            return "Invalid team.";
+
+                        if (!Enum.IsDefined(typeof(MobileTeams), team))
+                            return "Invalid team.";
+                    }
+
+                    GameObject[] mobile = GameObjectHelper.CreateFoeGameObjects(player.transform.position + player.transform.forward * 2, (MobileTypes)id, 1);
+
+                    DaggerfallEntityBehaviour behaviour = mobile[0].GetComponent<DaggerfallEntityBehaviour>();
+                    EnemyEntity entity = behaviour.Entity as EnemyEntity;
+                    if (args.Length > 1)
+                    {
+                        entity.Team = (MobileTeams)team;
+                    }
+                    else
+                        team = (int)entity.Team;
+
+                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                        mobile[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
+                    else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+                        mobile[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
+                    mobile[0].transform.LookAt(mobile[0].transform.position + (mobile[0].transform.position - player.transform.position));
+                    mobile[0].SetActive(true);
+
+                    return string.Format("Created {0} on team {1}", (MobileTypes)id, (MobileTeams)team);
                 }
                 else
                     return error;

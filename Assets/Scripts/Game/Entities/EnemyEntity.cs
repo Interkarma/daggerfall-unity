@@ -215,6 +215,7 @@ namespace DaggerfallWorkshop.Game.Entity
             this.entityType = entityType;
             name = career.Name;
             minMetalToHit = mobileEnemy.MinMetalToHit;
+            team = mobileEnemy.Team;
 
             short skillsLevel = (short)((level * 5) + 30);
             if (skillsLevel > 100)

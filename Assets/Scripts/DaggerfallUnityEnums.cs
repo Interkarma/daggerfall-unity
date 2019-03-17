@@ -260,6 +260,7 @@ namespace DaggerfallWorkshop
     /// </summary>
     public enum MobileTeams
     {
+        PlayerEnemy,
         PlayerAlly,
         Vermin,
         Spriggans,
