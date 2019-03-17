@@ -1369,7 +1369,8 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if ((!GameManager.Instance.IsPlayerInside)&&(!forceSaveOfDungeonDiscoveryState)) // if player is outside just skip this function
+            if ((!GameManager.Instance.IsPlayerInside)&&(!forceSaveOfDungeonDiscoveryState) || // if player is outside just skip this function
+                gameobjectGeometry == null)                                                    // also skip if object geomtry not initialised
             {
                 return;
             }
