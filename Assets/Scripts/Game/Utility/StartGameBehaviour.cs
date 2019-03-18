@@ -619,7 +619,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Restore effect
                 Debug.Log("Restoring vampirism to classic character.");
                 EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
-                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
 
                 // Assign correct clan from classic save
                 VampirismEffect vampireEffect = (VampirismEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<VampirismEffect>();

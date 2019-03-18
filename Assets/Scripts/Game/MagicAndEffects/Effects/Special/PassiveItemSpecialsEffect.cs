@@ -95,6 +95,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ShowSpellIcon = false;
+            bypassSavingThrows = true;
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

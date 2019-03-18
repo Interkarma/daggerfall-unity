@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             classicDiseaseType = Diseases.None;
             diseaseData = new DiseaseData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF); // Permanent no-effect disease, will manage custom lifecycle
+            bypassSavingThrows = true;
         }
 
         public int InfectionRegionIndex
@@ -169,7 +170,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Start permanent vampirism effect stage two
             EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismCurse();
-            GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+            GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
 
             // Display popup
             DaggerfallMessageBox mb = DaggerfallUI.MessageBox(deathIsNotEternalTextID);

@@ -834,7 +834,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     {
                         // Inflict stage one vampirism disease
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
-                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                         Debug.Log("Player infected by vampire.");
                     }
                     else if (random <= 2.0f)
@@ -1015,7 +1015,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     // Infect target
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreatePoison(poisonType);
-                    effectManager.AssignBundle(bundle);
+                    effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                 }
             }
             else
@@ -1259,7 +1259,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // Infect player
                 Diseases diseaseType = (Diseases)diseaseList[diseaseIndex];
                 EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateDisease(diseaseType);
-                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
 
                 Debug.LogFormat("Infected player with disease {0}", diseaseType.ToString());
             }

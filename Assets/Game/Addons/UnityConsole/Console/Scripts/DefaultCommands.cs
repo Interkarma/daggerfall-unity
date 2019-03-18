@@ -1786,7 +1786,7 @@ namespace Wenzil.Console
                     // Infect player
                     Diseases disease = (Diseases)index;
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateDisease(disease);
-                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                     return string.Format("Player infected with {0}", disease.ToString());
                 }
 
@@ -1795,7 +1795,7 @@ namespace Wenzil.Console
                 {
                     // Infect player with vampirism stage one
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
-                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                     return "Player infected with vampirism.";
                 }
                 else if (diseaseType == CommandDiseaseTypes.Werewolf)

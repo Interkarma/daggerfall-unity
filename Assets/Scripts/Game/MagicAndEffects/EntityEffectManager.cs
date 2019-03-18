@@ -360,8 +360,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        public void AssignBundle(EntityEffectBundle sourceBundle, bool showNonPlayerFailures = false)
+        public void AssignBundle(EntityEffectBundle sourceBundle, AssignBundleFlags flags = AssignBundleFlags.None)
         {
+            // Check flags
+            bool showNonPlayerFailures = (flags & AssignBundleFlags.ShowNonPlayerFailures) == AssignBundleFlags.ShowNonPlayerFailures;
+            bool bypassSavingThrows = (flags & AssignBundleFlags.BypassSavingThrows) == AssignBundleFlags.BypassSavingThrows;
+
             // Source bundle must have one or more effects
             if (sourceBundle.Settings.Effects == null || sourceBundle.Settings.Effects.Length == 0)
             {
@@ -467,7 +471,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Saving throw handling for effects without magnitude
                 // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
                 // Self-cast spells (e.g. self heals and buffs) should never be saved against
-                if (!effect.BypassSavingThrows && !effect.Properties.SupportMagnitude && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
+                if (!bypassSavingThrows && !effect.BypassSavingThrows && !effect.Properties.SupportMagnitude && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
@@ -734,7 +738,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             };
             // Assign effect bundle.
             EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-            AssignBundle(bundle);
+            AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
 
             // Play cast sound on drink for player only.
             if (IsPlayerEntity)
@@ -768,7 +772,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             };
             EntityEffectBundle passiveItemSpecialsBundle = new EntityEffectBundle(passiveItemSpecialsSettings, entityBehaviour);
             passiveItemSpecialsBundle.FromEquippedItem = item;
-            AssignBundle(passiveItemSpecialsBundle);
+            AssignBundle(passiveItemSpecialsBundle, AssignBundleFlags.BypassSavingThrows);
 
             // Some equipped magic items have "cast when held" enchantments
             DaggerfallEnchantment[] enchantments = item.Enchantments;
@@ -789,7 +793,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         // Assign bundle
                         EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         bundle.FromEquippedItem = item;
-                        AssignBundle(bundle);
+                        AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
 
                         // Play cast sound on equip for player only
                         if (IsPlayerEntity)
@@ -922,7 +926,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Assign bundles to this entity
             foreach (EntityEffectBundle bundle in bundles)
             {
-                AssignBundle(bundle, true);
+                AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
             }
         }
 
@@ -1605,7 +1609,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 BundleType = BundleTypes.None,
                 Effects = new EffectEntry[] { new EffectEntry(PassiveSpecialsEffect.EffectKey) },
             };
-            AssignBundle(new EntityEffectBundle(settings, entityBehaviour));
+            AssignBundle(new EntityEffectBundle(settings, entityBehaviour), AssignBundleFlags.BypassSavingThrows);
         }
 
         #endregion

@@ -109,4 +109,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Chrondiasis = 15,
         WizardFever = 16,
     }
+
+    /// <summary>
+    /// Flags to modify behaviour of assigning effect bundles.
+    /// </summary>
+    [Flags]
+    public enum AssignBundleFlags
+    {
+        None = 0,
+        ShowNonPlayerFailures = 1,
+        BypassSavingThrows = 2,
+    }
 }
