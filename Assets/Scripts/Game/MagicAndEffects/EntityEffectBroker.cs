@@ -786,7 +786,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Attempt to find the effect template
             IEntityEffect result = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(classicKey);
             if (result == null)
-                Debug.LogErrorFormat("Could not find effect template for type={0} subType={1}", type, subType);
+                Debug.LogWarningFormat("Could not find effect template for type={0} subType={1}", type, subType);
 
             return result;
         }
