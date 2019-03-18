@@ -33,6 +33,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(LoadCommand.name, LoadCommand.description, LoadCommand.usage, LoadCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GodCommand.name, GodCommand.description, GodCommand.usage, GodCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(NoTargetCommand.name, NoTargetCommand.description, NoTargetCommand.usage, NoTargetCommand.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ToggleAICommand.name, ToggleAICommand.description, ToggleAICommand.usage, ToggleAICommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(CreateMobileCommand.name, CreateMobileCommand.description, CreateMobileCommand.usage, CreateMobileCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Suicide.name, Suicide.description, Suicide.usage, Suicide.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowDebugStrings.name, ShowDebugStrings.description, ShowDebugStrings.usage, ShowDebugStrings.Execute);
@@ -275,6 +276,26 @@ namespace Wenzil.Console
                 {
                     playerEntity.NoTargetMode = !playerEntity.NoTargetMode;
                     return string.Format("NoTarget enabled: {0}", playerEntity.NoTargetMode);
+                }
+                else
+                    return error;
+            }
+        }
+
+        private static class ToggleAICommand
+        {
+            public static readonly string name = "tai";
+            public static readonly string error = "Failed to toggle AI";
+            public static readonly string usage = "tai";
+            public static readonly string description = "Toggles AI on or off";
+
+            public static string Execute(params string[] args)
+            {
+                GameManager gameManager = GameManager.Instance;
+                if (gameManager != null)
+                {
+                    gameManager.DisableAI = !gameManager.DisableAI;
+                    return string.Format("AI disabled: {0}", gameManager.DisableAI);
                 }
                 else
                     return error;

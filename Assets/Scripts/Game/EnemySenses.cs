@@ -216,6 +216,9 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            if (GameManager.Instance.DisableAI)
+                return;
+
             targetPosPredictTimer += Time.deltaTime;
             if (targetPosPredictTimer >= predictionInterval)
             {
