@@ -440,7 +440,7 @@ namespace DaggerfallWorkshop.Game
             // Otherwise, search for target
             else
             {
-                Vector3 searchPosition = senses.LastKnownTargetPos - (senses.LastPositionDiff.normalized * searchMult);
+                Vector3 searchPosition = senses.LastKnownTargetPos + (senses.LastPositionDiff.normalized * searchMult);
                 if (!searchedLastKnownPos && (searchPosition - transform.position).magnitude <= stopDistance)
                     searchedLastKnownPos = true;
 

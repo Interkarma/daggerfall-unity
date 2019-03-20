@@ -455,7 +455,7 @@ namespace DaggerfallWorkshop.Game
                     if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
                     {
                         if (awareOfTargetForLastPrediction)
-                            lastPositionDiff = oldLastKnownTargetPos - lastKnownTargetPos;
+                            lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
 
                         // Store current last known target position for next prediction update
                         oldLastKnownTargetPos = lastKnownTargetPos;
