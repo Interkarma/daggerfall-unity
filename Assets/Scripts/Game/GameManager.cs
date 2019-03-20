@@ -449,7 +449,10 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             if (!IsPlayingGame())
+            {
+                classicUpdate = false;
                 return;
+            }
 
             // Update timer that approximates the timing of original Daggerfall's game update loop
             classicUpdateTimer += Time.deltaTime;
