@@ -994,7 +994,7 @@ namespace DaggerfallWorkshop.Game
             if (!dfUnity.IsReady || !dfUnity.IsPathValidated)
                 return null;
 
-            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, readOnly);
+            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
             Texture2D texture;
             if (!TextureReplacement.TryImportImage(name, readOnly, out texture))
             {
