@@ -872,6 +872,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                     break;
                 }
+
+                // Handle Oghma Infinium
+                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 5)
+                {
+                    GameManager.Instance.PlayerEntity.ReadyToLevelUp = true;
+                    GameManager.Instance.PlayerEntity.OghmaLevelUp = true;
+                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
+                    collection.RemoveItem(item);
+                }
             }
         }
 

@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
         protected bool readyToLevelUp = false;
+        protected bool oghmaLevelUp = false;
 
         protected short[] sGroupReputations = new short[5];
 
@@ -150,6 +151,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
         public int CurrentLevelUpSkillSum { get { return currentLevelUpSkillSum; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
+        public bool OghmaLevelUp { get { return oghmaLevelUp; } set { oghmaLevelUp = value; } }
         public short[] SGroupReputations { get { return sGroupReputations; } set { sGroupReputations = value; } }
         public int BiographyResistDiseaseMod { get { return biographyResistDiseaseMod; } set { biographyResistDiseaseMod = value; } }
         public int BiographyResistMagicMod { get { return biographyResistMagicMod; } set { biographyResistMagicMod = value; } }

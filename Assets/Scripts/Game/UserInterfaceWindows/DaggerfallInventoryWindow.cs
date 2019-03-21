@@ -1520,7 +1520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Handle local items
-            if (item.ItemGroup == ItemGroups.Books)
+            if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
