@@ -1610,7 +1610,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.IsEnchanted)
             {
                 GameManager.Instance.PlayerEffectManager.UseItem(item, collection);
-                DaggerfallUI.Instance.PopToHUD();
+
+                // Need to delay popping to HUD until any message boxes have finished showing
+                if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() != typeof(DaggerfallMessageBox))
+                  DaggerfallUI.Instance.PopToHUD();
                 return;
             }
         }

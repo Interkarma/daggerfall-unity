@@ -881,6 +881,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
                     collection.RemoveItem(item);
                 }
+
+                // Handle Azura's Star
+                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 9)
+                {
+                    const int soulReleasedID = 32;
+                    const int noSoulToReleaseID = 20;
+
+                    if (item.TrappedSoulType != MobileTypes.None)
+                    {
+                        item.TrappedSoulType = MobileTypes.None;
+                        DaggerfallUI.MessageBox(soulReleasedID);
+                    }
+                    else
+                    {
+                        DaggerfallUI.MessageBox(noSoulToReleaseID);
+                    }
+                }
             }
         }
 

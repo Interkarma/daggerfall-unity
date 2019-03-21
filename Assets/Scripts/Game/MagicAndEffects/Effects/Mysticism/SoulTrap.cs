@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 
@@ -113,15 +114,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public bool FillEmptyTrapItem(MobileTypes soulType)
         {
-            // Get all soul traps and find first empty
+            // In classic, the player's items are iterated through and the first instance found of an empty soul trap or Azura's Star is used.
+            // Whichever is chosen first would depend on the order of the list of items, which would probably be the order in which the items were added to the inventory.
+            // For here, fill Azura's Star first, then soul traps, as this is probably the behavior players would expect.
+
             DaggerfallUnityItem emptyTrap = null;
-            List<DaggerfallUnityItem> traps = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-            foreach(DaggerfallUnityItem trap in traps)
+
+            // Get empty Azura's Star
+            List<DaggerfallUnityItem> amulets = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.Jewellery, (int)Jewellery.Amulet);
+            foreach (DaggerfallUnityItem amulet in amulets)
             {
-                if (trap.TrappedSoulType == MobileTypes.None)
+                if (amulet.Enchantments[0].type == EnchantmentTypes.SpecialArtifactEffect && amulet.Enchantments[0].param == 9 && amulet.TrappedSoulType == MobileTypes.None)
                 {
-                    emptyTrap = trap;
+                    emptyTrap = amulet;
                     break;
+                }
+            }
+
+            if (emptyTrap == null)
+            {
+                // Get empty soul trap
+                List<DaggerfallUnityItem> traps = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                foreach (DaggerfallUnityItem trap in traps)
+                {
+                    if (trap.TrappedSoulType == MobileTypes.None)
+                    {
+                        emptyTrap = trap;
+                        break;
+                    }
                 }
             }
 
