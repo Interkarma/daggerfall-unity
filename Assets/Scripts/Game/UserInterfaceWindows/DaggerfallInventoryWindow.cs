@@ -1611,9 +1611,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 GameManager.Instance.PlayerEffectManager.UseItem(item, collection);
 
-                // Need to delay popping to HUD until any message boxes have finished showing
-                if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() != typeof(DaggerfallMessageBox))
-                  DaggerfallUI.Instance.PopToHUD();
+                // Only pop the inventory window. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to pop those.
+                if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() == typeof(DaggerfallInventoryWindow))
+                  DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
                 return;
             }
         }
