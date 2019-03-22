@@ -946,7 +946,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         SetAttackModifier(DFCareer.AttackModifier.Phobia, advDis.secondaryString);
                         break;
                     case HardStrings.expertiseIn:
-                        SetAttackModifier(DFCareer.AttackModifier.Bonus, advDis.secondaryString);
+                        SetProficiency(DFCareer.Proficiency.Expert, advDis.secondaryString);
                         break;
                     case HardStrings.forbiddenWeaponry:
                         SetProficiency(DFCareer.Proficiency.Forbidden, advDis.secondaryString);

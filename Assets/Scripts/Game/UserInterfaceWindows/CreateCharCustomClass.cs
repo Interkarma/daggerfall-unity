@@ -160,6 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Initialize character class
             createdClass = new DFCareer();
             createdClass.HitPointsPerLevel = defaultHpPerLevel;
+            createdClass.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_0_50;
             createdClass.SpellPointMultiplierValue = .5f;
 
             // Initiate UI components
