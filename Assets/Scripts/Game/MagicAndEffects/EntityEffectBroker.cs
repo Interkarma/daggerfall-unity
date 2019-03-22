@@ -484,6 +484,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 case (int)ArtifactsSubTypes.Mehrunes_Razor:
                     effectKey = "MehrunesRazorEffect";
                     break;
+                case (int)ArtifactsSubTypes.Sanguine_Rose:
+                    effectKey = "SanguineRoseEffect";
+                    break;
             }
             settings = new EffectBundleSettings
             {

@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game
         /// Change enemy settings and configure in a single call.
         /// </summary>
         /// <param name="enemyType">Enemy type.</param>
-        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0)
+        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0, DaggerfallEntityBehaviour customTarget = null)
         {
             EnemyType = enemyType;
             EnemyReaction = enemyReaction;
