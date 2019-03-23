@@ -706,7 +706,7 @@ namespace DaggerfallWorkshop.Game
                     || targetBehaviour.EntityType == EntityTypes.Player)
                 {
                     // NoTarget mode
-                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && targetBehaviour == Player)
+                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || mobile.Summary.Enemy.AlliedToPlayer) && targetBehaviour == Player)
                         continue;
 
                     // Can't target ally
@@ -715,9 +715,9 @@ namespace DaggerfallWorkshop.Game
                         if (targetEntity != null && targetEntity.MobileEnemy.Team == enemyEntity.MobileEnemy.Team)
                             continue;
                     }
-                    else // TODO: Support player-summoned allies, even without infighting option
+                    else
                     {
-                        if (targetBehaviour != Player)
+                        if (targetBehaviour != Player && !mobile.Summary.Enemy.AlliedToPlayer)
                             continue;
                     }
 

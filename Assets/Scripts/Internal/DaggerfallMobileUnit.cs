@@ -145,12 +145,13 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
         /// <param name="enemyType">Enemy type.</param>
-        public void SetEnemy(DaggerfallUnity dfUnity, MobileEnemy enemy, MobileReactions reaction, byte classicSpawnDistanceType)
+        public void SetEnemy(DaggerfallUnity dfUnity, MobileEnemy enemy, MobileReactions reaction, byte classicSpawnDistanceType, bool alliedtoPlayer)
         {
             // Initial enemy settings
             summary.Enemy = enemy;
             summary.EnemyState = MobileStates.Move;
             summary.Enemy.Reactions = reaction;
+            summary.Enemy.AlliedToPlayer = alliedtoPlayer;
 
             // Load enemy content
             int archive = GetTextureArchive();
