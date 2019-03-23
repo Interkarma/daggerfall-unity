@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.items = entity.Items.SerializeItems();
             data.equipTable = entity.ItemEquipTable.SerializeEquipTable();
             data.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
+            data.alliedToPlayer = mobileEnemy.Summary.Enemy.Team == MobileTeams.PlayerAlly;
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -147,7 +148,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (entity == null || entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
             {
                 SetupDemoEnemy setupEnemy = enemy.GetComponent<SetupDemoEnemy>();
-                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.mobileGender, data.isHostile);
+                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.mobileGender, data.isHostile, alliedToPlayer: data.alliedToPlayer);
                 setupEnemy.AlignToGround();
 
                 if (entity == null)

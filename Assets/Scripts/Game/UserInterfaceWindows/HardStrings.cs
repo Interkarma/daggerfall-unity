@@ -437,6 +437,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string swamps = "swamps";
         public const string forests = "forests";
         public const string shores = "shores";
-        public const string noSummonedMonster = "No summoned monster appeared this time.";
+        public const string noMonstersNearby = "There are no monsters nearby.";
     }
 }

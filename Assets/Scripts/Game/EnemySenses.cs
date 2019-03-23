@@ -706,7 +706,7 @@ namespace DaggerfallWorkshop.Game
                     || targetBehaviour.EntityType == EntityTypes.Player)
                 {
                     // NoTarget mode
-                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || mobile.Summary.Enemy.AlliedToPlayer) && targetBehaviour == Player)
+                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == Player)
                         continue;
 
                     // Can't target ally
@@ -717,7 +717,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        if (targetBehaviour != Player && !mobile.Summary.Enemy.AlliedToPlayer)
+                        if (targetBehaviour != Player && enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly)
                             continue;
                     }
 

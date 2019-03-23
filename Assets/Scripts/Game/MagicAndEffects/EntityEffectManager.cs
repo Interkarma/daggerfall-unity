@@ -871,8 +871,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         }
                     }
                 }
-                else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact items
+                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4) // Handle Sanguine Rose
                 {
+                    // Use for any artifact that simply assigns a bundle
                     if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
                         continue;
                     bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);

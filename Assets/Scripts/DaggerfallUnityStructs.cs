@@ -221,7 +221,6 @@ namespace DaggerfallWorkshop
         public bool HasSpellAnimation;              // Whether or not this character has specific animations for casting spells
         public int[] SpellAnimFrames;               // Animation sequence to play when doing a spell cast
         public MobileTeams Team;                    // Team that this enemy uses if enemy in-fighting is on
-        public bool AlliedToPlayer;                 // Overrides standard target choices to defend player
     }
 
     /// <summary>

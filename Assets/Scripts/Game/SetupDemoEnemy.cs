@@ -48,6 +48,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
             MobileEnemy mobileEnemy = enemyDict[(int)EnemyType];
+            if (AlliedToPlayer)
+                mobileEnemy.Team = MobileTeams.PlayerAlly;
 
             // Find mobile unit in children
             DaggerfallMobileUnit dfMobile = GetMobileBillboardChild();
@@ -56,7 +58,7 @@ namespace DaggerfallWorkshop.Game
                 // Setup mobile billboard
                 Vector2 size = Vector2.one;
                 mobileEnemy.Gender = gender;
-                dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction, ClassicSpawnDistanceType, AlliedToPlayer);
+                dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction, ClassicSpawnDistanceType);
 
                 // Setup controller
                 CharacterController controller = GetComponent<CharacterController>();
@@ -127,7 +129,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Change enemy settings and configure in a single call.
         /// </summary>
-        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true)
+        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true, bool alliedToPlayer = false)
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
@@ -141,7 +143,7 @@ namespace DaggerfallWorkshop.Game
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
             MobileGender enemyGender = gender;
 
-            ApplyEnemySettings(mobileType, enemyReaction, enemyGender);
+            ApplyEnemySettings(mobileType, enemyReaction, enemyGender, alliedToPlayer: alliedToPlayer);
         }
 
         public void AlignToGround()
