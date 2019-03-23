@@ -46,13 +46,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     // Get enemy
                     EnemyEntity enemyEntity = target.Entity as EnemyEntity;
-                    // Spawn Daedroth and set its target
-                    GameObject gameObject = GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
-                    FoeSpawner foeSpawner = gameObject.GetComponent<FoeSpawner>();
+                    if (!enemyEntity.MobileEnemy.AlliedToPlayer) // Only spawn when aiming at a non-allied enemy
+                    {
+                        GameObject gameObject = GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
+                        FoeSpawner foeSpawner = gameObject.GetComponent<FoeSpawner>();
+                        return;
+                    }
                 }
-                // Debug for identifying interior furniture model ids.
-                Debug.Log(hit.transform);
             }
+            DaggerfallUI.Instance.PopupMessage(HardStrings.noSummonedMonster);
         }
 
         public override void SetProperties()
