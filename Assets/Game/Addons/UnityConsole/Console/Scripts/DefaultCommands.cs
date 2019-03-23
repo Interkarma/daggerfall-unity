@@ -1535,6 +1535,9 @@ namespace Wenzil.Console
                         case "torch":
                             newItem = ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch);
                             break;
+                        case "soultrap":
+                            newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                            break;
                         default:
                             return "unrecognized keyword. see usage";
                     }
