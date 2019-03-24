@@ -9,7 +9,10 @@
 // Notes:
 //
 
+using System.Collections.Generic;
+using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -29,6 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1518);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1218);
             properties.SupportChance = true;
+            properties.ChanceFunction = ChanceFunction.Custom;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
@@ -36,9 +40,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ChanceCosts = MakeEffectCosts(120, 180);
         }
 
-        public override void MagicRound()
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            base.MagicRound();
+            base.Start(manager, caster);
+
+            // Get nearby daedra
+            List<PlayerGPS.NearbyObject> nearbyDaedra = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Daedra);
+            foreach (PlayerGPS.NearbyObject obj in nearbyDaedra)
+            {
+                // Roll chance for dispel
+                // Just like classic, dispel simply destroys serializable enemy object in scene - target is not killed and will drop no loot
+                // This can break quests if used carelessly
+                if (obj.gameObject && RollChance())
+                    GameObject.Destroy(obj.gameObject);
+            }
         }
     }
 }
