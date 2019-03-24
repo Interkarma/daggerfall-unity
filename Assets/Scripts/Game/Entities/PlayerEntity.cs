@@ -978,13 +978,13 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             // IDs from SPELLS.STD record ID https://en.uesp.net/wiki/Daggerfall:SPELLS.STD_indices
             int levitateID = 4;
-            //int charmMortalID = 90;       // Not implemented
+            int charmMortalID = 90;
             int calmHumanoidID = 91;
             int nimblenessID = 85;
             int paralysisID = 50;
             int freeActionID = 10;
             int healID = 64;
-            //int shieldID = 17;            // Not implemented
+            int shieldID = 17;
             int resistColdID = 11;
             int resistFireID = 12;
             int resistShockID = 13;
@@ -995,7 +995,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Common spells
             AssignVampireSpell(levitateID);
-            //AssignVampireSpell(charmMortalID);
+            AssignVampireSpell(charmMortalID);
             AssignVampireSpell(calmHumanoidID);
 
             // Clan spells
@@ -1014,7 +1014,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     AssignVampireSpell(healID);
                     break;
                 case VampireClans.Garlythi:
-                    //AssignVampireSpell(shieldID);
+                    AssignVampireSpell(shieldID);
                     break;
                 case VampireClans.Selenu:
                     AssignVampireSpell(resistColdID);
