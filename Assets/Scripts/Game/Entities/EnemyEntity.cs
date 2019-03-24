@@ -135,11 +135,22 @@ namespace DaggerfallWorkshop.Game.Entity
             if (soulTrapEffect == null)
                 return true;
 
-            // Roll chance for trap
+            // Roll chance for trap, or always succeed if Azura's Star is equipped.
             // If trap fails then entity should die as normal without trapping a soul
             // If trap succeeds and player has a free soul gem then entity should die after storing soul
             // If trap succeeds and player has no free soul gems then entity will not die until effect expires or fails
-            if (soulTrapEffect.RollTrapChance())
+            bool azurasStarEquipped = false;
+            Items.DaggerfallUnityItem azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(Game.Items.EquipSlots.Amulet0);
+            if (azurasStar != null && azurasStar.Enchantments[0].type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect && azurasStar.Enchantments[0].param == 9)
+                azurasStarEquipped = true;
+            else
+            {
+                azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(Game.Items.EquipSlots.Amulet1);
+                if (azurasStar != null && azurasStar.Enchantments[0].type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect && azurasStar.Enchantments[0].param == 9)
+                    azurasStarEquipped = true;
+            }
+
+            if (azurasStarEquipped || soulTrapEffect.RollTrapChance())
             {
                 // Attempt to fill an empty soul trap
                 if (soulTrapEffect.FillEmptyTrapItem((MobileTypes)mobileEnemy.ID))

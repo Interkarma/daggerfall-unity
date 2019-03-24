@@ -1420,6 +1420,10 @@ namespace DaggerfallWorkshop.Game.Items
             if (UseWorldTexture())
                 return worldTextureRecord;
 
+            // Use texture record retrieved from MAGIC.DEF for artifacts. Otherwise the below code will give the Oghma Infinium record 2, from the "Book" template.
+            if (IsArtifact)
+                return playerTextureRecord;
+
             // Handle items with variants
             if (ItemTemplate.variants > 0)
             {

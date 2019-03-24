@@ -1520,7 +1520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Handle local items
-            if (item.ItemGroup == ItemGroups.Books)
+            if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
@@ -1610,7 +1610,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.IsEnchanted)
             {
                 GameManager.Instance.PlayerEffectManager.UseItem(item, collection);
-                DaggerfallUI.Instance.PopToHUD();
+
+                // Only pop the inventory window. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to pop those.
+                if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() == typeof(DaggerfallInventoryWindow))
+                  DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
                 return;
             }
         }
