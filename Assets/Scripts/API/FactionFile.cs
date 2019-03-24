@@ -1061,7 +1061,7 @@ namespace DaggerfallConnect.Arena2
                         faction.power = ParseInt(value);
                         break;
                     case "flags":
-                        faction.flags = ParseInt(value);
+                        faction.flags |= ParseInt(value);
                         break;
                     case "ruler":
                         faction.ruler = ParseInt(value);
