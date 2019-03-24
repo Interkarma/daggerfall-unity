@@ -508,6 +508,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Gets final chance value based on caster level and effect settings.
+        /// </summary>
+        /// <returns>Chance value.</returns>
+        public int ChanceValue()
+        {
+            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            //Debug.LogFormat("{5} ChanceValue {0} = base + plus * (level/chancePerLevel) = {1} + {2} * ({3}/{4})", settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel), settings.ChanceBase, settings.ChancePlus, casterLevel, settings.ChancePerLevel, Key);
+            return settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
+        }
+
+        /// <summary>
         /// Performs a chance roll for this effect based on chance settings.
         /// </summary>
         /// <returns>True if chance roll succeeded.</returns>
@@ -629,13 +640,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return;
 
             potionProperties.Recipes = recipes;
-        }
-
-        protected int ChanceValue()
-        {
-            int casterLevel = (caster) ? caster.Entity.Level : 1;
-            //Debug.LogFormat("{5} ChanceValue {0} = base + plus * (level/chancePerLevel) = {1} + {2} * ({3}/{4})", settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel), settings.ChanceBase, settings.ChancePlus, casterLevel, settings.ChancePerLevel, Key);
-            return settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
         }
 
         #endregion

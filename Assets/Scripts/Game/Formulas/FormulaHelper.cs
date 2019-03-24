@@ -310,6 +310,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
             chance += GameManager.Instance.WeaponManager.Sheathed ? 10 : -25;
 
+            // Add chance from Comprehend Languages effect if present
+            ComprehendLanguages languagesEffect = (ComprehendLanguages)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<ComprehendLanguages>();
+            if (languagesEffect != null)
+                chance += languagesEffect.ChanceValue();
+
             int roll = UnityEngine.Random.Range(0, 200);
             bool success = (roll < chance);
             if (success)
