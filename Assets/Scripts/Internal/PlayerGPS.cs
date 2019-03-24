@@ -753,19 +753,19 @@ namespace DaggerfallWorkshop
             if (entity.EntityType == EntityTypes.EnemyClass || entity.EntityType == EntityTypes.EnemyMonster)
             {
                 result |= NearbyObjectFlags.Enemy;
-                EnemyEntity enemyEntity = entity.Entity as EnemyEntity;
-                switch (enemyEntity.MobileEnemy.Affinity)
+                DFCareer.EnemyGroups enemyGroup = (entity.Entity as EnemyEntity).GetEnemyGroup();
+                switch (enemyGroup)
                 {
-                    case MobileAffinity.Undead:
+                    case DFCareer.EnemyGroups.Undead:
                         result |= NearbyObjectFlags.Undead;
                         break;
-                    case MobileAffinity.Daedra:
+                    case DFCareer.EnemyGroups.Daedra:
                         result |= NearbyObjectFlags.Daedra;
                         break;
-                    case MobileAffinity.Human:
+                    case DFCareer.EnemyGroups.Humanoid:
                         result |= NearbyObjectFlags.Humanoid;
                         break;
-                    case MobileAffinity.Animal:
+                    case DFCareer.EnemyGroups.Animals:
                         result |= NearbyObjectFlags.Animal;
                         break;
                 }
