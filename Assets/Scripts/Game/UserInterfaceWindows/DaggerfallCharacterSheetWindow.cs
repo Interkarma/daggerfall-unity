@@ -205,7 +205,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
-                CloseWindow();
+                if (CheckIfDoneLeveling())
+                    CloseWindow();
         }
 
         public override void OnPush()
@@ -220,20 +221,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void CancelWindow()
         {
-            if (leveling)
-            {
-                if (!CheckIfDoneLeveling())
-                    return;
-            }
-            base.CancelWindow();
-        }
-
-        public override void OnPop()
-        {
-            base.OnPop();
-            if (!leveling)
-                playerEntity.ResetSkillsRecentlyRaised();
-            leveling = false;
+            if (CheckIfDoneLeveling())
+                base.CancelWindow();
         }
 
         #endregion
@@ -468,20 +457,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool CheckIfDoneLeveling()
         {
-            if (statsRollout.BonusPool > 0 && !statsRollout.WorkingStats.IsAllMax())
+            if (leveling)
             {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.mustDistributeBonusPoints);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
-                return false;
+                if (statsRollout.BonusPool > 0 && !statsRollout.WorkingStats.IsAllMax())
+                {
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetText(HardStrings.mustDistributeBonusPoints);
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                    return false;
+                }
+                else
+                {
+                    leveling = false;
+                    PlayerEntity.Stats = statsRollout.WorkingStats;
+                    NativePanel.Components.Remove(statsRollout);
+                }
             }
             else
             {
-                PlayerEntity.Stats = statsRollout.WorkingStats;
-                NativePanel.Components.Remove(statsRollout);
-                return true;
+                playerEntity.ResetSkillsRecentlyRaised();
             }
+            return true;
         }
 
         string[] GetClassSpecials()
@@ -884,12 +881,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (leveling)
-            {
-                if (!CheckIfDoneLeveling())
-                    return;
-            }
-            CloseWindow();
+            if (CheckIfDoneLeveling())
+                CloseWindow();
         }
 
         private void StatsRollout_OnStatChanged()
