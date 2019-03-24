@@ -45,6 +45,15 @@ namespace DaggerfallConnect.Arena2
         private readonly DFSubMeshBuffer[] subMeshBuffer = new DFSubMeshBuffer[subMeshBufferLength];
         private FaceUVTool.DFPurePoint[] calculatedUVBuffer = new FaceUVTool.DFPurePoint[calculatedUVBufferLength];
 
+        // Special arrays containing UV coordinates fixes
+        private static readonly int[] uFirstPillar = { 0, 0, 96 };
+        private static readonly int[] uSecondPillar = { 1952, 0, 96 };
+        private static readonly int[] vEntrancePlane11 = { 2048, 0, -2048 };
+        private static readonly int[] vEntrancePlane12 = { 2048, 0, -1472 };
+        private static readonly int[] vEntrancePlane13 = { 0, 592, 0 };
+        private static readonly int[] uDungeonCorridor989 = { 512, 0, 1024 };
+        private static readonly int[] vDungeonCorridor989 = { 3264, 2864, 704 };
+
         /// <summary>
         /// Index lookup dictionary.
         /// </summary>
@@ -647,12 +656,19 @@ namespace DaggerfallConnect.Arena2
                     int u = reader.ReadInt16();
                     int v = reader.ReadInt16();
 
-                    // Fix certain UV coordinates that are
-                    // packed oddly, or aligned outside of poly.
-                    if (records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
+                    // Fix some UV coordinates (process only the first 3 points as
+                    // coordinates from point 4 and above are ignored)
+                    if (point < 3)
                     {
-                        UVunpack(ref u);
-                        UVunpack(ref v);
+                        // Fix incorrect coordinates
+                        FixBadUVCoordinates(record, plane, point, ref u, ref v);
+
+                        // Fix coordinates which require specific unpacking
+                        if (records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
+                        {
+                            UVunpack(ref u);
+                            UVunpack(ref v);
+                        }
                     }
 
                     // Store UV coordinates
@@ -762,7 +778,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Unpack special texture coordinates.
         /// </summary>
-        /// <param name="u">The U or V coordinate</param>
+        /// <param name="u">The U or V coordinate.</param>
         private static void UVunpack(ref int u)
         {
             const int n = 1024;
@@ -779,6 +795,152 @@ namespace DaggerfallConnect.Arena2
                 u = n - (u + n) % delta;
             else if (u < -threshold)
                 u = n + (u - n) % delta;
+        }
+
+        /// <summary>
+        /// Fix some incorrect UV coordinates.
+        /// </summary>
+        /// <param name="record">Mesh record index.</param>
+        /// <param name="plane">Plane index.</param>
+        /// <param name="point">Point index.</param>
+        /// <param name="u">U texture coordinate.</param>
+        /// <param name="v">V texture coordinate.</param>
+        private static void FixBadUVCoordinates(int record, int plane, int point, ref int u, ref int v)
+        {
+            switch (record)
+            {
+                // Dungeon corridor floor
+                case 989:
+                    if (plane == 13)
+                    {
+                        u = uDungeonCorridor989[point];
+                        v = vDungeonCorridor989[point];
+                    }
+                    break;
+
+                // All models containing interior pillars have incorrect
+                // UV coordinates (usually on the pillars, except models
+                // 31027...31827 which also have stretched textures around
+                // the entrance
+                case 2296: // Record id 31006
+                case 8869: // 31106
+                case 8834: // 31206
+                case 1986: // ...
+                case 8874:
+                case 2073:
+                case 2104:
+                case 2163:
+                case 2194: // 31806
+                    if (plane == 2)
+                        u = uFirstPillar[point];
+                    else if (plane == 3)
+                        u = uSecondPillar[point];
+                    break;
+                case 2242: // 31024
+                case 8822:
+                case 8788:
+                case 2029:
+                case 2062:
+                case 2092:
+                case 2154:
+                case 2178:
+                case 2212: // 31824
+                    if (plane == 2)
+                        u = uSecondPillar[point];
+                    else if (plane == 3)
+                        u = uFirstPillar[point];
+                    break;
+                case 2246: // 31025
+                case 8824:
+                case 8785:
+                case 2034:
+                case 2064:
+                case 2086:
+                case 2155:
+                case 2182:
+                case 2213: // 31825
+                    if (plane == 6 || plane == 11)
+                        u = uFirstPillar[point];
+                    else if (plane == 7 || plane == 12)
+                        u = uSecondPillar[point];
+                    break;
+                case 2238: // 31026
+                case 8825:
+                case 8789:
+                case 2032:
+                case 2065:
+                case 2093:
+                case 2156:
+                case 2183:
+                case 2214: // 31826
+                    if (plane == 1)
+                        u = uFirstPillar[point];
+                    else if (plane == 2)
+                        u = uSecondPillar[point];
+                    break;
+                case 2243: // 31027
+                case 8814:
+                case 8790:
+                case 2035:
+                case 2067:
+                case 2094:
+                case 2157:
+                case 2186:
+                case 2215: // 31827
+                    // Single pillar
+                    if (plane == 1 && point == 0)
+                        u = 1952;
+                    // Planes around the entrance
+                    if (plane == 11)
+                        v = vEntrancePlane11[point];
+                    else if (plane == 12)
+                        v = vEntrancePlane12[point];
+                    else if (plane == 13)
+                        v = vEntrancePlane13[point];
+                    break;
+                case 2247: // 31028
+                case 8828:
+                case 8793:
+                case 2038:
+                case 2068:
+                case 2095:
+                case 2158:
+                case 2185:
+                case 2216: // 31828
+                    if (plane == 0 && point == 0)
+                        u = 1952;
+                    break;
+                case 2248: // 31030
+                case 8827:
+                case 8792:
+                case 2037:
+                case 2066:
+                case 2098:
+                case 10033:
+                case 2187:
+                case 10036: // 31830
+                    if (plane == 7)
+                        u = uSecondPillar[point];
+                    break;
+                case 2251: // 31031
+                case 8705:
+                case 8707:
+                case 1984:
+                case 9761:
+                case 10032:
+                case 10034:
+                case 10035:
+                case 10037: // 31831
+                    if (plane == 3 && point == 0)
+                        u = 2992;
+                    break;
+
+                // Weapon store exterior wall on the right side of the door (e.g. The Count's Arsenal, Newtale, Bhoriane)
+                case 5941:
+                    if (plane == 21 && point == 2)
+                        u = -1024;
+                    break;
+            }
         }
 
         /// <summary>
