@@ -305,6 +305,19 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int DecreaseHealth(int amount)
         {
+            // Allow an active shield effect to mitigate incoming damage from all sources
+            // Testing classic shows that Shield will mitigate physical, magical, and fall damage
+            if (EntityBehaviour)
+            {
+                EntityEffectManager manager = EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (manager)
+                {
+                    Shield shield = (Shield)manager.FindIncumbentEffect<Shield>();
+                    if (shield != null)
+                        amount = shield.DamageShield(amount);
+                }
+            }
+
             return SetHealth(currentHealth - amount);
         }
 

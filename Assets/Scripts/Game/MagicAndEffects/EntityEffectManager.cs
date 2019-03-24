@@ -696,6 +696,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        /// <summary>
+        /// Allows any effect to update HUD icons when an immediate refresh is required.
+        /// Example is when an effect ends prematurely due to some condition (e.g. Shield spell busted).
+        /// </summary>
+        public void UpdateHUDSpellIcons()
+        {
+            if (DaggerfallUI.Instance.enableHUD && DaggerfallUI.Instance.DaggerfallHUD.ActiveSpells != null)
+                DaggerfallUI.Instance.DaggerfallHUD.ActiveSpells.UpdateIcons();
+        }
+
         #endregion
 
         #region Potions

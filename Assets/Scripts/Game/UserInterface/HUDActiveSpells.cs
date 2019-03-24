@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateIcons();
         }
 
-        void UpdateIcons()
+        public void UpdateIcons()
         {
             ClearIcons();
 
