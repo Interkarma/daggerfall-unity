@@ -770,7 +770,9 @@ namespace DaggerfallWorkshop
                                 lightsBillboardBatch,
                                 animalsBillboardBatch,
                                 null,
-                                null);
+                                null,
+                                dfLocation.Summary.Nature,
+                                dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter ? ClimateSeason.Winter : ClimateSeason.Summer);
 
                             // Set game object properties
                             go.hideFlags = defaultHideFlags;
