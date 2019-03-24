@@ -138,6 +138,9 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            if (GameManager.Instance.DisableAI)
+                return;
+
             Move();
             OpenDoors();
             HeightAdjust();

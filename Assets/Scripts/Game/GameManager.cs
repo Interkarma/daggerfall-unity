@@ -103,6 +103,8 @@ namespace DaggerfallWorkshop.Game
             get { return Instance.classicUpdate; }
         }
 
+        public bool DisableAI { get; set; }
+
         public StateManager StateManager
         {
             get { return (stateManager != null) ? stateManager : stateManager = new StateManager(StateManager.StateTypes.None); }

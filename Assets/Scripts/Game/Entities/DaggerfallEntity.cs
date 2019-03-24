@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentBreath;
         protected WeaponMaterialTypes minMetalToHit;
         protected sbyte[] armorValues = new sbyte[NumberBodyParts];
+        protected MobileTeams team;
 
         bool quiesce = false;
         bool isParalyzed = false;
@@ -266,6 +267,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int ToHitModifier { get { return FormulaHelper.ToHitModifier(stats.LiveAgility); } }
         public int HitPointsModifier { get { return FormulaHelper.HitPointsModifier(stats.LiveEndurance); } }
         public int HealingRateModifier { get { return FormulaHelper.HealingRateModifier(stats.LiveEndurance); } }
+        public MobileTeams Team { get { return team; } set { team = value; } }
 
         #endregion
 

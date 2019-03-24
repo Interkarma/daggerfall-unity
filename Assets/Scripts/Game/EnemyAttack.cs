@@ -49,6 +49,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (GameManager.Instance.DisableAI)
+                return;
+
             // If a melee attack has reached the damage frame we can run a melee attempt
             if (mobile.DoMeleeDamage)
             {
