@@ -820,7 +820,8 @@ namespace DaggerfallConnect.Arena2
                 blockData.BlockDoorRecords[i].ZPos = reader.ReadInt32();
                 blockData.BlockDoorRecords[i].YRotation = reader.ReadInt16();
                 blockData.BlockDoorRecords[i].OpenRotation = reader.ReadInt16();
-                blockData.BlockDoorRecords[i].Unknown3 = reader.ReadInt16();
+                blockData.BlockDoorRecords[i].DoorModelIndex = reader.ReadByte();
+                blockData.BlockDoorRecords[i].Unknown = reader.ReadByte();
                 blockData.BlockDoorRecords[i].NullValue1 = reader.ReadByte();
             }
         }

@@ -545,8 +545,11 @@ namespace DaggerfallConnect
             /// <summary>Angle to rotate door into open position.</summary>
             public Int16 OpenRotation;
 
+            /// <summary>Model index to use for door as offset from base door ID.</summary>
+            internal Byte DoorModelIndex;
+
             /// <summary>Unknown.</summary>
-            internal Int16 Unknown3;
+            internal Byte Unknown;
 
             /// <summary>Unknown.</summary>
             internal Byte NullValue1;

@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop
 {
     public class DaggerfallInterior : MonoBehaviour
     {
-        const int doorModelId = 9800;
         const int ladderModelId = 41409;
         const int propModelType = 3;
 
@@ -862,6 +861,10 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void AddActionDoors()
         {
+            // Using 9000-9005 here but identical door models are also found at 900x, 910x, through to 980x
+            // They seem to be duplicate models but can have different model origins so not all ranges are suitable
+            const int doorModelBaseId = 9000;
+
             GameObject actionDoorsNode = new GameObject("Action Doors");
             actionDoorsNode.transform.parent = this.transform;
 
@@ -874,9 +877,10 @@ namespace DaggerfallWorkshop
                 Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
-                // Instantiate door prefab and add model
+                // Instantiate door prefab and add model - DoorModelIndex is modulo to known-good range just in case
+                uint modelId = (uint)(doorModelBaseId + obj.DoorModelIndex % 5);
                 GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_InteriorDoorPrefab.gameObject, string.Empty, actionDoorsNode.transform, Vector3.zero);
-                GameObjectHelper.CreateDaggerfallMeshGameObject(doorModelId, actionDoorsNode.transform, false, go, true);
+                GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, actionDoorsNode.transform, false, go, true);
 
                 // Resize box collider to new mesh bounds
                 BoxCollider boxCollider = go.GetComponent<BoxCollider>();
@@ -890,6 +894,10 @@ namespace DaggerfallWorkshop
                 // Apply transforms
                 go.transform.rotation = Quaternion.Euler(modelRotation);
                 go.transform.position = modelPosition;
+
+                // Update climate
+                DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+                dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
 
                 // Get action door script
                 DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
