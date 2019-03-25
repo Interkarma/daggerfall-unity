@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 DaggerfallAudioSource source = QuestMachine.Instance.GetComponent<DaggerfallAudioSource>();
                 if (source != null && !source.IsPlaying())
                 {
-                    source.PlayOneShot(soundIndex, DaggerfallUnity.Settings.SoundVolume);
+                    source.PlayOneShot(soundIndex, 0f, DaggerfallUnity.Settings.SoundVolume);
                     lastTimePlayed = gameSeconds;
                 }
             }
