@@ -813,6 +813,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
         }
 
+        /// <summary>
+        /// Manually trigger an OnMouseClick event for this component.
+        /// </summary>
+        public virtual void TriggerMouseClick()
+        {
+            MouseClick(Vector2.zero);
+        }
+
         #endregion
 
         #region Protected Methods

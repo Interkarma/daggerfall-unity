@@ -226,6 +226,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyUp(extraProceedBinding))
             {
+                // Special handling for message boxes with buttons
+                if (buttons.Count > 0)
+                {
+                    // Trigger default button if one is present
+                    Button defaultButton = GetDefaultButton();
+                    if (defaultButton != null)
+                        defaultButton.TriggerMouseClick();
+
+                    // Exit here if no other message boxes queued
+                    // Most of the time this won't be the case and we don't want message boxes waiting for input to close prematurely
+                    if (nextMessageBox == null)
+                        return;
+                }
+
                 // if there is a nested next message box show it
                 if (this.nextMessageBox != null)
                 {
@@ -238,10 +252,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public Button AddButton(MessageBoxButtons messageBoxButton)
+        public Button AddButton(MessageBoxButtons messageBoxButton, bool defaultButton = false)
         {
             if (!IsSetup)
                 Setup();
+
+            // If this is to become default button, first unset any other default buttons
+            // Only one button in collection can be default
+            if (defaultButton)
+            {
+                foreach (Button b in buttons)
+                    b.DefaultButton = false;
+            }
 
             Texture2D background = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
             Button button = DaggerfallUI.AddButton(Vector2.zero, 
@@ -250,11 +272,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             button.Tag = messageBoxButton;
             button.OnMouseClick += ButtonClickHandler;
+            button.DefaultButton = defaultButton;
             buttons.Add(button);
+
+            // Once a button has been added the owner is expecting some kind of input from player
+            // Don't allow a messagebox with buttons to be cancelled with escape
+            AllowCancel = false;
 
             UpdatePanelSizes();
 
             return button;
+        }
+
+        /// <summary>
+        /// Gets default button (if any).
+        /// </summary>
+        /// <returns>Default Button reference, or null if no default button defined.</returns>
+        public Button GetDefaultButton()
+        {
+            foreach (Button b in buttons)
+            {
+                if (b.DefaultButton)
+                    return b;
+            }
+
+            return null;
         }
 
         public void SetText(string text, IMacroContextProvider mcp = null)
@@ -394,7 +436,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 case CommonMessageBoxButtons.YesNo:
                     AddButton(MessageBoxButtons.Yes);
-                    AddButton(MessageBoxButtons.No);
+                    AddButton(MessageBoxButtons.No, true);
                     break;
                 case CommonMessageBoxButtons.AnchorTeleport:
                     AddButton(MessageBoxButtons.Anchor);

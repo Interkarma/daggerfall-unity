@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public string ClickMessage { get; set; }
         public string DoubleClickMessage { get; set; }
+        public bool DefaultButton { get; set; }
 
         public TextLabel Label
         {
