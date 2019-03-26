@@ -60,7 +60,7 @@ QBN:
 Place _L.00_ permanent MantellanCrux
 Place _shedungent_ permanent Shedungent1
 
-Clock _delay_ 00:01 0 flag 1 range 0 1
+Clock _delay_ 00:01
 
 
 --	Quest start-up:
