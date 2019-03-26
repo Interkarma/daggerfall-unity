@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -228,8 +228,12 @@ namespace DaggerfallWorkshop.Game.Utility
             }
         }
 
-        // Gets best parent for spawn at create time
-        Transform GetBestParent()
+        /// <summary>
+        /// Gets best parent for a foe at spawn time.
+        /// Foes should always be placed to some child object in world rather than directly into root of scene.
+        /// </summary>
+        /// <returns>Best parent transform, or null as fallback.</returns>
+        public static Transform GetBestParent()
         {
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
 
@@ -245,6 +249,10 @@ namespace DaggerfallWorkshop.Game.Utility
             else if (!playerEnterExit.IsPlayerInside && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
             {
                 return GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
+            }
+            else if (!playerEnterExit.IsPlayerInside)
+            {
+                return GameManager.Instance.StreamingTarget.transform;
             }
             else
             {

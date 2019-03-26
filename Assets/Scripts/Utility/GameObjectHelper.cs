@@ -1100,7 +1100,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Generate enemy
                 string name = string.Format("DaggerfallEnemy [{0}]", foeType.ToString());
-                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, null, position);
+                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, FoeSpawner.GetBestParent(), position);
                 SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
                 if (setupEnemy != null)
                 {
