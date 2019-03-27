@@ -317,6 +317,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new WhenNpcIsAvailable(null));
             RegisterAction(new WhenReputeWith(null));
             RegisterAction(new WhenSkillLevel(null));
+            RegisterAction(new WhenAttributeLevel(null));
             RegisterAction(new WhenTask(null));
             RegisterAction(new ClickedNpc(null));
             RegisterAction(new ClickedItem(null));
