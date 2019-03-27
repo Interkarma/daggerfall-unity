@@ -413,8 +413,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
                 {
-                    // Catch up time and break if something spawns
-                    if (IntermittentEnemySpawn(l + lastGameMinutes + 1))
+                    // Catch up time and break if something spawns. Don't spawn encounters while player is swimming in water (same as classic).
+                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && IntermittentEnemySpawn(l + lastGameMinutes + 1))
                         break;
 
                     // Confirm regionData is available
