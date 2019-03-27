@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -188,6 +188,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void Update()
         {
+            // "Always on" triggers can both start and stop a task
+            // An example is S0000977 _S.03_ task which uses a single "when" trigger to start/stop spawns and play vengeance sound in Daggerfall city
+            // But this becomes an issue if task has multiple "always on" triggers, as trigger A might start the task then trigger B will stop it again
+            // One example of this behaviour is W0C00Y00 _pcgetsgold_ task where either "when" trigger can start reward task but subsequent triggers should not stop it again
+            // This implementation considers the first "always on" trigger as the "primary" - able to both start & stop parent task
+            // Subsequent "always on" triggers within the same task are "secondary" - only able to start a parent task but not stop it again
+            bool ranPrimaryAlwaysOnTrigger = false;
+
             // Iterate conditions and actions for this task
             foreach (IQuestAction action in actions)
             {
@@ -204,10 +212,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 // But can fire again if owning task is unset/rearmed later
                 if (action.IsTriggerCondition && !IsTriggered || action.IsAlwaysOnTriggerCondition)
                 {
-                    if (action.CheckTrigger(this))
-                        IsTriggered = true;
+                    // Handle primary/secondary "always on" triggers
+                    if (action.IsAlwaysOnTriggerCondition && !ranPrimaryAlwaysOnTrigger)
+                    {
+                        // Primary "always on" trigger can start/stop parent task
+                        // Flag is raised at first "always on" trigger so that subsequent triggers know the primary has run
+                        IsTriggered = action.CheckTrigger(this);
+                        ranPrimaryAlwaysOnTrigger = true;
+                    }
+                    else if (action.IsAlwaysOnTriggerCondition && ranPrimaryAlwaysOnTrigger)
+                    {
+                        // Secondary "always on" triggers can only start parent task, they cannot stop it again
+                        if (action.CheckTrigger(this))
+                            IsTriggered = true;
+                    }
                     else
-                        IsTriggered = false;
+                    {
+                        // All other triggers
+                        IsTriggered = action.CheckTrigger(this);
+                    }
                 }
 
                 // Tick other actions only when active
