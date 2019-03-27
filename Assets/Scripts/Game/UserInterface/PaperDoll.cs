@@ -373,6 +373,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Blit item images
             foreach(var item in orderedItems)
             {
+                if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing
+                    || item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons)
                 BlitItem(item);
             }
         }
