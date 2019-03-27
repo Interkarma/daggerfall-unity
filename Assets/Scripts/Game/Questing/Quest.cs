@@ -757,6 +757,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Show messages immediately if requested
             if (immediate)
             {
+                QuestBreak = true;
                 ShowPendingTaskMessages();
                 return null;
             }
