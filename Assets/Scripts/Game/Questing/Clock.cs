@@ -26,13 +26,6 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Clock must be started and stopped by quest actions.
     /// Clock runs down in game-time (default is 12x real-time).
     /// This also means timer is paused when game is paused.
-    /// 
-    /// Notes:
-    ///  * Range values are unknown
-    ///  * Flag value is unknown.
-    ///  * Flag 1 is most common. Have observed 1, 2, 9, 12, 17, 18 in canonical quests.
-    ///  * Suspect (flag & 16) = "set by distance". e.g. "Clock _qtime_ 00:00 0 flag 17 range 0 2".
-    ///  * In classic, this sort of clock definition is used when player must travel long distances.
     /// </summary>
     public class Clock : QuestResource
     {
@@ -227,19 +220,36 @@ namespace DaggerfallWorkshop.Game.Questing
                     clockTimeInSeconds = GetTravelTimeInSeconds();
                 }
 
-                // HACK: Add range of time in days when flag & 1 and maxRange > 0
-                // Still not positive this is the correct usage of minRange - maxRange
-                if ((flag & 1) == 1 && maxRange > 0)
-                {
-                    // Perform another check for travel time if total time 0
-                    // This ensures player has travel time from automatic NPCs
-                    if (clockTimeInSeconds == 0)
-                        clockTimeInSeconds = GetTravelTimeInSeconds();
+                // HACK: Force another travel time check when flag & 1, clock type involves some target, and clockTimeInSeconds is still 0
+                // This ensures player has travel time from automatic NPC quests such as A0C00Y17 and quest does not end instantly
+                if ((flag & 1) == 1 && maxRange > 0 && clockTimeInSeconds == 0)
+                    clockTimeInSeconds = GetTravelTimeInSeconds();
 
-                    // Add range
-                    int randomDays = UnityEngine.Random.Range(minRange, maxRange + 1);
-                    clockTimeInSeconds += randomDays * DaggerfallDateTime.SecondsPerDay;
-                }
+                // TODO: Improve clock types using available information
+                // Note that TEMPLATE misinterprets upper byte of flag value as "range min" and clock type as "range max"
+                // And unfortunately some information about targets is lost by TEMPLATE, but this does not seem critical in most cases
+                // Decompiled quest scripts can be fixed where necessary without re-decompiling all quests to a new timer format
+                // Thanks and credit to ELENWEL and PANGO for discovering more information about timers
+                // Refer to following links for more detail:
+                //  https://en.uesp.net/wiki/Daggerfall:Quest_hacking_guide#Timers_Section
+                //  https://forums.dfworkshop.net/viewtopic.php?f=23&t=1655&start=10#p19163
+                //  https://forums.dfworkshop.net/viewtopic.php?f=23&t=1655&start=10#p19262
+                // Timer "type" values that are currently stored in "range max":
+                //  0   Random duration (Random time from min to max)
+                //  1   Fixed duration (timer duration = min)
+                //  2   One location or NPC (one location duration will be travelTime( here(), link1) * 1.5)
+                //  3   Two locations/ NPCs, only one dungeon(gives extra week in some circumstances) (two locations (from=>To quest) duration will be travelTime(link1, link2)*1.5)
+                //  4   Same as 2 ?
+                //  5   Two locations / NPCs, both are dungeons(gives up to 2 extra weeks in some circumstances) (two locations duration will be travelTime(here(), link1)*1,5 + travelTime(link1, link2)*1.5)
+                // Notes on flags:
+                //  for destination based timer, flags & 0x100 : link1 is a NPC, if not link1 is a location
+                //  for destination based timer, flags & 0x200 : link2 is a NPC, if not link1 is a location
+                //  flags & 0x10 double timer’s duration(there and back)
+                //  flags & 8 : timer can fire multiple time(unsure ? )
+                //  flags & 4 : timer will set state to 0 upon expiration(unsure?)
+                //  flags & 2 : timer will set state to 1 upon expiration +something(todo)
+                //  flags & 1 : timer will set state to 1 upon expiration
+                //  other flags are reserved for internal uses (timer state)
 
                 // Set timer value in seconds
                 InitialiseTimer(clockTimeInSeconds);
