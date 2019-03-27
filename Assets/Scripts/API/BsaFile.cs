@@ -146,8 +146,9 @@ namespace DaggerfallConnect.Arena2
         /// <param name="filePath">Absolute path to BSA file.</param>
         /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
         /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
+        /// <param name="filePatch">An optional list of patches to apply to file memory buffer.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public bool Load(string filePath, FileUsage usage, bool readOnly)
+        public bool Load(string filePath, FileUsage usage, bool readOnly, PatchList filePatch = null)
         {
             // Ensure filename ends with .BSA or .SND
             if (!filePath.EndsWith(".BSA", StringComparison.InvariantCultureIgnoreCase) &&
@@ -158,6 +159,18 @@ namespace DaggerfallConnect.Arena2
             // Load file into memory
             if (!managedFile.Load(filePath, usage, readOnly))
                 return false;
+
+            // Patch the file
+            if (usage == FileUsage.UseMemory && filePatch != null)
+            {
+                foreach (var patch in filePatch)
+                {
+                    for (int i = 0; i < patch.data.Length; i++)
+                    {
+                        managedFile.Buffer[patch.offset + i] = patch.data[i];
+                    }
+                }
+            }
 
             // Read file
             if (!Read())
