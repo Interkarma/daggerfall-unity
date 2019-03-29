@@ -90,7 +90,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RebuildClassicSpellsDict();
 
             // Enumerate classes implementing an effect and create an instance to use as factory
-            // TODO: Provide an external method for mods to register custom effects without reflections
             magicEffectTemplates.Clear();
             IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
             foreach (BaseEntityEffect effect in effectTemplates)
@@ -99,28 +98,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (string.IsNullOrEmpty(effect.Key))
                     continue;
 
-                // Store template
-                // TODO: Allow effect overwrite for modded effects
-                if (effect.VariantCount > 1)
-                {
-                    // Store one template per variant for multi-effects
-                    for (int i = 0; i < effect.VariantCount; i++)
-                    {
-                        BaseEntityEffect variantEffect = CloneEffect(effect) as BaseEntityEffect;
-                        variantEffect.CurrentVariant = i;
-                        magicEffectTemplates.Add(variantEffect.Key, variantEffect);
-                        IndexEffectRecipes(variantEffect);
-                        MapClassicKey(variantEffect);
-                    }
-                }
-                else
-                {
-                    // Just store singleton effect
-                    magicEffectTemplates.Add(effect.Key, effect);
-                    IndexEffectRecipes(effect);
-                    MapClassicKey(effect);
-                }
+                // Register template
+                RegisterEffectTemplate(effect);
             }
+
+            // Raise event for custom effects to register
+            RaiseOnRegisterCustomEffectsEvent();
         }
 
         void Update()
@@ -167,6 +150,60 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Register new effect template with broker.
+        /// Also maps classic key and potion recipes defined by effect.
+        /// </summary>
+        /// <param name="effect">New effect to register.</param>
+        /// <param name="allowReplacement">Allow replacement of existing effect with this key.</param>
+        /// <returns>True if successful.</returns>
+        public bool RegisterEffectTemplate(BaseEntityEffect effect, bool allowReplacement = false)
+        {
+            // Template cannot be null or have a null or empty key
+            if (effect == null || string.IsNullOrEmpty(effect.Key))
+            {
+                Debug.LogError("RegisterEffect: Either template is null or has a null or empty key value.");
+                return false;
+            }
+
+            // Check for existing template with this key
+            if (magicEffectTemplates.ContainsKey(effect.Key))
+            {
+                if (allowReplacement)
+                {
+                    magicEffectTemplates.Remove(effect.Key);
+                }
+                else
+                {
+                    Debug.LogErrorFormat("RegisterEffect: Template key '{0}' already exists. Use allowReplacement=true to replace this effect.", effect.Key);
+                    return false;
+                }
+            }
+
+            // Register effect template
+            if (effect.VariantCount > 1)
+            {
+                // Store one template per variant for multi-effects
+                for (int i = 0; i < effect.VariantCount; i++)
+                {
+                    BaseEntityEffect variantEffect = CloneEffect(effect) as BaseEntityEffect;
+                    variantEffect.CurrentVariant = i;
+                    magicEffectTemplates.Add(variantEffect.Key, variantEffect);
+                    IndexEffectRecipes(variantEffect);
+                    MapClassicKey(variantEffect, allowReplacement);
+                }
+            }
+            else
+            {
+                // Just store singleton effect
+                magicEffectTemplates.Add(effect.Key, effect);
+                IndexEffectRecipes(effect);
+                MapClassicKey(effect, allowReplacement);
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Gets number of potion properties assigned to this effect.
@@ -550,14 +587,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        void MapClassicKey(IEntityEffect effect)
+        void MapClassicKey(IEntityEffect effect, bool allowReplacement)
         {
             byte groupIndex, subGroupIndex;
             BaseEntityEffect.ClassicEffectFamily family;
 
+            // Must be an effect with classic key
+            if (effect == null || effect.Properties.ClassicKey == 0)
+                return;
+
+            // Remove existing mapping if required
+            if (classicEffectMapping.ContainsKey(effect.Properties.ClassicKey) && allowReplacement)
+                classicEffectMapping.Remove(effect.Properties.ClassicKey);
+
             // Map classic key when defined - output error in case of classic key conflict
-            // NOTE: Mods should also be able to replace classic effect - will need to handle substitutions later
-            // NOTE: Not mapping effect keys for non spell effects at this time
             BaseEntityEffect.ReverseClasicKey(effect.Properties.ClassicKey, out groupIndex, out subGroupIndex, out family);
             if (effect.Properties.ClassicKey != 0 && family == BaseEntityEffect.ClassicEffectFamily.Spells)
             {
@@ -829,6 +872,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (OnNewMagicRound != null)
                 OnNewMagicRound();
+        }
+
+        // OnRegisterCustomEffects
+        public delegate void OnRegisterCustomEffectsEventHandler();
+        public static event OnRegisterCustomEffectsEventHandler OnRegisterCustomEffects;
+        protected virtual void RaiseOnRegisterCustomEffectsEvent()
+        {
+            if (OnRegisterCustomEffects != null)
+                OnRegisterCustomEffects();
         }
 
         #endregion
