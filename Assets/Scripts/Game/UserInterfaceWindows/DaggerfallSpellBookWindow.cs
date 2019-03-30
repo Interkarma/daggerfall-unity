@@ -212,33 +212,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add spells based on mode
             if (buyMode)
             {
-                // Load spells for sale
-                offeredSpells.Clear();
-                List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
-                if (standardSpells == null || standardSpells.Count == 0)
+                LoadSpellsForSale();
+                foreach (EffectBundleSettings bundle in offeredSpells)
                 {
-                    Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
-                    return;
-                }
-
-                for (int i = 0; i < standardSpells.Count; i++)
-                {
-                    // Filter internal spells starting with exclamation point '!'
-                    if (standardSpells[i].spellName.StartsWith("!"))
-                        continue;
-
-                    // NOTE: Classic allows purchase of duplicate spells
-                    // If ever changing this, must ensure spell is an *exact* duplicate (i.e. not a custom spell with same name)
-                    // Just allowing duplicates for now as per classic and let user manage preference
-
-                    // Get effect bundle settings from classic spell
-                    EffectBundleSettings bundle;
-                    if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(standardSpells[i], BundleTypes.Spell, out bundle))
-                        continue;
-
-                    // Store offered spell and add to list box
-                    offeredSpells.Add(bundle);
-                    spellsListBox.AddItem(standardSpells[i].spellName);
+                    spellsListBox.AddItem(bundle.Name);
                 }
             }
             else
@@ -280,6 +257,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     spellsListBox.SelectedIndex = oldSelectedIndex;
             }
+        }
+
+        private void LoadSpellsForSale()
+        {
+            // Load spells for sale
+            offeredSpells.Clear();
+            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
+            if (standardSpells == null || standardSpells.Count == 0)
+            {
+                Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
+                return;
+            }
+
+            for (int i = 0; i < standardSpells.Count; i++)
+            {
+                // Filter internal spells starting with exclamation point '!'
+                if (standardSpells[i].spellName.StartsWith("!"))
+                    continue;
+
+                // NOTE: Classic allows purchase of duplicate spells
+                // If ever changing this, must ensure spell is an *exact* duplicate (i.e. not a custom spell with same name)
+                // Just allowing duplicates for now as per classic and let user manage preference
+
+                // Get effect bundle settings from classic spell
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(standardSpells[i], BundleTypes.Spell, out bundle))
+                    continue;
+
+                // Store offered spell and add to list box
+                offeredSpells.Add(bundle);
+            }
+            // Sort spells for easier finding
+            offeredSpells = offeredSpells.OrderBy(x => x.Name).ToList();
         }
 
         #endregion
