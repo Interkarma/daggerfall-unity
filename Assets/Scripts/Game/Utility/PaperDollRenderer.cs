@@ -37,11 +37,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
         const string paperDollMaterialName = "Daggerfall/PaperDoll";
 
-        float scale = 1.0f;
         Material paperDollMaterial = null;
         RenderTexture target = null;
         DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
-        Color32 maskColor = new Color(255, 0, 200, 0);          // Special mask colour used on helmets, cloaks, etc.
 
         #endregion
 
@@ -54,11 +52,10 @@ namespace DaggerfallWorkshop.Game.Utility
         public enum LayerFlags
         {
             None = 0,
-            Background = 1,
-            CloakInterior = 2,
-            Body = 4,
-            Items = 8,
-            All = 15,
+            CloakInterior = 1,
+            Body = 2,
+            Items = 4,
+            All = 7,
         }
 
         #endregion
@@ -71,6 +68,7 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <param name="scale">Scale of paper doll render applied to classic dimensions. Cannot be lower than 1.0.</param>
         public PaperDollRenderer(float scale = 1.0f)
         {
+            paperDollMaterial = new Material(Shader.Find(paperDollMaterialName));
             ChangeRenderScale(scale);
         }
 
@@ -118,9 +116,7 @@ namespace DaggerfallWorkshop.Game.Utility
             RenderTexture.active = target;
 
             // Clear render target
-            GL.Clear(true, true, Color.green);
-
-            // TODO: Background
+            GL.Clear(true, true, Color.clear);
 
             // Cloak interior
             if ((layers & LayerFlags.CloakInterior) == LayerFlags.CloakInterior)
@@ -147,31 +143,24 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Common Rendering Methods
 
-        Material GetPaperDollMaterial()
-        {
-            if (paperDollMaterial != null)
-                return paperDollMaterial;
-            else
-                return paperDollMaterial = new Material(Shader.Find(paperDollMaterialName));
-        }
-
-        void DrawTexture(ImageData srcImage)
+        void DrawTexture(ImageData srcImage, bool item = false)
         {
             DrawTexture(
                 srcImage,
                 new Rect(0, 0, 1, 1),
-                new Rect(srcImage.offset.X, srcImage.offset.Y, srcImage.width, srcImage.height));
+                new Rect(srcImage.offset.X, srcImage.offset.Y, srcImage.width, srcImage.height),
+                item);
         }
 
-        void DrawTexture(ImageData srcImage, Rect srcRect, Rect targetRect)
+        void DrawTexture(ImageData srcImage, Rect srcRect, Rect targetRect, bool item = false)
         {
             // Calculate image position relative to origin
             int posX = (int)targetRect.xMin - paperDollOrigin.X;
             int posY = (int)targetRect.yMin - paperDollOrigin.Y;
 
             // Scaled coordinates and dimensions must be relative to screen dimensions
-            float scaleX = Screen.width / (paperDollWidth * scale);
-            float scaleY = Screen.height / (paperDollHeight * scale);
+            float scaleX = Screen.width / (float)paperDollWidth;
+            float scaleY = Screen.height / (float)paperDollHeight;
 
             // Get target rect
             Rect screenRect = new Rect(
@@ -180,7 +169,16 @@ namespace DaggerfallWorkshop.Game.Utility
                 targetRect.width * scaleX,
                 targetRect.height * scaleY);
 
-            Graphics.DrawTexture(screenRect, srcImage.texture, srcRect, 0, 0, 0, 0);
+            // Draw with custom shader for paper doll item masking
+            if (item)
+            {
+                paperDollMaterial.SetTexture("_MaskTex", srcImage.maskTexture);
+                Graphics.DrawTexture(screenRect, srcImage.texture, srcRect, 0, 0, 0, 0, paperDollMaterial);
+            }
+            else
+            {
+                Graphics.DrawTexture(screenRect, srcImage.texture, srcRect, 0, 0, 0, 0);
+            }
         }
 
         #endregion
@@ -322,8 +320,8 @@ namespace DaggerfallWorkshop.Game.Utility
         // Blits a normal item
         void BlitItem(DaggerfallUnityItem item)
         {
-            ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor, true);
-            DrawTexture(source);
+            ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, true, true);
+            DrawTexture(source, true);
         }
 
         #endregion

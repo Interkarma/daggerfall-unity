@@ -35,9 +35,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DFSize backgroundFullSize = new DFSize(125, 198);
         Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
 
-        // TEST: Testing 4x paper doll renderer
-        //Utility.PaperDollRenderer testRenderer = new Utility.PaperDollRenderer(4);
-
         #endregion
 
         #region Fields
@@ -145,10 +142,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             characterPanel.BackgroundTexture = paperDollTexture;
 
             RefreshArmourValues(playerEntity);
-
-            // TEST: Output paper doll render during refresh
-            //Texture2D render = testRenderer.RenderPaperDoll();
-            //TextureReader.SaveTextureToPNG(render, "c:\\test\\testrender.png");
 
             //// Create image from selection mask
             //DFPalette palette = new DFPalette();
