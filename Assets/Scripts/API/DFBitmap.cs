@@ -90,8 +90,9 @@ namespace DaggerfallConnect
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <param name="maskIndex">Index to receive mask colour.</param>
         /// <param name="maskColor">New mask color.</param>
+        /// <param name="excludeNonMasked">Exclude non-masked areas of image.</param>
         /// <returns>Color32 array.</returns>
-        public Color32[] GetColor32(int alphaIndex, int maskIndex, Color maskColor)
+        public Color32[] GetColor32(int alphaIndex, int maskIndex, Color maskColor, bool excludeNonMasked = false)
         {
             Color32[] colors = new Color32[Width * Height];
 
@@ -111,7 +112,7 @@ namespace DaggerfallConnect
                     {
                         colors[dstRow + x] = maskColor;
                     }
-                    else
+                    else if (!excludeNonMasked)
                     {
                         offset = Palette.HeaderLength + index * 3;
                         c.r = Palette.PaletteBuffer[offset];
@@ -119,6 +120,10 @@ namespace DaggerfallConnect
                         c.b = Palette.PaletteBuffer[offset + 2];
                         c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
                         colors[dstRow + x] = c;
+                    }
+                    else
+                    {
+                        colors[dstRow + x] = Color.clear;
                     }
                 }
             }

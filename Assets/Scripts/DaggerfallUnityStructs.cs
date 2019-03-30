@@ -145,6 +145,7 @@ namespace DaggerfallWorkshop
         public int height;                      // Original image height
         public DFBitmap dfBitmap;               // Original indexed bitmap
         public Texture2D texture;               // Generated texture
+        public Texture2D maskTexture;           // Generated mask texture
         public Texture2D[] animatedTextures;    // Array of animation frames if this is an animated texture
         public DFPosition offset;               // Custom Daggerfall offset position for paper doll inventory, etc.
         public DFSize scale;                    // Custom Daggerfall size for scaling sprites

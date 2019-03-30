@@ -406,6 +406,25 @@ namespace DaggerfallWorkshop.Utility
             imageData.texture = GetTexture(colors, imageData.width, imageData.height);
         }
 
+        /// <summary>
+        /// Updates mask texture.
+        /// The assigned Texture2D will have alpha 0 for unmasked areas and alpha 1 for masked areas.
+        /// If source DFBitmap has no mask indices then mask texture will simply be all clear.
+        /// </summary>
+        /// <param name="imageData">Source ImageData.</param>
+        public static void UpdateMaskTexture(ref ImageData imageData)
+        {
+            Color maskColor = new Color(0, 0, 0, 1);
+
+            // Get colors array without mask
+            Color32[] colors = imageData.dfBitmap.GetColor32(imageData.alphaIndex, 0xff, maskColor, true);
+            if (colors == null)
+                return;
+
+            // Create new Texture2D from mask
+            imageData.maskTexture = GetTexture(colors, imageData.width, imageData.height);
+        }
+
         #endregion
 
         #region Private Methods
