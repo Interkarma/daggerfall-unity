@@ -213,40 +213,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (buyMode)
             {
                 LoadSpellsForSale();
-                foreach (EffectBundleSettings bundle in offeredSpells)
-                {
-                    // Show spell name and cost
-                    // Costs can change based on player skills and stats so must be calculated each time
-                    int goldCost, spellPointCost;
-                    FormulaHelper.CalculateTotalEffectCosts(bundle.Effects, bundle.TargetType, out goldCost, out spellPointCost, null, bundle.MinimumCastingCost);
-                    spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, bundle.Name));
-                }
+                // I'm not sure GameManager.Instance.PlayerEntity.MaxMagicka would be a good idea here
+                PopulateSpellsList(offeredSpells, null);
             }
             else
             {
                 // Add player spells to list
                 EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
-                int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
                 if (spellbook != null)
                 {
-                    for (int i = 0; i < spellbook.Length; i++)
-                    {
-                        // Show spell name and cost
-                        // Costs can change based on player skills and stats so must be calculated each time
-                        int goldCost, spellPointCost;
-                        FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost, null, spellbook[i].MinimumCastingCost);
-                        ListBox.ListItem listItem;
-                        spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name), out listItem);
-                        if (curSpellPoints < spellPointCost)
-                        {
-                            // Desaturate unavailable spells
-                            float desaturation = 0.75f;
-                            listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
-                            listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
-                            listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
-                            listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
-                        }
-                    }
+                    PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
                 }
             }
 
@@ -260,6 +236,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         spellsListBox.SelectNone();
                 else
                     spellsListBox.SelectedIndex = oldSelectedIndex;
+            }
+        }
+
+        private void PopulateSpellsList(List<EffectBundleSettings> spells, int? availableSpellPoints = null)
+        {
+            foreach (EffectBundleSettings spell in spells)
+            {
+                // Show spell name and cost
+                // Costs can change based on player skills and stats so must be calculated each time
+                int goldCost, spellPointCost;
+                FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, out goldCost, out spellPointCost, null, spell.MinimumCastingCost);
+                ListBox.ListItem listItem;
+                spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spell.Name), out listItem);
+                if (availableSpellPoints != null && availableSpellPoints < spellPointCost)
+                {
+                    // Desaturate unavailable spells
+                    float desaturation = 0.75f;
+                    listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
+                    listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
+                    listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
+                    listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
+                }
             }
         }
 
