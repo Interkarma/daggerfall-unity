@@ -215,7 +215,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 LoadSpellsForSale();
                 foreach (EffectBundleSettings bundle in offeredSpells)
                 {
-                    spellsListBox.AddItem(bundle.Name);
+                    // Show spell name and cost
+                    // Costs can change based on player skills and stats so must be calculated each time
+                    int goldCost, spellPointCost;
+                    FormulaHelper.CalculateTotalEffectCosts(bundle.Effects, bundle.TargetType, out goldCost, out spellPointCost, null, bundle.MinimumCastingCost);
+                    spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, bundle.Name));
                 }
             }
             else
