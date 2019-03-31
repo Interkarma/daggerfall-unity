@@ -509,6 +509,11 @@ namespace DaggerfallWorkshop.Game
         {
             Vector3 assumedCurrentPosition;
 
+            if (predictedTargetPosWithoutLead == ResetPlayerPos)
+            {
+                predictedTargetPosWithoutLead = lastKnownTargetPos;
+            }
+
             // If aware of target, use last known position as assumed current position
             if (targetInSight || targetInEarshot)
             {

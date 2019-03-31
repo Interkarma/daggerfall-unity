@@ -67,9 +67,7 @@ namespace DaggerfallWorkshop.Game
         float heightChangeTimer;
         bool strafeLeft;
         float strafeAngle;
-        Vector3 strafeDest;
-        bool searchedLastKnownPos;
-        int searchMult = 0;
+        int searchMult;
 
         EnemySenses senses;
         Vector3 destination;
@@ -379,7 +377,6 @@ namespace DaggerfallWorkshop.Game
             {
                 SetChangeStateTimer();
                 bashing = false;
-                searchedLastKnownPos = false;
                 searchMult = 0;
 
                 return;
@@ -439,27 +436,29 @@ namespace DaggerfallWorkshop.Game
                     destination.y += 0.9f;
 
                 clearPathToShootAtPredictedPos = true;
-                searchedLastKnownPos = false;
                 searchMult = 0;
             }
             // Otherwise, search for target based on its last known position and direction
             else
             {
                 Vector3 searchPosition = senses.LastKnownTargetPos + (senses.LastPositionDiff.normalized * searchMult);
-                if (!searchedLastKnownPos && (searchPosition - transform.position).magnitude <= stopDistance)
-                    searchedLastKnownPos = true;
+                if ((searchPosition - transform.position).magnitude <= stopDistance)
+                    searchMult++;
 
-                if (!searchedLastKnownPos)
-                    destination = searchPosition;
-                else
+                destination = searchPosition;
+            }
+
+            if (GameManager.ClassicUpdate)
+            {
+                EnemyBlood sparkles2 = entityBehaviour.GetComponent<EnemyBlood>();
+                if (sparkles2)
                 {
-                    if ((searchPosition - transform.position).magnitude <= stopDistance)
-                        searchMult++;
-                    destination = searchPosition;
+                    sparkles2.ShowMagicSparkles(destination);
+                    //Debug.Log("senses.LastKnownTargetPos " + senses.LastKnownTargetPos + " senses.LastPositionDiff " + senses.LastPositionDiff + " destination " + destination + " ");
                 }
             }
 
-            if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
+                if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
             {
                 // Ground enemies target at their own height
                 // Otherwise, their target vector aims up towards the target, which could interfere with distance-to-target calculations
@@ -819,7 +818,7 @@ namespace DaggerfallWorkshop.Game
 
             if (strafe)
             {
-                strafeDest = new Vector3(destination.x + (Mathf.Sin(strafeAngle) * strafeDist), transform.position.y, destination.z + (Mathf.Cos(strafeAngle) * strafeDist));
+                Vector3 strafeDest = new Vector3(destination.x + (Mathf.Sin(strafeAngle) * strafeDist), transform.position.y, destination.z + (Mathf.Cos(strafeAngle) * strafeDist));
                 direction = (strafeDest - transform.position).normalized;
 
                 if ((strafeDest - transform.position).magnitude <= 0.2f)
