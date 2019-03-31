@@ -149,7 +149,7 @@ namespace DaggerfallWorkshop.Game
             if (moveInForAttackTimer > 0)
                 moveInForAttackTimer -= Time.deltaTime;
 
-            if (avoidObstaclesTimer > 0 && senses.TargetIsWithinYawAngle(5.625f, destination))
+            if (avoidObstaclesTimer > 0)
                 avoidObstaclesTimer -= Time.deltaTime;
             if (avoidObstaclesTimer < 0)
                 avoidObstaclesTimer = 0;
@@ -413,34 +413,36 @@ namespace DaggerfallWorkshop.Game
 
             bool clearPathToShootAtPredictedPos = false;
 
-            // Get location to move towards. Either the combat target's position or, if trying to avoid an obstacle or fall,
-            // a location to try to detour around the obstacle/fall.
-            if (avoidObstaclesTimer == 0 && ClearPathToPosition(senses.PredictedTargetPos))
+            // Set avoidObstaclesTimer to 0 if got close enough to detourDestination
+            if (avoidObstaclesTimer > 0)
+            {
+                Vector3 detourDestination2D = detourDestination;
+                detourDestination2D.y = transform.position.y;
+                if ((detourDestination2D - transform.position).magnitude <= 0.3f)
+                {
+                    avoidObstaclesTimer = 0;
+                }
+            }
+
+            // Get location to move towards.
+            // If detouring around an obstacle or fall, use the detour position
+            if (avoidObstaclesTimer > 0)
+            {
+                destination = detourDestination;
+            }
+            // Otherwise, try to get to the combat target if there is a clear path to it
+            else if (ClearPathToPosition(senses.PredictedTargetPos))
             {
                 destination = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
                 if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
                     destination.y += 0.9f;
-                else
-                {
-                    // Ground enemies target at their own height
-                    // This avoids short enemies from stepping on each other as they approach the target
-                    // Otherwise, their target vector aims up towards the target
-                    var targetController = senses.Target.GetComponent<CharacterController>();
-                    var deltaHeight = (targetController.height - controller.height) / 2;
-                    destination.y -= deltaHeight;
-                }
 
                 clearPathToShootAtPredictedPos = true;
                 searchedLastKnownPos = false;
                 searchMult = 0;
             }
-            // If detouring, use the detour position
-            else if (avoidObstaclesTimer > 0)
-            {
-                destination = detourDestination;
-            }
-            // Otherwise, search for target
+            // Otherwise, search for target based on its last known position and direction
             else
             {
                 Vector3 searchPosition = senses.LastKnownTargetPos + (senses.LastPositionDiff.normalized * searchMult);
@@ -455,6 +457,15 @@ namespace DaggerfallWorkshop.Game
                         searchMult++;
                     destination = searchPosition;
                 }
+            }
+
+            if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
+            {
+                // Ground enemies target at their own height
+                // Otherwise, their target vector aims up towards the target, which could interfere with distance-to-target calculations
+                var targetController = senses.Target.GetComponent<CharacterController>();
+                var deltaHeight = (targetController.height - controller.height) / 2;
+                destination.y -= deltaHeight;
             }
 
             // Get direction & distance.
@@ -998,43 +1009,36 @@ namespace DaggerfallWorkshop.Game
             detourDestination.y = transform.position.y;
 
             if (avoidObstaclesTimer == 0)
-                avoidObstaclesTimer = 0.25f;
+                avoidObstaclesTimer = 0.75f;
             lastTimeWasStuck = Time.time;
         }
 
         void RayCheckForObstacle(Vector3 direction)
         {
             obstacleDetected = false;
-            RaycastHit hit;
-            int checkDistance = 1;
-            Vector3 rayOrigin = transform.position + controller.center;
-            rayOrigin.y -= controller.height / 3;
+            const int checkDistance = 1;
             foundUpwardSlope = false;
             foundDoor = false;
 
-            Ray ray = new Ray(rayOrigin, direction);
-            if (Physics.Raycast(ray, out hit, checkDistance))
+            RaycastHit hit;
+            CharacterController charContr = GetComponent<CharacterController>();
+            Vector3 p1 = transform.position + charContr.center + Vector3.up * -charContr.height * 0.5F;
+            Vector3 p2 = p1 + Vector3.up * charContr.height;
+
+            if (Physics.CapsuleCast(p1, p2, charContr.radius, transform.forward, out hit, checkDistance))
             {
                 obstacleDetected = true;
-                float firstDistance = hit.distance;
-
-                rayOrigin.y += 0.5f;
-                ray = new Ray(rayOrigin, direction);
-                RaycastHit hit2;
-                bool secondRayHit = Physics.Raycast(ray, out hit2, checkDistance);
-
-                if (!secondRayHit || firstDistance < hit2.distance)
-                {
-                    obstacleDetected = false;
-                    foundUpwardSlope = true;
-                }
 
                 DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                if (entityBehaviour2 == senses.Target)
-                    obstacleDetected = false;
-
                 DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
-                if (door)
+                DaggerfallLoot loot = hit.transform.GetComponent<DaggerfallLoot>();
+
+                if (entityBehaviour2)
+                {
+                    if (entityBehaviour2 == senses.Target)
+                        obstacleDetected = false;
+                }
+                else if (door)
                 {
                     obstacleDetected = false;
                     foundDoor = true;
@@ -1044,10 +1048,34 @@ namespace DaggerfallWorkshop.Game
                         senses.DistanceToDoor = Vector3.Distance(transform.position, door.transform.position);
                     }
                 }
-
-                DaggerfallLoot loot = hit.transform.GetComponent<DaggerfallLoot>();
-                if (loot)
+                else if (loot)
+                {
                     obstacleDetected = false;
+                }
+                else
+                {
+                    Vector3 rayOrigin = transform.position + controller.center;
+
+                    // Set y for low ray to just above bottom of controller
+                    rayOrigin.y -= ((controller.height / 2) - 0.1f);
+                    Ray ray = new Ray(rayOrigin, direction);
+
+                    RaycastHit lowHit;
+                    Physics.Raycast(ray, out lowHit, checkDistance);
+
+                    // Aim a little higher for next ray. Should be enough for the ray to hit the next step on a climbable staircase,
+                    // but not so much that a non-climbable difference in height is mistaken as a climbable slope.
+                    rayOrigin.y += 0.3f;
+                    ray = new Ray(rayOrigin, direction);
+                    RaycastHit highHit;
+                    bool secondRayHit = Physics.Raycast(ray, out highHit, checkDistance);
+
+                    if (!secondRayHit || (lowHit.distance < highHit.distance - 0.1f))
+                    {
+                        obstacleDetected = false;
+                        foundUpwardSlope = true;
+                    }
+                }
             }
         }
 
