@@ -70,6 +70,17 @@ namespace DaggerfallWorkshop.Game
                     if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
                         controller.height /= 2f;
 
+                    // Limit minimum controller height
+                    // Stops very short characters like rats from being walked upon
+                    if (controller.height < 1.6f)
+                    {
+                        // Adjust center to match new height
+                        Vector3 newCenter = controller.center;
+                        newCenter.y += (1.6f - controller.height) / 2;
+                        controller.center = newCenter;
+                        controller.height = 1.6f;
+                    }
+
                     controller.gameObject.layer = LayerMask.NameToLayer("Enemies");
                 }
 
