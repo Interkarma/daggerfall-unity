@@ -150,6 +150,22 @@ namespace DaggerfallConnect.Arena2
             public string text;
             public int x;
             public int y;
+
+            public Token(Formatting formatting)
+            {
+                this.formatting = formatting;
+                text = string.Empty;
+                x = 0;
+                y = 0;
+            }
+
+            public Token(Formatting formatting, string text, int x = 0, int y = 0)
+            {
+                this.formatting = formatting;
+                this.text = text;
+                this.x = x;
+                this.y = y;
+            }
         }
 
         private struct TextRecordDatabaseHeader

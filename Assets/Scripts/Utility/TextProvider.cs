@@ -46,6 +46,14 @@ namespace DaggerfallWorkshop.Utility
         TextFile.Token[] GetRandomTokens(int id, bool dfRand = false);
 
         /// <summary>
+        /// Creates a custom token array.
+        /// </summary>
+        /// <param name="formatting">Formatting of each line.</param>
+        /// <param name="lines">All text lines.</param>
+        /// <returns>Token array.</returns>
+        TextFile.Token[] CreateTokens(TextFile.Formatting formatting, params string[] lines);
+
+        /// <summary>
         /// Gets random string from separated token array.
         /// Example would be flavour text variants when finding dungeon exterior.
         /// </summary>
@@ -295,6 +303,21 @@ namespace DaggerfallWorkshop.Utility
             int index = UnityEngine.Random.Range(0, textItems.Count);
 
             return textItems[index];
+        }
+
+        public virtual TextFile.Token[] CreateTokens(TextFile.Formatting formatting, params string[] lines)
+        {
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+
+            foreach(string line in lines)
+            {
+                tokens.Add(new TextFile.Token(TextFile.Formatting.Text, line));
+                tokens.Add(new TextFile.Token(formatting));
+            }
+
+            tokens.Add(new TextFile.Token(TextFile.Formatting.EndOfRecord));
+
+            return tokens.ToArray();
         }
 
         public string GetWeaponMaterialName(WeaponMaterialTypes material)
