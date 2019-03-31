@@ -61,7 +61,7 @@ Shader "Daggerfall/PaperDoll"
 
         // Second pass deletes masked fragments
         // Mask texture should use alpha 0 for non-masked areas and alpha 1 for masked areas
-        // Fragments below alpha cutoff is discarded, everything else is reset back to clear to expose background
+        // Fragments below alpha cutoff are discarded, everything else is cleared to expose background
         Pass {
             Blend Off
             CGPROGRAM
