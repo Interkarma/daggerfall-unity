@@ -279,6 +279,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Poisons poisonType = Poisons.None;
         public int potionRecipe;
         public ItemRepairData_v1 repairData;
+        public uint timeForItemToDisappear;
     }
 
     [fsObject("v1")]

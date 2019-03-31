@@ -357,6 +357,16 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Get flag checking if this is a summoned item.
+        /// Summoned items have a specific future game time they expire.
+        /// Non-summoned items have 0 in this field.
+        /// </summary>
+        public bool IsSummoned
+        {
+            get { return timeForItemToDisappear != 0; }
+        }
+
+        /// <summary>
         /// Check if this is a quest item.
         /// </summary>
         public bool IsQuestItem
@@ -604,6 +614,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>True if item stackable.</returns>
         public virtual bool IsStackable()
         {
+            if (IsSummoned)
+            {
+                // Only allowing summoned arrows to stack at this time
+                // But they should only stack with other summoned arrows
+                if (!IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
+                    return false;
+            }
+
             if (IsEquipped || IsQuestItem || IsEnchanted)
                 return false;
             if (IsIngredient || IsPotion ||
@@ -730,6 +748,7 @@ namespace DaggerfallWorkshop.Game.Items
                 data.poisonType = Poisons.None;
             data.potionRecipe = potionRecipeKey;
             data.repairData = repairData.GetSaveData();
+            data.timeForItemToDisappear = timeForItemToDisappear;
 
             return data;
         }
@@ -1381,6 +1400,8 @@ namespace DaggerfallWorkshop.Game.Items
                 potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
 
             repairData.RestoreRepairData(data.repairData);
+
+            timeForItemToDisappear = data.timeForItemToDisappear;
         }
 
         /// <summary>

@@ -152,6 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
         Color lightSourceBackgroundColor = new Color(0.6f, 0.5f, 0f, 0.5f);
+        Color summonedItemBackgroundColor = new Color(0.18f, 0.32f, 0.48f, 0.5f);
 
         PlayerEntity playerEntity;
 
@@ -364,11 +365,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual Color ItemBackgroundColourHandler(DaggerfallUnityItem item)
         {
-            // TEST: Set green background for remote quest items
+            // Set background for special items
             if (item.IsQuestItem)
                 return questItemBackgroundColor;
             else if (playerEntity.LightSource == item)
                 return lightSourceBackgroundColor;
+            else if (item.IsSummoned)
+                return summonedItemBackgroundColor;
             else
                 return Color.clear;
         }
@@ -1303,6 +1306,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Block transfer of horse or cart (don't allow putting either in wagon)
             if (blockTransport && item.ItemGroup == ItemGroups.Transportation)
                 return;
+
+            // Block transfer of summoned items
+            if (item.IsSummoned)
+            {
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
+                return;
+            }
 
             // Handle map items
             if (item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map))
