@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
@@ -48,7 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color32[] paperDollColors;                  // Paper doll as shown to player
         byte[] paperDollIndices;                    // Paper doll selection indices
 
-        Texture2D paperDollTexture;
+        //Texture2D paperDollTexture;
 
         Panel backgroundPanel = new Panel();
         Panel characterPanel = new Panel();
@@ -133,31 +134,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             BlitItems(playerEntity);
 
             // Destroy old paper doll texture
-            characterPanel.BackgroundTexture = null;
-            GameObject.Destroy(paperDollTexture);
-            paperDollTexture = null;
+            //characterPanel.BackgroundTexture = null;
+            //GameObject.Destroy(paperDollTexture);
+            //paperDollTexture = null;
 
             // Update paper doll texture
-            paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
-            characterPanel.BackgroundTexture = paperDollTexture;
+            //paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
+            //characterPanel.BackgroundTexture = paperDollTexture;
 
+            // Display using new paper doll renderer
+            DaggerfallUI.Instance.PaperDollRenderer.Refresh(PaperDollRenderer.LayerFlags.All, playerEntity);
+            characterPanel.BackgroundTexture = DaggerfallUI.Instance.PaperDollRenderer.PaperDollTexture;
+            //TextureReader.SaveTextureToPNG(DaggerfallUI.Instance.PaperDollRenderer.PaperDollTexture, "c:\\test\\testrender.png");
+
+            // Update armour values
             RefreshArmourValues(playerEntity);
-
-            //// Create image from selection mask
-            //DFPalette palette = new DFPalette();
-            //byte value = 20;
-            //for (int i = 0; i < 256; i++)
-            //{
-            //    palette.Set(i, value, value, value);
-            //    value += 8;
-            //}
-            //DFBitmap bitmap = new DFBitmap(paperDollWidth, paperDollHeight);
-            //bitmap.Palette = palette;
-            //bitmap.Data = (byte[])paperDollIndices.Clone();
-            //Color32[] testColors = bitmap.GetColor32(255);
-            //string path = @"d:\test\blits\selection.png";
-            //Texture2D texture = ImageProcessing.MakeTexture2D(ref testColors, paperDollWidth, paperDollHeight, TextureFormat.ARGB32, false);
-            //ImageProcessing.SaveTextureAsPng(texture, path);
         }
 
         /// <summary>

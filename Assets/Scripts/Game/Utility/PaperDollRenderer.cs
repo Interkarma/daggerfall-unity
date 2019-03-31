@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         Material paperDollMaterial = null;
         RenderTexture target = null;
+        Texture2D paperDollTexture = null;
         DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
 
         #endregion
@@ -56,6 +57,18 @@ namespace DaggerfallWorkshop.Game.Utility
             Body = 2,
             Items = 4,
             All = 7,
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets render output since last refresh.
+        /// </summary>
+        public Texture2D PaperDollTexture
+        {
+            get { return paperDollTexture; }
         }
 
         #endregion
@@ -89,12 +102,22 @@ namespace DaggerfallWorkshop.Game.Utility
                 target = null;
             }
 
+            // Destroy old output texture
+            if (paperDollTexture != null)
+            {
+                GameObject.Destroy(paperDollTexture);
+                paperDollTexture = null;
+            }
+
             // Scale cannot be lower than 1.0
             if (scale < 1)
                 scale = 1;
 
             // Create scaled render texture
             target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 16);
+
+            // Create output texture
+            paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
         }
 
         /// <summary>
@@ -102,14 +125,11 @@ namespace DaggerfallWorkshop.Game.Utility
         /// </summary>
         /// <param name="layers">Flags controlling which layers of paper doll to draw.</param>
         /// <param name="playerEntity">Player entity to use for paper doll construction. Use null for live player entity.</param>
-        public Texture2D RenderPaperDoll(LayerFlags layers = LayerFlags.All, PlayerEntity playerEntity = null)
+        public void Refresh(LayerFlags layers = LayerFlags.All, PlayerEntity playerEntity = null)
         {
             // Get current player entity if one not provided
             if (playerEntity == null)
                 playerEntity = GameManager.Instance.PlayerEntity;
-
-            // Create output texture
-            Texture2D result = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
 
             // Start rendering to paper doll target
             RenderTexture oldRT = RenderTexture.active;
@@ -131,12 +151,11 @@ namespace DaggerfallWorkshop.Game.Utility
                 BlitItems(playerEntity);
 
             // Copy render to new output
-            result.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);
+            paperDollTexture.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);
+            paperDollTexture.Apply();
 
             // Switch back to previous render target
             RenderTexture.active = oldRT;
-
-            return result;
         }
 
         #endregion

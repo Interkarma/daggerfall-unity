@@ -18,6 +18,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.MagicAndEffects;
@@ -124,6 +125,8 @@ namespace DaggerfallWorkshop.Game
 
         public Material PixelFontMaterial { get { return pixelFontMaterial; } set { pixelFontMaterial = value; } }
         public Material SDFFontMaterial { get { return sdfFontMaterial; } set { sdfFontMaterial = value; } }
+
+        PaperDollRenderer paperDollRenderer;
 
         public UserInterfaceRenderTarget CustomRenderTarget
         {
@@ -248,6 +251,11 @@ namespace DaggerfallWorkshop.Game
             get { return Path.Combine(Application.streamingAssetsPath, fontsFolderName); }
         }
 
+        public PaperDollRenderer PaperDollRenderer
+        {
+            get { return paperDollRenderer; }
+        }
+
         public enum PopupStyle
         {
             Parchment,
@@ -298,6 +306,12 @@ namespace DaggerfallWorkshop.Game
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
+
+            // TEST: 4x scale paper doll renderer
+            // This will be used to display visual paper doll during testing
+            // Old paper doll still refreshed and used for mouse-over picking
+            // Will switch back to old method if any significant issues found with new paper doll rendering
+            paperDollRenderer = new PaperDollRenderer(4);
 
             SetupSingleton();
         }
