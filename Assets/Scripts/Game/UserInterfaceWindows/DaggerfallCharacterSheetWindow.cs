@@ -405,7 +405,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     bonusPool = UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
                 }
                 else
-                    bonusPool = 30;
+                    bonusPool = oghmaBonusPool;
 
                 // Add stats rollout for leveling up
                 NativePanel.Components.Add(statsRollout);
