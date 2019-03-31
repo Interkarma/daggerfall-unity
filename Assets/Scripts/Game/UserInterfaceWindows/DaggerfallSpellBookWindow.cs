@@ -212,60 +212,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add spells based on mode
             if (buyMode)
             {
-                // Load spells for sale
-                offeredSpells.Clear();
-                List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
-                if (standardSpells == null || standardSpells.Count == 0)
-                {
-                    Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
-                    return;
-                }
-
-                for (int i = 0; i < standardSpells.Count; i++)
-                {
-                    // Filter internal spells starting with exclamation point '!'
-                    if (standardSpells[i].spellName.StartsWith("!"))
-                        continue;
-
-                    // NOTE: Classic allows purchase of duplicate spells
-                    // If ever changing this, must ensure spell is an *exact* duplicate (i.e. not a custom spell with same name)
-                    // Just allowing duplicates for now as per classic and let user manage preference
-
-                    // Get effect bundle settings from classic spell
-                    EffectBundleSettings bundle;
-                    if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(standardSpells[i], BundleTypes.Spell, out bundle))
-                        continue;
-
-                    // Store offered spell and add to list box
-                    offeredSpells.Add(bundle);
-                    spellsListBox.AddItem(standardSpells[i].spellName);
-                }
+                LoadSpellsForSale();
+                // I'm not sure GameManager.Instance.PlayerEntity.MaxMagicka would be a good idea here
+                PopulateSpellsList(offeredSpells, null);
             }
             else
             {
                 // Add player spells to list
                 EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
-                int curSpellPoints = GameManager.Instance.PlayerEntity.CurrentMagicka;
                 if (spellbook != null)
                 {
-                    for (int i = 0; i < spellbook.Length; i++)
-                    {
-                        // Show spell name and cost
-                        // Costs can change based on player skills and stats so must be calculated each time
-                        int goldCost, spellPointCost;
-                        FormulaHelper.CalculateTotalEffectCosts(spellbook[i].Effects, spellbook[i].TargetType, out goldCost, out spellPointCost, null, spellbook[i].MinimumCastingCost);
-                        ListBox.ListItem listItem;
-                        spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spellbook[i].Name), out listItem);
-                        if (curSpellPoints < spellPointCost)
-                        {
-                            // Desaturate unavailable spells
-                            float desaturation = 0.75f;
-                            listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
-                            listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
-                            listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
-                            listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
-                        }
-                    }
+                    PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
                 }
             }
 
@@ -280,6 +237,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     spellsListBox.SelectedIndex = oldSelectedIndex;
             }
+        }
+
+        private void PopulateSpellsList(List<EffectBundleSettings> spells, int? availableSpellPoints = null)
+        {
+            foreach (EffectBundleSettings spell in spells)
+            {
+                // Show spell name and cost
+                // Costs can change based on player skills and stats so must be calculated each time
+                int goldCost, spellPointCost;
+                FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, out goldCost, out spellPointCost, null, spell.MinimumCastingCost);
+                ListBox.ListItem listItem;
+                spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spell.Name), out listItem);
+                if (availableSpellPoints != null && availableSpellPoints < spellPointCost)
+                {
+                    // Desaturate unavailable spells
+                    float desaturation = 0.75f;
+                    listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
+                    listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
+                    listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
+                    listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
+                }
+            }
+        }
+
+        private void LoadSpellsForSale()
+        {
+            // Load spells for sale
+            offeredSpells.Clear();
+            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
+            if (standardSpells == null || standardSpells.Count == 0)
+            {
+                Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
+                return;
+            }
+
+            for (int i = 0; i < standardSpells.Count; i++)
+            {
+                // Filter internal spells starting with exclamation point '!'
+                if (standardSpells[i].spellName.StartsWith("!"))
+                    continue;
+
+                // NOTE: Classic allows purchase of duplicate spells
+                // If ever changing this, must ensure spell is an *exact* duplicate (i.e. not a custom spell with same name)
+                // Just allowing duplicates for now as per classic and let user manage preference
+
+                // Get effect bundle settings from classic spell
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(standardSpells[i], BundleTypes.Spell, out bundle))
+                    continue;
+
+                // Store offered spell and add to list box
+                offeredSpells.Add(bundle);
+            }
+            // Sort spells for easier finding
+            offeredSpells = offeredSpells.OrderBy(x => x.Name).ToList();
         }
 
         #endregion
