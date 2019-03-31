@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Create output texture
             paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
+            paperDollTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
         }
 
         /// <summary>
