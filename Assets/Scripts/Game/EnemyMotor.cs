@@ -442,20 +442,10 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 Vector3 searchPosition = senses.LastKnownTargetPos + (senses.LastPositionDiff.normalized * searchMult);
-                if ((searchPosition - transform.position).magnitude <= stopDistance)
+                if (searchMult <= 10 && (searchPosition - transform.position).magnitude <= stopDistance)
                     searchMult++;
 
                 destination = searchPosition;
-            }
-
-            if (GameManager.ClassicUpdate)
-            {
-                EnemyBlood sparkles2 = entityBehaviour.GetComponent<EnemyBlood>();
-                if (sparkles2)
-                {
-                    sparkles2.ShowMagicSparkles(destination);
-                    //Debug.Log("senses.LastKnownTargetPos " + senses.LastKnownTargetPos + " senses.LastPositionDiff " + senses.LastPositionDiff + " destination " + destination + " ");
-                }
             }
 
                 if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
@@ -1024,7 +1014,7 @@ namespace DaggerfallWorkshop.Game
             Vector3 p1 = transform.position + charContr.center + Vector3.up * -charContr.height * 0.5F;
             Vector3 p2 = p1 + Vector3.up * charContr.height;
 
-            if (Physics.CapsuleCast(p1, p2, charContr.radius, transform.forward, out hit, checkDistance))
+            if (Physics.CapsuleCast(p1, p2, charContr.radius, direction, out hit, checkDistance))
             {
                 obstacleDetected = true;
 

@@ -455,7 +455,7 @@ namespace DaggerfallWorkshop.Game
                 if (targetPosPredict && lastKnownTargetPos != ResetPlayerPos)
                 {
                     // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
-                    if (!blockedByIllusionEffect && (targetInSight || targetInEarshot))
+                    if (!blockedByIllusionEffect && targetInSight)
                     {
                         if (awareOfTargetForLastPrediction)
                             lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
@@ -508,22 +508,18 @@ namespace DaggerfallWorkshop.Game
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {
             Vector3 assumedCurrentPosition;
+            RaycastHit tempHit;
 
             if (predictedTargetPosWithoutLead == ResetPlayerPos)
             {
                 predictedTargetPosWithoutLead = lastKnownTargetPos;
             }
 
-            // If aware of target, use last known position as assumed current position
-            if (targetInSight || targetInEarshot)
+            // If aware of target, if distance is too far or can see nothing is there, use last known position as assumed current position
+            if (targetInSight || targetInEarshot || (predictedTargetPos - transform.position).magnitude > SightRadius + mobile.Summary.Enemy.SightModifier
+                || !Physics.Raycast(transform.position, (predictedTargetPosWithoutLead - transform.position).normalized, out tempHit, SightRadius + mobile.Summary.Enemy.SightModifier))
             {
                 assumedCurrentPosition = lastKnownTargetPos;
-            }
-            // Stop predicting if distance is too far
-            else if ((predictedTargetPos - transform.position).magnitude > SightRadius + mobile.Summary.Enemy.SightModifier)
-            {
-                assumedCurrentPosition = predictedTargetPosWithoutLead;
-                lastPositionDiff = Vector3.zero;
             }
             // If not aware of target and predicted position may still be good, use predicted position
             else
