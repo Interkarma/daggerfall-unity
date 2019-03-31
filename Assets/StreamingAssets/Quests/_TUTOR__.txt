@@ -214,9 +214,9 @@ QuestTimeLapse:  [1045]
 <ce>           walls. You can only rest in Taverns, if you have
 <ce>                        purchased a room there.
 <ce>                                    
-<ce>          The first thing you want to do is set your mode to
-<ce>         DIALOGUE. Click on the hand icon until it changes to
-<ce>        a word balloon, or just press F4. Now get close to one
+<ce>        The first thing you want to do is to press the F4 key to
+<ce>         set your mode to DIALOGUE (you can change the mode of
+<ce>       interaction anytime using F1 to F4). Now get close to one
 <ce>        of the townsfolk. They won't stop to talk to you unless
 <ce>         you are not moving. Click on the person and you will
 <ce>                  be placed into the Dialogue screen.
