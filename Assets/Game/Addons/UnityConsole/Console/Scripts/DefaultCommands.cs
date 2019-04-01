@@ -344,10 +344,6 @@ namespace Wenzil.Console
                     else
                         team = (int)entity.Team;
 
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
-                        mobile[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
-                    else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
-                        mobile[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
                     mobile[0].transform.LookAt(mobile[0].transform.position + (mobile[0].transform.position - player.transform.position));
                     mobile[0].SetActive(true);
 
