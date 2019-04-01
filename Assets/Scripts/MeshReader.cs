@@ -387,6 +387,63 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets a most basic quad.
+        /// </summary>
+        /// <param name="size">Size of quad in Unity units (not Daggerfall units).</param>
+        /// <returns>Mesh object.</returns>
+        public Mesh GetSimpleBillboardMesh(Vector2 size)
+        {
+            // Ready check
+            if (!IsReady)
+                return null;
+
+            // Vertices
+            float hx = size.x / 2;
+            float hy = size.y / 2;
+            Vector3[] vertices = new Vector3[4];
+            vertices[0] = new Vector3(hx, hy, 0);
+            vertices[1] = new Vector3(-hx, hy, 0);
+            vertices[2] = new Vector3(hx, -hy, 0);
+            vertices[3] = new Vector3(-hx, -hy, 0);
+
+            // Indices
+            int[] indices = new int[6]
+            {
+                0, 1, 2,
+                3, 2, 1,
+            };
+
+            // Normals
+            // Setting in between forward and up so billboards will
+            // pick up some light from both above and in front.
+            // This seems to work generally well for both directional and point lights.
+            // Possibly need a better solution later.
+            Vector3 normal = Vector3.Normalize(Vector3.up + Vector3.forward);
+            Vector3[] normals = new Vector3[4];
+            normals[0] = normal;
+            normals[1] = normal;
+            normals[2] = normal;
+            normals[3] = normal;
+
+            // UVs
+            Vector2[] uvs = new Vector2[4];
+            uvs[0] = new Vector2(0, 1);
+            uvs[1] = new Vector2(1, 1);
+            uvs[2] = new Vector2(0, 0);
+            uvs[3] = new Vector2(1, 0);
+
+            // Create mesh
+            Mesh mesh = new Mesh();
+            mesh.name = string.Format("SimpleBillboardMesh");
+            mesh.vertices = vertices;
+            mesh.triangles = indices;
+            mesh.normals = normals;
+            mesh.uv = uvs;
+
+            return mesh;
+        }
+
+        /// <summary>
         /// Gets a simple ground plane mesh.
         /// This is only used for RMB block layouts, not for terrain system.
         /// </summary>

@@ -355,6 +355,57 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Sets billboard material with a custom texture.
+        /// </summary>
+        /// <param name="texture">Texture2D to set on material.</param>
+        /// <param name="size">Size of billboard quad in normal units (not Daggerfall units).</param>
+        /// <returns>Material.</returns>
+        public Material SetMaterial(Texture2D texture, Vector2 size)
+        {
+            // Get DaggerfallUnity
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return null;
+
+            // Get references
+            meshRenderer = GetComponent<MeshRenderer>();
+
+            // Create material
+            Material material = MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout);
+            material.mainTexture = texture;
+
+            // Create mesh
+            Mesh mesh = dfUnity.MeshReader.GetSimpleBillboardMesh(size);
+
+            // Set summary
+            summary.FlatType = FlatTypes.Decoration;
+            summary.Size = size;
+
+            // Assign mesh and material
+            MeshFilter meshFilter = GetComponent<MeshFilter>();
+            Mesh oldMesh = meshFilter.sharedMesh;
+            if (mesh)
+            {
+                meshFilter.sharedMesh = mesh;
+                meshRenderer.sharedMaterial = material;
+            }
+            if (oldMesh)
+            {
+                // The old mesh is no longer required
+#if UNITY_EDITOR
+                DestroyImmediate(oldMesh);
+#else
+                Destroy(oldMesh);
+#endif
+            }
+
+            // Standalone billboards never cast shadows
+            meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+
+            return material;
+        }
+
+        /// <summary>
         /// Aligns billboard to centre of base, rather than exact centre.
         /// Must have already set material using SetMaterial() for billboard dimensions to be known.
         /// </summary>
