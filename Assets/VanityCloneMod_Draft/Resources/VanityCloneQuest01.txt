@@ -1,0 +1,68 @@
+---- Special quest deployed when Vanity Clone is cast under a full moon
+
+Quest: VanityCloneQuest01
+DisplayName: Thy Name Is Vanity
+
+
+QRC:
+
+Message:  1040
+%qdt:
+ I shouldn't have done that...
+
+Message:  1045
+<ce>Your clone rises into the air and shouts:
+<ce>"To me %pcn! To me!
+<ce>"Stand close, my magic will not harm you!"
+
+Message:  1050
+<ce>"We nearly have them, %pcn!
+<ce>Just a bit longer!"
+
+Message:  1055
+<ce>"Victory!
+<ce>Know that my name is Vanity,
+<ce>and on this night you set me free.
+<ce>I thank you for my freedom."
+
+Message:  1060
+<ce>"I must go now, my people need me.
+<ce>Witness meeee!"
+
+
+QBN:
+
+Foe _skeleton_ is Skeletal_warrior
+Foe _fire_ is Fire_daedra
+Foe _frost_ is Frost_daedra
+Foe _seducer_ is Daedra_seducer
+Foe _daedroth_ is Daedroth
+
+Clock _wavesDone_ 00:12
+Clock _eventDone_ 00:04
+
+ --	Quest start-up:
+	log 1040 step 0
+    play sound storm_1 every 2 minutes 100 times
+    play sound storm_2 every 3 minutes 100 times
+    play sound storm_3 every 5 minutes 100 times
+    start task _waves_
+    start timer _wavesDone_
+    say 1045
+
+_waves_ task:
+    create foe _skeleton_ every 1 minutes indefinitely with 100% success
+    create foe _fire_ every 2 minutes indefinitely with 100% success
+    create foe _frost_ every 3 minutes indefinitely with 100% success
+    create foe _seducer_ every 1 minutes indefinitely with 100% success
+    create foe _daedroth_ every 2 minutes indefinitely with 100% success
+
+_wavesDone_ task:
+    clear _waves_
+    start timer _eventDone_
+    say 1050
+
+_eventDone_ task:
+    say 1055
+    say 1060
+    end quest
