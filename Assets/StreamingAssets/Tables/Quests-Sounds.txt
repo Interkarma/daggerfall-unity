@@ -9,6 +9,9 @@ schema: id,*name
 
 8  , empty
 13 , fire_daemon
+92 , storm_1
+93 , storm_2
+94 , storm_3
 267, retch_4
 268, ugh_2
 269, agh_4
