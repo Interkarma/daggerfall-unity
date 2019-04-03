@@ -739,14 +739,12 @@ namespace DaggerfallWorkshop.Game.Items
                         {
                             switch (enchantment.param)
                             {
-                                case (int)ArtifactsSubTypes.Mehrunes_Razor: // Uses Mithril in classic but Elven matches its paper doll image
+                                case (int)ArtifactsSubTypes.Mehrunes_Razor: // Different from classic but Elven matches the paper doll more closely
                                     return MetalTypes.Elven;
                                 case (int)ArtifactsSubTypes.Mace_of_Molag_Bal:
                                     return MetalTypes.Ebony;
                                 case (int)ArtifactsSubTypes.Wabbajack:
                                     return MetalTypes.Steel;
-                                case (int)ArtifactsSubTypes.Volendrung: // Uses Steel in classic but Dwarven matches its paper doll image
-                                    return MetalTypes.Dwarven;
                                 default:
                                     break;
                             }
