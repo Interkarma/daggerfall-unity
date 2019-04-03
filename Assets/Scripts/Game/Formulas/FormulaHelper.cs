@@ -130,6 +130,20 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return 100;
         }
 
+        public static int BonusPool()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("BonusPool", out del))
+                return del();
+
+            const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
+            const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
+
+            // Roll bonus pool for player to distribute
+            // Using maxBonusPool + 1 for inclusive range
+            return UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
+        }
+
         #endregion
 
         #region Player

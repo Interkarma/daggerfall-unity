@@ -34,8 +34,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool leveling = false;
 
-        const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
-        const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
         const int oghmaBonusPool = 30;
 
         SoundClips levelUpSound = SoundClips.LevelUp;
@@ -400,9 +398,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 if (!PlayerEntity.OghmaLevelUp)
                 {
-                    // Roll bonus pool for player to distribute
-                    // Using maxBonusPool + 1 for inclusive range
-                    bonusPool = UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
+                    bonusPool = FormulaHelper.BonusPool();
                 }
                 else
                     bonusPool = oghmaBonusPool;
