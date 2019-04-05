@@ -26,6 +26,20 @@ namespace DaggerfallConnect.Arena2
             // side of the door (e.g. The Count's Arsenal, Newtale, Bhoriane)
             {14515830, 0, 252},
 
+            // Model 116 (house exterior wall)
+            {22229232, 0 ,4},
+            {22229240, 0, 252},
+            {22229248, 0, 0},
+
+            // Model 123 (general store exterior wall)
+            {25374440, 0, 0},
+            {25374448, 0, 0},
+
+            // Model 761 (house exterior wall)
+            {19367896, 0, 4},
+            {19367904, 0, 252},
+            {19367912, 0, 0},
+
             // Models 8016 to 8816 (room stretched floor)
             {304418, 250, 23},
             {304426, 6, 232},
