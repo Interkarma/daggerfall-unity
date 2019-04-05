@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
         readonly Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
         readonly Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
+        readonly List<EffectBundleSettings> customSpellBundleOffers = new List<EffectBundleSettings>();
 
         #endregion
 
@@ -203,6 +204,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Allows a mod to register custom spell bundles for sale at the spell maker along with classic spells.
+        /// </summary>
+        /// <param name="bundleSettings">EffectBundleSettings of spell bundle to offer.</param>
+        public void RegisterCustomSpellBundleOffer(EffectBundleSettings bundleSettings)
+        {
+            customSpellBundleOffers.Add(bundleSettings);
+        }
+
+        /// <summary>
+        /// Gets custom spell bundles offered for sale or item enchanting.
+        /// </summary>
+        public EffectBundleSettings[] GetCustomSpellBundleOffers()
+        {
+            return customSpellBundleOffers.ToArray();
         }
 
         /// <summary>

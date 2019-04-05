@@ -272,6 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
+            // Add standard spell bundles to offer
             for (int i = 0; i < standardSpells.Count; i++)
             {
                 // Filter internal spells starting with exclamation point '!'
@@ -290,6 +291,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Store offered spell and add to list box
                 offeredSpells.Add(bundle);
             }
+
+            // Add custom spell bundles to offer
+            offeredSpells.AddRange(GameManager.Instance.EntityEffectBroker.GetCustomSpellBundleOffers());
+
             // Sort spells for easier finding
             offeredSpells = offeredSpells.OrderBy(x => x.Name).ToList();
         }
