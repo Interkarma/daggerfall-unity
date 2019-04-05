@@ -478,6 +478,9 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenSpellMakerWindow:
                     uiManager.PushWindow(dfSpellMakerWindow);
                     break;
+                case DaggerfallUIMessages.dfuiOpenItemMakerWindow:
+                    uiManager.PushWindow(dfItemMakerWindow);
+                    break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (GameManager.Instance.IsPlayerInside)
                     {
