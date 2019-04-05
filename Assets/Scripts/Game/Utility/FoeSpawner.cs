@@ -13,6 +13,7 @@ using System;
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -36,6 +37,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public float MaxDistance = 20f;
         public Transform Parent = null;
         public bool LineOfSightCheck = true;
+        public bool AlliedToPlayer = false;
 
         public MobileTypes lastFoeType = MobileTypes.None;
         GameObject[] pendingFoeGameObjects;
@@ -48,7 +50,7 @@ namespace DaggerfallWorkshop.Game.Utility
             if (FoeType != MobileTypes.None && FoeType != lastFoeType && SpawnCount > 0)
             {
                 DestroyOldFoeGameObjects(pendingFoeGameObjects);
-                SetFoeGameObjects(GameObjectHelper.CreateFoeGameObjects(Vector3.zero, FoeType, SpawnCount));
+                SetFoeGameObjects(GameObjectHelper.CreateFoeGameObjects(Vector3.zero, FoeType, SpawnCount, alliedToPlayer: AlliedToPlayer));
                 lastFoeType = FoeType;
             }
 

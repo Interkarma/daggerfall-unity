@@ -513,18 +513,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool GetArtifactBundleSettings(out EffectBundleSettings settings, int effectIndex)
         {
             string effectKey = string.Empty;
+            TargetTypes effectTargetType = TargetTypes.None;
             switch (effectIndex)
             {
                 case (int)ArtifactsSubTypes.Wabbajack:
                     effectKey = "WabbajackEffect";
+                    effectTargetType = TargetTypes.ByTouch;
                     break;
                 case (int)ArtifactsSubTypes.Mehrunes_Razor:
                     effectKey = "MehrunesRazorEffect";
+                    effectTargetType = TargetTypes.ByTouch;
+                    break;
+                case (int)ArtifactsSubTypes.Sanguine_Rose:
+                    effectKey = "SanguineRoseEffect";
+                    effectTargetType = TargetTypes.CasterOnly;
                     break;
             }
             settings = new EffectBundleSettings
             {
-                Effects = new EffectEntry[] { new EffectEntry(effectKey) }
+                Effects = new EffectEntry[] { new EffectEntry(effectKey) },
+                TargetType = effectTargetType
             };
 
             return effectKey != string.Empty;

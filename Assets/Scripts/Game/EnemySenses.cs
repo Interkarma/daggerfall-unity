@@ -709,7 +709,7 @@ namespace DaggerfallWorkshop.Game
                     || targetBehaviour.EntityType == EntityTypes.Player)
                 {
                     // NoTarget mode
-                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile) && targetBehaviour == Player)
+                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == Player)
                         continue;
 
                     // Can't target ally
@@ -722,7 +722,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        if (targetBehaviour != Player)
+                        if (targetBehaviour != Player && enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly)
                             continue;
                     }
 

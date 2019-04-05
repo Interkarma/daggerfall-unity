@@ -1088,7 +1088,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="reaction">Foe is hostile by default but can optionally set to passive.</param>
         /// <returns>GameObject[] array of 1-N foes. Array can be null or empty if create fails.</returns>
-        public static GameObject[] CreateFoeGameObjects(Vector3 position, MobileTypes foeType, int spawnCount = 1, MobileReactions reaction = MobileReactions.Hostile, Foe foeResource = null)
+        public static GameObject[] CreateFoeGameObjects(Vector3 position, MobileTypes foeType, int spawnCount = 1, MobileReactions reaction = MobileReactions.Hostile, Foe foeResource = null, bool alliedToPlayer = false)
         {
             List<GameObject> gameObjects = new List<GameObject>();
 
@@ -1112,7 +1112,7 @@ namespace DaggerfallWorkshop.Utility
                         gender = MobileGender.Female;
 
                     // Configure enemy
-                    setupEnemy.ApplyEnemySettings(foeType, reaction, gender);
+                    setupEnemy.ApplyEnemySettings(foeType, reaction, gender, alliedToPlayer: alliedToPlayer);
 
                     // Align non-flying units with ground
                     DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
@@ -1157,7 +1157,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="maxDistance">Maximum distance from player.</param>
         /// <param name="parent">Parent GameObject. If none specified the most suitable parent will be selected automatically.</param>
         /// <returns>FoeSpawner GameObject.</returns>
-        public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, float minDistance = 4, float maxDistance = 20, Transform parent = null)
+        public static GameObject CreateFoeSpawner(bool lineOfSightCheck = true, MobileTypes foeType = MobileTypes.None, int spawnCount = 0, float minDistance = 4, float maxDistance = 20, Transform parent = null, bool alliedToPlayer = false)
         {
             // Create new foe spawner
             GameObject go = new GameObject();
@@ -1168,6 +1168,7 @@ namespace DaggerfallWorkshop.Utility
             spawner.MinDistance = minDistance;
             spawner.MaxDistance = maxDistance;
             spawner.Parent = parent;
+            spawner.AlliedToPlayer = alliedToPlayer;
 
             // Assign position on top of player
             // Spawner can be placed anywhere to work, but rest system considers a spawner to be an enemy "in potentia" for purposes of breaking rest and travel

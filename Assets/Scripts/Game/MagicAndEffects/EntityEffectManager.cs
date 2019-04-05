@@ -854,20 +854,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             DaggerfallEnchantment[] enchantments = item.Enchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
+                SpellRecord.SpellRecordData spell;
+                EffectBundleSettings bundleSettings;
+                EntityEffectBundle bundle;
                 if (enchantment.type == EnchantmentTypes.CastWhenUsed)
                 {
-                    SpellRecord.SpellRecordData spell;
                     if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
                     {
                         //Debug.LogFormat("EntityEffectManager.UseItem: Found CastWhenUsed enchantment '{0}'", spell.spellName);
 
                         // Create effect bundle settings from classic spell
-                        EffectBundleSettings bundleSettings;
                         if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                             continue;
 
                         // Assign bundle to ready spell 
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                         SetReadySpell(bundle, true);
 
                         // Apply durability loss to used item on use
@@ -879,8 +880,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                             collection.RemoveItem(item);
                         }
                     }
-
-                    break;
+                }
+                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4) // Handle Sanguine Rose
+                {
+                    // Use for any artifact that simply assigns a bundle
+                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
+                        continue;
+                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                    AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
                 }
 
                 // Handle Oghma Infinium

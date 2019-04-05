@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game
         public MobileTypes EnemyType = MobileTypes.SkeletalWarrior;
         public MobileReactions EnemyReaction = MobileReactions.Hostile;
         public MobileGender EnemyGender = MobileGender.Unspecified;
+        public bool AlliedToPlayer = false;
         public byte ClassicSpawnDistanceType = 0;
 
         DaggerfallEntityBehaviour entityBehaviour;
@@ -47,6 +48,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
             MobileEnemy mobileEnemy = enemyDict[(int)EnemyType];
+            if (AlliedToPlayer)
+                mobileEnemy.Team = MobileTeams.PlayerAlly;
 
             // Find mobile unit in children
             DaggerfallMobileUnit dfMobile = GetMobileBillboardChild();
@@ -114,18 +117,19 @@ namespace DaggerfallWorkshop.Game
         /// Change enemy settings and configure in a single call.
         /// </summary>
         /// <param name="enemyType">Enemy type.</param>
-        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0)
+        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0, bool alliedToPlayer = false)
         {
             EnemyType = enemyType;
             EnemyReaction = enemyReaction;
             ClassicSpawnDistanceType = classicSpawnDistanceType;
+            AlliedToPlayer = alliedToPlayer;
             ApplyEnemySettings(gender);
         }
 
         /// <summary>
         /// Change enemy settings and configure in a single call.
         /// </summary>
-        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true)
+        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true, bool alliedToPlayer = false)
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
@@ -139,7 +143,7 @@ namespace DaggerfallWorkshop.Game
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
             MobileGender enemyGender = gender;
 
-            ApplyEnemySettings(mobileType, enemyReaction, enemyGender);
+            ApplyEnemySettings(mobileType, enemyReaction, enemyGender, alliedToPlayer: alliedToPlayer);
         }
 
         public void AlignToGround()

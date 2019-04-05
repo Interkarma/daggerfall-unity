@@ -360,6 +360,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ulong[] equipTable;
         public QuestResourceBehaviour.QuestResourceSaveData_v1 questResource;
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
+        public bool alliedToPlayer;
     }
 
     #endregion
