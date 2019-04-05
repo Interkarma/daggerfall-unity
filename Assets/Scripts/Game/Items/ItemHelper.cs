@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:
+// Contributors: Numidium
 //
 // Notes:
 //
@@ -734,6 +734,32 @@ namespace DaggerfallWorkshop.Game.Items
             // Determine metal type
             if (item.ItemGroup == ItemGroups.Weapons)
             {
+                // Overrides for artifacts whose dyes do not match their materials
+                if (item.IsArtifact)
+                {
+                    foreach (DaggerfallEnchantment enchantment in item.Enchantments)
+                    {
+                        if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
+                        {
+                            switch (enchantment.param)
+                            {
+                                case (int)ArtifactsSubTypes.Mehrunes_Razor: // Different from classic but Elven matches the paper doll more closely
+                                    return MetalTypes.Elven;
+                                case (int)ArtifactsSubTypes.Mace_of_Molag_Bal:
+                                    return MetalTypes.Ebony;
+                                case (int)ArtifactsSubTypes.Wabbajack:
+                                    return MetalTypes.Steel;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    // Artifact weapons with no unique effects
+                    if (item.ItemName == "Chrysamere")
+                        return MetalTypes.Elven;
+                    if (item.ItemName == "Staff of Magnus")
+                        return MetalTypes.Mithril;
+                }
                 WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 switch (weaponMaterial)
                 {
