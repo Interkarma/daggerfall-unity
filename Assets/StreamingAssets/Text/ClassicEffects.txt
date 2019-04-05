@@ -156,3 +156,79 @@ ShortBow,                   Short Bow
 Arrows,                     Arrows
 SteelBattleAxe,             Steel Battle Axe
 Robes,                      Robes
+
+- Item Enchanting
+
+CastWhenUsed,               Cast when used:
+CastWhenHeld,               Cast when held:
+CastWhenStrikes,            Cast when strikes:
+ExtraSpellPts,              Extra spell pts
+PotentVs,                   Potent vs
+RegensHealth,               Regens health
+VampiricEffect,             Vampiric effect
+IncreasedWeightAllowance,   Increased Weight Allowance
+RepairsObjects,             Repairs objects
+AbsorbsSpells,              Absorbs spells
+EnhancesSkill,              Enhances skill
+FeatherWeight,              Feather Weight
+StrengthensArmor,           Strengthens armor
+ImprovesTalents,            Improves talents
+GoodRepWith,                Good rep with
+
+SoulBound,                  Soul bound
+ItemDeteriorates,           Item deteriorates
+UserTakesDamage,            User takes damage
+VisionProblems,             Vision problems
+WalkingProblems,            Walking problems
+LowDamageVs,                Low damage vs
+HealthLeech,                Health leech
+BadReactionsFrom,           Bad reactions from
+ExtraWeight,                Extra weight
+WeakensArmor,               Weakens armor
+BadRepWith,                 Bad rep with
+
+inHolyPlaces,               in holy places
+wheneverUsed,               whenever used
+unlessUsedDaily,            unless used daily
+unlessUsedWeekly,           unless used weekly
+fromHumanoids,              from humanoids
+fromAnimals,                from animals
+fromDaedra,                 from Daedra
+
+duringWinter,               during Winter
+duringSpring,               during Spring
+duringSummer,               during Summer
+duringFall,                 during Fall
+duringFullMoon,             during Full Moon
+duringHalfMoon,             during Half Moon
+duringNewMoon,              during New Moon
+
+nearUndead,                 near undead
+nearDaedra,                 near deadra
+nearHumanoids,              near humanoids
+nearAnimals,                near animals
+
+undeadLower,                undead
+humanoidLower,              humanoid
+animalsLower,               animals
+
+allTheTime,                 all the time
+inSunlight,                 in sunlight
+inDarkness,                 in darkness
+
+atRange,                    at range
+whenStrikes,                when strikes
+
+add25Percent,               25% additional
+add50Percent,               50% additional
+
+hearing,                    hearing
+athleticism,                athleticism
+adrenalineRush,             adrenaline rush
+
+commoners,                  Commoners
+merchants,                  Merchants
+scholars,                   Scholars
+nobility,                   Nobility
+underworld,                 Underworld
+all,                        All
