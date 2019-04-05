@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3367684}
   - component: {fileID: 2302536}
   - component: {fileID: 11478892}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MobileUnitBillboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 11439840}
   - component: {fileID: 11452974}
   - component: {fileID: 11435454}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: DaggerfallEnemy [Standalone]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,6 +223,7 @@ MonoBehaviour:
   EnemyType: 15
   EnemyReaction: 0
   EnemyGender: 0
+  AlliedToPlayer: 0
   ClassicSpawnDistanceType: 0
 --- !u!114 &11424130
 MonoBehaviour:
@@ -235,9 +236,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 148778fc11ccec74aa9f538dab0d07d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MeleeAttackSpeed: 1.25
   MeleeDistance: 2.25
+  ClassicMeleeDistanceVsAI: 1.5
   MeleeTimer: 0
+  ArrowMissilePrefab: {fileID: 0}
 --- !u!114 &11435454
 MonoBehaviour:
   m_ObjectHideFlags: 1
