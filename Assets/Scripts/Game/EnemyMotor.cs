@@ -977,9 +977,9 @@ namespace DaggerfallWorkshop.Game
             do
             {
                 if (checkingClockwise)
-                    angle += 10;
+                    angle += 45;
                 else
-                    angle -= 10;
+                    angle -= 45;
 
                 testMove = Quaternion.AngleAxis(angle, Vector3.up) * motion2d;
                 RayCheckForObstacle(testMove);
@@ -987,7 +987,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Break out of loop if can't find anywhere to go
                 count++;
-                if (count > 36)
+                if (count > 7)
                 {
                     break;
                 }
