@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
         readonly Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
         readonly Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
-        readonly List<EffectBundleSettings> customSpellBundleOffers = new List<EffectBundleSettings>();
+        readonly Dictionary<string, EffectBundleSettings> customSpellBundleOffers = new Dictionary<string, EffectBundleSettings>();
 
         #endregion
 
@@ -209,18 +209,37 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Allows a mod to register custom spell bundles for sale at the spell maker along with classic spells.
         /// </summary>
+        /// <param name="key">Unique key of bundle for tracking.</param>
         /// <param name="bundleSettings">EffectBundleSettings of spell bundle to offer.</param>
-        public void RegisterCustomSpellBundleOffer(EffectBundleSettings bundleSettings)
+        public void RegisterCustomSpellBundleOffer(string key, EffectBundleSettings bundleSettings)
         {
-            customSpellBundleOffers.Add(bundleSettings);
+            if (customSpellBundleOffers.ContainsKey(key))
+            {
+                Debug.LogErrorFormat("RegisterCustomSpellBundleOffer: Duplicate bundle key '{0}'", key);
+                return;
+            }
+            customSpellBundleOffers.Add(key, bundleSettings);
         }
 
         /// <summary>
-        /// Gets custom spell bundles offered for sale or item enchanting.
+        /// Gets a specific custom spell bundle offer.
+        /// </summary>
+        public EffectBundleSettings GetCustomSpellBundleOffers(string key)
+        {
+            if (!customSpellBundleOffers.ContainsKey(key))
+            {
+                Debug.LogErrorFormat("GetCustomSpellBundleOffers: Bundle key '{0}' not found", key);
+                return new EffectBundleSettings();
+            }
+            return customSpellBundleOffers[key];
+        }
+
+        /// <summary>
+        /// Gets all custom spell bundles offered for sale or item enchanting.
         /// </summary>
         public EffectBundleSettings[] GetCustomSpellBundleOffers()
         {
-            return customSpellBundleOffers.ToArray();
+            return customSpellBundleOffers.Values.ToArray();
         }
 
         /// <summary>
