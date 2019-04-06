@@ -68,6 +68,7 @@ namespace DaggerfallWorkshop.Game
         bool strafeLeft;
         float strafeAngle;
         int searchMult;
+        bool clearPathToShootAtPredictedPos;
 
         EnemySenses senses;
         Vector3 destination;
@@ -408,7 +409,7 @@ namespace DaggerfallWorkshop.Game
                     stopDistance = attack.ClassicMeleeDistanceVsAI;
             }
 
-            bool clearPathToShootAtPredictedPos = false;
+            clearPathToShootAtPredictedPos = false;
 
             // Set avoidObstaclesTimer to 0 if got close enough to detourDestination
             if (avoidObstaclesTimer > 0)
@@ -421,6 +422,10 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            bool rangedMagicAvailable = false;
+            if (!hasBowAttack && hasSpells)
+                rangedMagicAvailable = CanCastRangedSpell();
+
             // Get location to move towards.
             // If detouring around an obstacle or fall, use the detour position
             if (avoidObstaclesTimer > 0)
@@ -428,14 +433,13 @@ namespace DaggerfallWorkshop.Game
                 destination = detourDestination;
             }
             // Otherwise, try to get to the combat target if there is a clear path to it
-            else if (ClearPathToPosition(senses.PredictedTargetPos))
+            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (clearPathToShootAtPredictedPos && (hasBowAttack || rangedMagicAvailable)))
             {
                 destination = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
                 if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
                     destination.y += 0.9f;
 
-                clearPathToShootAtPredictedPos = true;
                 searchMult = 0;
             }
             // Otherwise, search for target based on its last known position and direction
@@ -468,52 +472,46 @@ namespace DaggerfallWorkshop.Game
                 distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
-            if ((hasBowAttack || hasSpells) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if ((hasBowAttack || rangedMagicAvailable) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
-                bool rangedMagicAvailable = false;
-                if (!hasBowAttack && hasSpells)
-                    rangedMagicAvailable = CanCastRangedSpell();
-
-                if (hasBowAttack || rangedMagicAvailable)
+                if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
-                    if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos) && strafeTimer <= 0)
-                    {
-                        StrafeDecision();
-                    }
-                    if (doStrafe && strafeTimer > 0)
-                    {
-                        AttemptMove(direction, moveSpeed / 4, false, true, distance);
-                    }
+                    StrafeDecision();
+                }
+                if (doStrafe && strafeTimer > 0)
+                {
+                    AttemptMove(direction, moveSpeed / 4, false, true, distance);
+                }
 
-                    if (GameManager.ClassicUpdate && senses.TargetIsWithinYawAngle(22.5f, senses.LastKnownTargetPos))
+                if (GameManager.ClassicUpdate && senses.TargetIsWithinYawAngle(22.5f, destination))
+                {
+                    if (!isPlayingOneShot)
                     {
-                        if (!isPlayingOneShot)
+                        if (hasBowAttack)
                         {
-                            if (hasBowAttack)
+                            // Random chance to shoot bow
+                            if (DFRandom.rand() < 1000)
                             {
-                                // Random chance to shoot bow
-                                if (DFRandom.rand() < 1000)
-                                {
-                                    if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
-                                        mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                                    else if (mobile.Summary.Enemy.HasRangedAttack2)
-                                        mobile.ChangeEnemyState(MobileStates.RangedAttack2);
-                                }
-                            }
-                            // Random chance to shoot spell
-                            else if (DFRandom.rand() % 40 == 0
-                                 && entityEffectManager.SetReadySpell(selectedSpell))
-                            {
-                                mobile.ChangeEnemyState(MobileStates.Spell);
+                                if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
+                                    mobile.ChangeEnemyState(MobileStates.RangedAttack1);
+                                else if (mobile.Summary.Enemy.HasRangedAttack2)
+                                    mobile.ChangeEnemyState(MobileStates.RangedAttack2);
                             }
                         }
+                        // Random chance to shoot spell
+                        else if (DFRandom.rand() % 40 == 0
+                             && entityEffectManager.SetReadySpell(selectedSpell))
+                        {
+                            mobile.ChangeEnemyState(MobileStates.Spell);
+                        }
                     }
-                    else
-                        TurnToTarget(direction);
-
-                    return;
                 }
+                else
+                    TurnToTarget(direction);
+
+                return;
             }
+
 
             // Touch spells
             if (senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance
@@ -612,21 +610,29 @@ namespace DaggerfallWorkshop.Game
             sphereCastDir2d.y = 0;
             RayCheckForObstacle(sphereCastDir2d);
             RayCheckForFall(sphereCastDir2d);
+            bool result = true;
 
             if (obstacleDetected || fallDetected)
-                return false;
+                result = false;
 
             RaycastHit hit;
-            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist))
+            int layerSpellMissiles = LayerMask.NameToLayer("SpellMissiles");
+            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist, layerSpellMissiles))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 if (hitTarget == senses.Target)
-                    return true;
-
-                return false;
+                {
+                    clearPathToShootAtPredictedPos = true;
+                }
+                else
+                {
+                    result = false;
+                }
             }
+            else
+                clearPathToShootAtPredictedPos = true;
 
-            return true;
+            return result;
         }
 
         /// <summary>
