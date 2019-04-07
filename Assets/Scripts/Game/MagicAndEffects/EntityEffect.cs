@@ -153,6 +153,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool RollChance();
 
         /// <summary>
+        /// Gets array of enchantment settings supported by this effect.
+        /// Can return a null or empty array, especially if effect not an enchantment.
+        /// </summary>
+        EnchantmentSettings[] GetEnchantmentSettings();
+
+        /// <summary>
         /// Get effect state data to serialize.
         /// </summary>
         object GetSaveData();
@@ -331,6 +337,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public virtual void SetPotionProperties()
         {
+        }
+
+        /// <summary>
+        /// Gets all enchantment settings supported by this effect.
+        /// Effects supporting MagicCraftingStations.ItemMaker must implement this method to become usable in item maker.
+        /// The effect must also be able to execute enchantment payload when handed back settings. 
+        /// </summary>
+        /// <returns>EnchantmentSettings array. Can return null or empty array.</returns>
+        public virtual EnchantmentSettings[] GetEnchantmentSettings()
+        {
+            return null;
         }
 
         /// <summary>

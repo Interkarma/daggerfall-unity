@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -431,6 +432,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return effectTemplates;
+        }
+
+        /// <summary>
+        /// Gets all registered item maker effects.
+        /// Only classes exposing MagicCraftingStations.ItemMaker in properties will be returned.
+        /// </summary>
+        /// <param name="sortAlpha">True to sort enchantment names by alpha.</param>
+        /// <returns>List of item enchantment templates.</returns>
+        public List<IEntityEffect> GetEnchantmentEffectTemplates(bool sortAlpha = false)
+        {
+            List<IEntityEffect> enchantmentTemplates = new List<IEntityEffect>();
+
+            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values)
+            {
+                // Effect must support access to item maker
+                if ((effectTemplate.Properties.AllowedCraftingStations & MagicCraftingStations.ItemMaker) == MagicCraftingStations.ItemMaker)
+                    enchantmentTemplates.Add(effectTemplate);
+            }
+
+            if (sortAlpha)
+                return enchantmentTemplates.OrderBy(o => o.Properties.GroupName).ToList();
+            else
+                return enchantmentTemplates;
         }
 
         /// <summary>

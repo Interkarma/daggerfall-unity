@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Items;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -70,6 +71,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel selectedItemPanel;
 
         ItemListScroller itemsListScroller;
+
+        List<IEntityEffect> enchantmentTemplates;
+        EnchantmentSettings[] enchantmentSettings;
 
         DaggerfallListPickerWindow effectGroupPicker;
         DaggerfallListPickerWindow effectSubGroupPicker;
@@ -336,17 +340,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PowersButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Debug.Log("Add powers");
-
             // TODO: Must have an item selected to be enchanted
             // Just working on populating lists for now
 
             effectGroupPicker.ListBox.ClearItems();
 
-            // Populate group names
-            string[] groupNames = GameManager.Instance.EntityEffectBroker.GetGroupNames(true, thisMagicStation);
-            effectGroupPicker.ListBox.AddItems(groupNames);
-            effectGroupPicker.ListBox.SelectedIndex = 0;
+            // Populate item effects list from suitable templates
+            // TODO: Rework this so only effects that return enchantment settings are added
+            enchantmentTemplates = GameManager.Instance.EntityEffectBroker.GetEnchantmentEffectTemplates();
+            foreach(IEntityEffect effect in enchantmentTemplates)
+            {
+                effectGroupPicker.ListBox.AddItem(effect.Properties.GroupName);
+            }
 
             // Show effect group picker
             uiManager.PushWindow(effectGroupPicker);
@@ -393,33 +398,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void AddEffectGroupListBox_OnUseSelectedItem()
         {
-            List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
-
             // Clear existing
             effectSubGroupPicker.ListBox.ClearItems();
-            enumeratedEffectTemplates.Clear();
 
-            // Enumerate subgroup effect key name pairs
-            enumeratedEffectTemplates = GameManager.Instance.EntityEffectBroker.GetEffectTemplates(effectGroupPicker.ListBox.SelectedItem, thisMagicStation);
-            if (enumeratedEffectTemplates.Count < 1)
-                throw new Exception(string.Format("Could not find any effect templates for group {0}", effectGroupPicker.ListBox.SelectedItem));
-
-            //// If this is a solo effect without any subgroups names defined (e.g. "Regenerate") then go straight to effect editor
-            //if (enumeratedEffectTemplates.Count == 1 && string.IsNullOrEmpty(enumeratedEffectTemplates[0].Properties.SubGroupName))
-            //{
-            //    effectGroupPicker.CloseWindow();
-            //    AddAndEditSlot(enumeratedEffectTemplates[0]);
-            //    //uiManager.PushWindow(effectEditor);
-            //    return;
-            //}
-
-            //// Sort list by subgroup name
-            //enumeratedEffectTemplates.Sort((s1, s2) => s1.Properties.SubGroupName.CompareTo(s2.Properties.SubGroupName));
-
-            // Populate subgroup names in list box
-            foreach (IEntityEffect effect in enumeratedEffectTemplates)
+            // Get enchantment params from selected effect template
+            IEntityEffect template = enchantmentTemplates[effectGroupPicker.ListBox.SelectedIndex];
+            enchantmentSettings = template.GetEnchantmentSettings();
+            foreach (EnchantmentSettings enchantment in enchantmentSettings)
             {
-                effectSubGroupPicker.ListBox.AddItem(effect.Properties.SubGroupName);
+                effectSubGroupPicker.ListBox.AddItem(enchantment.DisplayName);
             }
             effectSubGroupPicker.ListBox.SelectedIndex = 0;
 
@@ -432,14 +419,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Close effect pickers
             effectGroupPicker.CloseWindow();
             effectSubGroupPicker.CloseWindow();
-
-            //// Get selected effect from those on offer
-            //IEntityEffect effectTemplate = enumeratedEffectTemplates[effectSubGroupPicker.ListBox.SelectedIndex];
-            //if (effectTemplate != null)
-            //{
-            //    AddAndEditSlot(effectTemplate);
-            //    //Debug.LogFormat("Selected effect {0} {1} with key {2}", effectTemplate.GroupName, effectTemplate.SubGroupName, effectTemplate.Key);
-            //}
         }
 
         #endregion

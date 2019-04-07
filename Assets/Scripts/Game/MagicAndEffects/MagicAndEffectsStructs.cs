@@ -152,6 +152,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Settings for a single enchantment on item.
+    /// </summary>
+    [Serializable]
+    public struct EnchantmentSettings
+    {
+        public int Version;
+        public string EffectKey;
+        public short ClassicParam;
+        public string CustomParam;
+        public string DisplayName;
+        public int EnchantCost;
+    }
+
+    /// <summary>
     /// Settings for a basic disease effect.
     /// </summary>
     [Serializable]
