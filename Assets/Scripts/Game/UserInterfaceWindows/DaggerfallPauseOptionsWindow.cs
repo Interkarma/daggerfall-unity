@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.HorizontalAlignment = HorizontalAlignment.Center;
             optionsPanel.Position = new Vector2(0, 40);
             optionsPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName);
+            optionsPanel.BackgroundColor = Color.black;
             optionsPanel.BackgroundTexture = nativeTexture;
             NativePanel.Components.Add(optionsPanel);
 
