@@ -572,6 +572,16 @@ namespace DaggerfallConnect.Arena2
             records[record].Header.PlaneListOffset = reader.ReadInt32();
         }
 
+        private static int NearestMultipleOf16(int val)
+        {
+            int multSup = val - 1;
+            multSup = multSup >> 4;
+            ++multSup;
+            multSup = multSup << 4;
+            int multInf = multSup - 16;
+            return val - multInf < multSup - val ? multInf : multSup;
+        }
+
         /// <summary>
         /// Read mesh data to record array.
         /// </summary>
@@ -644,8 +654,8 @@ namespace DaggerfallConnect.Arena2
                     int pointOffset = reader.ReadInt32();
 
                     // Read UV data
-                    int u = reader.ReadInt16();
-                    int v = reader.ReadInt16();
+                    int u = NearestMultipleOf16(reader.ReadInt16());
+                    int v = NearestMultipleOf16(reader.ReadInt16());
 
                     // Fix some UV coordinates (process only the first 3 points as
                     // coordinates from point 4 and above are ignored)
