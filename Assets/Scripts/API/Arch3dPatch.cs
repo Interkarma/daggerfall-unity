@@ -27,13 +27,28 @@ namespace DaggerfallConnect.Arena2
             {14515830, 0, 252},
 
             // Model 116 (house exterior wall)
-            {22229232, 0 ,4},
+            {22229232, 0, 4},
             {22229240, 0, 252},
             {22229248, 0, 0},
+
+            // Model 117 (house entrance door)
+            {25344340, 0, 4},
+            {25344348, 0, 252},
+            {25344358, 0, 8},
 
             // Model 123 (general store exterior wall)
             {25374440, 0, 0},
             {25374448, 0, 0},
+
+            // Model 125 (house entrance door)
+            {25382922, 0, 0},
+            {25382930, 0},
+            {25382940, 0, 8},
+
+            // Model 212 (house entrance door)
+            {7148716, 0, 4},
+            {7148724, 0},
+            {7148734, 0, 8},
 
             // Model 761 (house exterior wall)
             {19367896, 0, 4},
