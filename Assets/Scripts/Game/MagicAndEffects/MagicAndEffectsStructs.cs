@@ -12,6 +12,7 @@
 using System;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -159,9 +160,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public int Version;
         public string EffectKey;
+        public EnchantmentTypes ClassicType;
         public short ClassicParam;
         public string CustomParam;
-        public string DisplayName;
+        public string PrimaryDisplayName;
+        public string SecondaryDisplayName;
         public int EnchantCost;
     }
 

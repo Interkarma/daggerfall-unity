@@ -48,6 +48,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 111, 50, 37)
         };
 
+        //Vector2 firstPowerLabelPos = new Vector2(10, 60);
+        //Vector2 firstSideEffectLabelPos = new Vector2(108, 60);
+        //const int labelsPerSide = 8;
+        //const int secondaryLabelXIndent = 10;
+        //const int secondaryLabelYIncrement = 5;
+        //const int nextLabelIncrement = 10;
+
         #endregion
 
         #region UI Controls
@@ -56,6 +63,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel goldLabel = new TextLabel();
         TextLabel costLabel = new TextLabel();
         TextLabel enchantLabel = new TextLabel();
+
+        //TextLabel[] powersListLabels = new TextLabel[labelsPerSide * 2];
+        //TextLabel[] sideEffectsListLabels = new TextLabel[labelsPerSide * 2];
 
         Button weaponsAndArmorButton;
         Button magicItemsButton;
@@ -75,8 +85,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<IEntityEffect> enchantmentTemplates;
         EnchantmentSettings[] enchantmentSettings;
 
-        DaggerfallListPickerWindow effectGroupPicker;
-        DaggerfallListPickerWindow effectSubGroupPicker;
+        EnchantmentList powersList;
+        EnchantmentList sideEffectsList;
+
+        bool selectingPowers;
+        DaggerfallListPickerWindow enchantmentPrimaryPicker;
+        DaggerfallListPickerWindow enchantmentSecondaryPicker;
 
         #endregion
 
@@ -103,12 +117,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "ITEM00I0.IMG";
         const string goldTextureName = "ITEM01I0.IMG";
         const int alternateAlphaIndex = 12;
+        const int maxEnchantSlots = 10;
 
+        PlayerEntity playerEntity;
         DaggerfallInventoryWindow.TabPages selectedTabPage = DaggerfallInventoryWindow.TabPages.WeaponsAndArmor;
         List<DaggerfallUnityItem> itemsFiltered = new List<DaggerfallUnityItem>();
         DaggerfallUnityItem selectedItem;
 
-        private PlayerEntity playerEntity;
+        List<EnchantmentSettings> itemPowers = new List<EnchantmentSettings>();
+        List<EnchantmentSettings> itemSideEffects = new List<EnchantmentSettings>();
+
+        //int powersScrollPos = 0;
+        //int sideEffectsScrollPos = 0;
+
+        #endregion
+
+        #region Properties
+
         PlayerEntity PlayerEntity {
             get { return (playerEntity != null) ? playerEntity : playerEntity = GameManager.Instance.PlayerEntity; }
         }
@@ -141,6 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup UI
             SetupLabels();
             SetupButtons();
+            SetupListBoxes();
             SetupPickers();
             SetupItemListScrollers();
 
@@ -214,6 +240,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(71, 15), NativePanel);
             costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(64, 27), NativePanel);
             enchantLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(98, 39), NativePanel);
+
+            //Vector2 powerLabelPos = firstPowerLabelPos;
+            //Vector2 sideEffectLabelPos = firstSideEffectLabelPos;
+            //for(int i = 0; i < labelsPerSide * 2; i += 2)
+            //{
+            //    powersListLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, powerLabelPos, "Cast when used:", NativePanel);
+            //    // TODO: Only display secondary when present
+            //    powerLabelPos.x += secondaryLabelXIndent;
+            //    powerLabelPos.y += secondaryLabelYIncrement;
+            //    powersListLabels[i + 1] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, powerLabelPos, "Levitate", NativePanel);
+            //    powerLabelPos.x = firstPowerLabelPos.x;
+            //    powerLabelPos.y += nextLabelIncrement;
+
+            //    sideEffectsListLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, sideEffectLabelPos, "Soul bound", NativePanel);
+            //    // TODO: Only display secondary when present
+            //    sideEffectLabelPos.x += secondaryLabelXIndent;
+            //    sideEffectLabelPos.y += secondaryLabelYIncrement;
+            //    sideEffectsListLabels[i + 1] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, sideEffectLabelPos, "Dragonling", NativePanel);
+            //    sideEffectLabelPos.x = firstSideEffectLabelPos.x;
+            //    sideEffectLabelPos.y += nextLabelIncrement;
+            //}
         }
 
         void SetupButtons()
@@ -252,16 +299,60 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedItemPanel.MaxAutoScale = 1f;
         }
 
+        void SetupListBoxes()
+        {
+            powersList = new EnchantmentList();
+            powersList.Position = new Vector2(10, 58);
+            powersList.Size = new Vector2(75, 120);
+
+            // Add test items
+            powersList.AddItem("Cast when used:", "Levitate");
+            powersList.AddItem("Cast when used:", "Light");
+            powersList.AddItem("Cast when used:", "Invisibility");
+            powersList.AddItem("Cast when used:", "Wizard's Fire");
+            powersList.AddItem("Cast when used:", "Shock");
+            powersList.AddItem("Increased weight allowance", "25% Additional");
+            powersList.AddItem("Cast when used:", "Free Action");
+            powersList.AddItem("Cast when used:", "Open");
+            powersList.AddItem("Cast when used:", "Levitate");
+            powersList.AddItem("Cast when used:", "Levitate");
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    powersList.AddItem(new EnchantmentSettings());
+            //}
+
+            NativePanel.Components.Add(powersList);
+
+            //powersListBox = new ListBox();
+            //powersListBox.Position = new Vector2(10, 60);
+            //powersListBox.Size = new Vector2(75, 118);
+            //powersListBox.VerticalScrollMode = ListBox.VerticalScrollModes.EntryWise;
+            //powersListBox.HorizontalScrollMode = ListBox.HorizontalScrollModes.CharWise;
+            //powersListBox.Font = DaggerfallUI.SmallFont;
+            //powersListBox.BackgroundColor = new Color32(0, 0, 0, 200);
+            //powersListBox.ShadowPosition = Vector2.zero;
+            //powersListBox.EnabledHorizontalScroll = true;
+            //powersListBox.WrapTextItems = true;
+            //powersListBox.WrapWords = true;
+
+            //// Add test items
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    powersListBox.AddItem("Cast when used: Levitate");
+            //}
+
+            //NativePanel.Components.Add(powersListBox);
+        }
+
         void SetupPickers()
         {
-            // Use a picker for effect group
-            effectGroupPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
-            effectGroupPicker.ListBox.OnUseSelectedItem += AddEffectGroupListBox_OnUseSelectedItem;
+            // Use a picker for power/side-effect primary selection
+            enchantmentPrimaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
+            enchantmentPrimaryPicker.ListBox.OnUseSelectedItem += EnchantmentPrimaryPicker_OnUseSelectedItem;
 
-            // Use another picker for effect subgroup
-            // This allows user to hit escape and return to effect group list, unlike classic which dumps whole spellmaker UI
-            effectSubGroupPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
-            effectSubGroupPicker.ListBox.OnUseSelectedItem += AddEffectSubGroup_OnUseSelectedItem;
+            // Use another picker for power/side-effect secondary selection
+            enchantmentSecondaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
+            enchantmentSecondaryPicker.ListBox.OnUseSelectedItem += EnchantmentSecondaryPicker_OnUseSelectedItem;
         }
 
         void SetupItemListScrollers()
@@ -324,6 +415,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region List Management
+
+        void AddEnchantmentSettings(EnchantmentSettings settings)
+        {
+            if (selectingPowers)
+                itemPowers.Add(settings);
+            else
+                itemSideEffects.Add(settings);
+        }
+
+        #endregion
+
         #region Event Handlers
 
         private void ItemListScroller_OnItemClick(DaggerfallUnityItem item)
@@ -340,25 +443,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PowersButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO: Must have an item selected to be enchanted
-            // Just working on populating lists for now
+            // NOTE: Just working on populating lists for now
 
-            effectGroupPicker.ListBox.ClearItems();
+            // TODO: Must have an item selected to be enchanted
+
+            // TODO: Check for max enchantments and display "You cannot enchant this item with any more powers."
+
+            enchantmentPrimaryPicker.ListBox.ClearItems();
+            selectingPowers = true;
 
             // Populate item effects list from suitable templates
             // TODO: Rework this so only effects that return enchantment settings are added
             enchantmentTemplates = GameManager.Instance.EntityEffectBroker.GetEnchantmentEffectTemplates();
             foreach(IEntityEffect effect in enchantmentTemplates)
             {
-                effectGroupPicker.ListBox.AddItem(effect.Properties.GroupName);
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName);
             }
 
             // Show effect group picker
-            uiManager.PushWindow(effectGroupPicker);
+            uiManager.PushWindow(enchantmentPrimaryPicker);
         }
 
         private void SideeffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // TODO: Check for max enchantments and display "No further side-effects may be enchanted in this item."
+
+            enchantmentPrimaryPicker.ListBox.ClearItems();
+            selectingPowers = false;
+
             Debug.Log("Add side-effects");
         }
 
@@ -394,31 +506,52 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region #Effect Picker Events
+        #region Effect Picker Events
 
-        private void AddEffectGroupListBox_OnUseSelectedItem()
-        {
+        private void EnchantmentPrimaryPicker_OnUseSelectedItem()
+    {
             // Clear existing
-            effectSubGroupPicker.ListBox.ClearItems();
+            enchantmentSecondaryPicker.ListBox.ClearItems();
 
-            // Get enchantment params from selected effect template
-            IEntityEffect template = enchantmentTemplates[effectGroupPicker.ListBox.SelectedIndex];
+            // Get enchantment settings from selected enchantment templates
+            IEntityEffect template = enchantmentTemplates[enchantmentPrimaryPicker.ListBox.SelectedIndex];
             enchantmentSettings = template.GetEnchantmentSettings();
+            if (enchantmentSettings == null | enchantmentSettings.Length == 0)
+            {
+                Debug.LogErrorFormat("Enchantment '{0}' returned no settings from GetEnchantmentSettings()", template.Key);
+                enchantmentPrimaryPicker.CloseWindow();
+                return;
+            }
+
+            // Just add single setting if there are no secondary types
+            if (enchantmentSettings.Length == 1)
+            {
+                AddEnchantmentSettings(enchantmentSettings[0]);
+                enchantmentPrimaryPicker.CloseWindow();
+                return;
+            }
+
+            // User must choose from available settings
             foreach (EnchantmentSettings enchantment in enchantmentSettings)
             {
-                effectSubGroupPicker.ListBox.AddItem(enchantment.DisplayName);
+                enchantmentSecondaryPicker.ListBox.AddItem(enchantment.SecondaryDisplayName);
             }
-            effectSubGroupPicker.ListBox.SelectedIndex = 0;
+            enchantmentSecondaryPicker.ListBox.SelectedIndex = 0;
 
-            // Show effect subgroup picker
-            uiManager.PushWindow(effectSubGroupPicker);
+            // Show enchantment secondary picker
+            uiManager.PushWindow(enchantmentSecondaryPicker);
         }
 
-        private void AddEffectSubGroup_OnUseSelectedItem()
+        private void EnchantmentSecondaryPicker_OnUseSelectedItem()
         {
+            // TODO: Check for overflow from automatic enchantments and display "no room in item..."
+
+            // Add selected enchantment settings to powers/side-effects
+            AddEnchantmentSettings(enchantmentSettings[enchantmentSecondaryPicker.ListBox.SelectedIndex]);
+
             // Close effect pickers
-            effectGroupPicker.CloseWindow();
-            effectSubGroupPicker.CloseWindow();
+            enchantmentPrimaryPicker.CloseWindow();
+            enchantmentSecondaryPicker.CloseWindow();
         }
 
         #endregion

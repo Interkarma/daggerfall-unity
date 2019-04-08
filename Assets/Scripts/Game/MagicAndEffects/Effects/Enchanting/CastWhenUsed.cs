@@ -31,9 +31,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         }
 
         /// <summary>
-        /// Outputs spells available to this item effect abstracted as EnchantmentParam array.
-        /// When EnchantmentParam.classicParam is set, it refers to a classic spell ID.
-        /// When EnchantmentParam.customKey is set, it refers to a custom spell bundle.
+        /// Outputs spells available to this item effect abstracted as EnchantmentSettings array.
+        /// When EnchantmentSettings.ClassicParam is set, it refers to a classic spell ID.
+        /// When EnchantmentSettings.CustomParam is set, it refers to a custom spell bundle.
         /// </summary>
         public override EnchantmentSettings[] GetEnchantmentSettings()
         {
@@ -51,8 +51,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     Version = 1,
                     EffectKey = EffectKey,
+                    ClassicType = EnchantmentTypes.CastWhenUsed,
                     ClassicParam = id,
-                    DisplayName = spellRecord.spellName,
+                    PrimaryDisplayName = properties.GroupName,
+                    SecondaryDisplayName = spellRecord.spellName,
                     EnchantCost = classicSpellCosts[i],
                 };
 
