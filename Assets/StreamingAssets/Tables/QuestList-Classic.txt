@@ -162,7 +162,7 @@ Q0C4XY04, Witches, N, 4, X,
 -A0C00Y00, Commoners, N, 0, 0, FAILED. Cannot get rid of popup 1013 after entering the _inn_.
 -A0C00Y04, Commoners, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX
 -A0C00Y06, Commoners, N, 0, 0, FAILED. No master npc in the shop indicated
-A0C00Y07, Commoners, N, 0, 0,
+A0C00Y07, Commoners, N, 0, 0, Passed with issues. Does not check victory condition correctly. Does not confine enemy spawns to target building.
 A0C00Y08, Commoners, N, 0, 0, Passed. questgiver name is incorrect (almost like a codename)
 A0C00Y10, Commoners, N, 0, 0,
 A0C00Y11, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
