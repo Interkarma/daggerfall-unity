@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility;
@@ -18,7 +17,6 @@ using DaggerfallWorkshop.Game.Items;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -48,12 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 111, 50, 37)
         };
 
-        //Vector2 firstPowerLabelPos = new Vector2(10, 60);
-        //Vector2 firstSideEffectLabelPos = new Vector2(108, 60);
-        //const int labelsPerSide = 8;
-        //const int secondaryLabelXIndent = 10;
-        //const int secondaryLabelYIncrement = 5;
-        //const int nextLabelIncrement = 10;
+        Rect powersListRect = new Rect(10, 58, 75, 120);
 
         #endregion
 
@@ -63,9 +56,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel goldLabel = new TextLabel();
         TextLabel costLabel = new TextLabel();
         TextLabel enchantLabel = new TextLabel();
-
-        //TextLabel[] powersListLabels = new TextLabel[labelsPerSide * 2];
-        //TextLabel[] sideEffectsListLabels = new TextLabel[labelsPerSide * 2];
 
         Button weaponsAndArmorButton;
         Button magicItemsButton;
@@ -85,8 +75,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<IEntityEffect> enchantmentTemplates;
         EnchantmentSettings[] enchantmentSettings;
 
-        EnchantmentList powersList;
-        EnchantmentList sideEffectsList;
+        EnchantmentListPicker powersList;
+        EnchantmentListPicker sideEffectsList;
 
         bool selectingPowers;
         DaggerfallListPickerWindow enchantmentPrimaryPicker;
@@ -126,9 +116,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         List<EnchantmentSettings> itemPowers = new List<EnchantmentSettings>();
         List<EnchantmentSettings> itemSideEffects = new List<EnchantmentSettings>();
-
-        //int powersScrollPos = 0;
-        //int sideEffectsScrollPos = 0;
 
         #endregion
 
@@ -240,27 +227,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(71, 15), NativePanel);
             costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(64, 27), NativePanel);
             enchantLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(98, 39), NativePanel);
-
-            //Vector2 powerLabelPos = firstPowerLabelPos;
-            //Vector2 sideEffectLabelPos = firstSideEffectLabelPos;
-            //for(int i = 0; i < labelsPerSide * 2; i += 2)
-            //{
-            //    powersListLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, powerLabelPos, "Cast when used:", NativePanel);
-            //    // TODO: Only display secondary when present
-            //    powerLabelPos.x += secondaryLabelXIndent;
-            //    powerLabelPos.y += secondaryLabelYIncrement;
-            //    powersListLabels[i + 1] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, powerLabelPos, "Levitate", NativePanel);
-            //    powerLabelPos.x = firstPowerLabelPos.x;
-            //    powerLabelPos.y += nextLabelIncrement;
-
-            //    sideEffectsListLabels[i] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, sideEffectLabelPos, "Soul bound", NativePanel);
-            //    // TODO: Only display secondary when present
-            //    sideEffectLabelPos.x += secondaryLabelXIndent;
-            //    sideEffectLabelPos.y += secondaryLabelYIncrement;
-            //    sideEffectsListLabels[i + 1] = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, sideEffectLabelPos, "Dragonling", NativePanel);
-            //    sideEffectLabelPos.x = firstSideEffectLabelPos.x;
-            //    sideEffectLabelPos.y += nextLabelIncrement;
-            //}
         }
 
         void SetupButtons()
@@ -292,6 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedItemButton = DaggerfallUI.AddButton(selectedItemRect, NativePanel);
             selectedItemButton.SetMargins(Margins.All, 2);
             selectedItemButton.OnMouseClick += SelectedItemButton_OnMouseClick;
+
             // Selected item icon image panel
             selectedItemPanel = DaggerfallUI.AddPanel(selectedItemButton, AutoSizeModes.ScaleToFit);
             selectedItemPanel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -301,47 +268,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupListBoxes()
         {
-            powersList = new EnchantmentList();
-            powersList.Position = new Vector2(10, 58);
-            powersList.Size = new Vector2(75, 120);
-
-            // Add test items
-            powersList.AddItem("Cast when used:", "Levitate");
-            powersList.AddItem("Cast when used:", "Light");
-            powersList.AddItem("Cast when used:", "Invisibility");
-            powersList.AddItem("Cast when used:", "Wizard's Fire");
-            powersList.AddItem("Cast when used:", "Shock");
-            powersList.AddItem("Increased weight allowance", "25% Additional");
-            powersList.AddItem("Cast when used:", "Free Action");
-            powersList.AddItem("Cast when used:", "Open");
-            powersList.AddItem("Cast when used:", "Levitate");
-            powersList.AddItem("Cast when used:", "Levitate");
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    powersList.AddItem(new EnchantmentSettings());
-            //}
-
+            powersList = new EnchantmentListPicker();
+            powersList.Position = new Vector2(powersListRect.x, powersListRect.y);
+            powersList.Size = new Vector2(powersListRect.width, powersListRect.height);
             NativePanel.Components.Add(powersList);
-
-            //powersListBox = new ListBox();
-            //powersListBox.Position = new Vector2(10, 60);
-            //powersListBox.Size = new Vector2(75, 118);
-            //powersListBox.VerticalScrollMode = ListBox.VerticalScrollModes.EntryWise;
-            //powersListBox.HorizontalScrollMode = ListBox.HorizontalScrollModes.CharWise;
-            //powersListBox.Font = DaggerfallUI.SmallFont;
-            //powersListBox.BackgroundColor = new Color32(0, 0, 0, 200);
-            //powersListBox.ShadowPosition = Vector2.zero;
-            //powersListBox.EnabledHorizontalScroll = true;
-            //powersListBox.WrapTextItems = true;
-            //powersListBox.WrapWords = true;
-
-            //// Add test items
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    powersListBox.AddItem("Cast when used: Levitate");
-            //}
-
-            //NativePanel.Components.Add(powersListBox);
         }
 
         void SetupPickers()
@@ -417,12 +347,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region List Management
 
-        void AddEnchantmentSettings(EnchantmentSettings settings)
+        void AddEnchantmentSettings(EnchantmentSettings enchantment)
         {
             if (selectingPowers)
-                itemPowers.Add(settings);
+            {
+                itemPowers.Add(enchantment);
+                powersList.AddEnchantment(enchantment);
+            }
             else
-                itemSideEffects.Add(settings);
+            {
+                itemSideEffects.Add(enchantment);
+                //sideEffectsList.AddItem(enchantment);
+            }
         }
 
         #endregion
