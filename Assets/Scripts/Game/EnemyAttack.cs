@@ -4,13 +4,12 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Allofich
 // 
 // Notes:
 //
 
 using UnityEngine;
-using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
@@ -167,11 +166,8 @@ namespace DaggerfallWorkshop.Game
 
                 // Switch to hand-to-hand if enemy is immune to weapon
                 Items.DaggerfallUnityItem weapon = entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
-                if (weapon != null)
-                {
-                    if (targetEntity != null && targetEntity.MobileEnemy.MinMetalToHit > (Items.WeaponMaterialTypes)weapon.NativeMaterialValue)
-                        weapon = null;
-                }
+                if (weapon != null && targetEntity != null && targetEntity.MobileEnemy.MinMetalToHit > (Items.WeaponMaterialTypes)weapon.NativeMaterialValue)
+                    weapon = null;
 
                 damage = 0;
 
@@ -305,25 +301,21 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Knock back enemy based on damage and enemy weight
-                if (targetMotor)
+                if (targetMotor && (targetMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
+                        && (entityBehaviour.EntityType == EntityTypes.EnemyClass || targetEntity.MobileEnemy.Weight > 0)))
                 {
-                    if (targetMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
-                        entityBehaviour.EntityType == EntityTypes.EnemyClass ||
-                        targetEntity.MobileEnemy.Weight > 0)
-                    {
-                        float enemyWeight = targetEntity.GetWeightInClassicUnits();
-                        float tenTimesDamage = damage * 10;
-                        float twoTimesDamage = damage * 2;
+                    float enemyWeight = targetEntity.GetWeightInClassicUnits();
+                    float tenTimesDamage = damage * 10;
+                    float twoTimesDamage = damage * 2;
 
-                        float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
-                        float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
-                        knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
+                    float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
+                    float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
+                    knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
 
-                        if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                            knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                        targetMotor.KnockBackSpeed = knockBackSpeed;
-                        targetMotor.KnockBackDirection = direction;
-                    }
+                    if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                        knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                    targetMotor.KnockBackSpeed = knockBackSpeed;
+                    targetMotor.KnockBackDirection = direction;
                 }
 
                 if (DaggerfallUnity.Settings.CombatVoices && senses.Target.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(40))
@@ -335,8 +327,7 @@ namespace DaggerfallWorkshop.Game
                     else
                         gender = Genders.Female;
 
-                    bool heavyDamage = damage >= targetEntity.MaxHealth / 4;
-                    targetSounds.PlayCombatVoice(gender, false, heavyDamage);
+                    targetSounds.PlayCombatVoice(gender, false, damage >= targetEntity.MaxHealth / 4);
                 }
             }
             else
