@@ -8,16 +8,12 @@
 // 
 // Notes:
 //
+
 using UnityEngine;
-using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.FallExe;
-using System;
-using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -34,7 +30,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (GameManager.Instance.AreEnemiesNearby())
             {
                 // Summon a Daedroth to fight for the player.
-                GameObject gameObject = GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
+                GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
                 ItemCollection items = GameManager.Instance.PlayerEntity.Items;
                 DaggerfallUnityItem item = items.GetItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Sanguine_Rose);
                 for (int i = 0; i < items.Count; i++)
