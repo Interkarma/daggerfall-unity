@@ -229,8 +229,6 @@ namespace DaggerfallWorkshop.Game
 
             if (attacker == GameManager.Instance.PlayerEntityBehaviour)
                 isHostile = true;
-
-            bashing = false;
         }
 
         /// <summary>
@@ -377,7 +375,6 @@ namespace DaggerfallWorkshop.Game
             if (senses.Target == null || giveUpTimer == 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
             {
                 SetChangeStateTimer();
-                bashing = false;
                 searchMult = 0;
 
                 return;
@@ -385,19 +382,14 @@ namespace DaggerfallWorkshop.Game
 
             if (bashing)
             {
-                if (senses.TargetInSight || senses.LastKnownDoor == null || !senses.LastKnownDoor.IsLocked)
-                    bashing = false;
-                else
+                int speed = entity.Stats.LiveSpeed;
+                if (GameManager.ClassicUpdate && DFRandom.rand() % speed >= (speed >> 3) + 6 && attack.MeleeTimer == 0)
                 {
-                    int speed = entity.Stats.LiveSpeed;
-                    if (GameManager.ClassicUpdate && DFRandom.rand() % speed >= (speed >> 3) + 6 && attack.MeleeTimer == 0)
-                    {
-                        mobile.ChangeEnemyState(MobileStates.PrimaryAttack);
-                        attack.ResetMeleeTimer();
-                    }
-
-                    return;
+                    mobile.ChangeEnemyState(MobileStates.PrimaryAttack);
+                    attack.ResetMeleeTimer();
                 }
+
+                return;
             }
 
             // Classic AI moves only as close as melee range
@@ -1016,11 +1008,10 @@ namespace DaggerfallWorkshop.Game
             foundDoor = false;
 
             RaycastHit hit;
-            CharacterController charContr = GetComponent<CharacterController>();
-            Vector3 p1 = transform.position + charContr.center + Vector3.up * -charContr.height * 0.5F;
-            Vector3 p2 = p1 + Vector3.up * charContr.height;
+            Vector3 p1 = transform.position + controller.center + (Vector3.up * -controller.height * 0.5F);
+            Vector3 p2 = p1 + (Vector3.up * controller.height);
 
-            if (Physics.CapsuleCast(p1, p2, charContr.radius, direction, out hit, checkDistance))
+            if (Physics.CapsuleCast(p1, p2, controller.radius, direction, out hit, checkDistance))
             {
                 obstacleDetected = true;
 
@@ -1246,9 +1237,8 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // If door didn't open, and we are trying to get to the target, bash
-                if (DaggerfallUnity.Settings.EnhancedCombatAI && moveInForAttack && senses.LastKnownDoor != null
-                    && senses.DistanceToDoor < attack.MeleeDistance && senses.LastKnownDoor.IsLocked)
-                    bashing = true;
+                bashing = DaggerfallUnity.Settings.EnhancedCombatAI && !senses.TargetInSight && moveInForAttack
+                    && senses.LastKnownDoor != null && senses.DistanceToDoor <= attack.MeleeDistance && senses.LastKnownDoor.IsLocked;
             }
         }
 

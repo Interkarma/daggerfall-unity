@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 directionToTarget;
         float distanceToPlayer;
         float distanceToTarget;
+        DaggerfallEntityBehaviour player;
         DaggerfallEntityBehaviour target;
         DaggerfallEntityBehaviour targetOnLastUpdate;
         DaggerfallEntityBehaviour secondaryTarget;
@@ -89,11 +90,6 @@ namespace DaggerfallWorkshop.Game
         {
             get { return secondaryTarget; }
             set { secondaryTarget = value; }
-        }
-
-        DaggerfallEntityBehaviour Player
-        {
-            get { return GameManager.Instance.PlayerEntityBehaviour; }
         }
 
         public bool TargetInSight
@@ -194,6 +190,7 @@ namespace DaggerfallWorkshop.Game
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
             motor = GetComponent<EnemyMotor>();
             questBehaviour = GetComponent<QuestResourceBehaviour>();
+            player = GameManager.Instance.PlayerEntityBehaviour;
 
             short[] classicSpawnXZDistArray = { 1024, 384, 640, 768, 768, 768, 768 };
             short[] classicSpawnYDistUpperArray = { 128, 128, 128, 384, 768, 128, 256 };
@@ -258,7 +255,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
 
-                    float YDiffToPlayer = transform.position.y - Player.transform.position.y;
+                    float YDiffToPlayer = transform.position.y - player.transform.position.y;
                     float YDiffToPlayerAbs = Mathf.Abs(YDiffToPlayer);
                     float distanceToPlayerXZ = Mathf.Sqrt(distanceToPlayer * distanceToPlayer - YDiffToPlayerAbs * YDiffToPlayerAbs);
 
@@ -294,9 +291,9 @@ namespace DaggerfallWorkshop.Game
                 // Non-hostile mode
                 if (GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile)
                 {
-                    if (target == Player)
+                    if (target == player)
                         target = null;
-                    if (secondaryTarget == Player)
+                    if (secondaryTarget == player)
                         secondaryTarget = null;
                 }
 
@@ -343,10 +340,10 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            if (Player != null)
+            if (player != null)
             {
                 // Get distance to player
-                Vector3 toPlayer = Player.transform.position - transform.position;
+                Vector3 toPlayer = player.transform.position - transform.position;
                 distanceToPlayer = toPlayer.magnitude;
 
                 // If out of classic spawn range, still check for direct LOS to player so that enemies who see player will
@@ -355,7 +352,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     distanceToTarget = distanceToPlayer;
                     directionToTarget = toPlayer.normalized;
-                    playerInSight = CanSeeTarget(Player);
+                    playerInSight = CanSeeTarget(player);
                 }
 
                 if (classicTargetUpdateTimer > 5)
@@ -367,7 +364,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         GetTargets();
 
-                        if (target != null && target != Player)
+                        if (target != null && target != player)
                             targetSenses = target.GetComponent<EnemySenses>();
                         else
                             targetSenses = null;
@@ -387,7 +384,7 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                if (!wouldBeSpawnedInClassic && target == Player)
+                if (!wouldBeSpawnedInClassic && target == player)
                 {
                     distanceToTarget = distanceToPlayer;
                     directionToTarget = toPlayer.normalized;
@@ -409,7 +406,7 @@ namespace DaggerfallWorkshop.Game
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
                 // hearing if the enemy has detected the target. If target is visible we can omit hearing.
                 if (detectedTarget && !targetInSight)
-                    targetInEarshot = CanHearTarget(target);
+                    targetInEarshot = CanHearTarget();
                 else
                     targetInEarshot = false;
 
@@ -477,7 +474,7 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                if (detectedTarget && !hasEncounteredPlayer && target == Player)
+                if (detectedTarget && !hasEncounteredPlayer && target == player)
                 {
                     hasEncounteredPlayer = true;
 
@@ -579,7 +576,7 @@ namespace DaggerfallWorkshop.Game
             if (gameMinutes == timeOfLastStealthCheck)
                 return detectedTarget;
 
-            if (target == Player)
+            if (target == player)
             {
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
                 if (playerMotor.IsMovingLessThanHalfSpeed)
@@ -650,7 +647,7 @@ namespace DaggerfallWorkshop.Game
 
             Vector3 targetDirection2D;
 
-            if (target == Player)
+            if (target == player)
             {
                 Camera mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 targetDirection2D = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
@@ -700,7 +697,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallEntityBehaviour targetBehaviour = entityBehaviours[i];
                 EnemyEntity targetEntity = null;
-                if (targetBehaviour != Player)
+                if (targetBehaviour != player)
                     targetEntity = targetBehaviour.Entity as EnemyEntity;
 
                 // Can't target self
@@ -712,11 +709,11 @@ namespace DaggerfallWorkshop.Game
                     || targetBehaviour.EntityType == EntityTypes.Player)
                 {
                     // NoTarget mode
-                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == Player)
+                    if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == player)
                         continue;
 
                     // Can't target ally
-                    if (targetBehaviour == Player && enemyEntity.Team == MobileTeams.PlayerAlly)
+                    if (targetBehaviour == player && enemyEntity.Team == MobileTeams.PlayerAlly)
                         continue;
                     else if (DaggerfallUnity.Settings.EnemyInfighting)
                     {
@@ -725,12 +722,12 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        if (targetBehaviour != Player && enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly)
+                        if (targetBehaviour != player && enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly)
                             continue;
                     }
 
                     // For now, quest AI only targets player
-                    if (questBehaviour && targetBehaviour != Player)
+                    if (questBehaviour && targetBehaviour != player)
                         continue;
 
                     EnemySenses targetSenses = null;
@@ -850,7 +847,7 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        bool CanHearTarget(DaggerfallEntityBehaviour target)
+        bool CanHearTarget()
         {
             float hearingScale = 1f;
 
