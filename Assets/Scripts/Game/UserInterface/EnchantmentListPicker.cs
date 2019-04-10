@@ -80,6 +80,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return enchantments.ToArray();
         }
 
+        public bool ContainsEnchantment(EnchantmentSettings other)
+        {
+            foreach(EnchantmentPanel panel in enchantmentPanels)
+            {
+                if (panel.Enchantment == other)
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Overrides

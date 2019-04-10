@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EffectCosts DurationCosts;                           // Duration cost values
         public EffectCosts ChanceCosts;                             // Chance cost values
         public EffectCosts MagnitudeCosts;                          // Magnitude cost values
+        public ItemMakerFlags ItemMakerFlags;                       // Item maker features
     }
 
     /// <summary>

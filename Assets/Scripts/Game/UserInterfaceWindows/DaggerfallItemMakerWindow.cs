@@ -113,7 +113,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Dictionary<string, IEntityEffect> groupedEffectTemplates = new Dictionary<string, IEntityEffect>();
         List<EnchantmentSettings> enumeratedEnchantments = new List<EnchantmentSettings>();
-        List<EnchantmentSettings> filteredEnchantments = new List<EnchantmentSettings>();
 
         bool selectingPowers;
         List<EnchantmentSettings> itemPowers = new List<EnchantmentSettings>();
@@ -389,6 +388,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        bool ContainsEnchantmentSettings(EnchantmentSettings enchantment)
+        {
+            if (selectingPowers)
+            {
+                return powersList.ContainsEnchantment(enchantment);
+            }
+            else
+            {
+                return false;
+                //return sideEffectsList.ContainsEnchantment(enchantment);
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -419,7 +431,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Populate and display primary picker
             foreach(IEntityEffect effect in groupedEffectTemplates.Values)
             {
-                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName);
+                // Filter out singleton items where multiple instances not allowed
+                if ((effect.Properties.ItemMakerFlags & ItemMakerFlags.SingletonEnchantment) == ItemMakerFlags.SingletonEnchantment &&
+                    (effect.Properties.ItemMakerFlags & ItemMakerFlags.AllowMultiplePrimaryInstances) != ItemMakerFlags.AllowMultiplePrimaryInstances)
+                {
+                    EnchantmentSettings[] effectEnchantments = effect.GetEnchantmentSettings();
+                    if (effectEnchantments != null && effectEnchantments.Length > 0 && ContainsEnchantmentSettings(effectEnchantments[0]))
+                        continue;
+                }
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
             }
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
@@ -472,16 +492,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
             // Clear existing
             enchantmentSecondaryPicker.ListBox.ClearItems();
-            filteredEnchantments.Clear();
+
+            // Get the effect template tagged to selected item
+            ListBox.ListItem listItem = enchantmentPrimaryPicker.ListBox.SelectedValue;
+            IEntityEffect effect = listItem.tag as IEntityEffect;
+            if (effect == null)
+                throw new Exception(string.Format("ListItem '{0}' has no IEntityEffect tag", listItem.textLabel.Text));
 
             // Filter enchantments based on effect key
-            IEntityEffect effect = groupedEffectTemplates.ElementAt(enchantmentPrimaryPicker.ListBox.SelectedIndex).Value;
-            filteredEnchantments.AddRange(enumeratedEnchantments.Where(e => e.EffectKey == effect.Key).ToArray());
-            if (filteredEnchantments.Count == 0)
-                throw new Exception(string.Format("EnchantmentPrimaryPicker_OnUseSelectedItem: Found no enchantments for effect key '{0}'", effect.Key));
+            EnchantmentSettings[] filteredEnchantments = enumeratedEnchantments.Where(e => e.EffectKey == effect.Key).ToArray();
+            if (filteredEnchantments == null || filteredEnchantments.Length == 0)
+                throw new Exception(string.Format("Found no enchantments for effect key '{0}'", effect.Key));
 
             // If this is a singleton effect with no secondary options then add directly to powers/side-effects
-            if (filteredEnchantments.Count == 1)
+            if (filteredEnchantments.Length == 1)
             {
                 AddEnchantmentSettings(filteredEnchantments[0]);
                 enchantmentPrimaryPicker.CloseWindow();
@@ -491,18 +515,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // User must select from available secondary enchantment types
             foreach (EnchantmentSettings enchantment in filteredEnchantments)
             {
-                enchantmentSecondaryPicker.ListBox.AddItem(enchantment.SecondaryDisplayName);
+                // Filter out enchantment when multiple instances not allowed
+                if ((effect.Properties.ItemMakerFlags & ItemMakerFlags.AllowMultipleSecondaryInstances) != ItemMakerFlags.AllowMultipleSecondaryInstances)
+                {
+                    if (ContainsEnchantmentSettings(enchantment))
+                        continue;
+                }
+                enchantmentSecondaryPicker.ListBox.AddItem(enchantment.SecondaryDisplayName, -1, enchantment);
             }
+
             enchantmentSecondaryPicker.ListBox.SelectedIndex = 0;
             uiManager.PushWindow(enchantmentSecondaryPicker);
         }
 
         private void EnchantmentSecondaryPicker_OnUseSelectedItem()
         {
+            // TODO: Add any automatic enchantments related to this one (e.g. a soul bound Daedra add a few auto enchantments)
+
             // TODO: Check for overflow from automatic enchantments and display "no room in item..."
 
+            // Get enchantment tagged to selected item
+            ListBox.ListItem listItem = enchantmentSecondaryPicker.ListBox.SelectedValue;
+            if (listItem.tag == null)
+                throw new Exception(string.Format("ListItem '{0}' has no EnchantmentSettings tag", listItem.textLabel.Text));
+
             // Add selected enchantment settings to powers/side-effects
-            AddEnchantmentSettings(filteredEnchantments[enchantmentSecondaryPicker.ListBox.SelectedIndex]);
+            AddEnchantmentSettings((EnchantmentSettings)listItem.tag);
 
             // Close effect pickers
             enchantmentPrimaryPicker.CloseWindow();

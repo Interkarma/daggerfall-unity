@@ -59,6 +59,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Defines flags for additional feature support at item maker.
+    /// </summary>
+    [Flags]
+    public enum ItemMakerFlags
+    {
+        None = 0,
+        SingletonEnchantment = 1,
+        AllowMultiplePrimaryInstances = 2,
+        AllowMultipleSecondaryInstances = 4,
+    }
+
+    /// <summary>
     /// Supported bundle types.
     /// This helps determine lifetime and usage of a bundle.
     /// </summary>
