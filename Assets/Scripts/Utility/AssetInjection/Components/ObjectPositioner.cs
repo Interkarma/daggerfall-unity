@@ -27,11 +27,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     }
 
     /// <summary>
+    /// Marks a component that interacts with the Asset-Injection framework to define object position.
+    /// </summary>
+    public interface IObjectPositioner
+    {
+        /// <summary>
+        /// Defines if the object can be given a random rotation if it replaces a billboard.
+        /// </summary>
+        bool AllowFlatRotation { get; }
+    }
+
+    /// <summary>
     /// Moves an object next to the nearest collider. Can be used to fix bad classic game-data positions.
     /// </summary>
-    public class ObjectPositioner : MonoBehaviour
+    [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/#ObjectPositioner")]
+    public class ObjectPositioner : MonoBehaviour, IObjectPositioner
     {
-        const float maxDistance = 1;
+        protected const float maxDistance = 1;
 
 #if TEST_TRANSLATION
         private Vector3 originalPosition;
@@ -43,13 +55,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         [Tooltip("The direction in which the object is moved.")]
         public Direction Direction;
 
+        protected MeshRenderer MeshRenderer { get; private set; }
+
+        /// <summary>
+        /// Always true because this component doesn't affect object rotation.
+        /// </summary>
+        public virtual bool AllowFlatRotation
+        {
+            get { return true; }
+        }
+
+        private void Awake()
+        {
+            MeshRenderer = GetComponent<MeshRenderer>();
+        }
+
         private void Start()
         {
 #if TEST_TRANSLATION
             originalPosition = transform.position;
 #endif
 
-            Move(GetDirection(Direction));
+            if (!MeshRenderer)
+            {
+                Debug.LogError("MeshRenderer not found!", this);
+                return;
+            }
+
+            Vector3 direction = GetDirection(Direction);
+            if (direction == Vector3.zero)
+            {
+                Debug.LogError("Direction is not set!", this);
+                return;
+            }
+
+            PerformPositioning(direction);
         }
 
 #if TEST_TRANSLATION
@@ -61,26 +101,33 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 #endif
 
         /// <summary>
-        /// Moves the object next the nearest collider in the given direction.
+        /// Performs all positioning operations.
         /// </summary>
         /// <param name="direction">A normalized direction in local space.</param>
-        private void Move(Vector3 direction)
+        protected virtual void PerformPositioning(Vector3 direction)
         {
-            var meshRenderer = GetComponent<MeshRenderer>();
-            if (!meshRenderer)
-            {
-                Debug.LogErrorFormat("ObjectPositioner: MeshRenderer is not found on {0}", name);
-                return;
-            }
+            Move(direction);
+        }
 
-            Vector3 worldSpaceDirection = transform.TransformDirection(direction);
+        /// <summary>
+        /// Moves the object next the nearest collider in the given direction or away from it if clipping.
+        /// </summary>
+        /// <param name="direction">A normalized direction in local space.</param>
+        protected void Move(Vector3 direction)
+        {
+            Bounds bounds = MeshRenderer.bounds;
+            Ray ray = new Ray(transform.position, transform.TransformDirection(direction));
 
             RaycastHit hitInfo;
-            if (Physics.Raycast(new Ray(transform.position, worldSpaceDirection), out hitInfo, maxDistance))
-            {
-                float distance = Vector3.Distance(meshRenderer.bounds.ClosestPoint(hitInfo.point), hitInfo.point);
-                transform.Translate(worldSpaceDirection * distance, Space.World);
-            }
+            if (!Physics.Raycast(ray, out hitInfo, maxDistance))
+                return;
+
+            // Get the bound extent on the direction of the ray axis
+            Vector3 extents = bounds.extents;
+            extents.Scale((bounds.center - hitInfo.point).normalized);
+
+            // Move the object for the distance between collision and bound point
+            transform.Translate(hitInfo.point - (bounds.center - extents), Space.World);
         }
 
         /// <summary>

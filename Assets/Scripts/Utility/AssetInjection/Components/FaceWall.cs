@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -23,8 +24,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// 2. Moves the object next to the wall or away from it if clipping.
     /// 3. Aligns the object if wall is not perpendicular.
     /// </remarks>
+    [Obsolete("Use WallPropPositioner")]
     [HelpURL("http://www.dfworkshop.net/projects/daggerfall-unity/modding/models-flats/#facewall")]
-    public class FaceWall : MonoBehaviour
+    public class FaceWall : MonoBehaviour, IObjectPositioner
     {
         #region Fields
 
@@ -50,6 +52,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         [Tooltip("Aligns the object if wall is not perpendicular.")]
         [FormerlySerializedAs("alignToWall")]
         public bool AlignToWall = true;
+
+        public bool AllowFlatRotation
+        {
+            get { return false; }
+        }
 
         #endregion
 
