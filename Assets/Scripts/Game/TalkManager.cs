@@ -30,7 +30,7 @@ using DaggerfallWorkshop.Game.Utility;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// this class manages talk topics and resulting actions/answers
+    /// This class manages talk topics and resulting actions/answers
     /// </summary>
     public partial class TalkManager : MonoBehaviour
     {
@@ -104,36 +104,36 @@ namespace DaggerfallWorkshop.Game
         readonly ushort[] answersToNonDirections =  { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7304, 7269, 7284,
                                                       7261, 7276, 7291, 7260, 7275, 7290, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
 
-        const float DefaultChanceKnowsSomethingAboutWhereIs = 0.5f; // chances unknown
-        const float DefaultChanceKnowsSomethingAboutQuest = 0.5f; // chances unknown
-        const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.5f; // chances unknown
-        const float DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC = 0.0f; // chances unknown
-        const float ChanceToRevealLocationOnMap = 0.25f; //chances unknown
+        const float DefaultChanceKnowsSomethingAboutWhereIs = 0.5f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutQuest = 0.5f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.5f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC = 0.0f; // Chances unknown
+        const float ChanceToRevealLocationOnMap = 0.25f; // Chances unknown
 
-        const int maxNumAnswersNpcGivesTellMeAboutOrRumors = 1; // maximum number of answers npc gives about "tell me about" question or rumors
+        const int maxNumAnswersNpcGivesTellMeAboutOrRumors = 1; // Maximum number of answers npc gives about "tell me about" questions or rumors
 
-        // specifies entry type of list item in topic lists
+        // Specifies entry type of list item in topic lists
         public enum ListItemType
         {
-            Item, // a item that can be talked about
-            ItemGroup, // a group containing other items
-            NavigationBack // a special item to navigate out of group items ("previous list")
+            Item, // A item that can be talked about
+            ItemGroup, // A group containing other items
+            NavigationBack // A special item to navigate out of group items ("Previous list")
         }
 
         public enum QuestionType
         {
-            NoQuestion, // used for list entries that are not of ListItemType item
-            News, // used for "any news" question
-            WhereAmI, // used for "Where am I?" question
-            OrganizationInfo, // used for "tell me about" -> organizations
-            Work, // used for "where is" -> "work"
-            LocalBuilding, // used for "where is" -> "location"
-            Regional, // used for "where is" -> "location" -> "regional"
-            Person, // used for "where is" -> "person"
-            Thing, // not used ("where is" -> "thing") - not implemented in vanilla daggerfall as well
-            QuestLocation, // used for quest resources that are locations that get added to "tell me about" section
-            QuestPerson, // used for quest resources that are persons that get added to "tell me about" section
-            QuestItem // used for quest resources that are items that get added to "tell me about" section
+            NoQuestion, // Used for list entries that are not of ListItemType item
+            News, // Used for "any news" question
+            WhereAmI, // Used for "Where am I?" question
+            OrganizationInfo, // Used for "tell me about" -> organizations
+            Work, // Used for "where is" -> "work"
+            LocalBuilding, // Used for "where is" -> "location"
+            Regional, // Used for "where is" -> "location" -> "regional"
+            Person, // Used for "where is" -> "person"
+            Thing, // Not used ("where is" -> "thing") - Not implemented in classic either
+            QuestLocation, // Used for quest resources that are locations that get added to "tell me about" section
+            QuestPerson, // Used for quest resources that are persons that get added to "tell me about" section
+            QuestItem // Used for quest resources that are items that get added to "tell me about" section
         }
 
         public enum NPCKnowledgeAboutItem
@@ -437,21 +437,21 @@ namespace DaggerfallWorkshop.Game
         {
             SetupSingleton();
 
-            // important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
+            // Important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
             PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
 
-            // initialize work variables
+            // Initialize work variables
             exteriorUsedForQuestors = 0;
             selectedNpcWorkKey = -1;
         }
 
         void OnDestroy()
         {
-            // important that transition events/delegates are destroyed in OnDestroy() instead of OnDisable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
+            // Important that transition events/delegates are destroyed in OnDestroy() instead of OnDisable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
             PlayerGPS.OnMapPixelChanged -= OnMapPixelChanged;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
@@ -461,7 +461,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            // register console commands
+            // Register console commands
             try
             {
                 TalkConsoleCommands.RegisterCommands();
@@ -486,8 +486,6 @@ namespace DaggerfallWorkshop.Game
 
         public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
         {
-            int reaction = 0;
-
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
             FactionFile.FactionData NPCfaction;
@@ -506,10 +504,9 @@ namespace DaggerfallWorkshop.Game
             NPCfaction = factions[0];
 
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            reaction = NPCfaction.rep;
-            reaction += player.BiographyReactionMod;
+            int reaction = NPCfaction.rep + player.BiographyReactionMod;
 
-            if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // one of the five general social groups
+            if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // One of the five general social groups
                 reaction += player.SGroupReputations[(int)socialGroup];
 
             return reaction;
@@ -607,7 +604,7 @@ namespace DaggerfallWorkshop.Game
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
 
-            npcData.numAnswersGivenTellMeAboutOrRumors = 0; // important to reset this here so even if npcs is the same as previous talk session pc will give one correct answer if npc knows about topic (as implemented in vanilla df)
+            npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will give one correct answer if NPC knows about topic (as implemented in classic)
 
             TalkToNpc();
         }
@@ -623,9 +620,7 @@ namespace DaggerfallWorkshop.Game
 
             // Populate NPC faction data
             FactionFile.FactionData targetFactionData;
-            PersistentFactionData factionsData;
-            factionsData = GameManager.Instance.PlayerEntity.FactionData;
-            factionsData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
 
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
@@ -645,7 +640,7 @@ namespace DaggerfallWorkshop.Game
             sameTalkTargetAsBefore = false;
             GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
 
-            npcData.numAnswersGivenTellMeAboutOrRumors = 0; // important to reset this here so even if npcs is the same as previous talk session pc will can one correct answer if npc knows about topic (as implemented in vanilla df)
+            npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will can one correct answer if NPC knows about topic (as implemented in classic)
             npcData.isSpyMaster = isSpyMaster;
 
             TalkToNpc();
@@ -666,7 +661,6 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.Instance.TalkWindow.SetNPCPortrait(DaggerfallTalkWindow.FacePortraitArchive.CommonFaces, targetMobileNPC.PersonFaceRecordId);
 
             lastTargetMobileNPC = targetMobileNPC;
-
             nameNPC = targetMobileNPC.NameNPC;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
@@ -679,7 +673,7 @@ namespace DaggerfallWorkshop.Game
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC;
             npcData.isSpyMaster = false;
 
-            AssembleTopicListPerson(); // update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
+            AssembleTopicListPerson(); // Update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
         public void SetTargetNPC(StaticNPC targetNPC, ref bool sameTalkTargetAsBefore)
@@ -693,8 +687,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             alreadyRejectedOnce = false;
-
-            this.targetStaticNPC = targetNPC;
+            targetStaticNPC = targetNPC;
 
             DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive;
             int recordIndex;
@@ -735,7 +728,7 @@ namespace DaggerfallWorkshop.Game
                 npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
             }
 
-            AssembleTopicListPerson(); // update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
+            AssembleTopicListPerson(); // Update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
         public void StartNewConversation()
@@ -766,7 +759,7 @@ namespace DaggerfallWorkshop.Game
 
             Guild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
 
-            // note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
+            // Note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
 
             if (currentNPCType == NPCType.Static)
             {
@@ -785,7 +778,7 @@ namespace DaggerfallWorkshop.Game
                             // Set external context to guild if player is a member
                             if (guild.IsMember())
                                 quest.ExternalMCP = guild;
-                            // expand tokens and reveal dialog-linked resources
+                            // Expand tokens and reveal dialog-linked resources
                             QuestMacroHelper macroHelper = new QuestMacroHelper();
                             macroHelper.ExpandQuestMessage(quest, ref tokens, true);
                             return TokensToString(tokens);
@@ -794,23 +787,23 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // check if npc is member of a guild            
+            // Check if NPC is a member of a guild
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) && // first check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
+            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) && // First check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
                 GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
             {
-                if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8553, 8554
+                if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8553, 8554
                 {
-                    if (reactionToPlayer >= minVeryLikeReaction) // what reputation is needed to show like greeting message?
+                    if (reactionToPlayer >= minVeryLikeReaction) // What reputation is needed to show like greeting message?
                         return ExpandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
-                    else if (reactionToPlayer >= minNeutralReaction) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                    else if (reactionToPlayer >= minNeutralReaction) // Not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
                         return ExpandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
                 }
-                else // all other guilds (including Knightly Orders) seem to use messages 8550, 8551
+                else // All other guilds (including Knightly Orders) seem to use messages 8550, 8551
                 {
-                    if (reactionToPlayer >= minVeryLikeReaction) // what reputation is needed to show like greeting message?
+                    if (reactionToPlayer >= minVeryLikeReaction) // What reputation is needed to show like greeting message?
                         return ExpandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
-                    else if (reactionToPlayer >= minNeutralReaction) // not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
+                    else if (reactionToPlayer >= minNeutralReaction) // Not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
                         return ExpandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
                 }
             }
@@ -827,17 +820,12 @@ namespace DaggerfallWorkshop.Game
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
-            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string greetingString = ExpandRandomTextRecord(7215 + toneIndex);
-
-            return (greetingString);
+            return ExpandRandomTextRecord(7215 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
         }
 
         public string GetPCFollowUpText(DaggerfallTalkWindow.TalkTone talkTone)
         {
-            int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
-            string followUpString = ExpandRandomTextRecord(7218 + toneIndex);
-            return (followUpString);
+            return ExpandRandomTextRecord(7218 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
         }
 
         public string GetPCGreetingOrFollowUpText()
@@ -885,7 +873,7 @@ namespace DaggerfallWorkshop.Game
 
         public string GetKeySubjectLocationCompassDirection()
         {
-            // note Nystul:
+            // Note Nystul:
             // I reused coordinate mapping from buildings from exterior automap layout implementation here
             // So both building position as well as player position are calculated in map coordinates and compared
             Vector2 playerPos;
@@ -924,22 +912,19 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public string GetQuestionText(TalkManager.ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
+        public string GetQuestionText(ListItem listItem, DaggerfallTalkWindow.TalkTone talkTone)
         {
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(talkTone);
             string question = "";
 
             currentTalkTone = talkTone;
 
-            currentKeySubject = listItem.caption; // set key to current caption for now (which is in case of buildings the building name)
+            currentKeySubject = listItem.caption; // Set key to current caption for now (which is in case of buildings the building name)
 
             currentQuestionListItem = listItem;
 
             switch (listItem.questionType)
             {
-                case QuestionType.NoQuestion:
-                default:
-                    break;
                 case QuestionType.News:
                     question = ExpandRandomTextRecord(7231 + toneIndex);
                     break;
@@ -960,7 +945,7 @@ namespace DaggerfallWorkshop.Game
                     question = ExpandRandomTextRecord(7225 + toneIndex);
                     break;
                 case QuestionType.Thing:
-                    question = "not implemented"; // vanilla df did not implement this as well
+                    question = "Not implemented"; // Classic did not implement this either
                     break;
                 case QuestionType.Regional:
                     currentKeySubjectType = KeySubjectType.Building;
@@ -1016,7 +1001,7 @@ namespace DaggerfallWorkshop.Game
 
                         MacroHelper.SetFactionIdsAndRegionID(entry.faction1, entry.faction2, regionID);
                         MacroHelper.ExpandMacros(ref tokens, this);
-                        MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // reset again so %reg macro may resolve to current region if needed
+                        MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // Reset again so %reg macro may resolve to current region if needed
                         news = TokensToString(tokens, false);
                     }
                 }
@@ -1025,7 +1010,7 @@ namespace DaggerfallWorkshop.Game
                     int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
                     TextFile.Token[] tokens = entry.listRumorVariants[variant];
 
-                    // expand tokens and reveal dialog-linked resources
+                    // Expand tokens and reveal dialog-linked resources
                     QuestMacroHelper macroHelper = new QuestMacroHelper();
                     macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
                     news = TokensToString(tokens);
@@ -1064,10 +1049,12 @@ namespace DaggerfallWorkshop.Game
                         FactionFile.FactionData factionData2;
 
                         // Flag 1 being set makes faction's rumors less likely to appear in conversation.
-                        if ((entry.faction1 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData1) && (factionData1.flags & 1) == 1
-                            || entry.faction2 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData2) && (factionData2.flags & 1) == 1)
+                        if (((entry.faction1 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData1) && (factionData1.flags & 1) == 1)
+                            || (entry.faction2 != 0 && GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData2) && (factionData2.flags & 1) == 1))
                             && Dice100.SuccessRoll(75))
+                        {
                             continue;
+                        }
                     }
                 }
 
@@ -1079,23 +1066,23 @@ namespace DaggerfallWorkshop.Game
 
         public string GetAnswerWhereAmI()
         {
-            // all npcs know this answer
+            // All NPCs know this answer
             if (GameManager.Instance.IsPlayerInside)
             {
-                if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0) // in building
+                if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0) // In building
                 {
                     PlayerGPS.DiscoveredBuilding discoveredBuilding;
                     if (GameManager.Instance.PlayerGPS.GetAnyBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
                     {
                         return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
                     }
-                    // fallback if no discovery info was found
+                    // Fallback if no discovery info was found
                     BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
 
-                    return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
                 }
 
-                if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // in dungeon
+                if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
                 {
                     DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
                     string dungeonName = "";
@@ -1110,21 +1097,21 @@ namespace DaggerfallWorkshop.Game
                         dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
                     }
 
-                    dungeonName = dungeonName.TrimEnd('.'); // remove character '.' from castle text record entry
+                    dungeonName = dungeonName.TrimEnd('.'); // Remove character '.' from castle text record entry
 
-                    return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
+                    return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
                 }
             }
             else
             {
-                return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
+                return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
             }
             return TextManager.Instance.GetText(textDatabase, "resolvingError");
         }
 
-        public string GetOrganizationInfo(TalkManager.ListItem listItem)
+        public string GetOrganizationInfo(ListItem listItem)
         {
-            int index = (listItem.index > 7 ? listItem.index + 1 : listItem.index); // note Nystul: this looks error-prone because we are assuming specific indices here -> what if this changes some day?
+            int index = (listItem.index > 7 ? listItem.index + 1 : listItem.index); // Note Nystul: this looks error-prone because we are assuming specific indices here -> what if this changes some day?
             return ExpandRandomTextRecord(860 + index);
         }
 
@@ -1139,7 +1126,7 @@ namespace DaggerfallWorkshop.Game
             entry.listRumorVariants = new List<TextFile.Token[]>();
             for (int i = 0; i < message.VariantCount; i++)
             {
-                TextFile.Token[] variantItem = message.GetTextTokensByVariant(i, false); // do not expand macros
+                TextFile.Token[] variantItem = message.GetTextTokensByVariant(i, false); // Do not expand macros
                 entry.listRumorVariants.Add(variantItem);
             }
 
@@ -1179,12 +1166,12 @@ namespace DaggerfallWorkshop.Game
             List<TextFile.Token[]> listRumorVariants = new List<TextFile.Token[]>();
             for (int v = 0; v < message.VariantCount; v++)
             {
-                TextFile.Token[] variantItem = message.GetTextTokensByVariant(v, false); // do not expand macros
+                TextFile.Token[] variantItem = message.GetTextTokensByVariant(v, false); // Do not expand macros
                 listRumorVariants.Add(variantItem);
             }
 
             RumorMillEntry entry;
-            if (i >= listRumorMill.Count) // no entry was found -> create new
+            if (i >= listRumorMill.Count) // No entry was found -> create new
             {
                 entry = new RumorMillEntry();
                 entry.rumorType = RumorType.QuestProgressRumor;
@@ -1192,7 +1179,7 @@ namespace DaggerfallWorkshop.Game
                 entry.listRumorVariants = listRumorVariants;
                 listRumorMill.Add(entry);
             }
-            else // existing entry for questID -> replace
+            else // Existing entry for questID -> replace
             {
                 entry = listRumorMill[i];
                 entry.listRumorVariants = listRumorVariants;
@@ -1242,7 +1229,7 @@ namespace DaggerfallWorkshop.Game
 
         public void AddQuestorPostQuestMessage(ulong questID, Message message)
         {
-            dictQuestorPostQuestMessage[questID] = message.GetTextTokens(0, false); // do not expand macros
+            dictQuestorPostQuestMessage[questID] = message.GetTextTokens(0, false); // Do not expand macros
         }
 
         public void RemoveQuestorPostQuestMessage(ulong questID)
@@ -1255,16 +1242,16 @@ namespace DaggerfallWorkshop.Game
 
         public string GetKeySubjectLocationDirection()
         {
-            markLocationOnMap = false; // when preprocessing messages in ExpandRandomTextRecord() do not reveal location accidentally (no %loc macro resolving)
+            markLocationOnMap = false; // When preprocessing messages in ExpandRandomTextRecord() do not reveal location accidentally (no %loc macro resolving)
             return ExpandRandomTextRecord(7333);
         }
 
         public string GetKeySubjectLocationOnMap()
         {
-            string answer;
-            markLocationOnMap = true; // only reveal on purpose
-            answer = ExpandRandomTextRecord(7332);
-            markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
+            markLocationOnMap = true; // Only reveal on purpose
+            string answer = ExpandRandomTextRecord(7332);
+            markLocationOnMap = false; // Don't forget so future %loc macro resolving when preprocessing messages does not reveal location
+
             return answer;
         }
 
@@ -1272,7 +1259,7 @@ namespace DaggerfallWorkshop.Game
         {
             string answer;
 
-            // decide if npc gives directional hints or marks building on map, always only give directional hints if player is inside
+            // Decide if npc gives directional hints or marks building on map, always only give directional hints if player is inside
             float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
             if (randomFloat > ChanceToRevealLocationOnMap || GameManager.Instance.IsPlayerInside)
             {
@@ -1288,32 +1275,30 @@ namespace DaggerfallWorkshop.Game
 
         public string GetKeySubjectPersonHint()
         {
-            string answer;
-
             string key = currentQuestionListItem.key;
 
-            // override key if it is explicitly set (by quest person resources, place resources)
-            if (currentQuestionListItem.key != String.Empty)
+            // Override key if it is explicitly set (by quest person resources, place resources)
+            if (currentQuestionListItem.key != string.Empty)
                 key = currentQuestionListItem.key;
 
             int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
 
-            string backupKeySubject = this.currentKeySubject; // backup current key subject
+            string backupKeySubject = currentKeySubject; // Backup current key subject
 
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
 
             //this.currentKeySubject = buildingInfo.name;
             PlayerGPS.DiscoveredBuilding discoveredBuilding;
             GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
-            this.currentKeySubject = discoveredBuilding.displayName;
+            currentKeySubject = discoveredBuilding.displayName;
 
-            this.currentKeySubjectBuildingKey = buildingKey;
+            currentKeySubjectBuildingKey = buildingKey;
 
-            markLocationOnMap = true; // only reveal on purpose
-            answer = GetKeySubjectLocationHint();
-            markLocationOnMap = false; // don't forget so future %loc macro resolving when preprocessing messages does not reveal location
+            markLocationOnMap = true; // Only reveal on purpose
+            string answer = GetKeySubjectLocationHint();
+            markLocationOnMap = false; // Don't forget so future %loc macro resolving when preprocessing messages does not reveal location
 
-            this.currentKeySubject = backupKeySubject; // restore old key subject           
+            currentKeySubject = backupKeySubject; // Restore old key subject
 
             return answer;
         }
@@ -1325,7 +1310,7 @@ namespace DaggerfallWorkshop.Game
                 List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 return GetAnswerFromTokensArray(listItem.questID, answers);
             }
-            return TextManager.Instance.GetText(textDatabase, "resolvingError"); // error case - should never ever occur
+            return TextManager.Instance.GetText(textDatabase, "resolvingError"); // Error case - should never ever occur
         }
 
         public string GetDialogHint2(ListItem listItem)
@@ -1333,12 +1318,12 @@ namespace DaggerfallWorkshop.Game
             if (dictQuestInfo.ContainsKey(listItem.questID) && dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.key))
             {
                 List<TextFile.Token[]> answers;
-                if (npcData.isSpyMaster) // spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that consoleCommandFlag_npcsKnowEverything does not apply here)
+                if (npcData.isSpyMaster) // Spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that consoleCommandFlag_npcsKnowEverything does not apply here)
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
-                else // everybody else gives rumors here for %hnt2
+                else // Everybody else gives rumors here for %hnt2
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].rumorsAnswers;
 
-                if (answers.Count == 0) // if no rumors are available, fall back to anyInfoAnswers
+                if (answers.Count == 0) // If no rumors are available, fall back to anyInfoAnswers
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 return GetAnswerFromTokensArray(listItem.questID, answers);
             }
@@ -1379,14 +1364,14 @@ namespace DaggerfallWorkshop.Game
 
         public string GetOldLeaderFateString(int index)
         {
-            return TextManager.Instance.GetText(textDatabase, String.Format("oldLeaderFate{0}", index));
+            return TextManager.Instance.GetText(textDatabase, string.Format("oldLeaderFate{0}", index));
         }
 
-        public string GetAnswerWhereIs(TalkManager.ListItem listItem)
+        public string GetAnswerWhereIs(ListItem listItem)
         {
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
             {
-                // decide here if npcs knows question's answer (spymaster always knows)
+                // Decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
                 if (randomFloat < npcData.chanceKnowsSomethingAboutWhereIs || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
@@ -1394,7 +1379,7 @@ namespace DaggerfallWorkshop.Game
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
 
-            // test if npc is asked about building and is in the same building (also for quest persons) -> then he/she should know about building
+            // Test if npc is asked about building and is in the same building (also for quest persons) -> then he/she should know about building
             if (listItem.questionType == QuestionType.LocalBuilding || listItem.questionType == QuestionType.QuestLocation && GameManager.Instance.IsPlayerInside)
             {
                 if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && listItem.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
@@ -1402,7 +1387,7 @@ namespace DaggerfallWorkshop.Game
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                     listItem.npcInSameBuildingAsTopic = true;
                 }
-                else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // in dungeon
+                else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
                 {
                     DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
                     string dungeonName = "";
@@ -1417,7 +1402,7 @@ namespace DaggerfallWorkshop.Game
                         dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
                     }
 
-                    dungeonName = dungeonName.TrimEnd('.'); // remove character '.' from castle text record entry
+                    dungeonName = dungeonName.TrimEnd('.'); // Remove character '.' from castle text record entry
 
                     if (dungeonName == listItem.caption)
                     {
@@ -1433,11 +1418,11 @@ namespace DaggerfallWorkshop.Game
                 return ExpandRandomTextRecord(answersToDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
             }
 
-            // check if npc is in same building if topic is building
+            // Check if npc is in same building if topic is building
             if (currentQuestionListItem.questionType == QuestionType.LocalBuilding && currentQuestionListItem.npcInSameBuildingAsTopic)
-                return String.Format(TextManager.Instance.GetText(textDatabase, "YouAreInSameBuilding"), currentQuestionListItem.caption);
+                return string.Format(TextManager.Instance.GetText(textDatabase, "YouAreInSameBuilding"), currentQuestionListItem.caption);
 
-            // check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
+            // Check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
             if (currentQuestionListItem.questionType == QuestionType.Person)
             {
                 string key = currentQuestionListItem.key;
@@ -1450,9 +1435,9 @@ namespace DaggerfallWorkshop.Game
                     string buildingName = GameManager.Instance.TalkManager.GetBuildingNameForBuildingKey(buildingKey);
 
                     if (buildingName != string.Empty)
-                        return String.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
-                    else
-                        return TextManager.Instance.GetText(textDatabase, "resolvingError");
+                        return string.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
+
+                    return TextManager.Instance.GetText(textDatabase, "resolvingError");
                 }
             }
 
@@ -1460,7 +1445,7 @@ namespace DaggerfallWorkshop.Game
             return ExpandRandomTextRecord(answersToDirections[15 + 3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
         }
 
-        public string GetAnswerAboutRegionalBuilding(TalkManager.ListItem listItem)
+        public string GetAnswerAboutRegionalBuilding(ListItem listItem)
         {
             if (GetRegionalLocationCityName(listItem))
                 return ExpandRandomTextRecord(10);
@@ -1468,7 +1453,7 @@ namespace DaggerfallWorkshop.Game
                 return ExpandRandomTextRecord(11);
         }
 
-        public bool GetRegionalLocationCityName(TalkManager.ListItem listItem)
+        public bool GetRegionalLocationCityName(ListItem listItem)
         {
             byte[] lookUpIndexes = { 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x19, 0x1A, 0x1B, 0x1D, 0x1E, 0x1F, 0x20,
                                      0x21, 0x22, 0x23, 0x24, 0x27, 0x00, 0x0B, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x0A };
@@ -1582,7 +1567,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public string GetAnswerText(TalkManager.ListItem listItem)
+        public string GetAnswerText(ListItem listItem)
         {
             if (lastToneIndex != DaggerfallTalkWindow.TalkToneToIndex(currentTalkTone))
                 reactionToPlayer_0_1_2 = GetReactionToPlayer_0_1_2(listItem.questionType);
@@ -1591,9 +1576,6 @@ namespace DaggerfallWorkshop.Game
             currentQuestionListItem = listItem;
             switch (listItem.questionType)
             {
-                case QuestionType.NoQuestion:
-                default:
-                    break;
                 case QuestionType.News:
                     answer = GetNewsOrRumors();
                     break;
@@ -1610,7 +1592,7 @@ namespace DaggerfallWorkshop.Game
                     answer = GetAnswerWhereIs(listItem);
                     break;
                 case QuestionType.Thing:
-                    answer = GetAnswerWhereIs(listItem); // actually never reached since there are no "where is"-type questions for things in vanilla df
+                    answer = GetAnswerWhereIs(listItem); // Never reached since there are no "where is"-type questions for things in classic
                     break;
                 case QuestionType.Regional:
                     answer = GetAnswerAboutRegionalBuilding(listItem);
@@ -1640,15 +1622,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             numQuestionsAsked++;
-            questionOpeningText = ""; // reset questionOpeningText so that it is newly created for next question
+            questionOpeningText = ""; // Reset questionOpeningText so that it is newly created for next question
             return answer;
         }
 
-        public string GetAnswerTellMeAboutTopic(TalkManager.ListItem listItem, float chanceNPCknowsSomthing)
+        public string GetAnswerTellMeAboutTopic(ListItem listItem, float chanceNPCknowsSomthing)
         {
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
             {
-                // decide here if npcs knows question's answer (spymaster always knows)
+                // Decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
                 if (randomFloat < chanceNPCknowsSomthing || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
@@ -1726,15 +1708,15 @@ namespace DaggerfallWorkshop.Game
 
             if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
             {
-                // undiscover residences when they are a quest resource (named residence) when creating quest resource
-                // otherwise previously discovered residences will automatically show up on the automap when used in a quest            
+                // Undiscover residences when they are a quest resource (named residence) when creating quest resource
+                // Otherwise previously discovered residences will automatically show up on the automap when used in a quest            
                 UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
             }
 
             // update topic lists
             rebuildTopicLists = true;
 
-            // update rumor mill
+            // Update rumor mill
             if (questResourceInfo.rumorsAnswers != null)
                 GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
         }
@@ -1748,7 +1730,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
+                Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
                 return;
             }
 
@@ -1759,14 +1741,14 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
                 return;
             }
 
             switch (linkedResourceType)
             {
                 case QuestInfoResourceType.NotSet:
-                    // no linked resource specified - don't create entries in linked resource lists but proceed (leave switch statement) so flag "availableForDialog" is set to false for resource
+                    // No linked resource specified - don't create entries in linked resource lists but proceed (leave switch statement) so flag "availableForDialog" is set to false for resource
                     break;
                 case QuestInfoResourceType.Location:
                     if (!questResource.dialogLinkedLocations.Contains(linkedResourceName))
@@ -1785,19 +1767,19 @@ namespace DaggerfallWorkshop.Game
                     return;
             }
 
-            // "hide" quest resource dialog entry
+            // "Hide" quest resource dialog entry
             questResource.availableForDialog = false;
 
             if (linkedResourceName != null)
             {
-                // "hide" linked quest resource dialog entry as well
+                // "Hide" linked quest resource dialog entry as well
                 if (questResources.resourceInfo.ContainsKey(linkedResourceName))
                     questResources.resourceInfo[linkedResourceName].availableForDialog = false;
                 else
                     Debug.Log("AddDialogLinkForQuestInfoResource(): linked quest resource not found");
             }
 
-            // update topic list
+            // Update topic list
             AssembleTopiclistTellMeAbout();
         }
 
@@ -1810,7 +1792,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
+                Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find quest with questID {0}", questID));
                 return;
             }
 
@@ -1823,7 +1805,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    Debug.Log(String.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                    Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
                     return;
                 }
 
@@ -1838,8 +1820,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     instantRebuildTopicListLocation = true;
 
-                    // undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
-                    // otherwise previously discovered residences will automatically show up on the automap when used in a quest
+                    // Undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
+                    // Otherwise previously discovered residences will automatically show up on the automap when used in a quest
                     UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
                 }
                 else if (questResourceInfo.resourceType == QuestInfoResourceType.Person)
@@ -1852,7 +1834,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // update topic lists
+            // Update topic lists
             if (instantRebuildTopicLists)
                 AssembleTopicLists(true);
             else
@@ -1866,7 +1848,7 @@ namespace DaggerfallWorkshop.Game
                 dictQuestInfo.Remove(questID);
             }
 
-            // update topic lists
+            // Update topic lists
             rebuildTopicLists = true;
         }
 
@@ -1874,13 +1856,13 @@ namespace DaggerfallWorkshop.Game
         {
             if (!dictQuestInfo.ContainsKey(questID))
             {
-                throw new Exception(String.Format("GetBuildingKeyForPersonResource(): could not find quest with questID {0}", questID));
+                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Could not find quest with questID {0}", questID));
             }
 
             QuestResources questResources = dictQuestInfo[questID];
 
             if (resourceName == null || resourceName == "")
-                throw new Exception("GetBuildingKeyForPersonResource(): - no valid resourceName was provided.");
+                throw new Exception("GetBuildingKeyForPersonResource(): No valid resourceName was provided.");
 
             QuestResourceInfo questResourceInfo;
             if (questResources.resourceInfo.ContainsKey(resourceName))
@@ -1889,30 +1871,28 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                throw new Exception(String.Format("GetBuildingKeyForPersonResource(): could not find resource with resourceName {1} for quest with questID {0}", questID, resourceName));
+                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Could not find resource with resourceName {1} for quest with questID {0}", questID, resourceName));
             }
 
             if (questResourceInfo.resourceType != QuestInfoResourceType.Person)
-                throw new Exception(String.Format("GetBuildingKeyForPersonResource(): resource is not of type Person but was expected to be"));
+                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
 
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
 
-            Questing.Person person = (Questing.Person)questResourceInfo.questResource;
+            Person person = (Person)questResourceInfo.questResource;
 
             if (person.IsQuestor)
             {
                 return person.QuestorData.buildingKey;
             }
-            else
-            {
-                Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
-                if (assignedPlaceSymbol == null)
-                    throw new Exception(String.Format("GetBuildingKeyForPersonResource(): resource is not of type Person but was expected to be"));
 
-                Place assignedPlace = quest.GetPlace(assignedPlaceSymbol);
+            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            if (assignedPlaceSymbol == null)
+                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
 
-                return assignedPlace.SiteDetails.buildingKey;
-            }
+            Place assignedPlace = quest.GetPlace(assignedPlaceSymbol);
+
+            return assignedPlace.SiteDetails.buildingKey;
         }
 
         public DFLocation.BuildingTypes GetBuildingTypeForBuildingKey(int buildingKey)
@@ -1921,9 +1901,9 @@ namespace DaggerfallWorkshop.Game
                 GetBuildingList();
             List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
             if (matchingBuildings.Count == 0)
-                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): no building with the queried key found"));
-            else if (matchingBuildings.Count > 1)
-                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): more than one building with the queried key found"));
+                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): No building with the queried key found"));
+            if (matchingBuildings.Count > 1)
+                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): More than one building with the queried key found"));
             return matchingBuildings[0].buildingType;
         }
 
@@ -1933,9 +1913,9 @@ namespace DaggerfallWorkshop.Game
                 GetBuildingList();
             List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
             if (matchingBuildings.Count == 0)
-                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): no building with the queried key found"));
-            else if (matchingBuildings.Count > 1)
-                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): more than one building with the queried key found"));
+                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): No building with the queried key found"));
+            if (matchingBuildings.Count > 1)
+                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): M<ore than one building with the queried key found"));
             return matchingBuildings[0].name;
         }
 
@@ -1952,12 +1932,12 @@ namespace DaggerfallWorkshop.Game
 
                 if (dictQuestInfo.ContainsKey(questID))
                 {
-                    QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
+                    QuestResources questInfo = dictQuestInfo[questID]; // Get questInfo containing orphaned list of quest resources
 
-                    QuestResource[] questResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources
+                    QuestResource[] questResources = quest.GetAllResources(typeof(Place)); // Get list of place quest resources
                     for (int i = 0; i < questResources.Length; i++)
                     {
-                        Questing.Place place = (Questing.Place)(questResources[i]);
+                        Place place = (Place)questResources[i];
                         string key = place.Symbol.Name;
 
                         if (place.SiteDetails.buildingKey != buildingKey)
@@ -1986,7 +1966,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Gets conversation dictionary for save.
+        /// Gets the conversation dictionary for save.
         /// </summary>
         public SaveDataConversation GetConversationSaveData()
         {
@@ -2000,7 +1980,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Restores conversation dictionary for load.
+        /// Restores the conversation dictionary for load.
         /// </summary>
         public void RestoreConversationData(SaveDataConversation data)
         {
@@ -2013,7 +1993,7 @@ namespace DaggerfallWorkshop.Game
 
             ulong[] questIDs = GameManager.Instance.QuestMachine.GetAllQuests();
 
-            // search for orphaned entries in dictQuestInfo
+            // Search for orphaned entries in dictQuestInfo
             List<ulong> idsToDelete = new List<ulong>();
             foreach (KeyValuePair<ulong, QuestResources> questResourceInfo in dictQuestInfo)
             {
@@ -2024,57 +2004,53 @@ namespace DaggerfallWorkshop.Game
             }
             for (int i = idsToDelete.Count - 1; i >= 0; i--)
             {
-                Debug.Log(String.Format("save data contains orphaned quest info for quest with id {0}. Removing these entries...", idsToDelete[i]));
+                Debug.Log(string.Format("Save data contains orphaned quest info for quest with id {0}. Removing these entries...", idsToDelete[i]));
                 dictQuestInfo.Remove(idsToDelete[i]);
             }
 
-            // for each running quest
+            // For each running quest
             foreach (ulong questID in questIDs)
             {
                 Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
-                // test if there exists a dictQuestInfo entry
+                // Test if there exists a dictQuestInfo entry
                 if (dictQuestInfo.ContainsKey(questID))
                 {
-                    //if yes relink quest resources
-
-                    QuestResources questInfo = dictQuestInfo[questID]; // get questInfo containing orphaned list of quest resources
-
-                    QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // get list of person quest resources
+                    // If yes, relink quest resources
+                    QuestResources questInfo = dictQuestInfo[questID]; // Get questInfo containing orphaned list of quest resources
+                    QuestResource[] questResources = quest.GetAllResources(typeof(Person)); // Get list of person quest resources
                     for (int i = 0; i < questResources.Length; i++)
                     {
-                        Questing.Person person = (Questing.Person)(questResources[i]);
+                        Person person = (Person)questResources[i];
 
                         string key = person.Symbol.Name;
 
-                        if (questInfo.resourceInfo.ContainsKey(key)) // if list of quest resources contains a matching entry
+                        if (questInfo.resourceInfo.ContainsKey(key)) // If list of quest resources contains a matching entry
                         {
-                            questInfo.resourceInfo[key].questResource = person; // update (relink) it
+                            questInfo.resourceInfo[key].questResource = person; // Update (relink) it
                         }
                     }
 
-                    questResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources                   
+                    questResources = quest.GetAllResources(typeof(Place)); // Get list of place quest resources                   
                     for (int i = 0; i < questResources.Length; i++)
                     {
-                        Questing.Place place = (Questing.Place)(questResources[i]);
-
+                        Place place = (Place)questResources[i];
                         string key = place.Symbol.Name;
 
-                        if (questInfo.resourceInfo.ContainsKey(key)) // if list of quest resources contains a matching entry
+                        if (questInfo.resourceInfo.ContainsKey(key)) // If list of quest resources contains a matching entry
                         {
-                            questInfo.resourceInfo[key].questResource = place; // update (relink) it
+                            questInfo.resourceInfo[key].questResource = place; // Update (relink) it
                         }
                     }
 
-                    questResources = quest.GetAllResources(typeof(Item)); // get list of item quest resources                   
+                    questResources = quest.GetAllResources(typeof(Item)); // Get list of item quest resources
                     for (int i = 0; i < questResources.Length; i++)
                     {
-                        Questing.Item item = (Questing.Item)(questResources[i]);
-
+                        Item item = (Item)questResources[i];
                         string key = item.Symbol.Name;
 
-                        if (questInfo.resourceInfo.ContainsKey(key)) // if list of quest resources contains a matching entry
+                        if (questInfo.resourceInfo.ContainsKey(key)) // If list of quest resources contains a matching entry
                         {
-                            questInfo.resourceInfo[key].questResource = item; // update (relink) it
+                            questInfo.resourceInfo[key].questResource = item; // Update (relink) it
                         }
                     }
 
@@ -2087,7 +2063,7 @@ namespace DaggerfallWorkshop.Game
                 SetupRumorMill();
             }
 
-            // search for orphaned entries in rumor mill
+            // Search for orphaned entries in rumor mill
             for (int i = listRumorMill.Count - 1; i >= 0; i--)
             {
                 if (listRumorMill[i].rumorType == RumorType.QuestRumorMill || listRumorMill[i].rumorType == RumorType.QuestProgressRumor)
@@ -2095,7 +2071,7 @@ namespace DaggerfallWorkshop.Game
                     ulong questID = listRumorMill[i].questID;
                     if (GameManager.Instance.QuestMachine.GetQuest(questID) == null)
                     {
-                        Debug.Log(String.Format("save data contains orphaned rumors for quest with id {0}. Removing these rumors...", questID));
+                        Debug.Log(string.Format("Save data contains orphaned rumors for quest with id {0}. Removing these rumors...", questID));
                         listRumorMill.Remove(listRumorMill[i]);
                     }
                 }
@@ -2113,7 +2089,7 @@ namespace DaggerfallWorkshop.Game
             if (data.castleNPCsSpokenTo != null)
                 castleNPCsSpokenTo = data.castleNPCsSpokenTo;
 
-            // update topic list
+            // Update topic list
             AssembleTopiclistTellMeAbout();
         }
 
@@ -2195,8 +2171,8 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
 
-                // reset npc knowledge, for now it resets every time the npc has changed (player talked to new npc)
-                // TODO: match classic daggerfall - in classic npc remember their knowledge about topics for their time of existence
+                // Reset NPC knowledge, for now it resets every time the NPC has changed (player talked to new NPC)
+                // TODO: Match classic daggerfall - in classic NPC remembers their knowledge about topics for their time of existence
                 if (!sameTalkTargetAsBefore)
                     ResetNPCKnowledge();
 
@@ -2206,29 +2182,26 @@ namespace DaggerfallWorkshop.Game
                 toneReactionForTalkSession[1] = 0;
                 toneReactionForTalkSession[2] = 0;
             }
+            else if (alreadyRejectedOnce)
+            {
+                DaggerfallUI.MessageBox(youGetNoResponseTextId);
+            }
             else
             {
-                if (alreadyRejectedOnce)
+                string responseText;
+                if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
                 {
-                    DaggerfallUI.MessageBox(youGetNoResponseTextId);
+                    if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8554
+                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
+                    else // All other guilds (including Knightly Orders) seem to use message 8552
+                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameGuildDislikePlayerRefusingToTalkTextId);
                 }
                 else
                 {
-                    string responseText;
-                    if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
-                    {
-                        if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // holy orders use message 8554
-                            responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
-                        else // all other guilds (including Knightly Orders) seem to use message 8552
-                            responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameGuildDislikePlayerRefusingToTalkTextId);
-                    }
-                    else
-                    {
-                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
-                    }
-                    DaggerfallUI.MessageBox(responseText);
-                    alreadyRejectedOnce = true;
+                    responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
                 }
+                DaggerfallUI.MessageBox(responseText);
+                alreadyRejectedOnce = true;
             }
         }
 
@@ -2285,8 +2258,6 @@ namespace DaggerfallWorkshop.Game
 
         private int GetFlagsForNewRumor(int type)
         {
-            int flags = 0;
-
             switch (type)
             {
                 case 10: // Witch burnings
@@ -2296,15 +2267,11 @@ namespace DaggerfallWorkshop.Game
                 case 28: // War started
                 case 27: // Enemy faction
                 case 26: // Alliance started
-                    flags = 1; // Sign message
-                    break;
+                    return 1; // Sign message
 
                 default:
-                    flags = 8; // Spoken rumor
-                    break;
+                    return 8; // Spoken rumor
             }
-
-            return flags;
         }
 
         public void RefreshRumorMill()
@@ -2312,8 +2279,7 @@ namespace DaggerfallWorkshop.Game
             if (listRumorMill == null)
                 listRumorMill = new List<RumorMillEntry>();
 
-            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-            uint nowClassic = now.ToClassicDaggerfallTime();
+            uint nowClassic = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
 
             for (int i = listRumorMill.Count - 1; i >= 0; i--)
             {
@@ -2330,6 +2296,7 @@ namespace DaggerfallWorkshop.Game
                 listRumorMill = new List<RumorMillEntry>();
         }
 
+        // Creates building list and "any work" questors
         private void GetBuildingList()
         {
             listBuildings = new List<BuildingInfo>();
@@ -2338,14 +2305,15 @@ namespace DaggerfallWorkshop.Game
             DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
             if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
             {
-                // no location found
-                return; // do nothing
+                // No location found
+                return; // Do nothing
             }
+
             DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
             if (!location.Loaded)
             {
                 // Location not loaded, something went wrong
-                DaggerfallUnity.LogMessage("error when loading location for in TalkManager.GetBuildingList", true);
+                DaggerfallUnity.LogMessage("Error when loading location in TalkManager.GetBuildingList", true);
             }
 
             ExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
@@ -2374,12 +2342,11 @@ namespace DaggerfallWorkshop.Game
                         BuildingSummary buildingSummary = buildingsInBlock[i];
                         try
                         {
-                            string locationName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             BuildingInfo item;
                             item.buildingType = buildingSummary.BuildingType;
-                            item.name = locationName;
+                            item.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             item.buildingKey = buildingSummary.buildingKey;
-                            // compute building position in map coordinate system                     
+                            // Compute building position in map coordinate system
                             float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * ExteriorAutomap.blockSizeWidth * 0.5f;
                             float yPosBuilding = blockLayout[index].rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeHeight) - GameManager.Instance.ExteriorAutomap.LocationHeight * ExteriorAutomap.blockSizeHeight * 0.5f;
                             item.position = new Vector2(xPosBuilding, yPosBuilding);
@@ -2388,7 +2355,7 @@ namespace DaggerfallWorkshop.Game
                         }
                         catch (Exception e)
                         {
-                            string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
+                            string exceptionMessage = string.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
                                                                         seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
                                                                         buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             DaggerfallUnity.LogMessage(exceptionMessage, true);
@@ -2402,10 +2369,10 @@ namespace DaggerfallWorkshop.Game
                             for (int p = 0; p < buildingNpcs.Length; p++)
                             {
                                 FactionFile.FactionData factionData;
-                                // Assuming commoners (people of region) are NPCs with have faction ids of zero.
+                                // Assuming commoners (people of region) are NPCs with have faction IDs of zero.
                                 if (buildingNpcs[p].FactionID == 0)
                                 {
-                                    // Get regional people faction id
+                                    // Get regional people faction ID
                                     FactionFile.FactionData[] factionsData = factions.FindFactions(
                                         (int)FactionFile.FactionTypes.People, (int)FactionFile.SocialGroups.Commoners,
                                         -1, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
@@ -2423,15 +2390,15 @@ namespace DaggerfallWorkshop.Game
                                     socialGroup == FactionFile.SocialGroups.Commoners ||
                                     socialGroup == FactionFile.SocialGroups.Nobility)
                                 {
-                                    // 25% chance that an npc will offer quest.
+                                    // 25% chance that an NPC will offer a quest.
                                     // TODO: how does classic decide?
                                     int randomChance = UnityEngine.Random.Range(0, 4);
                                     workStats[(int)socialGroup]++;
                                     if (randomChance < 3)
                                         continue;
 
-                                    StaticNPC.NPCData npcData = new StaticNPC.NPCData();
-                                    StaticNPC.SetLayoutData(ref npcData,
+                                    StaticNPC.NPCData npcData2 = new StaticNPC.NPCData();
+                                    StaticNPC.SetLayoutData(ref npcData2,
                                                             buildingNpcs[p].XPos, buildingNpcs[p].YPos, buildingNpcs[p].ZPos,
                                                             buildingNpcs[p].Flags,
                                                             factionData.id,
@@ -2440,35 +2407,37 @@ namespace DaggerfallWorkshop.Game
                                                             buildingNpcs[p].Position,
                                                             buildingSummary.buildingKey);
 
-                                    if (!npcsWithWork.ContainsKey(npcData.nameSeed))
+                                    if (!npcsWithWork.ContainsKey(npcData2.nameSeed))
                                     {
-                                        npcData.buildingKey = buildingSummary.buildingKey;
-                                        npcData.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
+                                        npcData2.buildingKey = buildingSummary.buildingKey;
+                                        npcData2.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
                                         NpcWorkEntry npcWork = new NpcWorkEntry
                                         {
-                                            npc = npcData,
+                                            npc = npcData2,
                                             socialGroup = socialGroup,
                                             buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
                                         };
+
                                         if (npcWork.buildingName == string.Empty)
                                         {
                                             workStats[(int)socialGroup + 8]++;
                                             continue;
                                         }
+
                                         workStats[(int)socialGroup + 4]++;
-                                        npcsWithWork.Add(npcData.nameSeed, npcWork);
-                                        selectedNpcWorkKey = npcData.nameSeed;
-                                        Debug.LogFormat("Added {4} questor: ns={0} bk={1} name={2} building={3} factionId={5}", npcData.nameSeed, buildingSummary.buildingKey, GetQuestorName(), npcWork.buildingName, socialGroup, npcData.factionID);
+                                        npcsWithWork.Add(npcData2.nameSeed, npcWork);
+                                        selectedNpcWorkKey = npcData2.nameSeed;
+                                        Debug.LogFormat("Added {4} questor: ns={0} bk={1} name={2} building={3} factionId={5}", npcData2.nameSeed, buildingSummary.buildingKey, GetQuestorName(), npcWork.buildingName, socialGroup, npcData2.factionID);
                                     }
                                 }
                             }
-                            exteriorUsedForQuestors = GameManager.Instance.PlayerGPS.CurrentLocationIndex; // create only once for current location
+                            exteriorUsedForQuestors = GameManager.Instance.PlayerGPS.CurrentLocationIndex; // Create only once for current location
                         }
                     }
                 }
             }
             if (populateQuestors)
-                Debug.LogFormat("Populated work availiable from NPCs. (allocated+noBuilding/candidates) Merchants: {0}(+{6})/{1}, Commoners: {2}(+{7})/{3}, Nobles: {4}(+{8})/{5}",
+                Debug.LogFormat("Populated work available from NPCs. (allocated+noBuilding/candidates) Merchants: {0}(+{6})/{1}, Commoners: {2}(+{7})/{3}, Nobles: {4}(+{8})/{5}",
                     workStats[5], workStats[1], workStats[4], workStats[0], workStats[7], workStats[3], workStats[9], workStats[8], workStats[11]);
         }
 
@@ -2477,39 +2446,39 @@ namespace DaggerfallWorkshop.Game
             switch (buildingType)
             {
                 case DFLocation.BuildingTypes.Alchemist:
-                    return (TextManager.Instance.GetText(textDatabase, "Alchemists"));
+                    return TextManager.Instance.GetText(textDatabase, "Alchemists");
                 case DFLocation.BuildingTypes.Armorer:
-                    return (TextManager.Instance.GetText(textDatabase, "Armorers"));
+                    return TextManager.Instance.GetText(textDatabase, "Armorers");
                 case DFLocation.BuildingTypes.Bank:
-                    return (TextManager.Instance.GetText(textDatabase, "Banks"));
+                    return TextManager.Instance.GetText(textDatabase, "Banks");
                 case DFLocation.BuildingTypes.Bookseller:
-                    return (TextManager.Instance.GetText(textDatabase, "Bookstores"));
+                    return TextManager.Instance.GetText(textDatabase, "Bookstores");
                 case DFLocation.BuildingTypes.ClothingStore:
-                    return (TextManager.Instance.GetText(textDatabase, "Clothingstores"));
+                    return TextManager.Instance.GetText(textDatabase, "Clothingstores");
                 case DFLocation.BuildingTypes.GemStore:
-                    return (TextManager.Instance.GetText(textDatabase, "Gemstores"));
+                    return TextManager.Instance.GetText(textDatabase, "Gemstores");
                 case DFLocation.BuildingTypes.GeneralStore:
-                    return (TextManager.Instance.GetText(textDatabase, "Generalstores"));
+                    return TextManager.Instance.GetText(textDatabase, "Generalstores");
                 case DFLocation.BuildingTypes.GuildHall:
-                    return (TextManager.Instance.GetText(textDatabase, "Guilds"));
+                    return TextManager.Instance.GetText(textDatabase, "Guilds");
                 case DFLocation.BuildingTypes.Library:
-                    return (TextManager.Instance.GetText(textDatabase, "Libraries"));
+                    return TextManager.Instance.GetText(textDatabase, "Libraries");
                 case DFLocation.BuildingTypes.PawnShop:
-                    return (TextManager.Instance.GetText(textDatabase, "Pawnshops"));
+                    return TextManager.Instance.GetText(textDatabase, "Pawnshops");
                 case DFLocation.BuildingTypes.Tavern:
-                    return (TextManager.Instance.GetText(textDatabase, "Taverns"));
+                    return TextManager.Instance.GetText(textDatabase, "Taverns");
                 case DFLocation.BuildingTypes.WeaponSmith:
-                    return (TextManager.Instance.GetText(textDatabase, "Weaponsmiths"));
+                    return TextManager.Instance.GetText(textDatabase, "Weaponsmiths");
                 case DFLocation.BuildingTypes.Temple:
-                    return (TextManager.Instance.GetText(textDatabase, "Localtemples"));
+                    return TextManager.Instance.GetText(textDatabase, "Localtemples");
                 default:
-                    return ("");
+                    return "";
             }
         }
 
         private bool CheckBuildingTypeInSkipList(DFLocation.BuildingTypes buildingType)
         {
-            if (buildingType == DFLocation.BuildingTypes.AllValid ||
+            return buildingType == DFLocation.BuildingTypes.AllValid ||
                 buildingType == DFLocation.BuildingTypes.FurnitureStore ||
                 buildingType == DFLocation.BuildingTypes.House1 ||
                 buildingType == DFLocation.BuildingTypes.House2 ||
@@ -2525,9 +2494,7 @@ namespace DaggerfallWorkshop.Game
                 buildingType == DFLocation.BuildingTypes.Special3 ||
                 buildingType == DFLocation.BuildingTypes.Special4 ||
                 buildingType == DFLocation.BuildingTypes.Town23 ||
-                buildingType == DFLocation.BuildingTypes.Town4)
-                return true;
-            return false;
+                buildingType == DFLocation.BuildingTypes.Town4;
         }
 
         private void UndiscoverQuestResidence(ulong questID, string resourceName, QuestResourceInfo questResourceInfo)
@@ -2538,14 +2505,14 @@ namespace DaggerfallWorkshop.Game
 
             if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
             {
-                QuestResource[] allQuestResources = quest.GetAllResources(typeof(Place)); // get list of place quest resources
+                QuestResource[] allQuestResources = quest.GetAllResources(typeof(Place)); // Get list of place quest resources
                 for (int i = 0; i < allQuestResources.Length; i++)
                 {
-                    Questing.Place place = (Questing.Place)(allQuestResources[i]);
+                    Place place = (Place)allQuestResources[i];
                     int buildingKey = place.SiteDetails.buildingKey;
-                    string name = place.Symbol.Name;
+                    string symbolName = place.Symbol.Name;
 
-                    if (name != resourceName)
+                    if (symbolName != resourceName)
                         continue;
 
                     GameManager.Instance.PlayerGPS.UndiscoverBuilding(buildingKey, true);
@@ -2616,7 +2583,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     ListItem itemQuestTopic = new ListItem();
                     itemQuestTopic.type = ListItemType.Item;
-                    string captionString = String.Empty;
+                    string captionString = string.Empty;
                     switch (questResourceInfo.Value.resourceType)
                     {
                         case QuestInfoResourceType.NotSet:
@@ -2626,7 +2593,7 @@ namespace DaggerfallWorkshop.Game
                             break;
                         case QuestInfoResourceType.Location:
                             itemQuestTopic.questionType = QuestionType.QuestLocation;
-                            Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
+                            Place place = (Place)questResourceInfo.Value.questResource;
                             if (place.SiteDetails.buildingName != null)
                                 captionString = place.SiteDetails.buildingName;
                             else
@@ -2634,24 +2601,23 @@ namespace DaggerfallWorkshop.Game
                             break;
                         case QuestInfoResourceType.Person:
                             itemQuestTopic.questionType = QuestionType.QuestPerson;
-                            Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
+                            Person person = (Person)questResourceInfo.Value.questResource;
                             captionString = person.DisplayName;
                             break;
                         case QuestInfoResourceType.Thing:
                             itemQuestTopic.questionType = QuestionType.QuestItem;
-                            Questing.Item item = (Questing.Item)questResourceInfo.Value.questResource;
+                            Item item = (Item)questResourceInfo.Value.questResource;
                             if (item != null && item.DaggerfallUnityItem != null)
                                 captionString = item.DaggerfallUnityItem.ItemName;
                             break;
                     }
-                    ulong questID = questInfo.Key;
-                    itemQuestTopic.questID = questID;
+                    itemQuestTopic.questID = questInfo.Key;
 
                     itemQuestTopic.caption = captionString;
 
                     itemQuestTopic.key = questResourceInfo.Key;
 
-                    if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // only make it available for talk if it is not "hidden" by dialog link command
+                    if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // Only make it available for talk if it is not "hidden" by dialog link command
                         listTopicTellMeAbout.Add(itemQuestTopic);
                 }
             }
@@ -2692,7 +2658,7 @@ namespace DaggerfallWorkshop.Game
             GetBuildingList();
 
             ListItem itemBuildingTypeGroup = null;
-            List<BuildingInfo> matchingBuildings = new List<BuildingInfo>();
+            List<BuildingInfo> matchingBuildings;
 
             foreach (DFLocation.BuildingTypes buildingType in Enum.GetValues(typeof(DFLocation.BuildingTypes)))
             {
@@ -2735,9 +2701,9 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Location)
                     {
-                        Questing.Place place = (Questing.Place)questResourceInfo.Value.questResource;
-                        // (fix bug reports http://forums.dfworkshop.net/viewtopic.php?f=24&t=996, http://forums.dfworkshop.net/viewtopic.php?f=24&t=997)
-                        // only build entries for place quest resources that are in same location as pc
+                        Place place = (Place)questResourceInfo.Value.questResource;
+                        // (Fixes bug reports http://forums.dfworkshop.net/viewtopic.php?f=24&t=996, http://forums.dfworkshop.net/viewtopic.php?f=24&t=997)
+                        // Only build entries for place quest resources that are in the same location as the PC
                         if (GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId != place.SiteDetails.mapId)
                             continue;
 
@@ -2760,12 +2726,8 @@ namespace DaggerfallWorkshop.Game
                             ListItem item = new ListItem();
                             item.type = ListItemType.Item;
                             item.questionType = QuestionType.LocalBuilding;
-
-                            ulong questID = questInfo.Key;
-                            item.questID = questID;
-
-                            string captionString = place.SiteDetails.buildingName;
-                            item.caption = captionString;
+                            item.questID = questInfo.Key;
+                            item.caption = place.SiteDetails.buildingName;
                             item.buildingKey = place.SiteDetails.buildingKey;
 
                             item.key = questResourceInfo.Key;
@@ -2783,8 +2745,7 @@ namespace DaggerfallWorkshop.Game
 
                                 if (itemBuildingTypeGroup.listChildItems == null)
                                 {
-                                    ListItem itemPreviousList;
-                                    itemPreviousList = new ListItem();
+                                    ListItem itemPreviousList = new ListItem();
                                     itemPreviousList.type = ListItemType.NavigationBack;
                                     itemPreviousList.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
                                     itemPreviousList.listParentItems = listTopicLocation;
@@ -2807,13 +2768,11 @@ namespace DaggerfallWorkshop.Game
                     itemBuildingTypeGroup.type = ListItemType.ItemGroup;
                     itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
                     listTopicLocation.Add(itemBuildingTypeGroup);
-                    alreadyCreatedGeneralSubSection = true;
                 }
 
                 if (itemBuildingTypeGroup.listChildItems == null)
                 {
-                    ListItem itemPreviousList;
-                    itemPreviousList = new ListItem();
+                    ListItem itemPreviousList = new ListItem();
                     itemPreviousList.type = ListItemType.NavigationBack;
                     itemPreviousList.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
                     itemPreviousList.listParentItems = listTopicLocation;
@@ -2837,8 +2796,7 @@ namespace DaggerfallWorkshop.Game
             itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "Regional"));
             itemBuildingTypeGroup.listChildItems = new List<ListItem>();
 
-            ListItem prevListItem;
-            prevListItem = new ListItem();
+            ListItem prevListItem = new ListItem();
             prevListItem.type = ListItemType.NavigationBack;
             prevListItem.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
             prevListItem.listParentItems = listTopicLocation;
@@ -2867,17 +2825,17 @@ namespace DaggerfallWorkshop.Game
 
             for (int i = 0; i < 28; ++i)
             {
-                if (i >= 8 && i <= 17) // is a knightly order
+                if (i >= 8 && i <= 17) // Is a knightly order
                 {
                     if (playerRegion == KnightlyOrderRegions[i - 8] && !DoesBuildingExistLocally(FactionsAndBuildings[i], false))
                         AddRegionalBuildingTalkItem(i, ref itemBuildingTypeGroup);
                 }
-                else if (i >= 20) // is a store
+                else if (i >= 20) // Is a store
                 {
                     if (!DoesBuildingExistLocally(FactionsAndBuildings[i], true))
                         AddRegionalBuildingTalkItem(i, ref itemBuildingTypeGroup);
                 }
-                else if (!DoesBuildingExistLocally(FactionsAndBuildings[i], false)) // is a temple
+                else if (!DoesBuildingExistLocally(FactionsAndBuildings[i], false)) // Is a temple
                 {
                     AddRegionalBuildingTalkItem(i, ref itemBuildingTypeGroup);
                 }
@@ -2897,11 +2855,8 @@ namespace DaggerfallWorkshop.Game
                         if ((short)building.BuildingType == SearchedFor)
                             return true;
                     }
-                    else
-                    {
-                        if (building.FactionId == SearchedFor)
-                            return true;
-                    }
+                    else if (building.FactionId == SearchedFor)
+                        return true;
                 }
             }
 
@@ -2924,7 +2879,7 @@ namespace DaggerfallWorkshop.Game
         {
             List<ListItem> oldTopicList = null;
             if (listTopicLocation != null)
-                oldTopicList = listTopicLocation; // store old topic list to inject some of the info into new list
+                oldTopicList = listTopicLocation; // Store old topic list to inject some of the info into new list
 
             listTopicPerson = new List<ListItem>();
 
@@ -2934,7 +2889,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (questResourceInfo.Value.resourceType == QuestInfoResourceType.Person)
                     {
-                        Questing.Person person = (Questing.Person)questResourceInfo.Value.questResource;
+                        Person person = (Person)questResourceInfo.Value.questResource;
 
                         ListItem item = new ListItem();
                         item.type = ListItemType.Item;
@@ -2950,17 +2905,19 @@ namespace DaggerfallWorkshop.Game
                         bool IsPlayerInSameLocationWorldCell = false;
                         bool dialogPartnerIsSamePersonAsPersonResource = false;
 
-                        // in case person is questor check if questor is in same mapID                        
-                        if (person.IsQuestor == true)
+                        // In case person is questor, check if questor is in same mapID
+                        if (person.IsQuestor)
                         {
                             if (person.QuestorData.mapID == GameManager.Instance.PlayerGPS.CurrentMapID)
                                 IsPlayerInSameLocationWorldCell = true;
 
                             // test if dialog partner is same person as person resource
-                            if (GameManager.Instance.IsPlayerInside && !GameManager.Instance.IsPlayerInsideCastle)
+                            if (GameManager.Instance.IsPlayerInside && !GameManager.Instance.IsPlayerInsideCastle
+                                && targetStaticNPC != null && currentNPCType == NPCType.Static
+                                && targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey
+                                && nameNPC == captionString)
                             {
-                                if (this.targetStaticNPC != null && this.currentNPCType == NPCType.Static && this.targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey && this.nameNPC == captionString)
-                                    dialogPartnerIsSamePersonAsPersonResource = true;
+                                dialogPartnerIsSamePersonAsPersonResource = true;
                             }
                         }
                         else
@@ -2986,10 +2943,10 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         // only make it available for talk if...
-                        if (!dialogPartnerIsSamePersonAsPersonResource &&   // dialog partner is not the same person as the person resource talked about
-                            questResourceInfo.Value.availableForDialog &&   // it is not "hidden" by dialog link command
-                            questResourceInfo.Value.hasEntryInWhereIs &&    // it is meant to have an entry in the where is section (currently this is always true, TODO: check if we can get rid of this)
-                            IsPlayerInSameLocationWorldCell)                // if person resource is in same world map location as player
+                        if (!dialogPartnerIsSamePersonAsPersonResource &&   // Dialog partner is not the same person as the person resource talked about
+                            questResourceInfo.Value.availableForDialog &&   // It is not "hidden" by dialog link command
+                            questResourceInfo.Value.hasEntryInWhereIs &&    // It is meant to have an entry in the where is section (currently this is always true, TODO: check if we can get rid of this)
+                            IsPlayerInSameLocationWorldCell)                // If person resource is in same world map location as player
                         {
                             listTopicPerson.Add(item);
                         }
@@ -3015,7 +2972,7 @@ namespace DaggerfallWorkshop.Game
         {
             List<ListItem> oldTopicList = null;
             if (listTopicLocation != null)
-                oldTopicList = listTopicLocation; // store old topic list to inject some of the info into new list
+                oldTopicList = listTopicLocation; // Store old topic list to inject some of the info into a new list
 
             listTopicThing = new List<ListItem>();
 
@@ -3033,9 +2990,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// get portrait archive and texture record index for current set target static npc
+        /// Gets portrait archive and texture record index for the current set target static NPC
         /// </summary>
-        /// <returns></returns>
         private void GetPortraitIndexFromStaticNPCBillboard(out DaggerfallTalkWindow.FacePortraitArchive facePortraitArchive, out int recordIndex)
         {
             FactionFile.FactionData factionData;
@@ -3044,7 +3000,7 @@ namespace DaggerfallWorkshop.Game
             FactionFile.FlatData factionFlatData = FactionFile.GetFlatData(factionData.flat1);
             FactionFile.FlatData factionFlatData2 = FactionFile.GetFlatData(factionData.flat2);
 
-            // get face for special npcs here and return in this case
+            // Get face for special NPCs here and return in this case
             if (factionData.type == 4)
             {
                 facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
@@ -3052,15 +3008,15 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // if no special npc, resolving process for common faces starts here
+            // If no special NPC, resolving process for common faces starts here
             facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.CommonFaces;
 
-            // use oops as default - so use it if we fail to resolve face later on in this resolving process
+            // Use "oops" as default - so use it if we fail to resolve face later on in this resolving process
             recordIndex = 410;
 
             FlatsFile.FlatData flatData;
 
-            // resolve face from npc's faction data as default            
+            // Resolve face from NPC's faction data as default
             int archive = factionFlatData.archive;
             int record = factionFlatData.record;
             if (targetStaticNPC.Data.gender == Genders.Female)
@@ -3071,7 +3027,7 @@ namespace DaggerfallWorkshop.Game
             if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(archive, record), out flatData)) // (if flat data exists in FlatsFile, overwrite index)
                 recordIndex = flatData.faceIndex;
 
-            // overwrite if target npc's billboard archive and record index can be resolved (more specific than just the factiondata - which will always resolve to same portrait for a specific faction)
+            // Overwrite if target NPC's billboard archive and record index can be resolved (more specific than just the factiondata - which will always resolve to the same portrait for a specific faction)
             if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(FlatsFile.GetFlatID(targetStaticNPC.Data.billboardArchiveIndex, targetStaticNPC.Data.billboardRecordIndex), out flatData))
                 recordIndex = flatData.faceIndex;
         }
@@ -3080,35 +3036,35 @@ namespace DaggerfallWorkshop.Game
         {
             int randomNumAnswer = UnityEngine.Random.Range(0, answers.Count);
 
-            // cloning important here: we want to evaluate every time the answer is created so altering macros are re-expanded correctly
+            // Cloning is important here: we want to evaluate every time the answer is created so altering macros are re-expanded correctly
             // e.g. Missing Prince quest allows player to ask for dungeon and there is a "%di" macro that needs to be re-evaluated
             // to correctly show current direction to dungeon (when in different towns it is likely to be different)
             TextFile.Token[] tokens = (TextFile.Token[])answers[randomNumAnswer].Clone();
 
-            // expand tokens and reveal dialog-linked resources
+            // Expand tokens and reveal dialog-linked resources
             QuestMacroHelper macroHelper = new QuestMacroHelper();
             macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questID), ref tokens, true);
 
             return TokensToString(tokens);
-
         }
 
         private string TokensToString(TextFile.Token[] tokens, bool addSpaceAtTokenEnd = true)
         {
-            // create return string from expanded tokens
-            string returnString = "";
-            string seperatorString = " ";
+            // Create return string from expanded tokens
+            string separatorString = " ";
             if (!addSpaceAtTokenEnd)
-                seperatorString = "";
+                separatorString = "";
+            var builder = new System.Text.StringBuilder();
             for (int i = 0; i < tokens.Length; i++)
             {
                 string textFragment = tokens[i].text;
                 if (textFragment != null && textFragment != string.Empty)
-                    returnString += textFragment;
+                    builder.Append(textFragment);
                 else
-                    returnString += seperatorString;
+                    builder.Append(separatorString);
             }
-            return returnString;
+
+            return builder.ToString();
         }
 
         private string ExpandRandomTextRecord(int recordIndex)
@@ -3117,29 +3073,29 @@ namespace DaggerfallWorkshop.Game
 
             MacroHelper.ExpandMacros(ref tokens, this); // this... TalkManager (TalkManagerMCP)
 
-            return (tokens[0].text);
+            return tokens[0].text;
         }
 
         #endregion
 
-        #region event handlers
+        #region Event handlers
 
         private void OnMapPixelChanged(DFPosition mapPixel)
         {
             rebuildTopicLists = true;
-            GetBuildingList(); // create building list and especially "any work" questors
+            GetBuildingList();
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             rebuildTopicLists = true;
-            GetBuildingList(); // create building list and especially "any work" questors
+            GetBuildingList();
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             rebuildTopicLists = true;
-            GetBuildingList(); // create building list and especially "any work" questors
+            GetBuildingList();
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
@@ -3150,12 +3106,12 @@ namespace DaggerfallWorkshop.Game
         void OnLoadEvent(SaveData_v1 saveData)
         {
             rebuildTopicLists = true;
-            GetBuildingList(); // create building list and especially "any work" questors            
+            GetBuildingList();
         }
 
         #endregion
 
-        #region console_commands
+        #region Console commands
 
         public static class TalkConsoleCommands
         {
