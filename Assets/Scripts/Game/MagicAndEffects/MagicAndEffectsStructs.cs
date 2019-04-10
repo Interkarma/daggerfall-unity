@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// Settings for a single enchantment on item.
     /// </summary>
     [Serializable]
-    public struct EnchantmentSettings
+    public struct EnchantmentSettings : IEquatable<EnchantmentSettings>
     {
         public int Version;
         public string EffectKey;
@@ -166,6 +166,58 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string PrimaryDisplayName;
         public string SecondaryDisplayName;
         public int EnchantCost;
+
+        public bool Equals(EnchantmentSettings other)
+        {
+            return
+                Version == other.Version &&
+                EffectKey == other.EffectKey &&
+                ClassicType == other.ClassicType &&
+                ClassicParam == other.ClassicParam &&
+                CustomParam == other.CustomParam &&
+                PrimaryDisplayName == other.PrimaryDisplayName &&
+                SecondaryDisplayName == other.SecondaryDisplayName &&
+                EnchantCost == other.EnchantCost;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is EnchantmentSettings))
+                return false;
+
+            return Equals((EnchantmentSettings)obj);
+        }
+
+        public static bool operator == (EnchantmentSettings enchantment1, EnchantmentSettings enchantment2)
+        {
+            if (((object)enchantment1) == null || ((object)enchantment2) == null)
+                return Object.Equals(enchantment1, enchantment2);
+
+            return enchantment1.Equals(enchantment2);
+        }
+
+        public static bool operator != (EnchantmentSettings enchantment1, EnchantmentSettings enchantment2)
+        {
+            if (((object)enchantment1) == null || ((object)enchantment2) == null)
+                return !Object.Equals(enchantment1, enchantment2);
+
+            return !(enchantment1.Equals(enchantment2));
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + Version.GetHashCode();
+            if (!string.IsNullOrEmpty(EffectKey)) hash = hash * 23 + EffectKey.GetHashCode();
+            hash = hash * 23 + ClassicType.GetHashCode();
+            hash = hash * 23 + ClassicParam.GetHashCode();
+            if (!string.IsNullOrEmpty(CustomParam)) hash = hash * 23 + CustomParam.GetHashCode();
+            if (!string.IsNullOrEmpty(PrimaryDisplayName)) hash = hash * 23 + PrimaryDisplayName.GetHashCode();
+            if (!string.IsNullOrEmpty(SecondaryDisplayName)) hash = hash * 23 + SecondaryDisplayName.GetHashCode();
+            hash = hash * 23 + EnchantCost.GetHashCode();
+
+            return hash;
+        }
     }
 
     /// <summary>

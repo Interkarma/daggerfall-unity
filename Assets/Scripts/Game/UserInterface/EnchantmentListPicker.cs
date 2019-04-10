@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string secondarySpacing = "  ";
 
         Panel listPanel = new Panel();
-        List<EnchantmentPanel> enchantmentsPanels = new List<EnchantmentPanel>();
+        List<EnchantmentPanel> enchantmentPanels = new List<EnchantmentPanel>();
         VerticalScrollBar scroller = new VerticalScrollBar();
 
         #endregion
@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void AddEnchantment(EnchantmentSettings enchantment)
         {
             EnchantmentPanel panel = new EnchantmentPanel(enchantment, new Rect(0, 0, GetRenderWidth(), InteriorHeight));
-            enchantmentsPanels.Add(panel);
+            enchantmentPanels.Add(panel);
             RefreshPanelLayout();
         }
 
@@ -59,20 +59,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             foreach(EnchantmentSettings enchantment in enchantments)
             {
                 EnchantmentPanel panel = new EnchantmentPanel(enchantment, new Rect(0, 0, GetRenderWidth(), InteriorHeight));
-                enchantmentsPanels.Add(panel);
+                enchantmentPanels.Add(panel);
             }
             RefreshPanelLayout();
         }
 
         public void ClearEnchantments()
         {
-            enchantmentsPanels.Clear();
+            enchantmentPanels.Clear();
         }
 
         public EnchantmentSettings[] GetEnchantments()
         {
             List<EnchantmentSettings> enchantments = new List<EnchantmentSettings>();
-            foreach(EnchantmentPanel enchantmentPanel in enchantmentsPanels)
+            foreach(EnchantmentPanel enchantmentPanel in enchantmentPanels)
             {
                 enchantments.Add(enchantmentPanel.Enchantment);
             }
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scroller.Enabled = true;
                 scroller.Position = new Vector2(InteriorWidth - scrollerWidth, 0);
                 scroller.Size = new Vector2(scrollerWidth, InteriorHeight);
-                scroller.TotalUnits = enchantmentsPanels.Count * panelSpacing;
+                scroller.TotalUnits = enchantmentPanels.Count * panelSpacing;
                 scroller.DisplayUnits = InteriorHeight;
             }
             else
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             Vector2 panelPos = new Vector2(0, panelPosVerticalStartingOffset);
-            foreach(EnchantmentPanel enchantmentPanel in enchantmentsPanels)
+            foreach(EnchantmentPanel enchantmentPanel in enchantmentPanels)
             {
                 listPanel.Components.Add(enchantmentPanel);
                 enchantmentPanel.Position = panelPos;
@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         bool ShowScroller()
         {
-            return enchantmentsPanels.Count > visiblePanels;
+            return enchantmentPanels.Count > visiblePanels;
         }
 
         #endregion
@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Find enchantment panel under mouse
             EnchantmentPanel panelToRemove = null;
-            foreach (EnchantmentPanel panel in enchantmentsPanels)
+            foreach (EnchantmentPanel panel in enchantmentPanels)
             {
                 if (panel.MouseOverPanel)
                 {
@@ -166,7 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (panelToRemove != null)
             {
                 scroller.ScrollIndex = 0;
-                enchantmentsPanels.Remove(panelToRemove);
+                enchantmentPanels.Remove(panelToRemove);
                 RefreshPanelLayout();
             }
         }
@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void Scroller_OnScroll()
         {
             Vector2 panelPos = new Vector2(0, panelPosVerticalStartingOffset - scroller.ScrollIndex);
-            foreach (EnchantmentPanel panel in enchantmentsPanels)
+            foreach (EnchantmentPanel panel in enchantmentPanels)
             {
                 panel.Position = panelPos;
                 panelPos.y += panelSpacing;
