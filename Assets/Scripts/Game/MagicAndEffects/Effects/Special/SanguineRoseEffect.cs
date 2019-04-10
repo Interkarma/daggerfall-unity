@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Summon a Daedroth to fight for the player.
                 GameObject gameObject = GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
-                FoeSpawner foeSpawner = gameObject.GetComponent<FoeSpawner>();
+                gameObject.GetComponent<FoeSpawner>();
                 ItemCollection items = GameManager.Instance.PlayerEntity.Items;
                 DaggerfallUnityItem item = items.GetItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Sanguine_Rose);
                 for (int i = 0; i < items.Count; i++)

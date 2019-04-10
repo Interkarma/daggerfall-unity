@@ -40,8 +40,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ScrollingPanel scrollingPanel = new ScrollingPanel();
         VerticalScrollBar scroller = new VerticalScrollBar();
 
-        Color mainPanelBackgroundColor = new Color(0.0f, 0f, 0.0f, 1.0f);
-
         #endregion
 
         #region Fields
