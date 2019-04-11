@@ -96,8 +96,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
             foreach (BaseEntityEffect effect in effectTemplates)
             {
-                // Effect must present a key
-                if (string.IsNullOrEmpty(effect.Key))
+                // Effect must present a key and be discoverable via reflective enumeration
+                if (string.IsNullOrEmpty(effect.Key) || effect.Properties.DisableReflectiveEnumeration)
                     continue;
 
                 // Register template
