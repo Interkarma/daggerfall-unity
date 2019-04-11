@@ -46,27 +46,10 @@ namespace DaggerfallWorkshop.Game
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (GameManager.Instance.DisableAI)
                 return;
-
-            // If a melee attack has reached the damage frame we can run a melee attempt
-            if (mobile.DoMeleeDamage)
-            {
-                MeleeDamage();
-                mobile.DoMeleeDamage = false;
-            }
-            // If a bow attack has reached the shoot frame we can shoot an arrow
-            else if (mobile.ShootArrow)
-            {
-                ShootBow();
-                mobile.ShootArrow = false;
-
-                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                if (dfAudioSource)
-                    dfAudioSource.PlayOneShot((int)SoundClips.ArrowShoot, 1, 1.0f);
-            }
 
             // Countdown to next melee attack
             MeleeTimer -= Time.deltaTime;
@@ -85,6 +68,26 @@ namespace DaggerfallWorkshop.Game
                     return;
 
                 ResetMeleeTimer();
+            }
+        }
+
+        void Update()
+        {
+            // If a melee attack has reached the damage frame we can run a melee attempt
+            if (mobile.DoMeleeDamage)
+            {
+                MeleeDamage();
+                mobile.DoMeleeDamage = false;
+            }
+            // If a bow attack has reached the shoot frame we can shoot an arrow
+            else if (mobile.ShootArrow)
+            {
+                ShootBow();
+                mobile.ShootArrow = false;
+
+                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                if (dfAudioSource)
+                    dfAudioSource.PlayOneShot((int)SoundClips.ArrowShoot, 1, 1.0f);
             }
         }
 

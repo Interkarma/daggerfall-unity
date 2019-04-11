@@ -251,6 +251,49 @@ namespace DaggerfallWorkshop.Game.Entity
             return (int)Math.Ceiling((remainingSecs / DaggerfallDateTime.SecondsPerHour));
         }
 
+        public override void FixedUpdate()
+        {
+            // Handle events that are called by classic's update loop
+            if (GameManager.ClassicUpdate)
+            {
+                // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
+                // Here we use a rate of 1/4 that observed for classic.
+                if (playerMotor.IsRunning && !playerMotor.IsRiding)
+                {
+                    if (runningTallyCounter == 3)
+                    {
+                        TallySkill(DFCareer.Skills.Running, 1);
+                        runningTallyCounter = 0;
+                    }
+                    else
+                        runningTallyCounter++;
+                }
+
+                // Handle breath when underwater and not water breathing
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged && !GameManager.Instance.PlayerEntity.IsWaterBreathing)
+                {
+                    if (currentBreath == 0)
+                    {
+                        currentBreath = GameManager.Instance.GuildManager.DeepBreath(MaxBreath);
+                    }
+                    if (breathUpdateTally > 18)
+                    {
+                        --currentBreath;
+                        if (Race == Races.Argonian && (UnityEngine.Random.Range(0, 2) == 1))
+                            ++currentBreath;
+                        breathUpdateTally = 0;
+                    }
+                    else
+                        ++breathUpdateTally;
+
+                    if (currentBreath <= 0)
+                        SetHealth(0);
+                }
+                else
+                    currentBreath = 0;
+            }
+        }
+
         public override void Update(DaggerfallEntityBehaviour sender)
         {
             if (SaveLoadManager.Instance.LoadInProgress)
@@ -308,46 +351,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
                     // Make magically-created items that have expired disappear
                     items.RemoveExpiredItems();
-                }
-
-                // Handle events that are called by classic's update loop
-                if (GameManager.ClassicUpdate)
-                {
-                    // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
-                    // Here we use a rate of 1/4 that observed for classic.
-                    if (playerMotor.IsRunning && !playerMotor.IsRiding)
-                    {
-                        if (runningTallyCounter == 3)
-                        {
-                            TallySkill(DFCareer.Skills.Running, 1);
-                            runningTallyCounter = 0;
-                        }
-                        else
-                            runningTallyCounter++;
-                    }
-
-                    // Handle breath when underwater and not water breathing
-                    if (GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged && !GameManager.Instance.PlayerEntity.IsWaterBreathing)
-                    {
-                        if (currentBreath == 0)
-                        {
-                            currentBreath = GameManager.Instance.GuildManager.DeepBreath(MaxBreath);
-                        }
-                        if (breathUpdateTally > 18)
-                        {
-                            --currentBreath;
-                            if (Race == Races.Argonian && (UnityEngine.Random.Range(0, 2) == 1))
-                                ++currentBreath;
-                            breathUpdateTally = 0;
-                        }
-                        else
-                            ++breathUpdateTally;
-
-                        if (currentBreath <= 0)
-                            SetHealth(0);
-                    }
-                    else
-                        currentBreath = 0;
                 }
 
                 // Reduce fatigue when jumping and tally jumping skill

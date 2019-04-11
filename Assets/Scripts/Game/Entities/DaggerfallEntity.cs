@@ -745,6 +745,13 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Helpers
 
         /// <summary>
+        /// Called by DaggerfallEntityBehaviour at regular intervals.
+        /// </summary>
+        public virtual void FixedUpdate()
+        {
+        }
+
+        /// <summary>
         /// Called by DaggerfallEntityBehaviour each frame.
         /// </summary>
         /// <param name="sender">DaggerfallEntityBehaviour making call.</param>
