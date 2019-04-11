@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop.Game
         Vector3 direction;
         Light myLight;
         SphereCollider myCollider;
-        MeshCollider arrowCollider;
         DaggerfallAudioSource audioSource;
         Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
@@ -207,7 +206,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Create and orient 3d arrow
                 goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
-                arrowCollider = GetComponent<MeshCollider>();
+                MeshCollider arrowCollider = GetComponent<MeshCollider>();
                 arrowCollider.sharedMesh = goModel.GetComponent<MeshFilter>().sharedMesh;
 
                 // Offset up so it comes from same place LOS check is done from
@@ -360,7 +359,8 @@ namespace DaggerfallWorkshop.Game
             if (isArrow)
             {
                 if (other != null)
-                AssignBowDamageToTarget(other);
+                    AssignBowDamageToTarget(other);
+
                 // Destroy 3d arrow
                 Destroy(goModel.gameObject);
                 impactDetected = true;
