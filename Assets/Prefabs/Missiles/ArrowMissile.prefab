@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114624404217668130}
   - component: {fileID: 54102960107042576}
   - component: {fileID: 64298782196861766}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: ArrowMissile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
