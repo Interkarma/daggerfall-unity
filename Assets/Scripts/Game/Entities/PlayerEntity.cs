@@ -701,10 +701,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public GameObject SpawnCityGuard(Vector3 position, Vector3 direction)
         {
             GameObject[] cityWatch = GameObjectHelper.CreateFoeGameObjects(position, MobileTypes.Knight_CityWatch, 1);
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
-                cityWatch[0].transform.parent = GameManager.Instance.PlayerEnterExit.Interior.transform;
-            else if (GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
-                cityWatch[0].transform.parent = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
             cityWatch[0].transform.forward = direction;
             EnemyMotor enemyMotor = cityWatch[0].GetComponent<EnemyMotor>();
 
