@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             InitEffectSlots();
-            
+
             SetDefaults();
         }
 
@@ -732,7 +732,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //const int notEnoughGold = 1702;
+            const int notEnoughGold = 1702;
             //const int noSpellBook = 1703;
             const int youMustChooseAName = 1704;
             const int spellHasBeenInscribed = 1705;
@@ -742,6 +742,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO:
             //   Implement costs and remove gold from player and block if user does not have enough gold (message 1702)
             //   Spells will be free (both gold and spell points) during build-out of effect system.
+
+            var moneyAvailable = GameManager.Instance.PlayerEntity.GoldPieces;
+            var cost = totalGoldCost;
+
+            if (moneyAvailable < cost)
+            {
+                DaggerfallMessageBox mbNoMoney = DaggerfallUI.MessageBox(notEnoughGold);
+                mbNoMoney.ClickAnywhereToClose = true;
+                mbNoMoney.PreviousWindow = this;
+                mbNoMoney.Show();
+                return;
+            }
+            else
+            {
+                GameManager.Instance.PlayerEntity.DeductGoldAmount(cost);
+            }
 
             // NOTES:
             //  In classic, player must have a spellbook item in their inventory (message 1703).
@@ -933,7 +949,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enumeratedEffectTemplates.Sort((s1, s2) => s1.Properties.SubGroupName.CompareTo(s2.Properties.SubGroupName));
 
             // Populate subgroup names in list box
-            foreach(IEntityEffect effect in enumeratedEffectTemplates)
+            foreach (IEntityEffect effect in enumeratedEffectTemplates)
             {
                 effectSubGroupPicker.ListBox.AddItem(effect.Properties.SubGroupName);
             }
