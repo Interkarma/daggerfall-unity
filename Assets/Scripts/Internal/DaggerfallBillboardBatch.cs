@@ -202,8 +202,8 @@ namespace DaggerfallWorkshop
 
             // Steal textures from source material
             Texture albedoMap = material.mainTexture;
-            Texture normalMap = material.GetTexture("_BumpMap");
-            Texture emissionMap = material.GetTexture("_EmissionMap");
+            Texture normalMap = material.GetTexture(Uniforms.BumpMap);
+            Texture emissionMap = material.GetTexture(Uniforms.EmissionMap);
 
             // Create local material
             // TODO: This should be created by MaterialReader
@@ -214,14 +214,14 @@ namespace DaggerfallWorkshop
             // Assign other maps
             if (normalMap != null)
             {
-                atlasMaterial.SetTexture("_BumpMap", normalMap);
-                atlasMaterial.EnableKeyword("_NORMALMAP");
+                atlasMaterial.SetTexture(Uniforms.BumpMap, normalMap);
+                atlasMaterial.EnableKeyword(KeyWords.NormalMap);
             }
             if (emissionMap != null)
             {
-                atlasMaterial.SetTexture("_EmissionMap", emissionMap);
-                atlasMaterial.SetColor("_EmissionColor", material.GetColor("_EmissionColor"));
-                atlasMaterial.EnableKeyword("_EMISSION");
+                atlasMaterial.SetTexture(Uniforms.EmissionMap, emissionMap);
+                atlasMaterial.SetColor(Uniforms.EmissionColor, material.GetColor(Uniforms.EmissionColor));
+                atlasMaterial.EnableKeyword(KeyWords.Emission);
             }
 
             // Assign renderer properties
