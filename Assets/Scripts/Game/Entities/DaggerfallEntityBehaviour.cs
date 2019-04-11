@@ -58,6 +58,11 @@ namespace DaggerfallWorkshop.Game.Entity
             SetEntityType(EntityType);
         }
 
+        void FixedUpdate()
+        {
+            Entity.FixedUpdate();
+        }
+
         void Update()
         {
             // Change entity type

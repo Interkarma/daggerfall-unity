@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game
             Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (!IsPlayingGame())
             {
@@ -465,7 +465,10 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 classicUpdate = false;
+        }
 
+        void Update()
+        {
             // Post message to open options dialog on escape during gameplay
             if (Input.GetKeyDown(KeyCode.Escape))
             {
