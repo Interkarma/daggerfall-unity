@@ -292,8 +292,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 offeredSpells.Add(bundle);
             }
 
-            // Add custom spell bundles to offer
-            offeredSpells.AddRange(GameManager.Instance.EntityEffectBroker.GetCustomSpellBundleOffers());
+            // Add custom spells for sale bundles to list of offered spells
+            offeredSpells.AddRange(GameManager.Instance.EntityEffectBroker.GetCustomSpellBundles(EntityEffectBroker.CustomSpellBundleOfferUsage.SpellsForSale));
 
             // Sort spells for easier finding
             offeredSpells = offeredSpells.OrderBy(x => x.Name).ToList();

@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
         readonly Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
         readonly Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
-        readonly Dictionary<string, EffectBundleSettings> customSpellBundleOffers = new Dictionary<string, EffectBundleSettings>();
+        readonly Dictionary<string, CustomSpellBundleOffer> customSpellBundleOffers = new Dictionary<string, CustomSpellBundleOffer>();
 
         #endregion
 
@@ -104,8 +104,78 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 RegisterEffectTemplate(effect);
             }
 
+            // Below is an example of how to register a fully custom effect and spell bundle
+            // This call should remain commented out except for testing and example purposes
+            // Mods would do this kind of work after capturing OnRegisterCustomEffects event
+            RegisterCustomEffectDemo();
+
             // Raise event for custom effects to register
             RaiseOnRegisterCustomEffectsEvent();
+        }
+
+        void RegisterCustomEffectDemo()
+        {
+            // This method is an example of how to create a fully custom spell bundle
+            // and expose it to other systems like spells for sale and item enchanter
+            // The process is mostly just setting up data, something that can be automated with helpers
+
+            // First register custom effect with broker
+            // This will make it available to crafting stations supported by effect
+            // We're using variant 0 of this effect here (Inferno)
+            MageLight templateEffect = new MageLight();
+            templateEffect.CurrentVariant = 0;
+            RegisterEffectTemplate(templateEffect);
+
+            // Create effect settings for our custom spell
+            // These are Chance, Duration, and Magnitude required by spell - usually seen in spellmaker
+            // No need to define settings not used by effect
+            // For our custom spell, we're using same Duration settings as Light spell: 1 + 4 per level
+            // Note these settings will also control final cost of spell to buy and cast
+            EffectSettings effectSettings = new EffectSettings()
+            {
+                DurationBase = 1,
+                DurationPlus = 4,
+                DurationPerLevel = 1,
+            };
+
+            // Create an EffectEntry
+            // This links the effect key with settings
+            // Each effect entry in bundle needs its own settings - most spells only have a single effect
+            EffectEntry effectEntry = new EffectEntry()
+            {
+                Key = templateEffect.Properties.Key,
+                Settings = effectSettings,
+            };
+
+            // Create a custom spell bundle
+            // This is a portable version of the spell for other systems
+            // For example, every spell in the player's spellbook is a bundle
+            // Bundle target and elements settings should follow effect requirements
+            EffectBundleSettings mageLightInferoSpell = new EffectBundleSettings()
+            {
+                Version = CurrentSpellVersion,
+                BundleType = BundleTypes.Spell,
+                TargetType = TargetTypes.CasterOnly,
+                ElementType = ElementTypes.Magic,
+                Name = "Magelight Inferno",
+                IconIndex = 12,
+                Effects = new EffectEntry[] { effectEntry },
+            };
+
+            // Create a custom spell offer
+            // This informs other systems if they can use this bundle
+            CustomSpellBundleOffer mageLightInferoOffer = new CustomSpellBundleOffer()
+            {
+                Key = "MageLightInferno-CustomOffer",                           // This key is for the offer itself and must be unique
+                Usage = CustomSpellBundleOfferUsage.SpellsForSale|              // Available in spells for sale
+                        CustomSpellBundleOfferUsage.CastWhenUsedEnchantment|    // Available for "cast on use" enchantments
+                        CustomSpellBundleOfferUsage.CastWhenHeldEnchantment,    // Available for "cast on held" enchantments
+                BundleSetttings = mageLightInferoSpell,                         // The spell bundle created earlier
+                EnchantmentCost = 250,                                          // Cost to use spell at item enchanter if enabled
+            };
+
+            // Register the offer
+            RegisterCustomSpellBundleOffer(mageLightInferoOffer);
         }
 
         void Update()
@@ -208,39 +278,87 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Allows a mod to register custom spell bundles for sale at the spell maker along with classic spells.
+        /// Usage flags for custom spell bundle offer.
+        /// Informs other systems if they can use this spell.
         /// </summary>
-        /// <param name="key">Unique key of bundle for tracking.</param>
-        /// <param name="bundleSettings">EffectBundleSettings of spell bundle to offer.</param>
-        public void RegisterCustomSpellBundleOffer(string key, EffectBundleSettings bundleSettings)
+        [Flags]
+        public enum CustomSpellBundleOfferUsage
         {
-            if (customSpellBundleOffers.ContainsKey(key))
+            None = 0,
+            SpellsForSale = 1,
+            CastWhenUsedEnchantment = 2,
+            CastWhenHeldEnchantment = 4,
+            CastWhenStrikesEnchantment = 8,
+            All = 15,
+        }
+
+        /// <summary>
+        /// A custom spell bundle offer.
+        /// </summary>
+        public struct CustomSpellBundleOffer
+        {
+            public string Key;
+            public CustomSpellBundleOfferUsage Usage;
+            public EffectBundleSettings BundleSetttings;
+            public int EnchantmentCost;
+        }
+
+        /// <summary>
+        /// Register a custom spell bundle from pre-made settings.
+        /// </summary>
+        /// <param name="offer">Offer settings.</param>
+        public void RegisterCustomSpellBundleOffer(CustomSpellBundleOffer offer)
+        {
+            // Key must be unique
+            if (customSpellBundleOffers.ContainsKey(offer.Key))
             {
-                Debug.LogErrorFormat("RegisterCustomSpellBundleOffer: Duplicate bundle key '{0}'", key);
+                Debug.LogErrorFormat("RegisterCustomSpellBundleOffer: Duplicate bundle key '{0}'", offer.Key);
                 return;
             }
-            customSpellBundleOffers.Add(key, bundleSettings);
+            customSpellBundleOffers.Add(offer.Key, offer);
         }
 
         /// <summary>
         /// Gets a specific custom spell bundle offer.
         /// </summary>
-        public EffectBundleSettings GetCustomSpellBundleOffers(string key)
+        public CustomSpellBundleOffer GetCustomSpellBundleOffer(string key)
         {
             if (!customSpellBundleOffers.ContainsKey(key))
-            {
-                Debug.LogErrorFormat("GetCustomSpellBundleOffers: Bundle key '{0}' not found", key);
-                return new EffectBundleSettings();
-            }
+                throw new Exception(string.Format("GetCustomSpellBundleOffers: Bundle key '{0}' not found", key));
+            
             return customSpellBundleOffers[key];
         }
 
         /// <summary>
-        /// Gets all custom spell bundles offered for sale or item enchanting.
+        /// Gets all custom spell bundle offers based on usage.
         /// </summary>
-        public EffectBundleSettings[] GetCustomSpellBundleOffers()
+        public CustomSpellBundleOffer[] GetCustomSpellBundleOffers(CustomSpellBundleOfferUsage usage = CustomSpellBundleOfferUsage.All)
         {
-            return customSpellBundleOffers.Values.ToArray();
+            List<CustomSpellBundleOffer> offers = new List<CustomSpellBundleOffer>();
+
+            foreach(CustomSpellBundleOffer offer in customSpellBundleOffers.Values)
+            {
+                if ((offer.Usage & usage) == usage)
+                    offers.Add(offer);
+            }
+
+            return offers.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all custom spell bundles based on usage.
+        /// </summary>
+        public EffectBundleSettings[] GetCustomSpellBundles(CustomSpellBundleOfferUsage usage = CustomSpellBundleOfferUsage.All)
+        {
+            List<EffectBundleSettings> bundles = new List<EffectBundleSettings>();
+
+            foreach (CustomSpellBundleOffer offer in customSpellBundleOffers.Values)
+            {
+                if ((offer.Usage & usage) == usage)
+                    bundles.Add(offer.BundleSetttings);
+            }
+
+            return bundles.ToArray();
         }
 
         /// <summary>
