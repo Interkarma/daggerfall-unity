@@ -149,6 +149,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         //TextLabel coordsLabel = new TextLabel();
 
+        readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
+
         #endregion
 
         #region Properties
@@ -706,8 +708,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D overlay = null;
             if (RegionSelected || identifyState)
             {
-                overlay = new Texture2D(width, height, TextureFormat.ARGB32, false);
-                overlay.SetPixels32(overlayPixelBuffer);
+                if (!RegionSelected)
+                {
+                    // Import map overlays named TRAV0I00.IMG-RegionName (ex: TRAV0I00.IMG-Ilessan Hills)
+                    int region = GetPlayerRegion();
+                    if (region != -1 &&
+                        !importedOverlays.TryGetValue(region, out overlay) &&
+                        TextureReplacement.TryImportImage(string.Format("{0}-{1}", nativeImgName, GetRegionName(region)), false, out overlay))
+                        importedOverlays[region] = overlay;
+                }
+
+                if (!overlay)
+                {
+                    overlay = new Texture2D(width, height, TextureFormat.ARGB32, false);
+                    overlay.SetPixels32(overlayPixelBuffer);
+                }
             }
 
             if (RegionSelected && zoom)
