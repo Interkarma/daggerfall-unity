@@ -469,6 +469,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Don't process game manager input messages when game not running
+            if (!IsPlayingGame())
+                return;
+
             // Post message to open options dialog on escape during gameplay
             if (Input.GetKeyDown(KeyCode.Escape))
             {
