@@ -159,6 +159,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EnchantmentSettings[] GetEnchantmentSettings();
 
         /// <summary>
+        /// Helper to check if properties contain the specified item maker flags.
+        /// </summary>
+        bool HasItemMakerFlags(ItemMakerFlags flags);
+
+        /// <summary>
         /// Get effect state data to serialize.
         /// </summary>
         object GetSaveData();
@@ -348,6 +353,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual EnchantmentSettings[] GetEnchantmentSettings()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Helper to check properties carry specified item maker flags.
+        /// </summary>
+        /// <param name="flags">Flags to check.</param>
+        /// <returns>True if flags specified.</returns>
+        public virtual bool HasItemMakerFlags(ItemMakerFlags flags)
+        {
+            return (Properties.ItemMakerFlags & flags) == flags;
         }
 
         /// <summary>

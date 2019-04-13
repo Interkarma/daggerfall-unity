@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.Key = EffectKey;
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
+            properties.ItemMakerFlags = ItemMakerFlags.AlphaSortSecondaryList;
         }
 
         /// <summary>
@@ -62,8 +63,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             // TODO: Enumerate custom spell bundles supporting EnchantmentUsage.WhenUsed flag
-
-            // TODO: Support ordering of list
 
             return enchantments.ToArray();
         }

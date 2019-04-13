@@ -68,6 +68,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         SingletonEnchantment = 1,
         AllowMultiplePrimaryInstances = 2,
         AllowMultipleSecondaryInstances = 4,
+        AlphaSortSecondaryList = 8,
     }
 
     /// <summary>
