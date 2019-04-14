@@ -965,7 +965,7 @@ namespace DaggerfallWorkshop.Game
 
             // Check that there is a clear path to shoot a spell
             float spellMovementSpeed = 25; // All range spells are currently 25 speed
-            Vector3 sphereCastDir = senses.PredictNextTargetPos(spellMovementSpeed);
+            Vector3 sphereCastDir = senses.PredictedTargetPos;
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
                 return false;
 
