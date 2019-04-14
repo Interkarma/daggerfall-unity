@@ -187,34 +187,25 @@ namespace DaggerfallWorkshop.Game
             {
                 case Races.Redguard:
                     recordIndices = (gender == Genders.Male) ? maleRedguardFaceRecordIndex : femaleRedguardFaceRecordIndex;
-                    //nameBankType = NameHelper.BankTypes.Redguard;
                     break;
                 case Races.Nord:
                     recordIndices = (gender == Genders.Male) ? maleNordFaceRecordIndex : femaleNordFaceRecordIndex;
-                    //nameBankType = NameHelper.BankTypes.Nord;
                     break;
                 case Races.Breton:
                 default:
                     recordIndices = (gender == Genders.Male) ? maleBretonFaceRecordIndex : femaleBretonFaceRecordIndex;
-                    //nameBankType = NameHelper.BankTypes.Breton;
                     break;
             }
 
             // create name for npc
-            DFLocation.ClimateSettings climateSettings = MapsFile.GetWorldClimateSettings(GameManager.Instance.PlayerGPS.ClimateSettings.WorldClimate);
-            switch (climateSettings.Names)
-            {                
-                case FactionFile.FactionRaces.Breton:
-                default:
-                    nameBankType = NameHelper.BankTypes.Breton;
-                    break;
-                case FactionFile.FactionRaces.Nord:
-                    nameBankType = NameHelper.BankTypes.Nord;
-                    break;
-                case FactionFile.FactionRaces.Redguard:
-                    nameBankType = NameHelper.BankTypes.Redguard;
-                    break;
-            }
+            byte nameRace = 0;
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                nameRace = MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+            if (nameRace == 0)
+                nameBankType = NameHelper.BankTypes.Breton;
+            else
+                nameBankType = NameHelper.BankTypes.Redguard;
+
             this.nameNPC = DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
 
             // get face record id to use (randomize portrait for current person outfit variant)

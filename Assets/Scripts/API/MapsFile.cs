@@ -59,6 +59,18 @@ namespace DaggerfallConnect.Arena2
         };
 
         /// <summary>
+        /// All region races, primarily used to generate townsfolk names. In the array extracted from FALL.EXE:
+        /// 0 = Breton, 1 = Redguard.
+        /// </summary>
+        private static readonly byte[] regionRaces = {
+            1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1,
+            0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+            0, 1
+        };
+
+        /// <summary>
         /// Block file prefixes.
         /// </summary>
         private readonly string[] rmbBlockPrefixes = {
@@ -212,6 +224,14 @@ namespace DaggerfallConnect.Arena2
         public static string[] RegionNames
         {
             get { return regionNames; }
+        }
+
+        /// <summary>
+        /// Gets all region races as byte array.
+        /// </summary>
+        public static byte[] RegionRaces
+        {
+            get { return regionRaces; }
         }
 
         /// <summary>
