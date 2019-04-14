@@ -62,7 +62,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 enchantments.Add(enchantment);
             }
 
-            // TODO: Enumerate custom spell bundles supporting EnchantmentUsage.WhenUsed flag
+            // Enumerate custom spell bundle offers supporting CastWhenUsedEnchantment flag
+            EntityEffectBroker.CustomSpellBundleOffer[] offers = GameManager.Instance.EntityEffectBroker.GetCustomSpellBundleOffers(EntityEffectBroker.CustomSpellBundleOfferUsage.CastWhenUsedEnchantment);
+            foreach(EntityEffectBroker.CustomSpellBundleOffer offer in offers)
+            {
+                EnchantmentSettings enchantment = new EnchantmentSettings()
+                {
+                    Version = 1,
+                    EffectKey = EffectKey,
+                    CustomParam = offer.Key,
+                    PrimaryDisplayName = properties.GroupName,
+                    SecondaryDisplayName = offer.BundleSetttings.Name,
+                    EnchantCost = offer.EnchantmentCost,
+                };
+
+                enchantments.Add(enchantment);
+            }
 
             return enchantments.ToArray();
         }
