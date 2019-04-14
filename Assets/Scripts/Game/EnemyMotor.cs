@@ -644,7 +644,7 @@ namespace DaggerfallWorkshop.Game
                                 RaycastHit hit2;
                                 acceptableDrop = Physics.SphereCast(rayDest, controller.radius, Vector3.down, out hit2, 2.5f, ignoreMask);
 
-                                if (acceptableDrop)
+                                if (acceptableDrop && hit2.point.y < rayDest.y)
                                 {
                                     rayDest.y = rayDest.y - hit2.distance + (controller.height / 2);
                                 }
@@ -689,10 +689,25 @@ namespace DaggerfallWorkshop.Game
                             bool foundSlope = false;
                             if (canGoUp)
                             {
-                                rayDest.y++;
-                                rayDir = rayDest - rayOrigin;
-                                if (!Physics.SphereCast(rayOrigin, controller.radius, rayDir, out hit, (rayDest - rayOrigin).magnitude * 3, ignoreMask))
+                                Vector3 slopeRayOrigin = transform.position + controller.center;
+
+                                // Set y for low ray to just above bottom of controller
+                                slopeRayOrigin.y -= ((controller.height / 2) - 0.1f);
+                                Ray ray = new Ray(slopeRayOrigin, rayDir);
+
+                                RaycastHit lowHit;
+                                bool firstRayHit = Physics.Raycast(ray, out lowHit, (rayDest - rayOrigin).magnitude);
+
+                                // Aim a little higher for next ray. Should be enough for the ray to hit the next step on a climbable staircase,
+                                // but not so much that a non-climbable difference in height is mistaken as a climbable slope.
+                                slopeRayOrigin.y += 0.5f;
+                                ray = new Ray(rayOrigin, rayDir);
+                                RaycastHit highHit;
+                                bool secondRayHit = Physics.Raycast(ray, out highHit, (rayDest - rayOrigin).magnitude);
+
+                                if (firstRayHit && (!secondRayHit || (lowHit.distance < highHit.distance - 0.3f)))
                                 {
+                                    rayDest.y = Mathf.Round(lowHit.point.y);
                                     rayOrigins.Insert(0, rayDest);
                                     usedDestinations.Add(new Vector2(rayDest.x, rayDest.z));
                                     directionCounts.Insert(0, 0);
@@ -701,12 +716,12 @@ namespace DaggerfallWorkshop.Game
                                 }
                             }
 
+                            Debug.DrawRay(rayOrigin, (rayDest - rayOrigin).normalized * (rayDest - rayOrigin).magnitude, Color.red, 0.5f, false);
+
                             // If no slope was found, and the obstacle we hit wasn't another DaggerfallBehaviour, reject the destination for a while as it's probably a wall
                             if (!foundSlope && !hitTarget)
                                 omittedPoints.Add(rayDest);
                         }
-                        Debug.DrawRay(rayOrigin, (rayDest - rayOrigin).normalized * (rayDest - rayOrigin).magnitude, Color.red, 0.5f, false);
-
                         count++;
                     }
 
@@ -1104,7 +1119,7 @@ namespace DaggerfallWorkshop.Game
 
             // Move downward some to eliminate bouncing down inclines
             if (!flies && !swims && !isLevitating && controller.isGrounded)
-                direction.y = -1f;
+                direction.y = -2f;
 
             Vector3 motion = direction * moveSpeed;
 
@@ -1333,12 +1348,12 @@ namespace DaggerfallWorkshop.Game
 
                     // Aim a little higher for next ray. Should be enough for the ray to hit the next step on a climbable staircase,
                     // but not so much that a non-climbable difference in height is mistaken as a climbable slope.
-                    rayOrigin.y += 0.3f;
+                    rayOrigin.y += 0.5f;
                     ray = new Ray(rayOrigin, direction);
                     RaycastHit highHit;
                     bool secondRayHit = Physics.Raycast(ray, out highHit, checkDistance);
 
-                    if (!secondRayHit || (lowHit.distance < highHit.distance - 0.1f))
+                    if (!secondRayHit || (lowHit.distance < highHit.distance - 0.25f))
                     {
                         obstacleDetected = false;
                         foundUpwardSlope = true;
