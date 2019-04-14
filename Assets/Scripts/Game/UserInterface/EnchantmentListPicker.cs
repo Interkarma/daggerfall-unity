@@ -19,16 +19,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
-        const int panelSpacing = 15;
+        const int panelSpacing = 5;
         const int visiblePanels = 8;
         const int scrollerWidth = 4;
-        const int scrollerStep = 4;
+        const int scrollerStep = 8;
         const int panelPosVerticalStartingOffset = 2;
         const string secondarySpacing = "  ";
 
         Panel listPanel = new Panel();
         List<EnchantmentPanel> enchantmentPanels = new List<EnchantmentPanel>();
         VerticalScrollBar scroller = new VerticalScrollBar();
+
+        public delegate void OnRefreshListEventHandler(EnchantmentListPicker sender);
+        public event OnRefreshListEventHandler OnRefreshList;
+
+        #endregion
+
+        #region Properties
+
+        public int EnchantmentCount
+        {
+            get { return enchantmentPanels.Count; }
+        }
 
         #endregion
 
@@ -39,7 +51,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(listPanel);
             Components.Add(scroller);
 
-            listPanel.OnMouseClick += ListPanel_OnMouseClick;
             scroller.OnScroll += Scroller_OnScroll;
         }
 
@@ -50,6 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void AddEnchantment(EnchantmentSettings enchantment)
         {
             EnchantmentPanel panel = new EnchantmentPanel(enchantment, new Rect(0, 0, GetRenderWidth(), InteriorHeight));
+            panel.OnMouseClick += EnchantmentPanel_OnMouseClick;
             enchantmentPanels.Add(panel);
             RefreshPanelLayout();
         }
@@ -66,7 +78,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void ClearEnchantments()
         {
+            foreach(EnchantmentPanel panel in enchantmentPanels)
+            {
+                panel.OnMouseClick -= EnchantmentPanel_OnMouseClick;
+            }
             enchantmentPanels.Clear();
+            listPanel.Components.Clear();
+            scroller.ScrollIndex = 0;
         }
 
         public EnchantmentSettings[] GetEnchantments()
@@ -91,6 +109,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return false;
         }
 
+        public int GetTotalEnchantmentCost()
+        {
+            int cost = 0;
+            foreach(EnchantmentPanel panel in enchantmentPanels)
+            {
+                cost += panel.Enchantment.EnchantCost;
+            }
+
+            return cost;
+        }
+
         #endregion
 
         #region Overrides
@@ -103,12 +132,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected override void MouseScrollUp()
         {
+            if (!ShowScroller())
+                return;
+
             base.MouseScrollUp();
             scroller.ScrollIndex -= scrollerStep;
         }
 
         protected override void MouseScrollDown()
         {
+            if (!ShowScroller())
+                return;
+
             base.MouseScrollDown();
             scroller.ScrollIndex += scrollerStep;
         }
@@ -128,7 +163,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scroller.Enabled = true;
                 scroller.Position = new Vector2(InteriorWidth - scrollerWidth, 0);
                 scroller.Size = new Vector2(scrollerWidth, InteriorHeight);
-                scroller.TotalUnits = enchantmentPanels.Count * panelSpacing;
                 scroller.DisplayUnits = InteriorHeight;
             }
             else
@@ -136,14 +170,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scroller.Enabled = false;
             }
 
+            int scrollerUnits = 0;
             Vector2 panelPos = new Vector2(0, panelPosVerticalStartingOffset);
             foreach(EnchantmentPanel enchantmentPanel in enchantmentPanels)
             {
                 listPanel.Components.Add(enchantmentPanel);
                 enchantmentPanel.Position = panelPos;
                 enchantmentPanel.FitToScroller = scroller.Enabled;
-                panelPos.y += panelSpacing;
+                panelPos.y += enchantmentPanel.Size.y + panelSpacing;
+                scrollerUnits += (int)(enchantmentPanel.Size.y + panelSpacing);
             }
+            scroller.TotalUnits = scrollerUnits;
+
+            // Raise event so any UI using this control knows when list has changed
+            if (OnRefreshList != null)
+                OnRefreshList(this);
         }
 
         int GetRenderWidth()
@@ -160,35 +201,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Event Handlers
 
-        private void ListPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void EnchantmentPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Find enchantment panel under mouse
-            EnchantmentPanel panelToRemove = null;
-            foreach (EnchantmentPanel panel in enchantmentPanels)
-            {
-                if (panel.MouseOverPanel)
-                {
-                    panelToRemove = panel;
-                    break;
-                }
-            }
-
-            // Remove panel under mouse and reset list scroll position
-            if (panelToRemove != null)
-            {
-                scroller.ScrollIndex = 0;
-                enchantmentPanels.Remove(panelToRemove);
-                RefreshPanelLayout();
-            }
+            EnchantmentPanel panelToRemove = (EnchantmentPanel)sender;
+            panelToRemove.OnMouseClick -= EnchantmentPanel_OnMouseClick;
+            enchantmentPanels.Remove(panelToRemove);
+            scroller.ScrollIndex = 0;
+            RefreshPanelLayout();
         }
 
         private void Scroller_OnScroll()
         {
+            if (!ShowScroller())
+                return;
+
             Vector2 panelPos = new Vector2(0, panelPosVerticalStartingOffset - scroller.ScrollIndex);
             foreach (EnchantmentPanel panel in enchantmentPanels)
             {
                 panel.Position = panelPos;
-                panelPos.y += panelSpacing;
+                panelPos.y += panel.Size.y + panelSpacing;
             }
         }
 
@@ -198,8 +229,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public class EnchantmentPanel : Panel
         {
-            Vector2 panelSizeWithoutScroller = new Vector2(75, 10);
-            Vector2 panelSizeWithScroller = new Vector2(71, 10);
+            const float panelWidthWithoutScroller = 75;
+            const float panelWidthWithScroller = 71;
+            const float panelHeightWithoutSecondary = 5;
+            const float panelHeightWithSecondary = 10;
+
             Vector2 secondaryLabelPos = new Vector2(0, 5);
             TextLabel primaryLabel, secondaryLabel;
             bool lastFitToScroller;
@@ -207,19 +241,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             public Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
             public Color highlightedTextColor = DaggerfallUI.DaggerfallAlternateHighlightTextColor;
 
-            public bool MouseOverPanel { get; private set; }
             public bool FitToScroller { get; set; }
             public EnchantmentSettings Enchantment { get; set; }
             Rect RenderArea { get; set; }
 
             public EnchantmentPanel(EnchantmentSettings enchantment, Rect renderArea)
             {
-                Size = panelSizeWithoutScroller;
+                bool hasSecondaryLabel = !string.IsNullOrEmpty(enchantment.SecondaryDisplayName);
+                Size = new Vector2(panelWidthWithoutScroller, hasSecondaryLabel ? panelHeightWithSecondary : panelHeightWithoutSecondary);
+
                 primaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, Vector2.zero, enchantment.PrimaryDisplayName, this);
                 secondaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, secondaryLabelPos, secondarySpacing + enchantment.SecondaryDisplayName, this);
                 primaryLabel.RestrictedRenderAreaCoordinateType = secondaryLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
                 primaryLabel.RectRestrictedRenderArea = secondaryLabel.RectRestrictedRenderArea = renderArea;
                 primaryLabel.TextColor = secondaryLabel.TextColor = textColor;
+
+                if (!hasSecondaryLabel)
+                    secondaryLabel.Enabled = false;
 
                 OnMouseEnter += EnchantmentPanel_OnMouseEnter;
                 OnMouseLeave += EnchantmentPanel_OnMouseLeave;
@@ -234,7 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 if (lastFitToScroller != FitToScroller)
                 { 
-                    Size = (FitToScroller) ? panelSizeWithScroller : panelSizeWithoutScroller;
+                    Size = new Vector2(FitToScroller ? panelWidthWithScroller : panelWidthWithoutScroller, Size.y);
                     lastFitToScroller = FitToScroller;
                 }
             }
@@ -248,7 +286,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 if (PanelInRenderArea())
                 {
-                    MouseOverPanel = true;
                     primaryLabel.TextColor = highlightedTextColor;
                     secondaryLabel.TextColor = highlightedTextColor;
                 }
@@ -258,7 +295,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 if (PanelInRenderArea())
                 {
-                    MouseOverPanel = false;
                     primaryLabel.TextColor = textColor;
                     secondaryLabel.TextColor = textColor;
                 }

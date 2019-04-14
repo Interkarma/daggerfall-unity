@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         };
 
         Rect powersListRect = new Rect(10, 58, 75, 120);
+        Rect sideEffectsListRect = new Rect(108, 58, 75, 120);
 
         #endregion
 
@@ -178,13 +179,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void Refresh()
         {
-            // Update labels
+            // Update labels and lists
             availableGoldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
-            //costLabel.Text = (selectedItem != null) ? "8132" : "";
-
             if (selectedItem == null)
             {
-                // Clear labels
                 itemNameLabel.Text = string.Empty;
                 enchantmentCostLabel.Text = string.Empty;
                 goldCostLabel.Text = string.Empty;
@@ -215,7 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int GetTotalEnchantmentCost()
         {
-            return 0;
+            return powersList.GetTotalEnchantmentCost() + sideEffectsList.GetTotalEnchantmentCost();
         }
 
         void EnumerateEnchantments()
@@ -316,7 +314,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             powersList = new EnchantmentListPicker();
             powersList.Position = new Vector2(powersListRect.x, powersListRect.y);
             powersList.Size = new Vector2(powersListRect.width, powersListRect.height);
+            powersList.OnRefreshList += EnchantmentList_OnRefreshList;
             NativePanel.Components.Add(powersList);
+
+            sideEffectsList = new EnchantmentListPicker();
+            sideEffectsList.Position = new Vector2(sideEffectsListRect.x, sideEffectsListRect.y);
+            sideEffectsList.Size = new Vector2(sideEffectsListRect.width, sideEffectsListRect.height);
+            sideEffectsList.OnRefreshList += EnchantmentList_OnRefreshList;
+            NativePanel.Components.Add(sideEffectsList);
         }
 
         void SetupPickers()
@@ -398,11 +403,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 itemPowers.Add(enchantment);
                 powersList.AddEnchantment(enchantment);
+                
             }
             else
             {
                 itemSideEffects.Add(enchantment);
-                //sideEffectsList.AddItem(enchantment);
+                sideEffectsList.AddEnchantment(enchantment);
             }
         }
 
@@ -414,8 +420,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                return false;
-                //return sideEffectsList.ContainsEnchantment(enchantment);
+                return sideEffectsList.ContainsEnchantment(enchantment);
             }
         }
 
@@ -426,6 +431,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ItemListScroller_OnItemClick(DaggerfallUnityItem item)
         {
             selectedItem = item;
+            powersList.ClearEnchantments();
+            sideEffectsList.ClearEnchantments();
             Refresh();
 
             // Update item name only when selected item changes - or other refreshes will reset custom item name
@@ -435,6 +442,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SelectedItemButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             selectedItem = null;
+            powersList.ClearEnchantments();
+            sideEffectsList.ClearEnchantments();
             Refresh();
         }
 
@@ -573,6 +582,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Close effect pickers
             enchantmentPrimaryPicker.CloseWindow();
             enchantmentSecondaryPicker.CloseWindow();
+        }
+
+        private void EnchantmentList_OnRefreshList(EnchantmentListPicker sender)
+        {
+            Refresh();
         }
 
         #endregion
