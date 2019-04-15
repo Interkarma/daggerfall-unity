@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -100,6 +101,33 @@ namespace DaggerfallWorkshop.Game.Entity
             raceDict.Add(argonian.ID, argonian);
 
             return raceDict;
+        }
+
+        /// <summary>
+        /// Get the entity race corresponding to that read from FACTION.TXT.
+        /// Only Breton, Redguard, Nord, Dark Elf and Wood Elf are supported.
+        /// Any other faction race will default to Breton.
+        /// </summary>
+        /// <param name="factionRace">The faction race</param>
+        /// <returns>The corresponding entity race.</returns>
+        public static Races GetRaceFromFactionRace(FactionFile.FactionRaces factionRace)
+        {
+            switch (factionRace)
+            {
+                case FactionFile.FactionRaces.None:
+                    return Races.None;
+                case FactionFile.FactionRaces.Redguard:
+                    return Races.Redguard;
+                case FactionFile.FactionRaces.Nord:
+                    return Races.Nord;
+                case FactionFile.FactionRaces.DarkElf:
+                    return Races.DarkElf;
+                case FactionFile.FactionRaces.WoodElf:
+                    return Races.WoodElf;
+                case FactionFile.FactionRaces.Breton:
+                default:
+                    return Races.Breton;
+            }
         }
     }
 
