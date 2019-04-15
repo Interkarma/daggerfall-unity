@@ -392,14 +392,9 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    Vector3 toTarget = ResetPlayerPos;
-                    toTarget = target.transform.position - transform.position;
-
-                    if (toTarget != ResetPlayerPos)
-                    {
-                        distanceToTarget = toTarget.magnitude;
-                        directionToTarget = toTarget.normalized;
-                    }
+                    Vector3 toTarget = target.transform.position - transform.position;
+                    distanceToTarget = toTarget.magnitude;
+                    directionToTarget = toTarget.normalized;
                     targetInSight = CanSeeTarget(target);
                 }
 
