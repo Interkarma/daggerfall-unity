@@ -439,8 +439,8 @@ namespace DaggerfallWorkshop.Game
                 rangedMagicAvailable = CanCastRangedSpell();
 
             // If we can simply move directly to the target, clear any existing path
-            clearPathToShootAtPredictedPos = false;
             bool clear = ClearPathToPosition(senses.PredictedTargetPos, (senses.PredictedTargetPos - transform.position).magnitude);
+            bool storedClearToShoot = clearPathToShootAtPredictedPos;
             if (clear)
                 pathToTarget.Clear();
 
@@ -452,7 +452,7 @@ namespace DaggerfallWorkshop.Game
                 if ((nextPoint - transform.position).magnitude <= 1f)
                 {
                     pathToTarget.RemoveAt(0);
-                    pathingTimer = 2f;
+                    pathingTimer = 5f;
                 }
 
                 if (pathToTarget.Count > 0)
@@ -460,9 +460,11 @@ namespace DaggerfallWorkshop.Game
                     destination = pathToTarget[0];
                 }
             }
+            else
+                pathingTimer = 0;
 
-            // If we're following a path and we can shortcut to the next one, do so
-            if (pathToTarget.Count > 1 && Mathf.Abs(pathToTarget[1].y - transform.position.y) <= 1 && ClearPathToPosition(pathToTarget[1], (pathToTarget[1] - transform.position).magnitude))
+            // If we're following a path and we can shortcut to the next one, do so. Don't omit the last point, though.
+            if (pathToTarget.Count > 2 && Mathf.Abs(pathToTarget[1].y - transform.position.y) <= 1 && ClearPathToPosition(pathToTarget[1], (pathToTarget[1] - transform.position).magnitude))
             {
                 pathToTarget.RemoveAt(0);
                 destination = pathToTarget[0];
@@ -481,7 +483,7 @@ namespace DaggerfallWorkshop.Game
                 destination = senses.PredictedTargetPos;
 
                 // If the way is clear or we can shoot, no need to path
-                if (senses.TargetInSight && senses.DetectedTarget && (clear || (clearPathToShootAtPredictedPos && (hasBowAttack || rangedMagicAvailable))))
+                if (senses.TargetInSight && senses.DetectedTarget && (clear || (storedClearToShoot && (hasBowAttack || rangedMagicAvailable))))
                 {
                     // Flying enemies and slaughterfish aim for target face
                     if (flies || isLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
@@ -513,7 +515,7 @@ namespace DaggerfallWorkshop.Game
                     rayOrigin.z = Mathf.Round(transform.position.z);
 
                     // Limit how many omitted points we remember
-                    if (omittedPoints.Count > 100)
+                    if (omittedPoints.Count > 300)
                         omittedPoints.Clear();
 
                     int count = 0;
@@ -533,14 +535,21 @@ namespace DaggerfallWorkshop.Game
 
                     Vector3 rayDir;
                     Vector3 rayDest;
-                    List<int> directionCounts = new List<int>();
-                    directionCounts.Add(0);
+                    List<int> directionCounts = new List<int>
+                    {
+                        0
+                    };
                     List<int> indexes = new List<int>();
-                    List<bool> doClockWisePathings = new List<bool>();
-                    doClockWisePathings.Add(doClockWisePathing);
+                    List<bool> doClockWisePathings = new List<bool>
+                    {
+                        doClockWisePathing
+                    };
 
                     bool canGoUp = true;
                     bool canGoDown = true;
+
+                    bool success = false;
+                    bool everSawDestination = false;
 
                     while (count < 70 && rayOrigins.Count > 0)
                     {
@@ -646,7 +655,7 @@ namespace DaggerfallWorkshop.Game
 
                                 if (acceptableDrop && hit2.point.y < rayDest.y)
                                 {
-                                    rayDest.y = rayDest.y - hit2.distance + (controller.height / 2);
+                                    rayDest.y = (rayDest.y - hit2.distance) + (controller.height / 2);
                                 }
                                 else
                                 {
@@ -657,8 +666,13 @@ namespace DaggerfallWorkshop.Game
                             if (acceptableDrop)
                             {
                                 // This rayDest is close to the destination, so stop searching
-                                if ((destination - rayDest).magnitude <= 2)
+                                if (ClearPathToPosition(destination, (destination - rayOrigin).magnitude))
+                                {
+                                    success = true;
                                     break;
+                                }
+                                if (clearPathToShootAtPredictedPos)
+                                    everSawDestination = true;
 
                                 // Check if the y-difference of this point is acceptable to include in path searching
                                 float yDiff = rayOrigin.y - rayDest.y;
@@ -729,6 +743,11 @@ namespace DaggerfallWorkshop.Game
                     foreach (Vector3 origin in rayOrigins)
                     {
                         pathToTarget.Insert(0, origin);
+
+                        // If didn't get to destination and never even saw it, we probably searched in
+                        // the wrong area. Omit every part of this path for a while.
+                        if (!success && !everSawDestination)
+                            omittedPoints.Insert(0, origin);
                     }
 
                     pathingTimer = 0.5f;
@@ -737,7 +756,7 @@ namespace DaggerfallWorkshop.Game
 
             // Get direction & distance.
             var direction = (destination - transform.position).normalized;
-            float distance = 0f;
+            float distance;
 
             // If enemy sees the target, use the distance value from EnemySenses, as this is also used for the melee attack decision and we need to be consistent with that.
             if (senses.TargetInSight && pathToTarget.Count == 0)
@@ -746,7 +765,7 @@ namespace DaggerfallWorkshop.Game
                 distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
-            if ((hasBowAttack || rangedMagicAvailable) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if ((hasBowAttack || rangedMagicAvailable) && storedClearToShoot && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
@@ -880,6 +899,7 @@ namespace DaggerfallWorkshop.Game
         bool ClearPathToPosition(Vector3 location, float dist)
         {
             bool result = true;
+            clearPathToShootAtPredictedPos = false;
 
             if (obstacleDetected || fallDetected)
                 result = false;
@@ -913,10 +933,9 @@ namespace DaggerfallWorkshop.Game
                     result = false;
                 else
                 {
-                    bool acceptableDrop = true;
                     Vector3 rayOrigin = transform.position + (location - transform.position) / 2;
                     Ray ray = new Ray(rayOrigin, Vector3.down);
-                    acceptableDrop = Physics.Raycast(ray, out hit, 2.5f);
+                    bool acceptableDrop = Physics.Raycast(ray, 2.5f);
 
                     if (!acceptableDrop)
                         result = false;
@@ -964,7 +983,6 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             // Check that there is a clear path to shoot a spell
-            float spellMovementSpeed = 25; // All range spells are currently 25 speed
             Vector3 sphereCastDir = senses.PredictedTargetPos;
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
                 return false;
@@ -1269,7 +1287,6 @@ namespace DaggerfallWorkshop.Game
 
             angle = 0;
             int count = 0;
-            testMove = Vector3.zero;
 
             do
             {
