@@ -364,32 +364,58 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Add item to filtered items based on selected tab
         void AddFilteredItem(DaggerfallUnityItem item)
         {
-            if (item == selectedItem)
+            if (item == selectedItem || item.IsEnchanted || item.IsPotion)
                 return;
 
-            bool isWeaponOrArmor = (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor);
+            // Weapon or armour, excluding arrows
+            bool isWeaponOrArmor =
+                (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor) &&
+                !item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow);
 
             if (selectedTabPage == DaggerfallInventoryWindow.TabPages.WeaponsAndArmor)
             {   // Weapons and armor
-                if (isWeaponOrArmor && !item.IsEnchanted)
+                if (isWeaponOrArmor)
                     itemsFiltered.Add(item);
             }
             else if (selectedTabPage == DaggerfallInventoryWindow.TabPages.MagicItems)
-            {   // Enchanted items
-                // TODO: seems completely pointless, is there any use case for this?
-                if (item.IsEnchanted)
-                    itemsFiltered.Add(item);
+            {
+                // Not sure what the intent was in classic here. Possibly modifying/viewing enchantments?
+                // Just disabling for now, as classic lists nothing in this tab page anyway.
+                //if (item.IsEnchanted)
+                //    itemsFiltered.Add(item);
             }
             else if (selectedTabPage == DaggerfallInventoryWindow.TabPages.Ingredients)
             {   // Ingredients
-                if (item.IsIngredient && !item.IsEnchanted)
+                if (IsEnchantableIngredient(item))
                     itemsFiltered.Add(item);
             }
             else if (selectedTabPage == DaggerfallInventoryWindow.TabPages.ClothingAndMisc)
             {   // Everything else
-                // TODO, filter only enchantable items...
-                if (!isWeaponOrArmor && !item.IsEnchanted && !item.IsIngredient && !item.IsOfTemplate((int) MiscItems.Spellbook))
+                if (IsEnchantableMiscItem(item))
                     itemsFiltered.Add(item);
+            }
+        }
+
+        bool IsEnchantableIngredient(DaggerfallUnityItem item)
+        {
+            // Gem ingredients like amber/jade/ruby are listed under ingredients
+            return item.IsIngredient && item.ItemGroup == ItemGroups.Gems;
+        }
+
+        bool IsEnchantableMiscItem(DaggerfallUnityItem item)
+        {
+            // Clothing and jewellery are listed under misc ingredients
+            // Classic will list potions here as simple "glass bottles", not replicating this here
+            // Also excluding oil, candles, and torches which have been repurposed by the personal light system
+            // Also excluding bandages, which should probably be repurposed into a Medical item
+            switch (item.ItemGroup)
+            {
+                case ItemGroups.MensClothing:
+                case ItemGroups.WomensClothing:
+                case ItemGroups.Jewellery:
+                    return true;
+                default:
+                    return false;
             }
         }
 
