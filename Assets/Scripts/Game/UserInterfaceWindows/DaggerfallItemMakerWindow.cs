@@ -522,7 +522,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void EnchantButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Enchant item!");
+            // TODO: Check for available gold and display "You do not have the gold to properly pay the enchanter." (1650)
+
+            // TODO: Check for enchantment power and display "You cannot enchant this item beyond its limit." (1651)
+
+            // TODO: Deduct gold from player and display "The item has been enchanted." (1652)
+
+            // TODO: Play enchantment sound effect (SoundClips.MakeItem)
+
+            // TODO: Transfer classic powers onto item
+
+            // TODO: Transfer custom powers onto item
         }
 
         private void WeaponsAndArmor_OnMouseClick(BaseScreenComponent sender, Vector2 position)
