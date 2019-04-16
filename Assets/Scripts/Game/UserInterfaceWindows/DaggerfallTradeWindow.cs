@@ -911,6 +911,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
+            else if (windowMode == WindowModes.Sell && PlayerEntity.WagonItems.Count > 0 && 
+                !PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
+            {
+                // Trying to sell all your wagons including the one you're using?
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "sellEmptyWagons"));
+            }
             else
             {
                 if (cost >> 1 <= tradePrice)

@@ -37,6 +37,7 @@ readMapDB,          The Dark Brotherhood revealed the secret of some treasure-la
 readMapFail,        You have already recorded all locations in this region!
 howManyItems,       Pick how many items (max {0})?
 wagonFullGold,      Your wagon could only hold {0} gold pieces.
+sellEmptyWagons,    You can only sell empty wagons.
 itemsIdentified,    Items identified.
 repairDone,         DONE
 repairDays,         %d days
