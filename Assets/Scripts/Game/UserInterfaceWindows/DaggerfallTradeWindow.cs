@@ -516,10 +516,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     {
                         DaggerfallUnityItem item = remoteItems.GetItem(i);
                         if (item.ItemGroup == ItemGroups.Transportation)
-                        {
-                            Debug.Log("Try to force clear transport item in player's inventory");
                             TransferItem(item, remoteItems, PlayerEntity.Items);
-                        }
                     }
                 }
                 localItems.TransferAll(remoteItems);
