@@ -666,7 +666,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems, blockTransport: true);
+                            TransferItem(item, localItems, remoteItems);
                         break;
 
                     case WindowModes.Buy:
@@ -725,7 +725,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         TakeItemFromRepair(item);
                 }
                 else
-                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
+                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item), blockTransport: usingWagon);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
