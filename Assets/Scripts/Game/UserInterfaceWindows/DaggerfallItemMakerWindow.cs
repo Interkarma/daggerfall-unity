@@ -483,7 +483,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // TODO: Check for max enchantments and display "You cannot enchant this item with any more powers."
+            // Check for max enchantments and display "You cannot enchant this item with any more powers."
+            // Displaying this message before opening selection rather than after player makes selection like classic
+            const int cannotEnchantAnyMorePowers = 1657;
+            if (powersList.EnchantmentCount + sideEffectsList.EnchantmentCount == 10)
+            {
+                DaggerfallUI.MessageBox(cannotEnchantAnyMorePowers);
+                return;
+            }
 
             enchantmentPrimaryPicker.ListBox.ClearItems();
             selectingPowers = true;
