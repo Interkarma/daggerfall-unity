@@ -87,7 +87,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = playerItems.GetItem(i);
                 if (item.IsEnchanted)
                 {
-                    foreach (DaggerfallEnchantment enchantment in item.Enchantments)
+                    foreach (DaggerfallEnchantment enchantment in item.LegacyEnchantments)
                         if (enchantment.type == EnchantmentTypes.CastWhenUsed)
                         {
                             magicUseItems.Add(item);

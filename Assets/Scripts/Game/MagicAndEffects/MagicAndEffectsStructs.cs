@@ -269,4 +269,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             daysOfSymptomsMax = daysOfSymptomsMaxp;
         }
     }
+
+    /// <summary>
+    /// Defines a custom enchantment for items.
+    /// Classic enchantments use a type/param number pair in DaggerfallEnchantment.
+    /// Custom enchantments use a key/param string pair in CustomEnchantment.
+    /// </summary>
+    [Serializable]
+    public struct CustomEnchantment
+    {
+        public string EffectKey;                                    // Define the effect used by this enchantment
+        public string CustomParam;                                  // Passed back to effect to locate/invoke enchantment settings
+    }
 }

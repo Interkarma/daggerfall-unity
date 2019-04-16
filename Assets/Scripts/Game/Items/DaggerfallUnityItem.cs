@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int enchantmentPoints;
         public int message;
         public DaggerfallEnchantment[] legacyMagic = null;
+        public CustomEnchantment[] customMagic = null;
         public int stackCount = 1;
         public Poisons poisonType = Poisons.None;
 
@@ -250,13 +252,21 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets enchantments on this item. Can be null or empty.
-        /// Enchantments on items are stored and generated using the classic enchantment format.
-        /// At runtime this is instantiated to an effect bundle for execution by entity effect manager.
+        /// Gets legacy enchantments on this item. Can be null or empty.
+        /// Legacy enchantments on items are stored and generated using the classic type/param enchantment format.
         /// </summary>
-        public DaggerfallEnchantment[] Enchantments
+        public DaggerfallEnchantment[] LegacyEnchantments
         {
             get { return legacyMagic; }
+        }
+
+        /// <summary>
+        /// Gets custom enchantments on this item. Can be null or empty.
+        /// Custom enchantments on items are stored and generated using an effectKey/customParam pair.
+        /// </summary>
+        public CustomEnchantment[] CustomEnchantments
+        {
+            get { return customMagic; }
         }
 
         /// <summary>

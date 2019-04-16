@@ -173,15 +173,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //long startTime = stopwatch.ElapsedMilliseconds;
 
             // Constant enchantments tick every frame
-            for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
+            for (int i = 0; i < enchantedItem.LegacyEnchantments.Length; i++)
             {
-                switch (enchantedItem.Enchantments[i].type)
+                switch (enchantedItem.LegacyEnchantments[i].type)
                 {
                     case EnchantmentTypes.ExtraSpellPts:
-                        ExtraSpellPoints(enchantedItem.Enchantments[i]);
+                        ExtraSpellPoints(enchantedItem.LegacyEnchantments[i]);
                         break;
                     case EnchantmentTypes.IncreasedWeightAllowance:
-                        IncreasedWeightAllowance(enchantedItem.Enchantments[i]);
+                        IncreasedWeightAllowance(enchantedItem.LegacyEnchantments[i]);
                         break;
                     case EnchantmentTypes.AbsorbsSpells:
                         entityBehaviour.Entity.IsAbsorbingSpells = true;
@@ -196,18 +196,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         void RoundBasedEnchantments()
         {
             // Round-based enchantments tick once every magic round (game minute)
-            for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
+            for (int i = 0; i < enchantedItem.LegacyEnchantments.Length; i++)
             {
-                switch (enchantedItem.Enchantments[i].type)
+                switch (enchantedItem.LegacyEnchantments[i].type)
                 {
                     case EnchantmentTypes.RegensHealth:
-                        RegenerateHealth(enchantedItem.Enchantments[i]);
+                        RegenerateHealth(enchantedItem.LegacyEnchantments[i]);
                         break;
                     case EnchantmentTypes.VampiricEffect:
-                        VampiricEffectRanged(enchantedItem.Enchantments[i]);
+                        VampiricEffectRanged(enchantedItem.LegacyEnchantments[i]);
                         break;
                     case EnchantmentTypes.RepairsObjects:
-                        RepairItems(enchantedItem.Enchantments[i]);
+                        RepairItems(enchantedItem.LegacyEnchantments[i]);
                         break;
                 }
             }
@@ -220,15 +220,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Weapon strike enchantments tick whenever owning item hits a target entity
-            for (int i = 0; i < enchantedItem.Enchantments.Length; i++)
+            for (int i = 0; i < enchantedItem.LegacyEnchantments.Length; i++)
             {
-                switch (enchantedItem.Enchantments[i].type)
+                switch (enchantedItem.LegacyEnchantments[i].type)
                 {
                     case EnchantmentTypes.PotentVs:
-                        PotentVs(enchantedItem.Enchantments[i], receiver);
+                        PotentVs(enchantedItem.LegacyEnchantments[i], receiver);
                         break;
                     case EnchantmentTypes.VampiricEffect:
-                        VampiricEffectWhenStrikes(enchantedItem.Enchantments[i], receiver, damage);
+                        VampiricEffectWhenStrikes(enchantedItem.LegacyEnchantments[i], receiver, damage);
                         break;
                 }
             }

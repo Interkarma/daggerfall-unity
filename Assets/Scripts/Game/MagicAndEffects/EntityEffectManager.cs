@@ -785,7 +785,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             AssignBundle(passiveItemSpecialsBundle, AssignBundleFlags.BypassSavingThrows);
 
             // Some equipped magic items have "cast when held" enchantments
-            DaggerfallEnchantment[] enchantments = item.Enchantments;
+            DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
                 if (enchantment.type == EnchantmentTypes.CastWhenHeld)
@@ -851,7 +851,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Cast first "cast when used" enchantment
             // This works by sending effect to readySpell which currently cannot queue more than one spell
             // Not sure how classic handles multiple "cast when used" effects, especially for "press to release" styled spells
-            DaggerfallEnchantment[] enchantments = item.Enchantments;
+            DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
                 SpellRecord.SpellRecordData spell;
@@ -931,7 +931,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Create bundle for every "cast when strikes" enchantment
             List<EntityEffectBundle> bundles = new List<EntityEffectBundle>();
-            DaggerfallEnchantment[] enchantments = item.Enchantments;
+            DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
                 EffectBundleSettings bundleSettings;

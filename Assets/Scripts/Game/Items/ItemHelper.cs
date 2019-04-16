@@ -737,7 +737,7 @@ namespace DaggerfallWorkshop.Game.Items
                 // Overrides for artifacts whose dyes do not match their materials
                 if (item.IsArtifact)
                 {
-                    foreach (DaggerfallEnchantment enchantment in item.Enchantments)
+                    foreach (DaggerfallEnchantment enchantment in item.LegacyEnchantments)
                     {
                         if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
                         {

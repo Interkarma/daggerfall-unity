@@ -50,9 +50,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         private bool IsRose(DaggerfallUnityItem item)
         {
-            if (item != null && item.Enchantments != null)
+            if (item != null && item.LegacyEnchantments != null)
             {
-                foreach (DaggerfallEnchantment enchantment in item.Enchantments)
+                foreach (DaggerfallEnchantment enchantment in item.LegacyEnchantments)
                 {
                     if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == (int)ArtifactsSubTypes.Sanguine_Rose)
                     {
