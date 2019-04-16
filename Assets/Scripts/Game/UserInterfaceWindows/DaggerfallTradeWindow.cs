@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:
+// Contributors:    Pango
 //
 // Notes:
 //
@@ -509,6 +509,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {   // Return items to player inventory. 
                 // Note: ignoring weight here, like classic. Priority is to not lose any items.
+                if (usingWagon)
+                {
+                    // Always clear transport items into player's inventory
+                    for (int i = remoteItems.Count; i-- > 0;)
+                    {
+                        DaggerfallUnityItem item = remoteItems.GetItem(i);
+                        if (item.ItemGroup == ItemGroups.Transportation)
+                        {
+                            Debug.Log("Try to force clear transport item in player's inventory");
+                            TransferItem(item, remoteItems, PlayerEntity.Items);
+                        }
+                    }
+                }
                 localItems.TransferAll(remoteItems);
             }
         }
