@@ -679,7 +679,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
+                        {
+                            // Are we trying to sell the non empty wagon?
+                            if (item.ItemGroup == ItemGroups.Transportation && PlayerEntity.WagonItems.Count > 0)
+                            {
+                                DaggerfallUnityItem usedWagon = PlayerEntity.Items.GetItem(ItemGroups.Transportation, (int)Transportation.Small_cart);
+                                if (usedWagon.Equals(item))
+                                    return;
+                            }
                             TransferItem(item, localItems, remoteItems);
+                        }
                         break;
 
                     case WindowModes.Buy:
@@ -910,12 +919,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic && PlayerEntity.GetGoldAmount() < tradePrice)
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
-            }
-            else if (windowMode == WindowModes.Sell && PlayerEntity.WagonItems.Count > 0 && 
-                !PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
-            {
-                // Trying to sell all your wagons including the one you're using?
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "sellEmptyWagons"));
             }
             else
             {
