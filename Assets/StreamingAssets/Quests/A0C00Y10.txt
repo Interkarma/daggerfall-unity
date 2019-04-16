@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 10
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 28
 Quest: A0C00Y10
 -- Message panels
@@ -179,9 +180,9 @@ Person _giver_ face 4 group Questor
 
 Place _inn_ local tavern
 
-Clock _S.00_ 06:00 0 flag 1 range 0 1
-Clock _S.01_ 12:00 0 flag 1 range 0 1
-Clock _S.02_ 01:00 0 flag 1 range 0 1
+Clock _S.00_ 06:00
+Clock _S.01_ 12:00
+Clock _S.02_ 01:00
 
 Foe _F.00_ is Spellsword
 
@@ -209,7 +210,8 @@ _S.04_ task:
 	say 1018 
 
 _S.05_ task:
-	end quest saying 1027 
+    say 1027
+	end quest 
 
 _S.06_ task:
 	injured _F.00_ saying 1019 

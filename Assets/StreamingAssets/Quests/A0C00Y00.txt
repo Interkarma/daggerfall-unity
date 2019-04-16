@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 32
 Quest: A0C00Y00
 -- Message panels
@@ -38,9 +39,7 @@ AcceptQuest:  [1002]
 <ce>                       bother trying to find me.
 
 QuestFail:  [1003]
-<ce>             Don't you have a letter to 'deliver' for me?
-                                     <--->
-<ce>         Come back when you have completed your mission, %pcf.
+<ce>             You had a letter to 'deliver' by now.
 
 QuestComplete:  [1004]
 <ce>               Ah! Well done, %pcf. Here is your reward.
@@ -252,6 +251,7 @@ _S.04_ task:
 	pick one of _S.11_ _S.12_ _S.13_ _S.14_ 
 
 _traveltime_ task:
+	say 1003
 	end quest 
 
 _S.06_ task:

@@ -4,6 +4,7 @@
 -- Questor: Namira
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: 30C00Y00
 -- Message panels
@@ -139,7 +140,6 @@ Foe _monster_ is Ancient_vampire
 _1stparton_ task:
 	end quest 
 
-variable _2ndparton_
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
@@ -153,6 +153,9 @@ _mondead_ task:
 _npcclicked_ task:
 	clicked npc _qgfriend_ 
 
-variable _clearclick_
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_
+	clear _npcclicked_ _clearclick_
+
 _delay_ task:
 	end quest 

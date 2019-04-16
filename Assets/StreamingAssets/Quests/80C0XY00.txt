@@ -4,6 +4,7 @@
 -- Questor: Malacath
 -- Repute: 0X
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 54
 Quest: 80C0XY00
 -- Message panels
@@ -225,7 +226,10 @@ _mondead_ task:
 _npcclicked_ task:
 	clicked npc _qgfriend_ 
 
-variable _clearclick_
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_
+	clear _npcclicked_ _clearclick_
+
 _delay_ task:
 	end quest 
 

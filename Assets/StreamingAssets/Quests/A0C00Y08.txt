@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 8
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 34
 Quest: A0C00Y08
 -- Message panels
@@ -185,7 +186,7 @@ _S.08_ task:
 _clearclick_ task:
 	when _S.08_ and not _S.07_ 
 	say 1015 
-	clear _S.08_ 
+	clear _S.08_ _clearclick_
 
 _S.10_ task:
 	when _S.08_ and _S.07_ 

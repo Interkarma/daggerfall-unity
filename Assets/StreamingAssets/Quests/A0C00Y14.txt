@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: A0C00Y14
 -- Message panels
@@ -174,8 +175,8 @@ Person _questgiver_ face 137 group Questor
 Person _pickuplocal_ face 232 group Local_3.0
 
 
-Clock _oneday_ 1.00:00 0 flag 1 range 0 1
-Clock _delay_ 01:00 0 flag 1 range 0 1
+Clock _oneday_ 1.00:00
+Clock _delay_ 01:00
 
 Foe _thief_ is Burglar
 

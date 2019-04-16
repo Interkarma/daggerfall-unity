@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 42
 Quest: A0C00Y11
 -- Message panels
@@ -193,7 +194,6 @@ Person _healer_ face 64 group Chemist anyInfo 1040 rumors 1041
 
 
 Clock _questtime_ 00:00 0 flag 1 range 3 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 
 --	Quest start-up:
@@ -228,7 +228,7 @@ _S.06_ task:
 _S.07_ task:
 	toting talisman and _cousin_ clicked 
 	give pc _gold2_ 
-	start timer _delay_ 
+	end quest 
 
 _S.08_ task:
 	clicked npc _healer_ 
@@ -241,7 +241,4 @@ _S.09_ task:
 
 _S.10_ task:
 	say 1015 
-	clear _S.08_ _S.09_ _S.10_ 
-
-_delay_ task:
-	end quest 
+	clear _S.08_ _S.09_ _S.10_

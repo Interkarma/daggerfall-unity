@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 11
 Quest: A0C00Y07
 -- Message panels
@@ -79,6 +80,8 @@ QuestLogEntry:  [1010]
  __house_ of monsters. %g needs
  them gone within a day.
 
+Message:  1011
+<ce>  That should be enough.
 
 -- Symbols used in the QRC file:
 --
@@ -111,37 +114,49 @@ Foe _bats_ is Giant_bat
 --	Quest start-up:
 	start timer _oneday_ 
 	log 1010 step 0 
-	pc at _house_ set _S.01_ 
+	pc at _house_ set _inside_ 
 	create npc at _house_ 
 
 _oneday_ task:
 	end quest 
 
-_S.01_ task:
+_inside_ task:
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
 
-_questdone_ task:
-	clicked npc _qgiver_ 
-	give pc _gold_ 
-
-_S.03_ task:
+_slain_ task:
 	killed 6 _bats_ 
 	killed 3 _spiders_ 
 	killed 7 _rats_ 
-	killed 3 _scorpions_ 
+	killed 3 _scorpions_
+	say 1011
 
-_S.04_ task:
-	create foe _bats_ every 3 minutes 8 times with 25% success 
+variable _S.04_
+_spawn1_ task:
+	when _inside_ and _S.04_ and not _slain_
+	create foe _bats_ every 3 minutes indefinitely with 25% success 
 
-_S.05_ task:
-	create foe _rats_ every 3 minutes 10 times with 25% success 
+variable _S.05_
+_spawn2_ task:
+	when _inside_ and _S.05_ and not _slain_
+	create foe _rats_ every 3 minutes indefinitely with 25% success 
 
-_S.06_ task:
-	create foe _scorpions_ every 3 minutes 4 times with 25% success 
+variable _S.06_
+_spawn3_ task:
+	when _inside_ and _S.06_ and not _slain_
+	create foe _scorpions_ every 3 minutes indefinitely with 25% success 
 
-_S.07_ task:
-	create foe _spiders_ every 3 minutes 4 times with 25% success 
+variable _S.07_
+	when _inside_ and _S.06_ and not _slain_
+	create foe _spiders_ every 3 minutes indefinitely with 25% success 
+
+_questdone_ task:
+	clicked npc _qgiver_
 
 _clearclick_ task:
-	when not _S.03_ and _questdone_ 
+	when not _slain_ and _questdone_ 
 	clear _questdone_ _clearclick_ 
+
+_pcgetsgold_ task:
+	when _questdone_ and _slain_
+	give pc _gold_ 
+	end quest

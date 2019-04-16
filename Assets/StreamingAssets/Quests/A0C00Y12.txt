@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C00Y12
 -- Message panels
@@ -196,7 +197,7 @@ _S.03_ task:
 
 _S.04_ task:
 	daily from 08:01 to 16:01 
-	pc at _store_ set _S.11_ _
+	pc at _store_ set _S.11_
 
 _S.05_ task:
 	clicked npc _informant_ say 1025 

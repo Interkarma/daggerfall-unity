@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0X
 -- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C0XY04
 -- Message panels
@@ -204,9 +205,9 @@ _giveingredient_ task:
 
 _hitguardian_ task:
 	injured _guardian_ 
-	prompt 1012 yes yes no _no_ 
+	prompt 1012 yes _yes_ no _no_ 
 
-yes task:
+_yes_ task:
 	log 1011 step 1 
 	get item _token_ 
 	say 1030 
@@ -226,8 +227,9 @@ _shamandead_ task:
 
 _givereward_ task:
 	when _givetoken_ and _shamandead_ 
-	change repute with _dummymage_ by +25 saying +1015 
+	change repute with _dummymage_ by +25
 	change repute with _dummyorc_ by -10 
+	say 1015
 
 _extratime_ task:
 	make _ingredient_ permanent 
