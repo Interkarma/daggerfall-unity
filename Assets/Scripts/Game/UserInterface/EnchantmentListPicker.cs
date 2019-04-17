@@ -207,6 +207,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             panelToRemove.OnMouseClick -= EnchantmentPanel_OnMouseClick;
             enchantmentPanels.Remove(panelToRemove);
             scroller.ScrollIndex = 0;
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             RefreshPanelLayout();
         }
 

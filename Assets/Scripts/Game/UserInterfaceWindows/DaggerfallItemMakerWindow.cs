@@ -348,6 +348,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SelectTabPage(DaggerfallInventoryWindow.TabPages tabPage)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
             // Select new tab page
             selectedTabPage = tabPage;
 
@@ -459,6 +461,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedItem = item;
             powersList.ClearEnchantments();
             sideEffectsList.ClearEnchantments();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             Refresh();
 
             // Update item name only when selected item changes - or other refreshes will reset custom item name
@@ -470,11 +473,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedItem = null;
             powersList.ClearEnchantments();
             sideEffectsList.ClearEnchantments();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             Refresh();
         }
 
         private void PowersButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
             // Must have an item selected to be enchanted
             const int mustHaveAnItemSelectedID = 1653;
             if (selectedItem == null)
@@ -512,6 +518,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SideeffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
             // TODO: Check for max enchantments and display "No further side-effects may be enchanted in this item."
 
             enchantmentPrimaryPicker.ListBox.ClearItems();
@@ -522,17 +530,54 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void EnchantButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO: Check for available gold and display "You do not have the gold to properly pay the enchanter." (1650)
+            const int notEnoughGold = 1650;
+            const int notEnoughEnchantmentPower = 1651;
+            const int itemEnchanted = 1652;
+            const int itemMustBeSelected = 1653;
 
-            // TODO: Check for enchantment power and display "You cannot enchant this item beyond its limit." (1651)
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            // TODO: Deduct gold from player and display "The item has been enchanted." (1652)
+            // Must have an item selected or display "An item must be selected to be enchanted."
+            if (selectedItem == null)
+            {
+                DaggerfallUI.MessageBox(itemMustBeSelected);
+                return;
+            }
 
-            // TODO: Play enchantment sound effect (SoundClips.MakeItem)
+            // Get costs
+            int totalEnchantmentCost = GetTotalEnchantmentCost();
+            int totalGoldCost = totalEnchantmentCost * 10;
+            int itemEnchantmentPower = FormulaHelper.GetItemEnchantmentPower(selectedItem);
 
-            // TODO: Transfer classic powers onto item
+            // Check for available gold and display "You do not have the gold to properly pay the enchanter." if not enough
+            int playerGold = GameManager.Instance.PlayerEntity.GetGoldAmount();
+            if (playerGold < totalGoldCost)
+            {
+                DaggerfallUI.MessageBox(notEnoughGold);
+                return;
+            }
 
-            // TODO: Transfer custom powers onto item
+            // Check for enchantment power and display "You cannot enchant this item beyond its limit." if not enough
+            if (itemEnchantmentPower < totalEnchantmentCost)
+            {
+                DaggerfallUI.MessageBox(notEnoughEnchantmentPower);
+                return;
+            }
+
+            // TODO: Deduct gold from player and display "The item has been enchanted."
+            //GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
+            //DaggerfallUI.MessageBox(itemEnchanted);
+
+            // TODO: Transfer powers onto item
+
+            // Play enchantment sound effect
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.MakeItem);
+
+            // Clear selected item and enchantments
+            selectedItem = null;
+            powersList.ClearEnchantments();
+            sideEffectsList.ClearEnchantments();
+            Refresh();
         }
 
         private void WeaponsAndArmor_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -557,6 +602,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
