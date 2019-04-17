@@ -232,3 +232,5 @@ scholars,                   Scholars
 nobility,                   Nobility
 underworld,                 Underworld
 all,                        All
+
+noRoomInItem,               No room in item...

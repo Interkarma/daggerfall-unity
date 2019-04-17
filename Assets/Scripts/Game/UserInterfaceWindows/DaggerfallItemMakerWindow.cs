@@ -564,11 +564,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // TODO: Deduct gold from player and display "The item has been enchanted."
-            //GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
-            //DaggerfallUI.MessageBox(itemEnchanted);
+            // Deduct gold from player and display "The item has been enchanted."
+            GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
+            DaggerfallUI.MessageBox(itemEnchanted);
 
-            // TODO: Transfer powers onto item
+            // Transfer powers onto item
+            List<EnchantmentSettings> combinedEnchantments = new List<EnchantmentSettings>();
+            combinedEnchantments.AddRange(powersList.GetEnchantments());
+            combinedEnchantments.AddRange(sideEffectsList.GetEnchantments());
+            selectedItem.SetEnchantments(combinedEnchantments.ToArray());
 
             // Play enchantment sound effect
             DaggerfallUI.Instance.PlayOneShot(SoundClips.MakeItem);

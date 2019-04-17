@@ -10,13 +10,13 @@
 //
 
 using System;
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
@@ -1219,6 +1219,66 @@ namespace DaggerfallWorkshop.Game.Items
         public void IdentifyItem()
         {
             flags = (ushort)(flags | identifiedMask);
+        }
+
+        /// <summary>
+        /// Set enchantments on this item. Any existing enchantments will be overwritten.
+        /// </summary>
+        /// <param name="enchantments">Array of enchantment settings. Maximum of 10 enchantments are applied.</param>
+        public void SetEnchantments(EnchantmentSettings[] enchantments)
+        {
+            const int maxEnchantments = 10;
+
+            // Validate list
+            if (enchantments == null || enchantments.Length == 0)
+                throw new Exception("SetEnchantments() enchantments cannot be null or empty.");
+
+            // Build enchantment lists
+            int count = 0;
+            List<DaggerfallEnchantment> legacyEnchantments = new List<DaggerfallEnchantment>();
+            List<CustomEnchantment> customEnchantments = new List<CustomEnchantment>();
+            foreach (EnchantmentSettings settings in enchantments)
+            {
+                // Enchanment must have an effect key
+                if (string.IsNullOrEmpty(settings.EffectKey))
+                    throw new Exception(string.Format("SetEnchantments() effect key is null or empty at index {0}", count));
+
+                // Add custom or legacy enchantment
+                if (!string.IsNullOrEmpty(settings.CustomParam))
+                {
+                    CustomEnchantment customEnchantment = new CustomEnchantment()
+                    {
+                        EffectKey = settings.EffectKey,
+                        CustomParam = settings.CustomParam,
+                    };
+                    customEnchantments.Add(customEnchantment);
+                }
+                else
+                {
+                    if (settings.ClassicType == EnchantmentTypes.None)
+                        throw new Exception(string.Format("SetEnchantments() not a valid enchantment type at index {0}", count));
+
+                    DaggerfallEnchantment legacyEnchantment = new DaggerfallEnchantment()
+                    {
+                        type = settings.ClassicType,
+                        param = settings.ClassicParam,
+                    };
+                    legacyEnchantments.Add(legacyEnchantment);
+                }
+
+                // Cap enchanting at limit
+                if (++count > maxEnchantments)
+                    break;
+            }
+
+            // Do nothing if no enchantments found
+            if (customEnchantments.Count == 0 && legacyEnchantments.Count == 0)
+                throw new Exception("SetEnchantments() no enchantments provided");
+
+            // Set new enchantments and identified flag
+            legacyMagic = legacyEnchantments.ToArray();
+            customMagic = customEnchantments.ToArray();
+            IdentifyItem();
         }
 
         #endregion
