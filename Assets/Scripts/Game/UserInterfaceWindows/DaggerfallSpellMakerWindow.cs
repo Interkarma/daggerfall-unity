@@ -743,10 +743,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //   Implement costs and remove gold from player and block if user does not have enough gold (message 1702)
             //   Spells will be free (both gold and spell points) during build-out of effect system.
 
-            var moneyAvailable = GameManager.Instance.PlayerEntity.GoldPieces;
-            var cost = totalGoldCost;
+            var moneyAvailable = GameManager.Instance.PlayerEntity.GetGoldAmount();
 
-            if (moneyAvailable < cost)
+            if (moneyAvailable < totalGoldCost)
             {
                 DaggerfallMessageBox mbNoMoney = DaggerfallUI.MessageBox(notEnoughGold);
                 mbNoMoney.ClickAnywhereToClose = true;
@@ -756,7 +755,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                GameManager.Instance.PlayerEntity.DeductGoldAmount(cost);
+                GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
             }
 
             // NOTES:
