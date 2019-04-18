@@ -347,77 +347,34 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Gets vampire clan based on region
-        public static VampireClans GetVampireClan(DaggerfallRegions region)
+        public static VampireClans GetVampireClan(int regionIndex)
         {
-            // Clan assignment according to UESP https://en.uesp.net/wiki/Daggerfall:Vampirism
-            switch (region)
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(regionIndex, out factionData);
+            switch ((FactionFile.FactionIDs) factionData.vam)
             {
-                // Anthotis
-                case DaggerfallRegions.AlikrDesert:
-                case DaggerfallRegions.Antiphyllos:
-                case DaggerfallRegions.Bergama:
-                case DaggerfallRegions.Dakfron:
-                case DaggerfallRegions.Tigonus:
-                    return VampireClans.Anthotis;
-
-                // Garlythi
-                case DaggerfallRegions.Northmoor:
-                case DaggerfallRegions.Phrygias:
-                    return VampireClans.Garlythi;
-
-                // Haarvenu
-                case DaggerfallRegions.Anticlere:
-                case DaggerfallRegions.IlessanHills:
-                case DaggerfallRegions.Shalgora:
-                    return VampireClans.Haarvenu;
-
-                // Khulari
-                case DaggerfallRegions.DragontailMountains:
-                case DaggerfallRegions.Ephesus:
-                case DaggerfallRegions.Kozanset:
-                case DaggerfallRegions.Santaki:
-                case DaggerfallRegions.Totambu:
-                    return VampireClans.Khulari;
-
-                // Lyrezi (default bloodline)
-                default:
-                    return VampireClans.Lyrezi;
-
-                // Montalion
-                case DaggerfallRegions.Bhoraine:
-                case DaggerfallRegions.Gavaudon:
-                case DaggerfallRegions.Lainlyn:
-                case DaggerfallRegions.Mournoth:
-                case DaggerfallRegions.Satakalaam:
-                case DaggerfallRegions.Wayrest:
-                    return VampireClans.Montalion;
-
-                // Selenu
-                case DaggerfallRegions.AbibonGora:
-                case DaggerfallRegions.Ayasofya:
-                case DaggerfallRegions.Cybiades:
-                case DaggerfallRegions.Kairou:
-                case DaggerfallRegions.Myrkwasa:
-                case DaggerfallRegions.Pothago:
-                case DaggerfallRegions.Sentinel:
-                    return VampireClans.Selenu;
-
-                // Thrafey
-                case DaggerfallRegions.Daenia:
-                case DaggerfallRegions.Dwynnen:
-                case DaggerfallRegions.Ykalon:
-                case DaggerfallRegions.Urvaius:
-                    return VampireClans.Thrafey;
-
-                // Vraseth
-                case DaggerfallRegions.Betony:
-                case DaggerfallRegions.Daggerfall:
-                case DaggerfallRegions.Glenpoint:
-                case DaggerfallRegions.GlenumbraMoors:
-                case DaggerfallRegions.Kambria:
-                case DaggerfallRegions.Tulune:
+                case FactionFile.FactionIDs.The_Vraseth:
                     return VampireClans.Vraseth;
+                case FactionFile.FactionIDs.The_Haarvenu:
+                    return VampireClans.Haarvenu;
+                case FactionFile.FactionIDs.The_Thrafey:
+                    return VampireClans.Thrafey;
+                case FactionFile.FactionIDs.The_Lyrezi:
+                    return VampireClans.Lyrezi;
+                case FactionFile.FactionIDs.The_Montalion:
+                    return VampireClans.Montalion;
+                case FactionFile.FactionIDs.The_Khulari:
+                    return VampireClans.Khulari;
+                case FactionFile.FactionIDs.The_Garlythi:
+                    return VampireClans.Garlythi;
+                case FactionFile.FactionIDs.The_Anthotis:
+                    return VampireClans.Anthotis;
+                case FactionFile.FactionIDs.The_Selenu:
+                    return VampireClans.Selenu;
             }
+
+            // The Lyrezi are the default like in classic
+            return VampireClans.Lyrezi;
         }
 
         #endregion

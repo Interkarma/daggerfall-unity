@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public VampireClans InfectionVampireClan
         {
-            get { return FormulaHelper.GetVampireClan((DaggerfallRegions)infectionRegionIndex); }
+            get { return FormulaHelper.GetVampireClan(infectionRegionIndex); }
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
