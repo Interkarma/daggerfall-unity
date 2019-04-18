@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const MagicCraftingStations thisMagicStation = MagicCraftingStations.ItemMaker;
 
+        const string textDatabase = "ClassicEffects";
         const string baseTextureName = "ITEM00I0.IMG";
         const string goldTextureName = "ITEM01I0.IMG";
         const int alternateAlphaIndex = 12;
@@ -544,6 +545,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
+            // Must have enchantments to apply or display "You have prepared no enchantments for this item."
+            if (powersList.EnchantmentCount == 0 && sideEffectsList.EnchantmentCount == 0)
+            {
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noEnchantments"));
+                return;
+            }
+
             // Get costs
             int totalEnchantmentCost = GetTotalEnchantmentCost();
             int totalGoldCost = totalEnchantmentCost * 10;
@@ -568,7 +576,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
             DaggerfallUI.MessageBox(itemEnchanted);
 
-            // Transfer powers onto item
+            // Transfer enchantment settings onto item
             List<EnchantmentSettings> combinedEnchantments = new List<EnchantmentSettings>();
             combinedEnchantments.AddRange(powersList.GetEnchantments());
             combinedEnchantments.AddRange(sideEffectsList.GetEnchantments());

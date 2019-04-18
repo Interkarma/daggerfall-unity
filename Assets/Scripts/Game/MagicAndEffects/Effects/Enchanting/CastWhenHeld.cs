@@ -17,11 +17,11 @@ using DaggerfallConnect.FallExe;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Cast spell when item used.
+    /// Cast spell when item held (equipped).
     /// </summary>
-    public class CastWhenUsed : BaseEntityEffect
+    public class CastWhenHeld : BaseEntityEffect
     {
-        public static readonly string EffectKey = EnchantmentTypes.CastWhenUsed.ToString();
+        public static readonly string EffectKey = EnchantmentTypes.CastWhenHeld.ToString();
 
         public override void SetProperties()
         {
@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     Version = 1,
                     EffectKey = EffectKey,
-                    ClassicType = EnchantmentTypes.CastWhenUsed,
+                    ClassicType = EnchantmentTypes.CastWhenHeld,
                     ClassicParam = id,
                     PrimaryDisplayName = properties.GroupName,
                     SecondaryDisplayName = spellRecord.spellName,
@@ -62,8 +62,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 enchantments.Add(enchantment);
             }
 
-            // Enumerate custom spell bundle offers supporting CastWhenUsedEnchantment flag
-            EntityEffectBroker.CustomSpellBundleOffer[] offers = GameManager.Instance.EntityEffectBroker.GetCustomSpellBundleOffers(EntityEffectBroker.CustomSpellBundleOfferUsage.CastWhenUsedEnchantment);
+            // Enumerate custom spell bundle offers supporting CastWhenHeldEnchantment flag
+            EntityEffectBroker.CustomSpellBundleOffer[] offers = GameManager.Instance.EntityEffectBroker.GetCustomSpellBundleOffers(EntityEffectBroker.CustomSpellBundleOfferUsage.CastWhenHeldEnchantment);
             foreach(EntityEffectBroker.CustomSpellBundleOffer offer in offers)
             {
                 EnchantmentSettings enchantment = new EnchantmentSettings()
@@ -88,82 +88,60 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         static short[] classicSpellIDs =
         {
-            4,      //Levitate
-            5,      //Light
-            6,      //Invisibility
-            7,      //Wizard's Fire
-            8,      //Shock
-            9,      //Strength Leech
+            37,     //Slowfalling
+            39,     //Spell Resistance
+            41,     //Water Walking
             10,     //Free Action
-            18,     //Open
+            42,     //Water Breathing
             11,     //Resist Cold
             12,     //Resist Fire
-            13,     //Resist Shock
-            19,     //Wizard Lock
-            14,     //Fireball
-            15,     //Cure Poison
-            16,     //Ice Bolt
-            17,     //Shield
-            22,     //Spell Shield
-            23,     //Silence
-            24,     //Troll's Blood
-            20,     //Ice Storm
-            25,     //Fire Storm
             26,     //Resist Poison
-            33,     //Wildfire
-            27,     //Spell Drain
-            28,     //Far Silence
-            29,     //Toxic Cloud
-            34,     //Wizard Rend
-            30,     //Shalidor's Mirror
-            31,     //Lightning
-            35,     //Medusa's Gaze
-            36,     //Force Bolt
-            32,     //Gods' Fire
-            40,     //Stamina
-            64,     //Heal
-            60,     //Balyna's Antidote
-            94,     //Recall
+            13,     //Resist Shock
+            6,      //Invisibility
+            44,     //Chameleon
+            45,     //Shadow Form
+            46,     //Spell Reflection
+            24,     //Troll's Blood
+            47,     //Spell Absorption
+            4,      //Levitate
+            49,     //Tongues
+            82,     //Orc Strength
+            83,     //Wisdom
+            84,     //Iron Will
+            85,     //Nimbleness
+            86,     //Feet of Notorgo
+            87,     //Fortitude
+            88,     //Charisma
+            89,     //Jack of Trades
         };
 
         static short[] classicSpellCosts =
         {
-            330,    //Levitate
-            250,    //Light
-            540,    //Invisibility
-            480,    //Wizard's Fire
-            380,    //Shock
-            480,    //Strength Leech
+            240,    //Slowfalling
+            1230,   //Spell Resistance
+            170,    //Water Walking
             1650,   //Free Action
-            900,    //Open
+            170,    //Water Breathing
             1560,   //Resist Cold
             1560,   //Resist Fire
+            1560,   //Resist Poison
             1560,   //Resist Shock
-            1740,   //Wizard Lock
-            470,    //Fireball
-            1020,   //Cure Poison
-            990,    //Ice Bolt
-            1040,   //Shield
-            1980,   //Spell Shield
-            1530,   //Silence
+            540,    //Invisibility
+            210,    //Chameleon
+            150,    //Shadow Form
+            1720,   //Spell Reflection
             920,    //Troll's Blood
-            1420,   //Ice Storm
-            840,    //Fire Storm
-            1650,   //Resist Poison
-            1020,   //Wildfire
-            1300,   //Spell Drain
-            2290,   //Far Silence
-            1020,   //Toxic Cloud
-            1610,   //Wizard Rend
-            1930,   //Shalidor's Mirror
-            760,    //Lightning
-            2140,   //Medusa's Gaze
-            3030,   //Force Bolt
-            1750,   //Gods' Fire
-            130,    //Stamina
-            360,    //Heal
-            930,    //Balyna's Antidote
-            480,    //Recall
+            1720,   //Spell Absorption
+            330,    //Levitate
+            1590,   //Tongues
+            1020,   //Orc Strength
+            1200,   //Wisdom
+            1200,   //Iron Will
+            1200,   //Nimbleness
+            1200,   //Feet of Notorgo
+            1200,   //Fortitude
+            1200,   //Charisma
+            1200,   //Jack of Trades
         };
 
         #endregion

@@ -690,7 +690,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Handle enchanted weapons
-            if (item.legacyMagic != null && item.legacyMagic[0].type != EnchantmentTypes.None)
+            if (item.IsEnchanted)
             {
                 switch (result)
                 {
