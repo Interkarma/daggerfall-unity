@@ -170,6 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!IsSetup)
                 return;
 
+            selectedItem = null;
             EnumerateEnchantments();
             Refresh();
         }
@@ -545,7 +546,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // Must have enchantments to apply or display "You have prepared no enchantments for this item."
+            // Must have enchantments to apply or display "You have not prepared enchantments for this item."
             if (powersList.EnchantmentCount == 0 && sideEffectsList.EnchantmentCount == 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noEnchantments"));

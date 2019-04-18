@@ -234,4 +234,4 @@ underworld,                 Underworld
 all,                        All
 
 noRoomInItem,               No room in item...
-noEnchantments,             You have prepared no enchantments for this item.
+noEnchantments,             You have not prepared enchantments for this item.
