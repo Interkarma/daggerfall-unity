@@ -128,13 +128,12 @@ _mondead_ task:
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
-_reset_ task:
-               	when _qgclicked_ and not _mondead_
-                clear _qgclicked_
+_clearclick_ task:
+    when _qgclicked_ and not _mondead_
+    clear _qgclicked_ _clearclick_
 
 _1stparton_ task:
 	end quest 
 
-variable _clearclick_
 _S.06_ task:
 	injured _imp_ saying 1010 

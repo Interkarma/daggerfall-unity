@@ -4,6 +4,7 @@
 -- Questor: witch
 -- Repute: 0
 -- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: Q0C00Y03
 -- Message panels

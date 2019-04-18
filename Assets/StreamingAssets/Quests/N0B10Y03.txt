@@ -115,8 +115,8 @@ Person _qgiver_ group Questor male
 
 Place _magesguild_ local magery
 
-Clock _oneday_ 1.03:00 0 flag 1 range 0 1
-Clock _S.10_ 3.00:00 0 flag 1 range 0 1
+Clock _oneday_ 1.03:00
+Clock _S.10_ 3.00:00
 
 Foe _F.00_ is Thief
 Foe _F.01_ is 4 Knight
@@ -124,8 +124,7 @@ Foe _F.01_ is 4 Knight
 --	Quest start-up:
 	place item _treasure_ at _magesguild_ 
 	start timer _oneday_ 
-	log 1010 step 0 
-	create npc at _magesguild_ 
+	log 1010 step 0
 
 _oneday_ task:
 	end quest 
@@ -138,10 +137,10 @@ _S.02_ task:
 	pc at _magesguild_ set _S.03_ 
 
 _S.03_ task:
-	create foe _F.00_ every 83 minutes 1 times with 100% success 
-	create foe _F.00_ every 100 minutes 1 times with 100% success 
-	create foe _F.00_ every 85 minutes 1 times with 100% success 
-	create foe _F.00_ every 82 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
 
 _S.04_ task:
 	injured _F.00_ saying 1012 

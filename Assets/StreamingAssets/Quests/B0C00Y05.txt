@@ -4,6 +4,7 @@
 -- Questor: knight
 -- Repute: 0
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: B0C00Y05
 -- Message panels
@@ -144,4 +145,4 @@ variable _nomap_
 _S.07_ task:
 	when _map_ and _pcgetsgold_
     say 1080
-	reveal _newdung_ readmap
+	reveal _newdung_

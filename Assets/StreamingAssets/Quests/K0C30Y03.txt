@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 30
 -- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 56
 Quest: K0C30Y03
 -- Message panels
@@ -132,11 +133,11 @@ Message:  1014
 <ce>                      %pcn is your target, a %ra
 <ce>             adventurer and mercenary. Use extreme caution
 <ce>                     and be prepared for a fight.
- 
+<ce>
 <ce>                        No jellyfish this one.
- 
- 
- -- _patsy_
+<ce> 
+<ce>
+ 			 _patsy_
 
 Message:  1015
 _banker_ works over at _bank_ in __bank_. Perfectly respectable sort.
@@ -209,10 +210,10 @@ Message:  1021
 <ce>           Change of agenda, folks. I need you in ___qgiver_
 <ce>         right away. Get over there and wait for my response.
 <ce>                Shouldn't take longer than a few days.
- 
- 
- 
-<ce>                              -- _patsy_
+<ce>
+<ce>
+<ce>
+<ce>                               _patsy_
 
 Message:  1023
 <ce>                       You know immediately that
@@ -230,7 +231,7 @@ I'm going to need some reinforcements if the
  when you arrive.
  
  
- -- _patsy_
+ 		 _patsy_
 
 Message:  1026
 <ce>                There is a stamp on the piece of _rock_
@@ -274,7 +275,7 @@ Message:  1031
  
  
  
- -- The Brotherhood
+ 		 The Brotherhood
 
 Message:  1032
 <ce>         You do not even realize that the young boy is next to
@@ -296,7 +297,7 @@ Message:  1033
       Good luck, %pcf, and walk with Baan Dar.
  
  
-<ce>                             -- The Guild
+<ce>                              The Guild
                                      <--->
                            
 
@@ -523,7 +524,7 @@ _thankyou_ task:
 	give item bribe2 to _F.01_ 
 	say 1012 
 	change repute with _hooker_ by +5 
-	send _F.01_ every minutes times with success 
+	send _F.01_ every 80 minutes 30 times with 15% success 
 
 _gimme_ task:
 	get item bribe4 
@@ -641,7 +642,8 @@ _clearclick_ task:
 	clear _qgclicked_ _clearclick_ 
 
 _S.33_ task:
-	clicked item _rock_ say 1026 
+	clicked item _rock_
+	say 1026 
 	add dialog for item _rock_ 
 	reveal _mondung_ 
 

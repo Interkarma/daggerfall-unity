@@ -4,6 +4,7 @@
 -- Questor: witch
 -- Repute: 10
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 24
 Quest: Q0C10Y00
 -- Message panels
@@ -100,6 +101,14 @@ Message:  1023
 <ce>                      This looks like the _item3_
 <ce>                         that _qgiver_ needed.
 
+Message:  1024
+<ce>  You offer up the _item1_.
+
+Message:  1025
+<ce>  You offer up the _item2_.
+
+Message:  1026
+<ce>  You offer up the _item3_.
 
 -- Symbols used in the QRC file:
 --
@@ -195,12 +204,15 @@ _S.10_ task:
 
 _batty_ task:
 	clicked item _item1_ say 1021 
+	say 1024
 
 _S.12_ task:
 	clicked item _item2_ say 1022 
+	say 1025
 
 _S.13_ task:
 	clicked item _item3_ say 1023 
+	say 1026
 
 _S.14_ task:
 	pick one of _a4_ _a5_ _a6_ _a4_ 

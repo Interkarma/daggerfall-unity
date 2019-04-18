@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0
 -- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 18
 Quest: K0C00Y03
 -- Message panels
@@ -216,6 +217,7 @@ _S.05_ task:
 	prompt 1015 yes _deed_ no _no_ 
 
 _deed_ task:
+	take _item_ from pc
 	give item _item_ to _guard_ 
 	say 1016 
 	restrain foe _guard_ 

@@ -4,6 +4,7 @@
 -- Questor: vampire
 -- Repute: 10
 -- QuestId: 8
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 22
 Quest: P0B10L08
 -- Message panels
@@ -48,8 +49,8 @@ QuestorPostfailure:  [1009]
 Error: Questtext 1009 Called.
 
 QuestLogEntry:  [1010]
-                    __vamp_
-                     ___vamp_
+                    __vamphouse_
+                     ___vamphouse_
  
  
  Dear %pcn,
@@ -84,7 +85,7 @@ Message:  1011
 
 Message:  1012
 %qdt:
- _vamp_ of ___vamp_
+ _vamp_ of ___vamphouse_
  has given me a letter, written
  by a _daedra_ of
  ___mondung_, insulting
@@ -93,7 +94,7 @@ Message:  1012
  make this _daedra_ eat
  %g3 words. I have =queston_ days to
  do this and return to
- __vamp_.
+ __vamphouse_.
 
 Message:  1013
 Blood Sponge,
@@ -121,7 +122,7 @@ Message:  1014
  I have received a letter from
  _vamp_ of %vam, asking for my
  immediate presence in a place
- called __vamp_ in ___vamp_.
+ called __vamphouse_ in ___vamphouse_.
 
 Message:  1015
 <ce>                        Welcome to ___mondung_,
@@ -185,7 +186,7 @@ Message:  1021
 --        =daedroth_ occurs 1 time.
 --         =queston_ occurs 2 times.
 --       ___mondung_ occurs 11 times.
---          ___vamp_ occurs 12 times.
+--          ___vamphouse_ occurs 12 times.
 --          _daedra_ occurs 4 times.
 --             _gem_ occurs 1 time.
 --            _vamp_ occurs 8 times.
@@ -199,6 +200,7 @@ Person _vamp_ factiontype Vampire_Clan male
 Person _daedra_ face 1 factiontype Daedra
 
 Place _mondung_ remote dungeon7
+Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 
@@ -209,6 +211,7 @@ Foe _daedroth_ is Daedroth
 	start timer _queston_ 
 	_letter_ used do _readletter_ 
 	give pc _letter_ notify 1021 
+	place npc _vamp_ at _vamphouse_
 
 _queston_ task:
 	end quest 

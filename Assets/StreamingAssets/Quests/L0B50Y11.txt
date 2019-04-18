@@ -191,7 +191,7 @@ _S.01_ task:
 	place foe _home_ at _house_ 
 
 _S.02_ task:
-	daily from 19:01 to 24:00 
+	daily from 19:01 to 23:59 
 	pc at _inn_ set _S.05_ 
 	cast Shield spell on _home_ 
 	place foe _home_ at _inn_ 

@@ -180,7 +180,6 @@ _S.03_ task:
 _S.04_ task:
 	killed 1 _target_ saying 1014 
 
-variable _reward_
 variable _S.06_
 _clearclick_ task:
 	when _qgclicked_ and not _S.04_ 

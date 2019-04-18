@@ -241,7 +241,7 @@ _S.05_ task:
 	when _S.04_ and not _S.03_ 
 	log 1021 step 1 
 	say 1041 
-	place foe _tiger_ at _newdung_ 
+	remove foe _tiger_
 	unset _S.01_ _S.04_ 
 
 _S.06_ task:

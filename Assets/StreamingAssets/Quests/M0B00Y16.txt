@@ -199,9 +199,9 @@ _S.09_ task:
 
 _S.10_ task:
 	clicked npc _villager_ 
-	prompt 1040 yes yes no _no_ 
+	prompt 1040 yes _yes_ no _no_ 
 
-yes task:
+_yes_ task:
 	pc at _store_ set _S.13_ 
 	log 1021 step 1 
 	hide npc _villager_ 
@@ -219,7 +219,7 @@ _S.13_ task:
 	place npc _villager_ at _store_ 
 
 _S.14_ task:
-	when yes and not _S.13_ and _qtime_ 
+	when _yes_ and not _S.13_ and _qtime_ 
 	say 1042 
 
 _S.15_ task:

@@ -4,6 +4,7 @@
 -- Questor: vampire
 -- Repute: 0
 -- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 17
 Quest: P0B00L04
 -- Message panels
@@ -100,8 +101,8 @@ QuestorPostfailure:  [1009]
 Error: Questtext 1009 Called
 
 QuestLogEntry:  [1010]
-                     __vamp_
-                      ___vamp_
+                     __vamphouse_
+                      ___vamphouse_
  
  
  My Dear %pcn,
@@ -131,8 +132,8 @@ Message:  1012
 %qdt:
  _vamp_ of %vam sent
  me a letter, asking for my
- immediate presence in ___vamp_
- at a place called __vamp_.
+ immediate presence in ___vamphouse_
+ at a place called __vamphouse_.
 
 Message:  1013
 <ce>              Ah, good evening to you, blood of my blood.
@@ -162,7 +163,7 @@ Message:  1014
  vampire I created. I have
  =queston_ nights to do
  this duty and report back to
- ___vamp_.
+ ___vamphouse_.
 
 Message:  1015
 <ce>                     Better not spare that rod, my
@@ -203,7 +204,7 @@ Message:  1016
 --         =queston_ occurs 2 times.
 --         =vampire_ occurs 5 times.
 --       ___mondung_ occurs 3 times.
---          ___vamp_ occurs 15 times.
+--          ___vamphouse_ occurs 15 times.
 
 QBN:
 Item _letter_ letter used 1010
@@ -211,6 +212,7 @@ Item _letter_ letter used 1010
 Person _vamp_ factiontype Vampire_Clan male
 
 Place _mondung_ remote dungeon
+Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 Clock _S.05_ 00:00 0 flag 17 range 1 4
@@ -223,6 +225,7 @@ Foe _vampire_ is Vampire
 	have _letter_ set _S.08_ 
 	give pc _letter_ notify 1011 
 	place foe _vampire_ at _mondung_ 
+	place npc _vamp_ at _vamphouse_
 
 _vampclicked_ task:
 	clicked npc _vamp_ 

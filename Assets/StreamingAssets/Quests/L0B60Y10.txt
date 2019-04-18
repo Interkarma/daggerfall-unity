@@ -119,10 +119,6 @@ _pcgetsgold_ task:
 _qgclicked_ task:
 	clicked npc _questgiver_ 
 
-_clearclick_ task:
-               when _qgclicked_ and not _S.02_
-               clear _qgclicked_ _clearclick_
-
 _S.02_ task:
 	killed 1 _F.00_ saying 1021 
 	killed 1 _F.03_ saying 1021 

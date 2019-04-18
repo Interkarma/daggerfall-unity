@@ -4,6 +4,7 @@
 -- Questor: witch
 -- Repute: 0
 -- QuestId: 6
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: Q0C00Y06
 -- Message panels
@@ -117,7 +118,7 @@ Item _reward_ magic_item
 
 Person _witch_ face 44 group Questor anyInfo 1011 rumors 1012
 
-Place __mondung_ remote dungeon8
+Place _mondung_ remote dungeon8
 
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
 
@@ -125,9 +126,9 @@ Foe _vamprival_ is Ancient_vampire
 
 --	Quest start-up:
 	start timer _1stparton_ 
-	reveal __mondung_ 
+	reveal _mondung_ 
 	log 1015 step 0 
-	place foe _vamprival_ at __mondung_ 
+	place foe _vamprival_ at _mondung_ 
 
 falseAide0 task:
 	when _vampclicked_ and _S.01_ 
@@ -141,8 +142,9 @@ _S.01_ task:
 _vampclicked_ task:
 	clicked npc _witch_ 
 
-until _vampclicked_ performed:
+_clearclick_ task:
 	when _vampclicked_ and not _S.01_ 
+	clear _vampclicked_ _clearclick_
 
 _1stparton_ task:
 	end quest 

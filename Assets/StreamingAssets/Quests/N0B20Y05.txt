@@ -151,4 +151,7 @@ _1stparton_ task:
 	end quest 
 
 variable _2ndparton_
-variable _clearclick_
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 

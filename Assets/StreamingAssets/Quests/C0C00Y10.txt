@@ -183,7 +183,7 @@ _S.01_ task:
 	say 1025 
 
 _S.02_ task:
-	end quest saying RumorsPostfailure 
+	end quest saying 1006
 
 _S.03_ task:
 	clicked npc _cousin_ 

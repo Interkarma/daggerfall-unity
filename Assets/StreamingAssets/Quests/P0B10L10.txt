@@ -4,6 +4,7 @@
 -- Questor: vampire
 -- Repute: 10
 -- QuestId: 10
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 18
 Quest: P0B10L10
 -- Message panels
@@ -48,8 +49,8 @@ QuestorPostfailure:  [1009]
 Error: Questtext 1009 Called.
 
 QuestLogEntry:  [1010]
-                    __vamp_
-                     ___vamp_
+                    __vamphouse_
+                     ___vamphouse_
  
  Dear %pcn,
  
@@ -67,8 +68,8 @@ Message:  1011
  a letter from _vamp_,
  a vampire of %vam urgently
  requesting my presence in
- ___vamp_ at a
- place called __vamp_.
+ ___vamphouse_ at a
+ place called __vamphouse_.
 
 Message:  1012
 <ce>                Thank you for coming so promptly. There
@@ -131,9 +132,9 @@ Message:  1017
 --            =mage_ occurs 8 times.
 --         =queston_ occurs 4 times.
 --           =vamp2_ occurs 4 times.
---          ___vamp_ occurs 5 times.
+--          ___vamphouse_ occurs 5 times.
 --          __vamp2_ occurs 3 times.
---           __vamp_ occurs 3 times.
+--           __vamphouse_ occurs 3 times.
 --           _vamp2_ occurs 2 times.
 --            _vamp_ occurs 9 times.
 
@@ -143,6 +144,7 @@ Item _letter_ letter used 1010
 Person _vamp_ factiontype Vampire_Clan male
 Person _vamp2_ factiontype Vampire_Clan female
 
+Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 1 range 1 2
 
@@ -194,7 +196,7 @@ _S.08_ task:
 _readletter_ task:
 	add dialog for person _vamp_ 
 	log 1011 step 0 
-	create npc _vamp_ 
+	place npc _vamp_ at _vamphouse_
 
 _S.10_ task:
 	start timer _queston_ 

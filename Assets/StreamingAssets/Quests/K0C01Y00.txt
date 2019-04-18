@@ -121,7 +121,7 @@ Message:  1013
  freelancers.
  
  
-<ce>                          -- The Thieves Guild
+<ce>                          The Thieves Guild
 
 Message:  1015
 <ce>                     A nondescript fellow slips a

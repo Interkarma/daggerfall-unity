@@ -180,7 +180,5 @@ _S.06_ task:
 	when _shortdelay_ and not _S.02_ 
 	say 1040 
 
-variable _S.07_
-_S.08_ task:
-	when _qtime_ and _S.07_ 
+_S.07_ task:
 	say 1015 

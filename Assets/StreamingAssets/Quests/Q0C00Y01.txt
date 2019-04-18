@@ -4,6 +4,7 @@
 -- Questor: witch
 -- Repute: 0
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: Q0C00Y01
 -- Message panels
@@ -11,7 +12,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                      We would use thee to find a
-<ce>                  a perfidious document circulated by
+<ce>                  a perfidious _document_ circulated by
 <ce>                  our enemies in an effort to suppress
 <ce>                 our coven. I know wherein this packet
 <ce>                  of printed lies has been placed, but
@@ -26,19 +27,19 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                   Wilt thou? Then you will have our
-<ce>                most unconfuted gratitude. The document
+<ce>                most unconfuted gratitude. The _document_
 <ce>                    lies in a temple, here in %reg,
 <ce>                      in a town called __temple_.
 <ce>                      _temple_ keeps it somewhere,
 <ce>                perhaps behind locked doors, guarded by
 <ce>                  a _guardian_ of unquestioned power.
-<ce>                If thou wilt bring the document here, to
+<ce>                If thou wilt bring the _document_ here, to
 <ce>                   me, I will give to thee a _mitem_
 <ce>                of the coven's manufacture. Return in no
 <ce>                       later than =queston_ days.
 
 QuestComplete:  [1004]
-<ce>                  Ah, the accursed document. Thou art
+<ce>                  Ah, the accursed _document_. Thou art
 <ce>                 to be commended for thy service to our
 <ce>                     sisterhood, %pct. Here is the
 <ce>                        _mitem_ I promised thee.
@@ -58,7 +59,7 @@ QuestorPostsuccess:  [1008]
 Art thou pleased with thy _mitem_, %pcf? Thou surely didst deserve it.
 
 QuestorPostfailure:  [1009]
-<ce>                      The accursed document hath
+<ce>                      The accursed _document_ hath
 <ce>                    gone to the Imperial City to be
 <ce>                      reproduced for the ignorant
 <ce>                           masses, %pcf. Thou
@@ -67,14 +68,14 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 %qdt:
- I have agreed to get a document
+ I have agreed to get a _document_
  about ==qgiver_ from _temple_
  in __temple_ and return with it
- in =queston_ days or less. The document
+ in =queston_ days or less. The _document_
  will likely be guarded by a _guardian_.
 
 Message:  1011
-<ce>                    This is apparently the document
+<ce>                    This is apparently the _document_
 <ce>                         that ==qgiver_ wanted.
 
 Message:  1012
@@ -119,7 +120,7 @@ Message:  1013
 --          _temple_ occurs 2 times.
 
 QBN:
-Item document letter used 1012
+Item _document_ letter used 1012
 Item _mitem_ magic_item
 
 Person _qgiver_ group Questor male
@@ -132,7 +133,7 @@ Clock _queston_ 00:00 0 flag 17 range 0 2
 Foe _guardian_ is Spellsword
 
 --	Quest start-up:
-	place item document at _temple_ 
+	place item _document_ at _temple_ 
 	dialog link for person _daedra_ 
 	start timer _queston_ 
 	log 1010 step 0 
@@ -141,7 +142,7 @@ _queston_ task:
 	end quest 
 
 _S.01_ task:
-	clicked item document 
+	clicked item _document_ 
 	create foe _guardian_ every 1 minutes 1 times with 100% success 
 	say 1011 
 
@@ -150,6 +151,6 @@ _S.02_ task:
 	say 1013 
 
 _reward_ task:
-	toting document and _qgiver_ clicked 
+	toting _document_ and _qgiver_ clicked 
 	give pc _mitem_ 
 	end quest 

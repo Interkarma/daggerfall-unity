@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 17
 Quest: K0C00Y00
 -- Message panels
@@ -196,7 +197,6 @@ _S.04_ task:
 	create foe _F.03_ every 9 minutes 1 times with 10% success 
 
 _S.05_ task:
-	say nothing 
 	give pc letter10 notify 1013 
 
 variable _S.06_

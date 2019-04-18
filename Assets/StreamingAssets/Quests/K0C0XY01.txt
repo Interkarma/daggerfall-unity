@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0X
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 100
 Quest: K0C0XY01
 -- Message panels
@@ -140,18 +141,6 @@ Message:  1020
  with a clan feather from one of the leaders in
  =2mondung_ days for a reward of _reward_ gold pieces.
 
-Message:  1030
-1 harpie dead
-
-Message:  1031
-2 harpies dead
-
-Message:  1032
-3 harpies dead
-
-Message:  1033
-4 harpies dead
-
 Message:  1040
 <ce>                I need some proof before I can pay you.
 
@@ -182,7 +171,7 @@ Message:  1099
 QBN:
 Item _item_ book2
 Item _reward_ gold
-Item clanfeather1 harpy_feather anyInfo 1030
+Item _clanfeather1_ harpy_feather anyInfo 1030
 Item clanfeather2 harpy_feather anyInfo 1031
 Item clanfeather3 harpy_feather anyInfo 1032
 Item clanfeather4 harpy_feather anyInfo 1032
@@ -206,17 +195,18 @@ Foe _F.01_ is Harpy
 	start timer _S.05_ 
 	reveal _mondung_ 
 	log 1020 step 0 
-	give item clanfeather1 to _F.01_ 
+	give item _clanfeather1_ to _F.01_ 
 	pc at _mondung_ set _S.08_ 
 	letter26 used do _S.15_ 
-	place foe _F.01_ at _mondung_ 
+	place foe _F.01_ at _mondung_
+	have _clanfeather1_ set _S.14_
 
 _2mondung_ task:
 	end quest 
 
 variable _pcgetsgold_
 _S.02_ task:
-	toting clanfeather1 and _qgiver_ clicked 
+	toting _clanfeather1_ and _qgiver_ clicked 
 	give pc _reward_ 
 	end quest 
 
@@ -246,14 +236,15 @@ _S.08_ task:
 
 _clearclick_ task:
 	when _S.04_ and not _S.02_ 
-	clear _S.04_ _clearclick_ saying 1040 
+	clear _S.04_ _clearclick_
+	say 1040 
 
 variable _S.10_
 variable _S.11_
 variable _S.12_
 variable _S.13_
 _S.14_ task:
-	clicked item clanfeather1 say 1099 
+	say 1099 
 
 _S.15_ task:
 	place npc _contact_ at _mondung_ 

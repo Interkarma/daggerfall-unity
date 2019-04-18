@@ -29,10 +29,10 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>             You will? Then good luck to you. Here is the
 <ce>               daedra's heart. If it is not in my friend
-<ce>                 _chemist_'s hands in =1stparton_ days,
+<ce>                 _chemist_'s hands in =2alch_ days,
 <ce>                it will be too old to be used. After you
 <ce>               have delivered it, return for your reward.
-<ce>                        Good luck and godspeed.
+<ce>                        Good luck and godspeed to ___alch_.
 
 QuestFail:  [1003]
 <ce>             You don't think I know you haven't delivered
@@ -46,7 +46,7 @@ QuestComplete:  [1004]
 <ce>                  Outstanding job, %pcf. I knew those
 <ce>           daedralings wouldn't slow you down. Your superior
 <ce>            skill has been duly noted. Thank you and here is
-<ce>                    the _reward_ gold we agreed on.
+<ce>                    the =reward_ gold we agreed on.
 
 RumorsDuringQuest:  [1005]
 Dire portents have been read in the sky. The daedric stars glow bright.
@@ -80,13 +80,13 @@ QuestLogEntry:  [1010]
 <ce>               with minimal decomposition. Hurry back to
 <ce>                        _questgiver_ now, %pcf.
 <ce>                There's a lot on %g3 mind, and if you're
-<ce>                  not back in =2ndparton_ days, %g may
+<ce>                  not back in =2questgiver_ days, %g may
 <ce>                         forget you even left.
 
 Message:  1011
 _chemist_? Resembles a sort of =chemist_? I think %g's %di of here.
 <--->
-there's an alchemist named _chemist_ who works for _questgiver_ %di of here.
+There's an alchemist named _chemist_ who works for _questgiver_ %di of here.
 
 Message:  1012
 _questgiver_? Why, %g's a noble. Involved in some daedric activity lately.
@@ -106,13 +106,13 @@ Message:  1015
 %qdt: _questgiver_
  of ___questgiver_ asked me
  to bring the heart of a daedra to
- %g3 alchemist in __chemist_ of
- ___chemist_. This alchemist
+ %g3 alchemist in _alch_ of
+ ___alch_. This alchemist
  is a =chemist_ named
  _chemist_, and if I can get
  to %g2 with all the daedra trying
  to stop me, and get there within
- =1stparton_ days, _questgiver_
+ =2alch_ days, _questgiver_
  will give me my reward upon my
  return to __questgiver_.
 
@@ -136,8 +136,8 @@ Message:  1020
 --              %pcf occurs 2 times.
 --              %qdt occurs 1 time.
 --               %ra occurs 4 times.
---       =1stparton_ occurs 2 times.
---       =2ndparton_ occurs 1 time.
+--       =2alch_ occurs 2 times.
+--       =2questgiver_ occurs 1 time.
 --         =chemist_ occurs 3 times.
 --    ___questgiver_ occurs 1 time.
 --        __chemist_ occurs 1 time.
@@ -154,19 +154,21 @@ Person _questgiver_ face 112 group Questor anyInfo 1012
 Person _chemist_ group Chemist female anyInfo 1011
 Person _dummydaedra_ face 102 factiontype Daedra
 
+Place _alch_ remote apothecary
 
-Clock _1stparton_ 00:00 0 flag 2 range 1 4
-Clock _2ndparton_ 00:00 0 flag 2 range 1 4
+Clock _2alch_ 00:00 0 flag 1 range 0 2
+Clock _2questgiver_ 00:00 0 flag 1 range 0 2
 
 Foe _daedra_ is Daedroth
 
 --	Quest start-up:
-	start timer _1stparton_ 
+	start timer _2alch_ 
 	log 1015 step 0 
 	get item _item_ 
+	place npc _chemist_ at _alch_
 
-variable _1stparton_
-_2ndparton_ task:
+variable _2alch_
+_2questgiver_ task:
 	change repute with _questgiver_ by -30 
 	end quest 
 
@@ -177,7 +179,7 @@ _pcgetsgold_ task:
 
 _npcclicked_ task:
 	toting _item_ and _chemist_ clicked 
-	start timer _2ndparton_ 
+	start timer _2questgiver_ 
 	say 1010 
 	change repute with _dummydaedra_ by -20 
 
@@ -186,7 +188,7 @@ until _npcclicked_ performed:
 
 variable _qgclicked_
 _queston_ task:
-	when _1stparton_ and not _npcclicked_ 
+	when _2alch_ and not _npcclicked_ 
 	make _item_ permanent 
 	change repute with _questgiver_ by -30 
 	end quest 

@@ -4,6 +4,7 @@
 -- Questor: vampire
 -- Repute: 10
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 18
 Quest: P0B10L07
 -- Message panels
@@ -46,8 +47,8 @@ QuestorPostfailure:  [1009]
 Error: Questtext 1009 Called.
 
 QuestLogEntry:  [1010]
-              __vamp_
-               ___vamp_
+              __vamphouse_
+               ___vamphouse_
  
  
  Dear %pcn,
@@ -85,8 +86,8 @@ Message:  1012
 %qdt:
  I received a letter
  from _vamp_, of
- %vam of ___vamp_. I
- am needed in __vamp_
+ %vam of ___vamphouse_. I
+ am needed in __vamphouse_
  as soon as possible.
 
 Message:  1013
@@ -97,7 +98,7 @@ Message:  1013
  will of %vam. I am
  ordered not to kill %g2, just
  frighten %g2, and be back in
- ___vamp_ in =queston_ days.
+ ___vamphouse_ in =queston_ days.
 
 Message:  1014
 <ce>                         Sweet %god, tell %vam
@@ -145,7 +146,7 @@ Message:  1017
 --              %vam occurs 7 times.
 --         =queston_ occurs 14 times.
 --       ___mondung_ occurs 2 times.
---          ___vamp_ occurs 9 times.
+--          ___vamphouse_ occurs 9 times.
 --         _jewelry_ occurs 1 time.
 --          _knight_ occurs 12 times.
 --            _vamp_ occurs 5 times.
@@ -158,6 +159,7 @@ Person _vamp_ factiontype Vampire_Clan male
 Person _knight_ face 69 factiontype Knightly_Guard
 
 Place _mondung_ remote dungeon2
+Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 
@@ -188,7 +190,7 @@ _S.03_ task:
 _S.04_ task:
 	injured _F.00_ 
 	say 1014 
-	restrain foe _F.00_ task _S.04_ 
+	restrain foe _F.00_
 
 _S.05_ task:
 	killed 1 _F.00_ 
@@ -208,7 +210,7 @@ _S.07_ task:
 _readletter_ task:
 	add dialog for location _mondung_ person _vamp_ 
 	log 1012 step 0 
-	create npc _vamp_ 
+	place npc _vamp_ at _vamphouse_
 
 _S.09_ task:
 	start timer _queston_ 

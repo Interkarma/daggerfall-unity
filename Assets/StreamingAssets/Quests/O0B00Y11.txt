@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 64
 Quest: O0B00Y11
 -- Message panels
@@ -165,7 +166,7 @@ Place _safehouse_ remote house3
 
 Clock _time_ 00:00 0 flag 1 range 0 2
 Clock _S.01_ 2.00:00 0 flag 1 range 0 1
-Clock _delay_ 01:00 0 flag 1 range 0 1
+Clock _delay_ 01:00
 
 Foe _guard_ is Rogue
 Foe _posse_ is 3 Archer
@@ -237,7 +238,7 @@ _S.13_ task:
 	injured _posse_ 
 	have _heist_ set _S.18_ 
 
-yes task:
+_yes_ task:
 	give item _heist_ to _posse_ 
 	say 1052 
 	restrain foe _posse_ 
@@ -252,7 +253,7 @@ _S.16_ task:
 
 _S.17_ task:
 	when _S.13_ and not _S.08_ and _S.18_ 
-	prompt 1062 yes yes no _no_ 
+	prompt 1062 yes _yes_ no _no_ 
 
 variable _S.18_
 _S.19_ task:

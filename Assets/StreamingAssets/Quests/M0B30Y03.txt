@@ -32,8 +32,8 @@ AcceptQuest:  [1002]
 <ce>                  your reward. I don't know how long
 <ce>                that thing's gonna be around, so you're
 <ce>                   gonna want to move your ass. And
-<ce>                      listen to me on this, %pcf
-<ce>                 -- go prepared for a hell of a fight.
+<ce>                      listen to me on this, %pcf --
+<ce>                 go prepared for a hell of a fight.
 
 QuestFail:  [1003]
 <ce>                   Are you waiting for that Daedroth

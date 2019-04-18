@@ -4,6 +4,7 @@
 -- Questor: fighter
 -- Repute: 21
 -- QuestId: 19
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 72
 Quest: M0B21Y19
 -- Message panels
@@ -218,8 +219,7 @@ Foe _F.02_ is 4 Assassin
 	start timer _qtime_ 
 	log 1020 step 0 
 	pc at _victimhouse_ set _S.05_ 
-	_note_ used do _readnote_ 
-	create npc _victim_ at _victimhouse_ 
+	_note_ used do _readnote_
 	place npc _victim_ at _victimhouse_ 
 
 variable _qtime_
@@ -268,7 +268,7 @@ _S.08_ task:
 	create foe _F.02_ every 1 minutes 1 times with 100% success 
 	say 1051 
 	add _daughter_ face 
-	place npc _daughter_ at aide 
+	hide npc _daughter_
 
 _readletter_ task:
 	log 1022 step 2 
@@ -286,8 +286,7 @@ _S.13_ task:
 	pc at _safehouse_ set _S.14_ 
 	when _S.08_ and not _S.12_ 
 	log 1023 step 3 
-	say 1052 
-	create npc at _safehouse_ 
+	say 1052
 
 _S.14_ task:
 	give pc _reward_ 

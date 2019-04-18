@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: O0B00Y01
 -- Message panels
@@ -182,9 +183,9 @@ variable _pchasitem1_
 variable _pchasitem2_
 _S.06_ task:
 	injured _F.01_ 
-	prompt 1020 yes yes no _no_ 
+	prompt 1020 yes _yes_ no _no_ 
 
-yes task:
+_yes_ task:
 	take _weapons_ from pc saying 1023 
 	change repute with _questgiver_ by -20 
 	restrain foe _guards_ 
@@ -194,11 +195,11 @@ yes task:
 variable _no_
 _S.09_ task:
 	injured _F.02_ 
-	prompt 1021 yes yes no _no_ 
+	prompt 1021 yes _yes_ no _no_ 
 
 _greklith_ task:
 	injured _guards_ 
-	prompt 1022 yes yes no _no_ 
+	prompt 1022 yes _yes_ no _no_ 
 
 _S.11_ task:
 	change repute with _questgiver_ by -10 

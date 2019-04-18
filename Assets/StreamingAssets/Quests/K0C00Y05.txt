@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 20
 Quest: K0C00Y05
 -- Message panels
@@ -241,7 +242,6 @@ _S.03_ task:
 
 _S.04_ task:
 	letter11 used do _S.05_ 
-	say nothing 
 	give pc letter11 notify 1012 
 
 _S.05_ task:

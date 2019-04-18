@@ -199,7 +199,7 @@ _S.04_ task:
 	injured _monster_
 
 _injtalk_ task:
-                when _S.04 and not _S.01_
+    when _S.04_ and not _S.01_
 	prompt 1020 yes _yes_ no _no_ 
 
 _yes_ task:

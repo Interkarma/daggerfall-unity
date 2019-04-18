@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 10
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: A0C10Y05
 -- Message panels
@@ -168,7 +169,6 @@ Foe _F.01_ is 2 Warrior
 
 --	Quest start-up:
 	start timer _traveltime_ 
-	location _betrothedhome_ 100 27000 
 	log 1010 step 0 
 	pc at _temple_ set _S.03_ saying 1015 
 	pc at _betrothedhome_ set _S.02_ saying 1014 

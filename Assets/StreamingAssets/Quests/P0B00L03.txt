@@ -4,6 +4,7 @@
 -- Questor: vampire
 -- Repute: 0
 -- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 27
 Quest: P0B00L03
 -- Message panels
@@ -90,15 +91,15 @@ Dear %pcn,
  
     %vam have a potential
  problem I fear. Come to me in
- ___vampire_ soonest.
+ ___vamphouse_ soonest.
  
  In death,
 <ce>                               _vampire_
 
 Message:  1011
-%g's a very nice and intelligent =vampire_ at __vampire_.
+%g's a very nice and intelligent =vampire_ at __vamphouse_.
 <--->
-_vampire_ is that nice =vampire_ you'll find at __vampire_, %di of here.
+_vampire_ is that nice =vampire_ you'll find at __vamphouse_, %di of here.
 
 Message:  1012
 _vampire_ is a vampire of %vam bloodline.
@@ -124,8 +125,8 @@ Message:  1022
 Message:  1025
 %qdt:
    _vampire_ of
- ___vampire_ has summoned
- me to __vampire_
+ ___vamphouse_ has summoned
+ me to __vamphouse_
  on %vam business.
 
 Message:  1026
@@ -135,7 +136,7 @@ Message:  1026
  vampire ancient called _vampname_.
  After slaughter time, I am to take some
  very special _vampproof_ as proof of the
- kill and return back to __vampire_
+ kill and return back to __vamphouse_
  in =1stparton_ nights.
 
 
@@ -154,7 +155,7 @@ Message:  1026
 --       =1stparton_ occurs 4 times.
 --         =vampire_ occurs 2 times.
 --       ___mondung_ occurs 25 times.
---       ___vampire_ occurs 10 times.
+--       ___vamphouse_ occurs 10 times.
 --          _reward_ occurs 18 times.
 --         _vampire_ occurs 7 times.
 --        _vampname_ occurs 9 times.
@@ -169,6 +170,7 @@ Person _vampire_ face 40 factiontype Vampire_Clan anyInfo 1011 rumors 1012
 Person _vampname_ face 4 factiontype Vampire_Clan
 
 Place _mondung_ remote dungeon8
+Place _vamphouse_ remote house
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 
@@ -180,9 +182,9 @@ Foe _vamprival_ is Ancient_vampire
 	_letter_ used do _readletter_ 
 	have _letter_ set _S.12_ 
 	give pc _letter_ notify 1021 
-	create npc _vampire_ 
+	place npc _vampire_ at _vamphouse_
 
-falseAide0 task:
+_falseAide0_ task:
 	toting _vampproof_ and _vampire_ clicked 
 	give pc _reward_ 
 	end quest 
@@ -192,7 +194,8 @@ _S.02_ task:
 	killed 1 _vamprival_ saying 1022 
 
 _vampclicked_ task:
-	clicked npc _vampire_ say AcceptQuest 
+	clicked npc _vampire_
+	say 1002
 	reveal _mondung_
 	log 1026 step 1 
 

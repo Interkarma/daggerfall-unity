@@ -45,20 +45,20 @@ Message:  1020
  destroy a rebel mage, who currently
  resides in ___rebelhouse_.  Once I
  have disposed of this mage, _rebel_,
- I am to report back to _questgiver_ of
- ___questgiver_'s Mages Guild.
+ I am to report back to _qgiver_ of
+ ___qgiver_'s Mages Guild.
  I have =qtime_ days.
 
 Message:  1021
 %qdt:
  I agreed to spare _rebel_'s life.
- %g said I should just tell _questgiver_
+ %g said I should just tell _qgiver_
  that I found no sign of _rebel_ in 
  ___rebelhouse_, except for a letter which
  %g gave me.
 
 Message:  1030
-<ce>                   So, _questgiver_ has sent another
+<ce>                   So, _qgiver_ has sent another
 <ce>                  of %g3 lackeys to bring me to heel.
 <ce>                 The old women who run the Mages Guild
 <ce>               have no sense of adventure, take no risks,
@@ -72,7 +72,7 @@ Message:  1030
 <ce>                       and we will defy them all!
 
 Message:  1031
-<ce>                Wonderful!  Just tell old _questgiver_
+<ce>                Wonderful!  Just tell old _qgiver_
 <ce>               that I was not here, but left this letter
 <ce>                  for %g2.  I must depart, but I will
 <ce>                  contact you as soon as I can cook us
@@ -83,7 +83,7 @@ Message:  1032
 <ce>               the hard way.  Defend yourself, mageling!
 
 Message:  1040
-Dear _questgiver_,
+Dear _qgiver_,
  
    So sorry I missed you.  I would love
  to catch up on old times with you. Do you
@@ -129,7 +129,7 @@ Message:  1051
 <ce>              my point.  We could have such fun together!
 
 Message:  1052
-<ce>               _questgiver_ has taught you persistence,
+<ce>               _qgiver_ has taught you persistence,
 <ce>                at least.  But why remain a slave to the
 <ce>                rules and regulations of the hidebound?
 <ce>                  Join my merry band of Guild defiers!
@@ -147,7 +147,7 @@ Message:  1061
 <ce>                          Yoo-hoo, over here!
 
 Message:  1062
-<ce>               Did _questgiver_ forget to tell you about
+<ce>               Did _qgiver_ forget to tell you about
 <ce>               my skill in magicka when %g was preaching
 <ce>                about my disloyalty and insubordination?
 
@@ -167,9 +167,9 @@ Message:  1063
 --           =mage1_ occurs 1 time.
 --           =mage3_ occurs 1 time.
 --           =qtime_ occurs 4 times.
---    ___questgiver_ occurs 1 time.
+--    ___qgiver_ occurs 1 time.
 --     __rebelhouse_ occurs 3 times.
---      _questgiver_ occurs 8 times.
+--      _qgiver_ occurs 8 times.
 --           _rebel_ occurs 6 times.
 --          _reward_ occurs 1 time.
 
@@ -177,7 +177,7 @@ QBN:
 Item _letter_ letter used 1040
 Item _reward_ magic_item
 
-Person _rebel_ face 1 named Baltham_Greyman male
+Person _rebel_ named Baltham_Greyman
 Person _qgiver_ group Questor male
 
 Place aide remote dungeon
@@ -206,7 +206,7 @@ _qtime_ task:
 _S.01_ task:
 	clicked npc _rebel_ 
 	prompt 1030 yes _S.02_ no _S.03_ 
-	place npc _rebel_ at aide 
+	hide npc _rebel_
 
 _qgclicked_ task:
                clicked npc _qgiver_
@@ -220,35 +220,39 @@ _S.02_ task:
 	log 1021 step 1 
 	get item _letter_ 
 	say 1031 
-	place foe _mage2_ at aide 
-	place foe _F.04_ at aide 
-	place foe _mage1_ at aide 
-	place foe _mage4_ at aide 
-	place foe _mage3_ at aide 
+	remove foe _mage2_
+	remove foe _F.04_
+	remove foe _mage1_
+	remove foe _mage4_
+	remove foe _mage3_
 
 _S.03_ task:
-	start timer _S.14_ 
+	start timer _S.04_ 
 	say 1032 
-                hide npc _rebel_
+    hide npc _rebel_
 	place foe _mage1_ at _rebelhouse_ 
 	cast Spell_Reflection spell on _mage1_ 
 
 _S.04_ task:
 	pc at _rebelhouse_ set _S.19_ 
-	place foe _mage1_ at aide saying 1060 
+	place foe _mage1_ at aide
+	say 1060 
 
 _S.05_ task:
-	create foe _mage3_ every 1 minutes 1 times with 100% success msg 1061 
+	create foe _mage3_ every 1 minutes 1 times with 100% success
+	say 1061 
 	start timer _S.06_ 
-	place foe _mage2_ at aide 
+	remove foe _mage2_
 
 _S.06_ task:
-	create foe _mage4_ every 1 minutes 1 times with 100% success msg 1062 
+	create foe _mage4_ every 1 minutes 1 times with 100% success
+	say 1062 
 	start timer _healer_ 
 	place foe _mage3_ at aide 
 
 _healer_ task:
-	create foe _F.04_ every 1 minutes 1 times with 100% success msg 1063 
+	create foe _F.04_ every 1 minutes 1 times with 100% success
+	say 1063 
 	place foe _mage4_ at aide 
 
 _S.08_ task:
@@ -263,7 +267,7 @@ _S.09_ task:
 	stop timer _healer_ 
 	stop timer _S.06_ 
 	stop timer _S.05_ 
-	stop timer _S.14_ 
+	stop timer _S.04_ 
 
 _S.10_ task:
 	injured _mage1_ 
@@ -279,7 +283,7 @@ _S.12_ task:
 	prompt 1051 yes _S.02_ no _S.03_ 
 	cast Heal spell on _mage3_ 
 
-boar task:
+_S.13_ task:
 	injured _mage4_ 
 	prompt 1052 yes _S.02_ no _S.03_ 
 
@@ -288,7 +292,7 @@ _S.14_ task:
 	prompt 1053 yes _S.02_ no _S.03_ 
 
 _S.15_ task:
-	toting _letter_ and _questgiver_ clicked 
+	toting _letter_ and _qgiver_ clicked 
 	say 1041 
 
 _success_ task:
