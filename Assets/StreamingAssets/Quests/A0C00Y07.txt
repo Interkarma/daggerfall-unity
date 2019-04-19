@@ -121,6 +121,9 @@ _oneday_ task:
 	end quest 
 
 _inside_ task:
+	start task _pickspawn_
+
+_pickspawn_ task:
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
 
 _slain_ task:
