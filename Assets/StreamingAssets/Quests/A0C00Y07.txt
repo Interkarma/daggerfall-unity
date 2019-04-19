@@ -150,7 +150,7 @@ _spawn3_ task:
 
 variable _S.07_
 _spawn4_ task:
-	when _inside_ and _S.06_ and not _slain_
+	when _inside_ and _S.07_ and not _slain_
 	create foe _spiders_ every 3 minutes indefinitely with 25% success 
 
 _questdone_ task:
