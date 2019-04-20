@@ -201,6 +201,23 @@ namespace DaggerfallWorkshop
             return true;
         }
 
+        public bool FindClosestInteriorDoor(Vector3 playerPos, out Vector3 closestDoorPositionOut, out Vector3 closestDoorNormalOut)
+        {
+            closestDoorPositionOut = closestDoorNormalOut = Vector3.zero;
+            DaggerfallStaticDoors interiorDoors = GetComponent<DaggerfallStaticDoors>();
+            if (!interiorDoors)
+                return false;
+
+            int doorIndex;
+            if (interiorDoors.FindClosestDoorToPlayer(playerPos, -1, out closestDoorPositionOut, out doorIndex))
+            {
+                closestDoorNormalOut = interiorDoors.GetDoorNormal(doorIndex);
+                return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Finds closest entrance marker to door position.
         /// </summary>

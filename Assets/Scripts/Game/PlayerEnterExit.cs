@@ -645,13 +645,26 @@ namespace DaggerfallWorkshop.Game
             interior.transform.position = door.ownerPosition + (Vector3)door.buildingMatrix.GetColumn(3);
             interior.transform.rotation = GameObjectHelper.QuaternionFromMatrix(door.buildingMatrix);
 
-            // Position player above closest enter marker
-            Vector3 marker;
-            if (!interior.FindClosestEnterMarker(transform.position, out marker))
+            // Position player in front of closest interior door
+            Vector3 landingPosition = Vector3.zero;
+            Vector3 foundDoorNormal = Vector3.zero;
+            if (interior.FindClosestInteriorDoor(transform.position, out landingPosition, out foundDoorNormal))
             {
-                // Could not find an enter marker, probably not a valid interior
-                Destroy(newInterior);
-                return;
+                landingPosition += foundDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
+            }
+            else
+            {
+                // If no door found position player above closest enter marker
+                if (interior.FindClosestEnterMarker(transform.position, out landingPosition))
+                {
+                    landingPosition += Vector3.up * (controller.height * 0.6f);
+                }
+                else
+                {
+                    // Could not find an door or enter marker, probably not a valid interior
+                    Destroy(newInterior);
+                    return;
+                }
             }
 
             // Enumerate all exterior doors belonging to this building
@@ -680,9 +693,8 @@ namespace DaggerfallWorkshop.Game
             buildingType = interior.BuildingData.BuildingType;
             factionID = interior.BuildingData.FactionId;
 
-            // Set player to marker position
-            // TODO: Find closest door for player facing
-            transform.position = marker + Vector3.up * (controller.height * 0.6f);
+            // Set player to landng position
+            transform.position = landingPosition;
             SetStanding();
 
             EnableInteriorParent();
