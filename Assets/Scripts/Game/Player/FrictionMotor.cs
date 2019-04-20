@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop.Game
         void HeadDipHandling()
         {
             const float raySampleDistance = 0.5f;
-            const float clearanceAdjustment = -0.25f;
+            const float clearanceAdjustment = -0.28f;
 
             if (!heightChanger || playerMotor.IsCrouching)
                 return;
