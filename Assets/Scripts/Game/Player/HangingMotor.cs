@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game
 
             //bool touchingSides = (playerMotor.CollisionFlags & CollisionFlags.Sides) != 0;
             bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
-            IsWithinHangingDistance = (scanner.HeadHitDistance > halfHeight - 0.17f && scanner.HeadHitDistance < halfHeight - 0.09f);
+            IsWithinHangingDistance = touchingAbove;//(scanner.HeadHitDistance > halfHeight - 0.17f && scanner.HeadHitDistance < halfHeight - 0.09f);
 
             bool inputAbortCondition = (InputManager.Instance.HasAction(InputManager.Actions.Crouch)
                                         || InputManager.Instance.HasAction(InputManager.Actions.Jump));
