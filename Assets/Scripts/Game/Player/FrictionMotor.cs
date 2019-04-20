@@ -126,7 +126,6 @@ namespace DaggerfallWorkshop.Game
             //  -Works best when player is standing as spherecast test has more clearance
             //  -Enemies will still become stuck as their motor does not have this handling
             const float stuckMovementThreshold = 0.25f;
-            const float stuckSampleRadius = 0.36f;
             const float stuckSampleDistance = 0.5f;
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
@@ -151,7 +150,7 @@ namespace DaggerfallWorkshop.Game
                         // But large enough not to pass through small cracks or openings the player should not traverse
                         Vector3 sampleDirection = (tryingToMoveForwards) ? myTransform.forward : -myTransform.forward;
                         Ray sampleRay = new Ray(myTransform.position, sampleDirection);
-                        if (!Physics.SphereCast(sampleRay, stuckSampleRadius, stuckSampleDistance))
+                        if (!Physics.SphereCast(sampleRay, controller.radius - 0.01f, stuckSampleDistance))
                         {
                             //Debug.LogFormat("Trying to resolve stuck for {0} frames", stuckFrameCount);
 
