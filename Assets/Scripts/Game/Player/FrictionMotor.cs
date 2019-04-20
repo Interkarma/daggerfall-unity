@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game
             //  -Works best when player is standing as spherecast test has more clearance
             //  -Enemies will still become stuck as their motor does not have this handling
             const float stuckMovementThreshold = 0.25f;
-            const float stuckSampleRadius = 0.1f;
+            const float stuckSampleRadius = 0.36f;
             const float stuckSampleDistance = 0.5f;
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
