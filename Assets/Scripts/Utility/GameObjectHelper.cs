@@ -331,6 +331,38 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
+        /// <summary>
+        /// Gets best parent for an object at spawn time.
+        /// Objects should always be placed to some child object in world rather than directly into root of scene.
+        /// </summary>
+        /// <returns>Best parent transform, or null as fallback.</returns>
+        public static Transform GetBestParent()
+        {
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            // Place in world near player depending on local area
+            if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                return playerEnterExit.Interior.transform;
+            }
+            else if (playerEnterExit.IsPlayerInsideDungeon)
+            {
+                return playerEnterExit.Dungeon.transform;
+            }
+            else if (!playerEnterExit.IsPlayerInside && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+            {
+                return GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
+            }
+            else if (!playerEnterExit.IsPlayerInside)
+            {
+                return GameManager.Instance.StreamingTarget.transform;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         #region RMB & RDB Block Helpers
 
         /// <summary>
@@ -1100,7 +1132,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Generate enemy
                 string name = string.Format("DaggerfallEnemy [{0}]", foeType.ToString());
-                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, FoeSpawner.GetBestParent(), position);
+                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, GetBestParent(), position);
                 SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
                 if (setupEnemy != null)
                 {
