@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
@@ -679,21 +680,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>DaggerfallMissile.</returns>
         public DaggerfallMissile InstantiateSpellMissile(ElementTypes elementType)
         {
+            DaggerfallMissile missile = null;
             switch (elementType)
             {
                 case ElementTypes.Cold:
-                    return Instantiate(ColdMissilePrefab);
+                    missile = Instantiate(ColdMissilePrefab);
+                    break;
                 case ElementTypes.Fire:
-                    return Instantiate(FireMissilePrefab);
+                    missile = Instantiate(FireMissilePrefab);
+                    break;
                 case ElementTypes.Poison:
-                    return Instantiate(PoisonMissilePrefab);
+                    missile = Instantiate(PoisonMissilePrefab);
+                    break;
                 case ElementTypes.Shock:
-                    return Instantiate(ShockMissilePrefab);
+                    missile = Instantiate(ShockMissilePrefab);
+                    break;
                 case ElementTypes.Magic:
-                    return Instantiate(MagicMissilePrefab);
+                    missile = Instantiate(MagicMissilePrefab);
+                    break;
                 default:
                     return null;
             }
+
+            if (missile)
+            {
+                missile.transform.parent = GameObjectHelper.GetBestParent();
+            }
+
+            return missile;
         }
 
         /// <summary>
