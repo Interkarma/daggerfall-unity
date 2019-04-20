@@ -186,8 +186,6 @@ namespace DaggerfallWorkshop.Game
                 if (isClimbing && inputAbortCondition && advancedClimbingOn)
                     WallEject = true;
 
-                isClimbing = false;
-                showClimbingModeMessage = true;
                 StopClimbing();
                 releasedFromCeiling = false;
                 // Reset position for horizontal distance check and timer to wait for climbing start
@@ -268,6 +266,8 @@ namespace DaggerfallWorkshop.Game
 
         public void StopClimbing(bool fromHanging = false)
         {
+            isClimbing = false;
+            showClimbingModeMessage = true;
             climbingStartTimer = 0;
         }
 
@@ -310,16 +310,35 @@ namespace DaggerfallWorkshop.Game
         {
             if (!isClimbing)
             {
-                if (showClimbingModeMessage)
-                    DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
-                // Disable further showing of climbing mode message until current climb attempt is stopped
-                // to keep it from filling message log
-                showClimbingModeMessage = false;
                 isClimbing = true;
                 hangingMotor.CancelHanging();
                 // reset jumping in case we jumped onto the wall
                 acrobatMotor.Jumping = false;
             }
+        }
+
+        /// <summary>
+        /// Checks to see if player should actually climb this object.
+        /// </summary>
+        bool IsClimable(Transform testTransform)
+        {
+            // Must be testing something
+            if (!testTransform || !testTransform.gameObject)
+                return false;
+
+            // Do not climb moving action objects
+            // We allow action objects because sometimes action objects are just the environment (e.g. inside throne rooms)
+            GameObject go = testTransform.gameObject;
+            DaggerfallAction action = go.GetComponent<DaggerfallAction>();
+            if (action && action.IsMoving)
+                return false;
+
+            // Do not climb enemies
+            DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+            if (enemy)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -348,6 +367,20 @@ namespace DaggerfallWorkshop.Game
             Debug.DrawRay(controller.transform.position, wallDirection, Color.gray);
             if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, controller.radius + 0.1f))
             {
+                // Immediately stop climbing if object not valid
+                if (!IsClimable(hit.transform))
+                {
+                    StopClimbing();
+                    return;
+                }
+
+                // Show climbing message then disable further showing of climbing mode message until current climb attempt is stopped
+                if (showClimbingModeMessage)
+                {
+                    DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
+                    showClimbingModeMessage = false;
+                }
+
                 // Get the negative horizontal component of the hitnormal, so gabled roofs don't mess it up
                 myLedgeDirection = Vector3.ProjectOnPlane(-hit.normal, Vector3.up).normalized;
 
