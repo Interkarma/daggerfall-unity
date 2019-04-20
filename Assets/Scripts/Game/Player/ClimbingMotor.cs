@@ -38,6 +38,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private Vector3 myLedgeDirection = Vector3.zero;
         /// <summary>
+        /// The current direction to the wall player is climbing
+        /// </summary>
+        private Vector3 wallDirection;
+        /// <summary>
         /// the adjacent wall's horizontal ledge direction, opposite of its normal
         /// </summary>
         private Vector3 adjacentLedgeDirection = Vector3.zero;
@@ -329,8 +333,6 @@ namespace DaggerfallWorkshop.Game
             Vector3 p2 = p1 + Vector3.up * controller.height;
 
             // decide what direction to look towards to get the ledge direction vector
-            Vector3 wallDirection;
-
             if (moveScanner.AboveBehindWall != null)
                 moveScanner.CutAndPasteAboveBehindWallTo(ref myLedgeDirection);
             else if (moveScanner.BelowBehindWall != null)
@@ -344,7 +346,7 @@ namespace DaggerfallWorkshop.Game
                 wallDirection = -cornerNormalRay.direction;
             // Cast character controller shape forward to see if it is about to hit anything.
             Debug.DrawRay(controller.transform.position, wallDirection, Color.gray);
-            if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, 0.20f))
+            if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, controller.radius + 0.1f))
             {
                 // Get the negative horizontal component of the hitnormal, so gabled roofs don't mess it up
                 myLedgeDirection = Vector3.ProjectOnPlane(-hit.normal, Vector3.up).normalized;
@@ -490,12 +492,12 @@ namespace DaggerfallWorkshop.Game
                     }
                     #endregion
                     // need to add horizontal movement towards wall for collision
-                    moveDirection.x += myLedgeDirection.x * playerMotor.Speed;
-                    moveDirection.z += myLedgeDirection.z * playerMotor.Speed;
+                    moveDirection.x += wallDirection.x * playerMotor.Speed;
+                    moveDirection.z += wallDirection.z * playerMotor.Speed;
                 }
                 else // do normal climbing
                 {
-                    moveDirection = myLedgeDirection * playerMotor.Speed;
+                    moveDirection = wallDirection * playerMotor.Speed;
                     moveDirection.y = Vector3.up.y * climbScalar;
                 }  
             }
