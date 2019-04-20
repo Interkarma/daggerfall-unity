@@ -1357,7 +1357,7 @@ namespace DaggerfallWorkshop
             if (foundCollection)
             {
                 Vector3 startPosition = foundCollection.GetDoorPosition(foundIndex);
-                startPosition += foundDoorNormal * 1f;
+                startPosition += foundDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
                 RepositionPlayer(MapPixelX, MapPixelY, startPosition);
             }
             else
