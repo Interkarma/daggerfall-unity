@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game
         private ClimbingMotor climbingMotor;
         private Camera mainCamera;
         private const float controllerStandingHeight = 1.8f;
-        private const float controllerCrouchHeight = 0.45f;
+        private const float controllerCrouchHeight = 0.9f;
         private const float controllerRideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private const float controllerSwimHeight = 0.30f;
         private const float controllerSwimHorseDisplacement = 0.30f; // amount added to swim height if on horse
@@ -244,7 +244,6 @@ namespace DaggerfallWorkshop.Game
                 standingHeightAdjustment = 0;
                 float targetHeight = controllerCrouchHeight;
                 ControllerHeightChange(targetHeight - prevHeight);
-                UpdateCameraPosition(mainCamera.transform.localPosition.y + camCrouchToStandDist);
 
                 timerResetAction();
                 playerMotor.IsCrouching = true;
