@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game
         private LevitateMotor levitateMotor;
         private ClimbingMotor climbingMotor;
         private Camera mainCamera;
-        private const float controllerStandHeight = 1.78f;
+        private const float controllerStandingHeight = 1.78f;
         private const float controllerCrouchHeight = 0.45f;
         private const float controllerRideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private const float controllerSwimHeight = 0.30f;
@@ -77,6 +77,28 @@ namespace DaggerfallWorkshop.Game
         private bool controllerMounted;
         private bool controllerSink;
 
+        // Intended height of controller while standing
+        public float FixedControllerStandingHeight
+        {
+            get { return controllerStandingHeight; }
+        }
+
+        // Intended height of controller while standing plus any adjustment amount
+        public float CurrentControllerStandingHeight
+        {
+            get { return controllerStandingHeight + StandingHeightAdjustment; }
+        }
+
+        // Allows for temporary dips in controller standing height to help player clear low doorways at bottom of stairs/ramp
+        // Should only be set when required and cleared when no longer required.
+        // Does nothing if player is crouched, and crouching/uncrouching will clear this adjustment
+        float standingHeightAdjustment;
+        public float StandingHeightAdjustment
+        {
+            get { return standingHeightAdjustment; }
+            set { ChangeStandingHeightAdjustment(value); }
+        }
+
         private void Start()
         {
             playerMotor = GetComponent<PlayerMotor>();
@@ -87,10 +109,10 @@ namespace DaggerfallWorkshop.Game
             climbingMotor = GetComponent<ClimbingMotor>();
             camSwimLevel = controllerSwimHeight / 2f;
             camCrouchLevel = controllerCrouchHeight / 2f;
-            camStandLevel = controllerStandHeight / 2f;
+            camStandLevel = controllerStandingHeight / 2f;
             camRideLevel = controllerRideHeight / 2f - eyeHeight;
             //camSwimToCrouchDist = (controllerCrouchHeight - controllerSwimHeight) / 2f;
-            camCrouchToStandDist = (controllerStandHeight - controllerCrouchHeight) / 2f;
+            camCrouchToStandDist = (controllerStandingHeight - controllerCrouchHeight) / 2f;
             //camStandToRideDist = (controllerRideHeight - controllerStandHeight) / 2f;
 
             // Use event to set whether player is crouched on load
@@ -197,6 +219,18 @@ namespace DaggerfallWorkshop.Game
         }
 
         #region HeightChangerActions
+
+        void ChangeStandingHeightAdjustment(float amount)
+        {
+            if (amount == standingHeightAdjustment)
+                return;
+
+            //Debug.LogFormat("Set new standing height adjustment {0}", amount);
+
+            standingHeightAdjustment = amount;
+            ControllerHeightChange(CurrentControllerStandingHeight - FixedControllerStandingHeight);
+        }
+
         private void DoCrouch() // first lower camera, Controller height last 
         {
             float prevHeight = controller.height;
@@ -207,6 +241,7 @@ namespace DaggerfallWorkshop.Game
 
             if (camTimer >= timerMax)
             {
+                standingHeightAdjustment = 0;
                 float targetHeight = controllerCrouchHeight;
                 ControllerHeightChange(targetHeight - prevHeight);
                 UpdateCameraPosition(mainCamera.transform.localPosition.y + camCrouchToStandDist);
@@ -222,7 +257,8 @@ namespace DaggerfallWorkshop.Game
 
             if (playerMotor.IsCrouching)
             {
-                float targetHeight = controllerStandHeight;
+                standingHeightAdjustment = 0;
+                float targetHeight = CurrentControllerStandingHeight;
                 prevCamLevel = prevHeight / 2f;
                 targetCamLevel = ControllerHeightChange(targetHeight - prevHeight);
                 playerMotor.IsCrouching = false;
@@ -284,7 +320,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     prevCamLevel = camRideLevel;
-                    targetHeight = controllerStandHeight;
+                    targetHeight = CurrentControllerStandingHeight;
                 }
 
                 targetCamLevel = ControllerHeightChange(targetHeight - prevHeight);
@@ -317,7 +353,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    baseHeight = controllerStandHeight;
+                    baseHeight = CurrentControllerStandingHeight;
                 }
 
                 float height = controllerSwimHeight + displacement;
@@ -356,7 +392,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        baseHeight = controllerStandHeight;
+                        baseHeight = CurrentControllerStandingHeight;
                         prevCamLevel = camStandLevel;
                     }
                 }
@@ -448,8 +484,8 @@ namespace DaggerfallWorkshop.Game
         /// <returns></returns>
         private float GetNearbyFloat(float value)
         {
-            if (CloseEnough(value, controllerStandHeight))
-                return controllerStandHeight;
+            if (CloseEnough(value, CurrentControllerStandingHeight))
+                return CurrentControllerStandingHeight;
             else if (CloseEnough(value, controllerCrouchHeight))
                 return controllerCrouchHeight;
             else if (CloseEnough(value, controllerRideHeight))
@@ -459,7 +495,19 @@ namespace DaggerfallWorkshop.Game
             else if (CloseEnough(value, controllerSwimHeight + controllerSwimHorseDisplacement))
                 return controllerSwimHeight + controllerSwimHorseDisplacement;
 
-            return 0;
+            // Couldn't get to an exact round-off within tolerance - return a fixed value based on current state rather than simply returning 0
+            // This fixes method from simply crunching player into a tiny ball during some edge cases
+            // Could probably replace the above round-off method completely with this, but just using as an improved failover for now
+            if (playerMotor.IsRiding && playerMotor.IsSwimming)
+                return controllerSwimHeight + controllerSwimHorseDisplacement;
+            else if (playerMotor.IsRiding && !playerMotor.IsSwimming)
+                return controllerRideHeight;
+            else if (playerMotor.IsSwimming)
+                return controllerSwimHeight;
+            else if (playerMotor.IsCrouching)
+                return controllerCrouchHeight;
+            else
+                return CurrentControllerStandingHeight;
         }
 
         private bool CloseEnough(float value1, float value2, float acceptableDifference = 0.01f)
