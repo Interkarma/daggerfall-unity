@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game
         private LevitateMotor levitateMotor;
         private ClimbingMotor climbingMotor;
         private Camera mainCamera;
-        private const float controllerStandingHeight = 1.78f;
+        private const float controllerStandingHeight = 1.8f;
         private const float controllerCrouchHeight = 0.45f;
         private const float controllerRideHeight = 2.6f;   // Height of a horse plus seated rider. (1.6m + 1m)
         private const float controllerSwimHeight = 0.30f;

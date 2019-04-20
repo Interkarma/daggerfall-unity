@@ -173,14 +173,14 @@ namespace DaggerfallWorkshop.Game
         void HeadDipHandling()
         {
             const float raySampleDistance = 0.5f;
-            const float clearanceAdjustment = -0.2f;
+            const float clearanceAdjustment = -0.25f;
 
             if (!heightChanger || playerMotor.IsCrouching)
                 return;
 
             // Sample forward from very top of player's head and from eye level
             Ray headRay = new Ray(myTransform.position + new Vector3(0, heightChanger.FixedControllerStandingHeight / 2 + 0.25f, 0), myTransform.forward);
-            Ray eyeRay = new Ray(myTransform.position + new Vector3(0, heightChanger.FixedControllerStandingHeight / 2 + 0.1f, 0), myTransform.forward);
+            Ray eyeRay = new Ray(GameManager.Instance.MainCamera.transform.position, myTransform.forward);
             bool headRayHit = Physics.Raycast(headRay, raySampleDistance);
             bool eyeRayHit = Physics.Raycast(eyeRay, raySampleDistance);
 
