@@ -35,6 +35,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         void Update()
         {
+            if (!entityBehaviour || entityBehaviour.Entity == null)
+                return;
+
             bool isConcealed = (entityBehaviour && entityBehaviour.Entity.IsMagicallyConcealed);
             MakeConcealed(isConcealed);
         }
