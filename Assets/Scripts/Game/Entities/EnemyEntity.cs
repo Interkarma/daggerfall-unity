@@ -21,8 +21,6 @@ namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
     /// Implements DaggerfallEntity with properties specific to enemies.
-    /// Currently enemy setup is bridging between old "demo" components and newer "game" systems.
-    /// TODO: Migrate completely to "game" methods and simplify enemy instantiation and setup.
     /// </summary>
     public class EnemyEntity : DaggerfallEntity
     {
@@ -32,6 +30,7 @@ namespace DaggerfallWorkshop.Game.Entity
         EntityTypes entityType = EntityTypes.None;
         MobileEnemy mobileEnemy;
         bool pickpocketByPlayerAttempted = false;
+        int questFoeSpellQueueIndex = -1;
 
         // From FALL.EXE offset 0x1C0F14
         static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
@@ -72,6 +71,12 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return (pickpocketByPlayerAttempted); }
             set { pickpocketByPlayerAttempted = value; }
+        }
+
+        public int QuestFoeSpellQueueIndex
+        {
+            get { return questFoeSpellQueueIndex; }
+            set { questFoeSpellQueueIndex = value; }
         }
 
         public bool SoulTrapActive { get; set; }

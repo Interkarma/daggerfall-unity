@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
         string displayName;                 // Foe display name for quest system macros
         string typeName;                    // Foe type name for quest system macros
+        SpellReference[] spellsToCast;      // Virtual spell queue to cast on entity
 
         #endregion
 
@@ -248,6 +250,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public int killCount;
             public string displayName;
             public string typeName;
+            public SpellReference[] spellsToCast;
         }
 
         public override object GetSaveData()
@@ -261,6 +264,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.killCount = killCount;
             data.displayName = displayName;
             data.typeName = typeName;
+            data.spellsToCast = spellsToCast;
 
             return data;
         }
@@ -279,6 +283,7 @@ namespace DaggerfallWorkshop.Game.Questing
             killCount = data.killCount;
             displayName = data.displayName;
             typeName = data.typeName;
+            spellsToCast = data.spellsToCast;
         }
 
         #endregion

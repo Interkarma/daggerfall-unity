@@ -281,4 +281,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string EffectKey;                                    // Define the effect used by this enchantment
         public string CustomParam;                                  // Passed back to effect to locate/invoke enchantment settings
     }
+
+    /// <summary>
+    /// References either a classic or custom spell bundle.
+    /// Always considered to reference a custom spell bundle when CustomKey is not null or empty.
+    /// </summary>
+    [Serializable]
+    public struct SpellReference
+    {
+        public int ClassicID;                                       // Spell ID into SPELLS.STD
+        public string CustomKey;                                    // Key into custom spell bundle offers
+    }
 }
