@@ -15,11 +15,11 @@ using DaggerfallConnect.FallExe;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Regenerate health under specific conditions.
+    /// Vampiric effect at range or on strike.
     /// </summary>
-    public class RegensHealth : BaseEntityEffect
+    public class VampiricEffect : BaseEntityEffect
     {
-        public static readonly string EffectKey = EnchantmentTypes.RegensHealth.ToString();
+        public static readonly string EffectKey = EnchantmentTypes.VampiricEffect.ToString();
 
         public override void SetProperties()
         {
@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     Version = 1,
                     EffectKey = EffectKey,
-                    ClassicType = EnchantmentTypes.RegensHealth,
+                    ClassicType = EnchantmentTypes.VampiricEffect,
                     ClassicParam = (short)i,
                     PrimaryDisplayName = properties.GroupName,
                     SecondaryDisplayName = TextManager.Instance.GetText(textDatabase, classicTextKeys[i]),
@@ -59,16 +59,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         static short[] classicParamCosts =
         {
-            4000,   //all the time
-            3000,   //in sunlight
-            3000,   //in darkness
+            2000,   //at range
+            1000,   //when strikes
         };
 
         static string[] classicTextKeys =
         {
-            "allTheTime",
-            "inSunlight",
-            "inDarkness",
+            "atRange",
+            "whenStrikes",
         };
 
         #endregion
