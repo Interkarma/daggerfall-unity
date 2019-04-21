@@ -532,9 +532,7 @@ namespace DaggerfallWorkshop.Game
             if (targetPosPredictTimer != 0)
             {
                 divisor = targetPosPredictTimer;
-                targetPosPredictTimer = 0;
                 lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
-                oldLastKnownTargetPos = lastKnownTargetPos;
             }
 
             Vector3 prediction = assumedCurrentPosition + (lastPositionDiff / divisor * secondsToPredictedPos);
