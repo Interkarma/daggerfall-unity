@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game
         bool strafeLeft;
         float strafeAngle;
         int searchMult;
-        bool clearPathToShootAtPredictedPos;
+        int ignoreMaskForShooting;
 
         EnemySenses senses;
         Vector3 destination;
@@ -131,6 +131,9 @@ namespace DaggerfallWorkshop.Game
 
             // Only need to check for ability to shoot bow once.
             hasBowAttack = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
+
+            // Add things AI should ignore when checking for a clear path to shoot.
+            ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
         }
 
         void FixedUpdate()
@@ -399,8 +402,6 @@ namespace DaggerfallWorkshop.Game
                     stopDistance = attack.ClassicMeleeDistanceVsAI;
             }
 
-            clearPathToShootAtPredictedPos = false;
-
             // Set avoidObstaclesTimer to 0 if got close enough to detourDestination
             if (avoidObstaclesTimer > 0)
             {
@@ -419,7 +420,7 @@ namespace DaggerfallWorkshop.Game
                 destination = detourDestination;
             }
             // Otherwise, try to get to the combat target if there is a clear path to it
-            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (clearPathToShootAtPredictedPos && (hasBowAttack || entity.CurrentMagicka > 0)))
+            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (senses.TargetInSight && (hasBowAttack || entity.CurrentMagicka > 0)))
             {
                 destination = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
@@ -452,13 +453,13 @@ namespace DaggerfallWorkshop.Game
             float distance;
 
             // If enemy sees the target, use the distance value from EnemySenses, as this is also used for the melee attack decision and we need to be consistent with that.
-            if (clearPathToShootAtPredictedPos)
+            if (avoidObstaclesTimer == 0 && senses.TargetInSight)
                 distance = senses.DistanceToTarget;
             else
                 distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
-            if ((hasBowAttack || CanCastRangedSpell()) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if ((CanShootBow() || CanCastRangedSpell()) && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
@@ -595,29 +596,69 @@ namespace DaggerfallWorkshop.Game
             sphereCastDir2d.y = 0;
             RayCheckForObstacle(sphereCastDir2d);
             RayCheckForFall(sphereCastDir2d);
-            bool result = true;
 
             if (obstacleDetected || fallDetected)
-                result = false;
+                return false;
 
             RaycastHit hit;
-            int layerSpellMissiles = LayerMask.NameToLayer("SpellMissiles");
-            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist, layerSpellMissiles))
+            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist, ignoreMaskForShooting))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 if (hitTarget == senses.Target)
                 {
-                    clearPathToShootAtPredictedPos = true;
+                    return true;
                 }
                 else
                 {
-                    result = false;
+                    return false;
                 }
             }
-            else
-                clearPathToShootAtPredictedPos = true;
 
-            return result;
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if can shoot projectile at target.
+        /// </summary>
+        bool HasClearPathToShootProjectile(float speed, float radius)
+        {
+            // Check that there is a clear path to shoot projectile
+            Vector3 sphereCastDir = senses.PredictNextTargetPos(speed);
+            if (sphereCastDir == EnemySenses.ResetPlayerPos)
+                return false;
+
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
+
+            RaycastHit hit;
+            if (Physics.SphereCast(transform.position, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
+            {
+                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+
+                // Clear path to target
+                if (hitTarget == senses.Target)
+                    return true;
+
+                // Something in the way
+                return false;
+            }
+
+            // Clear path to predicted target position
+            return true;
+        }
+
+
+        /// <summary>
+        /// Returns true if can shoot bow at target.
+        /// </summary>
+        bool CanShootBow()
+        {
+            if (!hasBowAttack)
+                return false;
+
+            // Check that there is a clear path to shoot a spell
+            // All arrows are currently 35 speed.
+            return HasClearPathToShootProjectile(35f, 0.45f);
         }
 
         /// <summary>
@@ -651,29 +692,8 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             // Check that there is a clear path to shoot a spell
-            float spellMovementSpeed = 25; // All range spells are currently 25 speed
-            Vector3 sphereCastDir = senses.PredictNextTargetPos(spellMovementSpeed);
-            if (sphereCastDir == EnemySenses.ResetPlayerPos)
-                return false;
-
-            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
-            sphereCastDir = (sphereCastDir - transform.position).normalized;
-
-            RaycastHit hit;
-            if (Physics.SphereCast(transform.position, 0.45f, sphereCastDir, out hit, sphereCastDist))
-            {
-                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-
-                // Clear path to target
-                if (hitTarget == senses.Target)
-                    return true;
-
-                // Something in the way
-                return false;
-            }
-
-            // Clear path to predicted target position
-            return true;
+            // All range spells are currently 25 speed and 0.45f radius
+            return HasClearPathToShootProjectile(25f, 0.45f);
         }
 
         /// <summary>
