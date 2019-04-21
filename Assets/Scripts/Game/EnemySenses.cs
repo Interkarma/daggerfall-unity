@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (distanceToPlayer < 1094 * MeshReader.GlobalScale)
                 {
-                    float upperXZ = 0;
+                    float upperXZ;
                     float upperY = 0;
                     float lowerY = 0;
                     bool playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
@@ -392,14 +392,9 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    Vector3 toTarget = ResetPlayerPos;
-                    toTarget = target.transform.position - transform.position;
-
-                    if (toTarget != ResetPlayerPos)
-                    {
-                        distanceToTarget = toTarget.magnitude;
-                        directionToTarget = toTarget.normalized;
-                    }
+                    Vector3 toTarget = target.transform.position - transform.position;
+                    distanceToTarget = toTarget.magnitude;
+                    directionToTarget = toTarget.normalized;
                     targetInSight = CanSeeTarget(target);
                 }
 

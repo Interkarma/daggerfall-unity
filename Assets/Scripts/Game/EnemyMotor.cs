@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop.Game
                 destination = searchPosition;
             }
 
-                if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
+            if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
             {
                 // Ground enemies target at their own height
                 // Otherwise, their target vector aims up towards the target, which could interfere with distance-to-target calculations
@@ -449,7 +449,7 @@ namespace DaggerfallWorkshop.Game
 
             // Get direction & distance.
             var direction = (destination - transform.position).normalized;
-            float distance = 0f;
+            float distance;
 
             // If enemy sees the target, use the distance value from EnemySenses, as this is also used for the melee attack decision and we need to be consistent with that.
             if (clearPathToShootAtPredictedPos)
@@ -464,6 +464,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     StrafeDecision();
                 }
+
                 if (doStrafe && strafeTimer > 0)
                 {
                     AttemptMove(direction, moveSpeed / 4, false, true, distance);
@@ -485,8 +486,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                         // Random chance to shoot spell
-                        else if (DFRandom.rand() % 40 == 0
-                             && entityEffectManager.SetReadySpell(selectedSpell))
+                        else if (DFRandom.rand() % 40 == 0 && entityEffectManager.SetReadySpell(selectedSpell))
                         {
                             mobile.ChangeEnemyState(MobileStates.Spell);
                         }
@@ -497,7 +497,6 @@ namespace DaggerfallWorkshop.Game
 
                 return;
             }
-
 
             // Touch spells
             if (senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance
@@ -950,7 +949,6 @@ namespace DaggerfallWorkshop.Game
 
             angle = 0;
             int count = 0;
-            testMove = Vector3.zero;
 
             do
             {
