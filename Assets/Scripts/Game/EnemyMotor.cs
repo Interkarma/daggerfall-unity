@@ -60,7 +60,6 @@ namespace DaggerfallWorkshop.Game
         float lastTimeWasStuck;
         bool bashing;
         bool hasBowAttack;
-        bool hasSpells;
         float realHeight;
         float centerChange;
         bool resetHeight;
@@ -130,9 +129,8 @@ namespace DaggerfallWorkshop.Game
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
 
-            // Only need to check for ability to shoot bow once, and if no spells, only need to check for spells once.
+            // Only need to check for ability to shoot bow once.
             hasBowAttack = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
-            hasSpells = entity.GetSpells().Length > 0;
         }
 
         void FixedUpdate()
@@ -414,10 +412,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            bool rangedMagicAvailable = false;
-            if (!hasBowAttack && hasSpells)
-                rangedMagicAvailable = CanCastRangedSpell();
-
             // Get location to move towards.
             // If detouring around an obstacle or fall, use the detour position
             if (avoidObstaclesTimer > 0)
@@ -425,7 +419,7 @@ namespace DaggerfallWorkshop.Game
                 destination = detourDestination;
             }
             // Otherwise, try to get to the combat target if there is a clear path to it
-            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (clearPathToShootAtPredictedPos && (hasBowAttack || rangedMagicAvailable)))
+            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (clearPathToShootAtPredictedPos && (hasBowAttack || entity.CurrentMagicka > 0)))
             {
                 destination = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
@@ -464,7 +458,7 @@ namespace DaggerfallWorkshop.Game
                 distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
-            if ((hasBowAttack || rangedMagicAvailable) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if ((hasBowAttack || CanCastRangedSpell()) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
@@ -654,13 +648,6 @@ namespace DaggerfallWorkshop.Game
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
             selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
 
-            int totalGoldCostUnused;
-            int readySpellCastingCost;
-
-            Formulas.FormulaHelper.CalculateTotalEffectCosts(selectedSpell.Settings.Effects, selectedSpell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
-            if (entity.CurrentMagicka < readySpellCastingCost)
-                return false;
-
             if (EffectsAlreadyOnTarget(selectedSpell))
                 return false;
 
@@ -729,13 +716,6 @@ namespace DaggerfallWorkshop.Game
 
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
             selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
-
-            int totalGoldCostUnused;
-            int readySpellCastingCost;
-
-            Formulas.FormulaHelper.CalculateTotalEffectCosts(selectedSpell.Settings.Effects, selectedSpell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
-            if (entity.CurrentMagicka < readySpellCastingCost)
-                return false;
 
             if (EffectsAlreadyOnTarget(selectedSpell))
                 return false;

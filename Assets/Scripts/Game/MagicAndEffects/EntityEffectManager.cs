@@ -300,11 +300,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             bool godModeCast = (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode);
 
             // Enforce spell point costs - Daggerfall does this when setting ready spell
-            if (entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
+            // Classic does not enforce this for enemies, they can cast any spell as long as they still have at least 1 spell point.
+            // Doing the same here. This also matters for classic AI combat logic, as it uses the existence of any remaining spell points
+            // to determine whether or not it can still cast spells.
+            if (IsPlayerEntity && entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
             {
-                // Output message only for player
-                if (IsPlayerEntity)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
 
                 readySpell = null;
                 readySpellCastingCost = 0;
