@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -228,7 +229,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (attacker == GameManager.Instance.PlayerEntityBehaviour)
+            {
                 isHostile = true;
+                // Reset former ally's team
+                if (entityBehaviour.Entity.Team == MobileTeams.PlayerAlly)
+                {
+                    int id = (entityBehaviour.Entity as EnemyEntity).MobileEnemy.ID;
+                    entityBehaviour.Entity.Team = EnemyBasics.Enemies[id].Team;
+                }
+            }
         }
 
         /// <summary>
