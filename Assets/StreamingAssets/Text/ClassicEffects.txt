@@ -211,6 +211,7 @@ nearAnimals,                near animals
 undeadLower,                undead
 humanoidLower,              humanoid
 animalsLower,               animals
+animalsUpper,               Animals
 
 allTheTime,                 all the time
 inSunlight,                 in sunlight
