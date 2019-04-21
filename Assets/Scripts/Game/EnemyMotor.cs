@@ -321,18 +321,6 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Apply gravity
-            if (!flies && !swims && !isLevitating && !controller.isGrounded)
-            {
-                controller.SimpleMove(Vector3.zero);
-
-                // Only return if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
-                // Allowing them to continue and attempt a Move() in the code below frees them, but we don't want to allow that if we can avoid it so they aren't moving
-                // while falling, which can also accelerate the fall due to anti-bounce downward movement in Move().
-                if (lastPosition != transform.position)
-                    return;
-            }
-
             // Monster speed of movement follows the same formula as for when the player walks
             float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
@@ -368,8 +356,20 @@ namespace DaggerfallWorkshop.Game
                     mobile.ChangeEnemyState(MobileStates.Idle);
                 else
                     mobile.ChangeEnemyState(MobileStates.Move);
+            }
 
-                lastPosition = transform.position;
+            lastPosition = transform.position;
+
+            // Apply gravity
+            if (!flies && !swims && !isLevitating && !controller.isGrounded)
+            {
+                controller.SimpleMove(Vector3.zero);
+
+                // Only return if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
+                // Allowing them to continue and attempt a Move() in the code below frees them, but we don't want to allow that if we can avoid it so they aren't moving
+                // while falling, which can also accelerate the fall due to anti-bounce downward movement in Move().
+                if (lastPosition != transform.position)
+                    return;
             }
 
             // Do nothing if no target or after giving up finding the target or if target position hasn't been acquired yet
