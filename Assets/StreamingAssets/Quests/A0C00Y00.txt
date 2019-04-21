@@ -39,7 +39,9 @@ AcceptQuest:  [1002]
 <ce>                       bother trying to find me.
 
 QuestFail:  [1003]
-<ce>             You had a letter to 'deliver' by now.
+<ce>             Don't you have a letter to 'deliver' for me?
+                                     <--->
+<ce>         Come back when you have completed your mission, %pcf.
 
 QuestComplete:  [1004]
 <ce>               Ah! Well done, %pcf. Here is your reward.
@@ -251,7 +253,6 @@ _S.04_ task:
 	pick one of _S.11_ _S.12_ _S.13_ _S.14_ 
 
 _traveltime_ task:
-	say 1003
 	end quest 
 
 _S.06_ task:

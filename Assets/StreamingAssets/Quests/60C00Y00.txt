@@ -176,6 +176,7 @@ _mondead_ task:
 _npcclicked_ task:
 	clicked npc _qgfriend_ 
 
+--defining clearclick to prevent out-of-place victory condition
 _clearclick_ task:
 	when _npcclicked_ and not _mondead_
 	clear _npcclicked_ _clearclick_

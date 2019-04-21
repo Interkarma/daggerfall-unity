@@ -198,6 +198,7 @@ _S.03_ task:
 _S.04_ task:
 	daily from 08:01 to 16:01 
 	pc at _store_ set _S.11_
+--unneeded underscore removed
 
 _S.05_ task:
 	clicked npc _informant_ say 1025 

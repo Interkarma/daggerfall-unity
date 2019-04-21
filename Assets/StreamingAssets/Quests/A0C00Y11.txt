@@ -192,9 +192,8 @@ Person _giver_ group Questor male
 Person _cousin_ group Resident4 female anyInfo 1012 rumors 1012
 Person _healer_ face 64 group Chemist anyInfo 1040 rumors 1041
 
-
 Clock _questtime_ 00:00 0 flag 1 range 3 5
-
+--delay clock unnecessary, only started to end the quest. perhaps a classic execution flaw.
 
 --	Quest start-up:
 	dialog link for person _healer_ item talisman 
@@ -206,6 +205,7 @@ Clock _questtime_ 00:00 0 flag 1 range 3 5
 	talisman used do _S.06_ 
 	create npc _healer_ 
 	create npc _cousin_ 
+--DFU automatically creates NPCs when defined but does not give them a convenient placement. "create npc" is unnecessary and is replaced by "place npc"
 
 _questtime_ task:
 	end quest 
@@ -242,3 +242,4 @@ _S.09_ task:
 _S.10_ task:
 	say 1015 
 	clear _S.08_ _S.09_ _S.10_
+--delay task removed as unnecessary

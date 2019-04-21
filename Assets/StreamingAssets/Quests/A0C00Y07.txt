@@ -104,6 +104,7 @@ Person _qgiver_ group Questor male
 
 Place _house_ local random
 
+--time set to 24 strict hours. if it carries flags in DFU, time becomes variable
 Clock _oneday_ 1.00:00
 
 Foe _spiders_ is Spider
@@ -114,19 +115,24 @@ Foe _bats_ is Giant_bat
 --	Quest start-up:
 	start timer _oneday_ 
 	log 1010 step 0 
-	pc at _house_ set _inside_ 
+	pc at _house_ set _S.01_ 
 	create npc at _house_ 
 
 _oneday_ task:
 	end quest 
 
-_inside_ task:
+--instant reward glitch fixed.
+_questdone_ task:
+	clicked npc _qgiver_
+
+_S.01_ task:
 	start task _pickspawn_
 
 _pickspawn_ task:
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
 
-_slain_ task:
+--this quest had a rare case of no victory message
+_S.03_ task:
 	killed 6 _bats_ 
 	killed 3 _spiders_ 
 	killed 7 _rats_ 
@@ -135,32 +141,30 @@ _slain_ task:
 
 variable _S.04_
 _spawn1_ task:
-	when _inside_ and _S.04_ and not _slain_
+	when _S.01_ and _S.04_ and not _S.03_
 	create foe _bats_ every 3 minutes indefinitely with 25% success 
 
 variable _S.05_
 _spawn2_ task:
-	when _inside_ and _S.05_ and not _slain_
+	when _S.01_ and _S.05_ and not _S.03_
 	create foe _rats_ every 3 minutes indefinitely with 25% success 
 
 variable _S.06_
 _spawn3_ task:
-	when _inside_ and _S.06_ and not _slain_
+	when _S.01_ and _S.06_ and not _S.03_
 	create foe _scorpions_ every 3 minutes indefinitely with 25% success 
 
 variable _S.07_
 _spawn4_ task:
-	when _inside_ and _S.07_ and not _slain_
+	when _S.01_ and _S.07_ and not _S.03_
 	create foe _spiders_ every 3 minutes indefinitely with 25% success 
 
-_questdone_ task:
-	clicked npc _qgiver_
-
 _clearclick_ task:
-	when not _slain_ and _questdone_ 
+	when not _S.03_ and _questdone_ 
 	clear _questdone_ _clearclick_ 
 
+
 _pcgetsgold_ task:
-	when _questdone_ and _slain_
+	when _questdone_ and _S.03_
 	give pc _gold_ 
 	end quest
