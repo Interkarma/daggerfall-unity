@@ -242,6 +242,7 @@ _S.03_ task:
 
 _S.04_ task:
 	letter11 used do _S.05_ 
+	--say nothing is a nonexistent action
 	give pc letter11 notify 1012 
 
 _S.05_ task:

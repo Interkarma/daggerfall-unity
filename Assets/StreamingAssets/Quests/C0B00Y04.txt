@@ -140,6 +140,7 @@ _bonk_ task:
 	say 1011 
 	add foe _priest_ face 
 	remove foe _priest_
+	--classic uses a system to transfer an existing enemy to a remote location to hide them. DFU doesn't support this and we can replace it with "remove foe"
 
 _queston_ task:
 	end quest 

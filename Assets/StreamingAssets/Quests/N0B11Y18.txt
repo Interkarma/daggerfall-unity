@@ -228,6 +228,7 @@ _S.02_ task:
 
 _S.03_ task:
 	start timer _S.04_ 
+	--S.14 timer was nonexistent
 	say 1032 
     hide npc _rebel_
 	place foe _mage1_ at _rebelhouse_ 

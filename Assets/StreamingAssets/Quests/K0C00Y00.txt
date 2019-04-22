@@ -197,6 +197,7 @@ _S.04_ task:
 	create foe _F.03_ every 9 minutes 1 times with 10% success 
 
 _S.05_ task:
+	--say nothing is unnecessary
 	give pc letter10 notify 1013 
 
 variable _S.06_

@@ -171,3 +171,4 @@ _success_ task:
 _clearclick_ task:
 	when _questdone_ and not _S.04_ 
 	clear _questdone_ _clearclick_
+--permits repeated clearclick

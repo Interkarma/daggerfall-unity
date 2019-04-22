@@ -206,6 +206,7 @@ _giveingredient_ task:
 _hitguardian_ task:
 	injured _guardian_ 
 	prompt 1012 yes _yes_ no _no_ 
+--a task yes without underscores is a prima facie danger, though it hasn't caused any problems yet. tasks, items, and so forth should have underscores for style and execution
 
 _yes_ task:
 	log 1011 step 1 
@@ -216,6 +217,7 @@ _yes_ task:
 _no_ task:
 	say 1035 
 
+--unused variable _clickonqgiver_
 variable _clickonqgiver_
 _givetoken_ task:
 	toting _token_ and _qgiver_ clicked saying 1014 
@@ -230,6 +232,7 @@ _givereward_ task:
 	change repute with _dummymage_ by +25
 	change repute with _dummyorc_ by -10 
 	say 1015
+	--"saying ###" as an argument here is unsupported
 
 _extratime_ task:
 	make _ingredient_ permanent 
@@ -249,7 +252,7 @@ _S.11_ task:
 	killed 1 _guardian_ 
 
 _betrayguardian_ task:
-	when yes and _S.11_ 
+	when _yes_ and _S.11_ 
 	create foe _daedras_ every 1 minutes 3 times with 100% success 
 	take _token_ from pc saying 1020 
 	change repute with _dummydarkb_ by -75 

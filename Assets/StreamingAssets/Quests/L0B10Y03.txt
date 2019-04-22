@@ -181,6 +181,7 @@ _S.04_ task:
 	killed 1 _target_ saying 1014 
 
 variable _S.06_
+--unused variables
 _clearclick_ task:
 	when _qgclicked_ and not _S.04_ 
 	clear _qgclicked_ _clearclick_ 

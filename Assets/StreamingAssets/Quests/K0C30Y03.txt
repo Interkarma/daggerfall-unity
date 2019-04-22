@@ -97,8 +97,8 @@ Do you give _hooker_ the gold?
 Message:  1012
 <ce>            Thank you, sweets. I've heard you're the decent
 <ce>            sort, and I thought I'd give you a break. I was
-<ce>                   hired by _patsy_ a few weeks ago
-<ce>          -- not for the reason you're thinkin. All I had to
+<ce>                   hired by _patsy_ a few weeks ago --
+<ce>          not for the reason you're thinkin. All I had to
 <ce>           do was flirt with some old gaffer and get him to
 <ce>          ask me out to dinner on a specific day. I guess to
 <ce>          get him out of his house, because I found out later
@@ -138,6 +138,7 @@ Message:  1014
 <ce> 
 <ce>
  			 _patsy_
+--eliminating unmarked white spaces. this problem was patched out in previous versions but i still prefer to have lines with blank spaces filled just in case.			
 
 Message:  1015
 _banker_ works over at _bank_ in __bank_. Perfectly respectable sort.
@@ -525,6 +526,7 @@ _thankyou_ task:
 	say 1012 
 	change repute with _hooker_ by +5 
 	send _F.01_ every 80 minutes 30 times with 15% success 
+	--data taken from UESP
 
 _gimme_ task:
 	get item bribe4 

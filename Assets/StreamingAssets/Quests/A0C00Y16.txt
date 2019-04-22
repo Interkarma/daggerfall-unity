@@ -219,6 +219,7 @@ Foe _F.00_ is 3 Barbarian
 	create npc _friend2_ 
 	create npc _friend3_ 
 	create npc _friend1_ 
+	--these need "place npc at" relevant places
 
 _S.00_ task:
 	place npc _missingperson_ at _hidingplace_ 

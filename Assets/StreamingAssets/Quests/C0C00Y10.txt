@@ -74,11 +74,7 @@ Message:  1025
 <ce>                    patient's name is _cousin_ and
 <ce>                     %g is in ___cousin_. You have
 <ce>                  =questtime_ days to prove yourself.
-
-RumorsPostfailure:  [1006]
-<ce>                     Too bad for you. I have to go
-<ce>                   and round up a temple cleric for
-<ce>                 the job, so I must ask you to leave.
+--duplicate 1006 removed, and badly implemented
 
 QuestLogEntry:  [1010]
 <ce>                     I feel so weak. I don't know
@@ -183,7 +179,8 @@ _S.01_ task:
 	say 1025 
 
 _S.02_ task:
-	end quest saying 1006
+	end quest saying RumorsPostfailure
+	--this is an awkward message to use for this task
 
 _S.03_ task:
 	clicked npc _cousin_ 
@@ -194,6 +191,7 @@ _S.04_ task:
 	make pc ill with Swamp_Rot 
 
 variable _S.05_
+--unused S.05
 variable _S.06_
 variable _S.07_
 _S.08_ task:

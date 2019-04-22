@@ -208,6 +208,7 @@ _success_ task:
 	when _clickqgiver_ and _S.07_ 
 	give pc nothing 
 	unset _clickqgiver_ 
+--no idea why to unset clickqgiver. the quest is ending.
 	end quest 
 
 _clearclick_ task:

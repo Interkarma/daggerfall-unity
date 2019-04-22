@@ -141,6 +141,8 @@ Message:  1020
  with a clan feather from one of the leaders in
  =2mondung_ days for a reward of _reward_ gold pieces.
 
+--removed "X harpies dead" messages. they were tied to the AnyInfo for unused harpy feather items. Obviously not intended effect
+
 Message:  1040
 <ce>                I need some proof before I can pay you.
 
@@ -170,12 +172,14 @@ Message:  1099
 
 QBN:
 Item _item_ book2
+--item is unused
 Item _reward_ gold
 Item _clanfeather1_ harpy_feather anyInfo 1030
 Item clanfeather2 harpy_feather anyInfo 1031
 Item clanfeather3 harpy_feather anyInfo 1032
 Item clanfeather4 harpy_feather anyInfo 1032
-Item letter26 letter used 1012
+--feather2-4 are unused
+Item _letter26_ letter used 1012
 Item _jewelry_ trinket
 
 Person _qgiver_ group Questor male
@@ -197,7 +201,7 @@ Foe _F.01_ is Harpy
 	log 1020 step 0 
 	give item _clanfeather1_ to _F.01_ 
 	pc at _mondung_ set _S.08_ 
-	letter26 used do _S.15_ 
+	_letter26_ used do _S.15_ 
 	place foe _F.01_ at _mondung_
 	have _clanfeather1_ set _S.14_
 
@@ -205,6 +209,7 @@ _2mondung_ task:
 	end quest 
 
 variable _pcgetsgold_
+--unused variable
 _S.02_ task:
 	toting _clanfeather1_ and _qgiver_ clicked 
 	give pc _reward_ 
@@ -224,13 +229,14 @@ _S.04_ task:
 	clicked npc _qgiver_ 
 
 _S.05_ task:
-	give pc letter26 notify 1014 
+	give pc _letter26_ notify 1014 
 
 _S.06_ task:
 	say 1011 
 	drop _contact_ face 
 
 variable _S.07_
+--unused variable
 _S.08_ task:
 	create foe _F.00_ every 21 minutes 15 times with 25% success 
 
@@ -243,8 +249,10 @@ variable _S.10_
 variable _S.11_
 variable _S.12_
 variable _S.13_
+--unused variables
 _S.14_ task:
 	say 1099 
+	--AFAIK clicked item is meant for items on the overworld, not inventory transfer. Not 100% sure.
 
 _S.15_ task:
 	place npc _contact_ at _mondung_ 

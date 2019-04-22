@@ -184,6 +184,7 @@ Message:  1015
 
 QBN:
 Item _bothdorjii_ letter used 1011
+--variables should always carry underscores
 
 Person _qgiver_ group Questor male
 
@@ -207,6 +208,7 @@ _queston_ task:
 _S.01_ task:
 	clicked item _bothdorjii_ 
 	_bothdorjii_ used do _S.02_ 
+	--"saying 1015" was illegal argument here
 	say 1012 
 
 _S.02_ task:

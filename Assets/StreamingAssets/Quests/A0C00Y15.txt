@@ -183,7 +183,7 @@ Person _pickupregion_ face 232 group Local_3.0
 
 Clock _traveltime_ 1.00:00 0 flag 1 range 1 4
 Clock _delay_ 01:00
-----precise timers needed due to short time limit
+--precise timers needed due to short time limit
 
 Foe _thief_ is Burglar
 

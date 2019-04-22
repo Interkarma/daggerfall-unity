@@ -146,3 +146,4 @@ _S.07_ task:
 	when _map_ and _pcgetsgold_
     say 1080
 	reveal _newdung_
+--this readmap argument appears often but serves no purpose. the reveal action happens independently, and no phyusical map is givedn

@@ -39,9 +39,6 @@ AcceptQuest:  [1002]
 <ce>                 mage in =queston_ days. Mephala steady
 <ce>                            your arm, %pct.
 
-QuestFail:   [1003]
-<ce>  You were to deal with the rogue mage by now.
-
 QuestComplete:  [1004]
 <ce>                   So, you put the spark out of that
 <ce>                         Sparkcaster, %pcf? Ah,
@@ -117,7 +114,6 @@ Foe _mage_ is Mage
 	place foe _mage_ at _mondung_ 
 
 _queston_ task:
-	say 1003
 	end quest 
 
 _S.01_ task:

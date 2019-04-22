@@ -141,6 +141,7 @@ _S.03_ task:
 	create foe _F.00_ every 3 minutes 1 times with 100% success 
 	create foe _F.00_ every 3 minutes 1 times with 100% success 
 	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	--spawn times reduced. leaving them at classic values would be very disjointed; one thief would arrive nearly half an hour later. classic tended to spawn all at once
 
 _S.04_ task:
 	injured _F.00_ saying 1012 

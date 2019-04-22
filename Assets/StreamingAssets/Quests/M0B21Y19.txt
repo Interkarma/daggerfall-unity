@@ -269,6 +269,7 @@ _S.08_ task:
 	say 1051 
 	add _daughter_ face 
 	hide npc _daughter_
+	--i've had some problems trying to transfer an existing NPC to a new location. hide is safer and easier.
 
 _readletter_ task:
 	log 1022 step 2 

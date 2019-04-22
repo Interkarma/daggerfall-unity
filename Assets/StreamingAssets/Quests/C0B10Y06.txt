@@ -122,3 +122,4 @@ _questdone_ task:
 _S.02_ task:
 	clicked item _ingredient_
 	say 1011 
+	--illegal argument

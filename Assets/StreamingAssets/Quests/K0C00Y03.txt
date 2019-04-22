@@ -218,6 +218,7 @@ _S.05_ task:
 
 _deed_ task:
 	take _item_ from pc
+	--classic would transfer the item from pc to guard. DFU requires a take item action.
 	give item _item_ to _guard_ 
 	say 1016 
 	restrain foe _guard_ 

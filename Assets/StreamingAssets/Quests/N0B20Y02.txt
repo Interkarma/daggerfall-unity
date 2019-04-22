@@ -150,6 +150,7 @@ Place _magesguild_ local magery
 Clock _oneday_ 1.03:00
 Clock _S.09_ 7.00:00
 Clock _S.12_ 03:00
+--precise timers set
 
 Foe _F.00_ is 3 Nightblade
 Foe _mage_ is Mage
