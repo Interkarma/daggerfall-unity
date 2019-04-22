@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.Key = EffectKey;
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
-            properties.ItemMakerFlags = ItemMakerFlags.SingletonEnchantment | ItemMakerFlags.AllowMultiplePrimaryInstances;
+            properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
         }
 
         public override EnchantmentSettings[] GetEnchantmentSettings()

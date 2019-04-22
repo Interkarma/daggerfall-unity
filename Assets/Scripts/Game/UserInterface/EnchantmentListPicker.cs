@@ -109,6 +109,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return false;
         }
 
+        public bool ContainsEnchantmentKey(string effectKey)
+        {
+            foreach (EnchantmentPanel panel in enchantmentPanels)
+            {
+                if (panel.Enchantment.EffectKey == effectKey)
+                    return true;
+            }
+
+            return false;
+        }
+
         public int GetTotalEnchantmentCost()
         {
             int cost = 0;

@@ -442,6 +442,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        bool ContainsEnchantmentKey(string effectKey)
+        {
+            if (selectingPowers)
+            {
+                return powersList.ContainsEnchantmentKey(effectKey);
+            }
+            else
+            {
+                return sideEffectsList.ContainsEnchantmentKey(effectKey);
+            }
+        }
+
         bool ContainsEnchantmentSettings(EnchantmentSettings enchantment)
         {
             if (selectingPowers)
@@ -506,13 +518,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Populate and display primary picker
             foreach(IEntityEffect effect in groupedEffectTemplates.Values)
             {
-                // Filter out singleton items where multiple instances not allowed
-                if (effect.HasItemMakerFlags(ItemMakerFlags.SingletonEnchantment) && !effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances))
-                {
-                    EnchantmentSettings[] effectEnchantments = effect.GetEnchantmentSettings();
-                    if (effectEnchantments != null && effectEnchantments.Length > 0 && ContainsEnchantmentSettings(effectEnchantments[0]))
-                        continue;
-                }
+                // Filter enchantments where multiple primary instances not allowed
+                if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
+                    continue;
+
                 enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
             }
             uiManager.PushWindow(enchantmentPrimaryPicker);

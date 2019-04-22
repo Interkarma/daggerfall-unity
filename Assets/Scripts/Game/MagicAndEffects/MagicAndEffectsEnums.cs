@@ -65,10 +65,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     public enum ItemMakerFlags
     {
         None = 0,
-        SingletonEnchantment = 1,
-        AllowMultiplePrimaryInstances = 2,
-        AllowMultipleSecondaryInstances = 4,
-        AlphaSortSecondaryList = 8,
+        AllowMultiplePrimaryInstances = 1,
+        AllowMultipleSecondaryInstances = 2,
+        AlphaSortSecondaryList = 4,
     }
 
     /// <summary>
