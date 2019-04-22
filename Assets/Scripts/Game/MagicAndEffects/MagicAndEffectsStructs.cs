@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EffectCosts ChanceCosts;                             // Chance cost values
         public EffectCosts MagnitudeCosts;                          // Magnitude cost values
         public ItemMakerFlags ItemMakerFlags;                       // Item maker features
+        public EnchantmentPayloadFlags EnchantmentPayloadFlags;     // How an enchantment wants to receive execution callbacks to deliver payload
         public bool DisableReflectiveEnumeration;                   // Prevents effect template from being registered automatically with broker
     }
 

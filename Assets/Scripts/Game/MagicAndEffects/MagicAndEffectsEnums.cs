@@ -132,4 +132,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         ShowNonPlayerFailures = 1,
         BypassSavingThrows = 2,
     }
+
+    /// <summary>
+    /// Flags to inform magic framework when enchantment effect should receive callbacks to execute its payload.
+    /// As Daggerfall Unity supports custom effects there is more granularity to payload execution than classic.
+    /// Note these are distinct from "cast when used", "cast when held", etc. Rather, the CastWhenUsed and CastWhenHeld
+    /// effects will deliver their payload from callbacks related to these flags.
+    /// </summary>
+    [Flags]
+    public enum EnchantmentPayloadFlags
+    {
+        None = 0,
+        Created = 1,        // Payload executed only once when enchanted item is created at item maker
+        Used = 2,           // Payload executed when item is used from inventory or "use item" UI
+        Equipped = 4,       // Payload executed when item is equipped - i.e. payload will execute once every time item is equipped
+        Held = 8,           // Payload executed for duration item is equipped - i.e. effect bundle will be persistently attached to entity until unequipped
+        Strikes = 16,       // Payload executed when a weapon item strikes another entity
+    }
 }
