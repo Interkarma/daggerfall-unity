@@ -311,13 +311,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case GuildServices.BuySpellsMages:
                     CloseWindow();
                     uiManager.PushWindow(new DaggerfallSpellBookWindow(uiManager, this, true));
-                    NoSpellbookWarning();
                     break;
 
                 case GuildServices.MakeSpells:
                     CloseWindow();
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
-                    NoSpellbookWarning();
+                    if (GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+                        uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
+                    else
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
@@ -372,14 +373,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     else
                         DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
-            }
-        }
-
-        private void NoSpellbookWarning()
-        {
-            if (!GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
-            {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
             }
         }
 
