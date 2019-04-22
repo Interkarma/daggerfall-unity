@@ -403,6 +403,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
+                // Assign any enchantment params to live effect
+                effect.EnchantmentParam = sourceBundle.Settings.Effects[i].EnchantmentParam;
+
                 // Incoming disease and paralysis effects are blocked if entity is hard immune (e.g. vampires/lycanthropes)
                 if (effect is DiseaseEffect && IsEntityImmuneToDisease() ||
                     effect is Paralyze && IsEntityImmuneToParalysis())
@@ -785,6 +788,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // All equipped magic items add a passive item specials effect
             // This may or may not deliver any payload based on passive enchanment settings
+            // NOTES:
+            //  * PassiveItemSpecialsEffect is deprecated and will be removed at a later date
+            //  * Future enchantment effects should implement payload within their effect class
             EffectBundleSettings passiveItemSpecialsSettings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
@@ -798,12 +804,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             passiveItemSpecialsBundle.FromEquippedItem = item;
             AssignBundle(passiveItemSpecialsBundle, AssignBundleFlags.BypassSavingThrows);
 
-            // Some equipped magic items have "cast when held" enchantments
+            // Add legacy enchantment effects
             DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
                 if (enchantment.type == EnchantmentTypes.CastWhenHeld)
                 {
+                    // Cast when held enchantment invokes a spell that is permanent until item is removed
+                    // TODO: Migrate this payload to CastWhenHeld enchantment class, just maintaining old method for now
                     SpellRecord.SpellRecordData spell;
                     if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
                     {
@@ -830,7 +838,45 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
                 }
+                else
+                {
+                    // Get effect template - classic enchantment effects use EnchantmentTypes string as their key
+                    string effectKey = enchantment.type.ToString();
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
+                    if (effectTemplate == null)
+                    {
+                        Debug.LogWarningFormat("StartEquippedItem() classic effect key {0} not found in broker.", effectKey);
+                        return;
+                    }
+
+                    // Equipped payload callback
+                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Equipped))
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, null, entityBehaviour, entityBehaviour, item);
+
+                    // Held payload assigns a new bundle with a fully stateful effect instance - does not use callback to effect template
+                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Held))
+                    {
+                        EnchantmentParam param = new EnchantmentParam()
+                        {
+                            ClassicParam = enchantment.param,
+                        };
+                        EffectBundleSettings heldEffectSettings = new EffectBundleSettings()
+                        {
+                            Version = EntityEffectBroker.CurrentSpellVersion,
+                            BundleType = BundleTypes.HeldMagicItem,
+                            TargetType = TargetTypes.None,
+                            ElementType = ElementTypes.None,
+                            Name = effectKey,
+                            Effects = new EffectEntry[] { new EffectEntry(effectTemplate.Key, param) },
+                        };
+                        EntityEffectBundle heldEffectBundle = new EntityEffectBundle(heldEffectSettings, entityBehaviour);
+                        heldEffectBundle.FromEquippedItem = item;
+                        AssignBundle(heldEffectBundle, AssignBundleFlags.BypassSavingThrows);
+                    }
+                }
             }
+
+            // TODO: Add modern enchantment effects
         }
 
         /// <summary>

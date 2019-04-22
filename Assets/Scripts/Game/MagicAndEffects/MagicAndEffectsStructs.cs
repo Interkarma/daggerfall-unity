@@ -108,17 +108,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public string Key;
         public EffectSettings Settings;
+        public EnchantmentParam? EnchantmentParam;
 
-        public EffectEntry(string key)
+        public EffectEntry(string key, EnchantmentParam? enchantmentParam = null)
         {
             Key = key;
             Settings = new EffectSettings();
+            EnchantmentParam = enchantmentParam;
         }
 
-        public EffectEntry(string key, EffectSettings settings)
+        public EffectEntry(string key, EffectSettings settings, EnchantmentParam? enchantmentParam = null)
         {
             Key = key;
             Settings = settings;
+            EnchantmentParam = enchantmentParam;
         }
     }
 
@@ -292,5 +295,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public int ClassicID;                                       // Spell ID into SPELLS.STD
         public string CustomKey;                                    // Key into custom spell bundle offers
+    }
+
+    /// <summary>
+    /// Flexible enchantment parameter for either a classic effect or a custom effect.
+    /// This is stored with EffectEntry for enchantment bundles and assigned to live effect instance.
+    /// Formalising this to a data structure allows for expanding custom enchantment params later.
+    /// </summary>
+    [Serializable]
+    public struct EnchantmentParam
+    {
+        public short ClassicParam;                                  // Classic echantment param
+        public string CustomParam;                                  // Custom enchantment param
     }
 }
