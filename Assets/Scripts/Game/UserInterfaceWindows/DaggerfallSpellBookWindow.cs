@@ -95,6 +95,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string spellBookBuyModeTextureFilename = "SPBK01I0.IMG";
         const string spellsFilename = "SPELLS.STD";
 
+        const int noSpellBook = 1703;
+
         const SoundClips openSpellBook = SoundClips.OpenBook;
         const SoundClips openSpellBookBuyMode = SoundClips.ButtonClick;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
@@ -885,7 +887,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int tradePrice = GetTradePrice();
             int msgOffset = 0;
 
-            if (GameManager.Instance.PlayerEntity.GetGoldAmount() < tradePrice)
+            if (!GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+            {
+                DaggerfallUI.MessageBox(noSpellBook);
+            }
+            else if (GameManager.Instance.PlayerEntity.GetGoldAmount() < tradePrice)
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
