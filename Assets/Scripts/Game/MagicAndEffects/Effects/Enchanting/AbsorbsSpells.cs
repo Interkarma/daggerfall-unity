@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by PassiveItemSpecialsEffect
         }
 
         public override EnchantmentSettings[] GetEnchantmentSettings()

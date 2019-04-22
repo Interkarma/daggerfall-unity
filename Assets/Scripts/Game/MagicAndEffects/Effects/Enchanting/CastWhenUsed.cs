@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.AlphaSortSecondaryList;
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by EntityEffectManager.UseItem()
         }
 
         /// <summary>

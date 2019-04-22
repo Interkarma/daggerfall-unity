@@ -22,7 +22,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Uber-effect used to deliver unique item powers and side-effects to entities.
     /// Not incumbent as most item powers are stackable and entity could have multiple instances of this effect running.
     /// NOTES:
-    ///  * This effect is a work in progress and will be added to over time.
+    ///  * Now that enchantment system is built, some or all of these will be moved to their corresponding effect.
+    ///  * Future item enchantment payloads should be implemented with their own effect class.
     /// </summary>
     public class PassiveItemSpecialsEffect : BaseEntityEffect
     {
