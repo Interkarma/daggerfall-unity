@@ -20,6 +20,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -40,6 +41,8 @@ namespace DaggerfallWorkshop.Game
         bool isPlayerInsideOpenShop = false;
         bool isPlayerSwimming = false;
         bool isPlayerSubmerged = false;
+        bool isPlayerInSunlight = false;
+        bool isPlayerInHolyPlace = false;
         bool isRespawning = false;
         bool lastInteriorStartFlag;
         bool displayAfloatMessage = false;
@@ -156,6 +159,34 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// True when player is in sunlight.
+        /// </summary>
+        public bool IsPlayerInSunlight
+        {
+            get { return isPlayerInSunlight; }
+        }
+
+        /// <summary>
+        /// True when player is in darkness.
+        /// Same as !IsPlayerInSunlight.
+        /// </summary>
+        public bool IsPlayerInDarkness
+        {
+            get { return !isPlayerInSunlight; }
+        }
+
+        /// <summary>
+        /// True when player is in a holy place.
+        /// Holy places include all Temples and guildhalls of the Fighter Trainers (faction #849)
+        /// https://en.uesp.net/wiki/Daggerfall:ClassMaker#Special_Disadvantages
+        /// Refreshed once per game minute.
+        /// </summary>
+        public bool IsPlayerInHolyPlace
+        {
+            get { return isPlayerInHolyPlace; }
+        }
+
+        /// <summary>
         /// True when a player respawn is in progress.
         /// e.g. After loading a game or teleporting back to a marked location.
         /// </summary>
@@ -244,6 +275,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Wire event for when player enters a new location
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
             levitateMotor = GetComponent<LevitateMotor>();
             underwaterFog = new UnderwaterFog();
         }
@@ -338,6 +370,9 @@ namespace DaggerfallWorkshop.Game
                 isPlayerSubmerged = false;
                 levitateMotor.IsSwimming = false;
             }
+
+            // Player in sunlight or darkness
+            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside;
         }
 
         #region Public Methods
@@ -1272,6 +1307,18 @@ namespace DaggerfallWorkshop.Game
                     // fixed this in TalkManager class
                     // TalkManager.Instance.LastExteriorEntered = location.LocationIndex;
                 }
+            }
+        }
+
+        private void EntityEffectBroker_OnNewMagicRound()
+        {
+            // Player in holy place
+            isPlayerInHolyPlace = false;
+            if (WorldContext == WorldContext.Interior && interior != null)
+            {
+                if (interior.BuildingData.BuildingType == DFLocation.BuildingTypes.Temple ||
+                    interior.BuildingData.FactionId == (int)FactionFile.FactionIDs.Fighter_Trainers)
+                    isPlayerInHolyPlace = true;
             }
         }
 
