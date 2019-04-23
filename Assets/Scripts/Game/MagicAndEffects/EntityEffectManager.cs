@@ -853,17 +853,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         continue;
                     }
 
+                    // Create enchantment param
+                    EnchantmentParam param = new EnchantmentParam()
+                    {
+                        ClassicParam = enchantment.param,
+                    };
+
                     // Equipped payload callback
                     if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Equipped))
-                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, null, entityBehaviour, entityBehaviour, item);
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, param, entityBehaviour, entityBehaviour, item);
 
                     // Held payload assigns a new bundle with a fully stateful effect instance - does not use callback to effect template
                     if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Held))
                     {
-                        EnchantmentParam param = new EnchantmentParam()
-                        {
-                            ClassicParam = enchantment.param,
-                        };
                         EffectBundleSettings heldEffectSettings = new EffectBundleSettings()
                         {
                             Version = EntityEffectBroker.CurrentSpellVersion,

@@ -1239,9 +1239,22 @@ namespace DaggerfallWorkshop.Game.Items
             List<CustomEnchantment> customEnchantments = new List<CustomEnchantment>();
             foreach (EnchantmentSettings settings in enchantments)
             {
-                // Enchanment must have an effect key
+                // Enchantment must have an effect key
                 if (string.IsNullOrEmpty(settings.EffectKey))
                     throw new Exception(string.Format("SetEnchantments() effect key is null or empty at index {0}", count));
+
+                // Created payload callback
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(settings.EffectKey);
+                if (effectTemplate != null)
+                {
+                    EnchantmentParam param = new EnchantmentParam()
+                    {
+                        ClassicParam = settings.ClassicParam,
+                        CustomParam = settings.CustomParam,
+                    };
+                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Created))
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Created, param, null, null, this);
+                }
 
                 // Add custom or legacy enchantment
                 if (!string.IsNullOrEmpty(settings.CustomParam))
