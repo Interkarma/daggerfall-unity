@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -637,8 +638,10 @@ namespace DaggerfallWorkshop.Utility
             }
 
             Texture2DArray textureArray;
-            Texture2D albedoMap;
+            if (!stayReadable && TryMakeTextureArrayCopyTexture(archive, numSlices, TextureMap.Albedo, null, out textureArray))
+                return textureArray;
 
+            Texture2D albedoMap;
             if (TextureReplacement.TryImportTexture(archive, 0, 0, out albedoMap))
             {
                 textureArray = new Texture2DArray(albedoMap.width, albedoMap.height, numSlices, TextureFormat.ARGB32, MipMaps);
@@ -703,6 +706,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             Texture2DArray textureArray;
+            if (!stayReadable && TryMakeTextureArrayCopyTexture(archive, numSlices, TextureMap.Normal, null, out textureArray))
+                return textureArray;
+
             int width;
             int height;
 
@@ -776,6 +782,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             Texture2DArray textureArray;
+            if (!stayReadable && TryMakeTextureArrayCopyTexture(archive, numSlices, TextureMap.MetallicGloss, new Color32(0, 0, 0, 255), out textureArray))
+                return textureArray;
+
             int width;
             int height;
 
@@ -929,6 +938,80 @@ namespace DaggerfallWorkshop.Utility
                 case SupportedAlphaTextureFormats.RGBA444:
                     return TextureFormat.RGBA4444;
             }
+        }
+
+        /// <summary>
+        /// Makes a texture array from textures loaded from mods, using <see cref="Graphics.CopyTexture"/> which is very efficient.
+        /// The result texture array respects format and settings of individual textures and is not available on the cpu side.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Graphics.CopyTexture"/> provides a very fast copy operation between textures, but is not supported on some platforms.
+        /// The result is also not available for further edits from the cpu.
+        /// The first record must be available and defines size and format that all records must match. A fallback color can be provided for other layers.
+        /// </remarks>
+        /// <param name="archive">The requested texture archive.</param>
+        /// <param name="depth">The expected number of layer.</param>
+        /// <param name="textureMap">The texture type.</param>
+        /// <param name="fallbackColor">If provided is used silenty for missing layers.</param>
+        /// <param name="textureArray">The created texture array or null.</param>
+        /// <returns>True if the texture array has been created.</returns>
+        private static bool TryMakeTextureArrayCopyTexture(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
+        {
+            textureArray = null;
+
+            if ((SystemInfo.copyTextureSupport & CopyTextureSupport.DifferentTypes) == CopyTextureSupport.None)
+                return false;
+            
+            bool mipMaps = false;
+            Texture2D fallback = null;
+
+            for (int record = 0; record < depth; record++)
+            {
+                Texture2D tex;
+                if (!TextureReplacement.TryImportTexture(archive, record, 0, textureMap, out tex))
+                {
+                    if (!textureArray)
+                        return false;
+
+                    if (!fallbackColor.HasValue)
+                    {
+                        Debug.LogErrorFormat("Failed to inject record {0} for texture archive {1} ({2}) because texture data is not available.", record, archive, textureMap);
+                        continue;
+                    }
+
+                    if (!fallback)
+                    {
+                        fallback = new Texture2D(textureArray.width, textureArray.height, textureArray.format, mipMaps);
+                        Color32[] colors = new Color32[fallback.width * fallback.height];
+                        for (int i = 0; i < colors.Length; i++)
+                            colors[i] = fallbackColor.Value;
+                        fallback.SetPixels32(colors);
+                        fallback.Apply(mipMaps, true);
+                    }
+
+                    tex = fallback;
+                }
+
+                if (!textureArray)
+                    textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1);
+
+                if (tex.width == textureArray.width && tex.height == textureArray.height && tex.format == textureArray.format)
+                    Graphics.CopyTexture(tex, 0, textureArray, record);
+                else
+                    Debug.LogErrorFormat("Failed to inject record {0} for texture archive {1} ({2}) due to size or format mismatch.", record, archive, textureMap);
+            }
+
+            if (fallback)
+                Texture2D.Destroy(fallback);
+
+            if (textureArray)
+            {
+                textureArray.wrapMode = TextureWrapMode.Clamp;
+                textureArray.anisoLevel = 8;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
