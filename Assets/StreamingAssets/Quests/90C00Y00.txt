@@ -154,12 +154,14 @@ _1stparton_ task:
 	end quest 
 
 variable _2ndparton_
+--unused variable
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
 	start timer _delay_ 
 
 variable _queston_
+--unused variable
 _mondead_ task:
 	killed 1 _monster_ 
 	say 1015 
@@ -169,6 +171,7 @@ _npcclicked_ task:
 
 _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
+	say 1003
 	clear _npcclicked_ 
 
 _delay_ task:

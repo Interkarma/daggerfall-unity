@@ -138,6 +138,7 @@ _qgclicked_ task:
 
 _clearclick_ task:
 	when not _mondead_ and _qgclicked_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 
 
 variable _map_

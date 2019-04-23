@@ -152,7 +152,7 @@ QBN:
 Item _letter_ letter used 1011
 Item _mitem_ magic_item
 Item _reward_ gold
-Item letter10 letter used 1012
+Item _letter10_ letter used 1012
 Item _gem_ gem
 
 Person _qgiver_ group Questor male
@@ -198,7 +198,7 @@ _S.04_ task:
 
 _S.05_ task:
 	--say nothing is unnecessary
-	give pc letter10 notify 1013 
+	give pc _letter10_ notify 1013 
 
 variable _S.06_
 _S.07_ task:
@@ -216,3 +216,11 @@ _S.09_ task:
 	change repute with _competitor_ by +5 
 	change repute with _qgiver_ by -5 
 	end quest 
+
+_qgclick2_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _pcgetsgold_
+	say 1003
+	clear _clearclick_ _qgclick2_

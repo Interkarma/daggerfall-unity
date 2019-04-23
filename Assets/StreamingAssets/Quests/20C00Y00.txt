@@ -158,6 +158,7 @@ _pcgetsgold_ task:
 	start timer _delay_ 
 
 variable _queston_
+--unused variable
 _mondead_ task:
 	killed 1 _monster_ 
 	say 1030 
@@ -169,8 +170,11 @@ _1stparton_ task:
 	end quest 
 
 variable _2ndparton_
+--unused variable
 _clearclick_ task:
-	when _qgclicked_ and not _2ndparton_ 
+	when _qgclicked_ and not _mondead_ 
+	--erroneous variable use
+	say 1003
 	clear _qgclicked_ _clearclick_ 
 
 _delay_ task:
@@ -183,7 +187,9 @@ _S.09_ task:
 
 _S.10_ task:
 	when _S.08_ and not _mondead_ 
-	place foe _monster_ at _hideout_ saying 1040 
+	place foe _monster_ at _hideout_
+	say 1040 
+--invalid argument
 
 _readmap_ task:
 	reveal _hideout_ readmap

@@ -279,3 +279,7 @@ _readletter_ task:
 
 _delay_ task:
 	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+	say 1003

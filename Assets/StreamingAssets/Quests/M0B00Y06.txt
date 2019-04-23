@@ -32,7 +32,7 @@ AcceptQuest:  [1002]
 <ce>                           waiting for you."
 <ce>                                    
 <ce>                  _qgiver_ calls out, "Hey, what kind
- of animal is it in _house_?"
+<ce> of animal is it in _house_?"
 
 QuestComplete:  [1004]
 <ce>                           Well done, %pcf.

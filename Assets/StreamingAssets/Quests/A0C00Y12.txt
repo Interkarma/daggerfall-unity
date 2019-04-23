@@ -173,7 +173,7 @@ Place _informant1_ local tavern
 
 Clock _S.01_ 10.00:00 0 flag 9 range 0 1
 
-Foe thiefFoe is Thief
+Foe _thiefFoe_ is Thief
 
 --	Quest start-up:
 	dialog link for location _house_ person _informant_ 
@@ -212,15 +212,15 @@ _S.06_ task:
 
 variable _S.07_
 _S.08_ task:
-	injured thiefFoe 
-	give item _book_ to thiefFoe 
+	injured _thiefFoe_ 
+	give item _book_ to _thiefFoe_ 
 	say 1030 
 
 _S.09_ task:
-	place foe thiefFoe at _house_
+	place foe _thiefFoe_ at _house_
 
 _S.10_ task:
-	place foe thiefFoe at _inn_ 
+	place foe _thiefFoe_ at _inn_ 
 
 _S.11_ task: 
-	place foe thiefFoe at _store_ 
+	place foe _thiefFoe_ at _store_ 

@@ -184,7 +184,7 @@ Message:  1020
 --          _victim_ occurs 14 times.
 
 QBN:
-Item letter15 letter used 1013
+Item _letter15_ letter used 1013
 Item _gold_ gold
 Item _gem_ gem
 
@@ -222,8 +222,8 @@ _S.03_ task:
 
 variable _S.04_
 _S.05_ task:
-	letter15 used do _S.06_ 
-	get item letter15 
+	_letter15_ used do _S.06_ 
+	get item _letter15_ 
 	say 1015 
 
 _S.06_ task:
@@ -243,25 +243,37 @@ _S.09_ task:
 _S.10_ task:
 	killed 1 _cousin_ 
 	say 1019 
+	start task _victory_
 
+variable _victory_
 _S.11_ task:
 	clicked item _gem_ 
 	say 1020 
 
 _qgclicked_ task:
-	clicked npc _qgiver_ 
+	clicked npc _qgiver_
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _victory_ 
 	give pc _gold_ 
 	end quest 
 
-_S.13_ task:
-	toting _gem_ and _qgiver_ clicked 
-	end quest 
+_clearclick_ task:
+	when _qgclicked_ and not _victory_
+	clear _clearclick_ _qgclicked_
+--the classic version was quite unusual and could break depending on engine fixes. This is far more waterproof.
+
+-_S.13_ task:
+-	toting _gem_ and _qgiver_ clicked 
+-	end quest 
+--this can't possibly be a justified end. Taking the gem is one of the ways to frustrate the ransom.
 
 _S.14_ task:
-	when _S.10_ or _S.08_ or _S.13_ 
-
-until _S.14_ performed:
-	clear _qgclicked_ 
+	when _S.10_ or _S.08_
+-or _S.13_ 
+-
+-until _S.14_ performed:
+-	clear _qgclicked_ 
 
 _S.15_ task:
 	make _gem_ permanent 

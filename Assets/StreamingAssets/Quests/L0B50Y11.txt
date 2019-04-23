@@ -151,7 +151,7 @@ Message:  1031
 
 QBN:
 Item _gold_ gold
-Item bribe3 gold range 50 to 50
+Item _bribe3_ gold range 50 to 50
 
 Person _mistress_ face 3 named Whitka
 Person _questgiver_ face 1 group Questor
@@ -245,9 +245,9 @@ _S.13_ task:
 
 _S.14_ task:
 	when not _S.04_ and _S.08_ and not _S.07_ 
-	prompt 1020 yes yes no _no_ 
+	prompt 1020 yes _yes_ no _no_ 
 
-variable yes
+variable _yes_
 variable _no_
 _S.17_ task:
 	clicked _mistress_ and at least 50 gold otherwise do _S.18_ 
@@ -255,10 +255,10 @@ _S.17_ task:
 variable _S.18_
 _S.19_ task:
 	when _S.17_ and _no_ 
-	get item bribe3 
+	get item _bribe3_ 
 
 _S.20_ task:
-	when _S.17_ and yes 
+	when _S.17_ and _yes_ 
 	say 1023 
 	unset _S.08_ 
 

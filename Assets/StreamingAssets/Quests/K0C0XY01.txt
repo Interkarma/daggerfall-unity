@@ -243,6 +243,7 @@ _S.08_ task:
 _clearclick_ task:
 	when _S.04_ and not _S.02_ 
 	clear _S.04_ _clearclick_
+	say 1003
 	say 1040 
 
 variable _S.10_

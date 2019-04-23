@@ -124,10 +124,10 @@ Message:  1015
 --         _reward1_ occurs 2 times.
 
 QBN:
-Item goldBrick1 gold_bar
-Item goldBrick2 gold_bar
-Item goldBrick3 gold_bar
-Item goldBrick4 gold_bar
+Item _goldBrick1_ gold_bar
+Item _goldBrick2_ gold_bar
+Item _goldBrick3_ gold_bar
+Item _goldBrick4_ gold_bar
 Item _reward1_ gold
 Item _reward2_ gold
 Item _reward3_ gold
@@ -147,10 +147,10 @@ Foe _F.01_ is 2 Battle_mage
 Foe _F.02_ is 2 Spellsword
 
 --	Quest start-up:
-	place item goldBrick1 at _depository_ 
-	place item goldBrick2 at _mansion_ 
-	place item goldBrick3 at _mondung_ 
-	place item goldBrick4 at _palace_ 
+	place item _goldBrick1_ at _depository_ 
+	place item _goldBrick2_ at _mansion_ 
+	place item _goldBrick3_ at _mondung_ 
+	place item _goldBrick4_ at _palace_ 
 	start timer _2mondung_ 
 	reveal _mondung_ 
 	log 1010 step 0 
@@ -163,28 +163,36 @@ variable _S.01_
 variable _2mondung_
 variable _2palace_
 _S.04_ task:
-	toting goldBrick1 and _qgiver_ clicked 
+	toting _goldBrick1_ and _qgiver_ clicked 
 	get item _reward1_ 
 	say 1015 
 	make _reward1_ permanent 
 
 _S.05_ task:
-	toting goldBrick2 and _qgiver_ clicked 
+	toting _goldBrick2_ and _qgiver_ clicked 
 	get item _reward2_ 
 	say 1015 
 	make _reward2_ permanent 
 
 _S.06_ task:
-	toting goldBrick3 and _qgiver_ clicked 
+	toting _goldBrick3_ and _qgiver_ clicked 
 	get item _reward3_ 
 	say 1015 
 	make _reward3_ permanent 
 
 _S.07_ task:
-	toting goldBrick4 and _qgiver_ clicked 
+	toting _goldBrick4_ and _qgiver_ clicked 
 	get item _I.07_ 
 	say 1015 
 	make _I.07_ permanent 
+
+_qgclick2_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _S.04_ and not _S.05_ and not _S.06_ and not _S.07_
+	say 1003
+	clear _clearclick_ _qgclick2_
 
 _S.08_ task:
 	create foe _F.00_ every 10 minutes 10 times with 20% success 
@@ -210,16 +218,16 @@ _S.14_ task:
 _success_ task:
 	when _2mondung_ and _mggold_ 
 	give pc nothing 
-	make goldBrick1 permanent 
-	make goldBrick2 permanent 
-	make goldBrick3 permanent 
-	make goldBrick4 permanent 
+	make _goldBrick1_ permanent 
+	make _goldBrick2_ permanent 
+	make _goldBrick3_ permanent 
+	make _goldBrick4_ permanent 
 	end quest 
 
 _S.16_ task:
 	when _2mondung_ and not _mggold_ 
-	make goldBrick1 permanent 
-	make goldBrick2 permanent 
-	make goldBrick3 permanent 
-	make goldBrick4 permanent 
+	make _goldBrick1_ permanent 
+	make _goldBrick2_ permanent 
+	make _goldBrick3_ permanent 
+	make _goldBrick4_ permanent 
 	end quest 

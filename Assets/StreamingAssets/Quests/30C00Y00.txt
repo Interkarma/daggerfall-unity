@@ -158,6 +158,7 @@ _npcclicked_ task:
 --defining clearclick to prevent out-of-place victory condition
 _clearclick_ task:
 	when _npcclicked_ and not _mondead_
+	say 1003
 	clear _npcclicked_ _clearclick_
 
 _delay_ task:

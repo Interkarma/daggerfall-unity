@@ -72,6 +72,7 @@ Message:  1013
 Meridia is a Daedra Regent and a collector of human specimens.
 <--->
 Meridia is a kind of acting Daedra Prince, and ruthless in her acquisitiveness.
+--unused string
 
 Message:  1014
 <ce>   The ring is an ancient item of power. Reputedly, it can make its
@@ -143,6 +144,7 @@ _1stparton_ task:
 	end quest 
 
 variable _2ndparton_
+--unused variable
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
@@ -158,6 +160,7 @@ _npcclicked_ task:
 
 _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
+	say 1003
 	clear _npcclicked_ _clearclick_ 
 
 _delay_ task:

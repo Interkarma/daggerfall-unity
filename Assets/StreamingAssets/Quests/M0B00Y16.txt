@@ -167,7 +167,7 @@ variable _map_
 variable _nomap_
 _S.02_ task:
 	injured _giant_ 
-	start task giantWaveWhileInDungeon
+	start task _giantWaveWhileInDungeon_
 	say 1030 
 
 _S.03_ task:
@@ -179,6 +179,7 @@ _clickqgiver_ task:
 
 _clearclick_ task:
 	when _clickqgiver_ and not _S.03_
+	say 1003
 	clear _clickqgiver_ _clearclick_
 
 _success_ task:
@@ -239,10 +240,8 @@ _S.19_ task:
 	when not _victim_ and _success_
 	end quest
 
-giantWaveWhileInDungeon task:
-	pc at _mondung_ set spawnGiants
+_giantWaveWhileInDungeon_ task:
+	pc at _mondung_ set _spawnGiants_
 
-spawnGiants task:
+_spawnGiants_ task:
 	create foe _F.01_ every 4 minutes 6 times with 50% success 
-
-

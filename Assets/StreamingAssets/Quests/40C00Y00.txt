@@ -345,7 +345,7 @@ Place _fakedung_ remote dungeon
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 Clock _bonk_ 01:00 0 flag 1 range 0 1
 Clock _S.22_ 1.00:00 2.18:40
-Clock betrayQuestor 00:02 00:30
+Clock _betrayQuestor_ 00:02 00:30
 
 Foe _monster_ is Mage
 Foe _daedra_ is Frost_daedra
@@ -385,13 +385,18 @@ _S.06_ task:
 	start timer _bonk_ 
 	unset _S.04_ 
 
+_clearclick_ task:
+	when _S.04_ and not _S.05_
+	say 1003
+	clear _S.04_ _clearclick_
+
 _S.07_ task:
 	injured _monster_ 
 	place item _letter_ at _mondung_ 
 
 variable _S.08_
 variable _S.09_
-variable betrayQuestor
+variable _betrayQuestor_
 _S.11_ task:
 	clicked item _bow_ 
 	clear _S.08_ 
@@ -454,31 +459,31 @@ _S.23_ task:
 	say 1050 
 
 _S.24_ task:
-	when betrayQuestor and _S.14_ 
+	when _betrayQuestor_ and _S.14_ 
 	place item _bow_ at _fakedung_ 
 	say 1045 
 
 _S.25_ task:
-	when betrayQuestor and _S.15_ 
+	when _betrayQuestor_ and _S.15_ 
 	place item _ring_ at _fakedung_ 
 	say 1046 
 
 _S.26_ task:
-	when betrayQuestor and _S.16_ 
+	when _betrayQuestor_ and _S.16_ 
 	place item _staff_ at _fakedung_ 
 	say 1047 
 
 _S.27_ task:
 	when _S.11_ and not _S.05_ 
-	start timer betrayQuestor 
+	start timer _betrayQuestor_ 
 
 _S.28_ task:
 	when _S.12_ and not _S.05_ 
-	start timer betrayQuestor 
+	start timer _betrayQuestor_ 
 
 _S.29_ task:
 	when _S.13_ and not _S.05_ 
-	start timer betrayQuestor 
+	start timer _betrayQuestor_ 
 
 _S.30_ task:
 	when _S.11_ and _S.05_ 

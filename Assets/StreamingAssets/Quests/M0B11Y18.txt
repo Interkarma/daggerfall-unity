@@ -542,3 +542,7 @@ _S.41_ task:
 	restore _questgiver_ 
 	make _amulet_ permanent 
 	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+	say 1003

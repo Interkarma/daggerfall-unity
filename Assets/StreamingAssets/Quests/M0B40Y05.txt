@@ -184,6 +184,7 @@ _qgclicked_ task:
 
 _normalvict_ task:
                 when _qgclicked_ and _S.01_
+	say 1003
                 start task _victory_
 
 _victory_ task:

@@ -213,4 +213,5 @@ _success_ task:
 
 _clearclick_ task:
 	when not _S.07_ and _clickqgiver_ 
+	say 1003
 	clear _clickqgiver_ _clearclick_ 
