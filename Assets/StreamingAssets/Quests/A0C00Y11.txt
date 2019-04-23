@@ -205,7 +205,6 @@ Clock _questtime_ 00:00 0 flag 1 range 3 5
 	talisman used do _S.06_ 
 	create npc _healer_ 
 	create npc _cousin_ 
---DFU automatically creates NPCs when defined but does not give them a convenient placement. "create npc" is unnecessary and is replaced by "place npc"
 
 _questtime_ task:
 	end quest 
