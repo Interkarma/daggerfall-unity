@@ -840,13 +840,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
                 else
                 {
+                    // Ignore empty enchantment slots
+                    if (enchantment.type == EnchantmentTypes.None)
+                        continue;
+
                     // Get effect template - classic enchantment effects use EnchantmentTypes string as their key
                     string effectKey = enchantment.type.ToString();
                     IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
                     if (effectTemplate == null)
                     {
                         Debug.LogWarningFormat("StartEquippedItem() classic effect key {0} not found in broker.", effectKey);
-                        return;
+                        continue;
                     }
 
                     // Equipped payload callback
