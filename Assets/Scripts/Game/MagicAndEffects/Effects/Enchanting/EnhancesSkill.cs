@@ -25,11 +25,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = EnchantmentTypes.EnhancesSkill.ToString();
 
         const int enchantCost = 900;
+        const int modAmount = 15;
 
         public override void SetProperties()
         {
             properties.Key = EffectKey;
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
+            properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.AlphaSortSecondaryList;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
@@ -61,6 +63,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             return enchantments.ToArray();
+        }
+
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Start(manager, caster);
+
+            // Must have enchantment params
+            if (EnchantmentParam == null)
+                return;
+
+            // Set skill mod
+            SetSkillMod((DFCareer.Skills)EnchantmentParam.Value.ClassicParam, modAmount);
         }
     }
 }
