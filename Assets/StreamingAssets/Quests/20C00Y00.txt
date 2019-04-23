@@ -173,7 +173,7 @@ variable _2ndparton_
 --unused variable
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 
-	--erroneous variable use
+	--this used the timer 2ndparton erroneously. properly changed to mondead.
 	say 1003
 	clear _qgclicked_ _clearclick_ 
 

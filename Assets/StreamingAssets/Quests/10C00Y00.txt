@@ -72,7 +72,6 @@ Message:  1013
 Meridia is a Daedra Regent and a collector of human specimens.
 <--->
 Meridia is a kind of acting Daedra Prince, and ruthless in her acquisitiveness.
---unused string
 
 Message:  1014
 <ce>   The ring is an ancient item of power. Reputedly, it can make its

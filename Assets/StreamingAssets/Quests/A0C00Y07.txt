@@ -127,6 +127,7 @@ _questdone_ task:
 
 _S.01_ task:
 	start task _pickspawn_
+--preventing multiple spawns by using static pick
 
 _pickspawn_ task:
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
