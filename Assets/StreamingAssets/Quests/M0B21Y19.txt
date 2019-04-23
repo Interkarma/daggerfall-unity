@@ -220,7 +220,7 @@ Foe _F.02_ is 4 Assassin
 	log 1020 step 0 
 	pc at _victimhouse_ set _S.05_ 
 	_note_ used do _readnote_
-	place npc _victim_ at _victimhouse_ 
+	create npc _victim_ at _victimhouse_ 
 
 variable _qtime_
 _readnote_ task:
@@ -287,6 +287,7 @@ _S.13_ task:
 	pc at _safehouse_ set _S.14_ 
 	when _S.08_ and not _S.12_ 
 	log 1023 step 3 
+	create npc at _safehouse_ 
 	say 1052
 
 _S.14_ task:

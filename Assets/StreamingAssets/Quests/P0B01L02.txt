@@ -22,7 +22,7 @@ My dear %pcf,
  to a more secure location.
     Once you have the _vamprelic_, come to me.
  I will wait for you for =1stparton_ days at
- __vamphouse_ in ___vamphouse_. I am
+ __vampire_ in ___vampire_. I am
  easy to recognize. Look for a =vampire_.
     I am looking forward to making your acquaintance
  less formally, %pcf. Do not fail to come.
@@ -73,9 +73,9 @@ QuestorPostfailure:  [1009]
 <ce>                       showing, %pcf.  Very poor.
 
 QuestLogEntry:  [1010]
-A sinister-looking character by that name is %di of here in __vamphouse_.
+A sinister-looking character by that name is %di of here in __vampire_.
 <--->
-An odd =vampire_ named _vampire_ is staying at __vamphouse_, %di of here.
+An odd =vampire_ named _vampire_ is staying at __vampire_, %di of here.
 
 Message:  1011
 _vampire_ is a member of %vam tribe, a mentor to its youthlings.
@@ -95,11 +95,11 @@ It's a _vamprelic_ used in certain secret rituals of %vam masters.
 Message:  1020
 %qdt:
  I received a letter from _vampire_
- of ___vamphouse_ who has given me =1stparton_ nights
+ of ___vampire_ who has given me =1stparton_ nights
  to steal a _vamprelic_ out of its secured chamber
  in the Mages Guild of __itemdung_. Once
  the deed has been done, I am to bring the _vamprelic_
- to _vampire_ at __vamphouse_.
+ to _vampire_ at __vampire_.
 
 Message:  1030
 <ce>                   A rolled parchment on the ground
@@ -118,7 +118,7 @@ Message:  1030
 --       =1stparton_ occurs 3 times.
 --         =vampire_ occurs 4 times.
 --       __itemdung_ occurs 2 times.
---        __vamphouse_ occurs 14 times.
+--        __vampire_ occurs 14 times.
 --       _vamprelic_ occurs 27 times.
 
 QBN:
@@ -140,7 +140,7 @@ Foe _battlemage_ is Battle_mage
 	_letter_ used do _readletter_ 
 	have _letter_ set _S.06_ 
 	give pc _letter_ notify 1030 
-	place npc _vampire_ at _vamphouse_
+	create npc _vampire_ 
 
 variable _pcgetsgold_
 _vampclicked_ task:

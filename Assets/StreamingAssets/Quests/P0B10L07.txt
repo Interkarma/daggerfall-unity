@@ -47,8 +47,8 @@ QuestorPostfailure:  [1009]
 Error: Questtext 1009 Called.
 
 QuestLogEntry:  [1010]
-              __vamphouse_
-               ___vamphouse_
+              __vamp_
+               ___vamp_
  
  
  Dear %pcn,
@@ -86,8 +86,8 @@ Message:  1012
 %qdt:
  I received a letter
  from _vamp_, of
- %vam of ___vamphouse_. I
- am needed in __vamphouse_
+ %vam of ___vamp_. I
+ am needed in __vamp_
  as soon as possible.
 
 Message:  1013
@@ -98,7 +98,7 @@ Message:  1013
  will of %vam. I am
  ordered not to kill %g2, just
  frighten %g2, and be back in
- ___vamphouse_ in =queston_ days.
+ ___vamp_ in =queston_ days.
 
 Message:  1014
 <ce>                         Sweet %god, tell %vam
@@ -146,7 +146,7 @@ Message:  1017
 --              %vam occurs 7 times.
 --         =queston_ occurs 14 times.
 --       ___mondung_ occurs 2 times.
---          ___vamphouse_ occurs 9 times.
+--          ___vamp_ occurs 9 times.
 --         _jewelry_ occurs 1 time.
 --          _knight_ occurs 12 times.
 --            _vamp_ occurs 5 times.

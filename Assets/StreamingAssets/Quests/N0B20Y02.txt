@@ -162,6 +162,7 @@ Foe _F.04_ is Battle_mage
 	start timer _oneday_ 
 	start timer _S.12_ 
 	log 1010 step 0 
+	create npc at _magesguild_ 
 	place npc _sleepingmage_ at _magesguild_ 
 
 variable _oneday_

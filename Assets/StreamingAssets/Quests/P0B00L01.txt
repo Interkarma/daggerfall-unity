@@ -194,7 +194,7 @@ Clock _1stparton_ 00:00 0 flag 17 range 1 2
 	_letter36_ used do _S.12_ 
 	have _letter36_ set _S.13_ 
 	give pc _letter36_ notify 1021 
-	place npc _vampire_ at _vamphouse_
+	create npc _vampire_ 
 
 variable _pcgetsgold_
 variable _queston_

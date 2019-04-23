@@ -91,15 +91,15 @@ Dear %pcn,
  
     %vam have a potential
  problem I fear. Come to me in
- ___vamphouse_ soonest.
+ ___vampire_ soonest.
  
  In death,
 <ce>                               _vampire_
 
 Message:  1011
-%g's a very nice and intelligent =vampire_ at __vamphouse_.
+%g's a very nice and intelligent =vampire_ at __vampire_.
 <--->
-_vampire_ is that nice =vampire_ you'll find at __vamphouse_, %di of here.
+_vampire_ is that nice =vampire_ you'll find at __vampire_, %di of here.
 
 Message:  1012
 _vampire_ is a vampire of %vam bloodline.
@@ -125,8 +125,8 @@ Message:  1022
 Message:  1025
 %qdt:
    _vampire_ of
- ___vamphouse_ has summoned
- me to __vamphouse_
+ ___vampire_ has summoned
+ me to __vampire_
  on %vam business.
 
 Message:  1026
@@ -136,7 +136,7 @@ Message:  1026
  vampire ancient called _vampname_.
  After slaughter time, I am to take some
  very special _vampproof_ as proof of the
- kill and return back to __vamphouse_
+ kill and return back to __vampire_
  in =1stparton_ nights.
 
 
@@ -155,7 +155,7 @@ Message:  1026
 --       =1stparton_ occurs 4 times.
 --         =vampire_ occurs 2 times.
 --       ___mondung_ occurs 25 times.
---       ___vamphouse_ occurs 10 times.
+--       ___vampire_ occurs 10 times.
 --          _reward_ occurs 18 times.
 --         _vampire_ occurs 7 times.
 --        _vampname_ occurs 9 times.
@@ -182,7 +182,7 @@ Foe _vamprival_ is Ancient_vampire
 	_letter_ used do _readletter_ 
 	have _letter_ set _S.12_ 
 	give pc _letter_ notify 1021 
-	place npc _vampire_ at _vamphouse_
+	create npc _vampire_ 
 
 _falseAide0_ task:
 	toting _vampproof_ and _vampire_ clicked 

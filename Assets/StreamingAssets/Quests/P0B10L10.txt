@@ -196,7 +196,7 @@ _S.08_ task:
 _readletter_ task:
 	add dialog for person _vamp_ 
 	log 1011 step 0 
-	place npc _vamp_ at _vamphouse_
+	create npc _vamp_
 
 _S.10_ task:
 	start timer _queston_ 
