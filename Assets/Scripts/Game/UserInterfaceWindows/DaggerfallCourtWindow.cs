@@ -458,6 +458,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.PreventEnemySpawns = true;
                 playerEntity.PreventNormalizingReputations = true;
                 DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
+                GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease = true;
                 inPrison = false;
                 playerEntity.FillVitalSigns();
             }

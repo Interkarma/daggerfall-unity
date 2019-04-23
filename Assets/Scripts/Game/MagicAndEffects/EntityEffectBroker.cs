@@ -71,6 +71,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return magicRoundsSinceStartup; }
         }
 
+        /// <summary>
+        /// Gets or sets flag stating if time was just increased synthetically.
+        /// Should only be raised by fast travel and prison time.
+        /// Some time-based effects do not operate during these increases, e.g. the "item deteriorates" side-effect
+        /// This flag is lowered at the end of each magic update.
+        /// </summary>
+        public bool SyntheticTimeIncrease { get; set; }
+
         #endregion
 
         #region Constructors
@@ -217,6 +225,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
                 //Debug.LogFormat("Time to run {0} magic rounds: {1}ms", catchupRounds, totalTime);
             }
+
+            // Lower synthetic time increase flag
+            SyntheticTimeIncrease = false;
         }
 
         #endregion

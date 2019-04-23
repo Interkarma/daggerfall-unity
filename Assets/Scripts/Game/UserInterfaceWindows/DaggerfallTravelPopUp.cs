@@ -296,6 +296,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(travelTimeMinutes * 60);
+            GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease = true;
 
             // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies at the end of a long trip
             GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
