@@ -487,9 +487,6 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 haveShownSurrenderToGuardsDialogue = false;
             }
-
-            // Clear reaction mods each update - live effects must apply change value each round to persist
-            Array.Clear(reactionMods, 0, socialGroupCount);
         }
 
         void StartRacialOverrideQuest(bool isCureQuest)
@@ -1440,6 +1437,11 @@ namespace DaggerfallWorkshop.Game.Entity
             // Optionally make permanent
             if (makePermanent)
                 item.MakePermanent();
+        }
+
+        public void ClearReactionMods()
+        {
+            Array.Clear(reactionMods, 0, socialGroupCount);
         }
 
         #endregion

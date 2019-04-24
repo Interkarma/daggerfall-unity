@@ -1476,6 +1476,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear direct mods
             Array.Clear(directStatMods, 0, DaggerfallStats.Count);
             Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
+            if (IsPlayerEntity)
+                (entityBehaviour.Entity as PlayerEntity).ClearReactionMods();
 
             // Run all bundles
             foreach (LiveEffectBundle bundle in instancedBundles)
