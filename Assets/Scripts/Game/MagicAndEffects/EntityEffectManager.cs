@@ -1871,6 +1871,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             public string key;
             public EffectSettings effectSettings;
+            public EnchantmentParam? enchantmentParam;
             public int roundsRemaining;
             public bool chanceSuccess;
             public int[] statMods;
@@ -1924,6 +1925,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectSaveData_v1 effectData = new EffectSaveData_v1();
             effectData.key = effect.Key;
             effectData.effectSettings = effect.Settings;
+            effectData.enchantmentParam = effect.EnchantmentParam;
             effectData.roundsRemaining = effect.RoundsRemaining;
             effectData.chanceSuccess = effect.ChanceSuccess;
             effectData.statMods = effect.StatMods;
@@ -1985,6 +1987,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                     // Resume effect
                     effect.ParentBundle = instancedBundle;
+                    effect.EnchantmentParam = effectData.enchantmentParam;
                     effect.Resume(effectData, this, instancedBundle.caster);
                     effect.RestoreSaveData(effectData.effectSpecific);
                     instancedBundle.liveEffects.Add(effect);
