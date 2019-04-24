@@ -186,6 +186,7 @@ _normalvict_ task:
                 when _qgclicked_ and _S.01_
 	say 1003
                 start task _victory_
+--1003 appears to be a victory statement for kill path
 
 _victory_ task:
 	give pc _gold_ 

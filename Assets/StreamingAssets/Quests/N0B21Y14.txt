@@ -245,12 +245,14 @@ Message:  1024
 QBN:
 Item _oracleNote_ letter used 1011
 Item _oracleMsg_ letter used 1024
+--added underscores to oracleNote and oracleMsg because they are variables
 Item _gold_ gold
 
 Person _oracle_ face 251 faction The_Oracle anyInfo 1013
 Person _acolyte_ face 5 faction The_Acolyte anyInfo 1012
 Person _noble_ face 25 factiontype Province
 Person _thd_ named Queen_Akorithi
+--%thd corrected to _thd_
 Person _love_ face 1 group Group_7.0
 Person _giver_ group Questor male
 

@@ -99,8 +99,10 @@ Place _palace_ remote palace
 Clock _traveltime_ 00:00 0 flag 17 range 0 2
 Clock _S.02_ 00:04 00:20
 Clock _Gothryd_ 00:04
+--timer Gothryd given underscores
 Clock _S.08_ 00:04
 Clock _S.09_ 00:04
+--flags removed to make timers precise
 
 Foe _imp_ is Imp
 
