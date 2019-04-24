@@ -1170,6 +1170,18 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        public void UnequipItem(DaggerfallEntity owner)
+        {
+            if (owner == null)
+                return;
+
+            foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
+            {
+                if (owner.ItemEquipTable.GetItem(slot) == this)
+                    owner.ItemEquipTable.UnequipItem(slot);
+            }
+        }
+
         public void ItemBreaks(DaggerfallEntity owner)
         {
             // Classic does not have the plural version of this string, and uses the short name rather than the long one.
@@ -1181,11 +1193,7 @@ namespace DaggerfallWorkshop.Game.Items
                 itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
             itemBroke = itemBroke.Replace("%s", LongName);
             DaggerfallUI.Instance.PopupMessage(itemBroke);
-            foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
-            {
-                if (owner.ItemEquipTable.GetItem(slot) == this)
-                    owner.ItemEquipTable.UnequipItem(slot);
-            }
+            UnequipItem(owner);
         }
 
         /// <summary>
@@ -1225,7 +1233,8 @@ namespace DaggerfallWorkshop.Game.Items
         /// Set enchantments on this item. Any existing enchantments will be overwritten.
         /// </summary>
         /// <param name="enchantments">Array of enchantment settings. Maximum of 10 enchantments are applied.</param>
-        public void SetEnchantments(EnchantmentSettings[] enchantments)
+        /// <param name="owner">Owner of this item for unequip test.</param>
+        public void SetEnchantments(EnchantmentSettings[] enchantments, DaggerfallEntity owner = null)
         {
             const int maxEnchantments = 10;
 
@@ -1287,6 +1296,10 @@ namespace DaggerfallWorkshop.Game.Items
             // Do nothing if no enchantments found
             if (customEnchantments.Count == 0 && legacyEnchantments.Count == 0)
                 throw new Exception("SetEnchantments() no enchantments provided");
+
+            // Unequip item - entity must equip again
+            // This ensures "on equip" effect payloads execute correctly
+            UnequipItem(owner);
 
             // Set new enchantments and identified flag
             legacyMagic = legacyEnchantments.ToArray();

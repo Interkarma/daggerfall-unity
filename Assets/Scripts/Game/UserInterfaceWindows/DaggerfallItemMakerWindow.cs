@@ -664,7 +664,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<EnchantmentSettings> combinedEnchantments = new List<EnchantmentSettings>();
             combinedEnchantments.AddRange(powersList.GetEnchantments());
             combinedEnchantments.AddRange(sideEffectsList.GetEnchantments());
-            selectedItem.SetEnchantments(combinedEnchantments.ToArray());
+            selectedItem.SetEnchantments(combinedEnchantments.ToArray(), GameManager.Instance.PlayerEntity);
 
             // Play enchantment sound effect
             DaggerfallUI.Instance.PlayOneShot(SoundClips.MakeItem);
