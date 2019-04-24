@@ -458,7 +458,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.PreventEnemySpawns = true;
                 playerEntity.PreventNormalizingReputations = true;
                 DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
-                GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease = true;
+                RaiseOnEndPrisonTimeEvent();
                 inPrison = false;
                 playerEntity.FillVitalSigns();
             }
@@ -482,6 +482,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnCourtScreen != null)
                 OnCourtScreen();
+        }
+
+        // OnEndPrisonTime
+        public delegate void OnEndPrisonTimeEventHandler();
+        public static event OnCourtScreenEventHandler OnEndPrisonTime;
+        protected virtual void RaiseOnEndPrisonTimeEvent()
+        {
+            if (OnEndPrisonTime != null)
+                OnEndPrisonTime();
         }
 
         private void SwitchToPrisonScreen()

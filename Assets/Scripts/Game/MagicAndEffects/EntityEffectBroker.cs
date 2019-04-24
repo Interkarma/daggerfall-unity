@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -77,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Some time-based effects do not operate during these increases, e.g. the "item deteriorates" side-effect
         /// This flag is lowered at the end of each magic update.
         /// </summary>
-        public bool SyntheticTimeIncrease { get; set; }
+        public bool SyntheticTimeIncrease { get; private set; }
 
         #endregion
 
@@ -88,6 +89,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
             StartGameBehaviour.OnStartGame += StartGameBehaviour_OnStartGame;
+            DaggerfallTravelPopUp.OnPostFastTravel += DaggerfallTravelPopUp_OnPostFastTravel;
+            DaggerfallCourtWindow.OnEndPrisonTime += DaggerfallCourtWindow_OnEndPrisonTime;
         }
 
         #endregion
@@ -835,6 +838,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
             InitMagicRoundTimer();
+        }
+
+        private void DaggerfallCourtWindow_OnEndPrisonTime()
+        {
+            SyntheticTimeIncrease = true;
+        }
+
+        private void DaggerfallTravelPopUp_OnPostFastTravel()
+        {
+            SyntheticTimeIncrease = true;
         }
 
         #endregion
