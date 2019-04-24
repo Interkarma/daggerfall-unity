@@ -15,7 +15,7 @@ using DaggerfallConnect.FallExe;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Item quality degrades by around one condition level per day. Or around 1 point per game hour.
+    /// Item quality degrades by around one condition level per day.
     /// Only equipped items lose condition, they do not degrade just sitting in inventory.
     /// Item does not degrade while fast travelling, possibly for balance reasons.
     /// Classic allows multiples of each side-effect with stacking penalties.
@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.ItemDeteriorates.ToString();
 
-        const int conditionLossPerRounds = 60;
+        const int conditionLossPerRounds = 4;
         const int conditionLossAmount = 1;
 
         public override void SetProperties()
@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease)
                 return;
 
-            // Only triggers once per hour
+            // Only triggers once per conditionLossPerRounds
             if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % conditionLossPerRounds != 0)
                 return;
 
@@ -88,6 +88,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Lower condition of this item
             ParentBundle.fromEquippedItem.currentCondition -= conditionLossAmount;
+
+            //UnityEngine.Debug.LogFormat("Item {0} lost {1} points of condition", ParentBundle.fromEquippedItem.LongName, conditionLossAmount);
         }
 
         #endregion
