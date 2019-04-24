@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect ingredientsRect = new Rect(175, 33, 81, 9);
 
         Rect powersButtonRect = new Rect(8, 183, 77, 10);
-        Rect sideeffectsButtonRect = new Rect(106, 183, 77, 10);
+        Rect sideEffectsButtonRect = new Rect(106, 183, 77, 10);
         Rect exitButtonRect = new Rect(202, 176, 39, 22);
 
         Rect enchantButtonRect = new Rect(200, 115, 43, 15);
@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button ingredientsButton;
 
         Button powersButton;
-        Button sideeffectsButton;
+        Button sideEffectsButton;
         Button exitButton;
 
         Button enchantButton;
@@ -114,8 +114,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<DaggerfallUnityItem> itemsFiltered = new List<DaggerfallUnityItem>();
         DaggerfallUnityItem selectedItem;
 
-        Dictionary<string, IEntityEffect> groupedEffectTemplates = new Dictionary<string, IEntityEffect>();
-        List<EnchantmentSettings> enumeratedEnchantments = new List<EnchantmentSettings>();
+        Dictionary<string, IEntityEffect> groupedPowerTemplates = new Dictionary<string, IEntityEffect>();
+        Dictionary<string, IEntityEffect> groupedSideEffectTemplates = new Dictionary<string, IEntityEffect>();
+        List<EnchantmentSettings> enumeratedPowerEnchantments = new List<EnchantmentSettings>();
+        List<EnchantmentSettings> enumeratedSideEffectEnchantments = new List<EnchantmentSettings>();
 
         bool selectingPowers;
         List<EnchantmentSettings> itemPowers = new List<EnchantmentSettings>();
@@ -171,6 +173,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             selectedItem = null;
+            powersList.ClearEnchantments();
+            sideEffectsList.ClearEnchantments();
             EnumerateEnchantments();
             Refresh();
         }
@@ -192,8 +196,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 int totalEnchantmentCost = GetTotalEnchantmentCost();
+                int totalGoldCost = GetTotalGoldCost();
                 enchantmentCostLabel.Text = string.Format("{0}/{1}", totalEnchantmentCost, FormulaHelper.GetItemEnchantmentPower(selectedItem));
-                goldCostLabel.Text = (totalEnchantmentCost * 10).ToString();
+                goldCostLabel.Text = totalGoldCost.ToString();
             }
 
             // Add appropriate items to filtered list
@@ -218,11 +223,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return powersList.GetTotalEnchantmentCost() + sideEffectsList.GetTotalEnchantmentCost();
         }
 
+        int GetTotalGoldCost()
+        {
+            return powersList.GetTotalEnchantmentCost() * 10;
+        }
+
         void EnumerateEnchantments()
         {
             // Clear existing enchantments
-            groupedEffectTemplates.Clear();
-            enumeratedEnchantments.Clear();
+            groupedPowerTemplates.Clear();
+            groupedSideEffectTemplates.Clear();
+            enumeratedPowerEnchantments.Clear();
+            enumeratedSideEffectEnchantments.Clear();
 
             // Get all effect templates with enchantments
             List<IEntityEffect> effectTemplates = GameManager.Instance.EntityEffectBroker.GetEnchantmentEffectTemplates();
@@ -233,12 +245,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (enchantments == null | enchantments.Length == 0)
                     Debug.LogWarningFormat("Effect template '{0}' returned no settings from GetEnchantmentSettings()", effect.Key);
 
-                // Add to effect templates grouped by key - this is used to populate primary picker
-                if (!groupedEffectTemplates.ContainsKey(effect.Key))
-                    groupedEffectTemplates.Add(effect.Key, effect);
+                // Sort enchantments into powers and side-effects
+                foreach(EnchantmentSettings enchantment in enchantments)
+                {
+                    if (enchantment.EnchantCost >= 0)
+                    {
+                        // TODO: Filter based on exclusive side-effects
 
-                // Add to enumerated enchantments - this is used to populate secondary picker
-                enumeratedEnchantments.AddRange(enchantments);
+                        // Add grouped key if not present
+                        if (!groupedPowerTemplates.ContainsKey(effect.Key))
+                            groupedPowerTemplates.Add(effect.Key, effect);
+
+                        // Add to powers list
+                        enumeratedPowerEnchantments.Add(enchantment);
+                    }
+                    else
+                    {
+                        // TODO: Filter based on exclusive powers
+
+                        // Add grouped key if not present
+                        if (!groupedSideEffectTemplates.ContainsKey(effect.Key))
+                            groupedSideEffectTemplates.Add(effect.Key, effect);
+
+                        // Add to side-effects list
+                        enumeratedSideEffectEnchantments.Add(enchantment);
+                    }
+                }
             }
         }
 
@@ -289,8 +321,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add powers & side-effects buttons
             Button powersButton = DaggerfallUI.AddButton(powersButtonRect, NativePanel);
             powersButton.OnMouseClick += PowersButton_OnMouseClick;
-            Button sideeffectsButton = DaggerfallUI.AddButton(sideeffectsButtonRect, NativePanel);
-            sideeffectsButton.OnMouseClick += SideeffectsButton_OnMouseClick;
+            Button sideEffectsButton = DaggerfallUI.AddButton(sideEffectsButtonRect, NativePanel);
+            sideEffectsButton.OnMouseClick += SideEffectsButton_OnMouseClick;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
@@ -466,6 +498,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        EnchantmentSettings[] GetFilteredEnchantments(IEntityEffect effect)
+        {
+            EnchantmentSettings[] filteredEnchantments = null;
+            if (selectingPowers)
+            {
+                filteredEnchantments = enumeratedPowerEnchantments.Where(e => e.EffectKey == effect.Key).ToArray();
+                if (filteredEnchantments == null || filteredEnchantments.Length == 0)
+                    throw new Exception(string.Format("Found no power enchantments for effect key '{0}'", effect.Key));
+            }
+            else
+            {
+                filteredEnchantments = enumeratedSideEffectEnchantments.Where(e => e.EffectKey == effect.Key).ToArray();
+                if (filteredEnchantments == null || filteredEnchantments.Length == 0)
+                    throw new Exception(string.Format("Found no side-effect enchantments for effect key '{0}'", effect.Key));
+            }
+
+            return filteredEnchantments;
+        }
+
         #endregion
 
         #region Event Handlers
@@ -516,7 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectingPowers = true;
 
             // Populate and display primary picker
-            foreach(IEntityEffect effect in groupedEffectTemplates.Values)
+            foreach(IEntityEffect effect in groupedPowerTemplates.Values)
             {
                 // Filter enchantments where multiple primary instances not allowed
                 if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
@@ -527,16 +578,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
 
-        private void SideeffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void SideEffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            // TODO: Check for max enchantments and display "No further side-effects may be enchanted in this item."
+            // Must have an item selected to be enchanted
+            const int mustHaveAnItemSelectedID = 1653;
+            if (selectedItem == null)
+            {
+                DaggerfallUI.MessageBox(mustHaveAnItemSelectedID);
+                return;
+            }
+
+            // Check for max enchantments and display "No further side-effects may be enchanted in this item."
+            const int cannotEnchantAnyMoreSideEffects = 1658;
+            if (powersList.EnchantmentCount + sideEffectsList.EnchantmentCount == 10)
+            {
+                DaggerfallUI.MessageBox(cannotEnchantAnyMoreSideEffects);
+                return;
+            }
 
             enchantmentPrimaryPicker.ListBox.ClearItems();
             selectingPowers = false;
 
-            Debug.Log("Add side-effects");
+            // Populate and display primary picker
+            foreach (IEntityEffect effect in groupedSideEffectTemplates.Values)
+            {
+                // Filter enchantments where multiple primary instances not allowed
+                if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
+                    continue;
+
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
+            }
+            uiManager.PushWindow(enchantmentPrimaryPicker);
         }
 
         private void EnchantButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -564,7 +638,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Get costs
             int totalEnchantmentCost = GetTotalEnchantmentCost();
-            int totalGoldCost = totalEnchantmentCost * 10;
+            int totalGoldCost = GetTotalGoldCost();
             int itemEnchantmentPower = FormulaHelper.GetItemEnchantmentPower(selectedItem);
 
             // Check for available gold and display "You do not have the gold to properly pay the enchanter." if not enough
@@ -644,9 +718,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception(string.Format("ListItem '{0}' has no IEntityEffect tag", listItem.textLabel.Text));
 
             // Filter enchantments based on effect key
-            EnchantmentSettings[] filteredEnchantments = enumeratedEnchantments.Where(e => e.EffectKey == effect.Key).ToArray();
-            if (filteredEnchantments == null || filteredEnchantments.Length == 0)
-                throw new Exception(string.Format("Found no enchantments for effect key '{0}'", effect.Key));
+            EnchantmentSettings[] filteredEnchantments = GetFilteredEnchantments(effect);
 
             // If this is a singleton effect with no secondary options then add directly to powers/side-effects
             if (filteredEnchantments.Length == 1)
