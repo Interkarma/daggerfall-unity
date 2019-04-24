@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -86,8 +87,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 param == Params.InHolyPlaces && !GameManager.Instance.PlayerEnterExit.IsPlayerInHolyPlace)
                 return;
 
+            // Get owner entity
+            DaggerfallEntity ownerEntity = null;
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (entityBehaviour)
+                ownerEntity = entityBehaviour.Entity;
+
             // Lower condition of this item
-            ParentBundle.fromEquippedItem.currentCondition -= conditionLossAmount;
+            ParentBundle.fromEquippedItem.LowerCondition(conditionLossAmount, ownerEntity);
 
             //UnityEngine.Debug.LogFormat("Item {0} lost {1} points of condition", ParentBundle.fromEquippedItem.LongName, conditionLossAmount);
         }

@@ -1170,6 +1170,20 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        public void LowerCondition(int amount, DaggerfallEntity unequipFromOwner = null, ItemCollection removeFromCollection = null)
+        {
+            currentCondition -= amount;
+            if (currentCondition <= 0)
+            {
+                currentCondition = 0;
+                ItemBreaks(unequipFromOwner);
+            }
+            if (removeFromCollection != null)
+            {
+                removeFromCollection.RemoveItem(this);
+            }
+        }
+
         public void UnequipItem(DaggerfallEntity owner)
         {
             if (owner == null)

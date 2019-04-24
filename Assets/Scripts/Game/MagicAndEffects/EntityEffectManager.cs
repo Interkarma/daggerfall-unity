@@ -939,12 +939,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                         // Apply durability loss to used item on use
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                        item.currentCondition -= 10;
-                        if (item.currentCondition <= 0 && collection != null)
-                        {
-                            item.ItemBreaks(GameManager.Instance.PlayerEntity);
-                            collection.RemoveItem(item);
-                        }
+                        item.LowerCondition(10, GameManager.Instance.PlayerEntity, collection);
                     }
                 }
                 if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4) // Handle Sanguine Rose
