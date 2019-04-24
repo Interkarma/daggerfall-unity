@@ -504,7 +504,7 @@ namespace DaggerfallWorkshop.Game
             NPCfaction = factions[0];
 
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            int reaction = NPCfaction.rep + player.BiographyReactionMod;
+            int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
             if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // One of the five general social groups
                 reaction += player.SGroupReputations[(int)socialGroup];
