@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -89,12 +90,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Get owner entity
             DaggerfallEntity ownerEntity = null;
+            ItemCollection ownerItemCollection = null;
             DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
             if (entityBehaviour)
+            {
                 ownerEntity = entityBehaviour.Entity;
+                ownerItemCollection = entityBehaviour.Entity.Items;
+            }
 
-            // Lower condition of this item
-            ParentBundle.fromEquippedItem.LowerCondition(conditionLossAmount, ownerEntity);
+            // Lower condition of this item - gone forever once it breaks
+            ParentBundle.fromEquippedItem.LowerCondition(conditionLossAmount, ownerEntity, ownerItemCollection);
 
             //UnityEngine.Debug.LogFormat("Item {0} lost {1} points of condition", ParentBundle.fromEquippedItem.LongName, conditionLossAmount);
         }
