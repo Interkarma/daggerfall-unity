@@ -85,8 +85,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 param == Params.InHolyPlaces && GameManager.Instance.PlayerEnterExit.IsPlayerInHolyPlace)
                 entityBehaviour.Entity.DecreaseHealth(damageAmount);
 
-            if (ParentBundle.fromEquippedItem != null)
-                UnityEngine.Debug.LogFormat("Applied {0} points of sun/holy damage from item {1}", damageAmount, ParentBundle.fromEquippedItem.LongName);
+            //if (ParentBundle.fromEquippedItem != null)
+            //    UnityEngine.Debug.LogFormat("Applied {0} points of sun/holy damage from item {1}", damageAmount, ParentBundle.fromEquippedItem.LongName);
         }
 
         #endregion
