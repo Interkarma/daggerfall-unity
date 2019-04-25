@@ -17,21 +17,19 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Lower reaction with selected social groups while item held.
+    /// Increase reaction with selected social groups while item held.
     /// Notes:
-    ///  * Classic reaction decrease amount currently unknown.
-    ///  * Sources claim that effect persists even when item in wagon, but this is suspect and not consistent with other item effects.
-    ///  * Classic allows unusual stacking of variants, e.g. all is exclusive to groups but each group not exclusive with itself.
+    ///  * Classic reaction increase amount currently unknown.
     ///  * Only allowing one enchantment variant to be added here.
     /// TODO:
     ///  * Find correct reaction adjustment value.
     ///  * Allow adding multiple individual groups, without duplicates, exclusive to all.
     /// </summary>
-    public class BadRepWith : BaseEntityEffect
+    public class GoodRepWith : BaseEntityEffect
     {
-        public static readonly string EffectKey = EnchantmentTypes.BadRepWith.ToString();
+        public static readonly string EffectKey = EnchantmentTypes.GoodRepWith.ToString();
 
-        const int adjustmentAmount = -25;
+        const int adjustmentAmount = 25;
 
         public override void SetProperties()
         {
@@ -56,7 +54,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     Version = 1,
                     EffectKey = EffectKey,
-                    ClassicType = EnchantmentTypes.BadRepWith,
+                    ClassicType = EnchantmentTypes.GoodRepWith,
                     ClassicParam = (short)i,
                     PrimaryDisplayName = properties.GroupName,
                     SecondaryDisplayName = TextManager.Instance.GetText(textDatabase, classicTextKeys[i]),
@@ -113,12 +111,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         static short[] classicParamCosts =
         {
-            -1000,  //Commoners
-            -1000,  //Merchants
-            -1000,  //Scholars
-            -1000,  //Nobility
-            -1000,  //Underworld
-            -5000,  //All
+            1000,   //Commoners
+            1000,   //Merchants
+            1000,   //Scholars
+            1000,   //Nobility
+            1000,   //Underworld
+            5000,   //All
         };
 
         static string[] classicTextKeys =
