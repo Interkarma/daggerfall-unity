@@ -1273,8 +1273,8 @@ namespace DaggerfallWorkshop.Game.Items
                         ClassicParam = settings.ClassicParam,
                         CustomParam = settings.CustomParam,
                     };
-                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Created))
-                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Created, param, null, null, this);
+                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Enchanted))
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Enchanted, param, null, null, this);
                 }
 
                 // Add custom or legacy enchantment
