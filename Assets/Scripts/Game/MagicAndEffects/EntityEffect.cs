@@ -183,6 +183,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null);
 
         /// <summary>
+        /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
+        /// Used by enchanting window to prevent certain enchantments from being selected together.
+        /// </summary>
+        bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null);
+
+        /// <summary>
         /// Get effect state data to serialize.
         /// </summary>
         object GetSaveData();
@@ -403,6 +409,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         public virtual void EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null)
         {
+        }
+
+        /// <summary>
+        /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
+        /// Used by enchanting window to prevent certain enchantments from being selected together.
+        /// </summary>
+        public virtual bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
+        {
+            return false;
         }
 
         /// <summary>

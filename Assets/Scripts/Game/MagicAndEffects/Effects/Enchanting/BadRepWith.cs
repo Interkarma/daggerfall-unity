@@ -22,10 +22,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     ///  * Classic reaction decrease amount currently unknown.
     ///  * Sources claim that effect persists even when item in wagon, but this is suspect and not consistent with other item effects.
     ///  * Classic allows unusual stacking of variants, e.g. all is exclusive to groups but each group not exclusive with itself.
-    ///  * Only allowing one enchantment variant to be added here.
+    ///  * Changed this to work uniformly as per GoodRepWith, which does not allow self-stacking of groups.
     /// TODO:
     ///  * Find correct reaction adjustment value.
-    ///  * Allow adding multiple individual groups, without duplicates, exclusive to all.
     /// </summary>
     public class BadRepWith : BaseEntityEffect
     {
@@ -39,6 +38,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
+            properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
 
@@ -95,6 +95,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 playerEntity.ChangeReactionMod((FactionFile.SocialGroups)EnchantmentParam.Value.ClassicParam, adjustmentAmount);
             }
+        }
+
+        public override bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
+        {
+            string goodRepWithKey = EnchantmentTypes.GoodRepWith.ToString();
+            foreach (EnchantmentSettings settings in settingsToTest)
+            {
+                // Self tests
+                if (settings.EffectKey == EffectKey)
+                {
+                    // Exclusive with self once "All" selected
+                    if (settings.ClassicParam == (int)Params.All)
+                        return true;
+
+                    // "All" is exclusive with other groups
+                    if (comparerParam != null && settings.ClassicParam != (int)Params.All && comparerParam.Value.ClassicParam == (int)Params.All)
+                        return true;
+                }
+
+                // Exclusive with opposing GoodRepWith param
+                if (settings.EffectKey == goodRepWithKey && comparerParam != null && settings.ClassicParam == comparerParam.Value.ClassicParam)
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion

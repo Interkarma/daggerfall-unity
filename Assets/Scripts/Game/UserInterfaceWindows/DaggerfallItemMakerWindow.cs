@@ -250,8 +250,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     if (enchantment.EnchantCost >= 0)
                     {
-                        // TODO: Filter based on exclusive side-effects
-
                         // Add grouped key if not present
                         if (!groupedPowerTemplates.ContainsKey(effect.Key))
                             groupedPowerTemplates.Add(effect.Key, effect);
@@ -261,8 +259,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                     else
                     {
-                        // TODO: Filter based on exclusive powers
-
                         // Add grouped key if not present
                         if (!groupedSideEffectTemplates.ContainsKey(effect.Key))
                             groupedSideEffectTemplates.Add(effect.Key, effect);
@@ -567,10 +563,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectingPowers = true;
 
             // Populate and display primary picker
+            EnchantmentSettings[] currentPowers = powersList.GetEnchantments();
+            EnchantmentSettings[] currentSideEffects = sideEffectsList.GetEnchantments();
             foreach(IEntityEffect effect in groupedPowerTemplates.Values)
             {
                 // Filter enchantments where multiple primary instances not allowed
                 if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
+                    continue;
+
+                // Filter if any current primary enchantments are exclusive to this one
+                if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
 
                 enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
@@ -602,10 +604,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectingPowers = false;
 
             // Populate and display primary picker
+            EnchantmentSettings[] currentPowers = powersList.GetEnchantments();
+            EnchantmentSettings[] currentSideEffects = sideEffectsList.GetEnchantments();
             foreach (IEntityEffect effect in groupedSideEffectTemplates.Values)
             {
                 // Filter enchantments where multiple primary instances not allowed
                 if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
+                    continue;
+
+                // Filter if any current primary enchantments are exclusive to this one
+                if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
 
                 enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
@@ -733,6 +741,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 filteredEnchantments = filteredEnchantments.OrderBy(o => o.SecondaryDisplayName).ToArray();
 
             // User must select from available secondary enchantment types
+            EnchantmentSettings[] currentPowers = powersList.GetEnchantments();
+            EnchantmentSettings[] currentSideEffects = sideEffectsList.GetEnchantments();
             foreach (EnchantmentSettings enchantment in filteredEnchantments)
             {
                 // Filter out enchantment when multiple instances not allowed
@@ -741,6 +751,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (ContainsEnchantmentSettings(enchantment))
                         continue;
                 }
+
+                // Filter if any current secondary enchantments are exclusive to this one
+                EnchantmentParam comparerParam = new EnchantmentParam() { ClassicParam = enchantment.ClassicParam, CustomParam = enchantment.CustomParam };
+                if (effect.IsEnchantmentExclusiveTo(currentPowers, comparerParam) || effect.IsEnchantmentExclusiveTo(currentSideEffects, comparerParam))
+                    continue;
+
                 enchantmentSecondaryPicker.ListBox.AddItem(enchantment.SecondaryDisplayName, -1, enchantment);
             }
 

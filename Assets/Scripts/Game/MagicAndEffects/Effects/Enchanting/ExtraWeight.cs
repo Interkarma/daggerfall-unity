@@ -17,7 +17,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Item weight is increased by multiple times.
-    /// TODO: Make exclusive with FeatherWeight
     /// </summary>
     public class ExtraWeight : BaseEntityEffect
     {
@@ -59,6 +58,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Increase weight when item is enchanted
             if (context == EnchantmentPayloadFlags.Enchanted && sourceItem != null)
                 sourceItem.weightInKg *= weightMultiplier;
+        }
+
+        public override bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
+        {
+            // Exclusive to FeatherWeight - no param test required
+            string featherWeightKey = EnchantmentTypes.FeatherWeight.ToString();
+            foreach (EnchantmentSettings settings in settingsToTest)
+            {
+                if (settings.EffectKey == featherWeightKey)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

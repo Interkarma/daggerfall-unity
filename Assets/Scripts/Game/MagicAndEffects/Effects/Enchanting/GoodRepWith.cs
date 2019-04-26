@@ -20,10 +20,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// Increase reaction with selected social groups while item held.
     /// Notes:
     ///  * Classic reaction increase amount currently unknown.
-    ///  * Only allowing one enchantment variant to be added here.
     /// TODO:
     ///  * Find correct reaction adjustment value.
-    ///  * Allow adding multiple individual groups, without duplicates, exclusive to all.
     /// </summary>
     public class GoodRepWith : BaseEntityEffect
     {
@@ -37,6 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
+            properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
 
@@ -93,6 +92,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 playerEntity.ChangeReactionMod((FactionFile.SocialGroups)EnchantmentParam.Value.ClassicParam, adjustmentAmount);
             }
+        }
+
+        public override bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
+        {
+            string badRepWithKey = EnchantmentTypes.BadRepWith.ToString();
+            foreach (EnchantmentSettings settings in settingsToTest)
+            {
+                // Self tests
+                if (settings.EffectKey == EffectKey)
+                {
+                    // Exclusive with self once "All" selected
+                    if (settings.ClassicParam == (int)Params.All)
+                        return true;
+
+                    // "All" is exclusive with other groups
+                    if (comparerParam != null && settings.ClassicParam != (int)Params.All && comparerParam.Value.ClassicParam == (int)Params.All)
+                        return true;
+                }
+
+                // Exclusive with opposing BadRepWith param
+                if (settings.EffectKey == badRepWithKey && comparerParam != null && settings.ClassicParam == comparerParam.Value.ClassicParam)
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion
