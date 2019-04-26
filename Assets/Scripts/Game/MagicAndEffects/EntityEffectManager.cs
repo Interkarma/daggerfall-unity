@@ -984,17 +984,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         /// <param name="item">Item striking this entity.</param>
         /// <param name="caster">Entity attacking with item.</param>
-        public void StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster)
+        /// <param name="damageIn">Original damage amount before effects.</param>
+        /// <returns>Damage out after effect callbacks. Always 0 or greater.</returns>
+        public int StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster, int damageIn)
         {
+            int damageOut = damageIn;
+
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
-                return;
+                return damageOut;
 
-            // Create bundle for every "cast when strikes" enchantment
+            // Legacy enchantmentment effects
             List<EntityEffectBundle> bundles = new List<EntityEffectBundle>();
             DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
             {
+                // TODO: Migrate this payload to CastWhenStrikes enchantment class, just maintaining old method for now
                 EffectBundleSettings bundleSettings;
                 EntityEffectBundle bundle;
                 if (enchantment.type == EnchantmentTypes.CastWhenStrikes)
@@ -1019,19 +1024,52 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
                 else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
                 {
+                    // TODO: Migrate this to enchantment system
                     if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
                         continue;
                     bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
                     bundle.CasterEntityBehaviour = caster;
                     bundles.Add(bundle);
                 }
+                else
+                {
+                    // Ignore empty enchantment slots
+                    if (enchantment.type == EnchantmentTypes.None)
+                        continue;
+
+                    // Get effect template - classic enchantment effects use EnchantmentTypes string as their key
+                    string effectKey = enchantment.type.ToString();
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
+                    if (effectTemplate == null)
+                    {
+                        Debug.LogWarningFormat("StrikeWithItem() classic effect key {0} not found in broker.", effectKey);
+                        continue;
+                    }
+
+                    // Strikes payload callback
+                    EnchantmentParam param = new EnchantmentParam() { ClassicParam = enchantment.param };
+                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Strikes))
+                    {
+                        PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, caster, entityBehaviour, item);
+                        if (results != null)
+                            damageOut += results.Value.strikesModulateDamage;
+                    }
+                }
             }
+
+            // TODO: Modern enchantment effects
 
             // Assign bundles to this entity
             foreach (EntityEffectBundle bundle in bundles)
             {
                 AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
             }
+
+            // Clamp damage to 0
+            if (damageOut < 0)
+                damageOut = 0;
+
+            return damageOut;
         }
 
         #endregion
