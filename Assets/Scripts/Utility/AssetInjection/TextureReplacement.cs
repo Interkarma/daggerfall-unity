@@ -409,18 +409,34 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             int record = summary.Record;
             int frame = 0;
 
-            // Check first frame
             Texture2D albedo, emission;
-            bool hasImportedTextures = LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission);
-            bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
-
-            if (summary.ImportedTextures.HasImportedTextures = hasImportedTextures)
+            if (summary.ImportedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission))
             {
+                bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
+
+                // Read xml configuration
+                Vector2 uv = Vector2.zero;
+                XMLManager xml;
+                if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
+                {
+                    isEmissive |= xml.GetBool("emission");
+
+                    // Set billboard scale
+                    Transform transform = go.GetComponent<Transform>();
+                    transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
+                    summary.Size.x *= transform.localScale.x;
+                    summary.Size.y *= transform.localScale.y;
+
+                    // Get UV
+                    uv = xml.GetVector2("uvX", "uvY", uv);
+                }
+                SetUv(go.GetComponent<MeshFilter>(), uv.x, uv.y);
+
                 // Set textures on material; emission is always overriden, with actual texture or null.
-                meshRenderer.material.SetTexture(Uniforms.MainTex, albedo);
-                meshRenderer.material.SetTexture(Uniforms.EmissionMap, isEmissive ? emission ?? albedo : null);
-                if (!isEmissive)
-                    meshRenderer.material.DisableKeyword(KeyWords.Emission);
+                Material material = meshRenderer.sharedMaterial;
+                material.SetTexture(Uniforms.MainTex, albedo);
+                material.SetTexture(Uniforms.EmissionMap, isEmissive ? emission ?? albedo : null);
+                ToggleEmission(material, isEmissive);
 
                 // Import animation frames
                 var albedoTextures = new List<Texture2D>();
@@ -432,22 +448,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         emissionTextures.Add(emission ?? albedo);
                 }
                 while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, true, out albedo, out emission));
-
-                // Set scale and uv
-                Vector2 uv = Vector2.zero;
-                XMLManager xml;
-                if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
-                {
-                    // Set billboard scale
-                    Transform transform = go.GetComponent<Transform>();
-                    transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
-                    summary.Size.x *= transform.localScale.x;
-                    summary.Size.y *= transform.localScale.y;
-
-                    // Get UV
-                    uv = xml.GetVector2("uvX", "uvY", uv);
-                }
-                SetUv(go.GetComponent<MeshFilter>(), uv.x, uv.y);
 
                 // Save results
                 summary.ImportedTextures.FrameCount = frame;
@@ -472,12 +472,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D tex, emission;
             if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
             {
+                // Read xml configuration
+                XMLManager xml;
+                if (XMLManager.TryReadXml(ImagesPath, string.Format("{0:000}", archive), out xml))
+                    importedTextures.IsEmissive = xml.GetBool("emission");
+
                 // Enable emission
-                if (importedTextures.IsEmissive = emission != null)
-                {
-                    material.EnableKeyword(KeyWords.Emission);
-                    material.SetColor(Uniforms.EmissionColor, Color.white);
-                }
+                ToggleEmission(material, importedTextures.IsEmissive |= emission != null);
 
                 // Load texture file to get record and frame count
                 string fileName = TextureFile.IndexToFileName(archive);
@@ -964,6 +965,25 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private static Texture2D GetTextureOrDefault(Material material, int propertyID)
         {
             return material.HasProperty(propertyID) ? (Texture2D)material.GetTexture(propertyID) : null;
+        }
+
+        private static void ToggleEmission(Material material, bool isEmissive)
+        {
+            bool isEnabled = material.IsKeywordEnabled(KeyWords.Emission);
+
+            if (isEmissive)
+            {
+                if (!isEnabled)
+                {
+                    material.EnableKeyword(KeyWords.Emission);
+                    material.SetColor(Uniforms.EmissionColor, Color.white);
+                }
+            }
+            else
+            {
+                if (isEnabled)
+                    material.DisableKeyword(KeyWords.Emission);
+            }
         }
 
         #endregion
