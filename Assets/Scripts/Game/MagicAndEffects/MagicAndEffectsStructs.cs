@@ -308,4 +308,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public short ClassicParam;                                  // Classic echantment param
         public string CustomParam;                                  // Custom enchantment param
     }
+
+    /// <summary>
+    /// Optional information returned to framework by enchantment payload callbacks.
+    /// </summary>
+    [Serializable]
+    public struct PayloadCallbackResults
+    {
+        public int strikesModulateDamage;                           // Amount to plus/minus from damage after Strikes effect payload
+    }
 }

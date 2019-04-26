@@ -51,13 +51,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return enchantments;
         }
 
-        public override void EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null)
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null)
         {
             base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
 
             // Increase weight when item is enchanted
             if (context == EnchantmentPayloadFlags.Enchanted && sourceItem != null)
                 sourceItem.weightInKg *= weightMultiplier;
+
+            return null;
         }
 
         public override bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
