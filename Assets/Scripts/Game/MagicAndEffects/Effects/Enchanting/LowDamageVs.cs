@@ -17,11 +17,14 @@ using DaggerfallWorkshop.Game.Items;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Potent vs enemy types.
+    /// Lower damage vs enemy types.
+    /// TODO: Find correct damage reduction amount.
     /// </summary>
-    public class PotentVs : BaseEntityEffect
+    public class LowDamageVs : BaseEntityEffect
     {
-        public static readonly string EffectKey = EnchantmentTypes.PotentVs.ToString();
+        public static readonly string EffectKey = EnchantmentTypes.LowDamageVs.ToString();
+
+        const int reduceDamageAmount = -5;
 
         public override void SetProperties()
         {
@@ -30,7 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.WeaponOnly;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by PassiveItemSpecialsEffect
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Strikes;
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     Version = 1,
                     EffectKey = EffectKey,
-                    ClassicType = EnchantmentTypes.PotentVs,
+                    ClassicType = EnchantmentTypes.LowDamageVs,
                     ClassicParam = (short)i,
                     PrimaryDisplayName = properties.GroupName,
                     SecondaryDisplayName = TextManager.Instance.GetText(textDatabase, classicTextKeys[i]),
@@ -62,13 +65,46 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Payloads
 
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null)
+        {
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
+
+            // Requires param
+            if (param == null)
+                return null;
+
+            // Check target is an enemy type
+            EnemyEntity enemyEntity = null;
+            if (targetEntity != null && (targetEntity.EntityType == EntityTypes.EnemyMonster || targetEntity.EntityType == EntityTypes.EnemyClass))
+                enemyEntity = targetEntity.Entity as EnemyEntity;
+            else
+                return null;
+
+            // Check enemy matches param type
+            Params type = (Params)param.Value.ClassicParam;
+            if (type == Params.Undead && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Undead ||
+                type == Params.Daedra && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Daedra ||
+                type == Params.Humanoid && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Human ||
+                type == Params.Animals && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Animal)
+            {
+                // Modulating damage to a lower value
+                // Currently unknown what values classic uses to lower damage
+                return new PayloadCallbackResults()
+                {
+                    strikesModulateDamage = reduceDamageAmount
+                };
+            }
+
+            return null;
+        }
+
         public override bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
         {
-            string lowDamageVsKey = EnchantmentTypes.LowDamageVs.ToString();
+            string potentVsKey = EnchantmentTypes.PotentVs.ToString();
             foreach (EnchantmentSettings settings in settingsToTest)
             {
-                // Exclusive with opposing LowDamageVs param
-                if (settings.EffectKey == lowDamageVsKey && comparerParam != null && settings.ClassicParam == comparerParam.Value.ClassicParam)
+                // Exclusive with opposing PotentVs param
+                if (settings.EffectKey == potentVsKey && comparerParam != null && settings.ClassicParam == comparerParam.Value.ClassicParam)
                     return true;
             }
 
@@ -79,12 +115,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Classic Support
 
+        enum Params
+        {
+            Undead,
+            Daedra,
+            Humanoid,
+            Animals,
+        }
+
         static short[] classicParamCosts =
         {
-            800,    //Undead
-            900,    //Daedra
-            1000,   //Humanoid
-            1200,   //Animals
+            -800,   //Undead
+            -900,   //Daedra
+            -1000,  //Humanoid
+            -1200,  //Animals
         };
 
         static string[] classicTextKeys =
