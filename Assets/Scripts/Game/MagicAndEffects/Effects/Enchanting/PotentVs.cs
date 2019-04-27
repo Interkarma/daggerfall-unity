@@ -17,11 +17,14 @@ using DaggerfallWorkshop.Game.Items;
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Potent vs enemy types.
+    /// Increase damage vs enemy types.
+    /// TODO: Find correct damage increase amount.
     /// </summary>
     public class PotentVs : BaseEntityEffect
     {
         public static readonly string EffectKey = EnchantmentTypes.PotentVs.ToString();
+
+        const int increaseDamageAmount = 5;
 
         public override void SetProperties()
         {
@@ -30,7 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.WeaponOnly;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by PassiveItemSpecialsEffect
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Strikes;
         }
 
         /// <summary>
@@ -62,6 +65,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Payloads
 
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null)
+        {
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
+
+            // Requires param
+            if (param == null)
+                return null;
+
+            // Check target is an enemy type
+            EnemyEntity enemyEntity = null;
+            if (targetEntity != null && (targetEntity.EntityType == EntityTypes.EnemyMonster || targetEntity.EntityType == EntityTypes.EnemyClass))
+                enemyEntity = targetEntity.Entity as EnemyEntity;
+            else
+                return null;
+
+            // Check enemy matches param type
+            Params type = (Params)param.Value.ClassicParam;
+            if (type == Params.Undead && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Undead ||
+                type == Params.Daedra && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Daedra ||
+                type == Params.Humanoid && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Human ||
+                type == Params.Animals && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Animal)
+            {
+                // Modulating damage to a higher value
+                // Currently unknown what values classic uses to increase damage
+                return new PayloadCallbackResults()
+                {
+                    strikesModulateDamage = increaseDamageAmount
+                };
+            }
+
+            return null;
+        }
+
         public override bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
         {
             string lowDamageVsKey = EnchantmentTypes.LowDamageVs.ToString();
@@ -78,6 +114,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #endregion
 
         #region Classic Support
+
+        enum Params
+        {
+            Undead,
+            Daedra,
+            Humanoid,
+            Animals,
+        }
 
         static short[] classicParamCosts =
         {

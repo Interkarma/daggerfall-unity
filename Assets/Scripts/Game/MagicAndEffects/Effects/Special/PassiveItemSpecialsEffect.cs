@@ -61,14 +61,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             NearAnimals = 10,
         }
 
-        enum PotentVsTypes
-        {
-            Undead = 0,
-            Daedra = 1,
-            Humanoid = 2,
-            Animals = 3,
-        }
-
         enum RegenerateTypes
         {
             AllTheTime = 0,
@@ -225,9 +217,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 switch (enchantedItem.LegacyEnchantments[i].type)
                 {
-                    case EnchantmentTypes.PotentVs:
-                        PotentVs(enchantedItem.LegacyEnchantments[i], receiver);
-                        break;
                     case EnchantmentTypes.VampiricEffect:
                         VampiricEffectWhenStrikes(enchantedItem.LegacyEnchantments[i], receiver, damage);
                         break;
@@ -398,35 +387,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Tick regeneration when conditions are right
             if (regenerate)
                 entityBehaviour.Entity.IncreaseHealth(regenerateAmount);
-        }
-
-        #endregion
-
-        #region Potent Vs
-
-        /// <summary>
-        /// UESP states this power has no effect in classic.
-        /// This implementation simply adds +5 damage to receiving entity on strike.
-        /// Minor potency is better than nothing. Can be researched and improved later.
-        /// </summary>
-        void PotentVs(DaggerfallEnchantment enchantment, DaggerfallEntityBehaviour receiver)
-        {
-            // Check this is an enemy type
-            EnemyEntity enemyEntity = null;
-            if (receiver.EntityType == EntityTypes.EnemyMonster || receiver.EntityType == EntityTypes.EnemyClass)
-                enemyEntity = receiver.Entity as EnemyEntity;
-            else
-                return;
-
-            PotentVsTypes type = (PotentVsTypes)enchantment.param;
-            if (type == PotentVsTypes.Undead && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Undead ||
-                type == PotentVsTypes.Daedra && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Daedra ||
-                type == PotentVsTypes.Humanoid && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Human ||
-                type == PotentVsTypes.Animals && enemyEntity.MobileEnemy.Affinity == MobileAffinity.Animal)
-            {
-                receiver.Entity.CurrentHealth -= potentVsDamage;
-                //Debug.LogFormat("Applied +{0} potent vs damage to {1}.", potentVsDamage, type.ToString());
-            }
         }
 
         #endregion
