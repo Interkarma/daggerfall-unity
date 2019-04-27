@@ -571,6 +571,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
                     continue;
 
+                // Filter if enchantment is weapon-only and this is not a weapon item
+                if (effect.HasItemMakerFlags(ItemMakerFlags.WeaponOnly) && selectedItem.ItemGroup != ItemGroups.Weapons)
+                    continue;
+
                 // Filter if any current primary enchantments are exclusive to this one
                 if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
@@ -610,6 +614,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Filter enchantments where multiple primary instances not allowed
                 if (!effect.HasItemMakerFlags(ItemMakerFlags.AllowMultiplePrimaryInstances) && ContainsEnchantmentKey(effect.Key))
+                    continue;
+
+                // Filter if enchantment is weapon-only and this is not a weapon item
+                if (effect.HasItemMakerFlags(ItemMakerFlags.WeaponOnly) && selectedItem.ItemGroup != ItemGroups.Weapons)
                     continue;
 
                 // Filter if any current primary enchantments are exclusive to this one
