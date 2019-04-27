@@ -905,6 +905,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         /// <summary>
         /// Offers item to effect manager when used by player in inventory.
+        /// TODO: Match classic when "use" casts multiple spells of different types from same item.
         /// </summary>
         /// <param name="item">Item just used.</param>
         /// <param name="collection">Collection containing item.</param>
@@ -914,35 +915,42 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (item == null || !item.IsEnchanted)
                 return;
 
-            // Cast first "cast when used" enchantment
-            // This works by sending effect to readySpell which currently cannot queue more than one spell
-            // Not sure how classic handles multiple "cast when used" effects, especially for "press to release" styled spells
-            DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
-            foreach (DaggerfallEnchantment enchantment in enchantments)
+            // Legacy enchantment effects
+            DaggerfallEnchantment[] legacyEnchantments = item.LegacyEnchantments;
+            foreach (DaggerfallEnchantment enchantment in legacyEnchantments)
             {
-                SpellRecord.SpellRecordData spell;
+                // Ignore empty enchantment slots
+                if (enchantment.type == EnchantmentTypes.None)
+                    continue;
+
+                // Get effect template - classic enchantment effects use EnchantmentTypes string as their key
+                string effectKey = enchantment.type.ToString();
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
+                if (effectTemplate == null)
+                {
+                    Debug.LogWarningFormat("UseItem() classic effect key {0} not found in broker.", effectKey);
+                    continue;
+                }
+
+                // Used payload callback
+                EnchantmentParam param = new EnchantmentParam() { ClassicParam = enchantment.param };
+                if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Used))
+                {
+                    effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Used, param, entityBehaviour, entityBehaviour, item);
+
+                    // Apply durability loss to used item on use
+                    // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+                    item.LowerCondition(10, GameManager.Instance.PlayerEntity, collection);
+                }
+
+                // NOTE: All artifact payloads to be delivered by effect system moving forwards - this code to be moved into respective effect class
+
                 EffectBundleSettings bundleSettings;
                 EntityEffectBundle bundle;
-                if (enchantment.type == EnchantmentTypes.CastWhenUsed)
-                {
-                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
-                    {
-                        //Debug.LogFormat("EntityEffectManager.UseItem: Found CastWhenUsed enchantment '{0}'", spell.spellName);
 
-                        // Create effect bundle settings from classic spell
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
-                            continue;
-
-                        // Assign bundle to ready spell 
-                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                        SetReadySpell(bundle, true);
-
-                        // Apply durability loss to used item on use
-                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                        item.LowerCondition(10, GameManager.Instance.PlayerEntity, collection);
-                    }
-                }
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4) // Handle Sanguine Rose
+                // Handle Sanguine Rose
+                // TODO: Move to effect class
+                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4)
                 {
                     // Use for any artifact that simply assigns a bundle
                     if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
@@ -952,6 +960,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
 
                 // Handle Oghma Infinium
+                // TODO: Move to effect class
                 if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 5)
                 {
                     GameManager.Instance.PlayerEntity.ReadyToLevelUp = true;
@@ -961,6 +970,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
 
                 // Handle Azura's Star
+                // TODO: Move to effect class
                 if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 9)
                 {
                     const int soulReleasedID = 32;
@@ -976,7 +986,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         DaggerfallUI.MessageBox(noSoulToReleaseID);
                     }
                 }
+
+                // NOTE: All artifact payloads to be delivered by effect system moving forwards - this code to be moved into respective effect class
             }
+
+            // TODO: Modern enchantment effects
         }
 
         /// <summary>
@@ -994,7 +1008,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (item == null || !item.IsEnchanted)
                 return damageOut;
 
-            // Legacy enchantmentment effects
+            // Legacy enchantment effects
             List<EntityEffectBundle> bundles = new List<EntityEffectBundle>();
             DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
