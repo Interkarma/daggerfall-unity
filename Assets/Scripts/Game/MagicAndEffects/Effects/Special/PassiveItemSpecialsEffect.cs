@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
@@ -32,8 +31,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "Passive-Item-Specials";
 
         const float nearbyRadius = 18f;             // Reasonably matched to classic with testing
-        const int potentVsDamage = 5;               // Setting this to a small amount for now
-        const float vampiricDrainRange = 2.25f;     // Testing classic shows range of vampiric effect items is approx. melee distance
         const int regenerateAmount = 1;
         const int regeneratePerRounds = 4;
         const int conditionAmount = 1;
@@ -68,12 +65,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             InDarkness = 2,
         }
 
-        enum VampiricEffectTypes
-        {
-            AtRange = 0,
-            WhenStrikes = 1,
-        }
-
         enum IncreasedWeightAllowanceTypes
         {
             OneQuarterExtra = 0,
@@ -95,20 +86,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.Start(manager, caster);
             CacheReferences();
-            SubscribeEvents();
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
             CacheReferences();
-            SubscribeEvents();
         }
 
         public override void End()
         {
             base.End();
-            UnsubscribeEvents();
         }
 
         public override void ConstantEffect()
@@ -142,22 +130,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Cache reference to peered entity behaviour
             if (!entityBehaviour)
                 entityBehaviour = GetPeeredEntityBehaviour(manager);
-        }
-
-        void SubscribeEvents()
-        {
-            if (enchantedItem != null)
-            {
-                enchantedItem.OnWeaponStrike += OnWeaponStrikeEnchantments;
-            }
-        }
-
-        void UnsubscribeEvents()
-        {
-            if (enchantedItem != null)
-            {
-                enchantedItem.OnWeaponStrike -= OnWeaponStrikeEnchantments;
-            }
         }
 
         void ConstantEnchantments()
@@ -196,34 +168,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     case EnchantmentTypes.RegensHealth:
                         RegenerateHealth(enchantedItem.LegacyEnchantments[i]);
                         break;
-                    case EnchantmentTypes.VampiricEffect:
-                        VampiricEffectRanged(enchantedItem.LegacyEnchantments[i]);
-                        break;
                     case EnchantmentTypes.RepairsObjects:
                         RepairItems(enchantedItem.LegacyEnchantments[i]);
                         break;
                 }
             }
-        }
-
-        private void OnWeaponStrikeEnchantments(DaggerfallUnityItem item, DaggerfallEntityBehaviour receiver, int damage)
-        {
-            // Must have an item and receiver
-            if (item == null || !receiver)
-                return;
-
-            // Weapon strike enchantments tick whenever owning item hits a target entity
-            for (int i = 0; i < enchantedItem.LegacyEnchantments.Length; i++)
-            {
-                switch (enchantedItem.LegacyEnchantments[i].type)
-                {
-                    case EnchantmentTypes.VampiricEffect:
-                        VampiricEffectWhenStrikes(enchantedItem.LegacyEnchantments[i], receiver, damage);
-                        break;
-                }
-            }
-
-            //Debug.LogFormat("Entity {0} hit target {1} with enchanted weapon {2}.", entityBehaviour.Entity.Name, receiver.Entity.Name, enchantedItem.LongName);
         }
 
         #endregion
@@ -289,69 +238,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.5f);
                     break;
             }
-        }
-
-        #endregion
-
-        #region Vampiric Effect
-
-        /// <summary>
-        /// Vampirically drains health from nearby enemies.
-        /// Classic seems to follow the 15 health per hour rule (or 1 health per 4 game minutes) at very close range.
-        /// While exact range is unknown, testing in classic shows that player needs to be roughly within melee distance or no effect.
-        /// </summary>
-        void VampiricEffectRanged(DaggerfallEnchantment enchantment)
-        {
-            // Must be correct vampiric effect type
-            VampiricEffectTypes type = (VampiricEffectTypes)enchantment.param;
-            if (type != VampiricEffectTypes.AtRange)
-                return;
-
-            // This special only triggers once every regeneratePerRounds
-            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
-                return;
-
-            // Drain all enemies in range
-            List<PlayerGPS.NearbyObject> nearby = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Enemy, vampiricDrainRange);
-            if (nearby != null && nearby.Count > 0)
-            {
-                foreach(PlayerGPS.NearbyObject enemy in nearby)
-                {
-                    // Get entity behaviour from found object
-                    DaggerfallEntityBehaviour enemyBehaviour = (enemy.gameObject) ? enemy.gameObject.GetComponent<DaggerfallEntityBehaviour>() : null;
-                    if (!enemyBehaviour)
-                        continue;
-
-                    // Transfer health from remote entity to this one
-                    enemyBehaviour.Entity.CurrentHealth -= regenerateAmount;
-                    entityBehaviour.Entity.CurrentHealth += regenerateAmount;
-                    //Debug.LogFormat("Entity {0} drained {1} health from nearby {2}", entityBehaviour.Entity.Name, regenerateAmount, enemyBehaviour.Entity.Name);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Vampirically drain health from target equal to damage delivered.
-        /// Was not able to fully confirm this how effect works, but seems close from observation alone.
-        /// Not sure if only base weapon should be delivered (e.g. exclude factors like critical strike).
-        /// TODO: This will likely need more research and refinement.
-        /// </summary>
-        void VampiricEffectWhenStrikes(DaggerfallEnchantment enchantment, DaggerfallEntityBehaviour receiver, int damage)
-        {
-            // Must be correct vampiric effect type
-            VampiricEffectTypes type = (VampiricEffectTypes)enchantment.param;
-            if (type != VampiricEffectTypes.WhenStrikes)
-                return;
-
-            // Check this is an enemy type
-            EnemyEntity enemyEntity = null;
-            if (receiver.EntityType == EntityTypes.EnemyMonster || receiver.EntityType == EntityTypes.EnemyClass)
-                enemyEntity = receiver.Entity as EnemyEntity;
-
-            // Drain target entity by damage amount and heal this entity by same amount
-            enemyEntity.CurrentHealth -= damage;
-            entityBehaviour.Entity.CurrentHealth += damage;
-            //Debug.LogFormat("Entity {0} drained {1} health by striking {2}", entityBehaviour.Entity.Name, damage, enemyEntity.Name);
         }
 
         #endregion

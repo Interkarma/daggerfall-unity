@@ -11,6 +11,8 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -21,6 +23,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.VampiricEffect.ToString();
 
+        const float vampiricDrainRange = 2.25f;     // Testing classic shows range of vampiric effect items is approx. melee distance
+        const int regeneratePerRounds = 4;
+        const int regenerateAmount = 1;
+
         public override void SetProperties()
         {
             properties.Key = EffectKey;
@@ -28,7 +34,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by PassiveItemSpecialsEffect
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held | EnchantmentPayloadFlags.Strikes;
         }
 
         /// <summary>
@@ -58,7 +64,85 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return enchantments.ToArray();
         }
 
+        #region Payloads
+
+        public override void MagicRound()
+        {
+            base.MagicRound();
+
+            // Must have a param
+            if (EnchantmentParam == null)
+                return;
+
+            // Must be correct vampiric effect type
+            Params type = (Params)EnchantmentParam.Value.ClassicParam;
+            if (type != Params.AtRange)
+                return;
+
+            // This special only triggers once every regeneratePerRounds
+            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
+                return;
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Drain all enemies in range
+            List<PlayerGPS.NearbyObject> nearby = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Enemy, vampiricDrainRange);
+            if (nearby != null && nearby.Count > 0)
+            {
+                foreach (PlayerGPS.NearbyObject enemy in nearby)
+                {
+                    // Get entity behaviour from found object
+                    DaggerfallEntityBehaviour enemyBehaviour = (enemy.gameObject) ? enemy.gameObject.GetComponent<DaggerfallEntityBehaviour>() : null;
+                    if (!enemyBehaviour)
+                        continue;
+
+                    // Transfer health from remote entity to this one
+                    enemyBehaviour.Entity.CurrentHealth -= regenerateAmount;
+                    entityBehaviour.Entity.CurrentHealth += regenerateAmount;
+                    //UnityEngine.Debug.LogFormat("Entity {0} drained {1} health from nearby {2}", entityBehaviour.Entity.Name, regenerateAmount, enemyBehaviour.Entity.Name);
+                }
+            }
+        }
+
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
+        {
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
+
+            // Validate
+            if (param == null || sourceEntity == null || targetEntity == null)
+                return null;
+
+            // Must be correct vampiric effect type
+            Params type = (Params)param.Value.ClassicParam;
+            if (type != Params.WhenStrikes)
+                return null;
+
+            // Check this is an enemy type
+            EnemyEntity enemyEntity = null;
+            if (targetEntity.EntityType == EntityTypes.EnemyMonster || targetEntity.EntityType == EntityTypes.EnemyClass)
+                enemyEntity = targetEntity.Entity as EnemyEntity;
+
+            // Heal source entity by base damage caused to target
+            // Was not able to fully confirm this how effect works, but seems close from observation alone.
+            // TODO: This will likely need more research and refinement.
+            sourceEntity.Entity.CurrentHealth += sourceDamage;
+            //UnityEngine.Debug.LogFormat("Entity {0} drained {1} health by striking {2}", sourceEntity.Entity.Name, sourceDamage, enemyEntity.Name);
+
+            return null;
+        }
+
+        #endregion
+
         #region Classic Support
+
+        enum Params
+        {
+            AtRange = 0,
+            WhenStrikes = 1,
+        }
 
         static short[] classicParamCosts =
         {

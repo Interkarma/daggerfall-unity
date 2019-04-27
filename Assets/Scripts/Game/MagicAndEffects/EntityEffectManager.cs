@@ -1064,7 +1064,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     EnchantmentParam param = new EnchantmentParam() { ClassicParam = enchantment.param };
                     if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Strikes))
                     {
-                        PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, caster, entityBehaviour, item);
+                        PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, caster, entityBehaviour, item, damageIn);
                         if (results != null)
                             damageOut += results.Value.strikesModulateDamage;
                     }
