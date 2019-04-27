@@ -31,8 +31,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "Passive-Item-Specials";
 
         const float nearbyRadius = 18f;             // Reasonably matched to classic with testing
-        const int regenerateAmount = 1;
-        const int regeneratePerRounds = 4;
 
         DaggerfallUnityItem enchantedItem;
         DaggerfallEntityBehaviour entityBehaviour;
@@ -54,13 +52,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             NearDaedra = 8,
             NearHumanoids = 9,
             NearAnimals = 10,
-        }
-
-        enum RegenerateTypes
-        {
-            AllTheTime = 0,
-            InSunlight = 1,
-            InDarkness = 2,
         }
 
         enum IncreasedWeightAllowanceTypes
@@ -106,15 +97,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 ConstantEnchantments();
         }
 
-        public override void MagicRound()
-        {
-            base.MagicRound();
-
-            // Execute round-based advantages/disadvantages
-            if (entityBehaviour && enchantedItem != null)
-                RoundBasedEnchantments();
-        }
-
         #endregion
 
         #region Private Methods
@@ -156,20 +138,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //Debug.LogFormat("Time to run PassiveItemSpecialsEffect.ConstantEnchantments(): {0}ms", totalTime);
         }
 
-        void RoundBasedEnchantments()
-        {
-            // Round-based enchantments tick once every magic round (game minute)
-            for (int i = 0; i < enchantedItem.LegacyEnchantments.Length; i++)
-            {
-                switch (enchantedItem.LegacyEnchantments[i].type)
-                {
-                    case EnchantmentTypes.RegensHealth:
-                        RegenerateHealth(enchantedItem.LegacyEnchantments[i]);
-                        break;
-                }
-            }
-        }
-
         #endregion
 
         #region Increased Weight Allowance
@@ -185,41 +153,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.5f);
                     break;
             }
-        }
-
-        #endregion
-
-        #region Regeneration
-
-        /// <summary>
-        /// Regenerates health in a manner similar to career special.
-        /// Classic will regenerate 15 health per hour, stacked per item with enchanement.
-        /// </summary>
-        void RegenerateHealth(DaggerfallEnchantment enchantment)
-        {
-            // This special only triggers once every regeneratePerRounds
-            if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % regeneratePerRounds != 0)
-                return;
-
-            // Check for regenerate conditions
-            bool regenerate = false;
-            RegenerateTypes type = (RegenerateTypes)enchantment.param;
-            switch (type)
-            {
-                case RegenerateTypes.AllTheTime:
-                    regenerate = true;
-                    break;
-                case RegenerateTypes.InDarkness:
-                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Dungeon;
-                    break;
-                case RegenerateTypes.InSunlight:
-                    regenerate = DaggerfallUnity.Instance.WorldTime.Now.IsDay && GameManager.Instance.PlayerEnterExit.WorldContext != WorldContext.Dungeon;
-                    break;
-            }
-
-            // Tick regeneration when conditions are right
-            if (regenerate)
-                entityBehaviour.Entity.IncreaseHealth(regenerateAmount);
         }
 
         #endregion
