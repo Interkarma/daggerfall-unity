@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Payloads
 
-        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null)
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
         {
             base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
 
