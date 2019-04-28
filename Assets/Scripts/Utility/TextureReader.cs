@@ -968,7 +968,7 @@ namespace DaggerfallWorkshop.Utility
             for (int record = 0; record < depth; record++)
             {
                 Texture2D tex;
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, textureMap, out tex))
+                if (!TextureReplacement.TryImportTexture(archive, record, 0, textureMap, true, out tex))
                 {
                     if (!textureArray)
                         return false;
