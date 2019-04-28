@@ -1320,6 +1320,18 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Rename item.
+        /// </summary>
+        /// <param name="name">New name of item. Cannot be null or empty.</param>
+        public void RenameItem(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                shortName = name;
+            }
+        }
+
+        /// <summary>
         /// Check if item contains a specific legacy enchantment.
         /// </summary>
         /// <param name="type">Legacy type.</param>

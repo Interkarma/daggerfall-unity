@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Rect powersListRect = new Rect(10, 58, 75, 120);
         Rect sideEffectsListRect = new Rect(108, 58, 75, 120);
+        Rect nameItemButtonRect = new Rect(4, 2, 157, 7);
 
         #endregion
 
@@ -337,6 +338,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedItemPanel.HorizontalAlignment = HorizontalAlignment.Center;
             selectedItemPanel.VerticalAlignment = VerticalAlignment.Middle;
             selectedItemPanel.MaxAutoScale = 1f;
+
+            // Rename item button
+            Button nameItemButon = DaggerfallUI.AddButton(nameItemButtonRect, NativePanel);
+            nameItemButon.OnMouseClick += NameItemButon_OnMouseClick;
         }
 
         void SetupListBoxes()
@@ -681,6 +686,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             combinedEnchantments.AddRange(powersList.GetEnchantments());
             combinedEnchantments.AddRange(sideEffectsList.GetEnchantments());
             selectedItem.SetEnchantments(combinedEnchantments.ToArray(), GameManager.Instance.PlayerEntity);
+            selectedItem.RenameItem(itemNameLabel.Text);
 
             // Play enchantment sound effect
             DaggerfallUI.Instance.PlayOneShot(SoundClips.MakeItem);
@@ -716,6 +722,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        private void NameItemButon_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            mb.TextBox.Text = itemNameLabel.Text;
+            mb.SetTextBoxLabel(TextManager.Instance.GetText("ClassicEffects", "enterNewName") + " ");
+            mb.OnGotUserInput += EnterName_OnGotUserInput;
+            mb.Show();
+        }
+
+        private void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            itemNameLabel.Text = input;
         }
 
         #endregion
