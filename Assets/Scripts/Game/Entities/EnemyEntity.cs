@@ -13,9 +13,11 @@ using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect.Save;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -145,13 +147,15 @@ namespace DaggerfallWorkshop.Game.Entity
             // If trap succeeds and player has a free soul gem then entity should die after storing soul
             // If trap succeeds and player has no free soul gems then entity will not die until effect expires or fails
             bool azurasStarEquipped = false;
-            Items.DaggerfallUnityItem azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(Game.Items.EquipSlots.Amulet0);
-            if (azurasStar != null && azurasStar.LegacyEnchantments[0].type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect && azurasStar.LegacyEnchantments[0].param == 9)
+            DaggerfallUnityItem azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(EquipSlots.Amulet0);
+            if (azurasStar != null && azurasStar.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Azuras_Star))
+            {
                 azurasStarEquipped = true;
+            }
             else
             {
                 azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(Game.Items.EquipSlots.Amulet1);
-                if (azurasStar != null && azurasStar.LegacyEnchantments[0].type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect && azurasStar.LegacyEnchantments[0].param == 9)
+                if (azurasStar != null && azurasStar.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Azuras_Star))
                     azurasStarEquipped = true;
             }
 

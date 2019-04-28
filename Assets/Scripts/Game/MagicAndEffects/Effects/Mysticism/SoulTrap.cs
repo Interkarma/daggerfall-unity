@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             List<DaggerfallUnityItem> amulets = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.Jewellery, (int)Jewellery.Amulet);
             foreach (DaggerfallUnityItem amulet in amulets)
             {
-                if (amulet.LegacyEnchantments[0].type == EnchantmentTypes.SpecialArtifactEffect && amulet.LegacyEnchantments[0].param == 9 && amulet.TrappedSoulType == MobileTypes.None)
+                if (amulet.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Azuras_Star) && amulet.TrappedSoulType == MobileTypes.None)
                 {
                     emptyTrap = amulet;
                     break;

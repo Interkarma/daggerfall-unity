@@ -1319,6 +1319,46 @@ namespace DaggerfallWorkshop.Game.Items
             IdentifyItem();
         }
 
+        /// <summary>
+        /// Check if item contains a specific legacy enchantment.
+        /// </summary>
+        /// <param name="type">Legacy type.</param>
+        /// <param name="param">Legacy param.</param>
+        /// <returns>True if item contains enchantment.</returns>
+        public bool ContainsEnchantment(EnchantmentTypes type, short param)
+        {
+            if (legacyMagic == null || legacyMagic.Length == 0)
+                return false;
+
+            foreach (DaggerfallEnchantment enchantment in LegacyEnchantments)
+            {
+                if (enchantment.type == type && enchantment.param == param)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if item contains a specific custom enchantment.
+        /// </summary>
+        /// <param name="key">Effect key.</param>
+        /// <param name="param">Effect param.</param>
+        /// <returns>True if item contains enchantment.</returns>
+        public bool ContainsEnchantment(string key, string param)
+        {
+            if (customMagic == null || customMagic.Length == 0)
+                return false;
+
+            foreach (CustomEnchantment enchantment in CustomEnchantments)
+            {
+                if (enchantment.EffectKey == key && enchantment.CustomParam == param)
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Static Methods
