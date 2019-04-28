@@ -814,7 +814,7 @@ namespace DaggerfallWorkshop.Utility
             // Is this a city gate?
             if (IsCityGate(modelID))
             {
-                DaggerfallCityGate gate = go.AddComponent<DaggerfallCityGate>();
+                go.AddComponent<DaggerfallCityGate>();
             }
 
             return go;
