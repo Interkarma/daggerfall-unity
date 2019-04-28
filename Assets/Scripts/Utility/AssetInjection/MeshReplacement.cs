@@ -114,7 +114,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             AlignToBase(go.transform, position, archive, record, inDungeon);
 
             // Assign a random rotation
-            if (go.GetComponent<FaceWall>() == null)
+            var iObjectPositioner = go.GetComponent<IObjectPositioner>();
+            if (iObjectPositioner == null || iObjectPositioner.AllowFlatRotation)
             {
                 Random.InitState((int)position.x);
                 go.transform.Rotate(0, Random.Range(0f, 360f), 0);
