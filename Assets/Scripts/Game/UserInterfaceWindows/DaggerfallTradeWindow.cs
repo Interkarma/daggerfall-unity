@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateRemoteTargetIcon();
             // UpdateRepairTimes(false);
             UpdateCostAndGold();
-            ShowWagon(false);
+            SelectWagon(false);
         }
 
         Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
@@ -323,7 +323,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear wagon button state
             if (wagonButton != null)
             {
-                ShowWagon(false);
+                SelectWagon(false);
             }
 
             // Refresh window
@@ -613,7 +613,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 base.FilterRemoteItems();
         }
 
-        protected void ShowWagon(bool show)
+        protected void SelectWagon(bool show)
         {
             if (show)
             {   // Switch to wagon
@@ -758,7 +758,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
             {
-                ShowWagon(!usingWagon);
+                SelectWagon(!usingWagon);
                 Refresh(false);
             }
         }
