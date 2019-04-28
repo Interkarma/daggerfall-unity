@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Was not able to fully confirm this how effect works, but seems close from observation alone.
             // TODO: This will likely need more research and refinement.
             sourceEntity.Entity.CurrentHealth += sourceDamage;
-            //UnityEngine.Debug.LogFormat("Entity {0} drained {1} health by striking {2}", sourceEntity.Entity.Name, sourceDamage, enemyEntity.Name);
+            //UnityEngine.Debug.LogFormat("Entity {0} drained {1} health by striking {2}", sourceEntity.Entity.Name, sourceDamage, targetEntity.Entity.Name);
 
             return null;
         }
