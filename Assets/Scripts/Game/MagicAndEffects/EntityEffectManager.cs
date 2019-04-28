@@ -978,23 +978,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
                 }
-                else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
-                {
-                    // TODO: Migrate this to enchantment system
-                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
-                        continue;
-                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                    bundle.CasterEntityBehaviour = caster;
-                    bundles.Add(bundle);
-                }
+                //else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
+                //{
+                //    // TODO: Migrate this to enchantment system
+                //    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
+                //        continue;
+                //    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
+                //    bundle.CasterEntityBehaviour = caster;
+                //    bundles.Add(bundle);
+                //}
                 else
                 {
                     // Ignore empty enchantment slots
                     if (enchantment.type == EnchantmentTypes.None)
                         continue;
 
-                    // Get effect template - classic enchantment effects use EnchantmentTypes string as their key
-                    string effectKey = enchantment.type.ToString();
+                    // Get classic effect key - enchantments use EnchantmentTypes string as key, artifacts use ArtifactsSubTypes string
+                    string effectKey;
+                    if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
+                        effectKey = ((ArtifactsSubTypes)enchantment.param).ToString();
+                    else
+                        effectKey = enchantment.type.ToString();
+
+                    // Get effect template
                     IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
                     if (effectTemplate == null)
                     {
@@ -1009,6 +1015,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, caster, entityBehaviour, item, damageIn);
                         if (results != null)
                             damageOut += results.Value.strikesModulateDamage;
+
+                        // Apply durability loss after striking with item
+                        if (results != null && results.Value.durabilityLoss > 0)
+                            item.LowerCondition(results.Value.durabilityLoss, caster.Entity, caster.Entity.Items);
                     }
                 }
             }

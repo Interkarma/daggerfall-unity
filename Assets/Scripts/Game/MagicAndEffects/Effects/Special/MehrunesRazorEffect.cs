@@ -4,18 +4,15 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Numidium
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
-using UnityEngine;
+
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallConnect.FallExe;
-using System;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -24,48 +21,40 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class MehrunesRazorEffect : BaseEntityEffect
     {
-        public static readonly string EffectKey = "MehrunesRazorEffect";
-
-        public override void MagicRound()
-        {
-            base.MagicRound();
-            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour)
-                return;
-            // Reduce weapon health by damage done to target.
-            bool foundRazor = false;
-            DaggerfallUnityItem item;
-            item = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(EquipSlots.RightHand);
-            foundRazor = IsRazor(item);
-            if (!foundRazor)
-            {
-                item = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(EquipSlots.LeftHand);
-                foundRazor = IsRazor(item);
-            }
-
-            if (foundRazor)
-                item.currentCondition -= entityBehaviour.Entity.CurrentHealth;
-            entityBehaviour.Entity.CurrentHealth = 0;
-        }
+        public static readonly string EffectKey = ArtifactsSubTypes.Mehrunes_Razor.ToString();
 
         public override void SetProperties()
         {
             properties.Key = EffectKey;
+            properties.ShowSpellIcon = false;
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Strikes;
         }
 
-        private bool IsRazor(DaggerfallUnityItem item)
+        #region Payloads
+
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
         {
-            if (item != null && item.LegacyEnchantments != null)
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem, sourceDamage);
+
+            // Validate
+            if (context != EnchantmentPayloadFlags.Strikes || targetEntity == null || sourceItem == null)
+                return null;
+
+            // Entity must save vs magic
+            if (FormulaHelper.SavingThrow(DFCareer.Elements.Magic, DFCareer.EffectFlags.Magic, targetEntity.Entity, 0) != 0)
             {
-                foreach (DaggerfallEnchantment enchantment in item.LegacyEnchantments)
+                // Kill target instantly - durability loss is equal to target health removed
+                int healthRemoved = targetEntity.Entity.CurrentHealth;
+                return new PayloadCallbackResults()
                 {
-                    if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == (int)ArtifactsSubTypes.Mehrunes_Razor)
-                    {
-                        return true;
-                    }
-                }
+                    strikesModulateDamage = healthRemoved,
+                    durabilityLoss = healthRemoved,
+                };
             }
-            return false;
+
+            return null;
         }
+
+        #endregion
     }
 }

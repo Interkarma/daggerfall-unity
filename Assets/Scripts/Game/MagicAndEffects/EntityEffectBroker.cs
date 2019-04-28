@@ -714,10 +714,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     effectKey = "WabbajackEffect";
                     effectTargetType = TargetTypes.ByTouch;
                     break;
-                case (int)ArtifactsSubTypes.Mehrunes_Razor:
-                    effectKey = "MehrunesRazorEffect";
-                    effectTargetType = TargetTypes.ByTouch;
-                    break;
             }
             settings = new EffectBundleSettings
             {
