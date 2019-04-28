@@ -893,6 +893,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <param name="collection">Collection containing item.</param>
         public void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
+            const int durabilityLossOnUse = 10;
+
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
                 return;
@@ -905,8 +907,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (enchantment.type == EnchantmentTypes.None)
                     continue;
 
-                // Get effect template - classic enchantment effects use EnchantmentTypes string as their key
-                string effectKey = enchantment.type.ToString();
+                // Get classic effect key - enchantments use EnchantmentTypes string as key, artifacts use ArtifactsSubTypes string
+                string effectKey;
+                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
+                    effectKey = ((ArtifactsSubTypes)enchantment.param).ToString();
+                else
+                    effectKey = enchantment.type.ToString();
+
+                // Get effect template
                 IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
                 if (effectTemplate == null)
                 {
@@ -918,28 +926,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 EnchantmentParam param = new EnchantmentParam() { ClassicParam = enchantment.param };
                 if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Used))
                 {
-                    effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Used, param, entityBehaviour, entityBehaviour, item);
+                    PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Used, param, entityBehaviour, entityBehaviour, item);
 
                     // Apply durability loss to used item on use
                     // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                    item.LowerCondition(10, GameManager.Instance.PlayerEntity, collection);
+                    int durabilityLoss = durabilityLossOnUse;
+                    if (results != null && results.Value.extraDurabilityLoss > 0)
+                        durabilityLoss += results.Value.extraDurabilityLoss;
+                    item.LowerCondition(durabilityLoss, GameManager.Instance.PlayerEntity, collection);
                 }
 
                 // NOTE: All artifact payloads to be delivered by effect system moving forwards - this code to be moved into respective effect class
-
-                EffectBundleSettings bundleSettings;
-                EntityEffectBundle bundle;
-
-                // Handle Sanguine Rose
-                // TODO: Move to effect class
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4)
-                {
-                    // Use for any artifact that simply assigns a bundle
-                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
-                        continue;
-                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                    AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
-                }
 
                 // Handle Oghma Infinium
                 // TODO: Move to effect class

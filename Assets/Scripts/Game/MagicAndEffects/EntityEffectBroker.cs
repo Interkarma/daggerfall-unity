@@ -699,7 +699,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Generate EffectBundleSettings for an artifact of a specified SpecialArtifactEffect index
+        /// Generate EffectBundleSettings for an artifact of a specified SpecialArtifactEffect index.
+        /// NOTE: Now deprecated. Artifact effects should capture Used callback in effect class to bootstrap their bundles. Effect key should be a string cast from ArtifactsSubTypes.
         /// </summary>
         /// <param name="settings">Settings for artifact effect (if found)</param>
         /// <returns>True if spell found, otherwise false.</returns>
@@ -716,10 +717,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 case (int)ArtifactsSubTypes.Mehrunes_Razor:
                     effectKey = "MehrunesRazorEffect";
                     effectTargetType = TargetTypes.ByTouch;
-                    break;
-                case (int)ArtifactsSubTypes.Sanguine_Rose:
-                    effectKey = "SanguineRoseEffect";
-                    effectTargetType = TargetTypes.CasterOnly;
                     break;
             }
             settings = new EffectBundleSettings

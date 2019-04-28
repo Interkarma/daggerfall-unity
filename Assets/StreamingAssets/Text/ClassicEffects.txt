@@ -236,3 +236,7 @@ all,                        All
 
 noRoomInItem,               No room in item...
 noEnchantments,             You have not prepared enchantments for this item.
+
+- Artifacts
+
+noMonstersNearby,           There are no monsters nearby.
