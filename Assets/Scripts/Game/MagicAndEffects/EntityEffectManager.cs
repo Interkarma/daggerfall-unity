@@ -847,7 +847,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Equipped payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
-            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, param, entityBehaviour, entityBehaviour, item);
+            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, param, entityBehaviour, entityBehaviour, item);
+            if (results != null && results.Value.durabilityLoss > 0)
+                item.LowerCondition(results.Value.durabilityLoss, entityBehaviour.Entity, entityBehaviour.Entity.Items);
         }
 
         void StartHeldItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
