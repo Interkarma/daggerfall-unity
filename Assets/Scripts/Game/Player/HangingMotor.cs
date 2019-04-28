@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             float continueHangingSkillCheckFrequency = 14f;
-            float halfHeight = (controller.height / 2f);
+            //float halfHeight = (controller.height / 2f);
             //bool inputBack = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
             bool inputForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
 
