@@ -779,18 +779,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Executes payloads on enchanted items.
         /// </summary>
-        /// <param name="flags">Payloads to execute.</param>
-        /// <param name="item">Item to execute payloads from. Must be enchanted.</param>
-        public void DoItemEnchantmentPayloads(EnchantmentPayloadFlags flags, DaggerfallUnityItem item, ItemCollection sourceCollection = null)
+        /// <param name="flags">Payloads to execute. Required by all payloads.</param>
+        /// <param name="sourceItem">Item to execute payloads from. Required by all payloads. Item must be enchanted.</param>
+        /// <param name="sourceCollection">ItemCollection the enchanted item belongs to. Required by Used payload.</param>
+        /// <param name="targetEntity">Target entity of attack by this entity. Required by Strikes payload.</param>
+        /// <param name="damageIn">Input damage before effects. Required by Strikes payload.</param>
+        /// <returns>Output damage after effect. Only changes for Strikes payload.</returns>
+        public int DoItemEnchantmentPayloads(
+            EnchantmentPayloadFlags flags,
+            DaggerfallUnityItem sourceItem,
+            ItemCollection sourceCollection = null,
+            DaggerfallEntityBehaviour targetEntity = null,
+            int damageIn = 0)
         {
+            int damageOut = damageIn;
+
             // Must specify an item
-            if (item == null)
-                return;
+            if (sourceItem == null)
+                return damageOut;
 
             // Get combined enchantments
-            EnchantmentSettings[] enchantments = item.GetCombinedEnchantmentSettings();
+            EnchantmentSettings[] enchantments = sourceItem.GetCombinedEnchantmentSettings();
             if (enchantments == null || enchantments.Length == 0)
-                return;
+                return damageOut;
 
             // Process all enchantments
             foreach (EnchantmentSettings settings in enchantments)
@@ -800,26 +811,36 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (effectTemplate == null)
                 {
                     Debug.LogWarningFormat("DoItemEnchantmentPayloads() effect key {0} not found in broker.", settings.EffectKey);
-                    return;
+                    return damageOut;
                 }
 
                 // Equipped payload
                 if ((flags & EnchantmentPayloadFlags.Equipped) == EnchantmentPayloadFlags.Equipped && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Equipped))
-                    StartEquippedItem(effectTemplate, item, settings);
+                    StartEquippedItem(effectTemplate, sourceItem, settings);
 
                 // Held payload
                 // Note: EnchantmentPayloadFlags.Held means the effect wants a long-running bundle assigned, it is unrelated to "cast when held" legacy enchantment
                 if ((flags & EnchantmentPayloadFlags.Held) == EnchantmentPayloadFlags.Held && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Held))
-                    StartHeldItem(effectTemplate, item, settings);
+                    StartHeldItem(effectTemplate, sourceItem, settings);
 
                 // Unequip payload
                 if ((flags & EnchantmentPayloadFlags.Unequipped) == EnchantmentPayloadFlags.Unequipped)
-                    UnequipHeldItem(effectTemplate, item, settings);
+                    UnequipHeldItem(effectTemplate, sourceItem, settings);
 
                 // Used payload
                 if ((flags & EnchantmentPayloadFlags.Used) == EnchantmentPayloadFlags.Used && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Used))
-                    UseItem(effectTemplate, item, settings, sourceCollection);
+                    UseItem(effectTemplate, sourceItem, settings, sourceCollection);
+
+                // Strikes payload
+                if ((flags & EnchantmentPayloadFlags.Strikes) == EnchantmentPayloadFlags.Strikes && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Strikes))
+                    damageOut += StrikeWithItem(effectTemplate, sourceItem, settings, targetEntity, damageIn);
             }
+
+            // Clamp damageOut to 0
+            if (damageOut < 0)
+                damageOut = 0;
+
+            return damageOut;
         }
 
         void StartEquippedItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
@@ -876,103 +897,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 item.LowerCondition(results.Value.durabilityLoss, GameManager.Instance.PlayerEntity, sourceCollection);
         }
 
-        #region Deprecated
-
-        /// <summary>
-        /// Assigns "cast when strikes" effects to this manager.
-        /// </summary>
-        /// <param name="item">Item striking this entity.</param>
-        /// <param name="caster">Entity attacking with item.</param>
-        /// <param name="damageIn">Original damage amount before effects.</param>
-        /// <returns>Damage out after effect callbacks. Always 0 or greater.</returns>
-        public int Deprecated_StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster, int damageIn)
+        int StrikeWithItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings, DaggerfallEntityBehaviour targetEntity, int damageIn)
         {
-            int damageOut = damageIn;
-
-            // Item must have enchancements
-            if (item == null || !item.IsEnchanted)
-                return damageOut;
-
-            // Legacy enchantment effects
-            List<EntityEffectBundle> bundles = new List<EntityEffectBundle>();
-            DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
-            foreach (DaggerfallEnchantment enchantment in enchantments)
+            // Strikes payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, entityBehaviour, targetEntity, item, damageIn);
+            if (results != null)
             {
-                // TODO: Migrate this payload to CastWhenStrikes enchantment class, just maintaining old method for now
-                EffectBundleSettings bundleSettings;
-                EntityEffectBundle bundle;
-                if (enchantment.type == EnchantmentTypes.CastWhenStrikes)
-                {
-                    SpellRecord.SpellRecordData spell;
-                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
-                    {
-                        //Debug.LogFormat("EntityEffectManager.StrikeWithItem: Found CastWhenStrikes enchantment '{0}'", spell.spellName);
+                if (results.Value.durabilityLoss > 0)
+                    item.LowerCondition(results.Value.durabilityLoss, entityBehaviour.Entity, entityBehaviour.Entity.Items);
 
-                        // Create effect bundle settings from classic spell
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
-                            continue;
-
-                        // Assign bundle to list
-                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                        bundle.CasterEntityBehaviour = caster;
-                        bundles.Add(bundle);
-
-                        // TODO: Apply durability loss to used item on strike
-                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                    }
-                }
-                else
-                {
-                    // Ignore empty enchantment slots
-                    if (enchantment.type == EnchantmentTypes.None)
-                        continue;
-
-                    // Get classic effect key - enchantments use EnchantmentTypes string as key, artifacts use ArtifactsSubTypes string
-                    string effectKey;
-                    if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
-                        effectKey = ((ArtifactsSubTypes)enchantment.param).ToString();
-                    else
-                        effectKey = enchantment.type.ToString();
-
-                    // Get effect template
-                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(effectKey);
-                    if (effectTemplate == null)
-                    {
-                        Debug.LogWarningFormat("StrikeWithItem() classic effect key {0} not found in broker.", effectKey);
-                        continue;
-                    }
-
-                    // Strikes payload callback
-                    EnchantmentParam param = new EnchantmentParam() { ClassicParam = enchantment.param };
-                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Strikes))
-                    {
-                        PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, caster, entityBehaviour, item, damageIn);
-                        if (results != null)
-                            damageOut += results.Value.strikesModulateDamage;
-
-                        // Apply durability loss after striking with item
-                        if (results != null && results.Value.durabilityLoss > 0)
-                            item.LowerCondition(results.Value.durabilityLoss, caster.Entity, caster.Entity.Items);
-                    }
-                }
+                return results.Value.strikesModulateDamage;
             }
 
-            // TODO: Modern enchantment effects
-
-            // Assign bundles to this entity
-            foreach (EntityEffectBundle bundle in bundles)
-            {
-                AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
-            }
-
-            // Clamp damage to 0
-            if (damageOut < 0)
-                damageOut = 0;
-
-            return damageOut;
+            return 0;
         }
-
-        #endregion
 
         #endregion
 

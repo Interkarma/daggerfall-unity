@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -23,6 +25,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.CastWhenStrikes.ToString();
 
+        // Items lose 10 durability points for every spell cast on strike
+        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+        const int durabilityLossOnStrike = 10;
+
         public override void SetProperties()
         {
             properties.Key = EffectKey;
@@ -30,7 +36,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.AlphaSortSecondaryList;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by EntityEffectManager.StrikeWithItem()
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Strikes;
         }
 
         /// <summary>
@@ -83,6 +89,50 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             return enchantments.ToArray();
         }
+
+        #region Payloads
+
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
+        {
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem, sourceDamage);
+
+            // Validate
+            if (context != EnchantmentPayloadFlags.Strikes || targetEntity == null || param == null)
+                return null;
+
+            // Get target effect manager
+            EntityEffectManager effectManager = targetEntity.GetComponent<EntityEffectManager>();
+            if (!effectManager)
+                return null;
+
+            // Cast when strikes enchantment prepares a new ready spell
+            if (!string.IsNullOrEmpty(param.Value.CustomParam))
+            {
+                // TODO: Ready a custom spell bundle
+            }
+            else
+            {
+                // Ready a classic spell bundle
+                SpellRecord.SpellRecordData spell;
+                EffectBundleSettings bundleSettings;
+                EntityEffectBundle bundle;
+                if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(param.Value.ClassicParam, out spell))
+                {
+                    if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
+                    {
+                        bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
+                        effectManager.AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
+                    }
+                }
+            }
+
+            return new PayloadCallbackResults()
+            {
+                durabilityLoss = durabilityLossOnStrike
+            };
+        }
+
+        #endregion
 
         #region Classic Support
 

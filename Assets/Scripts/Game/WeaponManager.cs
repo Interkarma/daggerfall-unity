@@ -587,11 +587,11 @@ namespace DaggerfallWorkshop.Game
                     // Handle weapon striking enchantments - this could change damage amount
                     if (strikingWeapon != null && strikingWeapon.IsEnchanted)
                     {
-                        EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                        if (enemyEffectManager)
-                            damage = enemyEffectManager.Deprecated_StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour, damage);
-                        strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
+                        EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                        if (effectManager)
+                            damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, strikingWeapon, GameManager.Instance.PlayerEntity.Items, enemyEntity.EntityBehaviour, damage);
                     }
+                    strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
 
                     // Remove health
                     enemyEntity.DecreaseHealth(damage);
