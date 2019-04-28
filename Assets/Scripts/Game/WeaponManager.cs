@@ -590,8 +590,8 @@ namespace DaggerfallWorkshop.Game
                         EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
                         if (effectManager)
                             damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, strikingWeapon, GameManager.Instance.PlayerEntity.Items, enemyEntity.EntityBehaviour, damage);
+                        strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
                     }
-                    strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
 
                     // Remove health
                     enemyEntity.DecreaseHealth(damage);
