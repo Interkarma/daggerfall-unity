@@ -780,7 +780,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Handles any magic-related work of equipping an item to this entity.
         /// </summary>
         /// <param name="item">Item just equipped.</param>
-        public void StartEquippedItem(DaggerfallUnityItem item)
+        public void Deprecated_StartEquippedItem(DaggerfallUnityItem item)
         {
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
@@ -871,7 +871,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Handles any magic-related work of unequipping an item from this entity
         /// </summary>
         /// <param name="item">Item just unequipped.</param>
-        public void StopEquippedItem(DaggerfallUnityItem item)
+        public void Deprecated_StopEquippedItem(DaggerfallUnityItem item)
         {
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
@@ -891,7 +891,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         /// <param name="item">Item just used.</param>
         /// <param name="collection">Collection containing item.</param>
-        public void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
+        public void Deprecated_UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
@@ -942,7 +942,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <param name="caster">Entity attacking with item.</param>
         /// <param name="damageIn">Original damage amount before effects.</param>
         /// <returns>Damage out after effect callbacks. Always 0 or greater.</returns>
-        public int StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster, int damageIn)
+        public int Deprecated_StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster, int damageIn)
         {
             int damageOut = damageIn;
 

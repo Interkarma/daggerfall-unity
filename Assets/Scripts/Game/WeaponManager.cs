@@ -589,7 +589,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
                         if (enemyEffectManager)
-                            damage = enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour, damage);
+                            damage = enemyEffectManager.Deprecated_StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour, damage);
                         strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
                     }
 
