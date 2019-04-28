@@ -203,7 +203,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupTargetIconPanels();
             SetupTabPageButtons();
             SetupActionButtons();
-            ResetWagonButton();
             SetupAccessoryElements();
             SetupItemListScrollers();
 
@@ -238,6 +237,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateRemoteTargetIcon();
             // UpdateRepairTimes(false);
             UpdateCostAndGold();
+            ShowWagon(false);
         }
 
         Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
@@ -323,7 +323,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear wagon button state
             if (wagonButton != null)
             {
-                ResetWagonButton();
+                ShowWagon(false);
             }
 
             // Refresh window
@@ -613,12 +613,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 base.FilterRemoteItems();
         }
 
-        protected void ResetWagonButton()
-        {
-            usingWagon = false;
-            wagonButton.BackgroundTexture = wagonNotSelected;
-        }
-
         protected void ShowWagon(bool show)
         {
             if (show)
@@ -633,7 +627,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             usingWagon = show;
             localItemListScroller.ResetScroll();
-            Refresh(false);
+            // Caller must now use Refresh
+            // Refresh(false);
         }
 
         protected override void LoadTextures()
@@ -762,7 +757,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
+            {
                 ShowWagon(!usingWagon);
+                Refresh(false);
+            }
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
