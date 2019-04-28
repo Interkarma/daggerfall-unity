@@ -1151,7 +1151,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Restore player position to world
-            playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true);
+            playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true, false);
 
             //Restore Travel Map settings
             DaggerfallUI.Instance.DfTravelMapWindow.SetTravelMapFromSaveData(saveData.travelMapData);

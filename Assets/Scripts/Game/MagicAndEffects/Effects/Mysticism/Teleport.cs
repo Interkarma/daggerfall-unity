@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                 // Need to load some other part of the world again - player could be anywhere
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
-                playerEnterExit.RestorePositionHelper(anchorPosition, false);
+                playerEnterExit.RestorePositionHelper(anchorPosition, false, true);
 
                 // Restore building summary data
                 if (anchorPosition.insideBuilding)
