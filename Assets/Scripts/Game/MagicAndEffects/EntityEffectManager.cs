@@ -978,15 +978,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
                 }
-                //else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
-                //{
-                //    // TODO: Migrate this to enchantment system
-                //    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
-                //        continue;
-                //    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                //    bundle.CasterEntityBehaviour = caster;
-                //    bundles.Add(bundle);
-                //}
                 else
                 {
                     // Ignore empty enchantment slots

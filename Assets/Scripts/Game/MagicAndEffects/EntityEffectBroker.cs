@@ -698,32 +698,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
-        /// <summary>
-        /// Generate EffectBundleSettings for an artifact of a specified SpecialArtifactEffect index.
-        /// NOTE: Now deprecated. Artifact effects should capture Used callback in effect class to bootstrap their bundles. Effect key should be a string cast from ArtifactsSubTypes.
-        /// </summary>
-        /// <param name="settings">Settings for artifact effect (if found)</param>
-        /// <returns>True if spell found, otherwise false.</returns>
-        public bool GetArtifactBundleSettings(out EffectBundleSettings settings, int effectIndex)
-        {
-            string effectKey = string.Empty;
-            TargetTypes effectTargetType = TargetTypes.None;
-            switch (effectIndex)
-            {
-                case (int)ArtifactsSubTypes.Wabbajack:
-                    effectKey = "WabbajackEffect";
-                    effectTargetType = TargetTypes.ByTouch;
-                    break;
-            }
-            settings = new EffectBundleSettings
-            {
-                Effects = new EffectEntry[] { new EffectEntry(effectKey) },
-                TargetType = effectTargetType
-            };
-
-            return effectKey != string.Empty;
-        }
-
         #endregion
 
         #region Private Methods
