@@ -786,24 +786,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (item == null || !item.IsEnchanted)
                 return;
 
-            // All equipped magic items add a passive item specials effect
-            // This may or may not deliver any payload based on passive enchanment settings
-            // NOTES:
-            //  * PassiveItemSpecialsEffect is deprecated and will be removed at a later date
-            //  * Future enchantment effects should implement payload within their effect class
-            EffectBundleSettings passiveItemSpecialsSettings = new EffectBundleSettings()
-            {
-                Version = EntityEffectBroker.CurrentSpellVersion,
-                BundleType = BundleTypes.HeldMagicItem,
-                TargetType = TargetTypes.None,
-                ElementType = ElementTypes.None,
-                Name = "Item Specials",
-                Effects = new EffectEntry[] { new EffectEntry(PassiveItemSpecialsEffect.EffectKey) },
-            };
-            EntityEffectBundle passiveItemSpecialsBundle = new EntityEffectBundle(passiveItemSpecialsSettings, entityBehaviour);
-            passiveItemSpecialsBundle.FromEquippedItem = item;
-            AssignBundle(passiveItemSpecialsBundle, AssignBundleFlags.BypassSavingThrows);
-
             // Add legacy enchantment effects
             DaggerfallEnchantment[] enchantments = item.LegacyEnchantments;
             foreach (DaggerfallEnchantment enchantment in enchantments)
