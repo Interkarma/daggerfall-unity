@@ -783,55 +783,51 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <param name="item">Item to execute payloads from. Must be enchanted.</param>
         public void DoItemEnchantmentPayloads(EnchantmentPayloadFlags flags, DaggerfallUnityItem item)
         {
+            // Must specify an item
+            if (item == null)
+                return;
+
             // Get combined enchantments
             EnchantmentSettings[] enchantments = item.GetCombinedEnchantmentSettings();
             if (enchantments == null || enchantments.Length == 0)
                 return;
 
             // Process all enchantments
-            foreach(EnchantmentSettings settings in enchantments)
+            foreach (EnchantmentSettings settings in enchantments)
             {
-                // Key cannot be null or empty
-                if (string.IsNullOrEmpty(settings.EffectKey))
-                    continue;
+                // Get effect template
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(settings.EffectKey);
+                if (effectTemplate == null)
+                {
+                    Debug.LogWarningFormat("DoItemEnchantmentPayloads() effect key {0} not found in broker.", settings.EffectKey);
+                    return;
+                }
 
                 // Equipped payload
                 if ((flags & EnchantmentPayloadFlags.Equipped) == EnchantmentPayloadFlags.Equipped)
-                    StartEquippedItem(item, settings);
+                    StartEquippedItem(effectTemplate, item, settings);
 
                 // Held payload
                 // Note: EnchantmentPayloadFlags.Held means the effect wants a long-running bundle assigned, it is unrelated to "cast when held" legacy enchantment
                 if ((flags & EnchantmentPayloadFlags.Held) == EnchantmentPayloadFlags.Held)
-                    StartHeldItem(item, settings);
+                    StartHeldItem(effectTemplate, item, settings);
+
+                // Unequip payload
+                if ((flags & EnchantmentPayloadFlags.Unequipped) == EnchantmentPayloadFlags.Unequipped)
+                    UnequipHeldItem(effectTemplate, item, settings);
             }
         }
 
-        void StartEquippedItem(DaggerfallUnityItem item, EnchantmentSettings settings)
+        void StartEquippedItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
         {
-            // Get effect template
-            IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(settings.EffectKey);
-            if (effectTemplate == null)
-            {
-                Debug.LogWarningFormat("StartEquippedItem() effect key {0} not found in broker.", settings.EffectKey);
-                return;
-            }
-
             // Equipped payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
             if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Equipped))
                 effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, param, entityBehaviour, entityBehaviour, item);
         }
 
-        void StartHeldItem(DaggerfallUnityItem item, EnchantmentSettings settings)
+        void StartHeldItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
         {
-            // Get effect template
-            IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(settings.EffectKey);
-            if (effectTemplate == null)
-            {
-                Debug.LogWarningFormat("StartHeldItem() effect key {0} not found in broker.", settings.EffectKey);
-                return;
-            }
-
             // Held payload assigns a new bundle with a fully stateful effect instance - does not use callback to effect template
             if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Held))
             {
@@ -851,17 +847,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        #region Deprecated
-
-        /// <summary>
-        /// Handles any magic-related work of unequipping an item from this entity
-        /// </summary>
-        /// <param name="item">Item just unequipped.</param>
-        public void Deprecated_StopEquippedItem(DaggerfallUnityItem item)
+        void UnequipHeldItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
         {
-            // Item must have enchancements
-            if (item == null || !item.IsEnchanted)
-                return;
+            // Unequipped payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Unequipped))
+                effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Unequipped, param, entityBehaviour, entityBehaviour, item);
 
             // Check all running bundles for any linked to this item and schedule instant removal
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -870,6 +861,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     bundlesToRemove.Add(bundle);
             }
         }
+
+        #region Deprecated
 
         /// <summary>
         /// Offers item to effect manager when used by player in inventory.
