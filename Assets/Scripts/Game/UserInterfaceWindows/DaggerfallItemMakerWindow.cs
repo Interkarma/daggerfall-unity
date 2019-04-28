@@ -681,6 +681,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
             DaggerfallUI.MessageBox(itemEnchanted);
 
+            // Only enchant one item from stack
+            if (selectedItem.IsAStack())
+                selectedItem = GameManager.Instance.PlayerEntity.Items.SplitStack(selectedItem, 1);
+
             // Transfer enchantment settings onto item
             List<EnchantmentSettings> combinedEnchantments = new List<EnchantmentSettings>();
             combinedEnchantments.AddRange(powersList.GetEnchantments());
