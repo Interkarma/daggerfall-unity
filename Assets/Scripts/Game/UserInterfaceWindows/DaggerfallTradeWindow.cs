@@ -203,6 +203,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupTargetIconPanels();
             SetupTabPageButtons();
             SetupActionButtons();
+            ResetWagonButton();
             SetupAccessoryElements();
             SetupItemListScrollers();
 
@@ -322,8 +323,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear wagon button state
             if (wagonButton != null)
             {
-                usingWagon = false;
-                wagonButton.BackgroundTexture = wagonNotSelected;
+                ResetWagonButton();
             }
 
             // Refresh window
@@ -611,6 +611,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
                 base.FilterRemoteItems();
+        }
+
+        protected void ResetWagonButton()
+        {
+            usingWagon = false;
+            wagonButton.BackgroundTexture = wagonNotSelected;
         }
 
         protected void ShowWagon(bool show)
