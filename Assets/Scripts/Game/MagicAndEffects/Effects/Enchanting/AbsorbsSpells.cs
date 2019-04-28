@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -47,5 +48,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             return enchantments;
         }
+
+        #region Payloads
+
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            entityBehaviour.Entity.IsAbsorbingSpells = true;
+        }
+
+        #endregion
     }
 }

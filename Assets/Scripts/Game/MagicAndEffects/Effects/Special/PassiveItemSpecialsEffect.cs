@@ -44,67 +44,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             bypassSavingThrows = true;
         }
 
-        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
-        {
-            base.Start(manager, caster);
-            CacheReferences();
-        }
-
-        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
-        {
-            base.Resume(effectData, manager, caster);
-            CacheReferences();
-        }
-
-        public override void End()
-        {
-            base.End();
-        }
-
-        public override void ConstantEffect()
-        {
-            base.ConstantEffect();
-
-            // Execute constant advantages/disadvantages
-            if (entityBehaviour && enchantedItem != null)
-                ConstantEnchantments();
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        void CacheReferences()
-        {
-            // Cache reference to item carrying enchantments for this effect
-            if (ParentBundle == null || ParentBundle.fromEquippedItem != null)
-                enchantedItem = ParentBundle.fromEquippedItem;
-
-            // Cache reference to peered entity behaviour
-            if (!entityBehaviour)
-                entityBehaviour = GetPeeredEntityBehaviour(manager);
-        }
-
-        void ConstantEnchantments()
-        {
-            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
-
-            // Constant enchantments tick every frame
-            for (int i = 0; i < enchantedItem.LegacyEnchantments.Length; i++)
-            {
-                switch (enchantedItem.LegacyEnchantments[i].type)
-                {
-                    case EnchantmentTypes.AbsorbsSpells:
-                        entityBehaviour.Entity.IsAbsorbingSpells = true;
-                        break;
-                }
-            }
-
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //Debug.LogFormat("Time to run PassiveItemSpecialsEffect.ConstantEnchantments(): {0}ms", totalTime);
-        }
-
         #endregion
     }
 }
