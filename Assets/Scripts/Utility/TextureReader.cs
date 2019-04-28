@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Set albedo texture
             Texture2D albedoMap;
-            if (!TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, out albedoMap))
+            if (!TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, !settings.stayReadable, out albedoMap))
             {
                 // Create albedo texture
                 albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Set normal texture (always import normal if present on disk)
             Texture2D normalMap = null;
-            bool normalMapImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Normal, textureImport, out normalMap);
+            bool normalMapImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Normal, textureImport, !settings.stayReadable, out normalMap);
             if (!normalMapImported && settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
             {
                 // Create normal texture - must be ARGB32
@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Utility
             // Import emission map or create basic emissive texture
             Texture2D emissionMap = null;
             bool resultEmissive = false;
-            if (TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Emission, textureImport, out emissionMap))
+            if (TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Emission, textureImport, !settings.stayReadable, out emissionMap))
             {
                 // Always import emission if present on disk
                 resultEmissive = true;
@@ -708,7 +708,7 @@ namespace DaggerfallWorkshop.Utility
 
             // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
             Texture2D normalMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.Normal, out normalMap))
+            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.Normal, false, out normalMap))
             {
                 width = normalMap.width;
                 height = normalMap.height;
@@ -724,7 +724,7 @@ namespace DaggerfallWorkshop.Utility
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
                 // Import custom texture(s)
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.Normal, out normalMap))
+                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.Normal, false, out normalMap))
                 {
                     // if current texture does not exist
                     Debug.LogErrorFormat("Terrain: imported archive {0} does not contain normal for record {1}.", archive, record);
@@ -781,7 +781,7 @@ namespace DaggerfallWorkshop.Utility
 
             // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
             Texture2D metallicGlossMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.MetallicGloss, out metallicGlossMap))
+            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.MetallicGloss, false, out metallicGlossMap))
             {                
                 width = metallicGlossMap.width;
                 height = metallicGlossMap.height;                
@@ -805,7 +805,7 @@ namespace DaggerfallWorkshop.Utility
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
                 // Import custom texture(s)
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.MetallicGloss, out metallicGlossMap))
+                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.MetallicGloss, false, out metallicGlossMap))
                 {
                     metallicGlossMap = new Texture2D(width, height, TextureFormat.ARGB32, MipMaps);
                     metallicGlossMap.SetPixels32(defaultMetallicGlossMap);
