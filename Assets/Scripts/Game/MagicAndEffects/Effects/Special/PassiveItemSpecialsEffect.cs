@@ -35,16 +35,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #endregion
 
-        #region Enums
-
-        enum IncreasedWeightAllowanceTypes
-        {
-            OneQuarterExtra = 0,
-            OneHalfExtra = 1,
-        }
-
-        #endregion
-
         #region Overrides
 
         public override void SetProperties()
@@ -105,9 +95,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 switch (enchantedItem.LegacyEnchantments[i].type)
                 {
-                    case EnchantmentTypes.IncreasedWeightAllowance:
-                        IncreasedWeightAllowance(enchantedItem.LegacyEnchantments[i]);
-                        break;
                     case EnchantmentTypes.AbsorbsSpells:
                         entityBehaviour.Entity.IsAbsorbingSpells = true;
                         break;
@@ -116,23 +103,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
             //Debug.LogFormat("Time to run PassiveItemSpecialsEffect.ConstantEnchantments(): {0}ms", totalTime);
-        }
-
-        #endregion
-
-        #region Increased Weight Allowance
-
-        void IncreasedWeightAllowance(DaggerfallEnchantment enchantment)
-        {
-            switch((IncreasedWeightAllowanceTypes)enchantment.param)
-            {
-                case IncreasedWeightAllowanceTypes.OneQuarterExtra:
-                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.25f);
-                    break;
-                case IncreasedWeightAllowanceTypes.OneHalfExtra:
-                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.5f);
-                    break;
-            }
         }
 
         #endregion

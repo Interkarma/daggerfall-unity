@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -27,7 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by PassiveItemSpecialsEffect
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
 
         /// <summary>
@@ -57,7 +58,43 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return enchantments.ToArray();
         }
 
+        #region Payloads
+
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+
+            // Must have a param
+            if (EnchantmentParam == null)
+                return;
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Increase weight allowance
+            Params type = (Params)EnchantmentParam.Value.ClassicParam;
+            switch (type)
+            {
+                case Params.OneQuarterExtra:
+                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.25f);
+                    break;
+                case Params.OneHalfExtra:
+                    entityBehaviour.Entity.SetIncreasedWeightAllowanceMultiplier(0.5f);
+                    break;
+            }
+        }
+
+        #endregion
+
         #region Classic Support
+
+        enum Params
+        {
+            OneQuarterExtra = 0,
+            OneHalfExtra = 1,
+        }
 
         static short[] classicParamCosts =
         {
