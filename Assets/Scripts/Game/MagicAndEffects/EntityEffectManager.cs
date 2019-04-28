@@ -860,7 +860,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID)
-                    bundlesToRemove.Add(bundle);
+                {
+                    if (!bundlesToRemove.Contains(bundle))
+                        bundlesToRemove.Add(bundle);
+                }
             }
         }
 
@@ -1929,6 +1932,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Cache racial override effect
                     if (effect is RacialOverrideEffect)
                         racialOverrideEffect = (RacialOverrideEffect)effect;
+                }
+
+                // Do not instantiate bundle if no live effects restored
+                // This can happen when effects are removed from game (e.g. mod removed or code refactor)
+                if (instancedBundle.liveEffects.Count == 0)
+                {
+                    Debug.LogWarningFormat("RestoreInstancedBundleSaveData() not restoring bundle {0} as it restored no live effects.", instancedBundle.name);
+                    continue;
                 }
 
                 instancedBundles.Add(instancedBundle);
