@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 GameManager.Instance.PlayerEntity.Items.RemoveOne(itemToUse);
             }
             else if (itemToUse.IsEnchanted)
-                GameManager.Instance.PlayerEffectManager.Deprecated_UseItem(itemToUse, GameManager.Instance.PlayerEntity.Items);
+                GameManager.Instance.PlayerEffectManager.DoItemEnchantmentPayloads(MagicAndEffects.EnchantmentPayloadFlags.Used, itemToUse, GameManager.Instance.PlayerEntity.Items);
 
             CloseWindow();
         }

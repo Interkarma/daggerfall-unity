@@ -105,16 +105,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!effectManager)
                 return null;
 
-            // Create a spell bundle and assign to caster
-            SpellRecord.SpellRecordData spell;
-            EffectBundleSettings bundleSettings;
-            EntityEffectBundle bundle;
-            if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(param.Value.ClassicParam, out spell))
+            // Cast when used enchantment prepares a new ready spell
+            if (!string.IsNullOrEmpty(param.Value.CustomParam))
             {
-                if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
+                // TODO: Ready a custom spell bundle
+            }
+            else
+            {
+                // Ready a classic spell bundle
+                SpellRecord.SpellRecordData spell;
+                EffectBundleSettings bundleSettings;
+                EntityEffectBundle bundle;
+                if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(param.Value.ClassicParam, out spell))
                 {
-                    bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
-                    effectManager.SetReadySpell(bundle, true);
+                    if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
+                    {
+                        bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
+                        effectManager.SetReadySpell(bundle, true);
+                    }
                 }
             }
 
