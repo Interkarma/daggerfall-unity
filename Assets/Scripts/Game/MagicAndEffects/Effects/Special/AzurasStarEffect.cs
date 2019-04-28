@@ -3,27 +3,26 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Numidium
+// Original Author: Allofich
 // Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
 
-using System.Collections.Generic;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Used by the Sanguine Rose. Spawns a Daedroth ally.
+    /// Azura's Star is a powerful soul trap.
     /// </summary>
-    public class SanguineRoseEffect : BaseEntityEffect
+    public class AzurasStarEffect : BaseEntityEffect
     {
-        public static readonly string EffectKey = ArtifactsSubTypes.Sanguine_Rose.ToString();
+        public static readonly string EffectKey = ArtifactsSubTypes.Azuras_Star.ToString();
 
-        const float enemyRange = 12;
+        const int soulReleasedID = 32;
+        const int noSoulToReleaseID = 20;
 
         public override void SetProperties()
         {
@@ -38,26 +37,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem, sourceDamage);
 
-            // Must be Used payload
-            if (context != EnchantmentPayloadFlags.Used)
+            // Validate
+            if (sourceItem == null)
                 return null;
 
-            // Must have nearby enemies
-            List<PlayerGPS.NearbyObject> nearby = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Enemy, enemyRange);
-            if (nearby.Count == 0)
+            // Used payload
+            if (context == EnchantmentPayloadFlags.Used)
             {
-                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText(textDatabase, "noMonstersNearby"));
-                return null;
+                if (sourceItem.TrappedSoulType != MobileTypes.None)
+                {
+                    sourceItem.TrappedSoulType = MobileTypes.None;
+                    DaggerfallUI.MessageBox(soulReleasedID);
+                }
+                else
+                {
+                    DaggerfallUI.MessageBox(noSoulToReleaseID);
+                }
             }
 
-            // Summon a Daedroth to fight for the player
-            GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
-
-            // Durability loss for this effect
-            return new PayloadCallbackResults()
-            {
-                durabilityLoss = 100,
-            };
+            return null;
         }
 
         #endregion

@@ -25,6 +25,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.CastWhenUsed.ToString();
 
+        // Items lose 10 durability points for every spell cast on use
+        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+        const int durabilityLossOnUse = 10;
+
         public override void SetProperties()
         {
             properties.Key = EffectKey;
@@ -114,7 +118,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 }
             }
 
-            return null;
+            return new PayloadCallbackResults()
+            {
+                durabilityLoss = durabilityLossOnUse
+            };
         }
 
         #endregion

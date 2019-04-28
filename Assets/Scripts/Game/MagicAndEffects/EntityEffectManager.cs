@@ -893,8 +893,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <param name="collection">Collection containing item.</param>
         public void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
-            const int durabilityLossOnUse = 10;
-
             // Item must have enchancements
             if (item == null || !item.IsEnchanted)
                 return;
@@ -928,35 +926,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 {
                     PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Used, param, entityBehaviour, entityBehaviour, item);
 
-                    // Apply durability loss to used item on use
-                    // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                    int durabilityLoss = durabilityLossOnUse;
-                    if (results != null && results.Value.extraDurabilityLoss > 0)
-                        durabilityLoss += results.Value.extraDurabilityLoss;
-                    item.LowerCondition(durabilityLoss, GameManager.Instance.PlayerEntity, collection);
+                    // Apply durability loss after using item
+                    if (results != null && results.Value.durabilityLoss > 0)
+                        item.LowerCondition(results.Value.durabilityLoss, GameManager.Instance.PlayerEntity, collection);
                 }
-
-                // NOTE: All artifact payloads to be delivered by effect system moving forwards - this code to be moved into respective effect class
-
-                // Handle Azura's Star
-                // TODO: Move to effect class
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 9)
-                {
-                    const int soulReleasedID = 32;
-                    const int noSoulToReleaseID = 20;
-
-                    if (item.TrappedSoulType != MobileTypes.None)
-                    {
-                        item.TrappedSoulType = MobileTypes.None;
-                        DaggerfallUI.MessageBox(soulReleasedID);
-                    }
-                    else
-                    {
-                        DaggerfallUI.MessageBox(noSoulToReleaseID);
-                    }
-                }
-
-                // NOTE: All artifact payloads to be delivered by effect system moving forwards - this code to be moved into respective effect class
             }
 
             // TODO: Modern enchantment effects

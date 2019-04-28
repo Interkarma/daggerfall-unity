@@ -316,6 +316,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     public struct PayloadCallbackResults
     {
         public int strikesModulateDamage;                           // Amount to plus/minus from damage after Strikes effect payload
-        public int extraDurabilityLoss;                             // Additional durability loss after callback - applied in addition to normal item durability loss
+        public int durabilityLoss;                                  // Amount of durability lost after callback
     }
 }
