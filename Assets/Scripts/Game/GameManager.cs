@@ -601,7 +601,7 @@ namespace DaggerfallWorkshop.Game
                             // Is it hostile or pacified?
                             EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
                             EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
-                            if (includingPacified || (enemyMotor.IsHostile || enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly))
+                            if (includingPacified || (enemyMotor.IsHostile && enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly))
                             {
                                 areEnemiesNearby = true;
                                 break;
@@ -646,7 +646,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         // Is it hostile or pacified?
                         EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
-                        if (includingPacified || enemyMotor.IsHostile)
+                        if (includingPacified || (enemyMotor.IsHostile && entity.Team != MobileTeams.PlayerAlly))
                         {
                             numberOfEnemies++;
                             if (stopLookingIfFound)
