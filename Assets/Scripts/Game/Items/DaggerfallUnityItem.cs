@@ -1359,6 +1359,68 @@ namespace DaggerfallWorkshop.Game.Items
             return false;
         }
 
+        /// <summary>
+        /// Combines all legacy and custom enchantments into a single array.
+        /// Using EnchantmentSettings to store relavent combined enchantment information.
+        /// Not all properties of EnchantmentSettings are set here, just what is needed to identify enchantment.
+        /// </summary>
+        /// <returns>Array of enchantment settings, can be null or empty.</returns>
+        public EnchantmentSettings[] GetCombinedEnchantmentSettings()
+        {
+            List<EnchantmentSettings> combinedEnchantments = new List<EnchantmentSettings>();
+
+            // Item must have enchancements
+            if (!IsEnchanted)
+                return null;
+
+            // Legacy enchantments
+            if (legacyMagic != null && legacyMagic.Length > 0)
+            {
+                foreach (DaggerfallEnchantment enchantment in legacyMagic)
+                {
+                    // Ignore empty enchantment slots
+                    if (enchantment.type == EnchantmentTypes.None)
+                        continue;
+
+                    // Get classic effect key - enchantments use EnchantmentTypes string as key, artifacts use ArtifactsSubTypes string
+                    string effectKey;
+                    if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
+                        effectKey = ((ArtifactsSubTypes)enchantment.param).ToString();
+                    else
+                        effectKey = enchantment.type.ToString();
+
+                    // Add enchantment settings
+                    combinedEnchantments.Add(new EnchantmentSettings()
+                    {
+                        EffectKey = effectKey,
+                        ClassicType = enchantment.type,
+                        ClassicParam = enchantment.param,
+                    });
+                }
+            }
+
+            // Custom enchantments
+            if (customMagic != null && customMagic.Length > 0)
+            {
+                foreach (CustomEnchantment enchantment in customMagic)
+                {
+                    // Ignore enchantment with null or empty key
+                    if (string.IsNullOrEmpty(enchantment.EffectKey))
+                        continue;
+
+                    // Add enchantment settings
+                    combinedEnchantments.Add(new EnchantmentSettings()
+                    {
+                        EffectKey = enchantment.EffectKey,
+                        CustomParam = enchantment.CustomParam,
+                        ClassicType = EnchantmentTypes.None,
+                    });
+                }
+            }
+
+            return combinedEnchantments.ToArray();
+        }
+
         #endregion
 
         #region Static Methods
