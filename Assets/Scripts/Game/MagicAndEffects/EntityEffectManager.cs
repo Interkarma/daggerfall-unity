@@ -938,16 +938,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 // NOTE: All artifact payloads to be delivered by effect system moving forwards - this code to be moved into respective effect class
 
-                // Handle Oghma Infinium
-                // TODO: Move to effect class
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 5)
-                {
-                    GameManager.Instance.PlayerEntity.ReadyToLevelUp = true;
-                    GameManager.Instance.PlayerEntity.OghmaLevelUp = true;
-                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
-                    collection.RemoveItem(item);
-                }
-
                 // Handle Azura's Star
                 // TODO: Move to effect class
                 if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 9)

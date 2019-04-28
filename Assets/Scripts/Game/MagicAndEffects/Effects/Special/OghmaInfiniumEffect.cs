@@ -3,27 +3,23 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Numidium
+// Original Author: Allofich
 // Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
 
-using System.Collections.Generic;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
-    /// Used by the Sanguine Rose. Spawns a Daedroth ally.
+    /// Oghma Infinium artifact gives player additional attribute points to distribute.
     /// </summary>
-    public class SanguineRoseEffect : BaseEntityEffect
+    public class OghmaInfiniumEffect : BaseEntityEffect
     {
-        public static readonly string EffectKey = ArtifactsSubTypes.Sanguine_Rose.ToString();
-
-        const float enemyRange = 12;
+        public static readonly string EffectKey = ArtifactsSubTypes.Oghma_Infinium.ToString();
 
         public override void SetProperties()
         {
@@ -38,26 +34,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem, sourceDamage);
 
-            // Must be Used payload
-            if (context != EnchantmentPayloadFlags.Used)
+            // Validate
+            if (context != EnchantmentPayloadFlags.Used || sourceEntity == null || sourceEntity.EntityType != EntityTypes.Player || sourceItem == null)
                 return null;
 
-            // Must have nearby enemies
-            List<PlayerGPS.NearbyObject> nearby = GameManager.Instance.PlayerGPS.GetNearbyObjects(PlayerGPS.NearbyObjectFlags.Enemy, enemyRange);
-            if (nearby.Count == 0)
-            {
-                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText(textDatabase, "noMonstersNearby"));
-                return null;
-            }
+            // Start Oghma level up and remove item
+            GameManager.Instance.PlayerEntity.ReadyToLevelUp = true;
+            GameManager.Instance.PlayerEntity.OghmaLevelUp = true;
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
+            GameManager.Instance.PlayerEntity.Items.RemoveItem(sourceItem);
 
-            // Summon a Daedroth to fight for the player
-            GameObjectHelper.CreateFoeSpawner(foeType: MobileTypes.Daedroth, spawnCount: 1, alliedToPlayer: true);
-
-            // Additional durability loss for this effect
-            return new PayloadCallbackResults()
-            {
-                extraDurabilityLoss = 100,
-            };
+            return null;
         }
 
         #endregion
