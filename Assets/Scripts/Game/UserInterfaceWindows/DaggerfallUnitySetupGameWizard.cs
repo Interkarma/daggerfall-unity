@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Override cursor
             Texture2D tex;
-            if (TextureReplacement.TryImportTexture("Cursor", out tex))
+            if (TextureReplacement.TryImportTexture("Cursor", true, out tex))
             {
                 Cursor.SetCursor(tex, Vector2.zero, CursorMode.Auto);
                 Debug.Log("Cursor texture overridden by mods.");
