@@ -812,10 +812,10 @@ namespace DaggerfallWorkshop.Utility
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
 
             // Is this a city gate?
-            /*if (IsCityGate(modelID))
+            if (IsCityGate(modelID))
             {
                 DaggerfallCityGate gate = go.AddComponent<DaggerfallCityGate>();
-            }*/
+            }
 
             return go;
         }
