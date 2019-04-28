@@ -574,7 +574,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 EntityEffectManager manager = parentEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
                 if (manager)
-                    manager.Deprecated_StartEquippedItem(item);
+                    manager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Equipped | EnchantmentPayloadFlags.Held, item);
             }
         }
 

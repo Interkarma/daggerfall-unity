@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.None; // TEMP: Payload currently handled by PassiveItemSpecialsEffect
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
 
         public override EnchantmentSettings[] GetEnchantmentSettings()

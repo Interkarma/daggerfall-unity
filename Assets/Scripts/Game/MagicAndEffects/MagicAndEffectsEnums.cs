@@ -147,7 +147,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Enchanted = 1,      // Payload executed only once when item is enchanted at item maker
         Used = 2,           // Payload executed when item is used from inventory or "use item" UI
         Equipped = 4,       // Payload executed when item is equipped - i.e. payload will execute once every time item is equipped
-        Held = 8,           // Payload executed for duration item is equipped - i.e. effect bundle will be persistently attached to entity until unequipped
-        Strikes = 16,       // Payload executed when a weapon item strikes another entity
+        Unequipped = 8,     // Payload executed when item is unequipped - i.e. payload will execute once every time item is unequipped
+        Held = 16,          // Payload executed for duration item is equipped - i.e. effect bundle will be persistently attached to entity until unequipped
+        Strikes = 32,       // Payload executed when a weapon item strikes another entity
+        Breaks = 64,        // Payload executed when item breaks after durability reaches zero or less
     }
 }
