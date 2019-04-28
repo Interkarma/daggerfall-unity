@@ -18,6 +18,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
+        Rect mainPanelRect = new Rect(0, 50, 171, 57);
         Rect destinationPanelRect = new Rect(5, 15, 161, 8);
         Rect yesButtonRect = new Rect(4, 38, 52, 15);
         Rect noButtonRect = new Rect(115, 38, 52, 15);
@@ -73,8 +74,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
             mainPanel.BackgroundTexture = baseTexture;
-            mainPanel.Position = new Vector2(0, 50);
-            mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
+            mainPanel.Position = mainPanelRect.position;
+            mainPanel.Size = mainPanelRect.size;
 
             destinationPanel = DaggerfallUI.AddPanel(destinationPanelRect, mainPanel);
             destinationLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 1), destinationPanel);
