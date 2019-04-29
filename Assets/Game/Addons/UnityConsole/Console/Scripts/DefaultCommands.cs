@@ -2111,7 +2111,7 @@ namespace Wenzil.Console
                 int n = 1;
                 Int32.TryParse(args[0], out n);
 
-                if (n < 1)
+                if (n < 1 || n > 100000)
                     return "Error - see usage";
 
                 for (int i = 1; i <= n; i++)
