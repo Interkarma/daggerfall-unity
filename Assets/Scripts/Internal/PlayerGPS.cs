@@ -414,22 +414,17 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Gets the factionID of player's current region.
         /// </summary>
-        int GetCurrentRegionFaction()
+        public int GetCurrentRegionFaction()
         {
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, CurrentRegionIndex);
-
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetCurrentRegionFaction() did not find exactly 1 match.");
-
-            return factions[0].id;
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(CurrentRegionIndex, out factionData);
+            return factionData.id;
         }
 
         /// <summary>
         /// Gets the factionID of noble court in player's current region 
         /// </summary>
-        int GetCourtOfCurrentRegion()
+        public int GetCourtOfCurrentRegion()
         {
             // Find court in current region
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(

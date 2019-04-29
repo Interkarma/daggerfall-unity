@@ -255,6 +255,23 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
+        /// Gets the faction data corresponding to the given region index.
+        /// </summary>
+        /// <param name="regionIndex">The index of the region to get faction data of.</param>
+        /// <param name="factionData">Receives faction data.</param>
+        public void GetRegionFaction(int regionIndex, out FactionFile.FactionData factionData)
+        {
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province, -1, -1, regionIndex);
+
+            // Should always find a single region
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetRegionFaction() did not find exactly 1 match.");
+
+            factionData = factions[0];
+        }
+
+        /// <summary>
         /// Gets faction ID from name. Experimental.
         /// </summary>
         /// <param name="name">Name of faction to get ID of.</param>

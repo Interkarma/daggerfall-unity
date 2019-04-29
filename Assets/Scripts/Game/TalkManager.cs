@@ -486,24 +486,13 @@ namespace DaggerfallWorkshop.Game
 
         public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
         {
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+        
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
             FactionFile.FactionData NPCfaction;
-            int currentRegionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, currentRegionIndex);
-
-            // Should always find a region
-            if (factions == null || factions.Length == 0)
-                throw new Exception("GetReactionToPlayer() did not find a match for NPC faction.");
-
-            // Warn if more than 1 region is found
-            if (factions.Length > 1)
-                Debug.LogWarningFormat("GetReactionToPlayer() found more than 1 matching NPC faction for region {0}.", currentRegionIndex);
-
-            NPCfaction = factions[0];
-
-            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            player.FactionData.GetRegionFaction(GameManager.Instance.PlayerGPS.CurrentRegionIndex, out NPCfaction);
+            
             int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
             if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // One of the five general social groups
