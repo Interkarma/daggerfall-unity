@@ -272,7 +272,7 @@ namespace DaggerfallWorkshop.Utility
         {
             // TODO: How should bank type be randomised? This line results in blank names sometimes, so using race instead.
             //return (NameHelper.BankTypes) DFRandom.random_range_inclusive(0, 8);
-            Races race = (Races) DFRandom.random_range_inclusive(0, 8);
+            Races race = (Races) DFRandom.random_range_inclusive(1, 8);
             return GetNameBank(race);
         }
 
@@ -283,7 +283,7 @@ namespace DaggerfallWorkshop.Utility
             factions.GetFactionData(factionId, out fd);
 
             Genders gender = (Genders) ((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
-            Races race = (Races) fd.race;
+            Races race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)fd.race);
 
             return DaggerfallUnity.Instance.NameHelper.FullName(GetNameBank(race), gender);
         }

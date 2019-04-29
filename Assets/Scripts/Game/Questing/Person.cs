@@ -493,28 +493,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Use faction race only for individuals
             if (isIndividualNPC)
             {
-                FactionFile.FactionRaces factionRace = (FactionFile.FactionRaces)factionData.race;
-                if (factionRace != FactionFile.FactionRaces.None)
+                race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)factionData.race);
+                if (race != Races.None)
                 {
-                    switch (factionRace)
-                    {
-                        case FactionFile.FactionRaces.Redguard:
-                            race = Races.Redguard;
-                            return;
-                        case FactionFile.FactionRaces.Nord:
-                            race = Races.Nord;
-                            return;
-                        case FactionFile.FactionRaces.DarkElf:
-                            race = Races.DarkElf;
-                            return;
-                        case FactionFile.FactionRaces.WoodElf:
-                            race = Races.WoodElf;
-                            return;
-                        case FactionFile.FactionRaces.Breton:
-                        default:
-                            race = Races.Breton;
-                            return;
-                    }
+                    return;
                 }
             }
 
