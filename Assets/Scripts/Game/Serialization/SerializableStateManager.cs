@@ -431,7 +431,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                     // Add custom drop containers back to scene (e.g. dropped loot, slain foes)
                     if (lootContainers[i].customDrop)
                     {
-                        DaggerfallLoot customLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, key);
+                        DaggerfallLoot customLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, key, lootContainers[i].textureArchive, lootContainers[i].textureRecord);
                         SerializableLootContainer serializableLootContainer = customLootContainer.GetComponent<SerializableLootContainer>();
                         if (serializableLootContainer)
                         {

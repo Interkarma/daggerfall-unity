@@ -1099,7 +1099,7 @@ namespace DaggerfallWorkshop.Game
         public static Texture2D GetTextureFromResources(string name)
         {
             Texture2D tex;
-            return TextureReplacement.TryImportTexture(name, out tex) ? tex : Resources.Load<Texture2D>(name);
+            return TextureReplacement.TryImportTexture(name, true, out tex) ? tex : Resources.Load<Texture2D>(name);
         }
 
         /// <summary>

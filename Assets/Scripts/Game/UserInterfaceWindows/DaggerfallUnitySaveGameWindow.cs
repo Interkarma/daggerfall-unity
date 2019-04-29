@@ -422,7 +422,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetBackground(BaseScreenComponent panel, Color color, string textureName)
         {
             Texture2D tex;
-            if (TextureReplacement.TryImportTexture(textureName, out tex))
+            if (TextureReplacement.TryImportTexture(textureName, true, out tex))
                 panel.BackgroundTexture = tex;
             else
                 panel.BackgroundColor = color;

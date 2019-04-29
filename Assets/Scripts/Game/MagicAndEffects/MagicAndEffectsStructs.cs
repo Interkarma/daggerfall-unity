@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EffectCosts ChanceCosts;                             // Chance cost values
         public EffectCosts MagnitudeCosts;                          // Magnitude cost values
         public ItemMakerFlags ItemMakerFlags;                       // Item maker features
+        public EnchantmentPayloadFlags EnchantmentPayloadFlags;     // How an enchantment wants to receive execution callbacks to deliver payload
         public bool DisableReflectiveEnumeration;                   // Prevents effect template from being registered automatically with broker
     }
 
@@ -107,17 +108,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public string Key;
         public EffectSettings Settings;
+        public EnchantmentParam? EnchantmentParam;
 
-        public EffectEntry(string key)
+        public EffectEntry(string key, EnchantmentParam? enchantmentParam = null)
         {
             Key = key;
             Settings = new EffectSettings();
+            EnchantmentParam = enchantmentParam;
         }
 
-        public EffectEntry(string key, EffectSettings settings)
+        public EffectEntry(string key, EffectSettings settings, EnchantmentParam? enchantmentParam = null)
         {
             Key = key;
             Settings = settings;
+            EnchantmentParam = enchantmentParam;
         }
     }
 
@@ -268,5 +272,50 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             daysOfSymptomsMin = daysOfSymptomsMinp;
             daysOfSymptomsMax = daysOfSymptomsMaxp;
         }
+    }
+
+    /// <summary>
+    /// Defines a custom enchantment for items.
+    /// Classic enchantments use a type/param number pair in DaggerfallEnchantment.
+    /// Custom enchantments use a key/param string pair in CustomEnchantment.
+    /// </summary>
+    [Serializable]
+    public struct CustomEnchantment
+    {
+        public string EffectKey;                                    // Define the effect used by this enchantment
+        public string CustomParam;                                  // Passed back to effect to locate/invoke enchantment settings
+    }
+
+    /// <summary>
+    /// References either a classic or custom spell bundle.
+    /// Always considered to reference a custom spell bundle when CustomKey is not null or empty.
+    /// </summary>
+    [Serializable]
+    public struct SpellReference
+    {
+        public int ClassicID;                                       // Spell ID into SPELLS.STD
+        public string CustomKey;                                    // Key into custom spell bundle offers
+    }
+
+    /// <summary>
+    /// Flexible enchantment parameter for either a classic effect or a custom effect.
+    /// This is stored with EffectEntry for enchantment bundles and assigned to live effect instance.
+    /// Formalising this to a data structure allows for expanding custom enchantment params later.
+    /// </summary>
+    [Serializable]
+    public struct EnchantmentParam
+    {
+        public short ClassicParam;                                  // Classic echantment param
+        public string CustomParam;                                  // Custom enchantment param
+    }
+
+    /// <summary>
+    /// Optional information returned to framework by enchantment payload callbacks.
+    /// </summary>
+    [Serializable]
+    public struct PayloadCallbackResults
+    {
+        public int strikesModulateDamage;                           // Amount to plus/minus from damage after Strikes effect payload
+        public int durabilityLoss;                                  // Amount of durability lost after callback
     }
 }

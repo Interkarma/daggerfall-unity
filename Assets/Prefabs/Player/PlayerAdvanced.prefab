@@ -828,8 +828,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1.78
-  m_Radius: 0.23
+  m_Height: 1.8
+  m_Radius: 0.35
   m_SlopeLimit: 70
   m_StepOffset: 0.5
   m_SkinWidth: 0.06
@@ -1167,7 +1167,7 @@ MonoBehaviour:
 --- !u!114 &114306241537309130
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
@@ -1190,7 +1190,7 @@ MonoBehaviour:
 --- !u!114 &114374011142275900
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1

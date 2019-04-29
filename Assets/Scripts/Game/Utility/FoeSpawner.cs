@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Set parent if none specified already
             if (!gameObjects[pendingFoesSpawned].transform.parent)
-                gameObjects[pendingFoesSpawned].transform.parent = GetBestParent();
+                gameObjects[pendingFoesSpawned].transform.parent = GameObjectHelper.GetBestParent();
 
             // Get roation of spawn ray
             Quaternion rotation;
@@ -227,38 +227,6 @@ namespace DaggerfallWorkshop.Game.Utility
             foreach(GameObject go in gameObjects)
             {
                 Destroy(go);
-            }
-        }
-
-        /// <summary>
-        /// Gets best parent for a foe at spawn time.
-        /// Foes should always be placed to some child object in world rather than directly into root of scene.
-        /// </summary>
-        /// <returns>Best parent transform, or null as fallback.</returns>
-        public static Transform GetBestParent()
-        {
-            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-
-            // Place in world near player depending on local area
-            if (playerEnterExit.IsPlayerInsideBuilding)
-            {
-                return playerEnterExit.Interior.transform;
-            }
-            else if (playerEnterExit.IsPlayerInsideDungeon)
-            {
-                return playerEnterExit.Dungeon.transform;
-            }
-            else if (!playerEnterExit.IsPlayerInside && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
-            {
-                return GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
-            }
-            else if (!playerEnterExit.IsPlayerInside)
-            {
-                return GameManager.Instance.StreamingTarget.transform;
-            }
-            else
-            {
-                return null;
             }
         }
 

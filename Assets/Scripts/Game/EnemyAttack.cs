@@ -345,15 +345,15 @@ namespace DaggerfallWorkshop.Game
                     targetSounds.PlayParrySound();
             }
 
-            targetEntity.DecreaseHealth(damage);
-
-            // Assign "cast when strikes" to target entity
+            // Handle weapon striking enchantments - this could change damage amount
             if (weapon != null && weapon.IsEnchanted)
             {
-                EntityEffectManager enemyEffectManager = targetEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                if (enemyEffectManager)
-                    enemyEffectManager.StrikeWithItem(weapon, entityBehaviour);
+                EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                if (effectManager)
+                    damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, weapon, entity.Items, targetEntity.EntityBehaviour, damage);
             }
+
+            targetEntity.DecreaseHealth(damage);
 
             if (targetMotor)
             {

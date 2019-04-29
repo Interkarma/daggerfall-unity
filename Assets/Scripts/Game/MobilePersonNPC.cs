@@ -178,43 +178,27 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void SetPerson()
         {
-            // do several things in switch statement:
             // get person's face texture record index for this race and gender and outfit variant
-            // get correct nameBankType for this race
             int[] recordIndices = null;
-            NameHelper.BankTypes nameBankType;
             switch (race)
             {
                 case Races.Redguard:
                     recordIndices = (gender == Genders.Male) ? maleRedguardFaceRecordIndex : femaleRedguardFaceRecordIndex;
-                    //nameBankType = NameHelper.BankTypes.Redguard;
                     break;
                 case Races.Nord:
                     recordIndices = (gender == Genders.Male) ? maleNordFaceRecordIndex : femaleNordFaceRecordIndex;
-                    //nameBankType = NameHelper.BankTypes.Nord;
                     break;
                 case Races.Breton:
                 default:
                     recordIndices = (gender == Genders.Male) ? maleBretonFaceRecordIndex : femaleBretonFaceRecordIndex;
-                    //nameBankType = NameHelper.BankTypes.Breton;
                     break;
             }
 
-            // create name for npc
-            DFLocation.ClimateSettings climateSettings = MapsFile.GetWorldClimateSettings(GameManager.Instance.PlayerGPS.ClimateSettings.WorldClimate);
-            switch (climateSettings.Names)
-            {                
-                case FactionFile.FactionRaces.Breton:
-                default:
-                    nameBankType = NameHelper.BankTypes.Breton;
-                    break;
-                case FactionFile.FactionRaces.Nord:
-                    nameBankType = NameHelper.BankTypes.Nord;
-                    break;
-                case FactionFile.FactionRaces.Redguard:
-                    nameBankType = NameHelper.BankTypes.Redguard;
-                    break;
-            }
+            // get correct nameBankType for this race and create name for npc
+            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                nameBankType = (NameHelper.BankTypes) MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+
             this.nameNPC = DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
 
             // get face record id to use (randomize portrait for current person outfit variant)

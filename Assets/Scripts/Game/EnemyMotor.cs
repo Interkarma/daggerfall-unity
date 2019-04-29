@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -60,7 +61,6 @@ namespace DaggerfallWorkshop.Game
         float lastTimeWasStuck;
         bool bashing;
         bool hasBowAttack;
-        bool hasSpells;
         float realHeight;
         float centerChange;
         bool resetHeight;
@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game
         bool strafeLeft;
         float strafeAngle;
         int searchMult;
-        bool clearPathToShootAtPredictedPos;
+        int ignoreMaskForShooting;
 
         EnemySenses senses;
         Vector3 destination;
@@ -130,9 +130,11 @@ namespace DaggerfallWorkshop.Game
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
 
-            // Only need to check for ability to shoot bow once, and if no spells, only need to check for spells once.
+            // Only need to check for ability to shoot bow once.
             hasBowAttack = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
-            hasSpells = entity.GetSpells().Length > 0;
+
+            // Add things AI should ignore when checking for a clear path to shoot.
+            ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
         }
 
         void FixedUpdate()
@@ -228,7 +230,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (attacker == GameManager.Instance.PlayerEntityBehaviour)
+            {
                 isHostile = true;
+                // Reset former ally's team
+                if (entityBehaviour.Entity.Team == MobileTeams.PlayerAlly)
+                {
+                    int id = (entityBehaviour.Entity as EnemyEntity).MobileEnemy.ID;
+                    entityBehaviour.Entity.Team = EnemyBasics.Enemies[id].Team;
+                }
+            }
         }
 
         /// <summary>
@@ -320,18 +330,6 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Apply gravity
-            if (!flies && !swims && !isLevitating && !controller.isGrounded)
-            {
-                controller.SimpleMove(Vector3.zero);
-
-                // Only return if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
-                // Allowing them to continue and attempt a Move() in the code below frees them, but we don't want to allow that if we can avoid it so they aren't moving
-                // while falling, which can also accelerate the fall due to anti-bounce downward movement in Move().
-                if (lastPosition != transform.position)
-                    return;
-            }
-
             // Monster speed of movement follows the same formula as for when the player walks
             float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
@@ -367,8 +365,20 @@ namespace DaggerfallWorkshop.Game
                     mobile.ChangeEnemyState(MobileStates.Idle);
                 else
                     mobile.ChangeEnemyState(MobileStates.Move);
+            }
 
-                lastPosition = transform.position;
+            lastPosition = transform.position;
+
+            // Apply gravity
+            if (!flies && !swims && !isLevitating && !controller.isGrounded)
+            {
+                controller.SimpleMove(Vector3.zero);
+
+                // Only return if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
+                // Allowing them to continue and attempt a Move() in the code below frees them, but we don't want to allow that if we can avoid it so they aren't moving
+                // while falling, which can also accelerate the fall due to anti-bounce downward movement in Move().
+                if (lastPosition != transform.position)
+                    return;
             }
 
             // Do nothing if no target or after giving up finding the target or if target position hasn't been acquired yet
@@ -401,8 +411,6 @@ namespace DaggerfallWorkshop.Game
                     stopDistance = attack.ClassicMeleeDistanceVsAI;
             }
 
-            clearPathToShootAtPredictedPos = false;
-
             // Set avoidObstaclesTimer to 0 if got close enough to detourDestination
             if (avoidObstaclesTimer > 0)
             {
@@ -414,10 +422,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            bool rangedMagicAvailable = false;
-            if (!hasBowAttack && hasSpells)
-                rangedMagicAvailable = CanCastRangedSpell();
-
             // Get location to move towards.
             // If detouring around an obstacle or fall, use the detour position
             if (avoidObstaclesTimer > 0)
@@ -425,7 +429,7 @@ namespace DaggerfallWorkshop.Game
                 destination = detourDestination;
             }
             // Otherwise, try to get to the combat target if there is a clear path to it
-            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (clearPathToShootAtPredictedPos && (hasBowAttack || rangedMagicAvailable)))
+            else if (ClearPathToPosition(senses.PredictedTargetPos, (destination - transform.position).magnitude) || (senses.TargetInSight && (hasBowAttack || entity.CurrentMagicka > 0)))
             {
                 destination = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
@@ -444,7 +448,7 @@ namespace DaggerfallWorkshop.Game
                 destination = searchPosition;
             }
 
-                if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
+            if (avoidObstaclesTimer == 0 && !flies && !isLevitating && !swims && senses.Target)
             {
                 // Ground enemies target at their own height
                 // Otherwise, their target vector aims up towards the target, which could interfere with distance-to-target calculations
@@ -455,21 +459,22 @@ namespace DaggerfallWorkshop.Game
 
             // Get direction & distance.
             var direction = (destination - transform.position).normalized;
-            float distance = 0f;
+            float distance;
 
             // If enemy sees the target, use the distance value from EnemySenses, as this is also used for the melee attack decision and we need to be consistent with that.
-            if (clearPathToShootAtPredictedPos)
+            if (avoidObstaclesTimer == 0 && senses.TargetInSight)
                 distance = senses.DistanceToTarget;
             else
                 distance = (destination - transform.position).magnitude;
 
             // Ranged attacks
-            if ((hasBowAttack || rangedMagicAvailable) && clearPathToShootAtPredictedPos && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if ((CanShootBow() || CanCastRangedSpell()) && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
                     StrafeDecision();
                 }
+
                 if (doStrafe && strafeTimer > 0)
                 {
                     AttemptMove(direction, moveSpeed / 4, false, true, distance);
@@ -491,8 +496,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                         // Random chance to shoot spell
-                        else if (DFRandom.rand() % 40 == 0
-                             && entityEffectManager.SetReadySpell(selectedSpell))
+                        else if (DFRandom.rand() % 40 == 0 && entityEffectManager.SetReadySpell(selectedSpell))
                         {
                             mobile.ChangeEnemyState(MobileStates.Spell);
                         }
@@ -503,7 +507,6 @@ namespace DaggerfallWorkshop.Game
 
                 return;
             }
-
 
             // Touch spells
             if (senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0 && senses.DistanceToTarget <= attack.MeleeDistance
@@ -602,29 +605,69 @@ namespace DaggerfallWorkshop.Game
             sphereCastDir2d.y = 0;
             RayCheckForObstacle(sphereCastDir2d);
             RayCheckForFall(sphereCastDir2d);
-            bool result = true;
 
             if (obstacleDetected || fallDetected)
-                result = false;
+                return false;
 
             RaycastHit hit;
-            int layerSpellMissiles = LayerMask.NameToLayer("SpellMissiles");
-            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist, layerSpellMissiles))
+            if (Physics.SphereCast(transform.position, controller.radius / 2, sphereCastDir, out hit, dist, ignoreMaskForShooting))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 if (hitTarget == senses.Target)
                 {
-                    clearPathToShootAtPredictedPos = true;
+                    return true;
                 }
                 else
                 {
-                    result = false;
+                    return false;
                 }
             }
-            else
-                clearPathToShootAtPredictedPos = true;
 
-            return result;
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if can shoot projectile at target.
+        /// </summary>
+        bool HasClearPathToShootProjectile(float speed, float radius)
+        {
+            // Check that there is a clear path to shoot projectile
+            Vector3 sphereCastDir = senses.PredictNextTargetPos(speed);
+            if (sphereCastDir == EnemySenses.ResetPlayerPos)
+                return false;
+
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
+
+            RaycastHit hit;
+            if (Physics.SphereCast(transform.position, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
+            {
+                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+
+                // Clear path to target
+                if (hitTarget == senses.Target)
+                    return true;
+
+                // Something in the way
+                return false;
+            }
+
+            // Clear path to predicted target position
+            return true;
+        }
+
+
+        /// <summary>
+        /// Returns true if can shoot bow at target.
+        /// </summary>
+        bool CanShootBow()
+        {
+            if (!hasBowAttack)
+                return false;
+
+            // Check that there is a clear path to shoot a spell
+            // All arrows are currently 35 speed.
+            return HasClearPathToShootProjectile(35f, 0.45f);
         }
 
         /// <summary>
@@ -654,40 +697,12 @@ namespace DaggerfallWorkshop.Game
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
             selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
 
-            int totalGoldCostUnused;
-            int readySpellCastingCost;
-
-            Formulas.FormulaHelper.CalculateTotalEffectCosts(selectedSpell.Settings.Effects, selectedSpell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
-            if (entity.CurrentMagicka < readySpellCastingCost)
-                return false;
-
             if (EffectsAlreadyOnTarget(selectedSpell))
                 return false;
 
             // Check that there is a clear path to shoot a spell
-            float spellMovementSpeed = 25; // All range spells are currently 25 speed
-            Vector3 sphereCastDir = senses.PredictNextTargetPos(spellMovementSpeed);
-            if (sphereCastDir == EnemySenses.ResetPlayerPos)
-                return false;
-
-            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
-            sphereCastDir = (sphereCastDir - transform.position).normalized;
-
-            RaycastHit hit;
-            if (Physics.SphereCast(transform.position, 0.45f, sphereCastDir, out hit, sphereCastDist))
-            {
-                DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-
-                // Clear path to target
-                if (hitTarget == senses.Target)
-                    return true;
-
-                // Something in the way
-                return false;
-            }
-
-            // Clear path to predicted target position
-            return true;
+            // All range spells are currently 25 speed and 0.45f radius
+            return HasClearPathToShootProjectile(25f, 0.45f);
         }
 
         /// <summary>
@@ -729,13 +744,6 @@ namespace DaggerfallWorkshop.Game
 
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
             selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
-
-            int totalGoldCostUnused;
-            int readySpellCastingCost;
-
-            Formulas.FormulaHelper.CalculateTotalEffectCosts(selectedSpell.Settings.Effects, selectedSpell.Settings.TargetType, out totalGoldCostUnused, out readySpellCastingCost);
-            if (entity.CurrentMagicka < readySpellCastingCost)
-                return false;
 
             if (EffectsAlreadyOnTarget(selectedSpell))
                 return false;
@@ -970,7 +978,6 @@ namespace DaggerfallWorkshop.Game
 
             angle = 0;
             int count = 0;
-            testMove = Vector3.zero;
 
             do
             {

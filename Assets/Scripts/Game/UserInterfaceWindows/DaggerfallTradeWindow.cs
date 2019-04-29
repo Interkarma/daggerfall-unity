@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:
+// Contributors:    Pango
 //
 // Notes:
 //
@@ -509,6 +509,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {   // Return items to player inventory. 
                 // Note: ignoring weight here, like classic. Priority is to not lose any items.
+                if (usingWagon)
+                {
+                    // Always clear transport items into player's inventory
+                    for (int i = remoteItems.Count; i-- > 0;)
+                    {
+                        DaggerfallUnityItem item = remoteItems.GetItem(i);
+                        if (item.ItemGroup == ItemGroups.Transportation)
+                            TransferItem(item, remoteItems, PlayerEntity.Items);
+                    }
+                }
                 localItems.TransferAll(remoteItems);
             }
         }
@@ -666,7 +676,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems, blockTransport: true);
+                        {
+                            // Are we trying to sell the non empty wagon?
+                            if (item.ItemGroup == ItemGroups.Transportation && PlayerEntity.WagonItems.Count > 0)
+                            {
+                                DaggerfallUnityItem usedWagon = PlayerEntity.Items.GetItem(ItemGroups.Transportation, (int)Transportation.Small_cart);
+                                if (usedWagon.Equals(item))
+                                    return;
+                            }
+                            TransferItem(item, localItems, remoteItems);
+                        }
                         break;
 
                     case WindowModes.Buy:
@@ -725,7 +744,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         TakeItemFromRepair(item);
                 }
                 else
-                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
+                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item), blockTransport: usingWagon);
             }
             else if (selectedActionMode == ActionModes.Info)
             {

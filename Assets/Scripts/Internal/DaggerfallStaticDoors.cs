@@ -123,8 +123,8 @@ namespace DaggerfallWorkshop
                 // Get this door centre in world space
                 Vector3 centre = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre) + transform.position;
 
-                // Check if door belongs to same building record
-                if (Doors[i].recordIndex == record)
+                // Check if door belongs to same building record or accept any record
+                if (Doors[i].recordIndex == record || record == -1)
                 {
                     // Check distance and save closest
                     float distance = Vector3.Distance(playerPos, centre);

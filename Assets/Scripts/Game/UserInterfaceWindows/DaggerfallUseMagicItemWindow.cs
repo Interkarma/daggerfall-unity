@@ -87,7 +87,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = playerItems.GetItem(i);
                 if (item.IsEnchanted)
                 {
-                    foreach (DaggerfallEnchantment enchantment in item.Enchantments)
+                    foreach (DaggerfallEnchantment enchantment in item.LegacyEnchantments)
                         if (enchantment.type == EnchantmentTypes.CastWhenUsed)
                         {
                             magicUseItems.Add(item);
@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 GameManager.Instance.PlayerEntity.Items.RemoveOne(itemToUse);
             }
             else if (itemToUse.IsEnchanted)
-                GameManager.Instance.PlayerEffectManager.UseItem(itemToUse, GameManager.Instance.PlayerEntity.Items);
+                GameManager.Instance.PlayerEffectManager.DoItemEnchantmentPayloads(MagicAndEffects.EnchantmentPayloadFlags.Used, itemToUse, GameManager.Instance.PlayerEntity.Items);
 
             CloseWindow();
         }

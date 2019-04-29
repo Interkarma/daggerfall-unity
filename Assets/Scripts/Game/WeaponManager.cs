@@ -584,17 +584,17 @@ namespace DaggerfallWorkshop.Game
                             enemySounds.PlayParrySound();
                     }
 
-                    // Remove health
-                    enemyEntity.DecreaseHealth(damage);
-
-                    // Assign "cast when strikes" to target entity and raise special strike handling event
+                    // Handle weapon striking enchantments - this could change damage amount
                     if (strikingWeapon != null && strikingWeapon.IsEnchanted)
                     {
-                        EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                        if (enemyEffectManager)
-                            enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
+                        EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                        if (effectManager)
+                            damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, strikingWeapon, GameManager.Instance.PlayerEntity.Items, enemyEntity.EntityBehaviour, damage);
                         strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
                     }
+
+                    // Remove health
+                    enemyEntity.DecreaseHealth(damage);
 
                     // Make foe attack their aggressor
                     // Currently this is just player, but should be expanded later

@@ -356,34 +356,15 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets NameHelper.BankType in player's current region.
-        /// In practice this will always be Redguard/Breton/Nord.
-        /// Supporting a few other name banks for possible diversity later.
+        /// In practice this will always be Redguard/Breton.
+        /// Supporting other name banks for possible diversity later.
         /// </summary>
         public NameHelper.BankTypes GetNameBankOfCurrentRegion()
         {
-            DFLocation.ClimateSettings settings = MapsFile.GetWorldClimateSettings(climateSettings.WorldClimate);
-            NameHelper.BankTypes bankType;
-            switch (settings.Names)
-            {
-                case FactionFile.FactionRaces.Redguard:
-                    bankType = NameHelper.BankTypes.Redguard;
-                    break;
-                case FactionFile.FactionRaces.Nord:
-                    bankType = NameHelper.BankTypes.Nord;
-                    break;
-                case FactionFile.FactionRaces.DarkElf:
-                    bankType = NameHelper.BankTypes.DarkElf;
-                    break;
-                case FactionFile.FactionRaces.WoodElf:
-                    bankType = NameHelper.BankTypes.WoodElf;
-                    break;
-                default:
-                case FactionFile.FactionRaces.Breton:
-                    bankType = NameHelper.BankTypes.Breton;
-                    break;
-            }
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                return (NameHelper.BankTypes) MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
 
-            return bankType;
+            return NameHelper.BankTypes.Breton;
         }
 
         /// <summary>

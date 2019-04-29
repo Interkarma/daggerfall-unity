@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -32,6 +33,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets or sets current effect settings.
         /// </summary>
         EffectSettings Settings { get; set; }
+
+        /// <summary>
+        /// Gets or sets enchantment param for enchantment effects.
+        /// If this property is null then effect is not a live enchantment.
+        /// </summary>
+        EnchantmentParam? EnchantmentParam { get; set; }
 
         /// <summary>
         /// Gets effect potion properties (if any).
@@ -164,6 +171,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool HasItemMakerFlags(ItemMakerFlags flags);
 
         /// <summary>
+        /// Helper to check if properties contain the specified enchantment payload flags
+        /// </summary>
+        bool HasEnchantmentPayloadFlags(EnchantmentPayloadFlags flags);
+
+        /// <summary>
+        /// Enchantment payload callback for enchantment to perform custom execution based on context.
+        /// These callbacks are performed directly from template, not from a live instance of effect. Do not store state in effect during callbacks.
+        /// Not used by EnchantmentPayloadFlags.Held - rather, an effect instance bundle is assigned to entity's effect manager to execute as normal.
+        /// </summary>
+        PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0);
+
+        /// <summary>
+        /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
+        /// Used by enchanting window to prevent certain enchantments from being selected together.
+        /// </summary>
+        bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null);
+
+        /// <summary>
         /// Get effect state data to serialize.
         /// </summary>
         object GetSaveData();
@@ -259,6 +284,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return settings; }
             set { settings = value; }
         }
+
+        public EnchantmentParam? EnchantmentParam { get; set; }
 
         public virtual PotionProperties PotionProperties
         {
@@ -363,6 +390,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual bool HasItemMakerFlags(ItemMakerFlags flags)
         {
             return (Properties.ItemMakerFlags & flags) == flags;
+        }
+
+        /// <summary>
+        /// Helper to check if properties contain the specified enchantment payload flags
+        /// </summary>
+        /// <param name="flags">Flags to check.</param>
+        /// <returns>True if flags specified.</returns>
+        public virtual bool HasEnchantmentPayloadFlags(EnchantmentPayloadFlags flags)
+        {
+            return (Properties.EnchantmentPayloadFlags & flags) == flags;
+        }
+
+        /// <summary>
+        /// Enchantment payload callback for enchantment to perform custom execution based on context.
+        /// These callbacks are performed directly from template, not from a live instance of effect. Do not store state in effect during callbacks.
+        /// Not used by EnchantmentPayloadFlags.Held - rather, an effect instance bundle is assigned to entity's effect manager to execute as normal.
+        /// </summary>
+        public virtual PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
+        /// Used by enchanting window to prevent certain enchantments from being selected together.
+        /// </summary>
+        public virtual bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
+        {
+            return false;
         }
 
         /// <summary>

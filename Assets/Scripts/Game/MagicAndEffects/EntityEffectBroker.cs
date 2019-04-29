@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -71,6 +72,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return magicRoundsSinceStartup; }
         }
 
+        /// <summary>
+        /// Gets or sets flag stating if time was just increased synthetically.
+        /// Should only be raised by fast travel and prison time.
+        /// Some time-based effects do not operate during these increases, e.g. the "item deteriorates" side-effect
+        /// This flag is lowered at the end of each magic update.
+        /// </summary>
+        public bool SyntheticTimeIncrease { get; private set; }
+
         #endregion
 
         #region Constructors
@@ -80,6 +89,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
             StartGameBehaviour.OnStartGame += StartGameBehaviour_OnStartGame;
+            DaggerfallTravelPopUp.OnPostFastTravel += DaggerfallTravelPopUp_OnPostFastTravel;
+            DaggerfallCourtWindow.OnEndPrisonTime += DaggerfallCourtWindow_OnEndPrisonTime;
         }
 
         #endregion
@@ -217,6 +228,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
                 //Debug.LogFormat("Time to run {0} magic rounds: {1}ms", catchupRounds, totalTime);
             }
+
+            // Lower synthetic time increase flag
+            SyntheticTimeIncrease = false;
         }
 
         #endregion
@@ -684,39 +698,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
-        /// <summary>
-        /// Generate EffectBundleSettings for an artifact of a specified SpecialArtifactEffect index
-        /// </summary>
-        /// <param name="settings">Settings for artifact effect (if found)</param>
-        /// <returns>True if spell found, otherwise false.</returns>
-        public bool GetArtifactBundleSettings(out EffectBundleSettings settings, int effectIndex)
-        {
-            string effectKey = string.Empty;
-            TargetTypes effectTargetType = TargetTypes.None;
-            switch (effectIndex)
-            {
-                case (int)ArtifactsSubTypes.Wabbajack:
-                    effectKey = "WabbajackEffect";
-                    effectTargetType = TargetTypes.ByTouch;
-                    break;
-                case (int)ArtifactsSubTypes.Mehrunes_Razor:
-                    effectKey = "MehrunesRazorEffect";
-                    effectTargetType = TargetTypes.ByTouch;
-                    break;
-                case (int)ArtifactsSubTypes.Sanguine_Rose:
-                    effectKey = "SanguineRoseEffect";
-                    effectTargetType = TargetTypes.CasterOnly;
-                    break;
-            }
-            settings = new EffectBundleSettings
-            {
-                Effects = new EffectEntry[] { new EffectEntry(effectKey) },
-                TargetType = effectTargetType
-            };
-
-            return effectKey != string.Empty;
-        }
-
         #endregion
 
         #region Private Methods
@@ -824,6 +805,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
             InitMagicRoundTimer();
+        }
+
+        private void DaggerfallCourtWindow_OnEndPrisonTime()
+        {
+            SyntheticTimeIncrease = true;
+        }
+
+        private void DaggerfallTravelPopUp_OnPostFastTravel()
+        {
+            SyntheticTimeIncrease = true;
         }
 
         #endregion

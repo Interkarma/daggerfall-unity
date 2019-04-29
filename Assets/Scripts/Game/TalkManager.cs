@@ -487,13 +487,13 @@ namespace DaggerfallWorkshop.Game
         public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-
+        
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
             FactionFile.FactionData NPCfaction;
             player.FactionData.GetRegionFaction(GameManager.Instance.PlayerGPS.CurrentRegionIndex, out NPCfaction);
-
-            int reaction = NPCfaction.rep + player.BiographyReactionMod;
+            
+            int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
             if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // One of the five general social groups
                 reaction += player.SGroupReputations[(int)socialGroup];

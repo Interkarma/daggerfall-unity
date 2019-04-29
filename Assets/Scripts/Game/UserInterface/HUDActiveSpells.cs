@@ -157,8 +157,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Never show passive items specials icon, this is an internal system effect only
             foreach (IEntityEffect effect in bundle.liveEffects)
             {
-                if ((effect.Properties.ShowSpellIcon && effect.RoundsRemaining > 0) ||
-                    (bundle.fromEquippedItem != null && !(effect is MagicAndEffects.MagicEffects.PassiveItemSpecialsEffect)))
+                if (effect.Properties.ShowSpellIcon && (effect.RoundsRemaining > 0 || bundle.fromEquippedItem != null))
                 {
                     return true;
                 }

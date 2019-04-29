@@ -211,6 +211,7 @@ nearAnimals,                near animals
 undeadLower,                undead
 humanoidLower,              humanoid
 animalsLower,               animals
+animalsUpper,               Animals
 
 allTheTime,                 all the time
 inSunlight,                 in sunlight
@@ -232,3 +233,11 @@ scholars,                   Scholars
 nobility,                   Nobility
 underworld,                 Underworld
 all,                        All
+
+noRoomInItem,               No room in item...
+noEnchantments,             You have not prepared enchantments for this item.
+enterNewName,               Enter new name :
+
+- Artifacts
+
+noMonstersNearby,           There are no monsters nearby.

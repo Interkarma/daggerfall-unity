@@ -1619,7 +1619,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Will see what feedback is like and revert to classic behaviour if widely preferred
             if (item.IsEnchanted)
             {
-                GameManager.Instance.PlayerEffectManager.UseItem(item, collection);
+                GameManager.Instance.PlayerEffectManager.DoItemEnchantmentPayloads(MagicAndEffects.EnchantmentPayloadFlags.Used, item, collection);
 
                 // Only pop the inventory window. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to pop those.
                 if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() == typeof(DaggerfallInventoryWindow))

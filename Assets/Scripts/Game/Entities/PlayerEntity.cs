@@ -122,6 +122,9 @@ namespace DaggerfallWorkshop.Game.Entity
         private bool gameStarted = false;
         bool displayingExhaustedPopup = false;
 
+        const int socialGroupCount = 11;
+        int[] reactionMods = new int[socialGroupCount];     // Indices map to FactionFile.SocialGroups 0-10 - do not serialize, set by live effects
+
         #endregion
 
         #region Properties
@@ -249,6 +252,22 @@ namespace DaggerfallWorkshop.Game.Entity
 
             double remainingSecs = (double)(room.expiryTime - DaggerfallUnity.Instance.WorldTime.Now.ToSeconds());
             return (int)Math.Ceiling((remainingSecs / DaggerfallDateTime.SecondsPerHour));
+        }
+
+        public void ChangeReactionMod(FactionFile.SocialGroups socialGroup, int amount)
+        {
+            int index = (int)socialGroup;
+            if (index >= 0 && index < reactionMods.Length)
+                reactionMods[index] += amount;
+        }
+
+        public int GetReactionMod(FactionFile.SocialGroups socialGroup)
+        {
+            int index = (int)socialGroup;
+            if (index >= 0 && index < reactionMods.Length)
+                return reactionMods[index];
+            else
+                return 0;
         }
 
         public override void FixedUpdate()
@@ -1418,6 +1437,11 @@ namespace DaggerfallWorkshop.Game.Entity
             // Optionally make permanent
             if (makePermanent)
                 item.MakePermanent();
+        }
+
+        public void ClearReactionMods()
+        {
+            Array.Clear(reactionMods, 0, socialGroupCount);
         }
 
         #endregion

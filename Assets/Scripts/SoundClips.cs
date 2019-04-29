@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -445,6 +445,7 @@ namespace DaggerfallWorkshop
         PageTurn = 362,
         ParchmentScratching = 363,
 
+        MakeItem = 364,
         MakePotion = 365,
 
         RaceBreton = 366,
