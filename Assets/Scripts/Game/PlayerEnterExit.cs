@@ -539,7 +539,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="playerPosition">Player position data.</param>
         /// <param name="start">Use true if this is a load/start operation, otherwise false.</param>
-        public void RestorePositionHelper(PlayerPositionData_v1 playerPosition, bool start)
+        public void RestorePositionHelper(PlayerPositionData_v1 playerPosition, bool start, bool importEnemies)
         {
             // Raise reposition flag if terrain sampler changed
             // This is required as changing terrain samplers will invalidate serialized player coordinates
@@ -577,7 +577,7 @@ namespace DaggerfallWorkshop.Game
                     playerPosition.worldPosX,
                     playerPosition.worldPosZ,
                     true,
-                    false);
+                    importEnemies);
             }
             else if (playerPosition.insideBuilding && hasExteriorDoors && !repositionPlayer)
             {
