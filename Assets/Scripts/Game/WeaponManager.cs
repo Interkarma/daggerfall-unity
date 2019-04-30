@@ -545,7 +545,7 @@ namespace DaggerfallWorkshop.Game
                         // Knock back enemy based on damage and enemy weight
                         if (enemyMotor)
                         {
-                            if (enemyMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
+                            if (enemyMotor.KnockbackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
                                 entityBehaviour.EntityType == EntityTypes.EnemyClass ||
                                 enemyEntity.MobileEnemy.Weight > 0)
                             {
@@ -554,13 +554,13 @@ namespace DaggerfallWorkshop.Game
                                 float twoTimesDamage = damage * 2;
 
                                 float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
-                                float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
-                                knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
+                                float KnockbackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
+                                KnockbackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
 
-                                if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                                    knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                                enemyMotor.KnockBackSpeed = knockBackSpeed;
-                                enemyMotor.KnockBackDirection = direction;
+                                if (KnockbackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                                    KnockbackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                                enemyMotor.KnockbackSpeed = KnockbackSpeed;
+                                enemyMotor.KnockbackDirection = direction;
                             }
                         }
 
