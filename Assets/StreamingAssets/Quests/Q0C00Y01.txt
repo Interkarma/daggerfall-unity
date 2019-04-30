@@ -12,7 +12,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                      We would use thee to find a
-<ce>                  a perfidious _document_ circulated by
+<ce>                  a perfidious document circulated by
 <ce>                  our enemies in an effort to suppress
 <ce>                 our coven. I know wherein this packet
 <ce>                  of printed lies has been placed, but
@@ -27,19 +27,19 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                   Wilt thou? Then you will have our
-<ce>                most unconfuted gratitude. The _document_
+<ce>                most unconfuted gratitude. The document
 <ce>                    lies in a temple, here in %reg,
 <ce>                      in a town called __temple_.
 <ce>                      _temple_ keeps it somewhere,
 <ce>                perhaps behind locked doors, guarded by
 <ce>                  a _guardian_ of unquestioned power.
-<ce>                If thou wilt bring the _document_ here, to
+<ce>                If thou wilt bring the document here, to
 <ce>                   me, I will give to thee a _mitem_
 <ce>                of the coven's manufacture. Return in no
 <ce>                       later than =queston_ days.
 
 QuestComplete:  [1004]
-<ce>                  Ah, the accursed _document_. Thou art
+<ce>                  Ah, the accursed document. Thou art
 <ce>                 to be commended for thy service to our
 <ce>                     sisterhood, %pct. Here is the
 <ce>                        _mitem_ I promised thee.
@@ -59,7 +59,7 @@ QuestorPostsuccess:  [1008]
 Art thou pleased with thy _mitem_, %pcf? Thou surely didst deserve it.
 
 QuestorPostfailure:  [1009]
-<ce>                      The accursed _document_ hath
+<ce>                      The accursed document hath
 <ce>                    gone to the Imperial City to be
 <ce>                      reproduced for the ignorant
 <ce>                           masses, %pcf. Thou
@@ -68,14 +68,14 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 %qdt:
- I have agreed to get a _document_
+ I have agreed to get a document
  about ==qgiver_ from _temple_
  in __temple_ and return with it
- in =queston_ days or less. The _document_
+ in =queston_ days or less. The document
  will likely be guarded by a _guardian_.
 
 Message:  1011
-<ce>                    This is apparently the _document_
+<ce>                    This is apparently the document
 <ce>                         that ==qgiver_ wanted.
 
 Message:  1012

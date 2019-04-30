@@ -130,7 +130,9 @@ _qgclicked_ task:
 
 _clearclick_ task:
     when _qgclicked_ and not _mondead_
+	say 1003
     clear _qgclicked_ _clearclick_
+--merged unused _clearclick_ variable into this _reset_ task and renamed it.
 
 _1stparton_ task:
 	end quest 

@@ -210,8 +210,8 @@ _vampclicked_ task:
 	add dialog for person _pawn_ 
 	log 1025 step 1 
 	get item _letter_ 
-	say 1002
-	place npc _pawn_ at _pawnhouse_
+	say AcceptQuest 
+	create npc _pawn_
 
 _1stparton_ task:
 	end quest 
@@ -222,7 +222,9 @@ _vampsecondclick_ task:
 variable _2ndparton_
 _clearclick_ task:
 	when _vampsecondclick_ and not _npcclicked_ 
+	say 1003
 	clear _vampsecondclick_ _clearclick_
+	--removed superfluous "clear S.11" from this task. Has no function.
 
 variable _S.09_
 variable _S.10_
@@ -230,6 +232,7 @@ _S.11_ task:
 	when _vampsecondclick_ and _npcclicked_
 	give pc _reward_ 
 	end quest 
+	--added _npcclicked_ here to prevent instant win glitch
 
 _S.12_ task:
 	add dialog for person _vampire_ 

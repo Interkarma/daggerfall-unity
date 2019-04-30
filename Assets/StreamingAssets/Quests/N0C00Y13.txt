@@ -206,6 +206,7 @@ _S.01_ task:
 _S.02_ task:
 	clicked item _ingredient_ 
 	_ingredient_ used do _S.03_ 
+	--moved "saying 1045" from used do, not a valid argument, to S.03.
 	say 1040 
 
 _S.03_ task:

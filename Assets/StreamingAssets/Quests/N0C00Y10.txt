@@ -176,6 +176,7 @@ Clock _S.00_ 00:00 0 flag 9 range 0 0
 Clock _S.01_ 10.00:00 0 flag 9 range 0 1
 
 Foe _thiefFoe_ is Thief
+-added underscores to thiefFoe
 
 --	Quest start-up:
 	dialog link for person _thief_ 
@@ -195,6 +196,7 @@ _S.02_ task:
 
 _S.03_ task:
 	daily from 16:02 to 23:59 
+--changed 24:00 to 23:59, 24:00 is not a valid time
 	place foe _thiefFoe_ at _inn_ 
 
 _S.04_ task:

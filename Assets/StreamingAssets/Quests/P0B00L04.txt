@@ -226,6 +226,7 @@ Foe _vampire_ is Vampire
 	give pc _letter_ notify 1011 
 	place foe _vampire_ at _mondung_ 
 	create npc _vamp_ 
+	--added create npc vamp. quest previously had no mechanic to spawn it.
 
 _vampclicked_ task:
 	clicked npc _vamp_ 

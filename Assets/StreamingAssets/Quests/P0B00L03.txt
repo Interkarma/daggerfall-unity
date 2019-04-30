@@ -185,9 +185,19 @@ Foe _vamprival_ is Ancient_vampire
 	create npc _vampire_ 
 
 _falseAide0_ task:
+--added hyphens to task name.
 	toting _vampproof_ and _vampire_ clicked 
 	give pc _reward_ 
 	end quest 
+
+_qgtalk_ task:
+	clicked npc _vampire_
+
+_clearclick_ task:
+	when _qgtalk_ and not _falseAide0_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
 
 variable _queston_
 _S.02_ task:
@@ -195,7 +205,8 @@ _S.02_ task:
 
 _vampclicked_ task:
 	clicked npc _vampire_
-	say 1002
+	say AcceptQuest
+	--moved "say" argument to its own line from "clicked."
 	reveal _mondung_
 	log 1026 step 1 
 

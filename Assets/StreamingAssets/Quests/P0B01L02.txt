@@ -141,6 +141,7 @@ Foe _battlemage_ is Battle_mage
 	have _letter_ set _S.06_ 
 	give pc _letter_ notify 1030 
 	create npc _vampire_ 
+	--added create npc vampire. quest previously had no mechanic to spawn it.
 
 variable _pcgetsgold_
 _vampclicked_ task:

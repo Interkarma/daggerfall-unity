@@ -172,6 +172,15 @@ until _npcclicked_ performed:
 	create foe _F.02_ every 179 minutes 4 times with 5% success 
 	create foe _F.01_ every 163 minutes 4 times with 5% success 
 
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
 _1stparton_ task:
 	make _weapons_ permanent 
 	make _gems_ permanent 
