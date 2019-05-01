@@ -810,7 +810,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     {
                         // Inflict stage one vampirism disease
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
-                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                         Debug.Log("Player infected by vampire.");
                     }
                     else if (random <= 2.0f)
