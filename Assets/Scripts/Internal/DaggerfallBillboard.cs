@@ -261,7 +261,11 @@ namespace DaggerfallWorkshop
             Vector2 size;
             Mesh mesh = null;
             Material material = null;
-            if (dfUnity.MaterialReader.AtlasTextures)
+            if (material = TextureReplacement.GetStaticBillboardMaterial(gameObject, archive, record, ref summary))
+            {
+                mesh = dfUnity.MeshReader.GetBillboardMesh(summary.Rect, archive, record, out size);
+            }
+            else if (dfUnity.MaterialReader.AtlasTextures)
             {
                 material = dfUnity.MaterialReader.GetMaterialAtlas(
                     archive,
@@ -337,9 +341,6 @@ namespace DaggerfallWorkshop
                 Destroy(oldMesh);
 #endif
             }
-
-            // Import custom textures
-            TextureReplacement.SetBillboardImportedTextures(gameObject, ref summary);
 
             // Standalone billboards never cast shadows
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
