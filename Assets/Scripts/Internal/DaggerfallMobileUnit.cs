@@ -649,14 +649,8 @@ namespace DaggerfallWorkshop
             meshFilter.sharedMesh = mesh;
 
             // Create material
-            Material material;
-            if (summary.ImportedTextures.HasImportedTextures)
-            {
-                material = MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout);
-            }
-            else
-            {
-                material = dfUnity.MaterialReader.GetMaterialAtlas(
+            Material material = TextureReplacement.GetMobileBillboardMaterial(archive, GetComponent<MeshFilter>(), ref summary.ImportedTextures) ??
+                dfUnity.MaterialReader.GetMaterialAtlas(
                 archive,
                 0,
                 4,
@@ -668,10 +662,6 @@ namespace DaggerfallWorkshop
                 0,
                 false,
                 true);
-            }
-
-            // Seek textures from mods
-            TextureReplacement.SetMobileBillboardImportedTextures(archive, GetComponent<MeshFilter>(), material, ref summary.ImportedTextures);
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;

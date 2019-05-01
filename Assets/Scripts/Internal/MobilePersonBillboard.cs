@@ -339,8 +339,7 @@ namespace DaggerfallWorkshop
             meshFilter.sharedMesh = mesh;
 
             // Create material
-            Material material = importedTextures.HasImportedTextures ?
-                MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout) :
+            Material material = TextureReplacement.GetMobileBillboardMaterial(textureArchive, GetComponent<MeshFilter>(), ref importedTextures) ??
                 DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
                 textureArchive,
                 0,
@@ -353,9 +352,6 @@ namespace DaggerfallWorkshop
                 0,
                 false,
                 true);
-
-            // Seek textures from mods
-            TextureReplacement.SetMobileBillboardImportedTextures(textureArchive, GetComponent<MeshFilter>(), material, ref importedTextures);
 
             // Set new person material
             GetComponent<MeshRenderer>().sharedMaterial = material;

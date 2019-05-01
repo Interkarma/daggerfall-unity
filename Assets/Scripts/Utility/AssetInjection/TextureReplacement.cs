@@ -91,6 +91,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string imgPath = Path.Combine(texturesPath, "Img");
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
+        static readonly Type customBlendModeType = typeof(MaterialReader.CustomBlendMode);
+
         #endregion
 
         #region Properties
@@ -458,24 +460,36 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import textures for all records and frames of a mobile billboard.
+        /// Gets a custom material for a mobile billboard with textures and configuration imported from mods.
         /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="meshFilter">The MeshFilter of the billboard object.</param>
+        /// <param name="importedTextures">All the imported textures for the archive.</param>
         /// <remarks>
         /// Seek the texture for the first frame of the first record. If found, it imports the entire archive.
         /// If this texture has an emission map the material is considered emissive and all emission maps are imported.
         /// </remarks>
-        public static void SetMobileBillboardImportedTextures(int archive, MeshFilter meshFilter, Material material, ref MobileBillboardImportedTextures importedTextures)
+        /// <returns>A material or null.</returns>
+        public static Material GetMobileBillboardMaterial(int archive, MeshFilter meshFilter, ref MobileBillboardImportedTextures importedTextures)
         {
             if (!DaggerfallUnity.Settings.AssetInjection)
-                return;
+                return null;
 
             Texture2D tex, emission;
             if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
             {
+                string renderMode = null;
+
                 // Read xml configuration
                 XMLManager xml;
                 if (XMLManager.TryReadXml(ImagesPath, string.Format("{0:000}", archive), out xml))
+                {
+                    xml.TryGetString("renderMode", out renderMode);
                     importedTextures.IsEmissive = xml.GetBool("emission");
+                }
+
+                // Make material
+                Material material = MakeBillboardMaterial(renderMode);
 
                 // Enable emission
                 ToggleEmission(material, importedTextures.IsEmissive |= emission != null);
@@ -510,7 +524,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 // Update UV map
                 SetUv(meshFilter);
+
+                return material;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -984,6 +1002,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (isEnabled)
                     material.DisableKeyword(KeyWords.Emission);
             }
+        }
+
+        private static Material MakeBillboardMaterial(string renderMode = null)
+        {
+            return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
+                (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
+                MaterialReader.CustomBlendMode.Cutout);
         }
 
         #endregion
