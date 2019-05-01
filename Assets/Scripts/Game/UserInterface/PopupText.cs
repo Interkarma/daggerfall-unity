@@ -26,9 +26,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         const float popDelay = 1.0f;
         const int maxRows = 7;
-        const float maxUnseenDelay = 1.5f;
 
-        const float speedupPerExtraLine = 1f + 1f / maxUnseenDelay;
+        const float rubberbandFactor = 0.8f;
 
         LinkedList<TextLabel> textRows = new LinkedList<TextLabel>();
         // Text scrolls away when timer becomes negative
@@ -48,18 +47,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (textRows.Count > 0)
             {
-                if (textRows.Count > maxRows)
+                int rowsLate = textRows.Count - maxRows;
+                if (rowsLate > 0)
                 {
                     // Accelerate to keep up
-                    float speedup = Mathf.Pow(speedupPerExtraLine, textRows.Count - maxRows);
-                    // Smoother, but no time guarantees:
-                    // float speedup = 1f + 0.5f * (textRows.Count - maxRows);
+                    float speedup = 1f + rubberbandFactor * rowsLate;
                     timer -= Time.deltaTime * speedup;
                 }
                 else
                     timer -= Time.deltaTime;
 
-                if (timer < -popDelay)
+                while (timer < -popDelay)
                 {
                     timer += nextPopDelay;
                     // Remove item from front of list

@@ -64,6 +64,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddPopupText.name, AddPopupText.description, AddPopupText.usage, AddPopupText.Execute);
 
             //ConsoleCommandsDatabase.RegisterCommand(SetMouseSmoothing.name, SetMouseSmoothing.description, SetMouseSmoothing.usage, SetMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetVSync.name, SetVSync.description, SetVSync.usage, SetVSync.Execute);
@@ -2097,5 +2098,27 @@ namespace Wenzil.Console
             }
         }
 
+        private static class AddPopupText
+        {
+            public static readonly string name = "addpopuptext";
+            public static readonly string description = "Fill HUD buffer with messages";
+            public static readonly string usage = "addpopuptext count";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length < 1) return "see usage";
+
+                int n = 1;
+                Int32.TryParse(args[0], out n);
+
+                if (n < 1 || n > 100000)
+                    return "Error - see usage";
+
+                for (int i = 1; i <= n; i++)
+                    DaggerfallUI.Instance.PopupMessage("message " + i);
+                return "Finished";
+            }
+        }
     }
+
 }
