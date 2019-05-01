@@ -338,9 +338,6 @@ namespace DaggerfallWorkshop
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 
-            // Seek textures from mods
-            TextureReplacement.SetMobileBillboardImportedTextures(textureArchive, GetComponent<MeshFilter>(), ref importedTextures);
-
             // Create material
             Material material = importedTextures.HasImportedTextures ?
                 MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout) :
@@ -356,6 +353,9 @@ namespace DaggerfallWorkshop
                 0,
                 false,
                 true);
+
+            // Seek textures from mods
+            TextureReplacement.SetMobileBillboardImportedTextures(textureArchive, GetComponent<MeshFilter>(), material, ref importedTextures);
 
             // Set new person material
             GetComponent<MeshRenderer>().sharedMaterial = material;
@@ -442,7 +442,9 @@ namespace DaggerfallWorkshop
                     meshRenderer = GetComponent<MeshRenderer>();
 
                 // Assign imported texture
-                meshRenderer.sharedMaterial.mainTexture = importedTextures.Textures[record][currentFrame];
+                meshRenderer.sharedMaterial.mainTexture = importedTextures.Albedo[record][currentFrame];
+                if (importedTextures.IsEmissive)
+                    meshRenderer.material.SetTexture(Uniforms.EmissionMap, importedTextures.EmissionMaps[record][currentFrame]);
 
                 // Update UVs on mesh
                 Vector2[] uvs = new Vector2[4];

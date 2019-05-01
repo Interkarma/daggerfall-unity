@@ -59,6 +59,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
+        public bool GetBool(string key, bool defaultValue = false)
+        {
+            XElement element;
+            return TryGetElement(key, out element) ? bool.Parse((string)element) : defaultValue;
+        }
+
         public bool TryGetFloat(string key, out float value)
         {
             XElement element;
