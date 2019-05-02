@@ -19,18 +19,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Lower reaction with selected social groups while item held.
     /// Notes:
-    ///  * Classic reaction decrease amount currently unknown.
     ///  * Sources claim that effect persists even when item in wagon, but this is suspect and not consistent with other item effects.
     ///  * Classic allows unusual stacking of variants, e.g. all is exclusive to groups but each group not exclusive with itself.
     ///  * Changed this to work uniformly as per GoodRepWith, which does not allow self-stacking of groups.
-    /// TODO:
-    ///  * Find correct reaction adjustment value.
     /// </summary>
     public class BadRepWith : BaseEntityEffect
     {
         public static readonly string EffectKey = EnchantmentTypes.BadRepWith.ToString();
 
-        const int adjustmentAmount = -25;
+        const int adjustmentAmount = -10;
 
         public override void SetProperties()
         {
