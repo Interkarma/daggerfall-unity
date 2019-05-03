@@ -491,7 +491,7 @@ namespace DaggerfallWorkshop.Game
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
             FactionFile.FactionData NPCfaction;
-            player.FactionData.GetRegionFaction(GameManager.Instance.PlayerGPS.CurrentRegionIndex, out NPCfaction);
+            player.FactionData.GetRegionFaction(GameManager.Instance.PlayerGPS.CurrentRegionIndex, out NPCfaction, false);
             
             int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
