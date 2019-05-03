@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Guilds;
 using Wenzil.Console;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -657,7 +658,7 @@ namespace DaggerfallWorkshop.Game
             npcData.socialGroup = FactionFile.SocialGroups.Commoners;
             npcData.guildGroup = FactionFile.GuildGroups.None;
             npcData.race = targetMobileNPC.Race;
-            npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs;
+            npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs + FormulaHelper.BonusChanceToKnowWhereIs();
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC;
             npcData.isSpyMaster = false;
@@ -702,7 +703,7 @@ namespace DaggerfallWorkshop.Game
             npcData.guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
             npcData.factionData = factionData;
             npcData.race = Races.Breton; // TODO: find a way to get race for static npc
-            npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs;
+            npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs + FormulaHelper.BonusChanceToKnowWhereIs();
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC;
             npcData.isSpyMaster = false;
