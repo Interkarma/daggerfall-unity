@@ -433,8 +433,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Debug.Log("UpdateRepairTimes called");
             int totalRepairTime = 0, longestRepairTime = 0;
             DaggerfallUnityItem itemLongestTime = null;
+            Dictionary<DaggerfallUnityItem, int> previousRepairTimes = new Dictionary<DaggerfallUnityItem, int>();
             foreach (DaggerfallUnityItem item in remoteItemsFiltered)
             {
+                bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
+                if (repairDone)
+                    continue;
+
+                if (item.RepairData.IsBeingRepaired())
+                    previousRepairTimes.Add(item, item.RepairData.RepairTime);
+
                 int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
                 if (commit && !item.RepairData.IsBeingRepaired())
                 {
@@ -460,6 +468,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     itemLongestTime.RepairData.RepairTime = modifiedLongestTime;
                 else
                     itemLongestTime.RepairData.EstimatedRepairTime = modifiedLongestTime;
+            }
+
+            // Don't allow repair times to decrease (when removing other now repaired items)
+            // https://forums.dfworkshop.net/viewtopic.php?f=24&t=2053
+            foreach (KeyValuePair<DaggerfallUnityItem, int> entry in previousRepairTimes)
+            {
+                if (commit)
+                    entry.Key.RepairData.RepairTime = Mathf.Max(entry.Key.RepairData.RepairTime, entry.Value);
+                else
+                    entry.Key.RepairData.EstimatedRepairTime = Mathf.Max(entry.Key.RepairData.EstimatedRepairTime, entry.Value);
             }
         }
 
