@@ -616,7 +616,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textBox.MaxCharacters = 5;
             textBox.Cursor.Enabled = false;
             textBox.DefaultText = text;
-            textBox.DefaultTextColor = selectedTextColor;
+            textBox.DefaultTextColor = Color.white;
             textBox.UseFocus = true;
             panel.Components.Add(textBox);
 

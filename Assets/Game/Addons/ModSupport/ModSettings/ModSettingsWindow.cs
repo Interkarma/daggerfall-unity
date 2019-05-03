@@ -56,8 +56,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         Color cancelButtonColor                     = new Color(0.2f, 0.2f, 0.2f, 0.4f);  // grey with alpha
         Color sectionTitleColor                     = new Color(0.53f, 0.81f, 0.98f, 1);  // light blue
         Color sectionTitleShadow                    = new Color(0.3f, 0.45f, 0.54f, 1);
-        Color backgroundTitleColor                  = new Color(0, 0.8f, 0, 0.1f);        // green
-        Color backgroundTitleAdvColor               = new Color(1, 0, 0, 0.1f);           // red
+        Color sectionTitleAdvColor                  = new Color(1, 0, 0, 1);
+        Color sectionTitleAdvShadow                 = new Color(0.5f, 0, 0, 1);
         Color sectionDescriptionBackgroundColor     = new Color(0.5f, 0.5f, 0.5f, 0.1f);
         Color sectionDescriptionOutlineColor        = new Color(0.7f, 0.7f, 0.7f, 0.1f);
 
@@ -145,8 +145,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             presetButton.Size = new Vector2(35, 9);
             presetButton.Position = new Vector2(mainPanel.Size.x - 37, 2);
             presetButton.Label.Text = ModManager.GetText("presets");
-            presetButton.Label.Font = DaggerfallUI.Instance.Font3;
-            presetButton.Label.TextScale = 0.8f;
+            presetButton.Label.Font = DaggerfallUI.Instance.Font1;
+            presetButton.Label.TextScale = 0.4f;
             presetButton.Label.TextColor = sectionTitleColor;
             presetButton.Label.ShadowColor = sectionTitleShadow;
             presetButton.OnMouseClick += PresetButton_OnMouseClick;
@@ -294,17 +294,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Panel background = new Panel();
             background.Position = new Vector2(x, y - 0.5f);
             background.Size = new Vector2(columnWidth, 6.5f);
-            background.BackgroundColor = section.IsAdvanced ? backgroundTitleAdvColor : backgroundTitleColor;
-            background.Outline.Enabled = true;
-            background.Outline.Sides = Sides.Bottom;
-            background.Outline.Color = section.IsAdvanced ? resetButtonColor : saveButtonColor;
-            background.Outline.Thickness = 1;
             AddAtNextPosition((int)background.Size.y, background);
 
-            TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font5);
+            TextLabel textLabel = new TextLabel(DaggerfallUI.Instance.Font4);
             textLabel.Text = ModSettingsData.FormattedName(mod.TryLocalize("Settings", section.Name, "Name") ?? section.Name);
-            textLabel.TextColor = sectionTitleColor;
-            textLabel.ShadowColor = sectionTitleShadow;
+            textLabel.TextColor = section.IsAdvanced ? sectionTitleAdvColor : sectionTitleColor;
+            textLabel.ShadowColor = section.IsAdvanced ? sectionTitleAdvShadow : sectionTitleShadow;
             textLabel.TextScale = 0.9f;
             textLabel.Position = new Vector2(0, 0.5f);
             textLabel.HorizontalAlignment = HorizontalAlignment.Center;
