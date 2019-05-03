@@ -915,8 +915,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 panel.BackgroundTexture = image.texture;
                 panel.Size = new Vector2(image.width, image.height);
                 button.ToolTipText = item.LongName;
-                if (item.IsEnchanted)
-                    button.AnimatedBackgroundTextures = magicAnimation.animatedTextures;
+                button.AnimatedBackgroundTextures = (item.IsEnchanted) ? magicAnimation.animatedTextures : null;
             }
         }
 
