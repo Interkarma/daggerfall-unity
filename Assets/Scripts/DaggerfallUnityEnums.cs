@@ -642,6 +642,16 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Lycanthropy variants.
+    /// </summary>
+    public enum LycanthropyTypes
+    {
+        None = 0,
+        Werewolf = 1,
+        Wereboar = 2,
+    }
+
+    /// <summary>
     /// Vampire clans.
     /// </summary>
     public enum VampireClans

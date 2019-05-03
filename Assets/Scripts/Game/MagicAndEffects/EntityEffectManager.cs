@@ -1169,6 +1169,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        public EntityEffectBundle CreateLycanthropyDisease(LycanthropyTypes infectionType)
+        {
+            string effectKey;
+            switch (infectionType)
+            {
+                case LycanthropyTypes.Werewolf:
+                    effectKey = WerewolfInfection.WerewolfInfectionKey;
+                    break;
+                case LycanthropyTypes.Wereboar:
+                    effectKey = WereboarInfection.WereboarInfectionKey;
+                    break;
+                default:
+                    throw new Exception("CreateLycanthropyInfection() infectionType cannot be LycanthropyTypes.None");
+            }
+
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(effectKey) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         /// <summary>
         /// Helper to create stage two curse of vampirism.
         /// </summary>

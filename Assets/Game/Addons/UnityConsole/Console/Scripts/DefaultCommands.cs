@@ -1887,18 +1887,22 @@ namespace Wenzil.Console
                 {
                     // Infect player with vampirism stage one
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
-                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                     return "Player infected with vampirism.";
                 }
                 else if (diseaseType == CommandDiseaseTypes.Werewolf)
                 {
-                    // Infect player with werewolf stage one
-                    return "Werewolf disease not implemented yet.";
+                    // Infect player with werewolf lycanthropy stage one
+                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                    return "Player infected with werewolf lycanthropy.";
                 }
                 else if (diseaseType == CommandDiseaseTypes.Wereboar)
                 {
-                    // Infect player with wereboar stage one
-                    return "Wereboar disease not implemented yet.";
+                    // Infect player with wereboar lycanthropy stage one
+                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                    return "Player infected with wereboar lycanthropy.";
                 }
                 else
                 {
