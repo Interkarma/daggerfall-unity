@@ -91,6 +91,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string imgPath = Path.Combine(texturesPath, "Img");
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
+        static readonly Type customBlendModeType = typeof(MaterialReader.CustomBlendMode);
+
         #endregion
 
         #region Properties
@@ -392,21 +394,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import textures and emission maps for all frames of this billboard. Also set other material properties from xml.
+        /// Gets a custom material for a static billboard with textures and configuration imported from mods.
         /// </summary>
+        /// <param name="go">The billboard object.</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="summary">Summary data of the billboard object.</param>
         /// <remarks>
         /// Seek the texture for the first frame of the given record. If found, it imports all other frames.
         /// Always creates an emission map for textures marked as emissive by TextureReader, import emission maps for others only if available.
         /// </remarks>
-        public static void SetBillboardImportedTextures(GameObject go, ref DaggerfallBillboard.BillboardSummary summary)
+        /// <returns>A material or null.</returns>
+        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref DaggerfallBillboard.BillboardSummary summary)
         {
             if (!DaggerfallUnity.Settings.AssetInjection)
-                return;
+                return null;
 
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-
-            int archive = summary.Archive;
-            int record = summary.Record;
             int frame = 0;
 
             Texture2D albedo, emission;
@@ -416,9 +420,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 // Read xml configuration
                 Vector2 uv = Vector2.zero;
+                string renderMode = null;
                 XMLManager xml;
                 if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
                 {
+                    xml.TryGetString("renderMode", out renderMode);
                     isEmissive |= xml.GetBool("emission");
 
                     // Set billboard scale
@@ -430,10 +436,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     // Get UV
                     uv = xml.GetVector2("uvX", "uvY", uv);
                 }
-                SetUv(go.GetComponent<MeshFilter>(), uv.x, uv.y);
+
+                // Make material
+                Material material = MakeBillboardMaterial(renderMode);
+                summary.Rect = new Rect(uv.x, uv.y, 1 - 2 * uv.x, 1 - 2 * uv.y);
 
                 // Set textures on material; emission is always overriden, with actual texture or null.
-                Material material = meshRenderer.sharedMaterial;
                 material.SetTexture(Uniforms.MainTex, albedo);
                 material.SetTexture(Uniforms.EmissionMap, isEmissive ? emission ?? albedo : null);
                 ToggleEmission(material, isEmissive);
@@ -454,28 +462,44 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 summary.ImportedTextures.IsEmissive = isEmissive;
                 summary.ImportedTextures.Albedo = albedoTextures;
                 summary.ImportedTextures.Emission = emissionTextures;
+
+                return material;
             }
+
+            return null;
         }
 
         /// <summary>
-        /// Import textures for all records and frames of a mobile billboard.
+        /// Gets a custom material for a mobile billboard with textures and configuration imported from mods.
         /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="meshFilter">The MeshFilter of the billboard object.</param>
+        /// <param name="importedTextures">All the imported textures for the archive.</param>
         /// <remarks>
         /// Seek the texture for the first frame of the first record. If found, it imports the entire archive.
         /// If this texture has an emission map the material is considered emissive and all emission maps are imported.
         /// </remarks>
-        public static void SetMobileBillboardImportedTextures(int archive, MeshFilter meshFilter, Material material, ref MobileBillboardImportedTextures importedTextures)
+        /// <returns>A material or null.</returns>
+        public static Material GetMobileBillboardMaterial(int archive, MeshFilter meshFilter, ref MobileBillboardImportedTextures importedTextures)
         {
             if (!DaggerfallUnity.Settings.AssetInjection)
-                return;
+                return null;
 
             Texture2D tex, emission;
             if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
             {
+                string renderMode = null;
+
                 // Read xml configuration
                 XMLManager xml;
                 if (XMLManager.TryReadXml(ImagesPath, string.Format("{0:000}", archive), out xml))
+                {
+                    xml.TryGetString("renderMode", out renderMode);
                     importedTextures.IsEmissive = xml.GetBool("emission");
+                }
+
+                // Make material
+                Material material = MakeBillboardMaterial(renderMode);
 
                 // Enable emission
                 ToggleEmission(material, importedTextures.IsEmissive |= emission != null);
@@ -510,7 +534,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 // Update UV map
                 SetUv(meshFilter);
+
+                return material;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -984,6 +1012,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (isEnabled)
                     material.DisableKeyword(KeyWords.Emission);
             }
+        }
+
+        private static Material MakeBillboardMaterial(string renderMode = null)
+        {
+            return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
+                (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
+                MaterialReader.CustomBlendMode.Cutout);
         }
 
         #endregion
