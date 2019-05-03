@@ -5369,7 +5369,7 @@ maxf: 70
 	maxf: 70
 
 #350
-type: 7
+type: 2
 name: The Septim Empire
 rep: 0
 summon: -1
