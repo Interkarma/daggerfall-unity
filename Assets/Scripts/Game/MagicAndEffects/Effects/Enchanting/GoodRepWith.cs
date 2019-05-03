@@ -18,16 +18,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Increase reaction with selected social groups while item held.
-    /// Notes:
-    ///  * Classic reaction increase amount currently unknown.
-    /// TODO:
-    ///  * Find correct reaction adjustment value.
     /// </summary>
     public class GoodRepWith : BaseEntityEffect
     {
         public static readonly string EffectKey = EnchantmentTypes.GoodRepWith.ToString();
 
-        const int adjustmentAmount = 25;
+        const int adjustmentAmount = 10;
 
         public override void SetProperties()
         {
