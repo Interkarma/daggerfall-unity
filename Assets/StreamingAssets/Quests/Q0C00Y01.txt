@@ -121,6 +121,7 @@ Message:  1013
 
 QBN:
 Item _document_ letter used 1012
+--added underscores to document
 Item _mitem_ magic_item
 
 Person _qgiver_ group Questor male
