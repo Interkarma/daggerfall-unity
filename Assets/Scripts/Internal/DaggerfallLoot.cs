@@ -210,6 +210,10 @@ namespace DaggerfallWorkshop
                                         item = ItemBuilder.CreateWomensClothing(j + WomensClothing.Brassier, playerEntity.Race);
                                         item.dyeColor = ItemBuilder.RandomClothingDye();
                                     }
+                                    else if (itemGroup == ItemGroups.MagicItems)
+                                    {
+                                        item = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                                    }
                                     else
                                     {
                                         item = new DaggerfallUnityItem(itemGroup, j);
