@@ -18,6 +18,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop
         MeshFilter meshFilter = null;
         bool restartAnims = true;
         MeshRenderer meshRenderer;
+        List<Vector3> vector3UVs;
 
         // Just using a simple animation speed for simple billboard anims
         // You can adjust this or extend as needed
@@ -161,7 +163,6 @@ namespace DaggerfallWorkshop
                     else
                     {
                         // Restart animation or destroy gameobject
-                        // The game uses all -and only- textures found on disk, even if they are less or more than vanilla frames
                         if (summary.CurrentFrame >= summary.ImportedTextures.FrameCount)
                         {
                             summary.CurrentFrame = 0;
@@ -169,10 +170,27 @@ namespace DaggerfallWorkshop
                                 GameObject.Destroy(gameObject);
                         }
 
-                        // Set imported textures for current frame
-                        meshRenderer.material.SetTexture(Uniforms.MainTex, summary.ImportedTextures.Albedo[summary.CurrentFrame]);
-                        if (summary.ImportedTextures.IsEmissive)
-                            meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.Emission[summary.CurrentFrame]);
+                        if (summary.ImportedTextures.UseTextureArray)
+                        {
+                            Rect rect = summary.Rect;
+                            int frame = summary.CurrentFrame;
+
+                            if (vector3UVs == null)
+                                vector3UVs = new List<Vector3>(Enumerable.Repeat(default(Vector3), 4));
+
+                            vector3UVs[0] = new Vector3(rect.x, rect.yMax, frame);
+                            vector3UVs[1] = new Vector3(rect.xMax, rect.yMax, frame);
+                            vector3UVs[2] = new Vector3(rect.x, rect.y, frame);
+                            vector3UVs[3] = new Vector3(rect.xMax, rect.y, frame);
+                            meshFilter.mesh.SetUVs(0, vector3UVs);
+                        }
+                        else
+                        {
+                            // Set imported textures for current frame
+                            meshRenderer.material.SetTexture(Uniforms.MainTex, summary.ImportedTextures.Albedo[summary.CurrentFrame]);
+                            if (summary.ImportedTextures.IsEmissive)
+                                meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.Emission[summary.CurrentFrame]);
+                        }
                     }
                 }
 

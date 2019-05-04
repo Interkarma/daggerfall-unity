@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop
         internal static readonly int SrcBlend                       = Shader.PropertyToID("_SrcBlend");
         internal static readonly int DstBlend                       = Shader.PropertyToID("_DstBlend");
         internal static readonly int ZWrite                         = Shader.PropertyToID("_ZWrite");
+        internal static readonly int MainTexArray                   = Shader.PropertyToID("_MainTexArray");
 
         internal static readonly int[] Textures = new int[]
         {

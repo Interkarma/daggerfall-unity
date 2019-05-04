@@ -920,6 +920,34 @@ namespace DaggerfallWorkshop.Utility
         }
 #endif
 
+        /// <summary>
+        /// Makes a texture array from a list of textures with <see cref="Graphics.CopyTexture"/>.
+        /// </summary>
+        /// <param name="textures">A list of textures.</param>
+        /// <param name="textureArray">The created texture array or null.</param>
+        /// <returns>True if the texture array has been created.</returns>
+        internal static bool TryMakeTextureArrayCopyTexture(IList<Texture2D> textures, out Texture2DArray textureArray)
+        {
+            textureArray = null;
+
+            if ((SystemInfo.copyTextureSupport & CopyTextureSupport.DifferentTypes) == CopyTextureSupport.None)
+                return false;
+
+            Texture2D first = textures[0];
+            textureArray = new Texture2DArray(first.width, first.height, textures.Count, first.format, first.mipmapCount > 1);
+
+            for (int i = 0; i < textures.Count; i++)
+                Graphics.CopyTexture(textures[i], 0, textureArray, i);
+
+            if (textureArray)
+            {
+                textureArray.wrapMode = TextureWrapMode.Clamp;
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Private Methods
