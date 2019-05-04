@@ -58,9 +58,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public bool HasImportedTextures;            // Contains imported textures ?
         public int FrameCount;                      // Number of frames
         public bool IsEmissive;                     // Is billboard emissive ?
-        public List<Texture2D> Albedo;              // Textures for all frames.
-        public List<Texture2D> Emission;            // EmissionMaps for all frames.
+        public Material Material;                   // Result material
         public bool UseTextureArray;                // Use a texture array for animation
+        public Texture2D[] AlbedoFrames;            // Albedo textures for all frames.
+        public Texture2D[] EmissionFrames;          // Emission maps for all frames.
+        public Rect Rect;                           // Rect for billboard
+        public Vector3? Scale;                      // Scale override for billboard
     }
 
     /// <summary>
@@ -82,7 +85,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     public static class TextureReplacement
     {
-
         #region Fields
 
         const string extension = ".png";
@@ -93,6 +95,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
         static readonly Type customBlendModeType = typeof(MaterialReader.CustomBlendMode);
+
+        static readonly Dictionary<Vector2Int, BillboardImportedTextures?> staticBillboardsResults = new Dictionary<Vector2Int, BillboardImportedTextures?>();
 
         #endregion
 
@@ -350,6 +354,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Textures Injection
 
         /// <summary>
+        /// Clears imported texture results cache, forcing textures to reload.
+        /// </summary>
+        internal static void ClearCache()
+        {
+            staticBillboardsResults.Clear();
+        }
+
+        /// <summary>
         /// Import additional custom components of material.
         /// </summary>
         /// <param name="archive">Archive index</param>
@@ -411,95 +423,118 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!DaggerfallUnity.Settings.AssetInjection)
                 return null;
 
-            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-            int frame = 0;
+            var resultsKey = new Vector2Int(archive, record);
 
-            Texture2D albedo, emission;
-            if (summary.ImportedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission))
+            BillboardImportedTextures? cachedResults;
+            if (!staticBillboardsResults.TryGetValue(resultsKey, out cachedResults))
             {
-                bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
-
-                // Read xml configuration
-                Vector2 uv = Vector2.zero;
-                string renderMode = null;
-                XMLManager xml;
-                if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
+                int frame = 0;
+                Texture2D albedo, emission;
+                if (LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission))
                 {
-                    xml.TryGetString("renderMode", out renderMode);
-                    isEmissive |= xml.GetBool("emission");
+                    bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
+                    Vector2 uv = Vector2.zero;
+                    Vector3? scale = null;
+                    string renderMode = null;
+                    bool useTextureArray = false;
 
-                    // Set billboard scale
-                    Transform transform = go.GetComponent<Transform>();
-                    transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
-                    summary.Size.x *= transform.localScale.x;
-                    summary.Size.y *= transform.localScale.y;
-
-                    // Get UV
-                    uv = xml.GetVector2("uvX", "uvY", uv);
-                }
-
-                // Import animation frames
-                var albedoTextures = new List<Texture2D>();
-                var emissionTextures = isEmissive ? new List<Texture2D>() : null;
-                do
-                {
-                    albedoTextures.Add(albedo);
-                    if (isEmissive)
-                        emissionTextures.Add(emission ?? albedo);
-                }
-                while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, true, out albedo, out emission));
-
-                Material material = null;
-                if (SystemInfo.supports2DArrayTextures && xml != null && xml.GetBool("useTextureArray"))
-                {
-                    // EXPERIMENTAL: Use texture array for animated billboards
-                    // This is an opt-in feature at the moment and does not support all configuration options
-                    material = new Material(Shader.Find("Daggerfall/BillboardTextureArray"));
-                    
-                    Texture2DArray textureArray;
-                    if (TextureReader.TryMakeTextureArrayCopyTexture(albedoTextures, out textureArray))
-                        material.SetTexture(Uniforms.MainTexArray, textureArray);
-                    else
-                        Debug.LogErrorFormat("Failed to create texture array for archive {0} record {1}.", archive, record);
-
-                    if (isEmissive)
+                    // Read xml configuration
+                    XMLManager xml = null;
+                    if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
                     {
-                        material.SetColor(Uniforms.EmissionColor, Color.white);
-
-                        Texture2DArray emissionTextureArray;
-                        if (TextureReader.TryMakeTextureArrayCopyTexture(emissionTextures, out emissionTextureArray))
-                            material.SetTexture(Uniforms.EmissionMap, emissionTextureArray);
-                        else
-                            Debug.LogErrorFormat("Failed to create emission texture array for archive {0} record {1}.", archive, record);
+                        isEmissive |= xml.GetBool("emission");
+                        uv = xml.GetVector2("uvX", "uvY", uv);
+                        scale = xml.GetVector3("scaleX", "scaleY", Vector3.one);
+                        xml.TryGetString("renderMode", out renderMode);
                     }
 
-                    summary.ImportedTextures.UseTextureArray = true;
-                }
-                else
-                {
+                    // Import textures
+                    var albedoTextures = new List<Texture2D>();
+                    var emissionTextures = isEmissive ? new List<Texture2D>() : null;
+                    do
+                    {
+                        albedoTextures.Add(albedo);
+                        if (isEmissive)
+                            emissionTextures.Add(emission ?? albedo);
+                    }
+                    while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, true, out albedo, out emission));
+
                     // Make material
-                    material = MakeBillboardMaterial(renderMode);
+                    Material material;
+                    if (SystemInfo.supports2DArrayTextures && xml != null && xml.GetBool("useTextureArray"))
+                    {
+                        // EXPERIMENTAL: Use texture array for animated billboards
+                        // This is an opt-in feature at the moment and does not support all configuration options
+                        material = new Material(Shader.Find("Daggerfall/BillboardTextureArray"));
 
-                    // Set textures on material; emission is always overriden, with actual texture or null.
-                    material.SetTexture(Uniforms.MainTex, albedoTextures[0]);
-                    material.SetTexture(Uniforms.EmissionMap, isEmissive ? emissionTextures[0] ?? albedoTextures[0] : null);
-                    ToggleEmission(material, isEmissive);
+                        Texture2DArray textureArray;
+                        if (TextureReader.TryMakeTextureArrayCopyTexture(albedoTextures, out textureArray))
+                            material.SetTexture(Uniforms.MainTexArray, textureArray);
+                        else
+                            Debug.LogErrorFormat("Failed to create texture array for archive {0} record {1}.", archive, record);
 
-                    summary.ImportedTextures.UseTextureArray = false;
+                        if (isEmissive)
+                        {
+                            material.SetColor(Uniforms.EmissionColor, Color.white);
+
+                            Texture2DArray emissionTextureArray;
+                            if (TextureReader.TryMakeTextureArrayCopyTexture(emissionTextures, out emissionTextureArray))
+                                material.SetTexture(Uniforms.EmissionMap, emissionTextureArray);
+                            else
+                                Debug.LogErrorFormat("Failed to create emission texture array for archive {0} record {1}.", archive, record);
+                        }
+
+                        useTextureArray = true;
+                    }
+                    else
+                    {
+                        material = MakeBillboardMaterial(renderMode);
+
+                        // Set textures on material; emission is always overriden, with actual texture or null.
+                        material.SetTexture(Uniforms.MainTex, albedoTextures[0]);
+                        material.SetTexture(Uniforms.EmissionMap, isEmissive ? emissionTextures[0] ?? albedoTextures[0] : null);
+                        ToggleEmission(material, isEmissive);
+                    }
+
+                    // Save results
+                    cachedResults = new BillboardImportedTextures()
+                    {
+                        HasImportedTextures = true,
+                        FrameCount = albedoTextures.Count,
+                        IsEmissive = isEmissive,
+                        Material = material,
+                        UseTextureArray = useTextureArray,
+                        AlbedoFrames = albedoTextures.ToArray(),
+                        EmissionFrames = emissionTextures != null ? emissionTextures.ToArray() : null,
+                        Rect = new Rect(uv.x, uv.y, 1 - 2 * uv.x, 1 - 2 * uv.y),
+                        Scale = scale
+                    };
                 }
 
-                summary.Rect = new Rect(uv.x, uv.y, 1 - 2 * uv.x, 1 - 2 * uv.y);
-
-                // Save results
-                summary.ImportedTextures.FrameCount = frame;
-                summary.ImportedTextures.IsEmissive = isEmissive;
-                summary.ImportedTextures.Albedo = albedoTextures;
-                summary.ImportedTextures.Emission = emissionTextures;
-
-                return material;
+                staticBillboardsResults.Add(resultsKey, cachedResults);
             }
 
-            return null;
+            // Custom textures not available
+            if (!cachedResults.HasValue)
+                return null;
+
+            var results = cachedResults.Value;
+
+            // Set billboard local scale
+            if (results.Scale.HasValue)
+            {
+                Transform transform = go.GetComponent<Transform>();
+                transform.localScale = results.Scale.Value;
+                summary.Size.x *= transform.localScale.x;
+                summary.Size.y *= transform.localScale.y;
+            }
+
+            // Save results
+            summary.Rect = results.Rect;
+            summary.ImportedTextures = results;
+
+            // Return material
+            return results.Material;
         }
 
         /// <summary>

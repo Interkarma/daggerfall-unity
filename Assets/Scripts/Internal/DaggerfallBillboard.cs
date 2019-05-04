@@ -187,9 +187,9 @@ namespace DaggerfallWorkshop
                         else
                         {
                             // Set imported textures for current frame
-                            meshRenderer.material.SetTexture(Uniforms.MainTex, summary.ImportedTextures.Albedo[summary.CurrentFrame]);
+                            meshRenderer.material.SetTexture(Uniforms.MainTex, summary.ImportedTextures.AlbedoFrames[summary.CurrentFrame]);
                             if (summary.ImportedTextures.IsEmissive)
-                                meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.Emission[summary.CurrentFrame]);
+                                meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.EmissionFrames[summary.CurrentFrame]);
                         }
                     }
                 }

@@ -428,6 +428,7 @@ namespace Wenzil.Console
             {
                 DaggerfallUnity.Instance.MeshReader.ClearCache();
                 DaggerfallUnity.Instance.MaterialReader.ClearCache();
+                TextureReplacement.ClearCache();
 
                 SaveLoadManager.Instance.QuickSave(true);
 
