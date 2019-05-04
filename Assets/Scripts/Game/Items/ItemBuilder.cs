@@ -260,8 +260,6 @@ namespace DaggerfallWorkshop.Game.Items
         {
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
             DaggerfallUnityItem book = new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book0));
-
-            // TODO: Change DaggerfallUnityItem.message from int to ushort
             book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
             book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
             // Update item value for this book.

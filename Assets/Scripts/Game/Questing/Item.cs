@@ -282,6 +282,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 result = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
             }
+            // Handle books
+            else if (itemClass == (int)ItemGroups.Books)
+            {
+                result = ItemBuilder.CreateRandomBook();
+            }
             else
             {
                 // Handle random subclass
