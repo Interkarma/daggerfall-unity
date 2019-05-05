@@ -264,6 +264,8 @@ namespace DaggerfallWorkshop
             if (material = TextureReplacement.GetStaticBillboardMaterial(gameObject, archive, record, ref summary))
             {
                 mesh = dfUnity.MeshReader.GetBillboardMesh(summary.Rect, archive, record, out size);
+                summary.AtlasedMaterial = false;
+                summary.AnimatedMaterial = summary.ImportedTextures.FrameCount > 1;
             }
             else if (dfUnity.MaterialReader.AtlasTextures)
             {
