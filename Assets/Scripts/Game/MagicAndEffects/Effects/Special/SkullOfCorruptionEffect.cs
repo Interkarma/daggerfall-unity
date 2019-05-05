@@ -17,6 +17,9 @@ using System.Linq;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
+    /// <summary>
+    /// Used by the Skull of Corruption. Creates a clone of the nearest enemy as an ally to the player.
+    /// </summary>
     class SkullOfCorruptionEffect : BaseEntityEffect
     {
         public static readonly string EffectKey = ArtifactsSubTypes.Skull_of_Corruption.ToString();
