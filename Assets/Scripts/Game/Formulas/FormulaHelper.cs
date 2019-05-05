@@ -588,8 +588,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                             if (hitDamage > 0)
                                 OnMonsterHit(AIAttacker, target, hitDamage);
 
-                            // TODO: Apply Ring of Namira effect
-
                             damage += hitDamage;
                         }
                         ++attackNumber;
@@ -622,6 +620,21 @@ namespace DaggerfallWorkshop.Game.Formulas
             damage = Mathf.Max(0, damage);
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
+
+            // Apply Ring of Namira effect
+            DaggerfallUnityItem[] equippedItems = target.ItemEquipTable.EquipTable;
+            for (int i = 0; i < equippedItems.Length; i++)
+            {
+                if (equippedItems[i] != null && equippedItems[i].ContainsEnchantment(DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect, (int)ArtifactsSubTypes.Ring_of_Namira))
+                {
+                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
+                    effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
+                        targetEntity: AIAttacker.EntityBehaviour,
+                        sourceItem: equippedItems[i],
+                        sourceDamage: damage);
+                    break;
+                }
+            }
 
             return damage;
         }
