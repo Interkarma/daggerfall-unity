@@ -430,13 +430,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 int frame = 0;
                 Texture2D albedo, emission;
-                if (LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission))
+                Texture2DArray textureArray = null;
+                Texture2DArray emissionTextureArray = null;
+
+                if (LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission) ||
+                    TryImportTexArray(archive, record, TextureMap.Albedo, out textureArray))
                 {
                     bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
                     Vector2 uv = Vector2.zero;
                     Vector3? scale = null;
                     string renderMode = null;
                     bool useTextureArray = false;
+                    List<Texture2D> albedoTextures = null;
+                    List<Texture2D> emissionTextures = null;
 
                     // Read xml configuration
                     XMLManager xml = null;
@@ -449,42 +455,59 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     }
 
                     // Import textures
-                    var albedoTextures = new List<Texture2D>();
-                    var emissionTextures = isEmissive ? new List<Texture2D>() : null;
-                    do
+                    // If material is not animated, import a single texture from mods or loose files
+                    // If material is animated, import texture array from mods or make a texture array with textures from loose files
+                    // For now also import individual textures from mods for legacy support
+                    if (albedo)
                     {
-                        albedoTextures.Add(albedo);
-                        if (isEmissive)
-                            emissionTextures.Add(emission ?? albedo);
+                        // Import all frames
+                        albedoTextures = new List<Texture2D>();
+                        emissionTextures = isEmissive ? new List<Texture2D>() : null;
+                        do
+                        {
+                            albedoTextures.Add(albedo);
+                            if (isEmissive)
+                                emissionTextures.Add(emission ?? albedo);
+                        }
+                        while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, true, out albedo, out emission));
+
+                        // If material is animated, make texture array with textures from loose files
+                        if (SystemInfo.supports2DArrayTextures && xml != null && xml.GetBool("useTextureArray"))
+                        {
+                            if (!TextureReader.TryMakeTextureArrayCopyTexture(albedoTextures, out textureArray))
+                                Debug.LogErrorFormat("Failed to create texture array for archive {0} record {1}.", archive, record);
+
+                            if (isEmissive && !TextureReader.TryMakeTextureArrayCopyTexture(emissionTextures, out emissionTextureArray))
+                                Debug.LogErrorFormat("Failed to create emission texture array for archive {0} record {1}.", archive, record);
+
+                            useTextureArray = true;
+                        }
                     }
-                    while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, true, out albedo, out emission));
+                    else if (textureArray)
+                    {
+                        // Import emission texture array
+                        if ((isEmissive |= TryImportTexArray(archive, record, TextureMap.Emission, out emissionTextureArray)) && !emissionTextureArray)
+                            emissionTextureArray = textureArray;
+
+                        useTextureArray = true;
+                    }
 
                     // Make material
+                    // If material is not animated, use the standard shader
+                    // If material is animated, use the shader for texture arrays
+                    // For now also swap textures with the standard shader for legacy support
                     Material material;
-                    if (SystemInfo.supports2DArrayTextures && xml != null && xml.GetBool("useTextureArray"))
+                    if (useTextureArray && SystemInfo.supports2DArrayTextures)
                     {
-                        // EXPERIMENTAL: Use texture array for animated billboards
-                        // This is an opt-in feature at the moment and does not support all configuration options
+                        // TODO: support fade render mode
                         material = new Material(Shader.Find("Daggerfall/BillboardTextureArray"));
-
-                        Texture2DArray textureArray;
-                        if (TextureReader.TryMakeTextureArrayCopyTexture(albedoTextures, out textureArray))
-                            material.SetTexture(Uniforms.MainTexArray, textureArray);
-                        else
-                            Debug.LogErrorFormat("Failed to create texture array for archive {0} record {1}.", archive, record);
+                        material.SetTexture(Uniforms.MainTexArray, textureArray);
 
                         if (isEmissive)
                         {
                             material.SetColor(Uniforms.EmissionColor, Color.white);
-
-                            Texture2DArray emissionTextureArray;
-                            if (TextureReader.TryMakeTextureArrayCopyTexture(emissionTextures, out emissionTextureArray))
-                                material.SetTexture(Uniforms.EmissionMap, emissionTextureArray);
-                            else
-                                Debug.LogErrorFormat("Failed to create emission texture array for archive {0} record {1}.", archive, record);
+                            material.SetTexture(Uniforms.EmissionMap, emissionTextureArray);
                         }
-
-                        useTextureArray = true;
                     }
                     else
                     {
@@ -500,11 +523,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     cachedResults = new BillboardImportedTextures()
                     {
                         HasImportedTextures = true,
-                        FrameCount = albedoTextures.Count,
+                        FrameCount = textureArray ? textureArray.depth : albedoTextures.Count,
                         IsEmissive = isEmissive,
                         Material = material,
                         UseTextureArray = useTextureArray,
-                        AlbedoFrames = albedoTextures.ToArray(),
+                        AlbedoFrames = albedoTextures != null ? albedoTextures.ToArray() : null,
                         EmissionFrames = emissionTextures != null ? emissionTextures.ToArray() : null,
                         Rect = new Rect(uv.x, uv.y, 1 - 2 * uv.x, 1 - 2 * uv.y),
                         Scale = scale
@@ -1087,6 +1110,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
                 (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
                 MaterialReader.CustomBlendMode.Cutout);
+        }
+
+        private static bool TryImportTexArray(int archive, int record, TextureMap textureMap, out Texture2DArray textureArray)
+        {
+            if (SystemInfo.supports2DArrayTextures && ModManager.Instance != null)
+            {
+                string name = textureMap == TextureMap.Albedo ?
+                    string.Format("{0}_{1}-TexArray", archive, record) :
+                    string.Format("{0}_{1}-TexArray_Emission", archive, record, textureMap);
+
+                return ModManager.Instance.TryGetAsset(name, false, out textureArray);
+            }
+
+            textureArray = null;
+            return false;
         }
 
         #endregion
