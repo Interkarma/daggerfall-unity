@@ -87,8 +87,11 @@ namespace DaggerfallWorkshop.Game
                 playerControl = true;
 
                 // Somewhat experimental handling for automatically unsticking player controller in very specific cases
-                HeadDipHandling();
-                UnstickHandling();
+                if (!GameManager.Instance.PlayerEntity.IsParalyzed)
+                {
+                    HeadDipHandling();
+                    UnstickHandling();
+                }
             }
         }
 
