@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign static
             if (makeStatic)
-                go.isStatic = true;
+                TagStaticGeometry(go);
 
             return go;
         }
@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign static
             if (makeStatic)
-                go.isStatic = true;
+                TagStaticGeometry(go);
 
             return go;
         }
@@ -361,6 +361,24 @@ namespace DaggerfallWorkshop.Utility
             {
                 return null;
             }
+        }
+
+        public static void TagStaticGeometry(GameObject go)
+        {
+            if (go)
+            {
+                go.tag = DaggerfallUnity.staticGeometryTag;
+            }
+        }
+
+        public static bool IsStaticGeometry(GameObject go)
+        {
+            if (go)
+            {
+                return go.CompareTag(DaggerfallUnity.staticGeometryTag);
+            }
+
+            return false;
         }
 
         #region RMB & RDB Block Helpers

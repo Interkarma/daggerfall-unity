@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
@@ -852,7 +853,7 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit))
             {
                 //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                if (hit.transform.gameObject.isStatic)
+                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
                     return false;
             }
 

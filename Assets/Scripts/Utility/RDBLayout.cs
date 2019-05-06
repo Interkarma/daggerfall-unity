@@ -717,11 +717,11 @@ namespace DaggerfallWorkshop.Utility
             bool ignoreCollider = false)
         {
             // Determine static flag
-            bool isStatic = (dfUnity.Option_SetStaticFlags && !overrideStatic) ? true : false;
+            bool makeStatic = (dfUnity.Option_SetStaticFlags && !overrideStatic) ? true : false;
 
             // Add GameObject
             uint modelID = (uint)modelData.DFMesh.ObjectId;
-            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, isStatic, null, ignoreCollider);
+            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, makeStatic, null, ignoreCollider);
             go.transform.position = matrix.GetColumn(3);
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
 

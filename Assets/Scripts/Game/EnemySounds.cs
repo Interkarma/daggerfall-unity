@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -242,7 +243,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
 
                 // Dampen based on hit
-                if (hit.transform.gameObject.isStatic || door)
+                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject) || door)
                     volumeScale = 0.25f;
             }
         }

@@ -507,7 +507,7 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     // Debug for identifying interior furniture model ids.
-                    Debug.Log(hit.transform);
+                    Debug.Log(string.Format("hit='{0}' static={1}", hit.transform, GameObjectHelper.IsStaticGeometry(hit.transform.gameObject)));
                     #endregion
                 }
             }

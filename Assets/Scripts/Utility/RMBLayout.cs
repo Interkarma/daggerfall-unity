@@ -423,7 +423,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign static
             if (dfUnity.Option_SetStaticFlags)
-                go.isStatic = true;
+                GameObjectHelper.TagStaticGeometry(go);
 
             return go;
         }

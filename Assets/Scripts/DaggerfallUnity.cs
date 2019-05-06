@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
+        public const string staticGeometryTag = "StaticGeometry";
+
         bool isReady = false;
         bool isPathValidated = false;
         ContentReader reader;
