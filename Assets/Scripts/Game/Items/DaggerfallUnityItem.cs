@@ -1194,7 +1194,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public void ItemBreaks(DaggerfallEntity owner)
+        protected void ItemBreaks(DaggerfallEntity owner)
         {
             // Classic does not have the plural version of this string, and uses the short name rather than the long one.
             // Also the classic string says "is" instead of "has"
@@ -1205,7 +1205,20 @@ namespace DaggerfallWorkshop.Game.Items
                 itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
             itemBroke = itemBroke.Replace("%s", LongName);
             DaggerfallUI.Instance.PopupMessage(itemBroke);
-            UnequipItem(owner);
+
+            // Unequip item if owner specified
+            if (owner != null)
+                UnequipItem(owner);
+            else
+                return;
+
+            // Breaks payload callback on owner effect manager
+            if (owner.EntityBehaviour)
+            {
+                EntityEffectManager ownerEffectManager = owner.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (ownerEffectManager)
+                    ownerEffectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Breaks, this, owner.Items, owner.EntityBehaviour);
+            }
         }
 
         /// <summary>

@@ -837,6 +837,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Strikes payload
                 if ((flags & EnchantmentPayloadFlags.Strikes) == EnchantmentPayloadFlags.Strikes && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Strikes))
                     damageOut += StrikeWithItem(effectTemplate, sourceItem, settings, targetEntity, damageIn);
+
+                // Breaks payload
+                if ((flags & EnchantmentPayloadFlags.Breaks) == EnchantmentPayloadFlags.Breaks && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Breaks))
+                    BrokenItem(effectTemplate, sourceItem, settings);
+                    
             }
 
             // Clamp damageOut to 0
@@ -916,6 +921,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return 0;
+        }
+
+        void BrokenItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // Breaks payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Breaks, param, entityBehaviour, entityBehaviour, item);
         }
 
         #endregion
