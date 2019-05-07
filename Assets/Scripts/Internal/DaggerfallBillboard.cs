@@ -276,10 +276,14 @@ namespace DaggerfallWorkshop
             // Get references
             meshRenderer = GetComponent<MeshRenderer>();
 
+            // Atlas shared with billboard batch
+            bool useBigAtlas = DaggerfallUnity.Settings.AssetInjection &&
+                (archive == TextureReader.AnimalsTextureArchive || archive == TextureReader.LightsTextureArchive);
+
             Vector2 size;
             Mesh mesh = null;
             Material material = null;
-            if (material = TextureReplacement.GetStaticBillboardMaterial(gameObject, archive, record, ref summary))
+            if (!useBigAtlas && (material = TextureReplacement.GetStaticBillboardMaterial(gameObject, archive, record, ref summary)))
             {
                 mesh = dfUnity.MeshReader.GetBillboardMesh(summary.Rect, archive, record, out size);
                 summary.AtlasedMaterial = false;
@@ -291,7 +295,7 @@ namespace DaggerfallWorkshop
                     archive,
                     0,
                     4,
-                    2048,
+                    useBigAtlas ? 4096 : 2048,
                     out summary.AtlasRects,
                     out summary.AtlasIndices,
                     4,
