@@ -238,6 +238,14 @@ namespace DaggerfallWorkshop.Game
             // Tally player's dodging skill
             playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
 
+            // Handle Strikes payload from enemy to player target - this could change damage amount
+            if (damage > 0 && weapon != null && weapon.IsEnchanted)
+            {
+                EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                if (effectManager)
+                    damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, weapon, entity.Items, playerEntity.EntityBehaviour, damage);
+            }
+
             if (damage > 0)
             {
                 if (entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
@@ -345,7 +353,7 @@ namespace DaggerfallWorkshop.Game
                     targetSounds.PlayParrySound();
             }
 
-            // Handle weapon striking enchantments - this could change damage amount
+            // Handle Strikes payload from enemy to non-player target - this could change damage amount
             if (weapon != null && weapon.IsEnchanted)
             {
                 EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
