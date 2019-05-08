@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game.Banking
         public const float goldUnitWeightInKg = 0.0025f;
         private const float deedSellMult = 0.85f;
         private const float housePriceMult = 1280f;
+        private const uint loanRepayMinutes = DaggerfallDateTime.DaysPerYear * DaggerfallDateTime.MinutesPerDay;
 
         #region Ships:
 
@@ -517,7 +518,7 @@ namespace DaggerfallWorkshop.Game.Banking
             {
                 BankAccounts[regionIndex].loanTotal += (int)(amount + amount * .1);
                 BankAccounts[regionIndex].accountGold += amount;
-                bankAccounts[regionIndex].loanDueDate = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                bankAccounts[regionIndex].loanDueDate = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + loanRepayMinutes;
             }
             return result;
         }
