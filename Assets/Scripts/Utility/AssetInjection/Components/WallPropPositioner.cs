@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 to = Vector3.back;
 
             if (to.HasValue)
-                transform.rotation = Quaternion.FromToRotation(from, to.Value);
+                transform.Rotate(Vector3.up, Vector3.SignedAngle(from, to.Value, Vector3.up));
         }
 
         /// <summary>
