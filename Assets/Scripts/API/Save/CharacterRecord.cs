@@ -134,7 +134,23 @@ namespace DaggerfallConnect.Save
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
             }
 
-            // TODO: Remove werewolf/wereboar bonuses to stats and skills
+            // Remove werewolf/wereboar bonuses to stats and skills
+            if (classicTransformedRace == Races.Werewolf || classicTransformedRace == Races.Wereboar)
+            {
+                // Remove +40 bonus to selected stats
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Strength, parsedData.currentStats.PermanentStrength - 40);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Speed, parsedData.currentStats.PermanentSpeed - 40);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Agility, parsedData.currentStats.PermanentAgility - 40);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Endurance, parsedData.currentStats.PermanentEndurance - 40);
+
+                // Remove +30 bonus to lycanthrope skills
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Swimming, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Swimming) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Running, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Running) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Stealth, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Stealth) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.CriticalStrike, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.CriticalStrike) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Climbing, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Climbing) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
+            }
 
             return liveRace;
         }
