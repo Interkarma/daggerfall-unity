@@ -704,8 +704,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void AddSpell(EffectBundleSettings spell)
         {
-            // Just add spell to end of list for now
-            // When implemented, the real collection class will allow for custom sorting
             spellbook.Add(spell);
         }
 
@@ -715,6 +713,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
 
             spellbook.RemoveAt(index);
+        }
+
+        public void DeleteTaggedSpells(string tag)
+        {
+            spellbook.RemoveAll(spell => spell.Tag == tag);
         }
 
         public EffectBundleSettings[] SerializeSpellbook()

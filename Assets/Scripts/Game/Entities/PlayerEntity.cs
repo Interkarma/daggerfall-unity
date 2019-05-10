@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         public const string vampireSpellTag = "vampire";
+        public const string lycanthropySpellTag = "lycanthrope";
 
         bool godMode = false;
         bool noTargetMode = false;
