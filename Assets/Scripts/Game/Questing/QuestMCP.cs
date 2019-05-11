@@ -11,7 +11,6 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
