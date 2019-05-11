@@ -80,5 +80,7 @@ suggestedIcons,     Suggested
 
 - Guild service window:
 
+serviceMembersOnly, My services are reserved for members only.
+serviceDonateHowMuch, Donate how much money : 
 curedDisease,       You are cured.
 freeHolidayCuring,  You are cured free from cost due to todays' holiday.

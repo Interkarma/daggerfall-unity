@@ -265,7 +265,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {
-                    DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "serviceMembersOnly"));
                 }
                 return;
             }
@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
             DaggerfallInputMessageBox donationMsgBox = new DaggerfallInputMessageBox(uiManager, this);
-            donationMsgBox.SetTextBoxLabel(HardStrings.serviceDonateHowMuch);
+            donationMsgBox.SetTextBoxLabel(TextManager.Instance.GetText(textDatabase, "serviceDonateHowMuch"));
             donationMsgBox.TextPanelDistanceX = 6;
             donationMsgBox.TextPanelDistanceY = 6;
             donationMsgBox.TextBox.Numeric = true;
