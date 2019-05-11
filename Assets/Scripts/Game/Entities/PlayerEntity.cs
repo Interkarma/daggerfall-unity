@@ -398,6 +398,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
                 RemoveExpiredRentedRooms();
+                LoanChecker.CheckOverdueLoans();
             }
 
             // Normalize legal reputation and update faction power and regional conditions every certain number of days

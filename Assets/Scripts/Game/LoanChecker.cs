@@ -7,31 +7,30 @@ namespace DaggerfallWorkshop.Game
 {
     public class LoanChecker : MonoBehaviour
     {
-        public LoanChecker()
+        private LoanChecker()
         {
         }
 
-        public void Start()
-        {
-            WorldTime.OnMidnight += CheckOverdueLoans;
-        }
-
-        private void CheckOverdueLoans()
+        public static void CheckOverdueLoans()
         {
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             for (int regionIndex = 0; regionIndex < DaggerfallBankManager.BankAccounts.Length; regionIndex++)
             {
                 uint paymentDueMinutes = DaggerfallBankManager.BankAccounts[regionIndex].loanDueDate;
 
-                if (paymentDueMinutes != 0 && paymentDueMinutes < gameMinutes)
+                if (paymentDueMinutes != 0)
                 {
-                    Debug.Log("loan due in region " + regionIndex + ": " + paymentDueMinutes + " < " + gameMinutes);
-                    DueLoan(regionIndex);
+                    Debug.Log("Loan in region " + regionIndex);
+                    if (paymentDueMinutes < gameMinutes)
+                    {
+                        Debug.Log("loan overdue " + paymentDueMinutes + " < " + gameMinutes);
+                        OverdueLoan(regionIndex);
+                    }
                 }
             }
         }
 
-        private static void DueLoan(int regionIndex)
+        private static void OverdueLoan(int regionIndex)
         {
             Serialization.BankRecordData_v1 account = DaggerfallBankManager.BankAccounts[regionIndex];
             int transferAmount = Mathf.Min(account.loanTotal, account.accountGold);

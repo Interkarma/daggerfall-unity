@@ -86,7 +86,6 @@ namespace DaggerfallWorkshop.Game
         TalkManager talkManager = null;
         GuildManager guildManager = null;
         QuestListsManager questListsManager = null;
-        LoanChecker loanChecker = null;
 
         #endregion
 
@@ -367,12 +366,6 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (questListsManager != null) ? questListsManager : questListsManager = new QuestListsManager(); }
             set { questListsManager = value; }
-        }
-
-        public LoanChecker LoanChecker
-        {
-            get { return (loanChecker != null) ? loanChecker : loanChecker = new LoanChecker(); }
-            set { loanChecker = value; }
         }
 
         public bool IsPlayerOnHUD
