@@ -49,6 +49,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
+        protected const string textDatabase = "DaggerfallUI";
+
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
         const string memberTextureName = "GILD01I0.IMG";      // Join Guild / Talk / Service
 
@@ -601,7 +603,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (playerEntity.GetGoldAmount() > amount)
                 {
-                    // Deduct gold, and apply blessing if member
+                    // Deduct gold, and apply blessing
                     playerEntity.DeductGoldAmount(amount);
                     int factionId = (int)Temple.GetDivine(buildingFactionId);
 
@@ -638,7 +640,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (playerEntity.TimeToBecomeVampireOrWerebeast != 0)
                 numberOfDiseases++;
 
-            if (numberOfDiseases > 0)
+            // Check holidays for free / cheaper curing
+            uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+
+
+            if (numberOfDiseases > 0 &&
+                (holidayId == (int)DFLocation.Holidays.South_Winds_Prayer ||
+                 holidayId == (int)DFLocation.Holidays.First_Harvest ||
+                 holidayId == (int)DFLocation.Holidays.Second_Harvest))
+            {
+                GameManager.Instance.PlayerEffectManager.CureAllDiseases();
+                playerEntity.TimeToBecomeVampireOrWerebeast = 0;
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "freeHolidayCuring"));
+            }
+            else if (numberOfDiseases > 0)
             {
                 // Get base cost
                 int baseCost = 250 * numberOfDiseases;
@@ -648,6 +664,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Apply temple quality and regional price modifiers
                 int costBeforeBargaining = FormulaHelper.CalculateCost(baseCost, buildingDiscoveryData.quality);
+
+                // Halve the price on North Winds Prayer holiday
+                if (holidayId == (int)DFLocation.Holidays.North_Winds_Festival)
+                    costBeforeBargaining /= 2;
 
                 // Apply bargaining to get final price
                 curingCost = FormulaHelper.CalculateTradePrice(costBeforeBargaining, buildingDiscoveryData.quality, false);
@@ -687,7 +707,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(curingCost);
                     GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                     playerEntity.TimeToBecomeVampireOrWerebeast = 0;
-                    DaggerfallUI.MessageBox(HardStrings.serviceCured);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "curedDisease"));
                 }
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);
