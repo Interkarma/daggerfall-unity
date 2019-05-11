@@ -42,9 +42,8 @@ namespace DaggerfallWorkshop
         {
             // Check permission to access bookshelf if inside a guild or temple
             PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
-            // TODO: Faction membership check here when implemented, just check building type for now..
             int factionID = buildingData.factionID;
-            Debug.Log("Faction ID = " + factionID);
+            Debug.Log("Bookshelf access, Faction ID = " + factionID);
             Guild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
             if ((buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
                  buildingData.buildingType == DFLocation.BuildingTypes.Temple) &&
