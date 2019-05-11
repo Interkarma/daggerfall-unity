@@ -357,10 +357,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
-                // Check holidays for half price sales
-                // - Merchants Festival, suns height 10th for normal shops.
-                // - Tales and Tallows hearth fire 3rd for mages guild.
-                // - weapons on Warriors Festival suns dusk 20th
+                // Check holidays for half price sales:
+                // - Merchants Festival, suns height 10th for normal shops
+                // - Tales and Tallows hearth fire 3rd for mages guild
+                // - Weapons on Warriors Festival suns dusk 20th
                 uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
                 int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
 
