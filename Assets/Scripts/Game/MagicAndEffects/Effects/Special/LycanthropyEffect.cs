@@ -132,6 +132,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             lastKilledInnocent = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
         }
 
+        public virtual void MorphSelf()
+        {
+            // TODO: Implement transformation
+        }
+
         #endregion
 
         #region Private Methods

@@ -24,6 +24,7 @@ jumping,                    Jumping
 levitate,                   Levitate
 light,                      Light
 lock,                       Lock
+morphSelf,                  Morph Self
 open,                       Open
 pacify,                     Pacify
 paralyze,                   Paralyze
