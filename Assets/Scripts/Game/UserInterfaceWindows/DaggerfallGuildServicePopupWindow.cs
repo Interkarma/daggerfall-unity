@@ -644,7 +644,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
 
-
             if (numberOfDiseases > 0 &&
                 (holidayId == (int)DFLocation.Holidays.South_Winds_Prayer ||
                  holidayId == (int)DFLocation.Holidays.First_Harvest ||
