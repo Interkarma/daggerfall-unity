@@ -80,4 +80,5 @@ suggestedIcons,     Suggested
 
 - Banking:
 
-loanReminder,       You have a loan of {0} gold pieces due in {1} months in {2}
+loanReminder,       You have a loan of {0} gold pieces due in
+loanReminder2,      less than {0} months in {1}
