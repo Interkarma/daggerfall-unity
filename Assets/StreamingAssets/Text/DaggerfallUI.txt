@@ -77,3 +77,7 @@ reqIngredients,     You do not have the ingredients required.
 
 classicIcons,       Classic
 suggestedIcons,     Suggested
+
+- Banking:
+
+loanReminder,       You have a loan of {0} gold pieces due in {1} months in {2}

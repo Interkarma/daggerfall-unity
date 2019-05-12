@@ -16,7 +16,6 @@ using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Utility;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
-using System;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
