@@ -122,8 +122,7 @@ namespace DaggerfallWorkshop.Game
                 // Adjust for custom scale factor
                 daylightScale *= ScaleFactor;
 
-                SetLightIntensity(daylightScale);
-                SetShadows(ShadowStrength);
+                SetLightIntensity(daylightScale, ShadowStrength);
             }
         }
 
@@ -169,10 +168,13 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void SetLightIntensity(float scale)
+        void SetLightIntensity(float scale, float shadowStrength)
         {
             if (myLight)
+            {
                 myLight.intensity = keyLightIntensity * scale;
+                myLight.shadowStrength = shadowStrength;
+            }
 
             if (OtherLights != null)
             {
@@ -181,31 +183,13 @@ namespace DaggerfallWorkshop.Game
                     if (OtherLights[i] == null)
                         continue;
                     OtherLights[i].intensity = otherLightsIntensity[i] * scale;
+                    OtherLights[i].shadowStrength = shadowStrength;
                 }
             }
             if (IndirectLight != null)
             {
                 IndirectLight.intensity = indirectLightIntensity * scale;
-            }
-        }
-
-        void SetShadows(float strength)
-        {
-            if (myLight)
-                myLight.shadowStrength = strength;
-
-            if (OtherLights != null)
-            {
-                for (int i = 0; i < OtherLights.Length; i++)
-                {
-                    if (OtherLights[i] == null)
-                        continue;
-                    OtherLights[i].shadowStrength = strength;
-                }
-            }
-            if (IndirectLight != null)
-            {
-                IndirectLight.shadowStrength = strength;
+                IndirectLight.shadowStrength = shadowStrength;
             }
         }
 
