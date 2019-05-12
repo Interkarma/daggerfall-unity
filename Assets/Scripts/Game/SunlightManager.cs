@@ -22,10 +22,13 @@ namespace DaggerfallWorkshop.Game
     public class SunlightManager : MonoBehaviour
     {
         public const float defaultScaleFactor = 1;
+        public const float defaultShadowStrength = 1;
 
         public float Angle = -90f;                          // Sunlight direction throughout day
         [Range(0, 1)]
         public float ScaleFactor = defaultScaleFactor;      // Scale all lights by this amount
+        [Range(0, 1)]
+        public float ShadowStrength = defaultShadowStrength;
         public Light IndirectLight;                         // Point light that follows player to simulate indirect lighting
         public GameObject LocalPlayer;                      // Player for indirect light positioning
         public Light[] OtherLights;                         // Other lights to scale and enable/disable
@@ -120,6 +123,7 @@ namespace DaggerfallWorkshop.Game
                 daylightScale *= ScaleFactor;
 
                 SetLightIntensity(daylightScale);
+                SetShadows(ShadowStrength);
             }
         }
 
@@ -182,6 +186,26 @@ namespace DaggerfallWorkshop.Game
             if (IndirectLight != null)
             {
                 IndirectLight.intensity = indirectLightIntensity * scale;
+            }
+        }
+
+        void SetShadows(float strength)
+        {
+            if (myLight)
+                myLight.shadowStrength = strength;
+
+            if (OtherLights != null)
+            {
+                for (int i = 0; i < OtherLights.Length; i++)
+                {
+                    if (OtherLights[i] == null)
+                        continue;
+                    OtherLights[i].shadowStrength = strength;
+                }
+            }
+            if (IndirectLight != null)
+            {
+                IndirectLight.shadowStrength = strength;
             }
         }
 

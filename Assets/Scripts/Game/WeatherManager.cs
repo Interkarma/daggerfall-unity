@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Game
         public AmbientEffectsPlayer WeatherEffects;
 
         [Range(0, 1)]
+        public float OvercastSunlightScale = 0.65f;
+        [Range(0, 1)]
         public float RainSunlightScale = 0.45f;
         [Range(0, 1)]
         public float StormSunlightScale = 0.25f;
@@ -41,6 +43,17 @@ namespace DaggerfallWorkshop.Game
         public float SnowSunlightScale = 0.45f;
         [Range(0, 1)]
         public float WinterSunlightScale = 0.65f;
+
+        [Range(0, 1)]
+        public float OvercastShadowStrength = 0.6f;
+        [Range(0, 1)]
+        public float RainShadowStrength = 0.4f;
+        [Range(0, 1)]
+        public float StormShadowStrength = 0.4f;
+        [Range(0, 1)]
+        public float SnowShadowStrength = 0.25f;
+        [Range(0, 1)]
+        public float WinterShadowStrength = 0.8f;
 
         [System.Serializable]
         public struct FogSettings
@@ -112,7 +125,7 @@ namespace DaggerfallWorkshop.Game
         {
             _dfUnity = DaggerfallUnity.Instance;
             _weatherTable = WeatherTable.ParseJsonTable();
-            
+
             postProcessingBehaviour = Camera.main.GetComponent<PostProcessingBehaviour>();
             if (postProcessingBehaviour != null)
             {
@@ -283,22 +296,45 @@ namespace DaggerfallWorkshop.Game
         {
             // Start with default scale
             float scale = SunlightManager.defaultScaleFactor;
+            float shadowStrength = SunlightManager.defaultShadowStrength;
 
             // Apply winter
             if (_dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
+            {
                 scale = WinterSunlightScale;
+                shadowStrength = WinterShadowStrength;
+            }
 
             // Apply rain, storm, snow light scale
             if (IsRaining && !IsStorming)
+            {
                 scale = RainSunlightScale;
+                shadowStrength = RainShadowStrength;
+            }
             else if (IsRaining && IsStorming)
+            {
                 scale = StormSunlightScale;
+                shadowStrength = StormShadowStrength;
+            }
             else if (IsSnowing)
+            {
                 scale = SnowSunlightScale;
+                shadowStrength = SnowShadowStrength;
+            }
+            else if (IsOvercast)
+            {
+                scale = OvercastSunlightScale;
+                shadowStrength = OvercastShadowStrength;
+            }
+
+            shadowStrength *= Mathf.Exp(-50f * currentOutdoorFogSettings.density);
 
             // Apply scale to sunlight manager
             if (SunlightManager)
+            {
                 SunlightManager.ScaleFactor = scale;
+                SunlightManager.ShadowStrength = shadowStrength;
+            }
         }
 
         void SetAmbientEffects()
