@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Serialization;
@@ -34,6 +35,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int classicSpellIconsCount = 69;
         const int spellTargetIconsCount = 5;
         const int spellElementIconsCount = 5;
+
+        readonly static DFSize spellTargetAndElementIconsSize = new DFSize(40, 80);
 
         List<Texture2D> spellIcons = new List<Texture2D>();
         List<Texture2D> spellTargetIcons = new List<Texture2D>();
@@ -421,7 +424,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect targetIconRect = new Rect(0, 0, targetIconWidth, height);
             for (int i = 0; i < spellTargetIconsCount; i++)
             {
-                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, targetIconRect);
+                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, targetIconRect, spellTargetAndElementIconsSize);
                 spellTargetIcons.Add(iconTexture);
                 targetIconRect.y = targetIconRect.y + height;
             }
@@ -430,7 +433,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect elementIconRect = new Rect(targetIconWidth, 0, elementIconWidth, height);
             for (int i = 0; i < spellElementIconsCount; i++)
             {
-                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, elementIconRect);
+                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, elementIconRect, spellTargetAndElementIconsSize);
                 spellElementIcons.Add(iconTexture);
                 elementIconRect.y = elementIconRect.y + height;
             }
