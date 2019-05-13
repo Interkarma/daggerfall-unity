@@ -622,6 +622,9 @@ namespace DaggerfallWorkshop.Game.Entity
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= 10)
             {
                 DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
+                if (dfLocation == null)
+                    return;
+
                 PopulationManager populationManager = dfLocation.GetComponent<PopulationManager>();
                 if (populationManager == null)
                     return;
