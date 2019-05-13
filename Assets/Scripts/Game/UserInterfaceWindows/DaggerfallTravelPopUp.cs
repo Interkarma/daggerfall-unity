@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using System.Collections;
@@ -88,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties
 
-        internal DFPosition EndPos { get { return endPos; } set { endPos = value;} }
+        public DFPosition EndPos { get { return endPos; } internal set { endPos = value;} }
         internal DaggerfallTravelMapWindow TravelWindow { get { return travelWindow; } set { travelWindow = value; } }
         public bool SpeedCautious { get { return speedCautious;} set {speedCautious = value; } }
         public bool TravelShip { get { return travelShip;} set { travelShip = value;} }
@@ -283,6 +284,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // perform fast travel actions
         private void performFastTravel()
         {
+            RaiseOnPreFastTravelEvent();
+
             // Cache scene first, if fast travelling while on ship.
             if (GameManager.Instance.TransportManager.IsOnShip())
                 SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);
@@ -440,6 +443,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             sleepModeInn = !sleepModeInn;
             Refresh();
+        }
+
+        /// <summary>
+        /// Raised before a fast travel is performed.
+        /// </summary>
+        public static event Action<DaggerfallTravelPopUp> OnPreFastTravel;
+        void RaiseOnPreFastTravelEvent()
+        {
+            if (OnPreFastTravel != null)
+                OnPreFastTravel(this);
         }
 
         // OnPostFastTravel
