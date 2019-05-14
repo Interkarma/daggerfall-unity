@@ -195,6 +195,9 @@ namespace DaggerfallConnect.Save
             parsedData.timeAfterWhichShieldEffectWillEnd = reader.ReadUInt32();
             parsedData.unknownLycanthropy = reader.ReadInt16();
 
+            reader.BaseStream.Position = 0x6c;
+            parsedData.incubatingLycanthropy = reader.ReadInt16();
+
             reader.BaseStream.Position = 0x74;
             parsedData.playerHouse = reader.ReadUInt32();
             parsedData.playerShip = reader.ReadUInt32();
@@ -383,6 +386,7 @@ namespace DaggerfallConnect.Save
             public UInt32 lastTimeUrgeToHuntInnocentSatisfied;
             public UInt32 timeAfterWhichShieldEffectWillEnd;
             public Int16 unknownLycanthropy; // Lycanthropy stage? Set when inflicted with lycanthropy.
+            public Int16 incubatingLycanthropy; // Incubating lycanthropy 0=None, 1=Werewolf, 2=Wereboar. Not currently used.
             public UInt32 playerHouse; // Building ID of player's house. 0 if player doesn't own a house.
             public UInt32 playerShip; // Probably same type of data as above, for player's ship. 0 if player doesn't own a ship.
             public Int16 currentHealth;

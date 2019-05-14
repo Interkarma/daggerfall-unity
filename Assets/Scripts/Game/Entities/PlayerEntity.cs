@@ -967,8 +967,10 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assigns diseases and poisons to player from classic save tree.
         /// </summary>
-        public void AssignDiseasesAndPoisons(SaveTree saveTree)
+        public void AssignDiseasesAndPoisons(SaveTree saveTree, out LycanthropyTypes lycanthropyType)
         {
+            lycanthropyType = LycanthropyTypes.None;
+
             // Find character record, should always be a singleton
             CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
             if (characterRecord == null)
@@ -980,7 +982,8 @@ namespace DaggerfallWorkshop.Game.Entity
             // Add Daggerfall Unity diseases and poisons
             foreach (var record in diseaseAndPoisonRecords)
             {
-                if ((record as DiseaseOrPoisonRecord).ParsedData.ID < 100) // is a disease
+                byte diseaseID = (record as DiseaseOrPoisonRecord).ParsedData.ID;
+                if (diseaseID < 100) // is a disease
                 {
                     // TODO: Import classic disease effect and poisons to player effect manager and set properties
                     //DaggerfallDisease_Deprecated newDisease = new DaggerfallDisease_Deprecated((DiseaseOrPoisonRecord)record);
@@ -992,6 +995,18 @@ namespace DaggerfallWorkshop.Game.Entity
                     //        incubationOver = true;
                     //    daysOfSymptomsLeft = (byte)record.ParsedData.daysOfSymptomsLeft;
                     //}
+                }
+                else
+                {
+                    switch (diseaseID)
+                    {
+                        case 101:
+                            lycanthropyType = LycanthropyTypes.Werewolf;
+                            break;
+                        case 102:
+                            lycanthropyType = LycanthropyTypes.Wereboar;
+                            break;
+                    }
                 }
             }
         }

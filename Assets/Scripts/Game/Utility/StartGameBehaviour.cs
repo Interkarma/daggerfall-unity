@@ -558,7 +558,8 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEntity.AssignGuildMemberships(saveTree);
 
             // Assign diseases and poisons to player entity
-            playerEntity.AssignDiseasesAndPoisons(saveTree);
+            LycanthropyTypes lycanthropyType;
+            playerEntity.AssignDiseasesAndPoisons(saveTree, out lycanthropyType);
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;
@@ -611,8 +612,7 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(playerEntity);
 
             // Restore old class specials
-            bool hasLycanthropySpellRecord = false;
-            RestoreOldClassSpecials(saveTree, characterDocument.classicTransformedRace, out hasLycanthropySpellRecord);
+            RestoreOldClassSpecials(saveTree, characterDocument.classicTransformedRace, lycanthropyType);
 
             // Restore vampirism if classic character was a vampire
             if (characterDocument.classicTransformedRace == Races.Vampire)
@@ -632,21 +632,15 @@ namespace DaggerfallWorkshop.Game.Utility
             }
 
             // Restore lycanthropy if classic character was a werewolf/wereboar
-            // NOTE: Currently can only determine correct lycanthropy type if player is currently transformed
-            // TODO: Determine where this is stored in classic data so type can be correctly identified at any time
-            bool showLycanthropeError = false;
-            if (characterDocument.classicTransformedRace == Races.Werewolf || characterDocument.classicTransformedRace == Races.Wereboar)
+            if (lycanthropyType != LycanthropyTypes.None)
             {
                 // TODO: Restore lycanthropy effect
-                LycanthropyTypes infectionType = LycanthropyTypes.None;
-                switch (characterDocument.classicTransformedRace)
+                switch (lycanthropyType)
                 {
-                    case Races.Werewolf:
+                    case LycanthropyTypes.Werewolf:
                         Debug.Log("Restoring lycanthropy (werewolf) to classic character.");
-                        infectionType = LycanthropyTypes.Werewolf;
                         break;
-                    case Races.Wereboar:
-                        infectionType = LycanthropyTypes.Wereboar;
+                    case LycanthropyTypes.Wereboar:
                         Debug.Log("Restoring lycanthropy (wereboar) to classic character.");
                         break;
                 }
@@ -655,13 +649,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 //LycanthropyEffect lycanthropyEffect = (LycanthropyEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<LycanthropyEffect>();
                 //if (lycanthropyEffect != null)
                 //{
-                //    lycanthropyEffect.InfectionType = infectionType;
+                //    lycanthropyEffect.InfectionType = lycanthropyType;
                 //    // TODO: Add Lycanthropy spell bundle to spellbook
                 //}
-            }
-            else if (hasLycanthropySpellRecord)
-            {
-                showLycanthropeError = true;
             }
 
             // Start game
@@ -673,31 +663,18 @@ namespace DaggerfallWorkshop.Game.Utility
             lastStartMethod = StartMethods.LoadClassicSave;
             SaveIndex = -1;
 
-            // Show lycanthrope error - at this time player must import lycanthrope character while currently transformed
-            if (showLycanthropeError)
-            {
-                string lycanthropeError = string.Format(@"{0} is a lycanthrope. Please import save while character is transformed so correct lycanthropy type (werewolf/wereboar) can be applied. Not restoring lycanthropy.", characterDocument.name);
-                DaggerfallUI.MessageBox(lycanthropeError, true);
-            }
-
             if (OnStartGame != null)
                 OnStartGame(this, null);
         }
 
-        void RestoreOldClassSpecials(SaveTree saveTree, Races classicTransformedRace, out bool hasLycanthropySpellRecord)
+        void RestoreOldClassSpecials(SaveTree saveTree, Races classicTransformedRace, LycanthropyTypes lycanthropyType)
         {
-            hasLycanthropySpellRecord = false;
-
             try
             {
                 // Get old class record
                 SaveTreeBaseRecord oldClassRecord = saveTree.FindRecord(RecordTypes.OldClass);
                 if (oldClassRecord == null)
                     return;
-
-                // Check if player has lycanthropy spell record
-                // This appears as a child of old class record if player infected by either lycanthropy type
-                hasLycanthropySpellRecord = HasLycanthropySpellRecord(ref oldClassRecord);
 
                 // Read old class data
                 System.IO.MemoryStream stream = new System.IO.MemoryStream(oldClassRecord.RecordData);
@@ -715,7 +692,7 @@ namespace DaggerfallWorkshop.Game.Utility
                     characterDocument.career.Paralysis = classFile.Career.Paralysis;
                     characterDocument.career.Disease = classFile.Career.Disease;
                 }
-                else if (classicTransformedRace == Races.Werewolf || classicTransformedRace == Races.Wereboar || hasLycanthropySpellRecord)
+                else if (lycanthropyType != LycanthropyTypes.None)
                 {
                     // Restore pre-lycanthropy specials
                     characterDocument.career.Disease = classFile.Career.Disease;
@@ -725,26 +702,6 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 Debug.LogErrorFormat("Could not restore old class specials for vamp/were import. Error: '{0}'", ex.Message);
             }
-        }
-
-        bool HasLycanthropySpellRecord(ref SaveTreeBaseRecord oldClassRecord)
-        {
-            const int lycanthropySpellID = 92;
-
-            if (oldClassRecord.Children != null && oldClassRecord.Children.Count > 0)
-            {
-                foreach (SaveTreeBaseRecord record in oldClassRecord.Children)
-                {
-                    if (record.RecordType == RecordTypes.Spell)
-                    {
-                        SpellRecord.SpellRecordData spell;
-                        if (DaggerfallSpellReader.ReadSpellData(record.RecordData, out spell) && spell.index == lycanthropySpellID)
-                            return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         #endregion
