@@ -4,13 +4,15 @@ schema: *key,text
 
 - Journal window:
 
-dialogButtonInfo,   Switch between: Active Quests; Finished Quests; Notebook; Messages
+dialogButtonInfo,   Switch between: Active Quests; Finished Quests; Notebook; Loans; Messages
 activeQuests,       Active Quests
 activeQuestsInfo,   Click on an active quest that has a target location to initiate travel.
 finishedQuests,     Finished Quests
 finishedQuestsInfo, Click on an entry to move it. Right click to delete.
 notebook,           Notebook
 notebookInfo,       Click a note to move. Right click to delete. Click in-between to add a new note.
+loans,              Loans
+loansInfo,          List of currently running loans
 messages,           Messages
 messagesInfo,       History of messages recently shown on screen
 confirmMoveHead,    Move entry
