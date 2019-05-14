@@ -50,7 +50,7 @@ QuestFail:  [1003]
 <ce>              I'll tell you this -- he don't like anything
 <ce>                done halfway. I know that werewolf ain't
 <ce>               dead, and if you think you can fool Vile,
-<ce>  you're an idiot. No dead werewolf, no. _artifact_.  Simple as that.
+<ce>  you're an idiot. No dead werewolf, no _artifact_.  Simple as that.
 
 QuestComplete:  [1004]
 <ce>                   Ah, %pcf, Vile told me to expect
@@ -130,6 +130,7 @@ Clock _1stparton_ 00:00 0 flag 1 range 0 5
 Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Werewolf
+--removed period from 1003
 
 --	Quest start-up:
 	start timer _1stparton_ 
@@ -156,7 +157,8 @@ _1stparton_ task:
 
 variable _2ndparton_
 _clearclick_ task:
-	when _qgclicked_ and not _mondead_ 
+	when _qgclicked_ and not _mondead_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 
 
 _delay_ task:
