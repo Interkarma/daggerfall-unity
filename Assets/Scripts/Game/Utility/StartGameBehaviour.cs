@@ -526,12 +526,16 @@ namespace DaggerfallWorkshop.Game.Utility
             if (records.Count != 1)
                 throw new Exception("SaveTree CharacterRecord not found.");
 
+            // Assign diseases and poisons to player entity
+            LycanthropyTypes lycanthropyType;
+            PlayerEntity playerEntity = FindPlayerEntity();
+            playerEntity.AssignDiseasesAndPoisons(saveTree, out lycanthropyType);
+
             // Get prototypical character document data
             CharacterRecord characterRecord = (CharacterRecord)records[0];
-            characterDocument = characterRecord.ToCharacterDocument();
+            characterDocument = characterRecord.ToCharacterDocument(lycanthropyType);
 
             // Assign data to player entity
-            PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
             playerEntity.SetCurrentLevelUpSkillSum();
 
@@ -556,10 +560,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign guild memberships
             playerEntity.AssignGuildMemberships(saveTree);
-
-            // Assign diseases and poisons to player entity
-            LycanthropyTypes lycanthropyType;
-            playerEntity.AssignDiseasesAndPoisons(saveTree, out lycanthropyType);
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;

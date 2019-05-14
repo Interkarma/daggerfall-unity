@@ -49,8 +49,9 @@ namespace DaggerfallConnect.Save
         /// <summary>
         /// Converts a CharacterRecord to a prototypical CharacterDocument for character import.
         /// </summary>
+        /// <param name="stripLycanthropyType">Lycanthropy type to remove, if previously read.</param>
         /// <returns>CharacterDocument derived from CharacterRecord data.</returns>
-        public CharacterDocument ToCharacterDocument()
+        public CharacterDocument ToCharacterDocument(LycanthropyTypes stripLycanthropyType = LycanthropyTypes.None)
         {
             CharacterDocument doc = new CharacterDocument();
             Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
@@ -58,7 +59,7 @@ namespace DaggerfallConnect.Save
             // Strip back classic changes for vampire or lycanthrope as this is handled by effect system in DFU
             // If player is not transformed then this will simply return parsedData.race + 1
             Races classicTransformedRace;
-            Races liveRace = StripTransformedRace(out classicTransformedRace);
+            Races liveRace = StripTransformedRace(out classicTransformedRace, stripLycanthropyType);
 
             doc.raceTemplate = raceDict[(int)liveRace];
             doc.gender = parsedData.gender;
@@ -99,7 +100,7 @@ namespace DaggerfallConnect.Save
             return doc;
         }
 
-        Races StripTransformedRace(out Races classicTransformedRace)
+        Races StripTransformedRace(out Races classicTransformedRace, LycanthropyTypes stripLycanthropyType = LycanthropyTypes.None)
         {
             // Restore original character race if vampire or lycanthrope
             // Racial overrides are handled by the effect system in DFU rather than entirely hardcoded, but still need to handle importing from classic
@@ -135,7 +136,7 @@ namespace DaggerfallConnect.Save
             }
 
             // Remove werewolf/wereboar bonuses to stats and skills
-            if (classicTransformedRace == Races.Werewolf || classicTransformedRace == Races.Wereboar)
+            if (classicTransformedRace == Races.Werewolf || classicTransformedRace == Races.Wereboar || stripLycanthropyType != LycanthropyTypes.None)
             {
                 // Remove +40 bonus to selected stats
                 parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Strength, parsedData.currentStats.PermanentStrength - 40);
