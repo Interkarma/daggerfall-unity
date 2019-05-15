@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.None;
+            properties.ShowSpellIcon = false;
             properties.MagicSkill = DFCareer.MagicSkills.Illusion;
         }
 

@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int IconIndex;
         public SpellIcon Icon;
         public bool MinimumCastingCost;
+        public bool NoCastingAnims;
         public string Tag;
         public EffectEntry[] Effects;
         public LegacyEffectEntry[] LegacyEffects;

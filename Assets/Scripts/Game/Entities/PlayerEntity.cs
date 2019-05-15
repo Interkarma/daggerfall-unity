@@ -1107,6 +1107,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Assign to player entity spellbook with some custom settings
             bundleSettings.MinimumCastingCost = true;
+            bundleSettings.NoCastingAnims = true;
             bundleSettings.Tag = lycanthropySpellTag;
             GameManager.Instance.PlayerEntity.AddSpell(bundleSettings);
         }
