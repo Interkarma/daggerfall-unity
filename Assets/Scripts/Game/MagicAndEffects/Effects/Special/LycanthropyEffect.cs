@@ -198,6 +198,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return compoundRace;
         }
 
+        void ApplyLycanthropeAdvantages()
+        {
+            // Set stat mods
+            const int statModAmount = 40;
+            SetStatMod(DFCareer.Stats.Strength, statModAmount);
+            SetStatMod(DFCareer.Stats.Agility, statModAmount);
+            SetStatMod(DFCareer.Stats.Endurance, statModAmount);
+            SetStatMod(DFCareer.Stats.Speed, statModAmount);
+
+            // Set skill mods
+            const int skillModAmount = 30;
+            SetSkillMod(DFCareer.Skills.Swimming, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Running, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Stealth, skillModAmount);
+            SetSkillMod(DFCareer.Skills.CriticalStrike, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Climbing, skillModAmount);
+            SetSkillMod(DFCareer.Skills.HandToHand, skillModAmount);
+        }
+
         bool IsWearingHircineRing()
         {
             DaggerfallUnityItem[] equipTable = GameManager.Instance.PlayerEntity.ItemEquipTable.EquipTable;
@@ -213,11 +232,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 item != null &&
                 item.IsArtifact &&
                 item.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Hircine_Ring);
-        }
-
-        void ApplyLycanthropeAdvantages()
-        {
-            // TODO: Apply advantages
         }
 
         #endregion
