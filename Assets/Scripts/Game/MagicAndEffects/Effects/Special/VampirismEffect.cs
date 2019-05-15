@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Remove player metal immunity
-            entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.None;
+            entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Iron;
         }
 
         #endregion

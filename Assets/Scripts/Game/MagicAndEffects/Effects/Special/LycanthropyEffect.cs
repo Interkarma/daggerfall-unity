@@ -126,10 +126,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Assign constant state changes for lycanthropes
             entityBehaviour.Entity.IsImmuneToDisease = true;
-            entityBehaviour.Entity.IsImmuneToParalysis = true;
 
-            // TODO: Assign minimum metal to hit only while transformed
-            //entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Silver;
+            // Assign minimum metal to hit only while transformed
+            if (isTransformed)
+                entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Silver;
+            else
+                entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Iron;
         }
 
         public override void MagicRound()
