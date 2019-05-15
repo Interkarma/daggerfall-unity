@@ -31,6 +31,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Allow racial override to suppress Combat Voices option as required.
+        /// </summary>
+        public virtual bool SuppressOptionalCombatVoices
+        {
+            get { return false; }
+        }
+
+        #endregion
+
         #region Overrides
 
         // Always present at least one round remaining so effect system does not remove

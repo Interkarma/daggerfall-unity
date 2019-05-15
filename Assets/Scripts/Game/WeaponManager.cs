@@ -333,8 +333,12 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
+                // Racial override can suppress optional attack voice
+                RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                bool suppressCombatVoices = racialOverride != null && racialOverride.SuppressOptionalCombatVoices;
+
                 // Chance to play attack voice
-                if (DaggerfallUnity.Settings.CombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && Dice100.SuccessRoll(20))
+                if (DaggerfallUnity.Settings.CombatVoices && !suppressCombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && Dice100.SuccessRoll(20))
                     ScreenWeapon.PlayAttackVoice();
 
                 // Transfer damage.

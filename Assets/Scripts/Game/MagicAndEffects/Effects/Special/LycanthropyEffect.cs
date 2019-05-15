@@ -74,6 +74,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return isTransformed; }
         }
 
+        /// <summary>
+        /// Combat Voices option is suppressed while transformed.
+        /// Transformed lycanthropes play custom attack voices on enemy hit.
+        /// </summary>
+        public override bool SuppressOptionalCombatVoices
+        {
+            get { return isTransformed; }
+        }
+
         #endregion
 
         #region Overrides
@@ -149,7 +158,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 target.WeaponType = WeaponTypes.Werecreature;
                 target.MetalType = MetalTypes.None;
                 target.DrawWeaponSound = SoundClips.None;
-                target.SwingWeaponSound = SoundClips.None;
+                target.SwingWeaponSound = SoundClips.SwingHighPitch;
                 target.Reach = WeaponManager.defaultWeaponReach;
                 return true;
             }
