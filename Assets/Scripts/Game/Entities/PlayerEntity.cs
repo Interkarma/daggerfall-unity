@@ -1087,6 +1087,30 @@ namespace DaggerfallWorkshop.Game.Entity
             GameManager.Instance.PlayerEntity.AddSpell(bundleSettings);
         }
 
+        public void AssignPlayerLycanthropySpell()
+        {
+            const int lycanthropyID = 92;
+
+            // Get spell record data
+            SpellRecord.SpellRecordData recordData;
+            if (!GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(lycanthropyID, out recordData))
+                return;
+
+            // Remove ! from start of spell name
+            if (recordData.spellName.StartsWith("!"))
+                recordData.spellName = recordData.spellName.Substring(1);
+
+            // Get effect bundle settings
+            EffectBundleSettings bundleSettings;
+            if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(recordData, BundleTypes.Spell, out bundleSettings))
+                return;
+
+            // Assign to player entity spellbook with some custom settings
+            bundleSettings.MinimumCastingCost = true;
+            bundleSettings.Tag = lycanthropySpellTag;
+            GameManager.Instance.PlayerEntity.AddSpell(bundleSettings);
+        }
+
         /// <summary>
         /// Assigns default entity settings.
         /// </summary>

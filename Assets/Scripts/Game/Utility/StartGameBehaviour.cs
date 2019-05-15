@@ -650,7 +650,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 if (lycanthropyEffect != null)
                 {
                     lycanthropyEffect.InfectionType = lycanthropyType;
-                    // TODO: Add Lycanthropy spell bundle to spellbook
+                    GameManager.Instance.PlayerEntity.AssignPlayerLycanthropySpell();
                 }
             }
 
