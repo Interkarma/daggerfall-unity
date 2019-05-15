@@ -132,7 +132,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             ApplyLycanthropeAdvantages();
 
-            Debug.LogFormat("Lycanthropy MagicRound(). Type={0}, HircineRing={1}, IsTransformed={2}", infectionType, wearingHircineRing, isTransformed);
+            // Some temp debug info used during development
+            Debug.LogFormat(
+                "Lycanthropy MagicRound(). Type={0}, HircineRing={1}, IsTransformed={2}, Massar={3}, Secunda={4}",
+                infectionType,
+                wearingHircineRing,
+                isTransformed,
+                DaggerfallUnity.Instance.WorldTime.Now.MassarLunarPhase,
+                DaggerfallUnity.Instance.WorldTime.Now.SecundaLunarPhase);
+        }
+
+        public override bool SetFPSWeapon(FPSWeapon target)
+        {
+            if (isTransformed)
+            {
+                target.WeaponType = WeaponTypes.Werecreature;
+                target.MetalType = MetalTypes.None;
+                target.DrawWeaponSound = SoundClips.None;
+                target.SwingWeaponSound = SoundClips.None;
+                target.Reach = WeaponManager.defaultWeaponReach;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game
     public class WeaponManager : MonoBehaviour
     {
         const float defaultBowReach = 50f;
-        const float defaultWeaponReach = 2.25f;
+        public const float defaultWeaponReach = 2.25f;
 
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
@@ -696,9 +696,10 @@ namespace DaggerfallWorkshop.Game
             if (!ScreenWeapon)
                 return;
 
-            if (GameManager.Instance.PlayerEffectManager.IsTransformedLycanthrope())
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null && racialOverride.SetFPSWeapon(ScreenWeapon))
             {
-                SetWerecreature(ScreenWeapon);
+                return;
             }
             else if (usingRightHand)
             {
@@ -737,14 +738,6 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
-        }
-
-        void SetWerecreature(FPSWeapon target)
-        {
-            target.WeaponType = WeaponTypes.Werecreature;
-            target.MetalType = MetalTypes.None;
-            target.DrawWeaponSound = SoundClips.None;
-            target.SwingWeaponSound = SoundClips.None;
         }
 
         #endregion

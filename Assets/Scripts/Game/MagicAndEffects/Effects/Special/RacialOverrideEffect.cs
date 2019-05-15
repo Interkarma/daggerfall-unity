@@ -125,6 +125,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
         }
 
+        /// <summary>
+        /// Set state of current FPS weapon from WeaponManager.
+        /// Allows the racial override to set a unique weapon type such as wereclaws.
+        /// </summary>
+        /// <param name="target">Target FPSWeapon to change.</param>
+        /// <returns>True if weapon changed.</returns>
+        public virtual bool SetFPSWeapon(FPSWeapon target)
+        {
+            return false;
+        }
+
         #endregion
 
         #region Properties
