@@ -586,10 +586,8 @@ namespace DaggerfallWorkshop.Game
             if (audioSource && ImpactSound != SoundClips.None)
             {
                 // Using weakened spatialBlend, classic does not appear to use 3D sound for spell impact at all
-                if (!isArrow)
-                    audioSource.PlayOneShot(ImpactSound, 0.95f);
-                else
-                    audioSource.PlayOneShot(ImpactSound);
+                float spatialBlend = !isArrow ? 0.95f : 1f;
+                audioSource.PlayOneShot(ImpactSound, spatialBlend, 5f);
             }
         }
 
