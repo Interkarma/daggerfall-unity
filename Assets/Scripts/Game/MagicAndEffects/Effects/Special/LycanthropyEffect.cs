@@ -11,14 +11,11 @@
 
 using UnityEngine;
 using FullSerializer;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -41,6 +38,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         LycanthropyTypes infectionType = LycanthropyTypes.None;
         uint lastKilledInnocent;
         bool hasStartedInitialLycanthropyQuest;
+        bool wearingHircineRing;
 
         DFSize backgroundFullSize = new DFSize(125, 198);
         Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
@@ -117,7 +115,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void MagicRound()
         {
             base.MagicRound();
+
+            // Check if player is wearing Hircine's Ring at start of each magic round
+            // This item will change certain lycanthropy payload behaviours when equipped
+            wearingHircineRing = IsWearingHircineRing();
+
             ApplyLycanthropeAdvantages();
+
+            Debug.LogFormat("Lycanthropy MagicRound(). Type={0}, HircineRing={1}", infectionType, wearingHircineRing);
         }
 
         #endregion
@@ -163,6 +168,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return compoundRace;
         }
 
+        bool IsWearingHircineRing()
+        {
+            DaggerfallUnityItem[] equipTable = GameManager.Instance.PlayerEntity.ItemEquipTable.EquipTable;
+            if (equipTable == null || equipTable.Length == 0)
+                return false;
+
+            return IsHircineRingItem(equipTable[(int)EquipSlots.Ring0]) || IsHircineRingItem(equipTable[(int)EquipSlots.Ring1]);
+        }
+
+        bool IsHircineRingItem(DaggerfallUnityItem item)
+        {
+            return
+                item != null &&
+                item.IsArtifact &&
+                item.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Hircine_Ring);
+        }
+
         void ApplyLycanthropeAdvantages()
         {
             // TODO: Apply advantages
@@ -171,6 +193,42 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #endregion
 
         #region Serialization
+
+        [fsObject("v1")]
+        public struct CustomSaveData_v1
+        {
+            public RaceTemplate compoundRace;
+            public LycanthropyTypes infectionType;
+            public uint lastKilledInnocent;
+            public bool hasStartedInitialLycanthropyQuest;
+            public bool wearingHircineRing;
+        }
+
+        public override object GetSaveData()
+        {
+            CustomSaveData_v1 data = new CustomSaveData_v1();
+            data.compoundRace = compoundRace;
+            data.infectionType = infectionType;
+            data.lastKilledInnocent = lastKilledInnocent;
+            data.hasStartedInitialLycanthropyQuest = hasStartedInitialLycanthropyQuest;
+            data.wearingHircineRing = wearingHircineRing;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            if (dataIn == null)
+                return;
+
+            CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
+            compoundRace = data.compoundRace;
+            infectionType = data.infectionType;
+            lastKilledInnocent = data.lastKilledInnocent;
+            hasStartedInitialLycanthropyQuest = data.hasStartedInitialLycanthropyQuest;
+            wearingHircineRing = data.wearingHircineRing;
+        }
+
         #endregion
 
         #region Console Commands

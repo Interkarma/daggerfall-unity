@@ -1226,7 +1226,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Helper to create stage two curse of lycanthropy.
         /// </summary>
         /// <returns>EntityEffectBundle.</returns>
-        public EntityEffectBundle CreateLycanthropyCurse(LycanthropyTypes infectionType)
+        public EntityEffectBundle CreateLycanthropyCurse()
         {
             EffectBundleSettings settings = new EffectBundleSettings()
             {

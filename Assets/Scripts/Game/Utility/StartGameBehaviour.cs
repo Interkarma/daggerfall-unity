@@ -644,14 +644,14 @@ namespace DaggerfallWorkshop.Game.Utility
                         Debug.Log("Restoring lycanthropy (wereboar) to classic character.");
                         break;
                 }
-                //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyCurse(infectionType);
-                //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
-                //LycanthropyEffect lycanthropyEffect = (LycanthropyEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<LycanthropyEffect>();
-                //if (lycanthropyEffect != null)
-                //{
-                //    lycanthropyEffect.InfectionType = lycanthropyType;
-                //    // TODO: Add Lycanthropy spell bundle to spellbook
-                //}
+                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyCurse();
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                LycanthropyEffect lycanthropyEffect = (LycanthropyEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<LycanthropyEffect>();
+                if (lycanthropyEffect != null)
+                {
+                    lycanthropyEffect.InfectionType = lycanthropyType;
+                    // TODO: Add Lycanthropy spell bundle to spellbook
+                }
             }
 
             // Start game
