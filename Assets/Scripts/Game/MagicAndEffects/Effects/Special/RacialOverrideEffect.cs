@@ -41,6 +41,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return false; }
         }
 
+        /// <summary>
+        /// Allow racial override to suppress paper doll body and items to show background only.
+        /// </summary>
+        public virtual bool SuppressPaperDollBodyAndItems
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Overrides

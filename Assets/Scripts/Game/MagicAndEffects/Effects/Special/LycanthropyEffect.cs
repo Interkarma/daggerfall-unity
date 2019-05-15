@@ -84,6 +84,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return isTransformed; }
         }
 
+        /// <summary>
+        /// Lycanthropes only display a custom background while transformed.
+        /// </summary>
+        public override bool SuppressPaperDollBodyAndItems
+        {
+            get { return isTransformed; }
+        }
+
         #endregion
 
         #region Overrides
