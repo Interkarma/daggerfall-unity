@@ -16,6 +16,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -164,6 +165,38 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             return false;
+        }
+
+        public override void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        {
+            const int chanceOfAttackSound = 10;
+            const int chanceOfBarkSound = 20;
+
+            // Do nothing if not transformed
+            if (!isTransformed)
+                return;
+
+            // Lycanthrope characters emit both attack and bark sounds while attacking
+            SoundClips customSound = SoundClips.None;
+            if (infectionType == LycanthropyTypes.Werewolf)
+            {
+                if (Dice100.SuccessRoll(chanceOfAttackSound))
+                    customSound = SoundClips.EnemyWerewolfAttack;
+                else if (Dice100.SuccessRoll(chanceOfBarkSound))
+                    customSound = SoundClips.EnemyWerewolfBark;
+            }
+            else if (infectionType == LycanthropyTypes.Wereboar)
+            {
+                if (Dice100.SuccessRoll(chanceOfAttackSound))
+                    customSound = SoundClips.EnemyWereboarAttack;
+                else if (Dice100.SuccessRoll(chanceOfBarkSound))
+                    customSound = SoundClips.EnemyWereboarBark;
+            }
+
+            // Play sound through weapon
+            FPSWeapon screenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
+            if (screenWeapon && customSound != SoundClips.None)
+                screenWeapon.PlayAttackVoice(customSound);
         }
 
         #endregion
