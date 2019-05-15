@@ -585,9 +585,9 @@ namespace DaggerfallWorkshop.Game
         {
             if (audioSource && ImpactSound != SoundClips.None)
             {
-                // Using doppler of zero as classic does not appear to use 3D sound for spell impact
+                // Using weakened spatialBlend, classic does not appear to use 3D sound for spell impact at all
                 if (!isArrow)
-                    audioSource.PlayOneShot(ImpactSound, 0);
+                    audioSource.PlayOneShot(ImpactSound, 0.95f);
                 else
                     audioSource.PlayOneShot(ImpactSound);
             }
