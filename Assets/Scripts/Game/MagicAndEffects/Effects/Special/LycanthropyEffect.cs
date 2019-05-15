@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         uint lastKilledInnocent;
         bool hasStartedInitialLycanthropyQuest;
         bool wearingHircineRing;
+        bool isTransformed;
 
         DFSize backgroundFullSize = new DFSize(125, 198);
         Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
@@ -55,7 +56,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #endregion
 
-        #region Overrides
+        #region Properties
 
         public LycanthropyTypes InfectionType
         {
@@ -67,6 +68,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             get { return GetCompoundRace(); }
         }
+
+        public bool IsTransformed
+        {
+            get { return isTransformed; }
+        }
+
+        #endregion
+
+        #region Overrides
 
         public override void SetProperties()
         {
@@ -122,7 +132,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             ApplyLycanthropeAdvantages();
 
-            Debug.LogFormat("Lycanthropy MagicRound(). Type={0}, HircineRing={1}", infectionType, wearingHircineRing);
+            Debug.LogFormat("Lycanthropy MagicRound(). Type={0}, HircineRing={1}, IsTransformed={2}", infectionType, wearingHircineRing, isTransformed);
         }
 
         #endregion
@@ -140,6 +150,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public virtual void MorphSelf()
         {
             // TODO: Implement transformation
+
+            // Simplistic implementation just to bootstrap various payloads
+            if (!isTransformed)
+            {
+                isTransformed = true;
+
+                // Unequip any items held in hands
+                GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(EquipSlots.RightHand);
+                GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(EquipSlots.LeftHand);
+
+                // TODO: Show claws
+
+                // TODO: Set last transform time for 24-hour cooldown
+            }
+            else
+            {
+                isTransformed = false;
+
+                // TODO: Show unarmed
+            }
         }
 
         #endregion
@@ -202,6 +232,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             public uint lastKilledInnocent;
             public bool hasStartedInitialLycanthropyQuest;
             public bool wearingHircineRing;
+            public bool isTransformed;
         }
 
         public override object GetSaveData()
@@ -212,6 +243,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             data.lastKilledInnocent = lastKilledInnocent;
             data.hasStartedInitialLycanthropyQuest = hasStartedInitialLycanthropyQuest;
             data.wearingHircineRing = wearingHircineRing;
+            data.isTransformed = isTransformed;
 
             return data;
         }
@@ -227,6 +259,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             lastKilledInnocent = data.lastKilledInnocent;
             hasStartedInitialLycanthropyQuest = data.hasStartedInitialLycanthropyQuest;
             wearingHircineRing = data.wearingHircineRing;
+            isTransformed = data.isTransformed;
         }
 
         #endregion
