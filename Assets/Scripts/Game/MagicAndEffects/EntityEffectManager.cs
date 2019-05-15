@@ -1347,6 +1347,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return racialOverrideEffect is VampirismEffect;
         }
 
+        public bool HasLycanthropy()
+        {
+            return racialOverrideEffect is LycanthropyEffect;
+        }
+
+        public bool IsTransformedLycanthrope()
+        {
+            if (HasLycanthropy())
+                return (racialOverrideEffect as LycanthropyEffect).IsTransformed;
+            else
+                return false;
+        }
+
         public void EndVampirism()
         {
             if (HasVampirism())

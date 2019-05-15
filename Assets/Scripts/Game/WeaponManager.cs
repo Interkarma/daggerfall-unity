@@ -696,7 +696,11 @@ namespace DaggerfallWorkshop.Game
             if (!ScreenWeapon)
                 return;
 
-            if (usingRightHand)
+            if (GameManager.Instance.PlayerEffectManager.IsTransformedLycanthrope())
+            {
+                SetWerecreature(ScreenWeapon);
+            }
+            else if (usingRightHand)
             {
                 if (currentRightHandWeapon == null)
                     SetMelee(ScreenWeapon);
@@ -733,6 +737,14 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
+        }
+
+        void SetWerecreature(FPSWeapon target)
+        {
+            target.WeaponType = WeaponTypes.Werecreature;
+            target.MetalType = MetalTypes.None;
+            target.DrawWeaponSound = SoundClips.None;
+            target.SwingWeaponSound = SoundClips.None;
         }
 
         #endregion
