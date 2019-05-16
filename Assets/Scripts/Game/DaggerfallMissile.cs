@@ -68,6 +68,7 @@ namespace DaggerfallWorkshop.Game
         Rigidbody myRigidbody;
         DaggerfallBillboard myBillboard;
         bool forceDisableSpellLighting;
+        bool noSpellsSpatialBlend = false;
         float lifespan = 0f;
         float postImpactLifespan = 0f;
         TargetTypes targetType = TargetTypes.None;
@@ -84,6 +85,7 @@ namespace DaggerfallWorkshop.Game
         EnemySenses enemySenses;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
+
 
         #endregion
 
@@ -585,9 +587,9 @@ namespace DaggerfallWorkshop.Game
         {
             if (audioSource && ImpactSound != SoundClips.None)
             {
-                // Using weakened spatialBlend, classic does not appear to use 3D sound for spell impact at all
-                float spatialBlend = !isArrow ? 0.95f : 1f;
-                audioSource.PlayOneShot(ImpactSound, spatialBlend, 5f);
+                // Classic does not appear to use 3D sound for spell impact at all
+                float spatialBlend = !isArrow && noSpellsSpatialBlend ? 0f : 1f;
+                audioSource.PlayOneShot(ImpactSound, spatialBlend);
             }
         }
 
