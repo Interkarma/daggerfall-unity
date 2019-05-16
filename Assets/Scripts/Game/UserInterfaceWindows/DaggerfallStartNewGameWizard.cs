@@ -154,14 +154,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetChooseBioWindow()
         {
-            if (createCharChooseBioWindow == null)
-            {
-                createCharChooseBioWindow = new CreateCharChooseBio(uiManager, createCharRaceSelectWindow);
-                createCharChooseBioWindow.OnClose += CreateCharChooseBioWindow_OnClose;
-            }
-
-            // Reset biography window in case user already answered it then cancelled
-            createCharBiographyWindow = null;
+            createCharChooseBioWindow = new CreateCharChooseBio(uiManager, createCharRaceSelectWindow);
+            createCharChooseBioWindow.OnClose += CreateCharChooseBioWindow_OnClose;
 
             wizardStage = WizardStages.SelectBiographyMethod;
             uiManager.PushWindow(createCharChooseBioWindow);
@@ -169,15 +163,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetBiographyWindow()
         {
-            if (createCharBiographyWindow == null)
+            if (!characterDocument.isCustom)
             {
-                if (!characterDocument.isCustom)
-                {
-                    characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
-                }
-                createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
-                createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
+                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
             }
+            createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
+            createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
                 
             createCharBiographyWindow.ClassIndex = characterDocument.classIndex;
             wizardStage = WizardStages.BiographyQuestions;
@@ -357,7 +348,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             characterDocument.career.Speed = createCharCustomClassWindow.Stats.WorkingStats.LiveSpeed;
             characterDocument.career.Luck = createCharCustomClassWindow.Stats.WorkingStats.LiveLuck;
 
-            SetChooseBioWindow();
+            SetClassSelectWindow();
         }
 
         void CreateCharChooseBioWindow_OnClose()
