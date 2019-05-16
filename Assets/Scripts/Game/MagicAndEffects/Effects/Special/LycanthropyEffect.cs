@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public const string LycanthropyCurseKey = "Lycanthropy-Curse";
 
+        const string generalTextDatabase = "GeneralText";
         const int paperDollWidth = 110;
         const int paperDollHeight = 184;
 
@@ -243,6 +244,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             FPSWeapon screenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
             if (screenWeapon && customSound != SoundClips.None)
                 screenWeapon.PlayAttackVoice(customSound);
+        }
+
+        public override bool GetSuppressInventory(out string suppressInventoryMessage)
+        {
+            if (isTransformed)
+            {
+                suppressInventoryMessage = TextManager.Instance.GetText(generalTextDatabase, "inventoryWhileShapechanged");
+                return true;
+            }
+            else
+            {
+                suppressInventoryMessage = string.Empty;
+                return false;
+            }
         }
 
         #endregion

@@ -190,6 +190,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         KeyCode toggleClosedBinding;
         private int maxAmount;
 
+        bool suppressInventory = false;
+        string suppressInventoryMessage = string.Empty;
+
         #endregion
 
         #region Enums
@@ -327,6 +330,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
+
+            // Close window immediately if inventory suppressed
+            if (suppressInventory)
+            {
+                CloseWindow();
+                if (!string.IsNullOrEmpty(suppressInventoryMessage))
+                    DaggerfallUI.MessageBox(suppressInventoryMessage);
+                return;
+            }
         }
 
         protected void SetupItemListScrollers()
@@ -527,6 +539,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            // Racial override can suppress inventory
+            // We still setup and push window normally, actual suppression is done in Update()
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressInventory = racialOverride.GetSuppressInventory(out suppressInventoryMessage);
+
             // Local items always points to player inventory
             localItems = PlayerEntity.Items;
 

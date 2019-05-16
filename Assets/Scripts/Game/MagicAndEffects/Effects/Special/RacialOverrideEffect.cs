@@ -156,6 +156,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return false;
         }
 
+        /// <summary>
+        /// Allow racial override to suppress inventory UI.
+        /// Some care might need to be taken by other systems this does not crash game like classic.
+        /// </summary>
+        /// <param name="suppressInventoryMessage">Optional message to display when inventory suppressed.</param>
+        public virtual bool GetSuppressInventory(out string suppressInventoryMessage)
+        {
+            suppressInventoryMessage = string.Empty;
+            return false;
+        }
+
         #endregion
 
         #region Properties

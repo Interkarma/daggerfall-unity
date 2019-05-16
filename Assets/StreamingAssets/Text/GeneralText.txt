@@ -7,3 +7,4 @@ schema: *key,$text
 canOnlyCastOncePerDay,          "Can only be cast once per day..."
 youNeedToHuntTheInnocent,       "You feel the need to hunt the innocent..."
 youDreamOfTheMoon,              "You dream, once again, of the moon..."
+inventoryWhileShapechanged,     "You cannot access the inventory while shapechanged..."
