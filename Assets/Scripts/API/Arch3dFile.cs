@@ -661,8 +661,7 @@ namespace DaggerfallConnect.Arena2
                     // coordinates from point 4 and above are ignored)
                     if (point < 3 && records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
                     {
-                        UVunpack(ref u);
-                        UVunpack(ref v);
+                        Uunpack(ref u);
                     }
 
                     // Store UV coordinates
@@ -770,25 +769,25 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
-        /// Unpack special texture coordinates.
+        /// The U texture coordinate sometimes is packed oddly. This method
+        /// aims at fixing such cases as best as possible.
         /// </summary>
-        /// <param name="u">The U or V coordinate.</param>
-        private static void UVunpack(ref int u)
+        /// <param name="u">The U texture coordinate.</param>
+        private static void Uunpack(ref int u)
         {
-            const int n = 1024;
-            const int delta = n * 8;
-
             // A packed coordinate has to be a multiple of 1024
-            // Also avoid unpacking 8192 or -8192
-            if (u % n != 0 || u == delta || u == -delta)
+            // Also avoid unpacking -8192
+            if (u % 1024 != 0 || u == -8192 || u > -7168 && u < 14336)
                 return;
 
-            // Values below or above this one produce incorrect results
-            const int threshold = delta - n - 1;
-            if (u > threshold)
-                u = n - (u + n) % delta;
-            else if (u < -threshold)
-                u = n + (u - n) % delta;
+            // Use the nearest multiple of 8192
+            int multSup = u - 1;
+            multSup = multSup >> 13;
+            ++multSup;
+            multSup = multSup << 13;
+            int multInf = multSup - 8192;
+
+            u = Math.Min(u - multInf, multSup - u);
         }
 
         /// <summary>
