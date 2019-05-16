@@ -105,11 +105,11 @@ namespace DaggerfallWorkshop.Game
         readonly ushort[] answersToNonDirections =  { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7304, 7269, 7284,
                                                       7261, 7276, 7291, 7260, 7275, 7290, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
 
-        const float DefaultChanceKnowsSomethingAboutWhereIs = 0.5f; // Chances unknown
-        const float DefaultChanceKnowsSomethingAboutQuest = 0.5f; // Chances unknown
-        const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.5f; // Chances unknown
-        const float DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC = 0.0f; // Chances unknown
-        const float ChanceToRevealLocationOnMap = 0.25f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutWhereIs = 0.6f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutQuest = 0.8f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.8f; // Chances unknown
+        const float DefaultChanceKnowsSomethingAboutOrganizationsMobileNPC = 0.8f; // Chances unknown
+        const float ChanceToRevealLocationOnMap = 0.35f; // Chances unknown
 
         const int maxNumAnswersNpcGivesTellMeAboutOrRumors = 1; // Maximum number of answers npc gives about "tell me about" questions or rumors
 
