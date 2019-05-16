@@ -572,16 +572,6 @@ namespace DaggerfallConnect.Arena2
             records[record].Header.PlaneListOffset = reader.ReadInt32();
         }
 
-        private static int NearestMultipleOf16(int val)
-        {
-            int multSup = val - 1;
-            multSup = multSup >> 4;
-            ++multSup;
-            multSup = multSup << 4;
-            int multInf = multSup - 16;
-            return val - multInf < multSup - val ? multInf : multSup;
-        }
-
         /// <summary>
         /// Read mesh data to record array.
         /// </summary>
@@ -654,12 +644,13 @@ namespace DaggerfallConnect.Arena2
                     int pointOffset = reader.ReadInt32();
 
                     // Read UV data
-                    int u = NearestMultipleOf16(reader.ReadInt16());
-                    int v = NearestMultipleOf16(reader.ReadInt16());
+                    int u = reader.ReadInt16();
+                    int v = reader.ReadInt16();
 
                     // Fix some UV coordinates (process only the first 3 points as
                     // coordinates from point 4 and above are ignored)
-                    if (point < 3 && records[record].PureMesh.Planes[plane].Header.UVunpack == 0)
+                    // Only models whose id is below 1000 seem to require some processing here
+                    if (point < 3 && records[record].PureMesh.Planes[plane].Header.UVunpack == 0 && GetRecordId(record) < 1000)
                     {
                         UVunpack(ref u);
                         UVunpack(ref v);
@@ -775,20 +766,21 @@ namespace DaggerfallConnect.Arena2
         /// <param name="u">The U or V coordinate.</param>
         private static void UVunpack(ref int u)
         {
-            const int n = 1024;
-            const int delta = n * 8;
-
-            // A packed coordinate has to be a multiple of 1024
-            // Also avoid unpacking 8192 or -8192
-            if (u % n != 0 || u == delta || u == -delta)
+            // A packed coordinate is outside the -14335,14335 range.
+            // -7168 is the only known exception
+            if (u > -14336 && u < 14336 && u != -7168)
                 return;
 
-            // Values below or above this one produce incorrect results
-            const int threshold = delta - n - 1;
-            if (u > threshold)
-                u = n - (u + n) % delta;
-            else if (u < -threshold)
-                u = n + (u - n) % delta;
+            // Get the nearest multiple of 8192
+            int nextMult = u - 1;
+            nextMult = nextMult >> 13;
+            ++nextMult;
+            nextMult = nextMult << 13;
+            int prevMult = nextMult - 8192;
+            int mult = u - prevMult < nextMult - u ? prevMult : nextMult;
+
+            // Unpack the coordinate by subtracting the above multiple
+            u -= mult;
         }
 
         /// <summary>
