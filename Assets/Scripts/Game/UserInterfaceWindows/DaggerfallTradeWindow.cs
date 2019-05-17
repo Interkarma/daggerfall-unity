@@ -101,6 +101,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
 
+        bool suppressInventory = false;
+        string suppressInventoryMessage = string.Empty;
+
         static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
             { DFLocation.BuildingTypes.Alchemist, new List<ItemGroups>()
@@ -300,8 +303,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Public Methods
 
+        public override void Update()
+        {
+            base.Update();
+
+            // Close window immediately if trade suppressed
+            if (suppressInventory)
+            {
+                CloseWindow();
+                if (!string.IsNullOrEmpty(suppressInventoryMessage))
+                    DaggerfallUI.MessageBox(suppressInventoryMessage);
+                return;
+            }
+        }
+
         public override void OnPush()
         {
+            // Racial override can suppress trade
+            // We still setup and push window normally, actual suppression is done in Update()
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressInventory = racialOverride.GetSuppressInventory(out suppressInventoryMessage);
+
             // Identify spell can run anywhere - only get building info when not using spell
             if (!usingIdentifySpell)
             {
