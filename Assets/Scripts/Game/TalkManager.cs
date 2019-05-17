@@ -2157,6 +2157,16 @@ namespace DaggerfallWorkshop.Game
 
             const int isInSameHolyOrderDislikePlayerRefusingToTalkTextId = 8555;
 
+            // Racial override can suppress talk
+            // Also doing suppression here to prevent talk window flashing open and closed in some cases
+            string suppressTalkMessage = string.Empty;
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null && racialOverride.GetSuppressTalk(out suppressTalkMessage))
+            {
+                DaggerfallUI.MessageBox(suppressTalkMessage);
+                return;
+            }
+
             if (reactionToPlayer >= -20)
             {
                 DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);

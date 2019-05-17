@@ -260,6 +260,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
         }
 
+        public override bool GetSuppressTalk(out string suppressTalkMessage)
+        {
+            if (isTransformed)
+            {
+                suppressTalkMessage = TextManager.Instance.GetText(generalTextDatabase, "youGetNoResponse");
+                return true;
+            }
+            else
+            {
+                suppressTalkMessage = string.Empty;
+                return false;
+            }
+        }
+
         #endregion
 
         #region Public Methods

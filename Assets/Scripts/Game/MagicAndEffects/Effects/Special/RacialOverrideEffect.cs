@@ -161,9 +161,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// Some care might need to be taken by other systems this does not crash game like classic.
         /// </summary>
         /// <param name="suppressInventoryMessage">Optional message to display when inventory suppressed.</param>
+        /// <returns>True if inventory should be suppressed.</returns>
         public virtual bool GetSuppressInventory(out string suppressInventoryMessage)
         {
             suppressInventoryMessage = string.Empty;
+            return false;
+        }
+
+        /// <summary>
+        /// Allow racial overrides to suppress talk UI.
+        /// </summary>
+        /// <param name="suppressTalkMessage">Optional message to display when talk suppressed.</param>
+        /// <returns>True if talk should be suppressed.</returns>
+        public virtual bool GetSuppressTalk(out string suppressTalkMessage)
+        {
+            suppressTalkMessage = string.Empty;
             return false;
         }
 
