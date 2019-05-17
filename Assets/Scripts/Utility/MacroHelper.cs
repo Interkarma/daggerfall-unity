@@ -962,7 +962,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string FactionOrderName(IMacroContextProvider mcp)
-        {   // %fon
+        {   // %fon %kno
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().FactionOrderName();
         }

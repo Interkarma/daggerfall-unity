@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
         public virtual string FactionOrderName()
-        {   // %fon
+        {   // %fon %kno
             throw new NotImplementedException();
         }
 
