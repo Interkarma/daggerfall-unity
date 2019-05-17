@@ -49,12 +49,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
         Texture2D backgroundTexture;
 
+        float moveSoundTimer;
+
         #endregion
 
         #region Constructors
 
         public LycanthropyEffect()
         {
+            InitMoveSoundTimer();
+
             // TODO: Register commands
         }
 
@@ -143,6 +147,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Silver;
             else
                 entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Iron;
+
+            // Play move sound while transformed after random amount of time has elapsed
+            if (isTransformed)
+            {
+                moveSoundTimer -= Time.deltaTime;
+                if (moveSoundTimer < 0)
+                {
+                    PlayLycanthropeMoveSound();
+                    InitMoveSoundTimer();
+                }
+            }
         }
 
         public override void MagicRound()
@@ -157,7 +172,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             isFullMoon = DaggerfallUnity.Instance.WorldTime.Now.MassarLunarPhase == LunarPhases.Full || DaggerfallUnity.Instance.WorldTime.Now.SecundaLunarPhase == LunarPhases.Full;
 
             ApplyLycanthropeAdvantages();
-            PlayLycanthropeMoveSound();
             ForceTransformDuringFullMoon();
 
             // Some temp debug info used during development
@@ -313,6 +327,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 else
                     compoundRace.Name = GameManager.Instance.PlayerEntity.BirthRaceTemplate.Name;
 
+                // Initialise move sound timer
+                InitMoveSoundTimer();
+
                 // TODO: Set last transform time for 24-hour cooldown
             }
             else
@@ -366,30 +383,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetSkillMod(DFCareer.Skills.HandToHand, skillModAmount);
         }
 
+        void InitMoveSoundTimer(float minTime = 4, float maxTime = 20)
+        {
+            moveSoundTimer = Random.Range(minTime, maxTime);
+        }
+
         void PlayLycanthropeMoveSound()
         {
-            const int chanceToPlay = 30;
+            // Get sound based on infection type
+            SoundClips customSound = SoundClips.None;
+            if (infectionType == LycanthropyTypes.Werewolf)
+                customSound = SoundClips.EnemyWerewolfMove;
+            else if (infectionType == LycanthropyTypes.Wereboar)
+                customSound = SoundClips.EnemyWereboarMove;
 
-            // Play "move" sound randomly while transformed
-            if (isTransformed && Dice100.SuccessRoll(chanceToPlay))
-            {
-                // Don't play sound while rest open or during synthetic time increase
-                if (GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease ||
-                    DaggerfallUI.UIManager.TopWindow is UserInterfaceWindows.DaggerfallRestWindow)
-                    return;
-
-                // Get sound based on infection type
-                SoundClips customSound = SoundClips.None;
-                if (infectionType == LycanthropyTypes.Werewolf)
-                    customSound = SoundClips.EnemyWerewolfMove;
-                else if (infectionType == LycanthropyTypes.Wereboar)
-                    customSound = SoundClips.EnemyWereboarMove;
-
-                // Play sound through weapon
-                FPSWeapon screenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
-                if (screenWeapon && customSound != SoundClips.None)
-                    screenWeapon.PlayAttackVoice(customSound);
-            }
+            // Play sound through weapon
+            FPSWeapon screenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
+            if (screenWeapon && customSound != SoundClips.None)
+                screenWeapon.PlayAttackVoice(customSound);
         }
 
         void ForceTransformDuringFullMoon()
