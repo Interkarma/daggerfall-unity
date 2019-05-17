@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             wearingHircineRing = IsWearingHircineRing();
 
             ApplyLycanthropeAdvantages();
+            PlayLycanthropeMoveSound();
 
             // Some temp debug info used during development
             Debug.LogFormat(
@@ -358,6 +359,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetSkillMod(DFCareer.Skills.CriticalStrike, skillModAmount);
             SetSkillMod(DFCareer.Skills.Climbing, skillModAmount);
             SetSkillMod(DFCareer.Skills.HandToHand, skillModAmount);
+        }
+
+        void PlayLycanthropeMoveSound()
+        {
+            const int chanceToPlay = 35;
+
+            // Play "move" sound randomly while transformed
+            if (isTransformed && Dice100.SuccessRoll(chanceToPlay))
+            {
+                SoundClips customSound = SoundClips.None;
+                if (infectionType == LycanthropyTypes.Werewolf)
+                    customSound = SoundClips.EnemyWerewolfMove;
+                else if (infectionType == LycanthropyTypes.Wereboar)
+                    customSound = SoundClips.EnemyWereboarMove;
+
+                // Play sound through weapon
+                FPSWeapon screenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
+                if (screenWeapon && customSound != SoundClips.None)
+                    screenWeapon.PlayAttackVoice(customSound);
+            }
         }
 
         bool IsWearingHircineRing()
