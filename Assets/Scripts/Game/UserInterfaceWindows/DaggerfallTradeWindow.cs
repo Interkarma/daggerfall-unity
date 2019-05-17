@@ -357,11 +357,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
+                // Check holidays for half price sales:
+                // - Merchants Festival, suns height 10th for normal shops
+                // - Tales and Tallows hearth fire 3rd for mages guild
+                // - Weapons on Warriors Festival suns dusk 20th
+                uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+
                 for (int i = 0; i < basketItems.Count; i++)
                 {
                     DaggerfallUnityItem item = basketItems.GetItem(i);
                     modeActionEnabled = true;
-                    cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                    int itemPrice = FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                    if ((holidayId == (int)DFLocation.Holidays.Merchants_Festival && guild == null) ||
+                        (holidayId == (int)DFLocation.Holidays.Tales_and_Tallow && guild != null && guild.GetFactionId() == (int)FactionFile.FactionIDs.The_Mages_Guild) ||
+                        (holidayId == (int)DFLocation.Holidays.Warriors_Festival && guild == null && item.ItemGroup == ItemGroups.Weapons))
+                    {
+                        itemPrice /= 2;
+                    }
+                    cost += itemPrice;
                 }
             }
             else if (remoteItems != null)

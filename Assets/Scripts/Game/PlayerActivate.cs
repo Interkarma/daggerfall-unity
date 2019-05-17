@@ -883,7 +883,17 @@ namespace DaggerfallWorkshop.Game
             {
                 unlocked = true;
             }
-            // Handle other structures (stores, temples, taverns, palaces)
+            // Handle stores
+            else if (RMBLayout.IsShop(type))
+            {
+                uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                int holidayId = Formulas.FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+                if (holidayId == (int)DFLocation.Holidays.Suns_Rest)
+                    unlocked = false;   // Shops are closed on Suns Rest holiday
+                else
+                    unlocked = IsBuildingOpen(type);
+            }
+            // Handle other structures (temples, taverns, palaces)
             else if (type <= DFLocation.BuildingTypes.Palace)
             {
                 unlocked = IsBuildingOpen(type);
