@@ -622,21 +622,31 @@ namespace DaggerfallWorkshop.Game.Formulas
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
             // Apply Ring of Namira effect
-            DaggerfallUnityItem[] equippedItems = target.ItemEquipTable.EquipTable;
-            for (int i = 0; i < equippedItems.Length; i++)
+            if (target == player)
             {
-                if (equippedItems[i] != null && equippedItems[i].ContainsEnchantment(DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect, (int)ArtifactsSubTypes.Ring_of_Namira))
+                DaggerfallUnityItem[] equippedItems = target.ItemEquipTable.EquipTable;
+                DaggerfallUnityItem item = null;
+                if (equippedItems.Length != 0)
                 {
-                    IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
-                    effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
-                        targetEntity: AIAttacker.EntityBehaviour,
-                        sourceItem: equippedItems[i],
-                        sourceDamage: damage);
-                    break;
+                    item = IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) ? equippedItems[(int)EquipSlots.Ring0] : equippedItems[(int)EquipSlots.Ring1];
+                    item = IsRingOfNamira(item) ? item : null;
+                    if (item != null)
+                    {
+                        IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
+                            targetEntity: AIAttacker.EntityBehaviour,
+                            sourceItem: item,
+                            sourceDamage: damage);
+                    }
                 }
             }
 
             return damage;
+        }
+
+        private static bool IsRingOfNamira(DaggerfallUnityItem item)
+        {
+            return item != null && item.ContainsEnchantment(DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect, (int)ArtifactsSubTypes.Ring_of_Namira);
         }
 
         private static int CalculateStruckBodyPart()
