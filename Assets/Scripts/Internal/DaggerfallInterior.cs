@@ -864,12 +864,6 @@ namespace DaggerfallWorkshop
                 {
                     go.SetActive(false);
                 }
-                // Disable people if they are TG spymaster, but not in a legit TG house (TODO: spot any other instances for TG/DB)
-                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID == 0 &&
-                         npc.Data.factionID == (int)GuildNpcServices.TG_Spymaster)
-                {
-                    go.SetActive(false);
-                }
             }
         }
 

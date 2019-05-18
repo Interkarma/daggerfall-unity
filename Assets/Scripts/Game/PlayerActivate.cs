@@ -1075,9 +1075,11 @@ namespace DaggerfallWorkshop.Game
                     {   // Use NPC guild group if building has none (e.g. Temple buildings of divine faction)
                         guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
                         // Don't popup guild service menu when holy order NPC isn't in a divine faction building. (bug t=1238)
-                        if (guildGroup == FactionFile.GuildGroups.HolyOrder && !Temple.IsDivine(buildingFactionData.id))
+                        // Don't popup guild service menu when TG spymaster NPC isn't in a faction building. (bug t=2037)
+                        if (guildGroup == FactionFile.GuildGroups.HolyOrder && !Temple.IsDivine(buildingFactionData.id) ||
+                            factionData.id == (int)GuildNpcServices.TG_Spymaster && buildingFactionData.id == 0)
                         {
-                            talkManager.TalkToStaticNPC(npc, false);
+                            talkManager.TalkToStaticNPC(npc, false, factionData.id == (int)GuildNpcServices.TG_Spymaster);
                             return;
                         }
                     }
