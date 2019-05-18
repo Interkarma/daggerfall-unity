@@ -359,6 +359,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     missile.Payload = readySpell;
             }
 
+            // Deduct spellpoint cost from entity if not free (magic item, innate ability)
+            if (!readySpellDoesNotCostSpellPoints)
+                entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
+
             // Clear ready spell and reset casting - do not store last spell for no anim spells (prevent spamming)
             RaiseOnCastReadySpell(readySpell);
             lastSpell = null;
