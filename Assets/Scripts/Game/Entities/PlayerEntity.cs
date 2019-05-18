@@ -274,7 +274,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public override void FixedUpdate()
         {
             // Handle events that are called by classic's update loop
-            if (GameManager.ClassicUpdate)
+            if (GameManager.ClassicUpdate && playerMotor)
             {
                 // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
                 // Here we use a rate of 1/4 that observed for classic.
