@@ -40,11 +40,16 @@ namespace DaggerfallWorkshop.Game
                         long remainingMonths = (paymentDueMinutes - gameMinutes) / MinutesPerMonth;
                         if (remainingMonths < lastRemainingMonths)
                         {
-                            // Send letters 6, 3 and 1 months before due date instead?
-                            DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetText(textDatabase, "loanReminder"),
-                                DaggerfallBankManager.GetLoanedTotal(regionIndex)), loanReminderHUDDelay);
-                            DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetText(textDatabase, "loanReminder2"),
-                                remainingMonths + 1, MapsFile.RegionNames[regionIndex]), loanReminderHUDDelay);
+                            // Months left before due date
+                            int[] sendReminderMonths = { 6, 3, 1 };
+                            if (Array.Exists(sendReminderMonths, month => lastRemainingMonths >= month && remainingMonths < month))
+                            {
+                                // Send letters before due date instead?
+                                DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetText(textDatabase, "loanReminder"),
+                                    DaggerfallBankManager.GetLoanedTotal(regionIndex)), loanReminderHUDDelay);
+                                DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetText(textDatabase, "loanReminder2"),
+                                    remainingMonths + 1, MapsFile.RegionNames[regionIndex]), loanReminderHUDDelay);
+                            }
                         }
                     }
                 }
