@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Questing;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -34,6 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public const string LycanthropyCurseKey = "Lycanthropy-Curse";
 
         const string generalTextDatabase = "GeneralText";
+        const string cureQuestName = "$CUREWER";
         const int paperDollWidth = 110;
         const int paperDollHeight = 184;
         const int needToKillHealthLimit = 4;
@@ -370,6 +372,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 suppressTalkMessage = string.Empty;
                 return false;
+            }
+        }
+
+        public override void StartQuest(bool isCureQuest)
+        {
+            base.StartQuest(isCureQuest);
+
+            if (isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
+            {
+                // Do nothing if a cure instance already running
+                // This is a long-running quest that involves hunters if player not cured by end of time limit
+                ulong[] quests = QuestMachine.Instance.FindQuests(cureQuestName);
+                if (quests != null && quests.Length > 0)
+                    return;
+
+                // Start the cure quest
+                QuestMachine.Instance.InstantiateQuest(cureQuestName);
             }
         }
 

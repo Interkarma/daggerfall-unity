@@ -776,6 +776,29 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Finds quests based on quest name.
+        /// </summary>
+        /// <param name="questName">Quest name to search for.</param>
+        /// <param name="activeOnly">Only find active quests.</param>
+        /// <returns>ulong[] array of quest UIDs with matching quest name.</returns>
+        public ulong[] FindQuests(string questName, bool activeOnly = false)
+        {
+            List<ulong> keys = new List<ulong>();
+            foreach (Quest quest in quests.Values)
+            {
+                if (quest.QuestName == questName)
+                {
+                    if (activeOnly && quest.QuestTombstoned)
+                        continue;
+                    else
+                        keys.Add(quest.UID);
+                }
+            }
+
+            return keys.ToArray();
+        }
+
+        /// <summary>
         /// Creates a yes/no prompt from quest message.
         /// Caller must set events and call Show() when ready.
         /// </summary>

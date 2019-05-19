@@ -497,51 +497,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 racialEffect.StartQuest(isCureQuest);
         }
 
-        // Recreation of vampire/werecreature quest starter from classic
-        // Notes:
-        // 1) In classic the initial quest can happen multiple times but this is probably a mistake.
-        // 2) Additional quests will come regardless of whether the initial quest was completed or failed, as the bool is set
-        //    when the initial quest begins, not on successful completion.
-        void StartVampireOrWereCreatureQuest(bool isCureQuest)
-        {
-            /* TEMP: Commenting out for now until quest deployment system is ready for this - please do not remove
-            if (Race == Races.Vampire)
-            {
-                if (isCureQuest)
-                {
-                    if (DFRandom.random_range_inclusive(10, 100) < 30)
-                        QuestMachine.Instance.InstantiateQuest("$CUREVAM");
-                }
-                else if (hasStartedInitialVampireQuest)
-                {
-                    // Get an appropriate quest for player's level?
-                    if (DFRandom.random_range_inclusive(1, 100) < 50)
-                    {
-                        // Get the regional vampire clan faction id for affecting reputation on success/failure, and current rep
-                        int factionId = 23; // TODO: get appropriate value - just hardcoding The Vraseth for now!
-                        int reputation = FactionData.GetReputation(factionId);
-
-                        // Select a quest at random from appropriate pool
-                        Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(FactionFile.GuildGroups.Vampires, MembershipStatus.Nonmember, factionId, reputation, Level);
-                        if (offeredQuest != null)
-                            QuestMachine.Instance.InstantiateQuest(offeredQuest);
-                    }
-                }
-                else if (DFRandom.random_range_inclusive(1, 100) < 50)
-                {
-                    QuestMachine.Instance.InstantiateQuest("P0A01L00");
-                    hasStartedInitialVampireQuest = true;
-                }
-            }
-            /*else
-            {
-                if (playerIsWereCreature && isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
-                {
-                    QuestMachine.Instance.InstantiateQuest("$CUREWER");
-                }
-            }*/
-        }
-
         public bool IntermittentEnemySpawn(uint Minutes)
         {
             // Define minimum distance from player based on spawn locations
