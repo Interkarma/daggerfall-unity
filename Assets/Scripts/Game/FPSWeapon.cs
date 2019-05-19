@@ -188,16 +188,23 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public void PlayAttackVoice()
+        public void PlayAttackVoice(SoundClips customSound = SoundClips.None)
         {
             if (dfAudioSource)
             {
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                SoundClips sound = DaggerfallEntity.GetRaceGenderAttackSound(playerEntity.Race, playerEntity.Gender, true);
-                float pitch = dfAudioSource.AudioSource.pitch;
-                dfAudioSource.AudioSource.pitch = pitch + UnityEngine.Random.Range(0, 0.3f);
-                dfAudioSource.PlayOneShot(sound, 0, 1f);
-                dfAudioSource.AudioSource.pitch = pitch;
+                if (customSound == SoundClips.None)
+                {
+                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                    SoundClips sound = DaggerfallEntity.GetRaceGenderAttackSound(playerEntity.Race, playerEntity.Gender, true);
+                    float pitch = dfAudioSource.AudioSource.pitch;
+                    dfAudioSource.AudioSource.pitch = pitch + UnityEngine.Random.Range(0, 0.3f);
+                    dfAudioSource.PlayOneShot(sound, 0, 1f);
+                    dfAudioSource.AudioSource.pitch = pitch;
+                }
+                else
+                {
+                    dfAudioSource.PlayOneShot(customSound, 0, 1f);
+                }
             }
         }
 
@@ -530,7 +537,7 @@ namespace DaggerfallWorkshop.Game
 
             // Tint based on metal type
             // But not for steel as that is default colour in files
-            if (metalType != MetalTypes.Steel)
+            if (metalType != MetalTypes.Steel && metalType != MetalTypes.None)
                 dfBitmap = ImageProcessing.ChangeDye(dfBitmap, ImageProcessing.GetMetalDyeColor(metalType), DyeTargets.WeaponsAndArmor);
 
             // Get Color32 array

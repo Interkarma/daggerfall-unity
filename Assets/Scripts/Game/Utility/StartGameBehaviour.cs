@@ -526,13 +526,17 @@ namespace DaggerfallWorkshop.Game.Utility
             if (records.Count != 1)
                 throw new Exception("SaveTree CharacterRecord not found.");
 
+            // Assign diseases and poisons to player entity
+            LycanthropyTypes lycanthropyType;
+            PlayerEntity playerEntity = FindPlayerEntity();
+            playerEntity.AssignDiseasesAndPoisons(saveTree, out lycanthropyType);
+
             // Get prototypical character document data
             CharacterRecord characterRecord = (CharacterRecord)records[0];
-            characterDocument = characterRecord.ToCharacterDocument();
+            characterDocument = characterRecord.ToCharacterDocument(lycanthropyType);
 
             // Assign data to player entity
-            PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
+            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.baseHealth, false);
             playerEntity.SetCurrentLevelUpSkillSum();
 
             // Assign biography modifiers
@@ -556,9 +560,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign guild memberships
             playerEntity.AssignGuildMemberships(saveTree);
-
-            // Assign diseases and poisons to player entity
-            playerEntity.AssignDiseasesAndPoisons(saveTree);
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;
@@ -611,7 +612,7 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUnity.Instance.ItemHelper.ValidateSpellbookItem(playerEntity);
 
             // Restore old class specials
-            RestoreOldClassSpecials(saveTree, characterDocument.classicTransformedRace);
+            RestoreOldClassSpecials(saveTree, characterDocument.classicTransformedRace, lycanthropyType);
 
             // Restore vampirism if classic character was a vampire
             if (characterDocument.classicTransformedRace == Races.Vampire)
@@ -630,7 +631,28 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
             }
 
-            // TODO: Restore lycanthropy if classic character was a werewolf/wereboar
+            // Restore lycanthropy if classic character was a werewolf/wereboar
+            if (lycanthropyType != LycanthropyTypes.None)
+            {
+                // TODO: Restore lycanthropy effect
+                switch (lycanthropyType)
+                {
+                    case LycanthropyTypes.Werewolf:
+                        Debug.Log("Restoring lycanthropy (werewolf) to classic character.");
+                        break;
+                    case LycanthropyTypes.Wereboar:
+                        Debug.Log("Restoring lycanthropy (wereboar) to classic character.");
+                        break;
+                }
+                EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyCurse();
+                GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                LycanthropyEffect lycanthropyEffect = (LycanthropyEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<LycanthropyEffect>();
+                if (lycanthropyEffect != null)
+                {
+                    lycanthropyEffect.InfectionType = lycanthropyType;
+                    GameManager.Instance.PlayerEntity.AssignPlayerLycanthropySpell();
+                }
+            }
 
             // Start game
             DaggerfallUI.Instance.PopToHUD();
@@ -645,7 +667,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 OnStartGame(this, null);
         }
 
-        void RestoreOldClassSpecials(SaveTree saveTree, Races classicTransformedRace)
+        void RestoreOldClassSpecials(SaveTree saveTree, Races classicTransformedRace, LycanthropyTypes lycanthropyType)
         {
             try
             {
@@ -670,13 +692,10 @@ namespace DaggerfallWorkshop.Game.Utility
                     characterDocument.career.Paralysis = classFile.Career.Paralysis;
                     characterDocument.career.Disease = classFile.Career.Disease;
                 }
-                else if (classicTransformedRace == Races.Werewolf)
+                else if (lycanthropyType != LycanthropyTypes.None)
                 {
-                    // TODO: Restore pre-werewolf specials
-                }
-                else if (classicTransformedRace == Races.Wereboar)
-                {
-                    // TODO: Restore pre-wereboar specials
+                    // Restore pre-lycanthropy specials
+                    characterDocument.career.Disease = classFile.Career.Disease;
                 }
             }
             catch(Exception ex)

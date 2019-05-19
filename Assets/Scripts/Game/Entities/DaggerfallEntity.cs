@@ -86,6 +86,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsSlowFalling { get; set; }
         public bool IsAbsorbingSpells { get; set; }
         public int MaxMagickaModifier { get; private set; }
+        public int MaxHealthLimiter { get; private set; }
         public float IncreasedWeightAllowanceMultiplier { get; private set; }
 
 
@@ -249,9 +250,10 @@ namespace DaggerfallWorkshop.Game.Entity
         public DaggerfallResistances Resistances { get { return resistances; } set { resistances.Copy(value); } }
         public ItemCollection Items { get { return items; } set { items.ReplaceAll(value); } }
         public ItemEquipTable ItemEquipTable { get { return equipTable; } }
-        public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
+        public int MaxHealth { get { return GetMaxHealth(); } set { maxHealth = value; } }
         public int CurrentHealth { get { return GetCurrentHealth(); } set { SetHealth(value); } }
-        public float CurrentHealthPercent { get { return GetCurrentHealth() / (float)maxHealth; } }
+        public float CurrentHealthPercent { get { return GetCurrentHealth() / (float)MaxHealth; } }
+        public int RawMaxHealth { get { return GetRawMaxHealth(); } }
         public int MaxFatigue { get { return (stats.LiveStrength + stats.LiveEndurance) * 64; } }
         public int CurrentFatigue { get { return GetCurrentFatigue(); } set { SetFatigue(value); } }
         public int MaxMagicka { get { return GetMaxMagicka(); } set { maxMagicka = value; } }
@@ -390,6 +392,18 @@ namespace DaggerfallWorkshop.Game.Entity
                 IncreasedWeightAllowanceMultiplier = amount;
         }
 
+        public void SetMaxHealthLimiter(int amount)
+        {
+            // Health limiter does not stack, only effect with lowest limiter used down to a floor of 1
+            // Still allow setting when health limiter is < 1 though, as this means not currently set
+            if (amount >= 1 && amount < MaxHealthLimiter || MaxHealthLimiter < 1)
+                MaxHealthLimiter = amount;
+
+            // Clamp current health at or below new limit
+            if (CurrentHealth > amount)
+                CurrentHealth = amount;
+        }
+
         public virtual int SetBreath(int amount)
         {
             currentBreath = Mathf.Clamp(amount, 0, MaxBreath);
@@ -422,6 +436,16 @@ namespace DaggerfallWorkshop.Game.Entity
             return currentMagicka;
         }
 
+        // Gets maximum health with effect limiter
+        int GetMaxHealth()
+        {
+            // Limiter must be 1 or greater
+            if (MaxHealthLimiter < 1)
+                return maxHealth;
+
+            return (MaxHealthLimiter < maxHealth) ? MaxHealthLimiter : maxHealth;
+        }
+
         // Gets maximum magicka with effect modifier
         int GetMaxMagicka()
         {
@@ -440,6 +464,12 @@ namespace DaggerfallWorkshop.Game.Entity
                 return FormulaHelper.SpellPoints(stats.LiveIntelligence, career.SpellPointMultiplierValue);
             else
                 return maxMagicka;
+        }
+
+        // Gets raw maximum health without limiter
+        int GetRawMaxHealth()
+        {
+            return maxHealth;
         }
 
         // Get standard encumbrance and add any increased weight allowance multiplier from effects
@@ -704,8 +734,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void AddSpell(EffectBundleSettings spell)
         {
-            // Just add spell to end of list for now
-            // When implemented, the real collection class will allow for custom sorting
             spellbook.Add(spell);
         }
 
@@ -715,6 +743,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
 
             spellbook.RemoveAt(index);
+        }
+
+        public void DeleteTaggedSpells(string tag)
+        {
+            spellbook.RemoveAll(spell => spell.Tag == tag);
         }
 
         public EffectBundleSettings[] SerializeSpellbook()
@@ -776,6 +809,7 @@ namespace DaggerfallWorkshop.Game.Entity
             IsSlowFalling = false;
             IsAbsorbingSpells = false;
             MaxMagickaModifier = 0;
+            MaxHealthLimiter = 0;
             IncreasedWeightAllowanceMultiplier = 0;
             IsResistingFire = false;
             IsResistingFrost = false;

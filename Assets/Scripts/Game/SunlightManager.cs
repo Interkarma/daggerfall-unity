@@ -22,10 +22,13 @@ namespace DaggerfallWorkshop.Game
     public class SunlightManager : MonoBehaviour
     {
         public const float defaultScaleFactor = 1;
+        public const float defaultShadowStrength = 1;
 
         public float Angle = -90f;                          // Sunlight direction throughout day
         [Range(0, 1)]
         public float ScaleFactor = defaultScaleFactor;      // Scale all lights by this amount
+        [Range(0, 1)]
+        public float ShadowStrength = defaultShadowStrength;
         public Light IndirectLight;                         // Point light that follows player to simulate indirect lighting
         public GameObject LocalPlayer;                      // Player for indirect light positioning
         public Light[] OtherLights;                         // Other lights to scale and enable/disable
@@ -119,7 +122,7 @@ namespace DaggerfallWorkshop.Game
                 // Adjust for custom scale factor
                 daylightScale *= ScaleFactor;
 
-                SetLightIntensity(daylightScale);
+                SetLightIntensity(daylightScale, ShadowStrength);
             }
         }
 
@@ -165,10 +168,13 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void SetLightIntensity(float scale)
+        void SetLightIntensity(float scale, float shadowStrength)
         {
             if (myLight)
+            {
                 myLight.intensity = keyLightIntensity * scale;
+                myLight.shadowStrength = shadowStrength;
+            }
 
             if (OtherLights != null)
             {
@@ -177,11 +183,13 @@ namespace DaggerfallWorkshop.Game
                     if (OtherLights[i] == null)
                         continue;
                     OtherLights[i].intensity = otherLightsIntensity[i] * scale;
+                    OtherLights[i].shadowStrength = shadowStrength;
                 }
             }
             if (IndirectLight != null)
             {
                 IndirectLight.intensity = indirectLightIntensity * scale;
+                IndirectLight.shadowStrength = shadowStrength;
             }
         }
 

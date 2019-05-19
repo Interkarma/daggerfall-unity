@@ -343,7 +343,7 @@ Place _childhouse_ remote house2
 Place _hintdung_ remote dungeon11
 
 Clock _S.05_ 7.00:00 27.23:40
-Clock _huntstart_ 00:00 0 flag 1 range 3 5
+Clock _huntstart_ 30.00:00 0
 
 Foe _F.00_ is Knight
 Foe _wereboar_ is Wereboar

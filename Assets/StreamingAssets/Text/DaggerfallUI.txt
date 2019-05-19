@@ -36,7 +36,7 @@ noteHeader,         {0} in {1}:
 readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
-readMapFail,        You have already recorded all locations in this region!
+readMapFail,        You have already discovered the location shown by this map.
 howManyItems,       Pick how many items (max {0})?
 wagonFullGold,      Your wagon could only hold {0} gold pieces.
 itemsIdentified,    Items identified.
@@ -84,3 +84,10 @@ suggestedIcons,     Suggested
 
 loanReminder,       You have a loan of {0} gold pieces due in
 loanReminder2,      less than {0} months in {1}
+
+- Guild service window:
+
+serviceMembersOnly, My services are reserved for members only.
+serviceDonateHowMuch, Donate how much money : 
+curedDisease,       You are cured.
+freeHolidayCuring,  You are cured free from cost due to todays' holiday.

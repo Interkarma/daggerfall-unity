@@ -72,9 +72,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         private void Start()
         {
-#if TEST_TRANSLATION
-            originalPosition = transform.position;
-#endif
+            const int ignoreRaycastLayer = 2;
 
             if (!MeshRenderer)
             {
@@ -89,14 +87,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 return;
             }
 
+#if TEST_TRANSLATION
+            originalPosition = MeshRenderer.bounds.center;
+#endif
+
+            int layer = gameObject.layer;
+            gameObject.layer = ignoreRaycastLayer;
+
             PerformPositioning(direction);
+
+            gameObject.layer = layer;
         }
 
 #if TEST_TRANSLATION
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(originalPosition, maxDistance);
-            Gizmos.DrawLine(originalPosition, transform.position);
+            if (originalPosition != Vector3.zero)
+            {
+                Gizmos.DrawWireSphere(originalPosition, maxDistance);
+                Gizmos.DrawLine(originalPosition, transform.position);
+            }
         }
 #endif
 
@@ -116,7 +126,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         protected void Move(Vector3 direction)
         {
             Bounds bounds = MeshRenderer.bounds;
-            Ray ray = new Ray(transform.position, transform.TransformDirection(direction));
+            Ray ray = new Ray(bounds.center, transform.TransformDirection(direction));
 
             RaycastHit hitInfo;
             if (!Physics.Raycast(ray, out hitInfo, maxDistance))

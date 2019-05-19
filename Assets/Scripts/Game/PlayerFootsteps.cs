@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -297,7 +298,11 @@ namespace DaggerfallWorkshop.Game
         // Capture this message so we can play pain voice
         public void RemoveHealth(int amount)
         {
-            if (dfAudioSource && DaggerfallUnity.Settings.CombatVoices && Dice100.SuccessRoll(40))
+            // Racial override can suppress optional attack voice
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            bool suppressCombatVoices = racialOverride != null && racialOverride.SuppressOptionalCombatVoices;
+
+            if (dfAudioSource && DaggerfallUnity.Settings.CombatVoices && !suppressCombatVoices && Dice100.SuccessRoll(40))
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 bool heavyDamage = amount >= playerEntity.MaxHealth / 4;

@@ -320,8 +320,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
-            if (buyMode)
-                mainPanel.BackgroundColor = Color.black;
 
             // Spells list
             spellsListBox = new ListBox();

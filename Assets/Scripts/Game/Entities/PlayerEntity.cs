@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         public const string vampireSpellTag = "vampire";
+        public const string lycanthropySpellTag = "lycanthrope";
 
         bool godMode = false;
         bool noTargetMode = false;
@@ -173,7 +174,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
-        public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
+        public Crimes CrimeCommitted { get { return crimeCommitted; } set { SetCrimeCommitted(value); } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
         public bool IsInBeastForm { get; set; }
@@ -273,7 +274,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public override void FixedUpdate()
         {
             // Handle events that are called by classic's update loop
-            if (GameManager.ClassicUpdate)
+            if (GameManager.ClassicUpdate && playerMotor)
             {
                 // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
                 // Here we use a rate of 1/4 that observed for classic.
@@ -497,51 +498,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 racialEffect.StartQuest(isCureQuest);
         }
 
-        // Recreation of vampire/werecreature quest starter from classic
-        // Notes:
-        // 1) In classic the initial quest can happen multiple times but this is probably a mistake.
-        // 2) Additional quests will come regardless of whether the initial quest was completed or failed, as the bool is set
-        //    when the initial quest begins, not on successful completion.
-        void StartVampireOrWereCreatureQuest(bool isCureQuest)
-        {
-            /* TEMP: Commenting out for now until quest deployment system is ready for this - please do not remove
-            if (Race == Races.Vampire)
-            {
-                if (isCureQuest)
-                {
-                    if (DFRandom.random_range_inclusive(10, 100) < 30)
-                        QuestMachine.Instance.InstantiateQuest("$CUREVAM");
-                }
-                else if (hasStartedInitialVampireQuest)
-                {
-                    // Get an appropriate quest for player's level?
-                    if (DFRandom.random_range_inclusive(1, 100) < 50)
-                    {
-                        // Get the regional vampire clan faction id for affecting reputation on success/failure, and current rep
-                        int factionId = 23; // TODO: get appropriate value - just hardcoding The Vraseth for now!
-                        int reputation = FactionData.GetReputation(factionId);
-
-                        // Select a quest at random from appropriate pool
-                        Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(FactionFile.GuildGroups.Vampires, MembershipStatus.Nonmember, factionId, reputation, Level);
-                        if (offeredQuest != null)
-                            QuestMachine.Instance.InstantiateQuest(offeredQuest);
-                    }
-                }
-                else if (DFRandom.random_range_inclusive(1, 100) < 50)
-                {
-                    QuestMachine.Instance.InstantiateQuest("P0A01L00");
-                    hasStartedInitialVampireQuest = true;
-                }
-            }
-            /*else
-            {
-                if (playerIsWereCreature && isCureQuest && DFRandom.random_range_inclusive(1, 100) < 30)
-                {
-                    QuestMachine.Instance.InstantiateQuest("$CUREWER");
-                }
-            }*/
-        }
-
         public bool IntermittentEnemySpawn(uint Minutes)
         {
             // Define minimum distance from player based on spawn locations
@@ -622,6 +578,9 @@ namespace DaggerfallWorkshop.Game.Entity
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= 10)
             {
                 DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
+                if (dfLocation == null)
+                    return;
+
                 PopulationManager populationManager = dfLocation.GetComponent<PopulationManager>();
                 if (populationManager == null)
                     return;
@@ -964,8 +923,10 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assigns diseases and poisons to player from classic save tree.
         /// </summary>
-        public void AssignDiseasesAndPoisons(SaveTree saveTree)
+        public void AssignDiseasesAndPoisons(SaveTree saveTree, out LycanthropyTypes lycanthropyType)
         {
+            lycanthropyType = LycanthropyTypes.None;
+
             // Find character record, should always be a singleton
             CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
             if (characterRecord == null)
@@ -977,7 +938,8 @@ namespace DaggerfallWorkshop.Game.Entity
             // Add Daggerfall Unity diseases and poisons
             foreach (var record in diseaseAndPoisonRecords)
             {
-                if ((record as DiseaseOrPoisonRecord).ParsedData.ID < 100) // is a disease
+                byte diseaseID = (record as DiseaseOrPoisonRecord).ParsedData.ID;
+                if (diseaseID < 100) // is a disease
                 {
                     // TODO: Import classic disease effect and poisons to player effect manager and set properties
                     //DaggerfallDisease_Deprecated newDisease = new DaggerfallDisease_Deprecated((DiseaseOrPoisonRecord)record);
@@ -989,6 +951,18 @@ namespace DaggerfallWorkshop.Game.Entity
                     //        incubationOver = true;
                     //    daysOfSymptomsLeft = (byte)record.ParsedData.daysOfSymptomsLeft;
                     //}
+                }
+                else
+                {
+                    switch (diseaseID)
+                    {
+                        case 101:
+                            lycanthropyType = LycanthropyTypes.Werewolf;
+                            break;
+                        case 102:
+                            lycanthropyType = LycanthropyTypes.Wereboar;
+                            break;
+                    }
                 }
             }
         }
@@ -1066,6 +1040,31 @@ namespace DaggerfallWorkshop.Game.Entity
             // Assign to player entity spellbook with some custom settings
             bundleSettings.MinimumCastingCost = true;
             bundleSettings.Tag = vampireSpellTag;
+            GameManager.Instance.PlayerEntity.AddSpell(bundleSettings);
+        }
+
+        public void AssignPlayerLycanthropySpell()
+        {
+            const int lycanthropyID = 92;
+
+            // Get spell record data
+            SpellRecord.SpellRecordData recordData;
+            if (!GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(lycanthropyID, out recordData))
+                return;
+
+            // Remove ! from start of spell name
+            if (recordData.spellName.StartsWith("!"))
+                recordData.spellName = recordData.spellName.Substring(1);
+
+            // Get effect bundle settings
+            EffectBundleSettings bundleSettings;
+            if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(recordData, BundleTypes.Spell, out bundleSettings))
+                return;
+
+            // Assign to player entity spellbook with some custom settings
+            bundleSettings.MinimumCastingCost = true;
+            bundleSettings.NoCastingAnims = true;
+            bundleSettings.Tag = lycanthropySpellTag;
             GameManager.Instance.PlayerEntity.AddSpell(bundleSettings);
         }
 
@@ -2186,6 +2185,15 @@ namespace DaggerfallWorkshop.Game.Entity
             arrested = true;
             halfOfLegalRepPlayerLostFromCrime = (short)(reputationLossPerCrime[(int)crimeCommitted] / 2);
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
+        }
+
+        void SetCrimeCommitted(Crimes crime)
+        {
+            // Racial override can suppress crimes, e.g. transformed lycanthrope
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            bool suppressCrime = racialOverride != null && racialOverride.SuppressCrime;
+
+            crimeCommitted = (!suppressCrime) ? crime : Crimes.None;
         }
 
         #endregion

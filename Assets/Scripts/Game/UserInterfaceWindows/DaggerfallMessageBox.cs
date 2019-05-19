@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (wrapText)
             {
-                label.WrapText = true;
+                label.WrapText = label.WrapWords = true;
                 // If wrapping text, set maxWidth to 288. This is just an aesthetically chosen value, as
                 // it is the widest text can be without making the parchment textures expand off the edges of the screen.
                 label.MaxTextWidth = 288;

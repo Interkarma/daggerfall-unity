@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop;
 
 namespace DaggerfallConnect.Save
@@ -49,8 +50,9 @@ namespace DaggerfallConnect.Save
         /// <summary>
         /// Converts a CharacterRecord to a prototypical CharacterDocument for character import.
         /// </summary>
+        /// <param name="stripLycanthropyType">Lycanthropy type to remove, if previously read.</param>
         /// <returns>CharacterDocument derived from CharacterRecord data.</returns>
-        public CharacterDocument ToCharacterDocument()
+        public CharacterDocument ToCharacterDocument(LycanthropyTypes stripLycanthropyType = LycanthropyTypes.None)
         {
             CharacterDocument doc = new CharacterDocument();
             Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
@@ -58,7 +60,7 @@ namespace DaggerfallConnect.Save
             // Strip back classic changes for vampire or lycanthrope as this is handled by effect system in DFU
             // If player is not transformed then this will simply return parsedData.race + 1
             Races classicTransformedRace;
-            Races liveRace = StripTransformedRace(out classicTransformedRace);
+            Races liveRace = StripTransformedRace(out classicTransformedRace, stripLycanthropyType);
 
             doc.raceTemplate = raceDict[(int)liveRace];
             doc.gender = parsedData.gender;
@@ -69,7 +71,7 @@ namespace DaggerfallConnect.Save
             doc.workingSkills = parsedData.skills;
             doc.reflexes = parsedData.reflexes;
             doc.currentHealth = parsedData.currentHealth;
-            doc.maxHealth = parsedData.maxHealth;
+            doc.maxHealth = parsedData.baseHealth;
             doc.currentSpellPoints = parsedData.currentSpellPoints;
             doc.reputationCommoners = parsedData.reputationCommoners;
             doc.reputationMerchants = parsedData.reputationMerchants;
@@ -99,7 +101,7 @@ namespace DaggerfallConnect.Save
             return doc;
         }
 
-        Races StripTransformedRace(out Races classicTransformedRace)
+        Races StripTransformedRace(out Races classicTransformedRace, LycanthropyTypes stripLycanthropyType = LycanthropyTypes.None)
         {
             // Restore original character race if vampire or lycanthrope
             // Racial overrides are handled by the effect system in DFU rather than entirely hardcoded, but still need to handle importing from classic
@@ -134,7 +136,23 @@ namespace DaggerfallConnect.Save
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
             }
 
-            // TODO: Remove werewolf/wereboar bonuses to stats and skills
+            // Remove werewolf/wereboar bonuses to stats and skills
+            if (classicTransformedRace == Races.Werewolf || classicTransformedRace == Races.Wereboar || stripLycanthropyType != LycanthropyTypes.None)
+            {
+                // Remove +40 bonus to selected stats
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Strength, parsedData.currentStats.PermanentStrength - 40);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Speed, parsedData.currentStats.PermanentSpeed - 40);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Agility, parsedData.currentStats.PermanentAgility - 40);
+                parsedData.currentStats.SetPermanentStatValue(DFCareer.Stats.Endurance, parsedData.currentStats.PermanentEndurance - 40);
+
+                // Remove +30 bonus to lycanthrope skills
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Swimming, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Swimming) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Running, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Running) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Stealth, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Stealth) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.CriticalStrike, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.CriticalStrike) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Climbing, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Climbing) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
+            }
 
             return liveRace;
         }
@@ -178,6 +196,9 @@ namespace DaggerfallConnect.Save
             parsedData.lastTimeUrgeToHuntInnocentSatisfied = reader.ReadUInt32();
             parsedData.timeAfterWhichShieldEffectWillEnd = reader.ReadUInt32();
             parsedData.unknownLycanthropy = reader.ReadInt16();
+
+            reader.BaseStream.Position = 0x6c;
+            parsedData.incubatingLycanthropy = reader.ReadInt16();
 
             reader.BaseStream.Position = 0x74;
             parsedData.playerHouse = reader.ReadUInt32();
@@ -367,6 +388,7 @@ namespace DaggerfallConnect.Save
             public UInt32 lastTimeUrgeToHuntInnocentSatisfied;
             public UInt32 timeAfterWhichShieldEffectWillEnd;
             public Int16 unknownLycanthropy; // Lycanthropy stage? Set when inflicted with lycanthropy.
+            public Int16 incubatingLycanthropy; // Incubating lycanthropy 0=None, 1=Werewolf, 2=Wereboar. Not currently used.
             public UInt32 playerHouse; // Building ID of player's house. 0 if player doesn't own a house.
             public UInt32 playerShip; // Probably same type of data as above, for player's ship. 0 if player doesn't own a ship.
             public Int16 currentHealth;

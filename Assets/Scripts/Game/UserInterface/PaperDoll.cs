@@ -126,12 +126,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (playerEntity == null)
                 playerEntity = GameManager.Instance.PlayerEntity;
 
+            // Racial override can suppress body and items
+            bool suppressBody = false;
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressBody = racialOverride.SuppressPaperDollBodyAndItems;
+
             // Update paper doll
             ClearPaperDoll();
             RefreshBackground(playerEntity);
-            BlitCloakInterior(playerEntity);
-            BlitBody(playerEntity);
-            BlitItems(playerEntity);
+            if (!suppressBody)
+            {
+                BlitCloakInterior(playerEntity);
+                BlitBody(playerEntity);
+                BlitItems(playerEntity);
+            }
 
             // Destroy old paper doll texture
             characterPanel.BackgroundTexture = null;
@@ -149,7 +158,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //TextureReader.SaveTextureToPNG(DaggerfallUI.Instance.PaperDollRenderer.PaperDollTexture, "c:\\test\\testrender.png");
 
             // Update armour values
-            RefreshArmourValues(playerEntity);
+            RefreshArmourValues(playerEntity, suppressBody);
         }
 
         /// <summary>
@@ -182,13 +191,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Private Methods
 
         // Refresh armour value labels
-        void RefreshArmourValues(PlayerEntity playerEntity)
+        void RefreshArmourValues(PlayerEntity playerEntity, bool suppress = false)
         {
             for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
             {
                 sbyte av = playerEntity.ArmorValues[bpIdx];
                 int bpAv = (100 - av) / 5;
-                armourLabels[bpIdx].Text = bpAv.ToString();
+                armourLabels[bpIdx].Text = (!suppress) ? bpAv.ToString() : string.Empty;
             }
         }
 

@@ -542,6 +542,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("An unknown P1 value of {0} was encountered for Place {1}", p1, Symbol.Original));
             }
 
+            // If searching for a dungeon and first numbered choice not found, then try again with any random dungeon type
+            if (!result && p1 == 1)
+                result = SelectRemoteDungeonSite(-1);
+
             // Throw exception when remote place could not be selected, e.g. a dungeon of that type does not exist in this region
             if (!result)
                 throw new Exception(string.Format("Search failed to locate matching remote site for Place {0} in region {1}. Resource source: '{2}'", Symbol.Original, GameManager.Instance.PlayerGPS.CurrentRegionName, line));

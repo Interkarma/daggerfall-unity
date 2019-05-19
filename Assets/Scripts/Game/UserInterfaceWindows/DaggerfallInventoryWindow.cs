@@ -190,6 +190,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         KeyCode toggleClosedBinding;
         private int maxAmount;
 
+        bool suppressInventory = false;
+        string suppressInventoryMessage = string.Empty;
+
         #endregion
 
         #region Enums
@@ -327,6 +330,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
+
+            // Close window immediately if inventory suppressed
+            if (suppressInventory)
+            {
+                CloseWindow();
+                if (!string.IsNullOrEmpty(suppressInventoryMessage))
+                    DaggerfallUI.MessageBox(suppressInventoryMessage);
+                return;
+            }
         }
 
         protected void SetupItemListScrollers()
@@ -527,6 +539,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            // Racial override can suppress inventory
+            // We still setup and push window normally, actual suppression is done in Update()
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressInventory = racialOverride.GetSuppressInventory(out suppressInventoryMessage);
+
             // Local items always points to player inventory
             localItems = PlayerEntity.Items;
 
@@ -1528,7 +1546,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
-            // Handle local items
+            // Handle normal items
             if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
@@ -1548,7 +1566,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cannotUse.ClickAnywhereToClose = true;
                 cannotUse.Show();
             }
-            else if (item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map) && collection != null)
+            else if ((item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map) ||
+                      item.IsOfTemplate(ItemGroups.Maps, (int)Maps.Map)) && collection != null)
             {   // Handle map items
                 RecordLocationFromMap(item);
                 collection.RemoveItem(item);
@@ -1631,23 +1650,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             const int mapTextId = 499;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
-            DFLocation revealedLocation = playerGPS.DiscoverRandomLocation();
 
-            if (string.IsNullOrEmpty(revealedLocation.Name))
-            {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "readMapFail"));
-                return;
+            try {
+                DFLocation revealedLocation = playerGPS.DiscoverRandomLocation();
+
+                if (string.IsNullOrEmpty(revealedLocation.Name))
+                    throw new Exception();
+
+                playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
+                GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                    TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
+
+                DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
+                mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
+                mapText.ClickAnywhereToClose = true;
+                mapText.Show();
             }
-
-            playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
-            GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
-
-            //TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId);
-            DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
-            mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
-            mapText.ClickAnywhereToClose = true;
-            mapText.Show();
+            catch (Exception)
+            {
+                // Player has already descovered all valid locations in this region!
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "readMapFail"));
+            }
         }
 
         #endregion
@@ -1726,14 +1749,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use
-                if (item.UseItem(localItems))
-                    Refresh(false);
-                else
-                {
+                // Allow item to handle its own use, fall through to general use function if unhandled
+                if (!item.UseItem(localItems))
                     UseItem(item, localItems);
-                    Refresh(false);
-                }
+                Refresh(false);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
@@ -1775,14 +1794,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use
-                if (item.UseItem(localItems))
-                    Refresh(false);
-                else
-                {
+                // Allow item to handle its own use, fall through to general use function if unhandled
+                if (!item.UseItem(remoteItems))
                     UseItem(item, remoteItems);
-                    Refresh(false);
-                }
+                Refresh(false);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {

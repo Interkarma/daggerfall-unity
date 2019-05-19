@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
-        public override void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        public override void OnWeaponHitEntity(PlayerEntity playerEntity, DaggerfallEntity targetEntity = null)
         {
             // Player just needs to strike enemy with any weapon (including melee) to register a feeding strike
             UpdateSatiation();
@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Remove player metal immunity
-            entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.None;
+            entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Iron;
         }
 
         #endregion
@@ -282,7 +282,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             ResignAsIncumbent();
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(60);
             GameManager.Instance.PlayerEntity.PreviousVampireClan = vampireClan;
-            // TODO: End all vampire quests that might be running other than cure quest
+            GameManager.Instance.PlayerEntity.DeleteTaggedSpells(PlayerEntity.vampireSpellTag);
+            EndVampireQuests();
         }
 
         /// <summary>
@@ -344,6 +345,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Set clan stat mods
             if (vampireClan == VampireClans.Anthotis)
                 SetStatMod(DFCareer.Stats.Intelligence, statModAmount);
+        }
+
+        void EndVampireQuests()
+        {
+            const string prefix = "P0";
+
+            ulong[] quests = QuestMachine.Instance.GetAllActiveQuests();
+            foreach (ulong id in quests)
+            {
+                Quest quest = QuestMachine.Instance.GetQuest(id);
+                if (quest != null && quest.QuestName.StartsWith(prefix))
+                    QuestMachine.Instance.TombstoneQuest(quest);
+            }
         }
 
         #endregion

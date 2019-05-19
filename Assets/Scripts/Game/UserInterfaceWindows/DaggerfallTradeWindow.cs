@@ -101,6 +101,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
 
+        bool suppressInventory = false;
+        string suppressInventoryMessage = string.Empty;
+
         static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
             { DFLocation.BuildingTypes.Alchemist, new List<ItemGroups>()
@@ -300,8 +303,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Public Methods
 
+        public override void Update()
+        {
+            base.Update();
+
+            // Close window immediately if trade suppressed
+            if (suppressInventory)
+            {
+                CloseWindow();
+                if (!string.IsNullOrEmpty(suppressInventoryMessage))
+                    DaggerfallUI.MessageBox(suppressInventoryMessage);
+                return;
+            }
+        }
+
         public override void OnPush()
         {
+            // Racial override can suppress trade
+            // We still setup and push window normally, actual suppression is done in Update()
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressInventory = racialOverride.GetSuppressInventory(out suppressInventoryMessage);
+
             // Identify spell can run anywhere - only get building info when not using spell
             if (!usingIdentifySpell)
             {
@@ -357,11 +380,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
+                // Check holidays for half price sales:
+                // - Merchants Festival, suns height 10th for normal shops
+                // - Tales and Tallows hearth fire 3rd for mages guild
+                // - Weapons on Warriors Festival suns dusk 20th
+                uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+
                 for (int i = 0; i < basketItems.Count; i++)
                 {
                     DaggerfallUnityItem item = basketItems.GetItem(i);
                     modeActionEnabled = true;
-                    cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                    int itemPrice = FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                    if ((holidayId == (int)DFLocation.Holidays.Merchants_Festival && guild == null) ||
+                        (holidayId == (int)DFLocation.Holidays.Tales_and_Tallow && guild != null && guild.GetFactionId() == (int)FactionFile.FactionIDs.The_Mages_Guild) ||
+                        (holidayId == (int)DFLocation.Holidays.Warriors_Festival && guild == null && item.ItemGroup == ItemGroups.Weapons))
+                    {
+                        itemPrice /= 2;
+                    }
+                    cost += itemPrice;
                 }
             }
             else if (remoteItems != null)

@@ -328,6 +328,11 @@ namespace DaggerfallWorkshop.Game.Entity
             Genders playerGender = player.Gender;
             Races race = player.Race;
             int chance = 0;
+
+            // City watch never have items above iron or steel
+            if (entityType == EntityTypes.EnemyClass && mobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                itemLevel = 1;
+
             if (variant == 0)
             {
                 // right-hand weapon

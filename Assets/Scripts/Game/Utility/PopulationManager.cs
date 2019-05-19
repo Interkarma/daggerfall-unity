@@ -171,6 +171,10 @@ namespace DaggerfallWorkshop.Game.Utility
         /// </summary>
         void UpdateMobiles()
         {
+            // Racial override can suppress population, e.g. transformed lycanthrope
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            bool suppressPopulationSpawns = racialOverride != null && racialOverride.SuppressPopulationSpawns;
+
             bool isDaytime = DaggerfallUnity.Instance.WorldTime.Now.IsDay;
             for (int i = 0; i < populationPool.Count; i++)
             {
@@ -183,7 +187,8 @@ namespace DaggerfallWorkshop.Game.Utility
                 if (poolItem.active &&
                     poolItem.scheduleEnable &&
                     AllowMobileActivationChange(ref poolItem) &&
-                    isDaytime)
+                    isDaytime &&
+                    !suppressPopulationSpawns)
                 {
                     poolItem.npc.Motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;

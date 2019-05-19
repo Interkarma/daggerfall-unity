@@ -212,6 +212,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Player must always have passive specials effect
                 PassiveSpecialsCheck();
 
+                // Fire no anim spells
+                if (readySpell != null && readySpell.Settings.NoCastingAnims)
+                {
+                    CastNoAnimSpell();
+                    return;
+                }
+
                 // Fire instant cast spells
                 if (readySpell != null && instantCast)
                 {
@@ -330,6 +337,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void AbortReadySpell()
         {
             readySpell = null;
+            readySpellDoesNotCostSpellPoints = false;
+        }
+
+        public void CastNoAnimSpell()
+        {
+            // Must have a spell loaded
+            if (readySpell == null)
+                return;
+
+            // Assign bundle directly to self if target is caster
+            // Otherwise instatiate missile prefab based on element type
+            if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
+            {
+                AssignBundle(readySpell);
+            }
+            else
+            {
+                DaggerfallMissile missile = InstantiateSpellMissile(readySpell.Settings.ElementType);
+                if (missile)
+                    missile.Payload = readySpell;
+            }
+
+            // Deduct spellpoint cost from entity if not free (magic item, innate ability)
+            if (!readySpellDoesNotCostSpellPoints)
+                entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
+
+            // Clear ready spell and reset casting - do not store last spell for no anim spells (prevent spamming)
+            RaiseOnCastReadySpell(readySpell);
+            lastSpell = null;
+            readySpell = null;
+            readySpellCastingCost = 0;
+            instantCast = false;
+            castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
         }
 
@@ -1222,6 +1262,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        /// <summary>
+        /// Helper to create stage two curse of lycanthropy.
+        /// </summary>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateLycanthropyCurse()
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(LycanthropyEffect.LycanthropyCurseKey) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         public void CureDisease(Diseases disease)
         {
             // Find specific disease incumbent
@@ -1329,6 +1385,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool HasVampirism()
         {
             return racialOverrideEffect is VampirismEffect;
+        }
+
+        public bool HasLycanthropy()
+        {
+            return racialOverrideEffect is LycanthropyEffect;
+        }
+
+        public bool IsTransformedLycanthrope()
+        {
+            if (HasLycanthropy())
+                return (racialOverrideEffect as LycanthropyEffect).IsTransformed;
+            else
+                return false;
         }
 
         public void EndVampirism()
