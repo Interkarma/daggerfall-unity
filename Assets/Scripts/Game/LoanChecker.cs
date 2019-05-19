@@ -28,7 +28,6 @@ namespace DaggerfallWorkshop.Game
 
                 if (paymentDueMinutes != 0)
                 {
-                    Debug.Log("Loan in region " + regionIndex);
                     if (paymentDueMinutes < gameMinutes)
                     {
                         Debug.Log("loan overdue " + paymentDueMinutes + " < " + gameMinutes);
