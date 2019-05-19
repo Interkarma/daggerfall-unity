@@ -497,8 +497,7 @@ namespace DaggerfallWorkshop.Game.Banking
             var availableGold = BankAccounts[regionIndex].accountGold;
             if (!accountOnly)
             {
-                var playerGold = playerEntity.GetGoldAmount();
-                availableGold += playerGold;
+                availableGold += playerEntity.GetGoldAmount();
             }
 
             TransactionResult result = TransactionResult.NONE;
