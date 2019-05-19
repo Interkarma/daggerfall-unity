@@ -536,7 +536,7 @@ namespace DaggerfallWorkshop.Game.Utility
             characterDocument = characterRecord.ToCharacterDocument(lycanthropyType);
 
             // Assign data to player entity
-            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
+            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.baseHealth, false);
             playerEntity.SetCurrentLevelUpSkillSum();
 
             // Assign biography modifiers

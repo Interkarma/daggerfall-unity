@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop;
 
 namespace DaggerfallConnect.Save
@@ -70,7 +71,7 @@ namespace DaggerfallConnect.Save
             doc.workingSkills = parsedData.skills;
             doc.reflexes = parsedData.reflexes;
             doc.currentHealth = parsedData.currentHealth;
-            doc.maxHealth = parsedData.maxHealth;
+            doc.maxHealth = parsedData.baseHealth;
             doc.currentSpellPoints = parsedData.currentSpellPoints;
             doc.reputationCommoners = parsedData.reputationCommoners;
             doc.reputationMerchants = parsedData.reputationMerchants;
