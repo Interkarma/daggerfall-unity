@@ -109,9 +109,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         }
 
         /// <summary>
-        /// Called by WeaponManager when player hits an enemy with a weapon (includes hand-to-hand).
+        /// Called by WeaponManager when player hits an entity with a weapon (includes hand-to-hand).
+        /// Target entity may be null, racial overrides should handle this.
         /// </summary>
-        public virtual void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        public virtual void OnWeaponHitEntity(PlayerEntity playerEntity, DaggerfallEntity targetEntity = null)
         {
         }
 

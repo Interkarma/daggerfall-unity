@@ -36,6 +36,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const string generalTextDatabase = "GeneralText";
         const int paperDollWidth = 110;
         const int paperDollHeight = 184;
+        const int needToKillHealthLimit = 4;
+        const int needToKillNotifySeconds = 120;
 
         RaceTemplate compoundRace;
         LycanthropyTypes infectionType = LycanthropyTypes.None;
@@ -44,12 +46,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         bool wearingHircineRing;
         bool isTransformed;
         bool isFullMoon;
+        bool urgeToKillRising;
 
         DFSize backgroundFullSize = new DFSize(125, 198);
         Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
         Texture2D backgroundTexture;
 
         float moveSoundTimer;
+        float needToKillNotifyTimer;
 
         #endregion
 
@@ -80,6 +84,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public bool IsTransformed
         {
             get { return isTransformed; }
+        }
+
+        public bool NeedToKill
+        {
+            get { return urgeToKillRising; }
         }
 
         /// <summary>
@@ -158,6 +167,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     InitMoveSoundTimer();
                 }
             }
+
+            // Lycanthropes must kill an innocent once per month unless wearing Hircine's Ring
+            // Storing this outcome so external systems can query via property
+            urgeToKillRising = GetNeedToKill();
+
+            // Handle need to kill innocents
+            if (urgeToKillRising)
+            {
+                // Notify player if lycanthrope has not killed in last month
+                // We are notifying player more frequently than classic here so they don't forget character is in weakened state
+                // But hopefully not so often it becomes annoying - using real-time minutes while game not paused
+                needToKillNotifyTimer -= Time.deltaTime;
+                if (needToKillNotifyTimer < 0)
+                {
+                    NotifyNeedToKill();
+                    needToKillNotifyTimer = needToKillNotifySeconds;
+                }
+
+                // Limit maximum health
+                GameManager.Instance.PlayerEntity.SetMaxHealthLimiter(needToKillHealthLimit);
+            }
+
+            // Copy transformed state to player entity - used as a hostile condition by mobile NPCs
+            GameManager.Instance.PlayerEntity.IsInBeastForm = isTransformed;
         }
 
         public override void MagicRound()
@@ -171,17 +204,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Check for full moon in either lunar cycle
             isFullMoon = DaggerfallUnity.Instance.WorldTime.Now.MassarLunarPhase == LunarPhases.Full || DaggerfallUnity.Instance.WorldTime.Now.SecundaLunarPhase == LunarPhases.Full;
 
+            // Payloads
             ApplyLycanthropeAdvantages();
             ForceTransformDuringFullMoon();
 
-            // Some temp debug info used during development
-            Debug.LogFormat(
-                "Lycanthropy MagicRound(). Type={0}, HircineRing={1}, IsTransformed={2}, Massar={3}, Secunda={4}",
-                infectionType,
-                wearingHircineRing,
-                isTransformed,
-                DaggerfallUnity.Instance.WorldTime.Now.MassarLunarPhase,
-                DaggerfallUnity.Instance.WorldTime.Now.SecundaLunarPhase);
+            //// Some temp debug info used during development
+            //Debug.LogFormat(
+            //    "Lycanthropy MagicRound(). Type={0}, HircineRing={1}, IsTransformed={2}, Massar={3}, Secunda={4}",
+            //    infectionType,
+            //    wearingHircineRing,
+            //    isTransformed,
+            //    DaggerfallUnity.Instance.WorldTime.Now.MassarLunarPhase,
+            //    DaggerfallUnity.Instance.WorldTime.Now.SecundaLunarPhase);
         }
 
         public override bool GetCustomPaperDollBackgroundTexture(PlayerEntity playerEntity, out Texture2D textureOut)
@@ -234,12 +268,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return false;
         }
 
-        public override void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        public override void OnWeaponHitEntity(PlayerEntity playerEntity, DaggerfallEntity targetEntity = null)
         {
             const int chanceOfAttackSound = 10;
             const int chanceOfBarkSound = 20;
 
-            // Do nothing if not transformed
+            // Check if we killed an innocent and update satiation - do not need to be transformed
+            if (KilledInnocent(targetEntity))
+                UpdateSatiation();
+
+            // Do nothing further if not transformed
             if (!isTransformed)
                 return;
 
@@ -264,6 +302,32 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             FPSWeapon screenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
             if (screenWeapon && customSound != SoundClips.None)
                 screenWeapon.PlayAttackVoice(customSound);
+        }
+
+        bool KilledInnocent(DaggerfallEntity targetEntity)
+        {
+            // Must have a target entity and behaviour
+            if (targetEntity == null || targetEntity.EntityBehaviour == false)
+                return false;
+
+            // Check if this is an innocent target (currently mobile NPCs and city watch)
+            bool isInnocent = false;
+            if (targetEntity.EntityBehaviour.EntityType == EntityTypes.CivilianNPC)
+            {
+                isInnocent = true;
+            }
+            else if (targetEntity.EntityBehaviour.EntityType == EntityTypes.EnemyClass)
+            {
+                EnemyEntity enemyEntity = targetEntity as EnemyEntity;
+                if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                    isInnocent = true;
+            }
+
+            // Was that innocent killed?
+            if (isInnocent && targetEntity.CurrentHealth <= 0)
+                return true;
+
+            return false;
         }
 
         public override bool GetSuppressInventory(out string suppressInventoryMessage)
@@ -303,7 +367,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         public void UpdateSatiation()
         {
+            // Store time sated and reset need to kill timer to 0 so player is notified immediately next time
             lastKilledInnocent = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            urgeToKillRising = false;
+            needToKillNotifyTimer = 0;
         }
 
         public virtual void MorphSelf()
@@ -422,6 +489,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallUI.AddHUDText(youDreamOfTheMoon, 2);
                 MorphSelf();
             }
+        }
+
+        bool GetNeedToKill()
+        {
+            return !wearingHircineRing && DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastKilledInnocent > DaggerfallDateTime.MinutesPerDay * DaggerfallDateTime.DaysPerMonth;
+        }
+
+        void NotifyNeedToKill()
+        {
+            string youNeedToKill = TextManager.Instance.GetText(generalTextDatabase, "youNeedToHuntTheInnocent");
+            DaggerfallUI.AddHUDText(youNeedToKill, 2);
         }
 
         bool IsWearingHircineRing()

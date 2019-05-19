@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.stats = entity.Stats;
             data.playerEntity.skills = entity.Skills;
             data.playerEntity.resistances = entity.Resistances;
-            data.playerEntity.maxHealth = entity.MaxHealth;
+            data.playerEntity.maxHealth = entity.RawMaxHealth;
             data.playerEntity.currentHealth = entity.CurrentHealth;
             data.playerEntity.currentFatigue = entity.CurrentFatigue;
             data.playerEntity.currentMagicka = entity.CurrentMagicka;

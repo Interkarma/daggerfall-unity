@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return true;
         }
 
-        public override void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        public override void OnWeaponHitEntity(PlayerEntity playerEntity, DaggerfallEntity targetEntity = null)
         {
             // Player just needs to strike enemy with any weapon (including melee) to register a feeding strike
             UpdateSatiation();

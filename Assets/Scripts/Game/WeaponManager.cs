@@ -476,6 +476,15 @@ namespace DaggerfallWorkshop.Game
                     playerEntity.TallyCrimeGuildRequirements(false, 5);
                     playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
                     playerEntity.SpawnCityGuards(true);
+
+                    // Allow custom race handling of weapon hit against mobile NPCs, e.g. vampire feeding or lycanthrope killing
+                    if (entityBehaviour)
+                    {
+                        entityBehaviour.Entity.SetHealth(0);
+                        RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                        if (racialOverride != null)
+                            racialOverride.OnWeaponHitEntity(GameManager.Instance.PlayerEntity, entityBehaviour.Entity);
+                    }
                 }
                 else
                 {
@@ -619,10 +628,10 @@ namespace DaggerfallWorkshop.Game
                         playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
                     }
 
-                    // Allow custom race handling of weapon hit, e.g. vampire feeding
+                    // Allow custom race handling of weapon hit against enemies, e.g. vampire feeding or lycanthrope killing
                     RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
                     if (racialOverride != null)
-                        racialOverride.OnWeaponHitEnemy(GameManager.Instance.PlayerEntity, enemyEntity);
+                        racialOverride.OnWeaponHitEntity(GameManager.Instance.PlayerEntity, entityBehaviour.Entity);
 
                     return true;
                 }
