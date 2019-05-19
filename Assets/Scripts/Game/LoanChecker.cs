@@ -61,6 +61,7 @@ namespace DaggerfallWorkshop.Game
             // Set hasDefaulted flag (Note: Does not seem to ever be set in classic)
             DaggerfallBankManager.SetDefaulted(regionIndex, true);
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            // Should that be weighted by the amount?
             playerEntity.LowerRepForCrime(regionIndex, PlayerEntity.Crimes.LoanDefault);
         }
     }

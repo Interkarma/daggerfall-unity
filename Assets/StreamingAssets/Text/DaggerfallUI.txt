@@ -82,6 +82,8 @@ account,            Account
 loan,               Loan
 dueDate,            Loan Due Date
 noAccount,          None
+loanReminder,       You have a loan of {0} gold pieces due in
+loanReminder2,      less than {0} months in {1}
 
 - Icon picker window:
 
