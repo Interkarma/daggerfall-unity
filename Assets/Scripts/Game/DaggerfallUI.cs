@@ -23,6 +23,8 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Banking;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -1308,6 +1310,66 @@ namespace DaggerfallWorkshop.Game
             healthBox.ClickAnywhereToClose = true;
             return healthBox;
         }
+
+        public DaggerfallMessageBox CreateBankingStatusBox(IUserInterfaceWindow previous = null)
+        {
+            const string textDatabase = "DaggerfallUI";
+
+            DaggerfallMessageBox bankingBox = new DaggerfallMessageBox(uiManager, previous);
+            List<TextFile.Token> messages = new List<TextFile.Token>();
+            bool found = false;
+            messages.AddRange(GetLoansLine(
+                TextManager.Instance.GetText(textDatabase, "region"),
+                TextManager.Instance.GetText(textDatabase, "account"),
+                TextManager.Instance.GetText(textDatabase, "loan"),
+                TextManager.Instance.GetText(textDatabase, "dueDate")));
+            messages.Add(TextFile.NewLineToken);
+            for (int regionIndex = 0; regionIndex < DaggerfallBankManager.BankAccounts.Length; regionIndex++)
+            {
+                if (DaggerfallBankManager.GetAccountTotal(regionIndex) > 0 || DaggerfallBankManager.HasLoan(regionIndex))
+                {
+                    messages.AddRange(GetLoansLine(Shorten(MapsFile.RegionNames[regionIndex], 12), DaggerfallBankManager.GetAccountTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex)));
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                TextFile.Token noneToken = TextFile.CreateTextToken(TextManager.Instance.GetText(textDatabase, "noAccount"));
+                messages.Add(noneToken);
+                messages.Add(TextFile.NewLineToken);
+            }
+            bankingBox.SetTextTokens(messages.ToArray());
+            bankingBox.ClickAnywhereToClose = true;
+            return bankingBox;
+        }
+
+        private static string Shorten(string name, int maxLength)
+        {
+            if (name.Length <= maxLength)
+                return name;
+            return name.Substring(0, maxLength - 1) + "...";
+        }
+
+        private static List<TextFile.Token> GetLoansLine(string region, string account, string loan, string duedate)
+        {
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+
+            TextFile.Token positioningToken = TextFile.TabToken;
+
+            tokens.Add(TextFile.CreateTextToken(region));
+            positioningToken.x = 60;
+            tokens.Add(positioningToken);
+            tokens.Add(TextFile.CreateTextToken(account));
+            positioningToken.x = 120;
+            tokens.Add(positioningToken);
+            tokens.Add(TextFile.CreateTextToken(loan));
+            positioningToken.x = 180;
+            tokens.Add(positioningToken);
+            tokens.Add(TextFile.CreateTextToken(duedate));
+            tokens.Add(TextFile.NewLineToken);
+            return tokens;
+        }
+
 
         // Re-init game with specified video
         void InitGame(string video)

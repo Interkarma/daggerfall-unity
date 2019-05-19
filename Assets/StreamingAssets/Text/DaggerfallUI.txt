@@ -4,7 +4,7 @@ schema: *key,text
 
 - Journal window:
 
-dialogButtonInfo,   Switch between: Active Quests; Finished Quests; Notebook; Loans; Messages
+dialogButtonInfo,   Switch between: Active Quests; Finished Quests; Notebook; Messages
 activeQuests,       Active Quests
 activeQuestsInfo,   Click on an active quest that has a target location to initiate travel.
 finishedQuests,     Finished Quests
@@ -75,15 +75,18 @@ potionMixed,        Your potion has been mixed.
 potionFailed,       Those ingredients did not concoct an effective potion.
 reqIngredients,     You do not have the ingredients required.
 
+- Banking statuc:
+
+region,             Region
+account,            Account
+loan,               Loan
+dueDate,            Loan Due Date
+noAccount,          None
+
 - Icon picker window:
 
 classicIcons,       Classic
 suggestedIcons,     Suggested
-
-- Banking:
-
-loanReminder,       You have a loan of {0} gold pieces due in
-loanReminder2,      less than {0} months in {1}
 
 - Guild service window:
 

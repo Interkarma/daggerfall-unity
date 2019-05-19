@@ -70,7 +70,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ActiveQuests,
             FinshedQuests,
             Notebook,
-            Loans,
             Messages
         }
 
@@ -218,9 +217,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case JournalDisplay.Notebook:
                         SetTextNotebook();
                         break;
-                    case JournalDisplay.Loans:
-                        SetTextLoans();
-                        break;
                     case JournalDisplay.Messages:
                         SetTextMessages();
                         break;
@@ -243,9 +239,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DisplayMode = JournalDisplay.Notebook;
                     break;
                 case JournalDisplay.Notebook:
-                    DisplayMode = JournalDisplay.Loans;
-                    break;
-                case JournalDisplay.Loans:
                     DisplayMode = JournalDisplay.Messages;
                     break;
                 case JournalDisplay.Messages:
@@ -559,16 +552,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
             titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "notebookInfo");
             SetTextWithListEntries(notes, maxLinesSmall);
-        }
-
-        private void SetTextLoans()
-        {
-            List<TextFile.Token[]> messages = LoanChecker.GetMessages();
-            messageCount = messages.Count;
-            questLogLabel.TextScale = textScaleSmall;
-            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "loans");
-            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "loansInfo");
-            SetTextWithListEntries(messages, maxLinesSmall);
         }
 
         private void SetTextMessages()

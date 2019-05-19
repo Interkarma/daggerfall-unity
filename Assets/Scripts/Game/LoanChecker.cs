@@ -63,44 +63,5 @@ namespace DaggerfallWorkshop.Game
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             playerEntity.LowerRepForCrime(regionIndex, PlayerEntity.Crimes.LoanDefault);
         }
-
-        internal static List<TextFile.Token[]> GetMessages()
-        {
-            List<TextFile.Token[]> messages = new List<TextFile.Token[]>();
-            bool found = false;
-            messages.Add(GetLoansLine("Region", "Amount", "Due Date"));
-            messages.Add(new TextFile.Token[] { });
-            for (int regionIndex = 0; regionIndex < DaggerfallBankManager.BankAccounts.Length; regionIndex++)
-            {
-                if (DaggerfallBankManager.HasLoan(regionIndex))
-                {
-                    messages.Add(GetLoansLine(MapsFile.RegionNames[regionIndex], DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex)));
-                    found = true;
-                }
-            }
-            if (!found)
-            {
-                TextFile.Token noneToken = TextFile.CreateTextToken("None");
-                messages.Add(new TextFile.Token[] { noneToken });
-            }
-            return messages;
-        }
-
-        private static TextFile.Token[] GetLoansLine(string region, string amount, string duedate)
-        {
-            List<TextFile.Token> tokens = new List<TextFile.Token>();
-
-            TextFile.Token positioningToken = TextFile.TabToken;
-
-            tokens.Add(TextFile.CreateTextToken(region));
-            positioningToken.x = 60;
-            tokens.Add(positioningToken);
-            tokens.Add(TextFile.CreateTextToken(amount));
-            positioningToken.x = 130;
-            tokens.Add(positioningToken);
-            tokens.Add(TextFile.CreateTextToken(duedate));
-            tokens.Add(TextFile.NewLineToken);
-            return tokens.ToArray();
-        }
     }
 }
