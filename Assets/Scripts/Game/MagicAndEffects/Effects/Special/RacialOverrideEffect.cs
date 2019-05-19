@@ -49,6 +49,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return false; }
         }
 
+        /// <summary>
+        /// Allows racial override to suppress crimes by player.
+        /// </summary>
+        public virtual bool SuppressCrime
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Overrides

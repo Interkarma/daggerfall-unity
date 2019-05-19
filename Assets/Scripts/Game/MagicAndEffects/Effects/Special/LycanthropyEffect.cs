@@ -107,6 +107,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return isTransformed; }
         }
 
+        /// <summary>
+        /// Lycanthropes are not tagged with crimes while transformed.
+        /// </summary>
+        public override bool SuppressCrime
+        {
+            get { return isTransformed; }
+        }
+
         #endregion
 
         #region Overrides

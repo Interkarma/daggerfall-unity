@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }
-        public Crimes CrimeCommitted { get { return crimeCommitted; } set { crimeCommitted = value; } }
+        public Crimes CrimeCommitted { get { return crimeCommitted; } set { SetCrimeCommitted(value); } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
         public bool IsInBeastForm { get; set; }
@@ -2224,6 +2224,15 @@ namespace DaggerfallWorkshop.Game.Entity
             arrested = true;
             halfOfLegalRepPlayerLostFromCrime = (short)(reputationLossPerCrime[(int)crimeCommitted] / 2);
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
+        }
+
+        void SetCrimeCommitted(Crimes crime)
+        {
+            // Racial override can suppress crimes, e.g. transformed lycanthrope
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            bool suppressCrime = racialOverride != null && racialOverride.SuppressCrime;
+
+            crimeCommitted = (!suppressCrime) ? crime : Crimes.None;
         }
 
         #endregion

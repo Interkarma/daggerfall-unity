@@ -98,6 +98,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // Close immediately if no crime assigned to player
+            if (playerEntity.CrimeCommitted == Entity.PlayerEntity.Crimes.None)
+            {
+                CloseWindow();
+                return;
+            }
+
             if (state == 0) // Starting
             {
                 regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
