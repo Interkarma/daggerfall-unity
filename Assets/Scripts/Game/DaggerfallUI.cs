@@ -1316,7 +1316,7 @@ namespace DaggerfallWorkshop.Game
             const string textDatabase = "DaggerfallUI";
 
             DaggerfallMessageBox bankingBox = new DaggerfallMessageBox(uiManager, previous);
-            bankingBox.SetHighlightColor(DaggerfallUI.DaggerfallUnityStatIncreasedTextColor);
+            bankingBox.SetHighlightColor(DaggerfallUI.DaggerfallUnityStatDrainedTextColor);
             List<TextFile.Token> messages = new List<TextFile.Token>();
             bool found = false;
             messages.AddRange(GetLoansLine(
