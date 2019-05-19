@@ -407,6 +407,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             needToKillNotifyTimer = 0;
         }
 
+        /// <summary>
+        /// Cure lycanthropy and allow this racial override effect to expire.
+        /// Game time is raised by one minute so effect payload expires almost immediately.
+        /// </summary>
+        public void CureLycanthropy()
+        {
+            // Transform back to humanoid form once last time to perform any race cleanup
+            if (isTransformed)
+                MorphSelf();
+
+            // Heal player back to full
+            GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.RawMaxHealth;
+
+            // End effect and cleanup
+            forcedRoundsRemaining = 0;
+            ResignAsIncumbent();
+            DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(60);
+            GameManager.Instance.PlayerEntity.DeleteTaggedSpells(PlayerEntity.lycanthropySpellTag);
+            EndLycanthropyQuests();
+        }
+
         public virtual void MorphSelf(bool forceMorph = false)
         {
             // Do transformation between forms
@@ -571,6 +592,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 item.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Hircine_Ring);
         }
 
+        void EndLycanthropyQuests()
+        {
+            // Just the one quest to end and should only be a single instance
+            ulong[] quests = QuestMachine.Instance.FindQuests(cureQuestName);
+            foreach (ulong id in quests)
+            {
+                Quest quest = QuestMachine.Instance.GetQuest(id);
+                if (quest != null)
+                    QuestMachine.Instance.TombstoneQuest(quest);
+            }
+        }
+
         #endregion
 
         #region Serialization
@@ -624,6 +657,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 try
                 {
                     ConsoleCommandsDatabase.RegisterCommand(SateMe.name, SateMe.description, SateMe.usage, SateMe.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(CureMe.name, CureMe.description, CureMe.usage, CureMe.Execute);
                 }
                 catch (System.Exception ex)
                 {
@@ -643,6 +677,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     {
                         (GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect() as LycanthropyEffect).UpdateSatiation();
                         return "Your urge to kill has been sated.";
+                    }
+                    else
+                        return "Player is not a werewolf/wereboar.";
+                }
+            }
+
+            private static class CureMe
+            {
+                public static readonly string name = "were_cureme";
+                public static readonly string description = "Player is cured of lycanthropy effect at start of next magic round (1 game minute).";
+                public static readonly string usage = "were_cureme";
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.PlayerEffectManager.HasLycanthropy())
+                    {
+                        GameManager.Instance.PlayerEffectManager.EndLycanthropy();
+                        return "You have been cured of lycanthropy.";
                     }
                     else
                         return "Player is not a werewolf/wereboar.";
