@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         RaceTemplate compoundRace;
         LycanthropyTypes infectionType = LycanthropyTypes.None;
         uint lastKilledInnocent;
-        bool hasStartedInitialLycanthropyQuest;
+        uint lastCastMorphSelf;
         bool wearingHircineRing;
         bool isTransformed;
         bool isFullMoon;
@@ -407,14 +407,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             needToKillNotifyTimer = 0;
         }
 
-        public virtual void MorphSelf()
+        public virtual void MorphSelf(bool forceMorph = false)
         {
-            // TODO: Enforce 24 hour cooldown on transform
-            // NOTE: Player can still exit beast form during cooldown if forced into it by full moon
-
             // Do transformation between forms
             if (!isTransformed)
             {
+                // Observe 24 hour cooldown on shapechange into beast form unless a full moon is forcing change
+                // Player can always cast to exit beast form or with no restrictions while wearing Hircine's Ring
+                if (!CanCastMorphSelf() && !forceMorph)
+                {
+                    string canOnlyCastOncePerDay = TextManager.Instance.GetText(generalTextDatabase, "canOnlyCastOncePerDay");
+                    DaggerfallUI.MessageBox(canOnlyCastOncePerDay);
+                    return;
+                }
+
                 isTransformed = true;
 
                 // Unequip any items held in hands
@@ -431,8 +437,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                 // Initialise move sound timer
                 InitMoveSoundTimer();
-
-                // TODO: Set last transform time for 24-hour cooldown
             }
             else
             {
@@ -446,6 +450,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Not sure if intentional and definitely exploitable during full moons
             // One of those cases where implementing like classic and open to review later
             GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
+
+            // Store time whenever cast
+            lastCastMorphSelf = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
         }
 
         #endregion
@@ -527,13 +534,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 string youDreamOfTheMoon = TextManager.Instance.GetText(generalTextDatabase, "youDreamOfTheMoon");
                 DaggerfallUI.AddHUDText(youDreamOfTheMoon, 2);
-                MorphSelf();
+                MorphSelf(true);
             }
         }
 
         bool GetNeedToKill()
         {
             return !wearingHircineRing && DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastKilledInnocent > DaggerfallDateTime.MinutesPerDay * DaggerfallDateTime.DaysPerMonth;
+        }
+
+        bool CanCastMorphSelf()
+        {
+            return wearingHircineRing || DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastCastMorphSelf > DaggerfallDateTime.MinutesPerDay;
         }
 
         void NotifyNeedToKill()
@@ -569,7 +581,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             public RaceTemplate compoundRace;
             public LycanthropyTypes infectionType;
             public uint lastKilledInnocent;
-            public bool hasStartedInitialLycanthropyQuest;
+            public uint lastCastMorphSelf;
             public bool wearingHircineRing;
             public bool isTransformed;
         }
@@ -580,7 +592,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             data.compoundRace = compoundRace;
             data.infectionType = infectionType;
             data.lastKilledInnocent = lastKilledInnocent;
-            data.hasStartedInitialLycanthropyQuest = hasStartedInitialLycanthropyQuest;
+            data.lastCastMorphSelf = lastCastMorphSelf;
             data.wearingHircineRing = wearingHircineRing;
             data.isTransformed = isTransformed;
 
@@ -596,7 +608,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             compoundRace = data.compoundRace;
             infectionType = data.infectionType;
             lastKilledInnocent = data.lastKilledInnocent;
-            hasStartedInitialLycanthropyQuest = data.hasStartedInitialLycanthropyQuest;
+            lastCastMorphSelf = data.lastCastMorphSelf;
             wearingHircineRing = data.wearingHircineRing;
             isTransformed = data.isTransformed;
         }
