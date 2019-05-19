@@ -115,6 +115,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return isTransformed; }
         }
 
+        /// <summary>
+        /// Do not spawn additional population while transformed.
+        /// </summary>
+        public override bool SuppressPopulationSpawns
+        {
+            get { return isTransformed; }
+        }
+
         #endregion
 
         #region Overrides

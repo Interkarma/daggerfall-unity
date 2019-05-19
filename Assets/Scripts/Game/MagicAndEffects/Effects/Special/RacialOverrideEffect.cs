@@ -57,6 +57,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             get { return false; }
         }
 
+        /// <summary>
+        /// Allows racial override to suppress population spawns.
+        /// </summary>
+        public virtual bool SuppressPopulationSpawns
+        {
+            get { return false; }
+        }
+
         #endregion
 
         #region Overrides
