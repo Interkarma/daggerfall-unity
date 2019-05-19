@@ -62,8 +62,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public LycanthropyEffect()
         {
             InitMoveSoundTimer();
-
-            // TODO: Register commands
+            LycanthropeConsoleCommands.RegisterCommands();
         }
 
         #endregion
@@ -570,6 +569,40 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #endregion
 
         #region Console Commands
+
+        public static class LycanthropeConsoleCommands
+        {
+            public static void RegisterCommands()
+            {
+                try
+                {
+                    ConsoleCommandsDatabase.RegisterCommand(SateMe.name, SateMe.description, SateMe.usage, SateMe.Execute);
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+            private static class SateMe
+            {
+                public static readonly string name = "were_sateme";
+                public static readonly string description = "Lycanthrope urge to kill becomes sated.";
+                public static readonly string usage = "were_sateme";
+
+                public static string Execute(params string[] args)
+                {
+                    if (GameManager.Instance.PlayerEffectManager.HasLycanthropy())
+                    {
+                        (GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect() as LycanthropyEffect).UpdateSatiation();
+                        return "Your urge to kill has been sated.";
+                    }
+                    else
+                        return "Player is not a werewolf/wereboar.";
+                }
+            }
+        }
+
         #endregion
     }
 }
