@@ -375,9 +375,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public virtual void MorphSelf()
         {
-            // TODO: Implement transformation
+            // TODO: Enforce 24 hour cooldown on transform
+            // NOTE: Player can still exit beast form during cooldown if forced into it by full moon
 
-            // Simplistic implementation just to bootstrap various payloads
+            // Do transformation between forms
             if (!isTransformed)
             {
                 isTransformed = true;
@@ -406,6 +407,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 // Restore birth race name
                 compoundRace.Name = GameManager.Instance.PlayerEntity.BirthRaceTemplate.Name;
             }
+
+            // Classic heals player to full each time they transform
+            // Not sure if intentional and definitely exploitable during full moons
+            // One of those cases where implementing like classic and open to review later
+            GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
         }
 
         #endregion
