@@ -31,7 +31,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override void DeployFullBlownLycanthropy()
         {
-            // TODO: Deploy werewolf variant of lycanthropy
+            // Start permanent werewolf lycanthropy effect stage two
+            EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyCurse();
+            GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+            LycanthropyEffect lycanthropyEffect = (LycanthropyEffect)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<LycanthropyEffect>();
+            if (lycanthropyEffect != null)
+                lycanthropyEffect.InfectionType = LycanthropyTypes.Werewolf;
         }
     }
 }

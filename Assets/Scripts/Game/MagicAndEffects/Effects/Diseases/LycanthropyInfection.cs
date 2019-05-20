@@ -110,7 +110,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else if (daysPast > 3 && warningDreamVideoPlayed)
             {
-                // TODO: Shared handling
+                // Assign Lycanthropy spell to spellbook
+                GameManager.Instance.PlayerEntity.AssignPlayerLycanthropySpell();
 
                 // Deploy full-blown lycanthropy
                 DeployFullBlownLycanthropy();
