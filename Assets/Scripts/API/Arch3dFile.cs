@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Ferital (ferital@yahoo.fr)
 // 
 // Notes:
 //
@@ -164,7 +164,7 @@ namespace DaggerfallConnect.Arena2
             public Byte PlanePointCount;
             public Byte Unknown1;
             public UInt16 Texture;
-            public int UVunpack;
+            public UInt32 Unknown2;
         }
 
         /// <summary>
@@ -589,6 +589,9 @@ namespace DaggerfallConnect.Arena2
             long normalPosition = records[record].Header.NormalListOffset;
             BinaryReader normalReader = records[record].MemoryFile.GetReader(normalPosition);
 
+            // Get the record id
+            uint recordId = GetRecordId(record);
+
             // Read native data into plane array
             int uniqueTextureCount = 0;
             MeshVersions version = records[record].Version;
@@ -604,7 +607,7 @@ namespace DaggerfallConnect.Arena2
                 records[record].PureMesh.Planes[plane].Header.PlanePointCount = reader.ReadByte();
                 records[record].PureMesh.Planes[plane].Header.Unknown1 = reader.ReadByte();
                 records[record].PureMesh.Planes[plane].Header.Texture = reader.ReadUInt16();
-                records[record].PureMesh.Planes[plane].Header.UVunpack = reader.ReadInt32();
+                records[record].PureMesh.Planes[plane].Header.Unknown2 = reader.ReadUInt32();
 
                 // Read the normal data for this plane
                 Int32 nx = normalReader.ReadInt32();
@@ -650,7 +653,7 @@ namespace DaggerfallConnect.Arena2
                     // Fix some UV coordinates (process only the first 3 points as
                     // coordinates from point 4 and above are ignored)
                     // Only models whose id is below 1000 seem to require some processing here
-                    if (point < 3 && records[record].PureMesh.Planes[plane].Header.UVunpack == 0 && GetRecordId(record) < 1000)
+                    if (point < 3 && recordId < 1000)
                     {
                         UVunpack(ref u);
                         UVunpack(ref v);
