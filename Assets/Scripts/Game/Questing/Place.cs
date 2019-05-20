@@ -893,6 +893,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
+            // Get sites already involved in active quests and this quest so far
+            // Need to check our parent quest resources separately as not loaded to quest machine during compile
+            SiteDetails[] activeQuestSites = QuestMachine.Instance.GetAllActiveQuestSites();
+            QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
+
             // Iterate through all blocks
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
@@ -951,6 +956,10 @@ namespace DaggerfallWorkshop.Game.Questing
                                 buildingSummary[i].FactionId == ThievesGuild.FactionId)
                                 continue;
 
+                            // Building must not be involved in any other quests
+                            if (IsBuildingAssigned(activeQuestSites, parentQuestPlaceResources, location, buildingSummary[i]))
+                                continue;
+
                             // Building must be a valid quest site
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
                             EnumerateBuildingQuestMarkers(blocks[index], i, out questSpawnMarkers, out questItemMarkers);
@@ -990,6 +999,36 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundSites.ToArray();
+        }
+
+        bool IsBuildingAssigned(SiteDetails[] activeQuestSites, QuestResource[] parentQuestPlaceResources, DFLocation location, BuildingSummary buildingSummary)
+        {
+            // Check quest building Place resources in parent quest so far
+            if (parentQuestPlaceResources != null && parentQuestPlaceResources.Length > 0)
+            {
+                foreach (QuestResource resource in parentQuestPlaceResources)
+                {
+                    Place place = (Place)resource;
+                    if (place.siteDetails.siteType == SiteTypes.Building &&
+                        place.siteDetails.mapId == location.Exterior.ExteriorData.MapId &&
+                        place.siteDetails.buildingKey == buildingSummary.buildingKey)
+                        return true;
+                }
+            }
+
+            // Check quest building sites already active in quest machine
+            if (activeQuestSites != null && activeQuestSites.Length > 0)
+            {
+                foreach (SiteDetails site in activeQuestSites)
+                {
+                    if (site.siteType == SiteTypes.Building &&
+                        site.mapId == location.Exterior.ExteriorData.MapId &&
+                        site.buildingKey == buildingSummary.buildingKey)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         bool IsGuildFactionMatch(int factionID, int guildHallFaction)
