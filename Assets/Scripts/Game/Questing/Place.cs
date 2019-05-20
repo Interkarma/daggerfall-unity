@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -943,6 +944,11 @@ namespace DaggerfallWorkshop.Game.Questing
                             // Guild halls must match specified type (e.g. guildhall/magery/fighters)
                             if (buildingSummary[i].BuildingType == DFLocation.BuildingTypes.GuildHall &&
                                 !IsGuildFactionMatch(buildingSummary[i].FactionId, guildHallFaction))
+                                continue;
+
+                            // Do not use Thieves Guild or Dark Brotherhood buildings for random quests
+                            if (buildingSummary[i].FactionId == DarkBrotherhood.FactionId ||
+                                buildingSummary[i].FactionId == ThievesGuild.FactionId)
                                 continue;
 
                             // Building must be a valid quest site
