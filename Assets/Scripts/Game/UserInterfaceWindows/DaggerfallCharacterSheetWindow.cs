@@ -801,7 +801,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallMessageBox bankingStatusBox = DaggerfallUI.Instance.CreateBankingStatusBox(this);
+            DaggerfallMessageBox bankingStatusBox = DaggerfallBankingWindow.CreateBankingStatusBox(this);
             bankingStatusBox.Show();
         }
 
