@@ -652,8 +652,8 @@ namespace DaggerfallConnect.Arena2
 
                     // Fix some UV coordinates (process only the first 3 points as
                     // coordinates from point 4 and above are ignored)
-                    // Only models whose id is below 1000 seem to require some processing here
-                    if (point < 3 && recordId < 1000)
+                    // Only models whose id is below 905 seem to require some processing here
+                    if (point < 3 && recordId < 905)
                     {
                         UVunpack(ref u);
                         UVunpack(ref v);
