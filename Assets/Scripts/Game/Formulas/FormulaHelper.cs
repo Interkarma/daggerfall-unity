@@ -855,7 +855,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Get armor value for struck body part
             if (struckBodyPart <= target.ArmorValues.Length)
             {
-                armorValue = target.ArmorValues[struckBodyPart];
+                armorValue = target.ArmorValues[struckBodyPart] + target.IncreasedArmorValueModifier + target.DecreasedArmorValueModifier;
             }
 
             chanceToHit += armorValue;

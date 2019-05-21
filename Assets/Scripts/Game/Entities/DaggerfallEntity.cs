@@ -88,7 +88,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public int MaxMagickaModifier { get; private set; }
         public int MaxHealthLimiter { get; private set; }
         public float IncreasedWeightAllowanceMultiplier { get; private set; }
-
+        public int IncreasedArmorValueModifier { get; private set; }
+        public int DecreasedArmorValueModifier { get; private set; }
 
         /// <summary>
         /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
@@ -390,6 +391,22 @@ namespace DaggerfallWorkshop.Game.Entity
             // Increased weight allowance does not stack, only effect with the highest multiplier used
             if (IncreasedWeightAllowanceMultiplier < amount)
                 IncreasedWeightAllowanceMultiplier = amount;
+        }
+
+        public void SetIncreasedArmorValueModifier(int amount)
+        {
+            // Increased armor value does not stack, only effect with the highest modifier used
+            // In classic effects this never goes above +5
+            if (IncreasedArmorValueModifier < amount)
+                IncreasedArmorValueModifier = amount;
+        }
+
+        public void SetDecreasedArmorValueModifier(int amount)
+        {
+            // Decreased armor value does not stack, only effect with the lowest modifier uses
+            // In classic effects this never goes below -5
+            if (amount < DecreasedArmorValueModifier)
+                DecreasedArmorValueModifier = amount;
         }
 
         public void SetMaxHealthLimiter(int amount)
@@ -811,6 +828,8 @@ namespace DaggerfallWorkshop.Game.Entity
             MaxMagickaModifier = 0;
             MaxHealthLimiter = 0;
             IncreasedWeightAllowanceMultiplier = 0;
+            IncreasedArmorValueModifier = 0;
+            DecreasedArmorValueModifier = 0;
             IsResistingFire = false;
             IsResistingFrost = false;
             IsResistingDiseaseOrPoison = false;
