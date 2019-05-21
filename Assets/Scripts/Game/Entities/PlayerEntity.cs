@@ -344,11 +344,18 @@ namespace DaggerfallWorkshop.Game.Entity
                 gameStarted = true;
             if (playerMotor != null)
             {
+                // Values are < 1 so fatigue loss is slower
+                const float atleticismMultiplier = 0.9f;
+                const float improvedAtleticismMultiplier = 0.8f;
+
                 // UESP describes Athleticism relating to fatigue/stamina as "decreases slower when running, jumping, climbing, and swimming."
                 // https://en.uesp.net/wiki/Daggerfall:ClassMaker#Special_Advantages
                 // In this implementation, players with athleticism will lose fatigue 10% slower, otherwise at normal rate
+                // If player also has improved athleticism enchantment, they will lose fatigue 20% slower
                 // TODO: Determine actual improvement multiplier to fatigue loss, possibly move to FormulaHelper
-                float fatigueLossMultiplier = (career.Athleticism) ? 0.90f : 1.0f;
+                float fatigueLossMultiplier = 1.0f;
+                if (career.Athleticism)
+                    fatigueLossMultiplier = (ImprovedAthleticism) ? improvedAtleticismMultiplier : atleticismMultiplier;
 
                 // Apply per-minute events
                 if (lastGameMinutes != gameMinutes)

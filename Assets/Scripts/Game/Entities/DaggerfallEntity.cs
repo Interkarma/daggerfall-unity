@@ -90,6 +90,9 @@ namespace DaggerfallWorkshop.Game.Entity
         public float IncreasedWeightAllowanceMultiplier { get; private set; }
         public int IncreasedArmorValueModifier { get; private set; }
         public int DecreasedArmorValueModifier { get; private set; }
+        public bool ImprovedAcuteHearing { get; set; }
+        public bool ImprovedAthleticism { get; set; }
+        public bool ImprovedAdrenalineRush { get; set; }
 
         /// <summary>
         /// Gets the DaggerfallEntityBehaviour related to this DaggerfallEntity.
@@ -830,6 +833,9 @@ namespace DaggerfallWorkshop.Game.Entity
             IncreasedWeightAllowanceMultiplier = 0;
             IncreasedArmorValueModifier = 0;
             DecreasedArmorValueModifier = 0;
+            ImprovedAcuteHearing = false;
+            ImprovedAthleticism = false;
+            ImprovedAdrenalineRush = false;
             IsResistingFire = false;
             IsResistingFrost = false;
             IsResistingDiseaseOrPoison = false;

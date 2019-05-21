@@ -861,14 +861,16 @@ namespace DaggerfallWorkshop.Game.Formulas
             chanceToHit += armorValue;
 
             // Apply adrenaline rush modifiers.
+            const int adrenalineRushModifier = 5;
+            const int improvedAdrenalineRushModifier = 8;
             if (attacker.Career.AdrenalineRush && attacker.CurrentHealth < (attacker.MaxHealth / 8))
             {
-                chanceToHit += 5;
+                chanceToHit += (attacker.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
             }
 
             if (target.Career.AdrenalineRush && target.CurrentHealth < (target.MaxHealth / 8))
             {
-                chanceToHit -= 5;
+                chanceToHit -= (target.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
             }
 
             // Apply luck modifier.
