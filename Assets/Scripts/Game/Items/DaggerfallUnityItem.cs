@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Items
         public CustomEnchantment[] customMagic = null;
         public int stackCount = 1;
         public Poisons poisonType = Poisons.None;
+        public uint timeEnchantmentLastUsed;
 
         // Private item fields
         int playerTextureArchive;
@@ -757,6 +758,7 @@ namespace DaggerfallWorkshop.Game.Items
                     j++;
                 }
             }
+            data.customMagic = customMagic;
             data.playerTextureArchive = playerTextureArchive;
             data.playerTextureRecord = playerTextureRecord;
             data.worldTextureArchive = worldTextureArchive;
@@ -775,6 +777,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.potionRecipe = potionRecipeKey;
             data.repairData = repairData.GetSaveData();
             data.timeForItemToDisappear = timeForItemToDisappear;
+            data.timeEnchantmentLastUsed = timeEnchantmentLastUsed;
 
             return data;
         }
@@ -1503,9 +1506,13 @@ namespace DaggerfallWorkshop.Game.Items
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
             potionRecipeKey = other.potionRecipeKey;
+            timeEnchantmentLastUsed = other.timeEnchantmentLastUsed;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();
+
+            if (other.customMagic != null)
+                customMagic = (CustomEnchantment[])other.customMagic.Clone();
         }
 
         /// <summary>
@@ -1630,6 +1637,7 @@ namespace DaggerfallWorkshop.Game.Items
                     j++;
                 }
             }
+            customMagic = data.customMagic;
             playerTextureArchive = data.playerTextureArchive;
             playerTextureRecord = data.playerTextureRecord;
             worldTextureArchive = data.worldTextureArchive;
@@ -1646,6 +1654,7 @@ namespace DaggerfallWorkshop.Game.Items
             if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 poisonType = Poisons.None;
             potionRecipeKey = data.potionRecipe;
+            timeEnchantmentLastUsed = data.timeEnchantmentLastUsed;
             // Convert any old classic recipe items in saves to DFU recipe key.
             if (potionRecipeKey == 0 && (IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
                 potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];

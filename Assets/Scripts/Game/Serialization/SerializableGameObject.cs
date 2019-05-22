@@ -264,6 +264,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int enchantmentPoints;
         public int message;
         public int[] legacyMagic;
+        public CustomEnchantment[] customMagic;
         public int playerTextureArchive;
         public int playerTextureRecord;
         public int worldTextureArchive;
@@ -280,6 +281,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int potionRecipe;
         public ItemRepairData_v1 repairData;
         public uint timeForItemToDisappear;
+        public uint timeEnchantmentLastUsed;
     }
 
     [fsObject("v1")]
