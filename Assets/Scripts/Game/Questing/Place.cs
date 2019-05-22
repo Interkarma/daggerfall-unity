@@ -1090,13 +1090,22 @@ namespace DaggerfallWorkshop.Game.Questing
             // Only dungeons 0-16 contain quest and item markers
             // 17-18 are available for exterior questing only
             int upperLimit = (allowFullRange) ? 18 : 16;
-            
+
+            // Get sites already involved in active quests and this quest so far
+            // Need to check our parent quest resources separately as not loaded to quest machine during compile
+            SiteDetails[] activeQuestSites = QuestMachine.Instance.GetAllActiveQuestSites();
+            QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
+
             // Collect all dungeon types
             List<int> foundLocationIndices = new List<int>();
             for (int i = 0; i < regionData.LocationCount; i++)
             {
                 // Discard all non-dungeon location types
                 if (!IsDungeonType(regionData.MapTable[i].LocationType))
+                    continue;
+
+                // Dungeon must not be involved in any other quests
+                if (IsDungeonAssigned(activeQuestSites, parentQuestPlaceResources, regionData.MapTable[i].MapId))
                     continue;
 
                 //Debug.LogFormat("Checking dungeon type {0} at location {1}", (int)regionData.MapTable[i].DungeonType, regionData.MapNames[i]);
@@ -1118,6 +1127,34 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundLocationIndices.ToArray();
+        }
+
+        bool IsDungeonAssigned(SiteDetails[] activeQuestSites, QuestResource[] parentQuestPlaceResources, int mapId)
+        {
+            // Check quest dungeon Place resources in parent quest so far
+            if (parentQuestPlaceResources != null && parentQuestPlaceResources.Length > 0)
+            {
+                foreach (QuestResource resource in parentQuestPlaceResources)
+                {
+                    Place place = (Place)resource;
+                    if (place.siteDetails.siteType == SiteTypes.Dungeon &&
+                        place.siteDetails.mapId == mapId)
+                        return true;
+                }
+            }
+
+            // Check quest dungeon sites already active in quest machine
+            if (activeQuestSites != null && activeQuestSites.Length > 0)
+            {
+                foreach (SiteDetails site in activeQuestSites)
+                {
+                    if (site.siteType == SiteTypes.Dungeon &&
+                        site.mapId == mapId)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
