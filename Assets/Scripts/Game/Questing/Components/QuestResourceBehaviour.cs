@@ -121,6 +121,18 @@ namespace DaggerfallWorkshop.Game.Questing
                     targetResource.QuestResourceBehaviour = this;
             }
 
+            // Handle NPC checks
+            if (targetResource is Person && targetResource.QuestResourceBehaviour)
+            {
+                // Disable person resource if hidden or destroyed
+                // Normally this is done via QuestResource.Tick() but this stops receiving ticks when quest terminates
+                // Sometimes a quest person is hidden at same time quest is ended, e.g. $CUREWER when spawning lycanthrope foe
+                // Also disabling here to handle this situation
+                Person targetPerson = (Person)targetResource;
+                if (targetPerson.IsHidden || targetPerson.IsDestroyed)
+                    targetPerson.QuestResourceBehaviour.gameObject.SetActive(false);
+            }
+
             // Handle enemy checks
             if (enemyEntityBehaviour)
             {

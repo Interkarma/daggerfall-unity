@@ -99,6 +99,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             place.AssignQuestResource(person.Symbol);
             person.SetAssignedPlaceSymbol(placeSymbol);
 
+            // Person is also unhidden when placed
+            person.IsHidden = false;
+
             TalkManager.Instance.ForceTopicListsUpdate();
 
             SetComplete();
