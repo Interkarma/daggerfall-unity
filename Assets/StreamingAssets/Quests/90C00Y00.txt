@@ -105,8 +105,9 @@ Message:  1015
 <ce>                          with Lady Vaernima.
 
 Message:  1020
-%qdt: I have made a contract with the Daedra
- Prince Vaernima. She will order her agent in ___qgfriend_
+%qdt:
+ I have made a contract with the Daedra Prince Vaernima.
+ She will order her agent in ___qgfriend_
  to give me her artifact, _artifact_, if
  I can meet %g2 at __qgfriend_ with the
  dust of a certain _monster_ on my hands
@@ -143,6 +144,7 @@ Clock _1stparton_ 00:00 0 flag 1 range 2 5
 Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Lich
+--fixed msg 1020 to not share qdt line
 
 --	Quest start-up:
 	start timer _1stparton_ 

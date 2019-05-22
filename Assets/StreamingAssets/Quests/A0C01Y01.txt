@@ -110,7 +110,7 @@ Foe _villains_ is 2 Assassin
 	start timer _S.00_ 
 	log 1010 step 0 
 	pc at _qgiverhome_ set _S.05_
-	---not an acceptable argument. moved to S.05
+	---removed "saying" as unacceptable argument. moved to S.05
 	create npc at _qgiverhome_ 
 
 _S.00_ task:
@@ -118,7 +118,7 @@ _S.00_ task:
 
 _S.01_ task:
 	daily from 21:00 to 23:59 
-	--00:00 already exists. 24:00 as a time is an aberration
+	--changed 24:00 to 23:59. 24:00 shouldn't exist.
 	place npc _qgiver_ at _qgiverhome_ 
 
 _S.02_ task:

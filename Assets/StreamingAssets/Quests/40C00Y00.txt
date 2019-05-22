@@ -348,6 +348,7 @@ Clock _S.22_ 1.00:00 2.18:40
 Clock _betrayQuestor_ 00:02 00:30
 
 Foe _monster_ is Mage
+Foe _monster1_ is Mage
 Foe _daedra_ is Frost_daedra
 
 --	Quest start-up:
@@ -377,6 +378,7 @@ _S.04_ task:
 
 _S.05_ task:
 	killed 1 _monster_ 
+	killed 1 _monster1_
 	say 1035 
 
 _S.06_ task:
@@ -436,7 +438,10 @@ _S.17_ task:
 	start timer _S.22_ 
 	rumor mill 1015 
 	change repute with _questgiver_ by -20 
-	place foe _monster_ at _fakedung_ 
+	remove foe _monster_
+	place foe _monster1_ at _fakedung_
+--replaced faulty action "place foe _monster_ at _fakedung_" with remove foe, otherwise foe would not disappear. added new monster1 variable
+
 
 variable _S.18_
 _S.19_ task:

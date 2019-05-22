@@ -174,10 +174,9 @@ Item _gold_ gold range 30 to 75
 Person _questgiver_ face 137 group Questor
 Person _pickuplocal_ face 232 group Local_3.0
 
-
 Clock _oneday_ 1.00:00
 Clock _delay_ 01:00
---precise timers needed due to short time limit
+--added precise timers due to short time limit
 
 Foe _thief_ is Burglar
 
@@ -192,12 +191,13 @@ _oneday_ task:
 	end quest 
 
 _S.01_ task:
-	pick one of _S.02_ snitch0 _S.04_ _S.05_ 
+	pick one of _S.02_ _snitch0_ _S.04_ _S.05_ 
+--added underscores to snitch0
 
 _S.02_ task:
 	get item _book_ saying 1011 
 
-snitch0 task:
+_snitch0_ task:
 	get item _ingredient_ saying 1012 
 
 _S.04_ task:
@@ -247,42 +247,51 @@ _S.14_ task:
 variable _S.15_
 _S.16_ task:
 	injured _thief_ 
-	prompt 1020 yes yes no _no_ 
+	prompt 1020 yes _yes_ no _no_ 
 
-yes task:
+_yes_ task:
 	restrain foe _thief_ 
 
 variable _no_
 _yes1_ task:
-	when yes and _S.02_ 
+	when _yes_ and _S.02_ 
+	take _book_ from pc
 	give item _book_ to _thief_ 
+--added "take X from pc" for all yes# tasks.
 
 _yes2_ task:
-	when yes and snitch0 
+	when _yes_ and _snitch0_ 
+	take _ingredient_ from pc
 	give item _ingredient_ to _thief_ 
 
 _yes3_ task:
-	when yes and _S.04_ 
+	when _yes_ and _S.04_ 
+	take _jewelry_ from pc
 	give item _jewelry_ to _thief_ 
 
 _yes4_ task:
-	when yes and _S.05_ 
+	when _yes_ and _S.05_ 
+	take _mensclothing_ from pc
 	give item _mensclothing_ to _thief_ 
 
 _ring_ task:
-	when yes and _S.06_ 
+	when _yes_ and _S.06_ 
+	take _painting_ from pc
 	give item _painting_ to _thief_ 
 
 _yes6_ task:
-	when yes and _S.07_ 
+	when _yes_ and _S.07_
+	take _potion_ from pc 
 	give item _potion_ to _thief_ 
 
 _note_ task:
-	when yes and _S.08_ 
+	when _yes_ and _S.08_ 
+	take _weapon_ from pc
 	give item _weapon_ to _thief_ 
 
 _poet_ task:
-	when yes and _S.09_ 
+	when _yes_ and _S.09_ 
+	take _womensclothing_ from pc
 	give item _womensclothing_ to _thief_ 
 
 _delay_ task:

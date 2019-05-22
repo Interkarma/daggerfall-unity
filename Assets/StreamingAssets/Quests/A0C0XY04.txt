@@ -232,7 +232,7 @@ _givereward_ task:
 	change repute with _dummymage_ by +25
 	change repute with _dummyorc_ by -10 
 	say 1015
-	--"saying ###" as an argument here is unsupported
+	--"saying ###" as an argument here is unsupported, I gave it its own line
 
 _extratime_ task:
 	make _ingredient_ permanent 

@@ -142,6 +142,7 @@ Clock _delay_ 01:00 0 flag 1 range 0 1
 Clock _S.08_ 00:01 00:04
 
 Foe _monster_ is Mage
+Foe _monster1_ is Mage
 
 --	Quest start-up:
 	place item _map_ at _mondung_ 
@@ -160,8 +161,10 @@ _pcgetsgold_ task:
 variable _queston_
 --unused variable
 _mondead_ task:
-	killed 1 _monster_ 
+	killed 1 _monster_
+	killed 1 _monster1_ 
 	say 1030 
+	--added kill condition for monster1
 
 _qgclicked_ task:
 	clicked npc _contact_ 
@@ -186,10 +189,12 @@ _S.09_ task:
 	start timer _S.08_ 
 
 _S.10_ task:
-	when _S.08_ and not _mondead_ 
-	place foe _monster_ at _hideout_
-	say 1040 
---invalid argument
+	when _S.08_ and not _mondead_
+	remove foe _monster_
+	place foe _monster1_ at _hideout_
+	say 1040
+--saying 1040 was previously used here as an invalid argument. Moved it to its own line.
+--added new monster1 creature and properly enabled disappearing act with new remove action.
 
 _readmap_ task:
 	reveal _hideout_ readmap

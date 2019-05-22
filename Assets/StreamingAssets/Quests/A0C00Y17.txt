@@ -194,7 +194,8 @@ _S.05_ task:
 	injured _guards_ saying 1020 
 	injured _F.03_ saying 1023 
 	injured _F.01_ saying 1022 
-	prompt 1019 yes yes no _no_ 
+	prompt 1019 yes _yes_ no _no_ 
+--added underscores to yes
 
 _S.06_ task:
 	give pc _gold_ 
@@ -205,12 +206,12 @@ _S.06_ task:
 _extratime_ task:
 	end quest 
 
-yes task:
+_yes_ task:
 	start timer _extratime_ 
 	say 1030 
 	drop _questgiver_ face 
 
-until yes performed:
+until _yes_ performed:
 	pc at _destination_ set _S.06_ 
 
 _no_ task:
@@ -218,17 +219,17 @@ _no_ task:
 
 variable _S.10_
 _S.11_ task:
-	when yes and _S.01_ 
+	when _yes_ and _S.01_ 
 	legal repute +10 
 	restrain foe _guards_ 
 
 _S.12_ task:
-	when yes and _S.02_ 
+	when _yes_ and _S.02_ 
 	change repute with _mage_ by +10 
 	restrain foe _mages_ 
 
 _S.13_ task:
-	when yes and _S.03_ 
+	when _yes_ and _S.03_ 
 	change repute with _thief_ by +10 
 	restrain foe _F.01_ 
 
@@ -236,7 +237,7 @@ _S.14_ task:
 	create foe _F.03_ every 5 minutes 3 times with 25% success 
 
 _S.15_ task:
-	when yes and _S.14_ 
+	when _yes_ and _S.14_ 
 	change repute with _darkb_ by +10 
 	restrain foe _F.03_ 
 

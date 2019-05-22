@@ -193,7 +193,7 @@ Person _cousin_ group Resident4 female anyInfo 1012 rumors 1012
 Person _healer_ face 64 group Chemist anyInfo 1040 rumors 1041
 
 Clock _questtime_ 00:00 0 flag 1 range 3 5
---delay clock unnecessary, only started to end the quest. perhaps a classic execution flaw.
+Clock _delay_ 01:00
 
 --	Quest start-up:
 	dialog link for person _healer_ item talisman 
@@ -226,8 +226,8 @@ _S.06_ task:
 
 _S.07_ task:
 	toting talisman and _cousin_ clicked 
-	give pc _gold2_ 
-	end quest 
+	give pc _gold2_
+	start timer _delay_ 
 
 _S.08_ task:
 	clicked npc _healer_ 
@@ -241,4 +241,6 @@ _S.09_ task:
 _S.10_ task:
 	say 1015 
 	clear _S.08_ _S.09_ _S.10_
---delay task removed as unnecessary
+
+_delay_ task:
+	end quest 
