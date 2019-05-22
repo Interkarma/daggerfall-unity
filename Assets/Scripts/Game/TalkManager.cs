@@ -175,6 +175,7 @@ namespace DaggerfallWorkshop.Game
             public float chanceKnowsSomethingAboutOrganizations; // the general chance that the current npc knows the answer to pc's question about organizations
             public int numAnswersGivenTellMeAboutOrRumors; // the number of (successful) answers to a "tell me about" question or rumors given by the npc (answers about npc knew something)
             public bool isSpyMaster;
+            public bool allowGuildResponse = true;
         }
         NPCData npcData;
 
@@ -632,6 +633,7 @@ namespace DaggerfallWorkshop.Game
 
             npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will can one correct answer if NPC knows about topic (as implemented in classic)
             npcData.isSpyMaster = isSpyMaster;
+            npcData.allowGuildResponse = !(!menu && isSpyMaster);   // Disables guild response for spymasters when talk is not from guild menu.
 
             TalkToNpc();
         }
@@ -779,7 +781,8 @@ namespace DaggerfallWorkshop.Game
 
             // Check if NPC is a member of a guild
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) && // First check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
+            if (npcData.allowGuildResponse &&   // Next check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
+                DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) &&
                 GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
             {
                 if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8553, 8554
@@ -2188,19 +2191,23 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                string responseText;
-                if (GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
+                TextFile.Token[] responseTokens;
+                if (npcData.allowGuildResponse && GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
                 {
-                    if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8554
-                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
+                    if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8555
+                        responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
                     else // All other guilds (including Knightly Orders) seem to use message 8552
-                        responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(isInSameGuildDislikePlayerRefusingToTalkTextId);
+                        responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(isInSameGuildDislikePlayerRefusingToTalkTextId);
                 }
                 else
                 {
-                    responseText = DaggerfallUnity.Instance.TextProvider.GetRandomText(dialogRejectionTextId);
+                    responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(dialogRejectionTextId);
                 }
-                DaggerfallUI.MessageBox(responseText);
+                DaggerfallMessageBox msgBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                msgBox.SetTextTokens(responseTokens);
+                msgBox.ClickAnywhereToClose = true;
+                msgBox.Show();
+
                 alreadyRejectedOnce = true;
             }
         }
