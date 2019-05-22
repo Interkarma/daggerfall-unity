@@ -588,8 +588,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                             if (hitDamage > 0)
                                 OnMonsterHit(AIAttacker, target, hitDamage);
 
-                            // TODO: Apply Ring of Namira effect
-
                             damage += hitDamage;
                         }
                         ++attackNumber;
@@ -623,7 +621,32 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
+            // Apply Ring of Namira effect
+            if (target == player)
+            {
+                DaggerfallUnityItem[] equippedItems = target.ItemEquipTable.EquipTable;
+                DaggerfallUnityItem item = null;
+                if (equippedItems.Length != 0)
+                {
+                    item = IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) ? equippedItems[(int)EquipSlots.Ring0] : equippedItems[(int)EquipSlots.Ring1];
+                    item = IsRingOfNamira(item) ? item : null;
+                    if (item != null)
+                    {
+                        IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
+                            targetEntity: AIAttacker.EntityBehaviour,
+                            sourceItem: item,
+                            sourceDamage: damage);
+                    }
+                }
+            }
+
             return damage;
+        }
+
+        private static bool IsRingOfNamira(DaggerfallUnityItem item)
+        {
+            return item != null && item.ContainsEnchantment(DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect, (int)ArtifactsSubTypes.Ring_of_Namira);
         }
 
         private static int CalculateStruckBodyPart()
