@@ -335,7 +335,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {               
             if (listboxTopic != null)
             {
-                string oldTopic = listboxTopic.SelectedItem;
+                string oldTopic = listboxTopic.SelectedIndex >= 0 ? listboxTopic.SelectedItem : null;
                 if (selectedTalkOption == TalkOption.TellMeAbout)
                 {
                     SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
@@ -348,8 +348,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
                     else if (selectedTalkCategory == TalkCategory.Things)
                         SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
-                }                
-                listboxTopic.SelectedIndex = listboxTopic.FindIndex(oldTopic);
+                }
+                if (oldTopic != null)
+                    listboxTopic.SelectedIndex = listboxTopic.FindIndex(oldTopic);
                 UpdateQuestion(listboxTopic.SelectedIndex);
             }                
         }
