@@ -967,7 +967,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Breaks payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
-            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Breaks, param, entityBehaviour, entityBehaviour, item);
+            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Breaks, param, entityBehaviour, entityBehaviour, item);
         }
 
         #endregion

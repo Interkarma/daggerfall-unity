@@ -410,7 +410,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!DaggerfallUnity.Settings.AssetInjection)
                 return null;
 
-            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+            //MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
             int frame = 0;
 
             Texture2D albedo, emission;
