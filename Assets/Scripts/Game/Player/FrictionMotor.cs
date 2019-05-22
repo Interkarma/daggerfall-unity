@@ -1,5 +1,6 @@
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -184,13 +185,14 @@ namespace DaggerfallWorkshop.Game
             // Sample forward from very top of player's head and from eye level
             Ray headRay = new Ray(myTransform.position + new Vector3(0, heightChanger.FixedControllerStandingHeight / 2 + 0.25f, 0), myTransform.forward);
             Ray eyeRay = new Ray(GameManager.Instance.MainCamera.transform.position, myTransform.forward);
-            bool headRayHit = Physics.Raycast(headRay, raySampleDistance);
+            RaycastHit headHit;
+            bool headRayHit = Physics.Raycast(headRay, out headHit, raySampleDistance);
             bool eyeRayHit = Physics.Raycast(eyeRay, raySampleDistance);
 
             //Debug.LogFormat("Ray contact: HeadRay: {0}, EyeRay {1}", headRayHit, eyeRayHit);
 
             // If top of head hits something but eyes are clear, try dipping controller height
-            if (headRayHit && !eyeRayHit)
+            if (headRayHit && !eyeRayHit && GameObjectHelper.IsStaticGeometry(headHit.transform.gameObject))
             {
                 // Dip controller height by clearance amount
                 heightChanger.StandingHeightAdjustment = clearanceAdjustment;
