@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get
             {
-                return @"destroy npc (?<anNPC>[a-zA-Z0-9_.-]+)";
+                return @"destroy npc (?<anNPC>[a-zA-Z0-9_.-]+)|destroy (?<anNPC>[a-zA-Z0-9_.-]+)";
             }
         }
 
