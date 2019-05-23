@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public int LoadPriority
         {
             get { return loadPriorty; }
-            set { loadPriorty = value; }
+            internal set { loadPriorty = value; }
         }
 
         /// <summary>
