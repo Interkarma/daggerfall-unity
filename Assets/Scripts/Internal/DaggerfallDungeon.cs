@@ -294,6 +294,8 @@ namespace DaggerfallWorkshop
                 RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
             }
 
+            RemoveOverlappingDoors();
+
 #if SHOW_LAYOUT_TIMES
             // Show timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
@@ -338,6 +340,62 @@ namespace DaggerfallWorkshop
 
                 // Add water blocks
                 RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
+            }
+
+            RemoveOverlappingDoors();
+        }
+
+        // Remove duplicate/overlapping action doors in dungeons
+        // Action doors that are intentionally placed flush next to each other (e.g. entrance in Daggerfall Castle) have ~2.25 units between origins
+        // Using a tolerance of <1.4 and culling a door found within this limit - any doors this close together are definitely overlapping
+        // Note some doors appear sunken in doorframe - not trying to select "best" door based on placement height at this time
+        // This process adds approx. 7ms layout time per 100 doors processed - hardly noticeable above layout times of ~1250ms for large dungeons (e.g. Scourg, 206 doors)
+        // TODO:
+        //  * Try to identify the "best" aligned door
+        private void RemoveOverlappingDoors()
+        {
+            const float tolerance = 1.4f;
+
+            List<Vector3> doorPosRegistry = new List<Vector3>();
+            DaggerfallStaticDoors[] staticDoorCollections = EnumerateStaticDoorCollections();
+            DaggerfallActionDoor[] actionDoors = GetComponentsInChildren<DaggerfallActionDoor>();
+
+            // Add static exit door to registry - should be just the one
+            foreach (DaggerfallStaticDoors collection in staticDoorCollections)
+            {
+                if (collection.Doors != null && collection.Doors.Length > 0)
+                {
+                    foreach (StaticDoor staticDoor in collection.Doors)
+                    {
+                        if (staticDoor.doorType == DoorTypes.DungeonExit)
+                        {
+                            // Get static door centre in world space and add to registry
+                            Vector3 centre = transform.rotation * staticDoor.buildingMatrix.MultiplyPoint3x4(staticDoor.centre) + transform.position;
+                            doorPosRegistry.Add(centre);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Check all action doors against registry and reject if close enough to overlap another door
+            foreach (DaggerfallActionDoor actionDoor in actionDoors)
+            {
+                bool duplicateFound = false;
+                foreach (Vector3 pos in doorPosRegistry)
+                {
+                    if (Vector3.Distance(actionDoor.transform.position, pos) < tolerance)
+                    {
+                        actionDoor.gameObject.SetActive(false);
+                        duplicateFound = true;
+                        Debug.Log(">Disabled overlapping action door");
+                        break;
+                    }
+                }
+                if (!duplicateFound)
+                {
+                    doorPosRegistry.Add(actionDoor.transform.position);
+                }
             }
         }
 
