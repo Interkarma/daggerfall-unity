@@ -126,6 +126,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button nameButton = DaggerfallUI.AddButton(new Rect(4, 3, 132, 8), NativePanel);
             nameButton.OnMouseClick += NameButton_OnMouseClick;
 
+            Button goldButton = DaggerfallUI.AddButton(new Rect(4, 43, 132, 8), NativePanel);
+            goldButton.OnMouseClick += GoldButton_OnMouseClick;
+
             // Health button
             Button healthButton = DaggerfallUI.AddButton(new Rect(4, 63, 128, 8), NativePanel);
             healthButton.OnMouseClick += HealthButton_OnMouseClick;
@@ -794,6 +797,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.SetTextBoxLabel(HardStrings.enterNewName);
             mb.OnGotUserInput += EnterName_OnGotUserInput;
             mb.Show();
+        }
+
+        private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallMessageBox bankingStatusBox = DaggerfallBankingWindow.CreateBankingStatusBox(this);
+            bankingStatusBox.Show();
         }
 
         private void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)

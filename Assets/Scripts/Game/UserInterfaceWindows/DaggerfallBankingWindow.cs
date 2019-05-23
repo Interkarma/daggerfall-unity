@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Utility;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -199,12 +200,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.OnPush();
             DaggerfallBankManager.OnTransaction += this.OnTransactionEventHandler;
             regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            uint paymentDueMinutes = DaggerfallBankManager.BankAccounts[regionIndex].loanDueDate;
-
-            // Set hasDefaulted flag (Note: Does not seem to ever be set in classic)
-            if (paymentDueMinutes != 0 && paymentDueMinutes < gameMinutes)
-                DaggerfallBankManager.BankAccounts[regionIndex].hasDefaulted = true;
         }
 
         public override void OnPop()
@@ -474,7 +469,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GeneratePopup(result, amount);
         }
 
-
         #endregion
 
         #region Macro handling
@@ -504,6 +498,71 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return DaggerfallBankManager.CalculateMaxLoan().ToString();
             }
 
+        }
+
+        #endregion
+
+        #region banking status box
+
+        public static DaggerfallMessageBox CreateBankingStatusBox(IUserInterfaceWindow previous = null)
+        {
+            const string textDatabase = "DaggerfallUI";
+
+            DaggerfallMessageBox bankingBox = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, previous);
+            bankingBox.SetHighlightColor(DaggerfallUI.DaggerfallUnityStatDrainedTextColor);
+            List<TextFile.Token> messages = new List<TextFile.Token>();
+            bool found = false;
+            messages.AddRange(GetLoansLine(
+                TextManager.Instance.GetText(textDatabase, "region"),
+                TextManager.Instance.GetText(textDatabase, "account"),
+                TextManager.Instance.GetText(textDatabase, "loan"),
+                TextManager.Instance.GetText(textDatabase, "dueDate")));
+            messages.Add(TextFile.NewLineToken);
+            for (int regionIndex = 0; regionIndex < DaggerfallBankManager.BankAccounts.Length; regionIndex++)
+            {
+                if (DaggerfallBankManager.GetAccountTotal(regionIndex) > 0 || DaggerfallBankManager.HasLoan(regionIndex))
+                {
+                    TextFile.Formatting formatting = DaggerfallBankManager.HasDefaulted(regionIndex) ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;
+                    messages.AddRange(GetLoansLine(ShortenName(MapsFile.RegionNames[regionIndex], 12), DaggerfallBankManager.GetAccountTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex), formatting));
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                TextFile.Token noneToken = TextFile.CreateTextToken(TextManager.Instance.GetText(textDatabase, "noAccount"));
+                messages.Add(noneToken);
+                messages.Add(TextFile.NewLineToken);
+            }
+            bankingBox.SetTextTokens(messages.ToArray());
+            bankingBox.ClickAnywhereToClose = true;
+            return bankingBox;
+        }
+
+        private static string ShortenName(string name, int maxLength)
+        {
+            if (name.Length <= maxLength)
+                return name;
+            return name.Substring(0, maxLength - 1) + "...";
+        }
+
+        private static List<TextFile.Token> GetLoansLine(string region, string account, string loan, string duedate, TextFile.Formatting formatting = TextFile.Formatting.Text)
+        {
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+
+            TextFile.Token positioningToken = TextFile.TabToken;
+
+            tokens.Add(new TextFile.Token(formatting, region));
+            positioningToken.x = 60;
+            tokens.Add(positioningToken);
+            tokens.Add(new TextFile.Token(formatting, account));
+            positioningToken.x = 120;
+            tokens.Add(positioningToken);
+            tokens.Add(new TextFile.Token(formatting, loan));
+            positioningToken.x = 180;
+            tokens.Add(positioningToken);
+            tokens.Add(new TextFile.Token(formatting, duedate));
+            tokens.Add(TextFile.NewLineToken);
+            return tokens;
         }
 
         #endregion

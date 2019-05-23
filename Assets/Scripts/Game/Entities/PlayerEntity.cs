@@ -406,6 +406,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 GameManager.Instance.WeatherManager.SetClimateWeathers();
                 GameManager.Instance.WeatherManager.UpdateWeatherFromClimateArray = true;
                 RemoveExpiredRentedRooms();
+                LoanChecker.CheckOverdueLoans(lastGameMinutes);
             }
 
             // Normalize legal reputation and update faction power and regional conditions every certain number of days
@@ -2132,20 +2133,25 @@ namespace DaggerfallWorkshop.Game.Entity
             Pickpocketing = 12,
             Theft = 13,
             Treason = 14,
+            LoanDefault = 15,
         }
 
         // Values after index 0 are from FALL.EXE. It does not seem to have a valid value for the last crime "Treason," so just using half of "High Treason" value here.
-        readonly short[] reputationLossPerCrime = { 0x00, 0x0A, 0x05, 0x0A, 0x08, 0x14, 0x0A, 0x02, 0x01, 0x02, 0x02, 0x4B, 0x02, 0x08, 0x24 };
+        readonly short[] reputationLossPerCrime = { 0x00, 0x0A, 0x05, 0x0A, 0x08, 0x14, 0x0A, 0x02, 0x01, 0x02, 0x02, 0x4B, 0x02, 0x08, 0x24, 0x0A };
 
         public void LowerRepForCrime()
         {
-            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            regionData[regionIndex].LegalRep -= reputationLossPerCrime[(int)crimeCommitted];
+            LowerRepForCrime(GameManager.Instance.PlayerGPS.CurrentRegionIndex, crimeCommitted);
+        }
+
+        public void LowerRepForCrime(int regionIndex, Crimes crime)
+        {
+            regionData[regionIndex].LegalRep -= reputationLossPerCrime[(int)crime];
 
             FactionFile.FactionData peopleFaction;
             FactionData.FindFactionByTypeAndRegion(15, regionIndex, out peopleFaction);
 
-            FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crimeCommitted] / 2), true);
+            FactionData.ChangeReputation(peopleFaction.id, -(reputationLossPerCrime[(int)crime] / 2), true);
         }
 
         public void RaiseReputationForDoingSentence()

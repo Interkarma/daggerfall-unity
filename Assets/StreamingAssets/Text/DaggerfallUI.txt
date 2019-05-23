@@ -73,6 +73,16 @@ potionMixed,        Your potion has been mixed.
 potionFailed,       Those ingredients did not concoct an effective potion.
 reqIngredients,     You do not have the ingredients required.
 
+- Banking status:
+
+region,             Region
+account,            Account
+loan,               Loan
+dueDate,            Loan Due Date
+noAccount,          None
+loanReminder,       You have a loan of {0} gold pieces due in
+loanReminder2,      less than {0} months in {1}
+
 - Icon picker window:
 
 classicIcons,       Classic
