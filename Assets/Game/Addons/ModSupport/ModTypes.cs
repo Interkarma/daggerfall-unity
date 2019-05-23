@@ -28,9 +28,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-
     //created with mod builder window, seralized to json, bundled into mod
-    [System.Serializable]
+    [Serializable]
     public class ModInfo
     {
         public string ModTitle;         //displayed in game
@@ -101,11 +100,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     /// Specify a non-generic, public, static, class method that only takes an <see cref="InitParams"/>
     /// struct for a parameter, to be called automatically by Mod Manager during mod setup.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class Invoke : Attribute
     {
-        public readonly int priority;
-        public readonly StateManager.StateTypes startState;
+        public readonly int Priority;
+        public readonly StateManager.StateTypes StartState;
 
         /// <summary>
         /// Request the mod manager to invoke this method at the specified state.
@@ -114,8 +113,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="priority">Defines a per-mod order if there are multiple invoked methods for the same state.</param>
         public Invoke(StateManager.StateTypes startState = StateManager.StateTypes.Start, int priority = 99)
         {
-            this.priority = priority;
-            this.startState = startState;
+            this.Priority = priority;
+            this.StartState = startState;
         }
     }
 
@@ -149,9 +148,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     //used by mod builder window
     public enum ModCompressionOptions
     {
-        LZ4=0,
-        LZMA=1,
-        Uncompressed=2,
+        LZ4 = 0,
+        LZMA = 1,
+        Uncompressed = 2,
     }
 
     public delegate void DFModMessageReceiver(string message, object data, DFModMessageCallback callBack);
