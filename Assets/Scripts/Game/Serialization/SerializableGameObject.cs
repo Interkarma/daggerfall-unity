@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int potionRecipe;
         public ItemRepairData_v1 repairData;
         public uint timeForItemToDisappear;
-        public uint timeEnchantmentLastUsed;
+        public uint timeHealthLeechLastUsed;
     }
 
     [fsObject("v1")]

@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Items
         public CustomEnchantment[] customMagic = null;
         public int stackCount = 1;
         public Poisons poisonType = Poisons.None;
-        public uint timeEnchantmentLastUsed;
+        public uint timeHealthLeechLastUsed;
 
         // Private item fields
         int playerTextureArchive;
@@ -777,7 +777,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.potionRecipe = potionRecipeKey;
             data.repairData = repairData.GetSaveData();
             data.timeForItemToDisappear = timeForItemToDisappear;
-            data.timeEnchantmentLastUsed = timeEnchantmentLastUsed;
+            data.timeHealthLeechLastUsed = timeHealthLeechLastUsed;
 
             return data;
         }
@@ -1506,7 +1506,7 @@ namespace DaggerfallWorkshop.Game.Items
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
             potionRecipeKey = other.potionRecipeKey;
-            timeEnchantmentLastUsed = other.timeEnchantmentLastUsed;
+            timeHealthLeechLastUsed = other.timeHealthLeechLastUsed;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();
@@ -1654,7 +1654,7 @@ namespace DaggerfallWorkshop.Game.Items
             if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 poisonType = Poisons.None;
             potionRecipeKey = data.potionRecipe;
-            timeEnchantmentLastUsed = data.timeEnchantmentLastUsed;
+            timeHealthLeechLastUsed = data.timeHealthLeechLastUsed;
             // Convert any old classic recipe items in saves to DFU recipe key.
             if (potionRecipeKey == 0 && (IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
                 potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
