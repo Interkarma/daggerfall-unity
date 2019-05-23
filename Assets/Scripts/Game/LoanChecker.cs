@@ -8,16 +8,12 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
-    public class LoanChecker : MonoBehaviour
+    public static class LoanChecker
     {
         const int MinutesPerMonth = DaggerfallDateTime.MinutesPerDay * DaggerfallDateTime.DaysPerMonth;
 
         const string textDatabase = "DaggerfallUI";
         const float loanReminderHUDDelay = 3;
-
-        private LoanChecker()
-        {
-        }
 
         public static void CheckOverdueLoans(uint lastGameMinutes)
         {
