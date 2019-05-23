@@ -146,8 +146,8 @@ Message:  1014
 <ce>             %g2 eventually myself. Here's _lessgold_ gold
 <ce>                 pieces. Not the full amount, but I am
 <ce>                             appreciative.
-                                     <--->
- 
+
+--removed erroneous blank msg inside 1014 
 
 -- Symbols used in the QRC file:
 --

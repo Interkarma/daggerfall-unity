@@ -187,7 +187,8 @@ variable _shortdelay_
 _S.06_ task:
 	when _shortdelay_ and not _S.02_ 
 	say 1040 
---erased S.08 task did nothing
 
 _S.07_ task:
 	say 1015 
+
+variable _S.08_

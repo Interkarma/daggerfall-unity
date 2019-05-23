@@ -141,7 +141,19 @@ Message:  1020
  with a clan feather from one of the leaders in
  =2mondung_ days for a reward of _reward_ gold pieces.
 
---removed "X harpies dead" messages. they were tied to the AnyInfo for unused harpy feather items. Obviously not intended effect
+Message:  1050
+1 harpie dead
+
+Message:  1051
+2 harpies dead
+
+Message:  1052
+3 harpies dead
+
+Message:  1053
+4 harpies dead
+
+--changed these msgs from 103X to 105X since those numbers were already taken above
 
 Message:  1040
 <ce>                I need some proof before I can pay you.
@@ -172,13 +184,11 @@ Message:  1099
 
 QBN:
 Item _item_ book2
---item is unused
 Item _reward_ gold
 Item _clanfeather1_ harpy_feather anyInfo 1030
 Item clanfeather2 harpy_feather anyInfo 1031
 Item clanfeather3 harpy_feather anyInfo 1032
 Item clanfeather4 harpy_feather anyInfo 1032
---feather2-4 are unused
 Item _letter26_ letter used 1012
 Item _jewelry_ trinket
 
@@ -209,7 +219,6 @@ _2mondung_ task:
 	end quest 
 
 variable _pcgetsgold_
---unused variable
 _S.02_ task:
 	toting _clanfeather1_ and _qgiver_ clicked 
 	give pc _reward_ 
@@ -236,7 +245,6 @@ _S.06_ task:
 	drop _contact_ face 
 
 variable _S.07_
---unused variable
 _S.08_ task:
 	create foe _F.00_ every 21 minutes 15 times with 25% success 
 
@@ -250,10 +258,9 @@ variable _S.10_
 variable _S.11_
 variable _S.12_
 variable _S.13_
---unused variables
 _S.14_ task:
 	say 1099 
-	--AFAIK clicked item is meant for items on the overworld, not inventory transfer. Not 100% sure.
+--changed "clicked item clanfeather1 say 1099" to "have item do this" since feather is on enemy body
 
 _S.15_ task:
 	place npc _contact_ at _mondung_ 

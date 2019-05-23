@@ -75,10 +75,13 @@ Message:  1020
 <ce>                         The Daedroth is dead.
 
 Message:  1030
-%qdt: The Fighters Guild in
+%qdt:
+ The Fighters Guild in
  ___questgiver_ will pay me _reward_ gold pieces
  if I slay the Daedroth in ___mondung_ in
  =1stparton_ days or less.
+
+-lowered first line of 1030 from %qdt line
 
 Message:  1080
 <ce>                 Since you didn't even blink at offing

@@ -74,7 +74,7 @@ Message:  1025
 <ce>                    patient's name is _cousin_ and
 <ce>                     %g is in ___cousin_. You have
 <ce>                  =questtime_ days to prove yourself.
---duplicate 1006 removed, and badly implemented
+--duplicate 1006 removed
 
 QuestLogEntry:  [1010]
 <ce>                     I feel so weak. I don't know
@@ -105,8 +105,7 @@ Message:  1014
 
 Message:  1015
 <ce>                   I'm sorry, you don't seem to have
-<ce>                  enough gold for the Hoar Frost Root
-.
+<ce>                  enough gold for the Hoar Frost Root.
 
 Message:  1016
 <ce>           Thank you, %pcn. I will use the Hoar Frost Root.
@@ -153,7 +152,8 @@ Message:  1019
 --          _healer_ occurs 39 times.
 
 QBN:
-Item talisman root_tendrils
+Item _talisman_ root_tendrils
+-added underscores to talisman
 
 Person _giver_ group Questor male
 Person _cousin_ group Local_3.0 female anyInfo 1012 rumors 1012
@@ -168,7 +168,7 @@ Clock _delay_ 01:00 0 flag 1 range 0 1
 	start timer _questtime_ 
 	prompt 1011 yes _S.01_ no _S.02_ 
 	pick one of _S.06_ _S.07_ 
-	talisman used do _S.08_ 
+	_talisman_ used do _S.08_ 
 	create npc _cousin_ 
 
 _questtime_ task:
@@ -179,8 +179,9 @@ _S.01_ task:
 	say 1025 
 
 _S.02_ task:
-	end quest saying RumorsPostfailure
-	--this is an awkward message to use for this task
+	say 1005
+	end quest
+-removed illogical "saying RumorsPostfailure" from this task. replaced with 1005.
 
 _S.03_ task:
 	clicked npc _cousin_ 
@@ -191,19 +192,19 @@ _S.04_ task:
 	make pc ill with Swamp_Rot 
 
 variable _S.05_
---unused S.05
 variable _S.06_
 variable _S.07_
 _S.08_ task:
-	take talisman from pc saying 1019 
+	take _talisman_ from pc saying 1019 
 	cure Swamp_Rot 
 
 _S.09_ task:
-	toting talisman and _cousin_ clicked 
-	give pc nothing 
+	toting _talisman_ and _cousin_ clicked 
 	start timer _delay_ 
 	log 1018 step 2 
 	say 1016 
+	give pc nothing 
+--moved "give pc nothing" to end of task, more sensible for dialogue
 
 _S.10_ task:
 	clicked npc _healer_ say 1013 
@@ -215,7 +216,7 @@ _no_ task:
 _S.11_ task:
 	clicked _healer_ and at least 20 gold otherwise do _S.12_ 
 	log 1017 step 1 
-	get item talisman 
+	get item _talisman_ 
 
 _S.12_ task:
 	say 1015 

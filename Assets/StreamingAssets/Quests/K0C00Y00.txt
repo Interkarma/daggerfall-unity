@@ -173,6 +173,8 @@ Foe _F.03_ is 2 Rogue
 	log 1010 step 0 
 	get item _letter_ 
 	pc at _storehouse_ set _S.04_ 
+	start timer _2storehouse_
+	--added timer start 2storehouse
 
 _pcgetsgold_ task:
 	toting _mitem_ and _qgiver_ clicked 
@@ -185,6 +187,8 @@ variable _qgclicked_
 _S.02_ task:
 	dropped _letter_ at _storehouse_ 
 	start timer _S.05_ 
+	stop timer _2storehouse_
+	--added timer stop 2storehouse
 
 _2storehouse_ task:
 	make _mitem_ permanent 
@@ -197,7 +201,7 @@ _S.04_ task:
 	create foe _F.03_ every 9 minutes 1 times with 10% success 
 
 _S.05_ task:
-	--say nothing is unnecessary
+	--removed unnecessary "say nothing"
 	give pc _letter10_ notify 1013 
 
 variable _S.06_

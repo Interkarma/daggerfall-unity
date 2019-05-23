@@ -340,7 +340,7 @@ Place _stronghold_ remote dungeon2
 Place _tavern_ local tavern
 Place _targethouse_ local house2
 Place _palace_ remote palace
-Place aide remote dungeon
+Place _aide_ remote dungeon
 
 Clock _S.00_ 00:05 0 flag 1 range 0 1
 Clock _patsy_ 30.00:00 0 flag 1 range 0 1
@@ -518,7 +518,8 @@ variable _S.35_
 _S.36_ task:
 	when _S.35_ and not _S.29_ 
 	say 1073 
-	place foe _mtraitor_ at aide 
+	remove foe _mtraitor_
+--changed "place foe in false dungeon" to remove foe.
 
 _S.37_ task:
 	when _S.36_ and _S.30_ 

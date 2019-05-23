@@ -79,7 +79,7 @@ Message:  1020
 <ce>                       The dragonslayer is dead.
 
 Message:  1030
-%qdat:
+%qdt:
  The Akatosh Chantry has asked me
  to hunt down someone who has been
  attacking the dragons in their sacred grove.
@@ -87,6 +87,8 @@ Message:  1030
  kill the dragonslayer, and be
  back at the Chantry in ___questgiver_
  in =1stparton_ days.
+
+ -corrected %qdat to %qdt
 
 
 -- Symbols used in the QRC file:
