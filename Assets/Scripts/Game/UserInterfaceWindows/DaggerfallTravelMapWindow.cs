@@ -151,6 +151,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
 
+        private readonly int maxMatchingResults = 20;
+
         #endregion
 
         #region Properties
@@ -357,7 +359,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     draw = true;
                 }
                 if (Input.GetKeyDown(KeyCode.L))
-                    ShowLocationPicker();
+                {
+
+                    if (!RegionSelected || currentDFRegion.LocationCount < 1)
+                        return;
+
+                    string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
+                    ShowLocationPicker(locations);
+                }
                 else if (Input.GetKeyDown(KeyCode.F))
                     FindlocationButtonClickHandler(null, Vector2.zero);
             }
@@ -1402,7 +1411,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Handles events from Find Location pop-up.
         void HandleLocationFindEvent(DaggerfallInputMessageBox inputMessageBox, string locationName)
         {
-            if (string.IsNullOrEmpty(locationName) || !FindLocation(locationName))
+            List<EditDistance.MatchResult> matching;
+            if (FindLocation(locationName, out matching))
+            {
+                if (matching.Count == 1)
+                { //place flashing crosshair over location
+                    locationSelected = true;
+                    findingLocation = true;
+                    StartIdentify();
+                }
+                else
+                {
+                    ShowLocationPicker(matching.ConvertAll(match => match.text).ToArray());
+                }
+            }
+            else
             {
                 TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(13);
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
@@ -1411,98 +1434,57 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 uiManager.PushWindow(messageBox);
                 return;
             }
-            else //place flashing crosshair over location
-            {
-                locationSelected = true;
-                findingLocation = true;
-                StartIdentify();
-            }
         }
 
         // Find location by name
-        bool FindLocation(string name)
+        bool FindLocation(string name, out List<EditDistance.MatchResult> matching)
         {
-            DFRegion.RegionMapTable locationInfo = new DFRegion.RegionMapTable();
-
+            matching = new List<EditDistance.MatchResult>();
             if (string.IsNullOrEmpty(name))
             {
                 return false;
             }
 
-            string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
-            name = name.ToLower();
+            EditDistance distance = DaggerfallEditDistance.Instance;
+            // FIXME: optim: call this only once per region change
+            distance.SetDictionary(currentDFRegion.MapNames);
 
-            // bug-fix in find location functionality (see http://forums.dfworkshop.net/viewtopic.php?f=24&p=5362#p5362)          
-            // first search for location with exact name as the search string
-            for (int i = 0; i < locations.Count(); i++)
+            EditDistance.MatchResult[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
+
+            // Check if selected locations actually exist/are visible
+            foreach (EditDistance.MatchResult match in bestMatches)
             {
-                if (locations[i].ToLower() == name) // Valid location found with exact name
+                if (!currentDFRegion.MapNameLookup.ContainsKey(match.text))
                 {
-                    if (!currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
-                    {
-                        DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
-                        return false;
-                    }
-                    int index = currentDFRegion.MapNameLookup[locations[i]];
-                    locationInfo = currentDFRegion.MapTable[index];
-                    DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
-                    if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
-                    {
-                        // only make location searchable if it is already discovered
-                        if (!checkLocationDiscovered(locationSummary))
-                            continue;
+                    DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
+                    continue;
+                }
+                int index = currentDFRegion.MapNameLookup[match.text];
+                DFRegion.RegionMapTable locationInfo = currentDFRegion.MapTable[index];
+                DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
+                if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                {
+                    // only make location searchable if it is already discovered
+                    if (!checkLocationDiscovered(locationSummary))
+                        continue;
 
-                        return true;
-                    }
+                    matching.Add(match);
+                    // Perfect match, return only one result?
+                    if (match.distance == 0)
+                        break;
                 }
             }
 
-            // location with exact name was not found, search for substring containing the search string
-            for (int i = 0; i < locations.Count(); i++)
-            {                
-                if (locations[i].ToLower().Contains(name)) // Valid location found with substring
-                {
-                    if (!currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
-                    {
-                        DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
-                        return false;
-                    }
-                    int index = currentDFRegion.MapNameLookup[locations[i]];
-                    locationInfo = currentDFRegion.MapTable[index];
-                    DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
-                    if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
-                    {
-                        // only make location searchable if it is already discovered
-                        if (!checkLocationDiscovered(locationSummary))
-                            continue;
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (locations[i][0] > name[0])
-                    return false;
-            }
-
-            return false;
+            return matching.Count > 0;
         }
 
         //creates a ListPickerWindow with a list of locations from current region
         //locations displayed will be filtered out depending on the dungeon / town / temple / home button settings
-        private void ShowLocationPicker()
+        private void ShowLocationPicker(string[] locations)
         {
-
-            if (!RegionSelected || currentDFRegion.LocationCount < 1)
-                return;
-
             DaggerfallListPickerWindow locationPicker = new DaggerfallListPickerWindow(uiManager, this);
             locationPicker.OnItemPicked += HandleLocationPickEvent;
             locationPicker.ListBox.MaxCharacters = 29;
-
-            string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
 
             for (int i = 0; i < locations.Length; i++)
             {
