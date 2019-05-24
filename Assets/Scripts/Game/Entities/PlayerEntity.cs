@@ -364,7 +364,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     int amount = (int)(DefaultFatigueLoss * fatigueLossMultiplier);
                     if (climbingMotor != null && climbingMotor.IsClimbing)
                         amount = (int)(ClimbingFatigueLoss * fatigueLossMultiplier);
-                    else if (playerMotor.IsRunning)
+                    else if (playerMotor.IsRunning && !playerMotor.IsStandingStill)
                         amount = (int)(RunningFatigueLoss * fatigueLossMultiplier);
                     else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
                     {
