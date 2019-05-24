@@ -210,7 +210,7 @@ _S.01_ task:
 	--changed "place npc _rebel_ at aide" to "hide" action. Classic would transfer the NPC away, hiding is far easier
 
 _qgclicked_ task:
-               clicked npc _questgiver_
+  clicked npc _questgiver_
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.01_ 
@@ -231,7 +231,7 @@ _S.02_ task:
 
 _S.03_ task:
 	start timer _S.04_ 
-	--S.14 timer was nonexistent
+	--S.14 timer was nonexistent. changed to S.04
 	say 1032 
     hide npc _rebel_
 	place foe _mage1_ at _rebelhouse_ 
@@ -239,9 +239,10 @@ _S.03_ task:
 
 _S.04_ task:
 	pc at _rebelhouse_ set _S.19_ 
-	place foe _mage1_ at aide
+	remove foe _mage1_
 	say 1060 
 --"place foe" not known to support "say ###." moved to its own line.
+--changed "place foe at false dungeon" to "remove foe"
 
 _S.05_ task:
 	create foe _mage3_ every 1 minutes 1 times with 100% success
@@ -249,19 +250,22 @@ _S.05_ task:
 	start timer _S.06_ 
 	remove foe _mage2_
 --"create foe" not known to support "say ###." moved to its own line.
+--changed "place foe at false dungeon" to "remove foe"
 
 _S.06_ task:
 	create foe _mage4_ every 1 minutes 1 times with 100% success
 	say 1062 
 	start timer _healer_ 
-	place foe _mage3_ at aide 
+	remove foe _mage3_
 	--"create foe" not known to support "say ###." moved to its own line.
+	--changed "place foe at false dungeon" to "remove foe"
 
 _healer_ task:
 	create foe _F.04_ every 1 minutes 1 times with 100% success
 	say 1063 
-	place foe _mage4_ at aide 
+	remove foe _mage4_
 	--"create foe" not known to support "say ###." moved to its own line.
+	--changed "place foe at false dungeon" to "remove foe"
 
 _S.08_ task:
 	killed 1 _mage2_ 

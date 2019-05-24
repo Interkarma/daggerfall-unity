@@ -116,14 +116,19 @@ Message:  1015
 
 Message:  1016
 %qdt:
- The Acolyte told me that he is attempting to
- convince _noble_, to leave _noblehouse_
- lest %g die and by dying, bring calamity to
- all %reg. I have been asked either to speak
- with _noble_ myself or go to __oracletemple_
- to escort the Oracle, the Acolyte's mistress, here.
- She might be able to convince _noble_,
- but, then again, so might I.
+ The Acolyte told me that
+ he is attempting to convince
+ _noble_, to leave _noblehouse_
+ lest %g die and by dying, bring
+ calamity to all %reg. I have been
+ asked either to speak with _noble_
+ myself or go to __oracletemple_
+ to escort the Oracle, the Acolyte's
+ mistress, here. She might be able to
+ convince _noble_, but, then again,
+ so might I.
+
+-changed 1016 to shorter lines, was running offscreen in journal
 
 Message:  1017
 <ce>                         You are %pcn, the %ra
@@ -248,8 +253,9 @@ Item _oracleMsg_ letter used 1024
 --added underscores to oracleNote and oracleMsg because they are variables
 Item _gold_ gold
 
-Person _oracle_ face 251 faction The_Oracle anyInfo 1013
-Person _acolyte_ face 5 faction The_Acolyte anyInfo 1012
+Person _oracle_ face 251 named The_Oracle anyInfo 1013
+Person _acolyte_ face 5 named The_Acolyte anyInfo 1012
+-changed oracle and acolyte to Named instead of Faction to prevent dialogue beginning
 Person _noble_ face 25 factiontype Province
 Person _thd_ named Queen_Akorithi
 --%thd corrected to _thd_
@@ -304,17 +310,19 @@ _S.04_ task:
 
 _S.05_ task:
 	when _S.04_ and _S.03_ 
-	give pc nothing 
 	say 1018 
+	give pc nothing 
 	change repute with _thd_ by +10 
 	end quest 
+--victory message changed to after 1018, more logical dialogue
 
 _S.06_ task:
 	when _S.04_ and _S.07_ 
-	give pc _gold_ 
 	get item _gold_ 
 	say 1019 
+	give pc _gold_ 
 	end quest 
+-victory message changed to after 1019, more logical dialogue
 
 _S.07_ task:
 	clicked npc _love_ 

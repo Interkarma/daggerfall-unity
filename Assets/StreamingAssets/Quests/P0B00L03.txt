@@ -4,7 +4,6 @@
 -- Questor: vampire
 -- Repute: 0
 -- QuestId: 3
--- Edited for Daggerfall Unity by Jay_H
 Messages: 27
 Quest: P0B00L03
 -- Message panels
@@ -170,7 +169,6 @@ Person _vampire_ face 40 factiontype Vampire_Clan anyInfo 1011 rumors 1012
 Person _vampname_ face 4 factiontype Vampire_Clan
 
 Place _mondung_ remote dungeon8
-Place _vamphouse_ remote house
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 
@@ -185,28 +183,17 @@ Foe _vamprival_ is Ancient_vampire
 	create npc _vampire_ 
 
 _falseAide0_ task:
---added hyphens to task name.
+-added underscores to falseaide0
 	toting _vampproof_ and _vampire_ clicked 
 	give pc _reward_ 
 	end quest 
-
-_qgtalk_ task:
-	clicked npc _vampire_
-
-_clearclick_ task:
-	when _qgtalk_ and not _falseAide0_
-	say 1003
-	clear _clearclick_ _qgtalk_
---added _qgtalk_ and _clearclick_
 
 variable _queston_
 _S.02_ task:
 	killed 1 _vamprival_ saying 1022 
 
 _vampclicked_ task:
-	clicked npc _vampire_
-	say AcceptQuest
-	--moved "say" argument to its own line from "clicked."
+	clicked npc _vampire_ say AcceptQuest 
 	reveal _mondung_
 	log 1026 step 1 
 

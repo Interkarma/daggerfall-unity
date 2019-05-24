@@ -4,7 +4,6 @@
 -- Questor: vampire
 -- Repute: 20
 -- QuestId: 9
--- Edited for Daggerfall Unity by Jay_H
 Messages: 22
 Quest: P0B20L09
 -- Message panels
@@ -127,7 +126,6 @@ Item _I.01_ tusk
 Person _vamp_ factiontype Vampire_Clan male
 
 Place _mondung_ remote dungeon
-Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 

@@ -4,7 +4,6 @@
 -- Questor: vampire
 -- Repute: 10
 -- QuestId: 7
--- Edited for Daggerfall Unity by Jay_H
 Messages: 18
 Quest: P0B10L07
 -- Message panels
@@ -18,7 +17,7 @@ Error: Questtext 1002 Called.
 
 QuestComplete:  [1004]
 <ce>                         _knight_ is half out
-<ce>                    of %g2 mind, %pcf. What a terror
+<ce>                    of %g3 mind, %pcf. What a terror
 <ce>                           you are. %vam feel
 <ce>                    that you deserve this _jewelry_
 <ce>                   in recognition of your loyalty and
@@ -159,7 +158,6 @@ Person _vamp_ factiontype Vampire_Clan male
 Person _knight_ face 69 factiontype Knightly_Guard
 
 Place _mondung_ remote dungeon2
-Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 
@@ -190,8 +188,7 @@ _S.03_ task:
 _S.04_ task:
 	injured _F.00_ 
 	say 1014 
-	restrain foe _F.00_
-	--removed "task _S.04_" from this restrain line as some kind of argument. 
+	restrain foe _F.00_ task _S.04_ 
 
 _S.05_ task:
 	killed 1 _F.00_ 

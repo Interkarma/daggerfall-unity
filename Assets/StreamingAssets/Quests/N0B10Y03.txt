@@ -69,12 +69,15 @@ QuestorPostfailure:  [1009]
 <ce>                            Leave me, %pcn.
 
 QuestLogEntry:  [1010]
-%qdt: I agreed
+%qdt:
+ I agreed
  to guard a magic _treasure_
  at the Mages Guild of
  ___qgiver_. I have
  to be there between midnight
  and three.
+
+-moved line down from %qdt line.
 
 Message:  1011
 %qdt:

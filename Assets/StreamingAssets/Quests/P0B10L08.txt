@@ -4,7 +4,6 @@
 -- Questor: vampire
 -- Repute: 10
 -- QuestId: 8
--- Edited for Daggerfall Unity by Jay_H
 Messages: 22
 Quest: P0B10L08
 -- Message panels
@@ -200,7 +199,6 @@ Person _vamp_ factiontype Vampire_Clan male
 Person _daedra_ face 1 factiontype Daedra
 
 Place _mondung_ remote dungeon7
-Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 
@@ -211,7 +209,6 @@ Foe _daedroth_ is Daedroth
 	start timer _queston_ 
 	_letter_ used do _readletter_ 
 	give pc _letter_ notify 1021 
-	create npc _vamp_ 
 
 _queston_ task:
 	end quest 

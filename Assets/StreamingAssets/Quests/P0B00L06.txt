@@ -4,7 +4,6 @@
 -- Questor: vampire
 -- Repute: 0
 -- QuestId: 6
--- Edited for Daggerfall Unity by Jay_H
 Messages: 24
 Quest: P0B00L06
 -- Message panels
@@ -257,8 +256,8 @@ Message:  1023
 
 QBN:
 Item _letter_ letter used 1010
-Item _letter37_ letter used 1013
-Item _research1_ letter used 1020
+Item letter37 letter used 1013
+Item research1 letter used 1020
 Item _mggold_ gold
 
 Person _vamp_ factiontype Vampire_Clan male
@@ -266,7 +265,6 @@ Person _mg_ faction The_Mages_Guild male
 Person _mage_ face 1 group Group_5.1
 
 Place _mondung_ remote dungeon9
-Place _vamphouse_ remote house
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 Clock _2ndparton_ 00:10 00:30 flag 9 range 0 0
@@ -277,13 +275,12 @@ Foe _sorceror_ is Sorceror
 	dialog link for person _vamp_ 
 	dialog link for location _mondung_ person _mg_ 
 	repute with _mg_ exceeds 15 do _S.04_ 
-	give item _research1_ to _sorceror_ 
-	_letter37_ used do _S.14_ 
+	give item research1 to _sorceror_ 
+	letter37 used do _S.14_ 
 	_letter_ used do _readletter_ 
 	have _letter_ set _S.15_ 
 	give pc _letter_ notify 1023 
 	place foe _sorceror_ at _mondung_ 
-	create npc _vamp_ 
 
 _queston_ task:
 	change repute with _vamp_ by -10 
@@ -297,7 +294,7 @@ _vampclicked_ task:
 
 variable _S.02_
 _2ndparton_ task:
-	give pc _letter37_ notify 1014 
+	give pc letter37 notify 1014 
 
 _S.04_ task:
 	start timer _2ndparton_ 
@@ -317,7 +314,7 @@ _S.08_ task:
 	prompt 1017 yes _S.09_ no _S.10_ 
 
 _S.09_ task:
-	get item _research1_ 
+	get item research1 
 	say 1018 
 	restrain foe _sorceror_ 
 
@@ -326,7 +323,7 @@ _S.10_ task:
 	say 1016 
 
 _S.11_ task:
-	toting _research1_ and _mg_ clicked 
+	toting research1 and _mg_ clicked 
 	get item _mggold_ 
 	say 1022 
 	make _mggold_ permanent 
@@ -335,7 +332,7 @@ _S.11_ task:
 	end quest 
 
 _S.12_ task:
-	toting _research1_ and _vamp_ clicked 
+	toting research1 and _vamp_ clicked 
 	give pc nothing 
 	end quest 
 

@@ -184,7 +184,7 @@ Message:  1015
 
 QBN:
 Item _bothdorjii_ letter used 1011
---variables should always carry underscores
+--added underscores to bothdorjii
 
 Person _qgiver_ group Questor male
 

@@ -4,7 +4,6 @@
 -- Questor: vampire
 -- Repute: 01
 -- QuestId: 2
--- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: P0B01L02
 -- Message panels
@@ -128,7 +127,6 @@ Item _letter_ letter used QuestorOffer
 Person _vampire_ factiontype Vampire_Clan female anyInfo 1011 rumors 1010
 
 Place _itemdung_ remote magery
-Place _vamphouse_ remote house
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 
@@ -140,8 +138,6 @@ Foe _battlemage_ is Battle_mage
 	_letter_ used do _readletter_ 
 	have _letter_ set _S.06_ 
 	give pc _letter_ notify 1030 
-	create npc _vampire_ 
-	--added create npc vampire. quest previously had no mechanic to spawn it.
 
 variable _pcgetsgold_
 _vampclicked_ task:
