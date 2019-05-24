@@ -244,7 +244,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Loads all assets from asset bundle immediatly.
+        /// Loads all assets from asset bundle immediately.
+        /// Invidual assets can then be retrieved with <see cref="GetAsset{T}(string, bool)"/>.
         /// </summary>
         /// <param name="unloadBundle">Unload asset bundle if true</param>
         /// <returns>True if assetbundle has been loaded succesfully.</returns>
@@ -295,8 +296,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         /// <summary>
         /// Load all assets from asset bundle asynchronously.
+        /// Invidual assets can then be retrieved with <see cref="GetAsset{T}(string, bool)"/>.
         /// </summary>
-        /// <param name="unloadBundle">Unload asset bundle if true</param>
+        /// <param name="unloadBundle">Unload asset bundle if true.</param>
         public IEnumerator LoadAllAssetsFromBundleAsync(bool unloadBundle = true)
         {
             if (AssetNames == null)
@@ -434,7 +436,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <typeparam name="T">Type of asset</typeparam>
         /// <param name="assetName">name of asset</param>
         /// <param name="loadedBundle">had to load asset bundle</param>
-        /// <returns></returns>
+        /// <returns>A reference to the loaded asset or null if not found.</returns>
         private T LoadAssetFromBundle<T>(string assetName, out bool loadedBundle) where T : UnityEngine.Object
         {
             LoadedAsset la = new LoadedAsset();
@@ -611,7 +613,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 Debug.Log(ex);
                 return null;
             }
-
         }
 
         /// <summary>
@@ -674,11 +675,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return modLoaders;
         }
 
+        /// <summary>
+        /// Checks if an asset has already been loaded and can be retrieved without loading it again.
+        /// </summary>
+        /// <param name="assetName">The name of the asset.</param>
+        /// <returns>True if the asset is already loaded.</returns>
         public bool IsAssetLoaded(string assetName)
         {
             return loadedAssets.ContainsKey(assetName);
         }
-
 
         private bool AddAsset(string assetName, UnityEngine.Object asset)
         {
@@ -712,6 +717,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
+        /// <summary>
+        /// Unloads the asset bundle associated to this mod. Loaded assets can still be retrieved from cache, 
+        /// unless they are also unloaded.
+        /// </summary>
+        /// <param name="unloadAllObjects">Remove all loaded assets from memory.</param>
         public void UnloadAssetBundle(bool unloadAllObjects)
         {
             if (assetBundle == null)
@@ -723,6 +733,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #endif
         }
 
+        /// <summary>
+        /// Loads the asset bundle associated to this mod.
+        /// </summary>
+        /// <returns>The loaded asset bundle or null.</returns>
         public AssetBundle LoadAssetBundle()
         {
             string abPath = System.IO.Path.Combine(dirPath, FileName + ModManager.MODEXTENSION);
@@ -738,6 +752,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return ab;
         }
 
+        /// <summary>
+        /// Loads the asset bundle associated to this mod asynchronously.
+        /// </summary>
         public IEnumerator LoadAssetBundleAsync()
         {
             string abPath = System.IO.Path.Combine(dirPath, FileName + ModManager.MODEXTENSION);
