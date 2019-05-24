@@ -23,6 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         uint startingDay = 0;
         bool warningDreamVideoPlayed = false;
+        bool deployedFullBlownLycanthropy = false;
 
         public override void SetProperties()
         {
@@ -108,13 +109,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 warningDreamVideoPlayed = true;
             }
-            else if (daysPast > 3 && warningDreamVideoPlayed)
+            else if (daysPast > 3 && warningDreamVideoPlayed && !deployedFullBlownLycanthropy)
             {
                 // Assign Lycanthropy spell to spellbook
                 GameManager.Instance.PlayerEntity.AssignPlayerLycanthropySpell();
 
                 // Deploy full-blown lycanthropy
                 DeployFullBlownLycanthropy();
+                deployedFullBlownLycanthropy = true;
+
+                // End infection
+                forcedRoundsRemaining = 0;
+                ResignAsIncumbent();
             }
         }
 
@@ -127,6 +133,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             public LycanthropyTypes infectionType;
             public bool warningDreamVideoPlayed;
+            public bool deployedFullBlownLycanthropy;
             public uint startingDay;
         }
 
@@ -135,6 +142,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = new CustomSaveData_v1();
             data.infectionType = InfectionType;
             data.warningDreamVideoPlayed = warningDreamVideoPlayed;
+            data.deployedFullBlownLycanthropy = deployedFullBlownLycanthropy;
             data.startingDay = startingDay;
 
             return data;
@@ -148,6 +156,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
             InfectionType = data.infectionType;
             warningDreamVideoPlayed = data.warningDreamVideoPlayed;
+            deployedFullBlownLycanthropy = data.deployedFullBlownLycanthropy;
             startingDay = data.startingDay;
         }
 
