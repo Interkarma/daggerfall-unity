@@ -1445,7 +1445,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return false;
             }
 
-            EditDistance distance = DaggerfallEditDistance.Instance;
+            EditDistance distance = DaggerfallEditDistance.GetDistance();
             // FIXME: optim: call this only once per region change
             distance.SetDictionary(currentDFRegion.MapNames);
 
