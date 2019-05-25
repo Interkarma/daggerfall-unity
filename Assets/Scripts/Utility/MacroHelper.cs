@@ -952,6 +952,15 @@ namespace DaggerfallWorkshop.Utility
             return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Male);
         }
 
+        private static string VampireClan(IMacroContextProvider mcp)
+        {   // %vam
+            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialEffect is VampirismEffect)
+                return (racialEffect as VampirismEffect).GetClanName();
+            else
+                return "%vam[ERROR: PC not a vampire]";
+        }
+
         #endregion
 
         //
@@ -1324,16 +1333,6 @@ namespace DaggerfallWorkshop.Utility
             // %hpw
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().GeographicalFeature();
-        }
-
-        private static string VampireClan(IMacroContextProvider mcp)
-        {
-            // %vam
-            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
-            if (racialEffect is VampirismEffect)
-                return (racialEffect as VampirismEffect).GetClanName();
-            else
-                return "%vam[ERROR: PC not a vampire]";
         }
 
         public static string Q1(IMacroContextProvider mcp)
