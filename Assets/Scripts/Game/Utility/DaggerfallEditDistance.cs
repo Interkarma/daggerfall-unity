@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         private static bool IsSeparator(char c)
         {
-            return (c == ' ' | c == '-');
+            return (c == ' ' | c == '-' | c == '\'');
         }
 
         private static int GetNumberOfWords(string s, int start, int stop)
