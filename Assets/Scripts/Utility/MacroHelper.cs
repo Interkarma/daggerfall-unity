@@ -138,8 +138,8 @@ namespace DaggerfallWorkshop.Utility
             { "%mn", MaleName },  // Random First name (Male)
             { "%mn2", MaleFullname }, // Random Full name (Male)
             { "%mod", ArmourMod }, // Modification
-            { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
-            { "%nam", null }, // A random full name
+            { "%n", Name },   // A random name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
+            { "%nam", Name }, // A random full name
             { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", OldLordOfFaction1 }, // Old lord of _fx1
@@ -809,10 +809,15 @@ namespace DaggerfallWorkshop.Utility
             return ""; // return empty string for now - not known if it does something else in classic
         }
 
-        private static string NameDialogPartner(IMacroContextProvider mcp)
-        {
-            // %n
-            return GameManager.Instance.TalkManager.NameNPC;
+        private static string Name(IMacroContextProvider mcp)
+        {   // %n
+            // Get appropriate nameBankType for this region and a random gender
+            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+            Genders gender = (UnityEngine.Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
+
+            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
         }
 
         private static string FactionPC(IMacroContextProvider mcp)
