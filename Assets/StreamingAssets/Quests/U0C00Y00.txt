@@ -184,6 +184,7 @@ Clock _delay_ 01:00 0 flag 1 range 0 1
 Clock _escapetime_ 00:00 0 flag 1 range 2 3
 
 Foe _monster_ is Spellsword
+Foe _monster1_ is Spellsword
 
 --	Quest start-up:
 	dialog link for person _mfriend_ 
@@ -205,6 +206,7 @@ _pcgetsgold_ task:
 
 _mondead_ task:
 	killed 1 _monster_ 
+	killed 1 _monster1_
 	say 1030 
 
 _npcclicked_ task:
@@ -222,7 +224,9 @@ variable _escapetime_
 _S.08_ task:
 	when _escapetime_ and not _mondead_ 
 	place item _letter_ at _mondung_ 
-	place foe _monster_ at _hideout_ 
+	remove foe _monster_
+	place foe _monster1_ at _hideout_ 
+--added monster1 due to duplicate monster issue
 
 _S.09_ task:
 	clicked npc _mfriend_ 

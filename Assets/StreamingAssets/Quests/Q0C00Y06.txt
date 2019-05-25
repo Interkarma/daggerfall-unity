@@ -119,7 +119,7 @@ Item _reward_ magic_item
 Person _witch_ face 44 group Questor anyInfo 1011 rumors 1012
 
 Place _mondung_ remote dungeon8
---removed extraneous underscore from __mondung_. QBN will never accept a double underscore.
+--removed extraneous underscore from __mondung_.
 
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
 
