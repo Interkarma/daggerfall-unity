@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Utility
             { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
             { "%vam", VampireClan }, // PC's vampire clan
-            { "%vcn", null }, // Vampire's Clan
+            { "%vcn", VampireNpcClan }, // Vampire's Clan
             { "%vn", null },  // ?
             { "%wdm", WeaponDamage }, // Weapon damage
             { "%wep", ItemName }, // Weapon
@@ -967,6 +967,12 @@ namespace DaggerfallWorkshop.Utility
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
         #region Contextual macro handlers
+
+        private static string VampireNpcClan(IMacroContextProvider mcp)
+        {   // %vcn
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().VampireNpcClan();
+        }
 
         private static string GuildTitle(IMacroContextProvider mcp)
         {   // %lev %pct

@@ -414,9 +414,8 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
-        public virtual string VampireClan()
-        {
-            // %vam
+        public virtual string VampireNpcClan()
+        {   // %vcn
             throw new NotImplementedException();
         }
 

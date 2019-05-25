@@ -105,6 +105,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
+            public override string VampireNpcClan()
+            {   // %vcn
+                if (parent.LastResourceReferenced == null && !(parent.LastResourceReferenced is Person))
+                    return null;
+
+                // TODO: How to find vampire clan of an NPC? Is faction data as used here the right method that covers all cases?
+                Person person = (Person) parent.LastResourceReferenced;
+                return (person.FactionData.type == (int)FactionFile.FactionTypes.VampireClan) ? person.FactionData.name : null;
+            }
+
             public override string QuestDate()
             {
                 return parent.QuestStartTime.DateString();
