@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -55,14 +54,6 @@ namespace DaggerfallWorkshop.Game.Utility
             this.replace_cost = replace_cost;
             this.seek_cost = seek_cost;
             this.trim_cost = trim_cost;
-        }
-
-        private class KeyComparer : Comparer<KeyValuePair<String, String>>
-        {
-            public override int Compare(KeyValuePair<string, string> x, KeyValuePair<string, string> y)
-            {
-                return string.Compare(x.Key, y.Key, StringComparison.InvariantCulture);
-            }
         }
 
         public void SetDictionary(String[] dictionary)
