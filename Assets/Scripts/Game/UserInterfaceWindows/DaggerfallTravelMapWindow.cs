@@ -152,6 +152,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
 
         private readonly int maxMatchingResults = 20;
+        private string distanceRegionName = null;
+        private EditDistance distance;
 
         #endregion
 
@@ -315,6 +317,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             teleportationTravel = false;
             findingLocation = false;
             gotoLocation = null;
+            distanceRegionName = null;
+            distance = null;
         }
 
         public override void Update()
@@ -1445,9 +1449,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return false;
             }
 
-            EditDistance distance = DaggerfallEditDistance.GetDistance();
-            // FIXME: optim: call this only once per region change
-            distance.SetDictionary(currentDFRegion.MapNames);
+            if (distanceRegionName != currentDFRegion.Name)
+            {
+                distanceRegionName = currentDFRegion.Name;
+                distance = DaggerfallEditDistance.GetDistance();
+                distance.SetDictionary(currentDFRegion.MapNames);
+            }
 
             EditDistance.MatchResult[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
 
