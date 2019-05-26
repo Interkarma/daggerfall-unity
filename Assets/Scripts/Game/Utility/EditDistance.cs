@@ -1,3 +1,5 @@
+#define DEBUG_SHOW_EDITDISTANCE_TIMES
+
 using System;
 using System.Collections.Generic;
 
@@ -189,6 +191,12 @@ namespace DaggerfallWorkshop.Game.Utility
 
         public MatchResult[] FindBestMatches(string needle, int ntop)
         {
+#if DEBUG_SHOW_EDITDISTANCE_TIMES
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+#endif
+
             string canonized_needle = canonize_string(needle);
             PriorityQueue<MatchResult> kept = new PriorityQueue<MatchResult>();
             float worseKeptDistance = float.PositiveInfinity;
@@ -212,6 +220,12 @@ namespace DaggerfallWorkshop.Game.Utility
             MatchResult[] result = new MatchResult[kept.Count()];
             for (int i = kept.Count(); i-- > 0; )
                 result[i] = kept.Dequeue();
+
+#if DEBUG_SHOW_EDITDISTANCE_TIMES
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to findBestMatches: {0}ms", totalTime), true);
+#endif
             return result;
         }
     }
