@@ -271,7 +271,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D LoadAtlasTextureFromPNG(string path)
         {
             byte[] data = File.ReadAllBytes(path);
-            Texture2D atlas = new Texture2D(0, 0);
+            Texture2D atlas = new Texture2D(0, 0, TextureFormat.ARGB32, false);
             if (atlas.LoadImage(data))
                 return atlas;
 
