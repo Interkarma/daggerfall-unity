@@ -91,12 +91,13 @@ namespace DaggerfallWorkshop.Game.Utility
                 // row[j] is the distance between the ith prefix of s1 and the jth prefix of s2
                 // future_row[j] should be the distance between the (i+1)th prefix of s1 and the jth prefix of s2
 
-                bool found_lower = float.IsInfinity(upperBound);
+                // found_lesser: Is any cost in future_row[] lesser than upperBound?
+                bool found_lesser = float.IsInfinity(upperBound);
 
                 // j = 0, only available transition is deleting ith character of s1
                 future_row[0] = row[0] + delete_cost(s1[i]);
-                if (!found_lower && future_row[0] < upperBound)
-                    found_lower = true;
+                if (!found_lesser && future_row[0] <= upperBound)
+                    found_lesser = true;
 
                 for (int j1 = 0; j1 < l2; j1++) // j = j1 + 1
                 {
@@ -111,10 +112,10 @@ namespace DaggerfallWorkshop.Game.Utility
                                                        future_row[j1] + insert_cost(s2[j1])), 
                                               row[j1] + replace_cost(s1[i], s2[j1]));
                     }
-                    if (!found_lower && future_row[j1 + 1] < upperBound)
-                        found_lower = true;
+                    if (!found_lesser && future_row[j1 + 1] <= upperBound)
+                        found_lesser = true;
                 }
-                if (!found_lower)
+                if (!found_lesser)
                     // Asuming all costs are positive, if no cost in future_row[] is lesser than upperBound, 
                     // then final result won't be either
                     return float.PositiveInfinity;
