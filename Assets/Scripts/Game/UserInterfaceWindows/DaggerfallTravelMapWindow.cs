@@ -1462,6 +1462,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             bool first = true;
             bool perfectMatchExists = false;
+            ContentReader.MapSummary findLocationSummary;
 
             foreach (EditDistance.MatchResult match in bestMatches)
             {
@@ -1473,16 +1474,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int index = currentDFRegion.MapNameLookup[match.text];
                 DFRegion.RegionMapTable locationInfo = currentDFRegion.MapTable[index];
                 DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
-                if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out findLocationSummary))
                 {
                     // only make location searchable if it is already discovered
-                    if (!checkLocationDiscovered(locationSummary))
+                    if (!checkLocationDiscovered(findLocationSummary))
                         continue;
 
                     if (first)
                     {
                         perfectMatchExists = (match.distance == 0);
 
+                        // Set locationSummary to first result's MapSummary in case we skip the location list picker step
+                        locationSummary = findLocationSummary;
                         first = false;
                     }
                     else
