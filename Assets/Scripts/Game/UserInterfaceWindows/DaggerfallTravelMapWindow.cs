@@ -1459,6 +1459,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EditDistance.MatchResult[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
 
             // Check if selected locations actually exist/are visible
+
+            bool first = true;
+            bool perfectMatchExists = false;
+
             foreach (EditDistance.MatchResult match in bestMatches)
             {
                 if (!currentDFRegion.MapNameLookup.ContainsKey(match.text))
@@ -1475,10 +1479,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (!checkLocationDiscovered(locationSummary))
                         continue;
 
+                    if (first)
+                    {
+                        perfectMatchExists = (match.distance == 0);
+
+                        first = false;
+                    }
+                    else
+                    {
+                        // If perfect match exist, return all perfect matches only
+                        // Normally there should be only one perfect match, but if string canonization generates collisions that's no longer guaranteed
+                        if (perfectMatchExists && match.distance > 0f)
+                            break;
+                    }
                     matching.Add(match);
-                    // Perfect match, return only one result?
-                    if (match.distance == 0)
-                        break;
                 }
             }
 
