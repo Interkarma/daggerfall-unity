@@ -797,10 +797,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     random = UnityEngine.Random.Range(0f, 100f);
                     if (random <= 0.6f)
                     {
-                        // TODO: Werewolf
-                        //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWerewolfDisease();
-                        //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
-                        //Debug.Log("Player infected by werewolf.");
+                        // Werewolf
+                        EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                        Debug.Log("Player infected by werewolf.");
                     }
                     break;
                 case (int)MonsterCareers.Nymph:
@@ -810,10 +810,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     random = UnityEngine.Random.Range(0f, 100f);
                     if (random <= 0.6f)
                     {
-                        // TODO: Wereboar
-                        //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWereboarDisease();
-                        //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
-                        //Debug.Log("Player infected by wereboar.");
+                        // Wereboar
+                        EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                        Debug.Log("Player infected by wereboar.");
                     }
                     break;
                 case (int)MonsterCareers.Zombie:
