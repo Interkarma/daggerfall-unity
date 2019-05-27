@@ -809,17 +809,6 @@ namespace DaggerfallWorkshop.Utility
             return ""; // return empty string for now - not known if it does something else in classic
         }
 
-        private static string Name(IMacroContextProvider mcp)
-        {   // %n
-            // Get appropriate nameBankType for this region and a random gender
-            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
-            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
-                nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
-            Genders gender = (UnityEngine.Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
-
-            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
-        }
-
         private static string FactionPC(IMacroContextProvider mcp)
         {   // %fpc
             return GameManager.Instance.TalkManager.GetFactionPC();
@@ -967,6 +956,27 @@ namespace DaggerfallWorkshop.Utility
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
         #region Contextual macro handlers
+
+        private static string Name(IMacroContextProvider mcp)
+        {   // %n %nam
+            // Call the MCP first for context.
+            if (mcp != null)
+            {
+                try {
+                    string name = mcp.GetMacroDataSource().Name();
+                    if (name != null)
+                        return name;
+                } catch (NotImplementedException) { }
+            }
+            
+            // Get appropriate nameBankType for this region and a random gender
+            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+            Genders gender = (UnityEngine.Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
+
+            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
+        }
 
         private static string VampireNpcClan(IMacroContextProvider mcp)
         {   // %vcn

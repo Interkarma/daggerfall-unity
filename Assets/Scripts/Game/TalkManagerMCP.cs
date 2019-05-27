@@ -6,14 +6,9 @@
 // Original Author: Michael Rauter (Nystul)
 // Contributors:    Numidium
 
-using System;
 using DaggerfallWorkshop.Utility;
-using DaggerfallConnect.Arena2;
-using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using UnityEngine;
-using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -64,6 +59,15 @@ namespace DaggerfallWorkshop.Game
             public TalkManagerDataSource(TalkManagerContext context)
             {
                 this.parent = context;
+            }
+
+            public override string Name()
+            {
+                // Used for greeting messages only: 7215, 7216, 7217
+                if (GameManager.Instance.TalkManager.Greeting)
+                    return GameManager.Instance.TalkManager.NameNPC;
+                else
+                    return null;
             }
 
             public override string LocationDirection()

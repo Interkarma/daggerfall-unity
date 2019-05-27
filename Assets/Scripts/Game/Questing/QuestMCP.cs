@@ -32,6 +32,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 this.parent = parent;
             }
 
+            public override string Name()
+            {
+                // Set seed to the quest UID before falling through to random name generation. (See t=2108)
+                DFRandom.srand((int) parent.UID);
+                return null;
+            }
+
             public override string FactionOrderName()
             {
                 // Only used for knightly order quests, %kno macro. (removing 'The ' prefix from name for readability)
