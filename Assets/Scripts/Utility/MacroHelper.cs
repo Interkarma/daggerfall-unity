@@ -385,7 +385,7 @@ namespace DaggerfallWorkshop.Utility
                         for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
                         {
                             int pos = words[wordIdx].IndexOf('%');
-                            if (pos >= 0)
+                            if (pos >= 0 && words[wordIdx].Length > pos + 1)
                             {
                                 string prefix = words[wordIdx].Substring(0, pos);
                                 string macro = words[wordIdx].Substring(pos);

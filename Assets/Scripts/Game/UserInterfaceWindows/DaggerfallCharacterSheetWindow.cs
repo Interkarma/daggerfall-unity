@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
         const string nativeImgName = "INFO00I0.IMG";
+
+        protected const string textDatabase = "DaggerfallUI";
         private const int noAffiliationsMsgId = 19;
 
         StatsRollout statsRollout;
@@ -126,6 +128,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button nameButton = DaggerfallUI.AddButton(new Rect(4, 3, 132, 8), NativePanel);
             nameButton.OnMouseClick += NameButton_OnMouseClick;
 
+            // Level button
+            Button levelButton = DaggerfallUI.AddButton(new Rect(4, 33, 132, 8), NativePanel);
+            levelButton.OnMouseClick += LevelButton_OnMouseClick;
+
+            // Gold button
             Button goldButton = DaggerfallUI.AddButton(new Rect(4, 43, 132, 8), NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
 
@@ -797,6 +804,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.SetTextBoxLabel(HardStrings.enterNewName);
             mb.OnGotUserInput += EnterName_OnGotUserInput;
             mb.Show();
+        }
+
+        private void LevelButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            float currentLevel = (playerEntity.CurrentLevelUpSkillSum - playerEntity.StartingLevelUpSkillSum + 28f) / 15f;
+            int progress = (int)((currentLevel % 1) * 100);
+            DaggerfallUI.MessageBox(string.Format(TextManager.Instance.GetText(textDatabase, "levelProgress"), progress));
         }
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
