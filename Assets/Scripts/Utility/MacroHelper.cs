@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Utility
             { "%r5", UnderworldRep },  // Underworld rep
             { "%ra", PlayerRace },  // Player's race
             { "%reg", RegionInContext }, // Region in context
-            { "%rn", null },  // Regent's Name
+            { "%rn", RegentName },  // Regent's Name
             { "%rt", RegentTitle },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
             { "%ski", Skill }, // Mastered skill name
@@ -587,8 +587,25 @@ namespace DaggerfallWorkshop.Utility
         {   // %rt %t
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
-            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex, out regionFaction);
+            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion((int)FactionFile.FactionTypes.Province, gps.CurrentRegionIndex, out regionFaction);
             return GetRulerTitle(regionFaction.ruler);
+        }
+
+        public static string RegentName(IMacroContextProvider mcp)
+        {   // %rn
+            // Look for a defined ruler for the region.
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            PersistentFactionData factionData = GameManager.Instance.PlayerEntity.FactionData;
+            FactionFile.FactionData regionFaction;
+            if (factionData.FindFactionByTypeAndRegion((int)FactionFile.FactionTypes.Province, gps.CurrentRegionIndex, out regionFaction))
+            {
+                FactionFile.FactionData child;
+                foreach (int childID in regionFaction.children)
+                    if (factionData.GetFactionData(childID, out child) && child.type == (int)FactionFile.FactionTypes.Individual)
+                        return child.name;
+            }
+            // Use a random name if no defined individual ruler.
+            return Name(null);
         }
 
         private static string Crime(IMacroContextProvider mcp)
