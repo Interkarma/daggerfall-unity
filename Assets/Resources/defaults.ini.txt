@@ -48,6 +48,7 @@ EnableArrowCounter=True
 AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
+DungeonExitWagonPrompt=True
 
 [Spells]
 EnableSpellLighting=True
