@@ -29,7 +29,7 @@ finishQuestHeader,  {0} {1} at {2}:
 quest,              Quest
 noteHeader,         {0} in {1}:
 
-- Charactor window:
+- Character window:
 
 levelProgress,      Progress made to the next level: {0}%
 
