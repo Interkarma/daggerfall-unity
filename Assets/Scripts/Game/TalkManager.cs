@@ -206,7 +206,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         string nameNPC = "";
-        bool greeting = false;  // Indicates a greeting is being parsed, %n = nameNPC.
+        bool isGreeting = false;  // Indicates a greeting is being parsed, %n = nameNPC.
 
         bool rebuildTopicLists = true; // flag to indicate that topic lists need to be rebuild next time talkwindow is opened
 
@@ -381,9 +381,9 @@ namespace DaggerfallWorkshop.Game
             get { return nameNPC; }
         }
 
-        public bool Greeting
+        public bool IsGreeting
         {
-            get { return greeting; }
+            get { return isGreeting; }
         }
 
         public ListItem CurrentQuestionListItem
@@ -819,9 +819,9 @@ namespace DaggerfallWorkshop.Game
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
-            greeting = true;
+            isGreeting = true;
             string greetingText = ExpandRandomTextRecord(7215 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
-            greeting = false;
+            isGreeting = false;
             return greetingText;
         }
 

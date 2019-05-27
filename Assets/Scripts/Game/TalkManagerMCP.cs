@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game
             public override string Name()
             {
                 // Used for greeting messages only: 7215, 7216, 7217
-                if (GameManager.Instance.TalkManager.Greeting)
+                if (GameManager.Instance.TalkManager.IsGreeting)
                     return GameManager.Instance.TalkManager.NameNPC;
                 else
                     return null;
