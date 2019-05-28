@@ -680,6 +680,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void SelectWagon(bool show)
         {
+            if (wagonButton == null)
+                return;
+
             if (show)
             {   // Switch to wagon
                 wagonButton.BackgroundTexture = wagonSelected;
