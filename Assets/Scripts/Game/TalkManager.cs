@@ -2203,10 +2203,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(dialogRejectionTextId);
                 }
-                DaggerfallMessageBox msgBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-                msgBox.SetTextTokens(responseTokens);
-                msgBox.ClickAnywhereToClose = true;
-                msgBox.Show();
+                DaggerfallUI.MessageBox(responseTokens);
 
                 alreadyRejectedOnce = true;
             }

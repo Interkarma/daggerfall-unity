@@ -1141,6 +1141,15 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
+        public static DaggerfallMessageBox MessageBox(TextFile.Token[] textTokens, IMacroContextProvider mcp = null)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            messageBox.SetTextTokens(textTokens, mcp);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.Show();
+            return messageBox;
+        }
+
         public static Texture2D CreateSolidTexture(Color color, int dim)
         {
             Texture2D texture = null;
