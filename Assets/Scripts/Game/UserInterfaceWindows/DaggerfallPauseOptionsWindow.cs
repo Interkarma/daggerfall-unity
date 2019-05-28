@@ -38,12 +38,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel headBobbingTick = new Panel();
         Panel musicBar = new Panel();
         Panel soundBar = new Panel();
+        Panel detailBar;
         const float barMaxLength = 109.1f;
         DaggerfallHUD hud;
 
         TextLabel versionTextLabel;
         Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
         Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
+
+        bool saveSettings = false;
 
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             :base(uiManager, previousWindow)
@@ -97,6 +100,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             musicPanel.OnMouseClick += MusicBar_OnMouseClick;
             musicBar = DaggerfallUI.AddPanel(new Rect(0f, 1f, DaggerfallUnity.Settings.MusicVolume * barMaxLength, 3.5f), musicPanel);
             musicBar.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
+
+            // Detail level
+            Button detailButton = DaggerfallUI.AddButton(new Rect(6.15f, 39f, barMaxLength, 5.5f), optionsPanel);
+            detailButton.OnMouseClick += DetailButton_OnMouseClick;
+            detailBar = DaggerfallUI.AddPanel(new Rect(0f, 1f, GetDetailBarWidth(QualitySettings.GetQualityLevel()), 3.5f), detailButton);
+            detailBar.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
 
             // Controls
             Button controlsButton = DaggerfallUI.AddButton(new Rect(5, 60, 70, 17), optionsPanel);
@@ -159,6 +168,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            if (saveSettings)
+                DaggerfallUnity.Settings.SaveSettings();
+        }
+
+        #region Private Helpers
+
+        private static float GetDetailBarWidth(int value)
+        {
+            return Mathf.Lerp(0, barMaxLength, value / (float)(QualitySettings.names.Length - 1));
+        }
+
+        #endregion
+
         #region Event Handlers
 
         private void SoundBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -184,6 +210,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             musicBar.Size = new Vector2(position.x, 3.5f);
             DaggerfallUnity.Settings.MusicVolume = (position.x / barMaxLength);
             DaggerfallUnity.Settings.SaveSettings();
+        }
+
+        private void DetailButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            int value = Mathf.RoundToInt(Mathf.Lerp(0, QualitySettings.names.Length - 1, position.x / sender.Size.x));
+            detailBar.Size = new Vector2(GetDetailBarWidth(value), detailBar.Size.y);
+            QualitySettings.SetQualityLevel(DaggerfallUnity.Settings.QualityLevel = value);
+            if (!saveSettings)
+                saveSettings = true;
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
