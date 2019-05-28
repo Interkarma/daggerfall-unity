@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -1156,6 +1157,32 @@ namespace DaggerfallWorkshop.Game
             texture.filterMode = FilterMode.Point;
 
             return texture;
+        }
+
+        /// <summary>
+        /// Gets all resolutions without duplicates; when the same resolution support different refresh rates, the highest one is chosen.
+        /// </summary>
+        /// <returns>All supported distinct resolutions.</returns>
+        public static Resolution[] GetDistinctResolutions()
+        {
+            Resolution[] resolutions = Screen.resolutions;
+            var distinctResolutions = new List<Resolution>(resolutions.Length);
+
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                Resolution current = resolutions[i];
+
+                if (i + 1 < resolutions.Length)
+                {
+                    Resolution next = resolutions[i + 1];
+                    if (current.width == next.width && current.height == next.height)
+                        continue;
+                }
+
+                distinctResolutions.Add(current);
+            }
+
+            return distinctResolutions.ToArray();
         }
 
         #endregion

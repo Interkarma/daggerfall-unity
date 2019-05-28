@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Get resolutions
             initialResolution = Screen.currentResolution;
-            availableResolutions = Screen.resolutions;
+            availableResolutions = DaggerfallUI.GetDistinctResolutions();
 
             // Create backdrop
             if (!backdropCreated)

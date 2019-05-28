@@ -71,6 +71,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallFont titleFont        = DaggerfallUI.Instance.Font2;
         DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
 
+        readonly Resolution[] resolutions = DaggerfallUI.GetDistinctResolutions();
+
         int currentPage = 0;
         float y = 0;
 
@@ -294,8 +296,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Basic settings
             AddSectionTitle(leftPanel, "basic");
             resolution = AddSlider(leftPanel, "resolution",
-                Array.FindIndex(Screen.resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
-                Screen.resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
+                Array.FindIndex(resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
+                resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
             resolution.OnScroll += Resolution_OnScroll;
             fullscreen = AddCheckbox(leftPanel, "fullscreen", DaggerfallUnity.Settings.Fullscreen);
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
@@ -390,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (applyScreenChanges)
             {
-                Resolution selectedResolution = Screen.resolutions[resolution.ScrollIndex];
+                Resolution selectedResolution = resolutions[resolution.ScrollIndex];
                 DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
                 DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
                 DaggerfallUnity.Settings.Fullscreen = fullscreen.IsChecked;
