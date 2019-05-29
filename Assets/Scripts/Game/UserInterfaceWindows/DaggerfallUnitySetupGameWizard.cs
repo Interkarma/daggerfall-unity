@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox playerNudity;
         Checkbox clickToAttack;
         Checkbox sdfFontRendering;
+        Checkbox retro320x200WorldRendering;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
@@ -463,6 +464,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO: Might rework this, but could still be useful for certain core mods later
             sdfFontRendering = AddOption(x, "sdfFontRendering", DaggerfallUnity.Settings.SDFFontRendering);
             sdfFontRendering.OnToggleState += SDFFontRendering_OnToggleState;
+            retro320x200WorldRendering = AddOption(x, "retro320x200World", DaggerfallUnity.Settings.Retro320x200World);
             //bool exampleModCheckbox = AddOption(x, "Example", "Example built-in mod", DaggerfallUnity.Settings.ExampleModOption);
 
             // Add mod note
@@ -725,6 +727,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
+            DaggerfallUnity.Settings.Retro320x200World = retro320x200WorldRendering.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;
