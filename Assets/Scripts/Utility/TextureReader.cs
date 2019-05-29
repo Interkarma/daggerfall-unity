@@ -266,8 +266,8 @@ namespace DaggerfallWorkshop.Utility
                     // For the unlit flats we create a null-emissive black texture
                     if (!isEmissive)
                     {
-                        Color32[] emissionColors = new Color32[sz.Width * sz.Height];
-                        emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
+                        Color32[] emissionColors = new Color32[albedoMap.width * albedoMap.height];
+                        emissionMap = new Texture2D(albedoMap.width, albedoMap.height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                         emissionMap.SetPixels32(emissionColors);
                         emissionMap.Apply(true, !settings.stayReadable);
                         resultEmissive = true;
@@ -367,11 +367,23 @@ namespace DaggerfallWorkshop.Utility
                     albedoTextures.Add(nextTextureResults.albedoMap);
                     if (nextTextureResults.normalMap != null)
                     {
+                        if (nextTextureResults.normalMap.width != nextTextureResults.albedoMap.width || nextTextureResults.normalMap.height != nextTextureResults.albedoMap.height)
+                        {
+                            Debug.LogErrorFormat("The size of atlased normal map for {0}-{1} must be equal to the size of main texture.", settings.archive, settings.record);
+                            nextTextureResults.normalMap = nextTextureResults.albedoMap;
+                        }
+
                         normalTextures.Add(nextTextureResults.normalMap);
                         hasNormalMaps = true;
                     }
                     if (nextTextureResults.emissionMap != null)
                     {
+                        if (nextTextureResults.emissionMap.width != nextTextureResults.albedoMap.width || nextTextureResults.emissionMap.height != nextTextureResults.albedoMap.height)
+                        {
+                            Debug.LogErrorFormat("The size of atlased emission map for {0}-{1} must be equal to the size of main texture.", settings.archive, settings.record);
+                            nextTextureResults.emissionMap = nextTextureResults.albedoMap;
+                        }
+
                         emissionTextures.Add(nextTextureResults.emissionMap);
                         hasEmissionMaps = true;
                     }
