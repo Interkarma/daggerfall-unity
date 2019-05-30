@@ -29,6 +29,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         Panel optionsPanel = new Panel();
+#if !UNITY_EDITOR
+        Panel fullScreenTick;
+#endif
         Panel headBobbingTick;
         Panel musicBar;
         Panel soundBar;
@@ -113,8 +116,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             controlsButton.OnMouseClick += ControlsButton_OnMouseClick;
 
             // Full screen
-            //Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
-            //fullScreenButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
+#if UNITY_EDITOR
+            fullScreenButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+#else
+            fullScreenButton.OnMouseClick += FullScreenButton_OnMouseClick;
+            fullScreenTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), fullScreenButton);
+            fullScreenTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
+            fullScreenTick.Enabled = DaggerfallUnity.Settings.Fullscreen;
+#endif
 
             // Head bobbing
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
@@ -269,6 +279,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenControlsWindow);
         }
+
+#if !UNITY_EDITOR
+        private void FullScreenButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            fullScreenTick.Enabled = DaggerfallUnity.Settings.Fullscreen = Screen.fullScreen = !Screen.fullScreen;
+            if (!saveSettings)
+                saveSettings = true;
+        }
+#endif
 
         private void HeadBobbingButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
