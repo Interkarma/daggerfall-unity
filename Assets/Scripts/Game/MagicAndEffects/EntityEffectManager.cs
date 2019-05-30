@@ -186,7 +186,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
 
             // Run any per-frame constant effects
-            entityBehaviour.Entity.ClearConstantEffects();
             DoConstantEffects();
 
             // Refresh mods more frequently than magic rounds, but not too frequently
@@ -916,6 +915,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EntityEffectBundle heldEffectBundle = new EntityEffectBundle(heldEffectSettings, entityBehaviour);
             heldEffectBundle.FromEquippedItem = item;
             AssignBundle(heldEffectBundle, AssignBundleFlags.BypassSavingThrows);
+            DoConstantEffects();
         }
 
         void UnequipHeldItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
@@ -936,6 +936,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         bundlesToRemove.Add(bundle);
                 }
             }
+            RemovePendingBundles();
+            DoConstantEffects();
         }
 
         void UseItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings, ItemCollection sourceCollection)
@@ -1445,6 +1447,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoConstantEffects()
         {
+            // Clear existing constant effects
+            entityBehaviour.Entity.ClearConstantEffects();
+
             // Do nothing further if entity has perished or object disabled
             if (entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
                 return;
