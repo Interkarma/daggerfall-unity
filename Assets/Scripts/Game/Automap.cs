@@ -1268,7 +1268,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
                 Light keyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
                 keyLight.type = LightType.Directional;
-                //keyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+                keyLight.cullingMask = 1 << layerAutomap;
                 gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
             }
 
@@ -1278,6 +1278,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
                 Light fillLight = gameobjectAutomapFillLight.AddComponent<Light>();
                 fillLight.type = LightType.Directional;
+                fillLight.cullingMask = 1 << layerAutomap;
                 gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
             }
 
@@ -1287,6 +1288,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
                 Light backLight = gameobjectAutomapBackLight.AddComponent<Light>();
                 backLight.type = LightType.Directional;
+                backLight.cullingMask = 1 << layerAutomap;
                 gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
             }
 
