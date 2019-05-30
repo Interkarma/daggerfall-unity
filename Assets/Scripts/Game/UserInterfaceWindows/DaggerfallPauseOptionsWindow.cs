@@ -11,16 +11,7 @@
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Player;
-using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -30,28 +21,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallPauseOptionsWindow : DaggerfallPopupWindow
     {
+        #region Fields
+
         const string nativeImgName = "OPTN00I0.IMG";
         const int strAreYouSure = 1069;
+        const float barMaxLength = 109.1f;
 
         Texture2D nativeTexture;
         Panel optionsPanel = new Panel();
-        Panel headBobbingTick = new Panel();
-        Panel musicBar = new Panel();
-        Panel soundBar = new Panel();
+        Panel headBobbingTick;
+        Panel musicBar;
+        Panel soundBar;
         Panel detailBar;
-        const float barMaxLength = 109.1f;
         DaggerfallHUD hud;
-
         TextLabel versionTextLabel;
-        Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
-        Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
+
+        readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
+        readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
 
         bool saveSettings = false;
 
+        #endregion
+
+        #region Constructors
+
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
-            :base(uiManager, previousWindow)
+            : base(uiManager, previousWindow)
         {
         }
+
+        #endregion
+
+        #region Overrides
 
         protected override void Setup()
         {
@@ -176,6 +177,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.SaveSettings();
         }
 
+        #endregion
+
         #region Private Helpers
 
         private static float GetDetailBarWidth(int value)
@@ -274,6 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
             DaggerfallUnity.Settings.SaveSettings();
         }
+
         #endregion
     }
 }
