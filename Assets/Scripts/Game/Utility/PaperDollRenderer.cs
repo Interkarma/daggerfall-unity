@@ -191,8 +191,6 @@ namespace DaggerfallWorkshop.Game.Utility
             int posY = (int)targetRect.yMin - paperDollOrigin.Y;
 
             // Scaled coordinates and dimensions must be relative to screen dimensions
-            //float scaleX = 1f;// Screen.width / (float)paperDollWidth;
-            //float scaleY = 1f;// Screen.height / (float)paperDollHeight;
             float scaleX = target.width / (float)paperDollWidth;
             float scaleY = target.height / (float)paperDollHeight;
 
