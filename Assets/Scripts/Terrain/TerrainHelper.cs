@@ -355,7 +355,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Assign to tileMap
-                tileColor.r = (byte)record;
+                tileColor.r = tileColor.a = (byte)record;
                 tileMap[y * tDim + x] = tileColor;
             }
         }
