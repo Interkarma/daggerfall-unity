@@ -134,7 +134,7 @@ namespace DaggerfallWorkshop.Game
                     return;
             }
 
-            // Do not change if already playing attack animation
+            // Do not change if already playing attack animation, unless releasing an arrow (bow & state=up->down)
             if (!IsPlayingOneShot() || (WeaponType == WeaponTypes.Bow && weaponState == WeaponStates.StrikeUp && state == WeaponStates.StrikeDown))
                 ChangeWeaponState(state);
         }
@@ -143,6 +143,7 @@ namespace DaggerfallWorkshop.Game
         {
             weaponState = state;
 
+            // Only reset frame to 0 for bows if idle state
             if (WeaponType != WeaponTypes.Bow || state == WeaponStates.Idle)
                 currentFrame = 0;
 
