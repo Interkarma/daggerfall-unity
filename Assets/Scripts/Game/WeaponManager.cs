@@ -309,11 +309,16 @@ namespace DaggerfallWorkshop.Game
                     attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
                 }
             }
-            if (isAttacking && bowEquipped && DaggerfallUnity.Settings.BowDrawback &&
-                !InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && ScreenWeapon.GetCurrentFrame() == 3)
+            if (isAttacking && bowEquipped && DaggerfallUnity.Settings.BowDrawback && ScreenWeapon.GetCurrentFrame() == 3)
             {
-                // Release arrow. Debug.Log("Release arrow!");
-                attackDirection = MouseDirections.Down;
+                if (InputManager.Instance.HasAction(InputManager.Actions.ActivateCenterObject))
+                {   // Un-draw the bow without releasing an arrow.
+                    ScreenWeapon.ChangeWeaponState(WeaponStates.Idle);
+                }
+                else if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
+                {   // Release arrow. Debug.Log("Release arrow!");
+                    attackDirection = MouseDirections.Down;
+                }
             }
 
             // Start attack if one has been initiated
@@ -832,7 +837,7 @@ namespace DaggerfallWorkshop.Game
 
         void ExecuteAttacks(MouseDirections direction)
         { 
-            if(ScreenWeapon)
+            if (ScreenWeapon)
             {
                 // Fire screen weapon animation
                 ScreenWeapon.OnAttackDirection(direction);
