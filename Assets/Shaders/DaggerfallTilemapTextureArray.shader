@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Gavin Clayton
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Web Site:        http://www.dfworkshop.net
@@ -68,7 +68,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
 			// Get offset to tile in atlas
-			int index = tex2D(_TilemapTex, IN.uv_MainTex).x * _MaxIndex;
+			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex;
 
 			// Offset to fragment position inside tile
 			float2 uv = fmod(IN.uv_MainTex * _TilemapDim, 1.0f);
