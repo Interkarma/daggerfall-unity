@@ -210,7 +210,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // resize panel to where user clicked
             soundBar.Size = new Vector2(position.x, 3.5f);
             DaggerfallUnity.Settings.SoundVolume = (position.x / barMaxLength);
-            DaggerfallUnity.Settings.SaveSettings();
+            if (!saveSettings)
+                saveSettings = true;
         }
         private void MusicBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
@@ -222,7 +223,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // resize panel to where user clicked
             musicBar.Size = new Vector2(position.x, 3.5f);
             DaggerfallUnity.Settings.MusicVolume = (position.x / barMaxLength);
-            DaggerfallUnity.Settings.SaveSettings();
+            if (!saveSettings)
+                saveSettings = true;
         }
 
         private void DetailButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -246,6 +248,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
+                if (saveSettings)
+                    DaggerfallUnity.Settings.SaveSettings();
+
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiExitGame);
                 CancelWindow();
             }
@@ -294,7 +299,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //Debug.Log("Head Bobbing clicked, position: x: " + position.x + ", y: " + position.y);
             DaggerfallUnity.Settings.HeadBobbing = !DaggerfallUnity.Settings.HeadBobbing;
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
-            DaggerfallUnity.Settings.SaveSettings();
+            if (!saveSettings)
+                saveSettings = true;
         }
 
         #endregion
