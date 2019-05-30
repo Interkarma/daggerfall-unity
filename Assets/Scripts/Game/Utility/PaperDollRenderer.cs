@@ -141,6 +141,8 @@ namespace DaggerfallWorkshop.Game.Utility
             // Start rendering to paper doll target
             RenderTexture oldRT = RenderTexture.active;
             RenderTexture.active = target;
+            GL.PushMatrix();
+            GL.LoadPixelMatrix(0, target.width, target.height, 0);
 
             // Clear render target
             GL.Clear(true, true, Color.clear);
@@ -165,6 +167,7 @@ namespace DaggerfallWorkshop.Game.Utility
             paperDollTexture.Apply();
 
             // Switch back to previous render target
+            GL.PopMatrix();
             RenderTexture.active = oldRT;
         }
 
@@ -188,8 +191,10 @@ namespace DaggerfallWorkshop.Game.Utility
             int posY = (int)targetRect.yMin - paperDollOrigin.Y;
 
             // Scaled coordinates and dimensions must be relative to screen dimensions
-            float scaleX = Screen.width / (float)paperDollWidth;
-            float scaleY = Screen.height / (float)paperDollHeight;
+            //float scaleX = 1f;// Screen.width / (float)paperDollWidth;
+            //float scaleY = 1f;// Screen.height / (float)paperDollHeight;
+            float scaleX = target.width / (float)paperDollWidth;
+            float scaleY = target.height / (float)paperDollHeight;
 
             // Get target rect
             Rect screenRect = new Rect(
