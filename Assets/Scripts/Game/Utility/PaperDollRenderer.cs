@@ -132,6 +132,12 @@ namespace DaggerfallWorkshop.Game.Utility
             if (playerEntity == null)
                 playerEntity = GameManager.Instance.PlayerEntity;
 
+            // Racial override can suppress body and items
+            bool suppressBody = false;
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressBody = racialOverride.SuppressPaperDollBodyAndItems;
+
             // Start rendering to paper doll target
             RenderTexture oldRT = RenderTexture.active;
             RenderTexture.active = target;
@@ -139,17 +145,20 @@ namespace DaggerfallWorkshop.Game.Utility
             // Clear render target
             GL.Clear(true, true, Color.clear);
 
-            // Cloak interior
-            if ((layers & LayerFlags.CloakInterior) == LayerFlags.CloakInterior)
-                BlitCloakInterior(playerEntity);
+            if (!suppressBody)
+            {
+                // Cloak interior
+                if ((layers & LayerFlags.CloakInterior) == LayerFlags.CloakInterior)
+                    BlitCloakInterior(playerEntity);
 
-            // Body
-            if ((layers & LayerFlags.Body) == LayerFlags.Body)
-                BlitBody(playerEntity);
+                // Body
+                if ((layers & LayerFlags.Body) == LayerFlags.Body)
+                    BlitBody(playerEntity);
 
-            // Items
-            if ((layers & LayerFlags.Items) == LayerFlags.Items)
-                BlitItems(playerEntity);
+                // Items
+                if ((layers & LayerFlags.Items) == LayerFlags.Items)
+                    BlitItems(playerEntity);
+            }
 
             // Copy render to new output
             paperDollTexture.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);

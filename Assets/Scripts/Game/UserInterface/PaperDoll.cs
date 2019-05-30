@@ -148,12 +148,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             paperDollTexture = null;
 
             // Update paper doll texture
-            paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
-            characterPanel.BackgroundTexture = paperDollTexture;
+            //paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
+            //characterPanel.BackgroundTexture = paperDollTexture;
 
             // Display using new paper doll renderer
-            //DaggerfallUI.Instance.PaperDollRenderer.Refresh(PaperDollRenderer.LayerFlags.All, playerEntity);
-            //characterPanel.BackgroundTexture = DaggerfallUI.Instance.PaperDollRenderer.PaperDollTexture;
+            DaggerfallUI.Instance.PaperDollRenderer.Refresh(PaperDollRenderer.LayerFlags.All, playerEntity);
+            characterPanel.BackgroundTexture = DaggerfallUI.Instance.PaperDollRenderer.PaperDollTexture;
 
             //TextureReader.SaveTextureToPNG(DaggerfallUI.Instance.PaperDollRenderer.PaperDollTexture, "c:\\test\\testrender.png");
 
