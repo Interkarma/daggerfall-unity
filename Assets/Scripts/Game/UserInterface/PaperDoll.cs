@@ -158,9 +158,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
             {
+                int armorMod = playerEntity.IncreasedArmorValueModifier + playerEntity.DecreasedArmorValueModifier;
+
                 sbyte av = playerEntity.ArmorValues[bpIdx];
-                int bpAv = (100 - av) / 5;
+                int bpAv = (100 - av) / 5 + armorMod;
                 armourLabels[bpIdx].Text = (!suppress) ? bpAv.ToString() : string.Empty;
+
+                if (armorMod < 0)
+                    armourLabels[bpIdx].TextColor = DaggerfallUI.DaggerfallUnityStatDrainedTextColor;
+                else if (armorMod > 0)
+                    armourLabels[bpIdx].TextColor = DaggerfallUI.DaggerfallUnityStatIncreasedTextColor;
+                else
+                    armourLabels[bpIdx].TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             }
         }
 
