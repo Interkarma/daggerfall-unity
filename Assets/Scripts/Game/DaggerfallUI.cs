@@ -307,11 +307,8 @@ namespace DaggerfallWorkshop.Game
 
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
 
-            // TEST: 4x scale paper doll renderer
-            // This will be used to display visual paper doll during testing
-            // Old paper doll still refreshed and used for mouse-over picking
-            // Will switch back to old method if any significant issues found with new paper doll rendering
-            paperDollRenderer = new PaperDollRenderer(4);
+            // Create 8x scale paper doll renderer
+            paperDollRenderer = new PaperDollRenderer(8);
 
             SetupSingleton();
         }
