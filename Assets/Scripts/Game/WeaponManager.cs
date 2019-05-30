@@ -297,7 +297,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Ensure attack button was released before starting the next attack
                     if (lastAttackHand == Hand.None)
-                        attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
+                        attackDirection = DaggerfallUnity.Settings.BowDrawback ? MouseDirections.Up : MouseDirections.Down; // Force attack without tracking a swing for Bow
                 }
                 else if (isClickAttack)
                 {
@@ -308,6 +308,12 @@ namespace DaggerfallWorkshop.Game
                 {
                     attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
                 }
+            }
+            if (isAttacking && bowEquipped && DaggerfallUnity.Settings.BowDrawback &&
+                !InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && ScreenWeapon.GetCurrentFrame() == 3)
+            {
+                Debug.Log("Release arrow!");
+                attackDirection = MouseDirections.Down;
             }
 
             // Start attack if one has been initiated
@@ -321,7 +327,7 @@ namespace DaggerfallWorkshop.Game
             if (!isAttacking)
                 return;
 
-            if (!isBowSoundFinished && ScreenWeapon.WeaponType == WeaponTypes.Bow && ScreenWeapon.GetCurrentFrame() == 3)
+            if (!isBowSoundFinished && ScreenWeapon.WeaponType == WeaponTypes.Bow && ScreenWeapon.GetCurrentFrame() == 4)
             {
                 ScreenWeapon.PlaySwingSound();
                 isBowSoundFinished = true;
@@ -333,6 +339,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
+                Debug.Log("HitFrame");
                 // Racial override can suppress optional attack voice
                 RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
                 bool suppressCombatVoices = racialOverride != null && racialOverride.SuppressOptionalCombatVoices;

@@ -110,10 +110,7 @@ namespace DaggerfallWorkshop.Game
             // Get state based on attack direction
             WeaponStates state;
 
-            // Bows has only one type of attack
-            if (WeaponType == WeaponTypes.Bow)
-                state = WeaponStates.StrikeDown;
-            else switch (direction)
+            switch (direction)
             {
                 case WeaponManager.MouseDirections.Down:
                     state = WeaponStates.StrikeDown;
@@ -138,7 +135,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Do not change if already playing attack animation
-            if (!IsPlayingOneShot())
+            if (!IsPlayingOneShot() || (WeaponType == WeaponTypes.Bow && weaponState == WeaponStates.StrikeUp && state == WeaponStates.StrikeDown))
                 ChangeWeaponState(state);
         }
 
@@ -146,8 +143,10 @@ namespace DaggerfallWorkshop.Game
         {
             weaponState = state;
 
-            if (!(WeaponType == WeaponTypes.Bow && state == WeaponStates.StrikeDown))
+            if (WeaponType != WeaponTypes.Bow || state == WeaponStates.Idle)
                 currentFrame = 0;
+
+            Debug.LogFormat("Frame {0} new state {1}", currentFrame, weaponState);
 
             UpdateWeapon();
         }
@@ -212,10 +211,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool IsPlayingOneShot()
         {
-            if (weaponState != WeaponStates.Idle)
-                return true;
-
-            return false;
+            return (weaponState != WeaponStates.Idle);
         }
 
         private void UpdateWeapon()
@@ -409,6 +405,12 @@ namespace DaggerfallWorkshop.Game
                             leftUnarmedAnimIndex = 0;
                         }
                     }
+                    else if (WeaponType == WeaponTypes.Bow && weaponState == WeaponStates.StrikeUp)
+                    {
+                        // Step each frame for drawing the bow until reach frame for ready to release arrow
+                        if (currentFrame < weaponAnims[(int)weaponState].NumFrames - 1)
+                            currentFrame++;
+                    }
                     else
                     {
                         // Step frame
@@ -421,7 +423,7 @@ namespace DaggerfallWorkshop.Game
                                 if (WeaponType == WeaponTypes.Bow)
                                     ShowWeapon = false;                 // Immediately hide bow so its idle frame doesn't show before it is hidden for its cooldown
                             }
-                            else if (WeaponType == WeaponTypes.Bow)
+                            else if (WeaponType == WeaponTypes.Bow && !DaggerfallUnity.Settings.BowDrawback)
                                 currentFrame = 3;
                             else
                                 currentFrame = 0;                       // Otherwise keep looping frames
@@ -429,8 +431,10 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     // Only update if the frame actually changed
-                    if (frameBeforeStepping != currentFrame)
+                    if (frameBeforeStepping != currentFrame) {
+                        Debug.Log("Frame " + currentFrame);
                         UpdateWeapon();
+                    }
                 }
 
                 yield return new WaitForSeconds(time);
