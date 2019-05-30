@@ -93,6 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox spellLighting;
         Checkbox spellShadows;
         Checkbox instantRepairs;
+        Checkbox bowDrawback;
 
         // Interface
         Checkbox toolTips;
@@ -213,6 +214,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
             movementAcceleration = AddSlider(leftPanel, "moveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
+            bowDrawback = AddCheckbox(leftPanel, "bowDrawback", DaggerfallUnity.Settings.BowDrawback);
 
             y = 0;
 
@@ -339,6 +341,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
+            DaggerfallUnity.Settings.BowDrawback = bowDrawback.IsChecked;
 
             DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
             DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();

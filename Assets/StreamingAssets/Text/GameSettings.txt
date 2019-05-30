@@ -48,6 +48,8 @@ spellShadows,                                       Spell shadows
 spellShadowsInfo,                                   Enable spell shadows
 instantRepairs,                                     Instant repair services
 instantRepairsInfo,                                 Disables waiting for repairs and makes them instantaneous
+bowDrawback,                                        Enable bow drawing
+bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
 
 toolTips,                                           Tool Tips
 toolTipsInfo,                                       Shows informations about GUI items

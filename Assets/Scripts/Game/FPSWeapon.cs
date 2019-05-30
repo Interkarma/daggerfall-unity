@@ -146,8 +146,6 @@ namespace DaggerfallWorkshop.Game
             if (WeaponType != WeaponTypes.Bow || state == WeaponStates.Idle)
                 currentFrame = 0;
 
-            Debug.LogFormat("Frame {0} new state {1}", currentFrame, weaponState);
-
             UpdateWeapon();
         }
 
@@ -431,10 +429,8 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     // Only update if the frame actually changed
-                    if (frameBeforeStepping != currentFrame) {
-                        Debug.Log("Frame " + currentFrame);
+                    if (frameBeforeStepping != currentFrame)
                         UpdateWeapon();
-                    }
                 }
 
                 yield return new WaitForSeconds(time);

@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game
             if (isAttacking && bowEquipped && DaggerfallUnity.Settings.BowDrawback &&
                 !InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && ScreenWeapon.GetCurrentFrame() == 3)
             {
-                Debug.Log("Release arrow!");
+                // Release arrow. Debug.Log("Release arrow!");
                 attackDirection = MouseDirections.Down;
             }
 
@@ -339,7 +339,6 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
-                Debug.Log("HitFrame");
                 // Racial override can suppress optional attack voice
                 RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
                 bool suppressCombatVoices = racialOverride != null && racialOverride.SuppressOptionalCombatVoices;
