@@ -45,6 +45,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
         }
 
+        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            RoundsRemaining = 1; // permanently stay at >0
+        }
         #endregion
     }
 }
