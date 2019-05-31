@@ -40,7 +40,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         Normal,
         Height,
         Emission,
-        MetallicGloss
+        MetallicGloss,
+        Mask
     }
 
     public enum TextureImport
@@ -218,11 +219,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation frame index</param>
         /// <param name="dye">Dye colour for armour, weapons, and clothing.</param>
+        /// <param name="textureMap">Texture type.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, out Texture2D tex)
+        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, dye), false, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, out tex);
         }
 
         /// <summary>
@@ -600,40 +602,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        public static string GetName(int archive, int record, int frame = 0)
+        /// <param name="textureMap">Texture type.</param>
+        /// <param name="dye">Color Dye.</param>
+        /// <returns>The name for the texture with requested options.</returns>
+        public static string GetName(int archive, int record, int frame = 0, TextureMap textureMap = TextureMap.Albedo, DyeColors dye = DyeColors.Unchanged)
         {
-            return string.Format("{0:000}_{1}-{2}", archive, record, frame);
-        }
+            string name = string.Format("{0:000}_{1}-{2}", archive, record, frame);
 
-        /// <summary>
-        /// Get name for a texture with a dye.
-        /// </summary>
-        /// <param name="archive">Archive index from TEXTURE.XXX</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <param name="dye">Color Dye</param>
-        public static string GetName(int archive, int record, int frame, DyeColors dye)
-        {
-            if (dye == DyeColors.Unchanged)
-                return GetName(archive, record, frame);
+            if (dye != DyeColors.Unchanged)
+                name = string.Format("{0}_{1}", name, dye);
 
-            return string.Format("{0}_{1}", GetName(archive, record, frame), dye);
-        }
+            if (textureMap != TextureMap.Albedo)
+                name = string.Format("{0}_{1}", name, textureMap);
 
-        /// <summary>
-        /// Get name for a specific texture map.
-        /// </summary>
-        /// <param name="archive">Archive index from TEXTURE.XXX</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <param name="textureMap">Shader texture type.</param>
-        /// <returns></returns>
-        public static string GetName(int archive, int record, int frame, TextureMap textureMap)
-        {
-            if (textureMap == TextureMap.Albedo)
-                return GetName(archive, record, frame);
-
-            return string.Format("{0}_{1}", GetName(archive, record, frame), textureMap);
+            return name;
         }
 
         /// <summary>
