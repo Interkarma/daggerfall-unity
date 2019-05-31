@@ -413,9 +413,13 @@ namespace DaggerfallWorkshop.Game
         // Returns true if hit an enemy entity
         public bool WeaponDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
         {
-            DaggerfallUnityItem strikingWeapon = null;
+            DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
 
-            if (!arrowHit)
+            if (arrowHit)
+            {
+                strikingWeapon = lastBowUsed;
+            }
+            else
             {
                 // Check if hit has an DaggerfallAction component
                 DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
@@ -440,42 +444,19 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Set up for use below
-            DaggerfallEntityBehaviour entityBehaviour = null;
-            DaggerfallMobileUnit entityMobileUnit = null;
-            EnemyMotor enemyMotor = null;
-            EnemySounds enemySounds = null;
-            if (!arrowHit)
-            {
-                entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
-                enemyMotor = hit.transform.GetComponent<EnemyMotor>();
-                enemySounds = hit.transform.GetComponent<EnemySounds>();
-            }
-            else if (arrowHitCollider != null)
-            {
-                entityBehaviour = arrowHitCollider.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
-                entityMobileUnit = arrowHitCollider.gameObject.transform.GetComponentInChildren<DaggerfallMobileUnit>();
-                enemyMotor = arrowHitCollider.gameObject.transform.GetComponent<EnemyMotor>();
-                enemySounds = arrowHitCollider.gameObject.transform.GetComponent<EnemySounds>();
-            }
+            Transform transform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
+            DaggerfallEntityBehaviour entityBehaviour = transform.GetComponent<DaggerfallEntityBehaviour>();
+            DaggerfallMobileUnit entityMobileUnit = transform.GetComponentInChildren<DaggerfallMobileUnit>();
+            EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
+            EnemySounds enemySounds = transform.GetComponent<EnemySounds>();
 
             // Check if hit a mobile NPC
-            MobilePersonNPC mobileNpc = null;
-            if (!arrowHit)
-                mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
-            else if (arrowHitCollider != null)
-                mobileNpc = arrowHitCollider.gameObject.transform.GetComponent<MobilePersonNPC>();
-
+            MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
             if (mobileNpc)
             {
                 if (!mobileNpc.Billboard.IsUsingGuardTexture)
                 {
-                    EnemyBlood blood = null;
-                    if (!arrowHit)
-                        blood = hit.transform.GetComponent<EnemyBlood>();
-                    else if (arrowHitCollider != null)
-                        blood = arrowHitCollider.gameObject.transform.GetComponent<EnemyBlood>();
-
+                    EnemyBlood blood = transform.GetComponent<EnemyBlood>();
                     if (blood)
                     {
                         if (!arrowHit)
@@ -517,24 +498,8 @@ namespace DaggerfallWorkshop.Game
                     EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
                     // Calculate damage
-                    int damage;
-                    if (!arrowHit)
-                    {
-                        if (usingRightHand)
-                        {
-                            strikingWeapon = currentRightHandWeapon;
-                        }
-                        else
-                        {
-                            strikingWeapon = currentLeftHandWeapon;
-                        }
-                    }
-                    else
-                    {
-                        strikingWeapon = lastBowUsed;
-                    }
-
-                    damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
+                    int animTime = (int)(ScreenWeapon.GetAnimTime() * 1000);    // Get animation time, converted to ms. 
+                    int damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, entityMobileUnit.Summary.AnimStateRecord, animTime, strikingWeapon);
 
                     // Break any "normal power" concealment effects on player
                     if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
@@ -555,12 +520,7 @@ namespace DaggerfallWorkshop.Game
                         else
                             enemySounds.PlayHitSound(currentLeftHandWeapon);
 
-                        EnemyBlood blood = null;
-                        if (!arrowHit)
-                            blood = hit.transform.GetComponent<EnemyBlood>();
-                        else if (arrowHitCollider != null)
-                            blood = arrowHitCollider.gameObject.transform.GetComponent<EnemyBlood>();
-
+                        EnemyBlood blood = transform.GetComponent<EnemyBlood>();
                         if (blood)
                         {
                             blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);

@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         WeaponAnimation[] weaponAnims;
         WeaponStates weaponState = WeaponStates.Idle;
         int currentFrame = 0;
+        int animTicks = 0;
         Rect curAnimRect;
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
@@ -145,7 +146,7 @@ namespace DaggerfallWorkshop.Game
 
             // Only reset frame to 0 for bows if idle state
             if (WeaponType != WeaponTypes.Bow || state == WeaponStates.Idle)
-                currentFrame = 0;
+                currentFrame = animTicks = 0;
 
             UpdateWeapon();
         }
@@ -166,6 +167,11 @@ namespace DaggerfallWorkshop.Game
         public int GetCurrentFrame()
         {
             return currentFrame;
+        }
+
+        public float GetAnimTime()
+        {
+            return animTicks * GetAnimTickTime();
         }
 
         public void PlayActivateSound()
@@ -373,19 +379,7 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                float speed = 0;
-                float time = 0;
-                if (player != null)
-                {
-                    if (WeaponType == WeaponTypes.Bow)
-                        time = GameManager.classicUpdateInterval;
-                    else
-                    {
-                        speed = 3 * (115 - player.Stats.LiveSpeed);
-                        time = speed / 980; // Approximation of classic frame update
-                    }
-                }
+                float time = GetAnimTickTime();
 
                 if (weaponAnims != null && ShowWeapon)
                 {
@@ -409,6 +403,8 @@ namespace DaggerfallWorkshop.Game
                         // Step each frame for drawing the bow until reach frame for ready to release arrow
                         if (currentFrame < weaponAnims[(int)weaponState].NumFrames - 1)
                             currentFrame++;
+                        // Record animation ticks for drawing and then holding a bow
+                        animTicks++;
                     }
                     else
                     {
@@ -435,6 +431,19 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 yield return new WaitForSeconds(time);
+            }
+        }
+
+        private float GetAnimTickTime()
+        {
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float speed = 0;
+            if (WeaponType == WeaponTypes.Bow || player == null)
+                return GameManager.classicUpdateInterval;
+            else
+            {
+                speed = 3 * (115 - player.Stats.LiveSpeed);
+                return speed / 980; // Approximation of classic frame update
             }
         }
 
