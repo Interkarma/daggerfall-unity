@@ -1460,8 +1460,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Check if selected locations actually exist/are visible
 
-            bool first = true;
-            bool perfectMatchExists = false;
+            MatchesCutOff cutoff = null;
             ContentReader.MapSummary findLocationSummary;
 
             foreach (EditDistance.MatchResult match in bestMatches)
@@ -1480,19 +1479,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (!checkLocationDiscovered(findLocationSummary))
                         continue;
 
-                    if (first)
+                    if (cutoff == null)
                     {
-                        perfectMatchExists = (match.distance == 0);
+                        cutoff = new MatchesCutOff(match.relevance);
 
                         // Set locationSummary to first result's MapSummary in case we skip the location list picker step
                         locationSummary = findLocationSummary;
-                        first = false;
                     }
                     else
                     {
-                        // If perfect match exist, return all perfect matches only
-                        // Normally there should be only one perfect match, but if string canonization generates collisions that's no longer guaranteed
-                        if (perfectMatchExists && match.distance > 0f)
+                        if (!cutoff.Keep(match.relevance))
                             break;
                     }
                     matching.Add(match);
@@ -1500,6 +1496,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             return matching.Count > 0;
+        }
+
+        private class MatchesCutOff
+        {
+            private readonly float threshold;
+                
+            public MatchesCutOff(float bestRelevance)
+            {
+                // If perfect match exist, return all perfect matches only
+                // Normally there should be only one perfect match, but if string canonization generates collisions that's no longer guaranteed
+                threshold = bestRelevance == 1f ? 1f : bestRelevance * 0.2f;
+            }
+
+            public bool Keep(float relevance)
+            {
+                return relevance >= threshold;
+            }
         }
 
         //creates a ListPickerWindow with a list of locations from current region

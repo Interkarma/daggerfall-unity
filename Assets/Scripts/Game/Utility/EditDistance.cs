@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -21,13 +22,11 @@ namespace DaggerfallWorkshop.Game.Utility
         public class MatchResult : IComparable<MatchResult>
         {
             public readonly string text;
-            public readonly float distance;
-            public readonly float relevance;
+            public readonly float relevance; // 0f: low relevance .. 1f: high relevance
 
-            public MatchResult(string answer, float distance, float relevance)
+            public MatchResult(string answer, float relevance)
             {
                 this.text = answer;
-                this.distance = distance;
                 this.relevance = relevance;
             }
 
@@ -39,6 +38,35 @@ namespace DaggerfallWorkshop.Game.Utility
                 if (compare == 0)
                     compare = string.Compare(this.text, otherResult.text, StringComparison.InvariantCulture);
                 return compare;
+            }
+        }
+
+        private class InternalMatchResult : IComparable<InternalMatchResult>
+        {
+            public readonly string text;
+            public readonly float distance;
+            public readonly float relevance;
+
+            public InternalMatchResult(string answer, float distance, float relevance)
+            {
+                this.text = answer;
+                this.distance = distance;
+                this.relevance = relevance;
+            }
+
+            public int CompareTo(InternalMatchResult otherResult)
+            {
+                if (otherResult == null) return 1;
+
+                int compare = this.relevance.CompareTo(otherResult.relevance);
+                if (compare == 0)
+                    compare = string.Compare(this.text, otherResult.text, StringComparison.InvariantCulture);
+                return compare;
+            }
+
+            public MatchResult GetMatchResult()
+            {
+                return new MatchResult(text, relevance);
             }
         }
 
@@ -207,6 +235,12 @@ namespace DaggerfallWorkshop.Game.Utility
             }
         }
 
+        private static float GetRelevance(float distance)
+        {
+            const float RelevanceDrop = 0.1f; // How fast relevance drops with distance
+            return Mathf.Exp(-RelevanceDrop * distance);
+        }
+
         public MatchResult[] FindBestMatches(string needle, int ntop)
         {
 #if DEBUG_SHOW_EDITDISTANCE_TIMES
@@ -216,15 +250,14 @@ namespace DaggerfallWorkshop.Game.Utility
 #endif
 
             string canonized_needle = canonize_string(needle);
-            PriorityQueue<MatchResult> kept = new PriorityQueue<MatchResult>();
+            PriorityQueue<InternalMatchResult> kept = new PriorityQueue<InternalMatchResult>();
             float worseKeptDistance = float.PositiveInfinity;
             foreach (KeyValuePair<String, String> kv in dictionary)
             {
                 float answer_distance = distance(canonized_needle, kv.Value, worseKeptDistance);
                 if (answer_distance < worseKeptDistance)
                 {
-                    // use opposite of distance as relevance so low distances give highest relevances
-                    kept.Enqueue(new MatchResult(kv.Key, answer_distance, -answer_distance));
+                    kept.Enqueue(new InternalMatchResult(kv.Key, answer_distance, GetRelevance(answer_distance)));
                     // start dropping results?
                     if (kept.Count() > ntop)
                     {
@@ -237,7 +270,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Dump the heap in reverse order so highest relevances are at the beginning of results
             MatchResult[] result = new MatchResult[kept.Count()];
             for (int i = kept.Count(); i-- > 0; )
-                result[i] = kept.Dequeue();
+                result[i] = kept.Dequeue().GetMatchResult();
 
 #if DEBUG_SHOW_EDITDISTANCE_TIMES
             // Show timer
