@@ -184,6 +184,8 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectBeaconPlayerPosition = null; // GameObject which will hold player marker ray (red ray)
         GameObject gameobjectBeaconEntrancePosition = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
         GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
+        public GameObject gameobjectRotationArrow1 = null; // GameObject which will hold rotation arrow1 (blue arrow)
+        public GameObject gameobjectRotationArrow2 = null; // GameObject which will hold rotation arrow2 (blue arrow)
 
         GameObject gameObjectEntrancePositionCubeMarker = null; // used for entrance marker discovery
 
@@ -1022,8 +1024,35 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconRotationPivotAxis.layer = layerAutomap;
                 gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
-                material.color = new Color(0.0f, 0.0f, 1.0f);
+                material.color = new Color(0.0f, 0.0f, 1.0f, 0.5f);
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.DisableKeyword("_ALPHABLEND_ON");
+                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = 3000;
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
+
+                gameobjectRotationArrow1 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
+                gameobjectRotationArrow1.name = "RotateArrow1";
+                gameobjectRotationArrow1.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
+                gameobjectRotationArrow1.layer = layerAutomap;
+                gameobjectRotationArrow1.transform.GetChild(0).gameObject.layer = layerAutomap;
+                gameobjectRotationArrow1.transform.localPosition = new Vector3(1.0f, -0.02f, -1.0f);
+                gameobjectRotationArrow1.transform.localScale = new Vector3(0.07f, 0.0005f, 0.07f);
+                gameobjectRotationArrow1.GetComponentInChildren<MeshRenderer>().material = material;
+
+                gameobjectRotationArrow2 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
+                gameobjectRotationArrow2.name = "RotateArrow2";
+                gameobjectRotationArrow2.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
+                gameobjectRotationArrow2.layer = layerAutomap;
+                gameobjectRotationArrow2.transform.GetChild(0).gameObject.layer = layerAutomap;
+                gameobjectRotationArrow2.transform.localPosition = new Vector3(-1.0f, -0.02f, 1.0f);
+                gameobjectRotationArrow2.transform.localScale = new Vector3(0.07f, 0.0005f, 0.07f);
+                gameobjectRotationArrow2.transform.Rotate(0.0f, 180.0f, 0.0f);
+                gameobjectRotationArrow2.GetComponentInChildren<MeshRenderer>().material = material;
             }
             gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
 
