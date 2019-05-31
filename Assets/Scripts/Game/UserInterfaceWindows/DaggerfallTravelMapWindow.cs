@@ -369,7 +369,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         return;
 
                     string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
-                    ShowLocationPicker(locations);
+                    ShowLocationPicker(locations, true);
                 }
                 else if (Input.GetKeyDown(KeyCode.F))
                     FindlocationButtonClickHandler(null, Vector2.zero);
@@ -1426,7 +1426,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {
-                    ShowLocationPicker(matching.ConvertAll(match => match.text).ToArray());
+                    ShowLocationPicker(matching.ConvertAll(match => match.text).ToArray(), false);
                 }
             }
             else
@@ -1504,9 +1504,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 
             public MatchesCutOff(float bestRelevance)
             {
-                // If perfect match exist, return all perfect matches only
+                // If perfect match exists, return all perfect matches only
                 // Normally there should be only one perfect match, but if string canonization generates collisions that's no longer guaranteed
-                threshold = bestRelevance == 1f ? 1f : bestRelevance * 0.2f;
+                threshold = bestRelevance == 1f ? 1f : bestRelevance * 0.5f;
             }
 
             public bool Keep(float relevance)
@@ -1517,7 +1517,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         //creates a ListPickerWindow with a list of locations from current region
         //locations displayed will be filtered out depending on the dungeon / town / temple / home button settings
-        private void ShowLocationPicker(string[] locations)
+        private void ShowLocationPicker(string[] locations, bool applyFilters)
         {
             DaggerfallListPickerWindow locationPicker = new DaggerfallListPickerWindow(uiManager, this);
             locationPicker.OnItemPicked += HandleLocationPickEvent;
@@ -1526,10 +1526,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < locations.Length; i++)
             {
                 int index = currentDFRegion.MapNameLookup[locations[i]];
-                if (GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
+                if (applyFilters && GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
                     continue;
-                else
-                    locationPicker.ListBox.AddItem(locations[i]);
+                locationPicker.ListBox.AddItem(locations[i]);
             }
 
             uiManager.PushWindow(locationPicker);
