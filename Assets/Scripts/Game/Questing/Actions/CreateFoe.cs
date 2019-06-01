@@ -14,7 +14,7 @@ using System;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -144,12 +144,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (spawnInProgress)
             {
                 TryPlacement();
-            }
-
-            // Keep breaking rest if spawn in progress
-            if (spawnInProgress && DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
-            {
-                (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).AbortRestForEnemySpawn();
+                GameManager.Instance.RaiseOnEncounterEvent();
             }
         }
 
