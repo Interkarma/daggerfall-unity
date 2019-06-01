@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.Utility
         // value: canonized string
         private SortedDictionary<String, String> dictionary;
 
-        public class MatchResult : IComparable<MatchResult>
+        public class MatchResult
         {
             public readonly string text;
             public readonly float relevance; // 0f: low relevance .. 1f: high relevance
@@ -28,16 +28,6 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 this.text = answer;
                 this.relevance = relevance;
-            }
-
-            public int CompareTo(MatchResult otherResult)
-            {
-                if (otherResult == null) return 1;
-
-                int compare = this.relevance.CompareTo(otherResult.relevance);
-                if (compare == 0)
-                    compare = string.Compare(this.text, otherResult.text, StringComparison.InvariantCulture);
-                return compare;
             }
         }
 
@@ -60,7 +50,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
                 int compare = this.relevance.CompareTo(otherResult.relevance);
                 if (compare == 0)
-                    compare = string.Compare(this.text, otherResult.text, StringComparison.InvariantCulture);
+                    // Results will be returned in decreasing order
+                    compare = - string.Compare(this.text, otherResult.text, StringComparison.InvariantCulture);
                 return compare;
             }
 
