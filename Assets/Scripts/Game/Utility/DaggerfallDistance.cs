@@ -5,7 +5,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public static IDistance GetDistance()
         {
             return new EditDistance(
-                            s => s.TrimStart().TrimEnd().ToLower(),
+                            s => s.Trim().ToLowerInvariant(),
                             // Inserting/deleting separators is cheap
                             c => IsSeparator(c) ? 3 : 10,
                             c => IsSeparator(c) ? 3 : 10,

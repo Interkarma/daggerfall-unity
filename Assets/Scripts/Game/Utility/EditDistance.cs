@@ -254,7 +254,7 @@ namespace DaggerfallWorkshop.Game.Utility
 #if DEBUG_SHOW_EDITDISTANCE_TIMES
             // Show timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            DaggerfallUnity.LogMessage(string.Format("Time to findBestMatches: {0}ms", totalTime), true);
+            DaggerfallUnity.LogMessage(string.Format("Time to findBestMatches {0}: {1}ms", needle, totalTime), true);
 #endif
             return result;
         }
