@@ -1525,9 +1525,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             for (int i = 0; i < locations.Length; i++)
             {
-                int index = currentDFRegion.MapNameLookup[locations[i]];
-                if (applyFilters && GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
-                    continue;
+                if (applyFilters)
+                {
+                    int index = currentDFRegion.MapNameLookup[locations[i]];
+                    if (GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
+                        continue;
+                }
                 locationPicker.ListBox.AddItem(locations[i]);
             }
 

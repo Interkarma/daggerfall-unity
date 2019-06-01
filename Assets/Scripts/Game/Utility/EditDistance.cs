@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 int compare = this.relevance.CompareTo(otherResult.relevance);
                 if (compare == 0)
                     // Results will be returned in decreasing order
-                    compare = - string.Compare(this.text, otherResult.text, StringComparison.InvariantCulture);
+                    compare = string.Compare(otherResult.text, this.text, StringComparison.InvariantCulture);
                 return compare;
             }
 
