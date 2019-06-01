@@ -24,6 +24,7 @@ using System.Linq;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 
@@ -775,6 +776,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
+        /// <summary>
+        /// Read configuration for a paperdoll item with custom rect.
+        /// </summary>
+        /// <param name="item">Target item or null.</param>
+        /// <param name="imageData">Source image data.</param>
+        /// <param name="rect">Rect for the item on paperdoll.</param>
+        internal static void OverridePaperdollItemRect(DaggerfallUnityItem item, ImageData imageData, float paperdollScale, ref Rect rect)
+        {
+            DyeColors dyeColor = item != null ? item.dyeColor : DyeColors.Unchanged;
+
+            string directory;
+            string name;
+            XMLManager xml;
+            if (MakeName(imageData, dyeColor, out directory, out name) && XMLManager.TryReadXml(directory, name, out xml))
+                rect = xml.GetRect("rect", rect, paperdollScale);
+        }
+
         public static int FileNameToArchive(string filename)
         {
             return int.Parse(filename.Substring("TEXTURE.".Length));
@@ -1001,6 +1019,34 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
                 (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
                 MaterialReader.CustomBlendMode.Cutout);
+        }
+
+        private static bool MakeName(ImageData imageData, DyeColors dyeColor, out string directory, out string name)
+        {
+            switch (imageData.type)
+            {
+                case ImageTypes.TEXTURE:
+                    directory = texturesPath;
+                    int archive = FileNameToArchive(imageData.filename);
+                    name = GetName(archive, imageData.record, imageData.frame, TextureMap.Albedo, dyeColor);
+                    return true;
+
+                case ImageTypes.IMG:
+                    directory = imgPath;
+                    name = imageData.filename;
+                    return true;
+
+                case ImageTypes.CIF:
+                case ImageTypes.RCI:
+                    directory = cifRciPath;
+                    name = GetNameCifRci(imageData.filename, imageData.record, imageData.frame);
+                    return true;
+
+                default:
+                    directory = null;
+                    name = null;
+                    return false;
+            }
         }
 
         #endregion

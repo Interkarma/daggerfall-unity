@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Utility
         Texture2D paperDollTexture = null;
         DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
 
+        float scale;
         List<ItemElement> itemLayout = new List<ItemElement>();
 
         #endregion
@@ -123,6 +125,8 @@ namespace DaggerfallWorkshop.Game.Utility
             // Scale cannot be lower than 1.0
             if (scale < 1)
                 scale = 1;
+
+            this.scale = scale;
 
             // Create scaled render texture
             target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 16);
@@ -259,6 +263,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 posY * scaleY,
                 targetRect.width * scaleX,
                 targetRect.height * scaleY);
+
+            // Allow for some adjustment so artist can finetune how their new item images should be positioned.
+            TextureReplacement.OverridePaperdollItemRect(item, srcImage, scale, ref screenRect);
 
             // Draw with custom shader for paper doll item masking
             if (item != null)
