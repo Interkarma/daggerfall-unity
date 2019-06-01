@@ -1,8 +1,8 @@
 namespace DaggerfallWorkshop.Game.Utility
 {
-    public static class DaggerfallEditDistance
+    public static class DaggerfallDistance
     {
-        public static EditDistance GetDistance()
+        public static IDistance GetDistance()
         {
             return new EditDistance(
                             s => s.TrimStart().TrimEnd().ToLower(),

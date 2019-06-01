@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private readonly int maxMatchingResults = 20;
         private string distanceRegionName = null;
-        private EditDistance distance;
+        private IDistance distance;
 
         #endregion
 
@@ -1415,7 +1415,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Handles events from Find Location pop-up.
         void HandleLocationFindEvent(DaggerfallInputMessageBox inputMessageBox, string locationName)
         {
-            List<EditDistance.MatchResult> matching;
+            List<DistanceMatch> matching;
             if (FindLocation(locationName, out matching))
             {
                 if (matching.Count == 1)
@@ -1441,9 +1441,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Find location by name
-        bool FindLocation(string name, out List<EditDistance.MatchResult> matching)
+        bool FindLocation(string name, out List<DistanceMatch> matching)
         {
-            matching = new List<EditDistance.MatchResult>();
+            matching = new List<DistanceMatch>();
             if (string.IsNullOrEmpty(name))
             {
                 return false;
@@ -1452,18 +1452,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (distanceRegionName != currentDFRegion.Name)
             {
                 distanceRegionName = currentDFRegion.Name;
-                distance = DaggerfallEditDistance.GetDistance();
+                distance = DaggerfallDistance.GetDistance();
                 distance.SetDictionary(currentDFRegion.MapNames);
             }
 
-            EditDistance.MatchResult[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
+            DistanceMatch[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
 
             // Check if selected locations actually exist/are visible
 
             MatchesCutOff cutoff = null;
             ContentReader.MapSummary findLocationSummary;
 
-            foreach (EditDistance.MatchResult match in bestMatches)
+            foreach (DistanceMatch match in bestMatches)
             {
                 if (!currentDFRegion.MapNameLookup.ContainsKey(match.text))
                 {
