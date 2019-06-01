@@ -100,12 +100,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pickerPanel.Components.Add(scrollBar);
         }
 
-        public override void OnPush()
-        {
-            base.OnPush();
-            pickerPanel.SetFocus();
-        }
-
         public override void Update()
         {
             base.Update();
