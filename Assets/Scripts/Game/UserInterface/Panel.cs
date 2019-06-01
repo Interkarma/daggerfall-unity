@@ -99,12 +99,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Update();
 
             // Update child components
-            for (int i = 0; i < components.Count; i++)
+            foreach(var component in components)
             {
-                if (components[i].Enabled)
+                if (component.Enabled)
                 {
-                    Components[i].CustomMousePosition = CustomMousePosition;
-                    Components[i].Update();
+                    component.CustomMousePosition = CustomMousePosition;
+                    component.Update();
                 }
             }
         }
@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 DrawBorder();
 
             // Draw child components
-            foreach (BaseScreenComponent component in components)
+            foreach (var component in components)
             {
                 if (component.Enabled)
                     component.Draw();
