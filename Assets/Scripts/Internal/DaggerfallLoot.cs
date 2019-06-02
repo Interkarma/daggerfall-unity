@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop
 {
@@ -97,9 +98,9 @@ namespace DaggerfallWorkshop
         {
             if (Dice100.SuccessRoll(chance))
             {
-                DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4);
-                byte recipe = (byte)Random.Range(0, 20);
-                potionRecipe.typeDependentData = recipe;
+                int recipeIdx = Random.Range(0, PotionRecipe.classicRecipeKeys.Length);
+                int recipeKey = PotionRecipe.classicRecipeKeys[recipeIdx];
+                DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4) { PotionRecipeKey = recipeKey };
                 collection.AddItem(potionRecipe);
             }
         }
