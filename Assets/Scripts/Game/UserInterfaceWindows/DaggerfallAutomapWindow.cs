@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
         public enum AutomapViewMode { View2D = 0, View3D = 1};
-        AutomapViewMode automapViewMode = AutomapViewMode.View2D;
+        AutomapViewMode automapViewMode = AutomapViewMode.View3D; // default to 3D - this deviation from classic is on purpose (after people asked for it)
 
         Panel dummyPanelAutomap = null; // used to determine correct render panel position
         Panel panelRenderAutomap = null; // level geometry is rendered into this panel
@@ -515,7 +515,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void UpdateButtonToolTipsText()
         {
-            gridButton.ToolTipText = String.Format("left click: switch between 2D top view and 3D view (hotkey: {0})\rright click: reset rotation center to player position (hotkey: Ctrl+{1})\rmouse wheel up while over this button: increase perspective (only 3D mode)\rmouse wheel down while over this button: decrease perspective (only 3D mode)", currentKeyCode_SwitchAutomapGridMode.ToString(), currentKeyCode_ResetRotationPivotAxisView.ToString());
+            gridButton.ToolTipText = String.Format("left click: switch between 2D top view and 3D view (hotkey: {0})\rright click: reset rotation axis to player position (hotkey: Ctrl+{1})\rmouse wheel up while over button: increase perspective (only 3D mode)\rmouse wheel down while over button: decrease perspective (only 3D mode)", currentKeyCode_SwitchAutomapGridMode.ToString(), currentKeyCode_ResetRotationPivotAxisView.ToString());
             forwardButton.ToolTipText = String.Format("left click: move viewpoint forward (hotkey: {0})\rright click: move rotation center axis forward (hotkey: Ctrl+{1})", currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveRotationPivotAxisForward.ToString());
             backwardButton.ToolTipText = String.Format("left click: move viewpoint backwards (hotkey: {0})\rright click: move rotation center axis backwards (hotkey: Ctrl+{1})", currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveRotationPivotAxisBackward.ToString());
             leftButton.ToolTipText = String.Format("left click: move viewpoint to the left (hotkey: {0})\rright click: move rotation center axis to the left (hotkey: Ctrl+{1})", currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveRotationPivotAxisLeft.ToString());
@@ -524,7 +524,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.ToolTipText = String.Format("left click: rotate dungeon model to the right (hotkey: Alt+{0})\rright click: rotate camera view to the right (hotkey: Shift+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
             upstairsButton.ToolTipText = String.Format("left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)", currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
             downstairsButton.ToolTipText = String.Format("left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)", currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0},\ralternative: double-click left mouse button)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: {1},\ralternative: double-click right mouse button)", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
+            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0},\ralternative: double-click left mouse button in window)\rred beacon: player, green beacon: entrance, blue beacon: rotation axis\r\rright click: reset view (hotkey: {1},\ralternative: double-click right mouse button in window)", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
@@ -762,8 +762,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             InitGlobalResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
 
             if (!isSetup) // if Setup() has not run, run it now
+            {
                 Setup();
 
+                // reset values to default on first automap window open
+                ResetRotationPivotAxisPosition(); // reset rotation pivot axis
+                automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+            }
             // check if global automap open/close hotkey has changed
             if (toggleClosedBinding != InputManager.Instance.GetBinding(InputManager.Actions.AutoMap))
             {
@@ -802,7 +807,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // reset values to default whenever automap window is opened
-            ResetRotationPivotAxisPosition(); // reset rotation pivot axis
             automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
 
             if (automap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
@@ -828,6 +832,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     ActionSwitchToAutomapRenderModeTransparent(); // set automap render mode to transparent (since people that don't know the map functionality often think cutout mode is a bug)
                 }
+
+                // reset rotation pivot axis position
+                ResetRotationPivotAxisPosition();
+
+                // reset slicing y-bias
+                automap.SlicingBiasY = defaultSlicingBiasY;
 
                 automap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
@@ -1676,8 +1686,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
             cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            //automap.gameobjectRotationArrow1.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            //automap.gameobjectRotationArrow2.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
             UpdateAutomapView();
         }
 
@@ -1718,11 +1726,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //        break;
             //}
 
-            //if (automapViewMode == AutomapViewMode.View2D)
-            //{
-            //    automap.gameobjectRotationArrow1.transform.RotateAround(rotationPivotAxisPositionViewFromTop, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            //    automap.gameobjectRotationArrow2.transform.RotateAround(rotationPivotAxisPositionViewFromTop, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            //}
             UpdateAutomapView();
         }
 
@@ -1931,16 +1934,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionResetView()
         {
             // reset values to default
-            ResetRotationPivotAxisPosition(); // reset rotation pivot axis
             automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
             ResetCameraPosition();
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
+                    ResetRotationPivotAxisPositionViewFromTop(); // reset rotation pivot axis                 
                     break;
                 case AutomapViewMode.View3D:
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                    ResetRotationPivotAxisPositionView3D(); // reset rotation pivot axis
                     break;
             }            
             UpdateAutomapView();

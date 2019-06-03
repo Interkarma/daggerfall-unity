@@ -201,8 +201,11 @@ namespace DaggerfallWorkshop.Game
 
         AutomapFocusObject focusObject;
 
-        readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
-        readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
+        //readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
+        //readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
+        readonly Vector3 rayPlayerPosOffset = new Vector3(0.0f, 0.0f, 0.0f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
+        readonly Vector3 rayEntrancePosOffset = new Vector3(0.0f, 0.0f, 0.0f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
+
 
         bool debugTeleportMode = false;
 
@@ -986,6 +989,18 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void SetMaterialTransparency(Material material)
+        {
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+            material.DisableKeyword("_ALPHATEST_ON");
+            material.DisableKeyword("_ALPHABLEND_ON");
+            material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+            material.renderQueue = 3000;
+        }
+
         /// <summary>
         /// setup beacons: lazy creation of player marker arrow and beacons including
         /// player position beacon, dungeon entrance position beacon and rotation pivot axis position beacon
@@ -1020,7 +1035,8 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconPlayerPosition.layer = layerAutomap;
                 gameobjectBeaconPlayerPosition.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
-                material.color = new Color(1.0f, 0.0f, 0.0f);
+                material.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
+                SetMaterialTransparency(material);
                 gameobjectBeaconPlayerPosition.GetComponent<MeshRenderer>().material = material;
             }
             gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
@@ -1032,17 +1048,10 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
                 gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconRotationPivotAxis.layer = layerAutomap;
-                gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.15f, 50.0f, 0.15f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f, 0.5f);
-                material.SetOverrideTag("RenderType", "Transparent");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.DisableKeyword("_ALPHATEST_ON");
-                material.DisableKeyword("_ALPHABLEND_ON");
-                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = 3000;
+                SetMaterialTransparency(material);
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
 
                 gameobjectRotationArrow1 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
@@ -1050,8 +1059,8 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRotationArrow1.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
                 gameobjectRotationArrow1.layer = layerAutomap;
                 gameobjectRotationArrow1.transform.GetChild(0).gameObject.layer = layerAutomap;
-                gameobjectRotationArrow1.transform.localPosition = new Vector3(1.0f, -0.02f, -1.0f);
-                gameobjectRotationArrow1.transform.localScale = new Vector3(0.07f, 0.0005f, 0.07f);
+                gameobjectRotationArrow1.transform.localPosition = new Vector3(2.0f, -0.02f, -2.0f);
+                gameobjectRotationArrow1.transform.localScale = new Vector3(0.15f, 0.0005f, 0.15f);
                 gameobjectRotationArrow1.GetComponentInChildren<MeshRenderer>().material = material;
 
                 gameobjectRotationArrow2 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
@@ -1059,8 +1068,8 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRotationArrow2.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
                 gameobjectRotationArrow2.layer = layerAutomap;
                 gameobjectRotationArrow2.transform.GetChild(0).gameObject.layer = layerAutomap;
-                gameobjectRotationArrow2.transform.localPosition = new Vector3(-1.0f, -0.02f, 1.0f);
-                gameobjectRotationArrow2.transform.localScale = new Vector3(0.07f, 0.0005f, 0.07f);
+                gameobjectRotationArrow2.transform.localPosition = new Vector3(-2.0f, -0.02f, 2.0f);
+                gameobjectRotationArrow2.transform.localScale = new Vector3(0.15f, 0.0005f, 0.15f);
                 gameobjectRotationArrow2.transform.Rotate(0.0f, 180.0f, 0.0f);
                 gameobjectRotationArrow2.GetComponentInChildren<MeshRenderer>().material = material;
             }
@@ -1079,14 +1088,17 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRay.layer = layerAutomap;
                 gameobjectRay.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
-                material.color = new Color(0.0f, 1.0f, 0.0f);
+                material.color = new Color(0.0f, 1.0f, 0.0f, 0.75f);
+                SetMaterialTransparency(material);
                 gameobjectRay.GetComponent<MeshRenderer>().material = material;
 
                 gameObjectEntrancePositionCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker.GetComponent<Collider>());
                 gameObjectEntrancePositionCubeMarker.name = "CubeEntracePositionMarker";
                 gameObjectEntrancePositionCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
-                gameObjectEntrancePositionCubeMarker.GetComponent<MeshRenderer>().material = material;
+                Material materialCubeEntracePositionMarker = new Material(Shader.Find("Standard"));
+                materialCubeEntracePositionMarker.color = new Color(0.0f, 1.0f, 0.0f);
+                gameObjectEntrancePositionCubeMarker.GetComponent<MeshRenderer>().material = materialCubeEntracePositionMarker;
                 gameObjectEntrancePositionCubeMarker.layer = layerAutomap;
                 gameObjectEntrancePositionCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
