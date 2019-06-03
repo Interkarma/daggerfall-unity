@@ -1454,6 +1454,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             automap.forceUpdate();
 
+            // update rotation of pivot axis (which will affect its child objects i.e. the rotation indicator arrows)
+            automap.RotationPivotAxisRotation = Quaternion.Euler(0.0f, cameraAutomap.transform.rotation.eulerAngles.y, 0.0f);
+
             if ((!cameraAutomap) || (!renderTextureAutomap))
                 return;
 
@@ -1673,8 +1676,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
             cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            automap.gameobjectRotationArrow1.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            automap.gameobjectRotationArrow2.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            //automap.gameobjectRotationArrow1.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            //automap.gameobjectRotationArrow2.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
             UpdateAutomapView();
         }
 
@@ -1715,11 +1718,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //        break;
             //}
 
-            if (automapViewMode == AutomapViewMode.View2D)
-            {
-                automap.gameobjectRotationArrow1.transform.RotateAround(rotationPivotAxisPositionViewFromTop, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-                automap.gameobjectRotationArrow2.transform.RotateAround(rotationPivotAxisPositionViewFromTop, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            }
+            //if (automapViewMode == AutomapViewMode.View2D)
+            //{
+            //    automap.gameobjectRotationArrow1.transform.RotateAround(rotationPivotAxisPositionViewFromTop, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            //    automap.gameobjectRotationArrow2.transform.RotateAround(rotationPivotAxisPositionViewFromTop, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            //}
             UpdateAutomapView();
         }
 

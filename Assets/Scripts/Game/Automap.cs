@@ -184,8 +184,8 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectBeaconPlayerPosition = null; // GameObject which will hold player marker ray (red ray)
         GameObject gameobjectBeaconEntrancePosition = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
         GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
-        public GameObject gameobjectRotationArrow1 = null; // GameObject which will hold rotation arrow1 (blue arrow)
-        public GameObject gameobjectRotationArrow2 = null; // GameObject which will hold rotation arrow2 (blue arrow)
+        GameObject gameobjectRotationArrow1 = null; // GameObject which will hold rotation arrow1 (blue arrow)
+        GameObject gameobjectRotationArrow2 = null; // GameObject which will hold rotation arrow2 (blue arrow)
 
         GameObject gameObjectEntrancePositionCubeMarker = null; // used for entrance marker discovery
 
@@ -252,6 +252,16 @@ namespace DaggerfallWorkshop.Game
             get { return (rotationPivotAxisPosition); }
             set { rotationPivotAxisPosition = value; }
         }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to propagate its rotation pivot axis rotation
+        /// (rotating the pixot axis will rotate the indicator arrows as they are child objects of the pivot axis)
+        /// </summary>
+        public Quaternion RotationPivotAxisRotation
+        {
+            get { return (gameobjectBeaconRotationPivotAxis.transform.rotation); }
+            set { gameobjectBeaconRotationPivotAxis.transform.rotation = value; }
+        }        
 
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to propagate if the automap window is open or not
