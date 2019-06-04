@@ -26,9 +26,6 @@ namespace DaggerfallWorkshop.Game.Utility
     /// Render paper doll at higher pixel densities using custom layer flags.
     /// Maintains layout data to sample equip index of item texture under mouse.
     /// Replacement paper doll textures must be readable.
-    /// TODO:
-    ///  - Read a mask texture with replacement (similar to reading emission texture) for masking out hair around helmets.
-    ///  - Allow for some adjustment by body morphology in XML so artist can finetune how their new item images should be positioned over paper doll based on race and gender.
     /// </summary>
     public class PaperDollRenderer
     {

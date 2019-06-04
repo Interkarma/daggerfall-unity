@@ -11,7 +11,6 @@
 
 /*
  * TODO:
- * - Support for Paperdoll (BODY00I0.IMG)
  * - Support for Sky (SKYxx.DAT)
  */
 
