@@ -1015,7 +1015,7 @@ namespace DaggerfallWorkshop.Game
         /// player position since this function is only called when geometry is created (when entering the dungeon or interior) -
         /// so the player position is at the entrance), for dungeon: will get the start marker from DaggerfallDungeon component
         /// </summary>
-        private void SetupBeacons()
+        private void SetupBeacons(StaticDoor ?entranceDoor = null)
         {
             if (!gameobjectBeacons)
             {
@@ -1042,7 +1042,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconPlayerPosition.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
-                SetMaterialTransparency(material);
+                //SetMaterialTransparency(material);
                 gameobjectBeaconPlayerPosition.GetComponent<MeshRenderer>().material = material;
             }
             gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
@@ -1054,10 +1054,10 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
                 gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconRotationPivotAxis.layer = layerAutomap;
-                gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.15f, 50.0f, 0.15f);
+                gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.15f, 50.2f, 0.15f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f, 0.5f);
-                SetMaterialTransparency(material);
+                //SetMaterialTransparency(material);
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
 
                 gameobjectRotationArrow1 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
@@ -1095,7 +1095,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRay.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 1.0f, 0.0f, 0.75f);
-                SetMaterialTransparency(material);
+                //SetMaterialTransparency(material);
                 gameobjectRay.GetComponent<MeshRenderer>().material = material;
 
                 gameObjectEntrancePositionCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1118,8 +1118,10 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // entrance marker to current position (position player entered)
-                gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
+                // entrance marker to current position (position player entered)                
+                StaticDoor door = entranceDoor.Value;
+                gameobjectBeaconEntrancePosition.transform.position = door.ownerRotation * door.buildingMatrix.MultiplyPoint3x4(door.centre);
+                gameobjectBeaconEntrancePosition.transform.position += door.ownerPosition;
                 gameobjectBeaconEntrancePosition.SetActive(true); // set do discovered
             }
         }
@@ -1250,7 +1252,7 @@ namespace DaggerfallWorkshop.Game
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
 
                     // do this (here in createIndoorGeometryForAutomap()) analog in the same way and the same place like in createDungeonGeometryForAutomap()
-                    SetupBeacons();
+                    SetupBeacons(door);
                 }
             }
 

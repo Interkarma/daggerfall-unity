@@ -637,11 +637,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.OnRightMouseDoubleClick += PanelAutomap_OnRightMouseDoubleClick;
             panelRenderAutomap.OnMiddleMouseDoubleClick += PanelAutomap_OnMiddleMouseDoubleClick;
 
-            //Rect positionPanelAutomapOverlay = NativePanel.Rectangle;
-            //panelAutomapOverlayNative = DaggerfallUI.AddPanel(positionPanelAutomapOverlay, ParentPanel);
-            //panelAutomapOverlayNative.AutoSize = AutoSizeModes.None;
 
-            // dummyPanelCompass is used to get correct size for compass
+            // dummyPanelOverlay is used to get correct size for compass
             Rect rectPanelOverlay = new Rect();
             rectPanelOverlay.position = new Vector2(0, 52);
             rectPanelOverlay.size = new Vector2(28, 28);
@@ -651,11 +648,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Rect positionPanelOverlay = dummyPanelOverlay.Rectangle;
             panelRenderOverlay = DaggerfallUI.AddPanel(positionPanelOverlay, ParentPanel);
             panelRenderOverlay.AutoSize = AutoSizeModes.None;
-            //panelRenderAutomap = new Panel(); //DaggerfallUI.AddPanel(rectDummyPanelOverlay, NativePanel);
-            //panelRenderAutomap.Position = rectPanelOverlay.position;
-            //panelRenderAutomap.Size = rectPanelOverlay.size;
-            //panelRenderAutomap.Scale = NativePanel.LocalScale;
-            //NativePanel.Components.Add(panelOverlay);
+
 
             // Grid button (toggle 2D <-> 3D view)
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
