@@ -105,6 +105,10 @@ namespace DaggerfallWorkshop.Game
         readonly ushort[] answersToNonDirections =  { 7251, 7266, 7281, 7250, 7265, 7280, 7252, 7267, 7282, 7253, 7268, 7283, 7304, 7269, 7284,
                                                       7261, 7276, 7291, 7260, 7275, 7290, 7262, 7277, 7292, 7263, 7278, 7293, 7264, 7279, 7294};
 
+        // Greeting records extracted from FALL.EXE.
+        readonly ushort[] greetings =               { 8550, 8551, 8552, 8553, 8554, 8555, 8556, 8557, 8558, 8559, 8560, 8561, 8562, 8562,
+                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 }; 
+
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.6f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.8f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.8f; // Chances unknown
@@ -163,13 +167,16 @@ namespace DaggerfallWorkshop.Game
         // current target npc for conversion
         StaticNPC targetStaticNPC = null;
 
-        // this class holds information about a npc talk partner
+        // this class holds information about an npc talk partner
         public class NPCData
         {
             public Races race;
             public FactionFile.SocialGroups socialGroup;
             public FactionFile.GuildGroups guildGroup;
-            public FactionFile.FactionData factionData; // only used for static npcs
+            public FactionFile.FactionData factionData;
+            public string pcFactionName; // kept for guild related greetings
+            public string allyFactionName; // kept for guild related greetings
+            public string enemyFactionName; // kept for guild related greetings
             public float chanceKnowsSomethingAboutWhereIs; // the general chance that the current npc knows the answer to pc's "where is" question
             public float chanceKnowsSomethingAboutQuest; // the general chance that the current npc knows the answer to pc's quest related question
             public float chanceKnowsSomethingAboutOrganizations; // the general chance that the current npc knows the answer to pc's question about organizations
@@ -190,7 +197,7 @@ namespace DaggerfallWorkshop.Game
         StaticNPC lastTargetStaticNPC = null; // the last static npc talk partner
         NPCType currentNPCType = NPCType.Unset; // current type of npc talk partner
         bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
-        bool alreadyRejectedOnce = false; // used to display a random rejection text first time when talking to a npc that dislikes pc, trying to talk a 2nd time (for same npc) pc gets msg "you get no response"
+        bool alreadyRejectedOnce = false; // used to display a random rejection text first time when talking to an npc that dislikes pc, trying to talk a 2nd time (for same npc) pc gets msg "you get no response"
 
         bool consoleCommandFlag_npcsKnowEverything = false; // used for console commands "npc_knowsEverything" and "npc_knowsUsual"
 
@@ -207,6 +214,8 @@ namespace DaggerfallWorkshop.Game
 
         string nameNPC = "";
         bool isGreeting = false;  // Indicates a greeting is being parsed, %n = nameNPC.
+
+        string npcGreetingText = ""; // the last NPC greeting text
 
         bool rebuildTopicLists = true; // flag to indicate that topic lists need to be rebuild next time talkwindow is opened
 
@@ -437,6 +446,11 @@ namespace DaggerfallWorkshop.Game
             set { consoleCommandFlag_npcsKnowEverything = value; }
         }
 
+        public string NPCGreetingText
+        {
+            get { return npcGreetingText; }
+        }
+
         #endregion
 
         #region Unity
@@ -599,7 +613,7 @@ namespace DaggerfallWorkshop.Game
             reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners); // All mobile NPCs are commoners
 
             sameTalkTargetAsBefore = false;
-            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
+            SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
 
             npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will give one correct answer if NPC knows about topic (as implemented in classic)
 
@@ -635,7 +649,7 @@ namespace DaggerfallWorkshop.Game
             reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup);
 
             sameTalkTargetAsBefore = false;
-            GameManager.Instance.TalkManager.SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
+            SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
 
             npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will can one correct answer if NPC knows about topic (as implemented in classic)
             npcData.isSpyMaster = isSpyMaster;
@@ -665,6 +679,8 @@ namespace DaggerfallWorkshop.Game
             npcData = new NPCData();
             npcData.socialGroup = FactionFile.SocialGroups.Commoners;
             npcData.guildGroup = FactionFile.GuildGroups.None;
+            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(
+                GameManager.Instance.PlayerGPS.CurrentRegionIndex, out npcData.factionData, false);
             npcData.race = targetMobileNPC.Race;
             npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs + FormulaHelper.BonusChanceToKnowWhereIs();
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
@@ -697,10 +713,22 @@ namespace DaggerfallWorkshop.Game
             nameNPC = targetNPC.DisplayName;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
-            FactionFile.FactionData factionData;
-            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetStaticNPC.Data.factionID, out factionData);
+            int npcFactionID = targetStaticNPC.Data.factionID;
 
-            // Matched to classic. For dialogue, NPCs that are not of type 2, 7 or 9 use their first parent that is, if such a parent exists
+            // Matched to classic: an NPC with a null faction id is assigned to court or people of current region
+            if (npcFactionID == 0)
+            {
+                BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
+                if (currentBuilding.buildingType == DFLocation.BuildingTypes.Palace)
+                    npcFactionID = GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();
+                else
+                    npcFactionID = GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
+            }
+
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionID, out factionData);
+
+            // Matched to classic. For dialog, NPCs that are not of type 2, 7 or 9 use their first parent that is, if such a parent exists
             while (factionData.parent != 0 && factionData.type != 2 && factionData.type != 7 && factionData.type != 9)
             {
                 GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionData.parent, out factionData);
@@ -742,22 +770,9 @@ namespace DaggerfallWorkshop.Game
             SetupRumorMill();
         }
 
-        public string GetNPCGreetingText()
+        private string GetNPCQuestGreeting()
         {
-            const int dislikePlayerGreetingTextId = 7206;
-            const int neutralToPlayerGreetingTextId = 7207;
-            const int likePlayerGreetingTextId = 7208;
-            const int veryLikePlayerGreetingTextId = 7209;
-
-            const int isInSameGuildLikePlayerGreetingTextId = 8550;
-            const int isInSameGuildNeutralPlayerGreetingTextId = 8551;
-
-            const int isInSameHolyOrderLikePlayerGreetingTextId = 8553;
-            const int isInSameHolyOrderNeutralPlayerGreetingTextId = 8554;
-
             Guild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
-
-            // Note Nystul: did not find any use of text record ids 8556 - 8569 in my testing - but some of them might be used by nobles of the courtyards
 
             if (currentNPCType == NPCType.Static)
             {
@@ -785,36 +800,183 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Check if NPC is a member of a guild
-            FactionFile.FactionData factionData;
-            if (npcData.allowGuildResponse &&   // Next check is important to rule out merchants that are assigned to fighters guild (see this bug report: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1240)
-                DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(guild.GetFactionId(), out factionData) &&
-                GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
+            return string.Empty;
+        }
+
+        private int GetNPCGreetingRecord()
+        {
+            // Almost matched to classic: avoid faction related greetings for children of
+            // a province. In classic, this is the case only for people or court of the
+            // current region. DFU also blocks it for court related unique NPCs, to avoid
+            // weird greetings like "As a member of Sentinel...".
+            if (npcData.factionData.type != 7)
             {
-                if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8553, 8554
+                int reputation = npcData.factionData.rep;
+                int greetingIndex = GetGreetingIndex(ref reputation);
+
+                if (npcData.factionData.sgroup < 5)
+                    reputation += GameManager.Instance.PlayerEntity.SGroupReputations[npcData.factionData.sgroup];
+
+                int reaction = DFRandom.random_range_inclusive(0, 15) - 10;
+
+                if (reputation >= reaction)
                 {
-                    if (reactionToPlayer >= minVeryLikeReaction) // What reputation is needed to show like greeting message?
-                        return ExpandRandomTextRecord(isInSameHolyOrderLikePlayerGreetingTextId);
-                    else if (reactionToPlayer >= minNeutralReaction) // Not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
-                        return ExpandRandomTextRecord(isInSameHolyOrderNeutralPlayerGreetingTextId);
+                    // Improvment over classic: in classic, if greeting index is
+                    // equal to 8, NPC will always meet the player with text entry
+                    // 8570 i.e. "Well met, stranger.", that even if PC reputation
+                    // with NPC is very good. In DFU, the player is now considered
+                    // a stranger only if his reputation with NPC is of 5 or below.
+                    if (npcData.factionData.rep >= 30 && greetingIndex != 8)
+                        return greetings[3 * greetingIndex];
+                    else if (npcData.factionData.rep <= 5 || greetingIndex != 8)
+                        return greetings[1 + 3 * greetingIndex];
                 }
-                else // All other guilds (including Knightly Orders) seem to use messages 8550, 8551
+                else
                 {
-                    if (reactionToPlayer >= minVeryLikeReaction) // What reputation is needed to show like greeting message?
-                        return ExpandRandomTextRecord(isInSameGuildLikePlayerGreetingTextId);
-                    else if (reactionToPlayer >= minNeutralReaction) // Not sure here - are member greeting messages also shown if npc dislikes pc (but still talks to pc)?
-                        return ExpandRandomTextRecord(isInSameGuildNeutralPlayerGreetingTextId);
+                    alreadyRejectedOnce = true;
+                    return greetings[2 + 3 * greetingIndex];
                 }
             }
 
+            const int dislikePlayerGreetingTextId = 7206;
+            const int neutralToPlayerGreetingTextId = 7207;
+            const int likePlayerGreetingTextId = 7208;
+            const int veryLikePlayerGreetingTextId = 7209;
+
             if (reactionToPlayer >= minVeryLikeReaction)
-                return ExpandRandomTextRecord(veryLikePlayerGreetingTextId);
-            else if (reactionToPlayer >= minLikeReaction)
-                return ExpandRandomTextRecord(likePlayerGreetingTextId);
-            else if (reactionToPlayer >= minNeutralReaction)
-                return ExpandRandomTextRecord(neutralToPlayerGreetingTextId);
-            else
-                return ExpandRandomTextRecord(dislikePlayerGreetingTextId);
+                return veryLikePlayerGreetingTextId;
+            if (reactionToPlayer >= minLikeReaction)
+                return likePlayerGreetingTextId;
+            if (reactionToPlayer >= minNeutralReaction)
+                return neutralToPlayerGreetingTextId;
+            return dislikePlayerGreetingTextId;
+        }
+
+        /// <summary>
+        /// Get an NPC greeting index based on player guild affiliations.
+        /// </summary>
+        /// <param name="reputation">Player overall reputation with NPC based on guild memberships.</param>
+        /// <returns>The greeting index.</returns>
+        private int GetGreetingIndex(ref int reputation)
+        {
+            PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
+
+            int greetingIndex = 8;
+            List<Guild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
+            foreach (Guild guild in guildMemberships)
+            {
+                FactionFile.FactionData guildFactionData;
+                persistentFactionData.GetFactionData(guild.GetFactionId(), out guildFactionData);
+
+                if (npcData.factionData.id == guildFactionData.id)
+                {
+                    npcData.pcFactionName = guildFactionData.name;
+                    return 0;
+                }
+
+                // Check if guild and NPC have the same parent or if one is parent of the other
+                if ((guildFactionData.parent != 0 && npcData.factionData.parent != 0 &&
+                    guildFactionData.parent == npcData.factionData.parent ||
+                    guildFactionData.parent == npcData.factionData.id ||
+                    npcData.factionData.parent == guildFactionData.id) &&
+                    greetingIndex > 1)
+                {
+                    npcData.pcFactionName = guildFactionData.name;
+                    greetingIndex = 1;
+                    reputation += 15;
+                }
+
+                // Check if guild and NPC are allies
+                if (FactionFile.IsAlly(ref guildFactionData, ref npcData.factionData) ||
+                    FactionFile.IsAlly(ref npcData.factionData, ref guildFactionData)
+                  && greetingIndex > 2)
+                {
+                    npcData.pcFactionName = guildFactionData.name;
+                    reputation += 10;
+                    greetingIndex = 2;
+                }
+
+                // Check if guild and NPC are enemies
+                if (FactionFile.IsEnemy(ref guildFactionData, ref npcData.factionData) ||
+                    FactionFile.IsEnemy(ref npcData.factionData, ref guildFactionData)
+                  && greetingIndex > 3)
+                {
+                    npcData.pcFactionName = guildFactionData.name;
+                    // Fixed a bug from classic where reputation is set to 20 instead of being decreased
+                    reputation -= 20;
+                    greetingIndex = 3;
+                }
+
+                // Check if guild and NPC have enemies in common
+                int[] guildEnemies = { guildFactionData.enemy1, guildFactionData.enemy2, guildFactionData.enemy3 };
+                int[] npcEnemies = { npcData.factionData.enemy1, npcData.factionData.enemy2, npcData.factionData.enemy3 };
+                for (int i = 0; i < 3; ++i)
+                {
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        if (guildEnemies[i] != 0 &&
+                            guildEnemies[i] == npcEnemies[j] &&
+                            greetingIndex > 4)
+                        {
+                            npcData.pcFactionName = guildFactionData.name;
+                            npcData.enemyFactionName = persistentFactionData.GetFactionName(guildEnemies[i]);
+                            greetingIndex = 4;
+                            reputation += 5;
+                        }
+                    }
+                }
+
+                // Check if guild and NPC have allies in common
+                int[] guildAllies = { guildFactionData.ally1, guildFactionData.ally2, guildFactionData.ally3 };
+                int[] npcAllies = { npcData.factionData.ally1, npcData.factionData.ally2, npcData.factionData.ally3 };
+                for (int i = 0; i < 3; ++i)
+                {
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        if (guildAllies[i] != 0 &&
+                            guildAllies[i] == npcAllies[j] &&
+                            greetingIndex > 5)
+                        {
+                            npcData.pcFactionName = guildFactionData.name;
+                            npcData.allyFactionName = persistentFactionData.GetFactionName(guildAllies[i]);
+                            greetingIndex = 5;
+                            reputation += 5;
+                        }
+                    }
+                }
+
+                // Check if at least one of guild allies is an NPC enemy
+                for (int i = 0; i < 3; ++i)
+                {
+                    FactionFile.FactionData enemy;
+                    if (persistentFactionData.GetFactionData(npcEnemies[i], out enemy) &&
+                        FactionFile.IsAlly(ref guildFactionData, ref enemy) &&
+                        greetingIndex > 6)
+                    {
+                        npcData.pcFactionName = guildFactionData.name;
+                        npcData.enemyFactionName = enemy.name;
+                        greetingIndex = 6;
+                        reputation -= 5;
+                    }
+                }
+
+                // Check if at least one of guild enemies is an NPC ally
+                for (int i = 0; i < 3; ++i)
+                {
+                    FactionFile.FactionData ally;
+                    if (persistentFactionData.GetFactionData(npcAllies[i], out ally) &&
+                        FactionFile.IsEnemy(ref guildFactionData, ref ally) &&
+                        greetingIndex > 7)
+                    {
+                        npcData.pcFactionName = guildFactionData.name;
+                        npcData.allyFactionName = ally.name;
+                        greetingIndex = 7;
+                        reputation -= 5;
+                    }
+                }
+            }
+
+            return greetingIndex;
         }
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
@@ -1283,7 +1445,7 @@ namespace DaggerfallWorkshop.Game
             if (currentQuestionListItem.key != string.Empty)
                 key = currentQuestionListItem.key;
 
-            int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
+            int buildingKey = GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
 
             string backupKeySubject = currentKeySubject; // Backup current key subject
 
@@ -1332,17 +1494,24 @@ namespace DaggerfallWorkshop.Game
             return TextManager.Instance.GetText(textDatabase, "resolvingError"); // error case - should never ever occur
         }
 
-        public string GetGuildNPC()
+        public string GetFactionNPCAlly()
         {
-            return GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID).GetGuildName();
+            return npcData.allyFactionName;
+        }
+
+        public string GetFactionNPCEnemy()
+        {
+            return npcData.enemyFactionName;
+        }
+
+        public string GetFactionNPC()
+        {
+            return npcData.factionData.name;
         }
 
         public string GetFactionPC()
         {
-            if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder)
-                return GetFactionName();
-            else
-                return GetGuildNPC();
+            return npcData.pcFactionName;
         }
 
         public string GetFactionName()
@@ -1428,13 +1597,13 @@ namespace DaggerfallWorkshop.Game
             if (currentQuestionListItem.questionType == QuestionType.Person)
             {
                 string key = currentQuestionListItem.key;
-                int buildingKey = GameManager.Instance.TalkManager.GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
+                int buildingKey = GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
 
                 if (GameManager.Instance.IsPlayerInside && GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
                 {
                     currentQuestionListItem.npcInSameBuildingAsTopic = true;
 
-                    string buildingName = GameManager.Instance.TalkManager.GetBuildingNameForBuildingKey(buildingKey);
+                    string buildingName = GetBuildingNameForBuildingKey(buildingKey);
 
                     if (buildingName != string.Empty)
                         return string.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
@@ -1720,7 +1889,7 @@ namespace DaggerfallWorkshop.Game
 
             // Update rumor mill
             if (questResourceInfo.rumorsAnswers != null)
-                GameManager.Instance.TalkManager.AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
+                AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
         }
 
         public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
@@ -2162,12 +2331,7 @@ namespace DaggerfallWorkshop.Game
 
         private void TalkToNpc()
         {
-            const int dialogRejectionTextId = 8571;
             const int youGetNoResponseTextId = 7205;
-
-            const int isInSameGuildDislikePlayerRefusingToTalkTextId = 8552;
-
-            const int isInSameHolyOrderDislikePlayerRefusingToTalkTextId = 8555;
 
             // Racial override can suppress talk
             // Also doing suppression here to prevent talk window flashing open and closed in some cases
@@ -2179,46 +2343,40 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if (reactionToPlayer >= -20)
-            {
-                DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-
-                // Reset NPC knowledge, for now it resets every time the NPC has changed (player talked to new NPC)
-                // TODO: Match classic daggerfall - in classic NPC remembers their knowledge about topics for their time of existence
-                if (!sameTalkTargetAsBefore)
-                    ResetNPCKnowledge();
-
-                // Reset last checked tone index for NPC reaction and tone results
-                lastToneIndex = -1;
-                toneReactionForTalkSession[0] = 0;
-                toneReactionForTalkSession[1] = 0;
-                toneReactionForTalkSession[2] = 0;
-            }
-            else if (alreadyRejectedOnce)
+            if (reactionToPlayer < -20 || alreadyRejectedOnce)
             {
                 DaggerfallUI.MessageBox(youGetNoResponseTextId);
+                return;
             }
-            else
-            {
-                TextFile.Token[] responseTokens;
-                if (npcData.allowGuildResponse && GameManager.Instance.GuildManager.GetGuild(npcData.guildGroup, (int)GameManager.Instance.PlayerEnterExit.FactionID).IsMember())
-                {
-                    if (npcData.guildGroup == FactionFile.GuildGroups.HolyOrder) // Holy orders use message 8555
-                        responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(isInSameHolyOrderDislikePlayerRefusingToTalkTextId);
-                    else // All other guilds (including Knightly Orders) seem to use message 8552
-                        responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(isInSameGuildDislikePlayerRefusingToTalkTextId);
-                }
-                else
-                {
-                    responseTokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(dialogRejectionTextId);
-                }
-                DaggerfallMessageBox msgBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-                msgBox.SetTextTokens(responseTokens);
-                msgBox.ClickAnywhereToClose = true;
-                msgBox.Show();
 
-                alreadyRejectedOnce = true;
+            // Get a quest greeting if any
+            npcGreetingText = GetNPCQuestGreeting();
+            if (string.IsNullOrEmpty(npcGreetingText))
+            {
+                int npcGreetingRecord = GetNPCGreetingRecord();
+                if (alreadyRejectedOnce)
+                {
+                    TextFile.Token[] responseTokens =
+                        DaggerfallUnity.Instance.TextProvider.GetRandomTokens(npcGreetingRecord);
+                    DaggerfallUI.MessageBox(responseTokens);
+                    return;
+                }
+
+                npcGreetingText = ExpandRandomTextRecord(npcGreetingRecord);
             }
+
+            DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
+
+            // Reset NPC knowledge, for now it resets every time the NPC has changed (player talked to new NPC)
+            // TODO: Match classic daggerfall - in classic NPC remembers their knowledge about topics for their time of existence
+            if (!sameTalkTargetAsBefore)
+                ResetNPCKnowledge();
+
+            // Reset last checked tone index for NPC reaction and tone results
+            lastToneIndex = -1;
+            toneReactionForTalkSession[0] = 0;
+            toneReactionForTalkSession[1] = 0;
+            toneReactionForTalkSession[2] = 0;
         }
 
         public void ImportClassicRumor(RumorFile.DaggerfallRumor rumor)
@@ -2729,7 +2887,7 @@ namespace DaggerfallWorkshop.Game
                         DFLocation.BuildingTypes buildingType;
                         try
                         {
-                            buildingType = GameManager.Instance.TalkManager.GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
+                            buildingType = GetBuildingTypeForBuildingKey(place.SiteDetails.buildingKey);
                         }
                         catch (Exception ex)
                         {
@@ -3089,7 +3247,7 @@ namespace DaggerfallWorkshop.Game
 
             MacroHelper.ExpandMacros(ref tokens, this); // this... TalkManager (TalkManagerMCP)
 
-            return tokens[0].text;
+            return TokensToString(tokens, false);
         }
 
         #endregion
