@@ -34,6 +34,8 @@ Shader "Daggerfall/Automap"
     	Pass 
     	{
 			//ZWrite On // not really necessary here since default setting
+			ZWrite On
+			ZTest LEqual
 
 			CGPROGRAM
 
@@ -58,6 +60,7 @@ Shader "Daggerfall/Automap"
     			float4  pos : SV_POSITION;				
     			float2  uv : TEXCOORD0;
 				float3 worldPos : TEXCOORD5;
+				float3 normal : NORMAL;
 			};		
 
 			void vert(appdata_full v, out v2f OUT)
@@ -65,6 +68,7 @@ Shader "Daggerfall/Automap"
     			OUT.pos = UnityObjectToClipPos(v.vertex);
     			OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				OUT.normal = v.normal;
 			}
 
 
@@ -81,6 +85,7 @@ Shader "Daggerfall/Automap"
 				}
 
 				float dist = distance(IN.worldPos.y, _SclicingPositionY);
+				//float dist = 40.0f / distance(IN.worldPos.y, 20.0f); // _SclicingPositionY);
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
 				#if defined(RENDER_IN_GRAYSCALE)
@@ -88,6 +93,12 @@ Shader "Daggerfall/Automap"
 					float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
 					outColor.rgb = half3(grayValue, grayValue, grayValue);
 				#endif
+					
+				//float3 surfaceNormal = IN.normal;
+				//const float3 upVec = float3(0.0f, 1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), upVec);
+				//if (dotResult == 0.0f)
+				//	discard;
 
 				return outColor;
 
@@ -110,13 +121,17 @@ Shader "Daggerfall/Automap"
 		//Blend One DstAlpha
 		//Blend SrcAlpha One
 		//Blend OneMinusSrcAlpha One
+		//Blend SrcAlpha OneMinusSrcAlpha, SrcAlpha OneMinusSrcAlpha
 
 		BlendOp Add, Max
+		//BlendOp Add, Add
 
 		Pass
 		{
+			//ZWrite On
+			//ZTest LEqual
 			ZWrite Off
-			//ZTest Always
+			//ZTest LEqual
 			//ColorMask RGBA
 
 			CGPROGRAM
@@ -143,6 +158,7 @@ Shader "Daggerfall/Automap"
 				float4  pos : SV_POSITION;
 				float2  uv : TEXCOORD0;
 				float3 worldPos : TEXCOORD5;
+				float3 normal : NORMAL;
 			};
 
 			void vert(appdata_full v, out v2g OUT)
@@ -150,6 +166,7 @@ Shader "Daggerfall/Automap"
 				OUT.pos = UnityObjectToClipPos(v.vertex);
 				OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				OUT.normal = v.normal;
 			}
 
 			struct g2f
@@ -158,6 +175,7 @@ Shader "Daggerfall/Automap"
 				float2  uv : TEXCOORD0;
 				float3 dist : TEXCOORD1;
 				float3 worldPos : TEXCOORD5;
+				float3 normal : NORMAL;
 			};
 
 			[maxvertexcount(3)]
@@ -183,22 +201,22 @@ Shader "Daggerfall/Automap"
 				OUT.uv = IN[0].uv;
 				OUT.dist = float3(area / length(v0),0,0);
 				OUT.worldPos = IN[0].worldPos;
+				OUT.normal = IN[0].normal;
 				triStream.Append(OUT);
 
 				OUT.pos = IN[1].pos;
 				OUT.uv = IN[1].uv;
 				OUT.dist = float3(0,area / length(v1),0);
 				OUT.worldPos = IN[1].worldPos;
+				OUT.normal = IN[1].normal;
 				triStream.Append(OUT);
 
 				OUT.pos = IN[2].pos;
 				OUT.uv = IN[2].uv;
 				OUT.dist = float3(0,0,area / length(v2));
 				OUT.worldPos = IN[2].worldPos;
+				OUT.normal = IN[2].normal;
 				triStream.Append(OUT);
-
-
-
 			}
 
 			half4 frag(g2f IN) : COLOR
@@ -250,6 +268,12 @@ Shader "Daggerfall/Automap"
 					float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
 					outColor.rgb = half3(grayValue, grayValue, grayValue);
 				#endif
+
+				//float3 surfaceNormal = IN.normal;
+				//const float3 upVec = float3(0.0f, 1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), upVec);
+				//if (dotResult == 0.0f)
+				//	discard;
 
 				return outColor;
 
