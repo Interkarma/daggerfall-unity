@@ -311,6 +311,8 @@ namespace DaggerfallWorkshop.Game
             // create lights that will light automap level geometry
             CreateLightsForAutomapGeometry();
 
+            UpdateMicroMapTexture();
+
             gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
 
             UpdateSlicingPositionY();
@@ -468,6 +470,9 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconPlayerPosition.transform.position = nearestHit.Value.point + rayPlayerPosOffset;
                 gameobjectPlayerMarkerArrow.transform.position = nearestHit.Value.point + rayPlayerPosOffset;
             }
+
+            // don't forget to update micro map texture, so new player position is visualized correctly on micro map
+            UpdateMicroMapTexture();
         }
 
         #endregion
@@ -1112,7 +1117,7 @@ namespace DaggerfallWorkshop.Game
             if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
                 // entrance marker to dungeon start marker
-                DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();                
+                DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
                 gameobjectBeaconEntrancePosition.transform.position = dungeon.StartMarker.transform.position + rayEntrancePosOffset;
                 gameobjectBeaconEntrancePosition.SetActive(false); // set do undiscovered
             }
@@ -1177,14 +1182,27 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void SetupMicroMapTexture(DFLocation ?currentLocation)
+        private void UpdateMicroMapTexture()
+        {
+            if (GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                UpdateMicroMapTexture(null);
+            }
+            else
+            {
+                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                UpdateMicroMapTexture(location);
+            }
+        }
+
+        private void UpdateMicroMapTexture(DFLocation? currentLocation)
         {
             if (!currentLocation.HasValue)
             {
                 textureMicroMap = null;
                 return;
             }
-          
+
             int width = 28;
             int height = 28;
             textureMicroMap = new Texture2D(width, height, TextureFormat.ARGB32, false);
@@ -1200,15 +1218,42 @@ namespace DaggerfallWorkshop.Game
             {
                 int xBlockPos = 3 + block.X;
                 int yBlockPos = 3 + block.Z;
-                for (int y=0; y<4; y++)
+                for (int y = 0; y < 4; y++)
                 {
-                    for (int x=0; x<4; x++)
+                    for (int x = 0; x < 4; x++)
                     {
                         textureMicroMap.SetPixel(xBlockPos * 4 + x, yBlockPos * 4 + y, Color.yellow);
                     }
                 }
             }
-           
+
+            // mark entrance position on micro map
+            DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
+            float entrancePosX = dungeon.StartMarker.transform.position.x / RDBLayout.RDBSide;
+            float entrancePosY = dungeon.StartMarker.transform.position.z / RDBLayout.RDBSide;
+            int xPosOfBlock = 3 * 4 + (int)(Mathf.Round(entrancePosX)) * 2; // * 0.5f);
+            int yPosOfBlock = 3 * 4 + (int)(Mathf.Round(entrancePosY)) * 2; // * 0.5f);
+            for (int y = 0; y < 2; y++)
+            {
+                for (int x = 0; x < 2; x++)
+                {
+                    textureMicroMap.SetPixel(xPosOfBlock + x, yPosOfBlock + y, Color.green);
+                }
+            }
+
+            // mark player position on micro map            
+            float playerPosX = gameObjectPlayerAdvanced.transform.position.x / RDBLayout.RDBSide;
+            float playerPosY = gameObjectPlayerAdvanced.transform.position.z / RDBLayout.RDBSide;
+            xPosOfBlock = 3 * 4 + (int)(Mathf.Round(playerPosX)) * 2; // * 0.5f);
+            yPosOfBlock = 3 * 4 + (int)(Mathf.Round(playerPosY)) * 2; // * 0.5f);
+            for (int y = 0; y < 2; y++)
+            {
+                for (int x = 0; x < 2; x++)
+                {
+                    textureMicroMap.SetPixel(xPosOfBlock + x, yPosOfBlock + y, Color.red);
+                }
+            }
+
             textureMicroMap.Apply(false);
         }
 
@@ -1220,7 +1265,7 @@ namespace DaggerfallWorkshop.Game
         {
             String newGeometryName = DaggerfallInterior.GetSceneName(GameManager.Instance.PlayerGPS.CurrentLocation, door);
 
-            SetupMicroMapTexture(null); // setup micro map texture for interior geometry
+            //SetupMicroMapTexture(null); // setup micro map texture for interior geometry
 
             if (gameobjectGeometry != null)
             {
@@ -1274,7 +1319,7 @@ namespace DaggerfallWorkshop.Game
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             String newGeometryName = DaggerfallDungeon.GetSceneName(location);
 
-            SetupMicroMapTexture(location); // setup micro map texture for dungeon
+            //SetupMicroMapTexture(location); // setup micro map texture for dungeon
 
             if (gameobjectGeometry != null)
             {
