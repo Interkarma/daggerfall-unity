@@ -1244,8 +1244,8 @@ namespace DaggerfallWorkshop.Game
             // mark player position on micro map            
             float playerPosX = gameObjectPlayerAdvanced.transform.position.x / RDBLayout.RDBSide;
             float playerPosY = gameObjectPlayerAdvanced.transform.position.z / RDBLayout.RDBSide;
-            xPosOfBlock = 3 * 4 + (int)(Mathf.Round(playerPosX)) * 2; // * 0.5f);
-            yPosOfBlock = 3 * 4 + (int)(Mathf.Round(playerPosY)) * 2; // * 0.5f);
+            xPosOfBlock = 3 * 4 + (int)(Mathf.Floor(playerPosX * 2)) * 2; // * 0.5f);
+            yPosOfBlock = 3 * 4 + (int)(Mathf.Floor(playerPosY * 2)) * 2; // * 0.5f);
             for (int y = 0; y < 2; y++)
             {
                 for (int x = 0; x < 2; x++)
