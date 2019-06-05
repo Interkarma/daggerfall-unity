@@ -1231,8 +1231,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
             float entrancePosX = dungeon.StartMarker.transform.position.x / RDBLayout.RDBSide;
             float entrancePosY = dungeon.StartMarker.transform.position.z / RDBLayout.RDBSide;
-            int xPosOfBlock = 3 * 4 + (int)(Mathf.Round(entrancePosX)) * 2; // * 0.5f);
-            int yPosOfBlock = 3 * 4 + (int)(Mathf.Round(entrancePosY)) * 2; // * 0.5f);
+            int xPosOfBlock = 3 * 4 + (int)(Mathf.Floor(entrancePosX*2)) * 2; // * 0.5f);
+            int yPosOfBlock = 3 * 4 + (int)(Mathf.Floor(entrancePosY*2)) * 2; // * 0.5f);
             for (int y = 0; y < 2; y++)
             {
                 for (int x = 0; x < 2; x++)
