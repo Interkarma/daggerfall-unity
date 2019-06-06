@@ -443,6 +443,29 @@ namespace DaggerfallWorkshop.Game
             return (gameobjectInFocus);
         }
 
+        public void TrySetRotationPivotAxisToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        {
+            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
+
+            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);
+
+            RaycastHit? nearestHit = null;
+            float nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hits)
+            {
+                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
+                {
+                    nearestHit = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+
+            if (nearestHit.HasValue)
+            {
+                rotationPivotAxisPosition = new Vector3(nearestHit.Value.point.x, gameobjectBeaconRotationPivotAxis.transform.position.y, nearestHit.Value.point.z);
+            }
+        }
+
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to signal this script to try to teleport player to dungeon segment shown at a provided screen position
         /// </summary>

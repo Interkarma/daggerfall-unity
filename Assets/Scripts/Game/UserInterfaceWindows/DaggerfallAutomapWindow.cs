@@ -524,9 +524,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.ToolTipText = String.Format("left click: move viewpoint to the right (hotkey: {0})\rright click: move rotation center axis to the right (hotkey: Ctrl+{1})", currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveRotationPivotAxisRight.ToString());
             rotateLeftButton.ToolTipText = String.Format("left click: rotate dungeon model to the left (hotkey: Alt+{0})\rright click: rotate camera view to the left (hotkey: Shift+{1})", currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateCameraLeft.ToString());
             rotateRightButton.ToolTipText = String.Format("left click: rotate dungeon model to the right (hotkey: Alt+{0})\rright click: rotate camera view to the right (hotkey: Shift+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
-            upstairsButton.ToolTipText = String.Format("left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)", currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            downstairsButton.ToolTipText = String.Format("left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)", currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0},\ralternative: double-click left mouse button in window)\rred beacon: player, green beacon: entrance, blue beacon: rotation axis\r\rright click: reset view (hotkey: {1},\ralternative: double-click right mouse button in window)", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
+            upstairsButton.ToolTipText = String.Format("left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r", currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
+            downstairsButton.ToolTipText = String.Format("left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r", currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
+            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0},\ralternative: double-click left mouse button in window)\rred beacon: player, green beacon: entrance, blue beacon: rotation axis\r\rright click: reset view (hotkey: {1},\ralternative: double-click middle mouse button in window)\rdouble-click right mouse button in window to position rotation axis", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
@@ -959,7 +959,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 automap.TryTeleportPlayerToDungeonSegmentAtScreenPosition(mousePosition);
                 UpdateAutomapView();
             }
-            
+
             // check hotkeys and assign actions
             if (Input.GetKeyDown(HotkeySequence_SwitchAutomapGridMode.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchAutomapGridMode.modifiers))
             {
@@ -2052,13 +2052,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         private void PanelAutomap_OnRightMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
-        {
-            ActionResetView();
+        {            
+            Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
+            mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
+            automap.TrySetRotationPivotAxisToDungeonSegmentAtScreenPosition(mousePosition);
+
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    rotationPivotAxisPositionViewFromTop = automap.RotationPivotAxisPosition;
+                    break;
+                case AutomapViewMode.View3D:
+                    rotationPivotAxisPositionView3D = automap.RotationPivotAxisPosition;
+                    break;
+                default:
+                    break;
+            }
+
+            UpdateAutomapView();
         }
 
         private void PanelAutomap_OnMiddleMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
         {
-            ActionSwitchToNextAutomapRenderMode();
+            ActionResetView();
         }
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
