@@ -893,7 +893,11 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private void UpdateSlicingPositionY()
         {
-            float slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
+            float slicingPositionY;
+            if (!DaggerfallUnity.Settings.AutomapAlwaysMaxOutSliceLevel)
+                slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
+            else
+                slicingPositionY = float.MaxValue;
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
@@ -1197,6 +1201,9 @@ namespace DaggerfallWorkshop.Game
 
         private void UpdateMicroMapTexture(DFLocation? currentLocation)
         {
+            if (DaggerfallUnity.Settings.AutomapDisableMicroMap)
+                return;
+
             if (!currentLocation.HasValue)
             {
                 textureMicroMap = null;

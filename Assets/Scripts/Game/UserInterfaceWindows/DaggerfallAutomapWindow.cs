@@ -821,8 +821,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.CompassCamera = cameraAutomap;
             }
 
-            // reset values to default whenever automap window is opened
-            automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+            if (!DaggerfallUnity.Settings.AutomapRememberSliceLevel)
+            {
+                // reset values to default whenever automap window is opened
+                automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+            }
 
             if (automap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {

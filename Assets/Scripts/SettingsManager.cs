@@ -134,6 +134,9 @@ namespace DaggerfallWorkshop
 
         // [Map]
         public int AutomapNumberOfDungeons { get; set; }
+        public bool AutomapDisableMicroMap { get; set; }
+        public bool AutomapRememberSliceLevel { get; set; }
+        public bool AutomapAlwaysMaxOutSliceLevel { get; set; }
         public float ExteriorMapDefaultZoomLevel { get; set; }
         public bool ExteriorMapResetZoomLevelOnNewLocation { get; set; }
 
@@ -243,6 +246,9 @@ namespace DaggerfallWorkshop
             AllowMagicRepairs = GetBool(sectionControls, "AllowMagicRepairs");
 
             AutomapNumberOfDungeons = GetInt(sectionMap, "AutomapNumberOfDungeons", 0, 100);
+            AutomapDisableMicroMap = GetBool(sectionMap, "AutomapDisableMicroMap");
+            AutomapRememberSliceLevel = GetBool(sectionMap, "AutomapRememberSliceLevel");
+            AutomapAlwaysMaxOutSliceLevel = GetBool(sectionMap, "AutomapAlwaysMaxOutSliceLevel");            
             ExteriorMapDefaultZoomLevel = GetFloat(sectionMap, "ExteriorMapDefaultZoomLevel", 4, 31);
             ExteriorMapResetZoomLevelOnNewLocation = GetBool(sectionMap, "ExteriorMapResetZoomLevelOnNewLocation");
 
