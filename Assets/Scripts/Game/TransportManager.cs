@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Mounts a horse or cart if available if on foot, otherwise gets on foot
         /// </summary>
-        public void ToggleHorse()
+        public void ToggleMount()
         {
             if (TransportMode == TransportModes.Horse || TransportMode == TransportModes.Cart)
             {
