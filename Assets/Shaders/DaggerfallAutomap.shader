@@ -15,7 +15,6 @@
 
 Shader "Daggerfall/Automap"
 {
-
 	// Surface Shader for Automap Geometry
 	Properties {
 		_Color("Color", Color) = (1,1,1,1)
@@ -47,6 +46,8 @@ Shader "Daggerfall/Automap"
 			#pragma multi_compile __ RENDER_IN_GRAYSCALE
 			#pragma multi_compile __ AUTOMAP_RENDER_MODE_TRANSPARENT
 			
+			#define PI 3.1416f
+
 			half4 _Color;
 			sampler2D _MainTex;
 			sampler2D _BumpMap;
@@ -78,8 +79,9 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
                 half4 albedo = tex2D(_MainTex, IN.uv) *_Color;
-                //half4 albedo = tex2D(_MainTex, float2(0.1f, 0.1f));
-                //half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
+				//half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
+				//half4 albedo = tex2Dlod(_MainTex, float4(IN.uv.x, IN.uv.y, 0.0f, 7.0f));
+				                
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
                 outColor.rgb = albedo.rgb; // -emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
@@ -102,6 +104,13 @@ Shader "Daggerfall/Automap"
 				//const float3 upVec = float3(0.0f, 1.0f, 0.0f);
 				//float dotResult = dot(normalize(surfaceNormal), upVec);
 				//if (dotResult == 0.0f)
+				//	discard;
+
+				//float3 surfaceNormal = IN.normal;
+				//const float3 downVec = float3(0.0f, -1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), downVec);
+				//float angle = abs(acos(dotResult));
+				//if (angle < 90.0f * PI / 180.0f)
 				//	discard;
 
 				return outColor;
@@ -151,6 +160,8 @@ Shader "Daggerfall/Automap"
 
 			#pragma multi_compile __ RENDER_IN_GRAYSCALE
 			#pragma multi_compile __ AUTOMAP_RENDER_MODE_WIREFRAME AUTOMAP_RENDER_MODE_TRANSPARENT
+
+			#define PI 3.1416f
 
 			half4 _Color;
 			sampler2D _MainTex;
@@ -230,7 +241,7 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
 				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
-                //half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
+                //half4 albedo = tex2Dlod(_MainTex, float4(IN.uv.x, IN.uv.y, 0.0f, 7.0f));
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
 				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
@@ -256,7 +267,7 @@ Shader "Daggerfall/Automap"
 							#endif
 						}
 					#elif defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
-						outColor.a = 0.85;
+					outColor.a = 0.75;
 					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
 						clip(-1.0);
 						outColor = half4(1.0, 0.0, 0.0, 1.0);
@@ -281,6 +292,13 @@ Shader "Daggerfall/Automap"
 				//const float3 upVec = float3(0.0f, 1.0f, 0.0f);
 				//float dotResult = dot(normalize(surfaceNormal), upVec);
 				//if (dotResult == 0.0f)
+				//	discard;
+
+				//float3 surfaceNormal = IN.normal;
+				//const float3 downVec = float3(0.0f, -1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), downVec);
+				//float angle = abs(acos(dotResult));
+				//if (angle < 90.0f * PI / 180.0f)
 				//	discard;
 
 				return outColor;
