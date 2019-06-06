@@ -1,4 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
@@ -61,6 +61,7 @@ Shader "Daggerfall/Automap"
     			float2  uv : TEXCOORD0;
 				float3 worldPos : TEXCOORD5;
 				float3 normal : NORMAL;
+                //fixed4 color : COLOR;
 			};		
 
 			void vert(appdata_full v, out v2f OUT)
@@ -69,22 +70,25 @@ Shader "Daggerfall/Automap"
     			OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				OUT.normal = v.normal;
+                //OUT.color.xyz = _Color;
 			}
 
 
 			half4 frag(v2f IN) : COLOR
 			{
 				float4 outColor;
-				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
+                half4 albedo = tex2D(_MainTex, IN.uv) *_Color;
+                //half4 albedo = tex2D(_MainTex, float2(0.1f, 0.1f));
+                //half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
-				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
+                outColor.rgb = albedo.rgb; // -emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{				
 					discard;				
 				}
 
-				float dist = distance(IN.worldPos.y, _SclicingPositionY);
+			    float dist = distance(IN.worldPos.y, _SclicingPositionY);
 				//float dist = 40.0f / distance(IN.worldPos.y, 20.0f); // _SclicingPositionY);
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
@@ -108,14 +112,16 @@ Shader "Daggerfall/Automap"
 
     	}
 
-		Pass
-		{
-			ColorMask 0
-		}
+		//Pass
+		//{
+  //          //ZWrite Off
+		//	ColorMask 0
+		//}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
-		//Blend OneMinusSrcAlpha SrcAlpha		
+		//Blend OneMinusSrcAlpha SrcAlpha
+        //Blend SrcAlpha OneMinusSrcAlpha, OneMinusSrcColor SrcAlpha
 		//Blend One One
 		//Blend One OneMinusSrcAlpha
 		//Blend One DstAlpha
@@ -123,8 +129,8 @@ Shader "Daggerfall/Automap"
 		//Blend OneMinusSrcAlpha One
 		//Blend SrcAlpha OneMinusSrcAlpha, SrcAlpha OneMinusSrcAlpha
 
-		BlendOp Add, Max
-		//BlendOp Add, Add
+		//BlendOp Add, Max
+		BlendOp Add, Add
 
 		Pass
 		{
@@ -223,6 +229,7 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
 				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
+                //half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
 				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
@@ -248,7 +255,7 @@ Shader "Daggerfall/Automap"
 							#endif
 						}
 					#elif defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
-						outColor.a = 0.65;
+						outColor.a = 0.75;
 					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
 						clip(-1.0);
 						outColor = half4(1.0, 0.0, 0.0, 1.0);
