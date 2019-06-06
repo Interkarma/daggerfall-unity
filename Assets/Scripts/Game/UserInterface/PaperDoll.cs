@@ -30,26 +30,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int paperDollHeight = 184;
         const int waistHeight = 40;
 
-        DFSize backgroundFullSize = new DFSize(125, 198);
-        Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
+        readonly DFSize backgroundFullSize = new DFSize(125, 198);
+        readonly Rect backgroundSubRect = new Rect(8, 7, paperDollWidth, paperDollHeight);
 
         #endregion
 
         #region Fields
 
-        static Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
-        DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
+        static readonly Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
 
-        bool showBackgroundLayer = true;
-        bool showCharacterLayer = true;
+        const bool showBackgroundLayer = true;
+        const bool showCharacterLayer = true;
 
-        Texture2D paperDollTexture;
+        readonly Panel backgroundPanel = new Panel();
+        readonly Panel characterPanel = new Panel();
 
-        Panel backgroundPanel = new Panel();
-        Panel characterPanel = new Panel();
-
-        TextLabel[] armourLabels = new TextLabel[DaggerfallEntity.NumberBodyParts];
-        Vector2[] armourLabelPos = new Vector2[] { new Vector2(70, 12), new Vector2(20, 38), new Vector2(86, 38), new Vector2(12, 58), new Vector2(6, 90), new Vector2(18, 120), new Vector2(22, 168) };
+        readonly TextLabel[] armourLabels = new TextLabel[DaggerfallEntity.NumberBodyParts];
+        readonly Vector2[] armourLabelPos = new Vector2[] { new Vector2(70, 12), new Vector2(20, 38), new Vector2(86, 38), new Vector2(12, 58), new Vector2(6, 90), new Vector2(18, 120), new Vector2(22, 168) };
 
         string lastBackgroundName = string.Empty;
 
@@ -124,11 +121,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Update background
             RefreshBackground(playerEntity);
-
-            // Destroy old paper doll texture
-            characterPanel.BackgroundTexture = null;
-            GameObject.Destroy(paperDollTexture);
-            paperDollTexture = null;
 
             // Display paper doll render
             DaggerfallUI.Instance.PaperDollRenderer.Refresh(PaperDollRenderer.LayerFlags.All, playerEntity);

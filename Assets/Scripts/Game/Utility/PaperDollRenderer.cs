@@ -37,13 +37,13 @@ namespace DaggerfallWorkshop.Game.Utility
 
         const string paperDollMaterialName = "Daggerfall/PaperDoll";
 
-        Material paperDollMaterial = null;
+        readonly Material paperDollMaterial;
         RenderTexture target = null;
         Texture2D paperDollTexture = null;
-        DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
+        readonly DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
 
         float scale;
-        List<ItemElement> itemLayout = new List<ItemElement>();
+        readonly List<ItemElement> itemLayout = new List<ItemElement>();
 
         #endregion
 
