@@ -101,7 +101,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Mounts a horse or cart if available if on foot, otherwise gets on foot
         /// </summary>
-        public void ToggleMount()
+        public void ToggleHorse()
         {
             if (TransportMode == TransportModes.Horse || TransportMode == TransportModes.Cart)
             {
@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (GameManager.Instance.PlayerController.isGrounded)
                     {
-                        ToggleMount();
+                        ToggleHorse();
                     }
                 }
             }
