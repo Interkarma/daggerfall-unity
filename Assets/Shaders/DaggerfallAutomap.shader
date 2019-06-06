@@ -33,9 +33,9 @@ Shader "Daggerfall/Automap"
 
     	Pass 
     	{
-			//ZWrite On // not really necessary here since default setting
-			ZWrite On
+			ZWrite On // not really necessary here since default setting
 			ZTest LEqual
+            //Cull Off
 
 			CGPROGRAM
 
@@ -114,14 +114,15 @@ Shader "Daggerfall/Automap"
 
 		//Pass
 		//{
-  //          //ZWrite Off
-		//	ColorMask 0
+  //          ZWrite On
+		//	ColorMask Off
 		//}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha
+        //Blend SrcAlpha OneMinusSrcAlpha, One One
+        Blend SrcAlpha OneMinusSrcAlpha
 		//Blend OneMinusSrcAlpha SrcAlpha
-        //Blend SrcAlpha OneMinusSrcAlpha, OneMinusSrcColor SrcAlpha
+        //Blend SrcColor OneMinusSrcColor, SrcAlpha OneMinusSrcAlpha        
 		//Blend One One
 		//Blend One OneMinusSrcAlpha
 		//Blend One DstAlpha
@@ -136,10 +137,10 @@ Shader "Daggerfall/Automap"
 		{
 			//ZWrite On
 			//ZTest LEqual
-			ZWrite Off
+			ZWrite On
 			//ZTest LEqual
-			//ColorMask RGBA
-
+            //Cull Off
+            
 			CGPROGRAM
 
 			#include "UnityCG.cginc"
@@ -255,7 +256,7 @@ Shader "Daggerfall/Automap"
 							#endif
 						}
 					#elif defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
-						outColor.a = 0.75;
+						outColor.a = 0.85;
 					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
 						clip(-1.0);
 						outColor = half4(1.0, 0.0, 0.0, 1.0);
