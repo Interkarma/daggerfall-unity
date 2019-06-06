@@ -909,14 +909,14 @@ namespace DaggerfallWorkshop.Game
                 newMaterial = new Material(Shader.Find("Daggerfall/Automap"));
                 //newMaterial.CopyPropertiesFromMaterial(material);
                 newMaterial.name = "AutomapBelowSclicePlane injected for: " + material.name;
-                Texture mainTex = material.GetTexture("_MainTex");
-                newMaterial.SetTexture("_MainTex", mainTex);
-                Texture bumpMapTex = material.GetTexture("_BumpMap");
-                newMaterial.SetTexture("_BumpMap", bumpMapTex);
-                Texture emissionMapTex = material.GetTexture("_EmissionMap");
-                newMaterial.SetTexture("_EmissionMap", emissionMapTex);
-                Color emissionColor = material.GetColor("_EmissionColor");
-                newMaterial.SetColor("_EmissionColor", emissionColor);
+                if (material.HasProperty(Uniforms.MainTex))
+                    newMaterial.SetTexture(Uniforms.MainTex, material.GetTexture(Uniforms.MainTex));
+                if (material.HasProperty(Uniforms.BumpMap))
+                    newMaterial.SetTexture(Uniforms.BumpMap, material.GetTexture(Uniforms.BumpMap));
+                if (material.HasProperty(Uniforms.EmissionMap))
+                    newMaterial.SetTexture(Uniforms.EmissionMap, material.GetTexture(Uniforms.EmissionMap));
+                if (material.HasProperty(Uniforms.EmissionColor))
+                    newMaterial.SetColor(Uniforms.EmissionColor, material.GetColor(Uniforms.EmissionColor));
                 Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
                 newMaterial.SetVector("_PlayerPosition", playerPosition);
                 if (visitedInThisEntering == true)
