@@ -526,7 +526,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.ToolTipText = String.Format("left click: rotate dungeon model to the right (hotkey: Alt+{0})\rright click: rotate camera view to the right (hotkey: Shift+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
             upstairsButton.ToolTipText = String.Format("left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r", currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
             downstairsButton.ToolTipText = String.Format("left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r", currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0},\ralternative: double-click left mouse button in window)\rred beacon: player, green beacon: entrance, blue beacon: rotation axis\r\rright click: reset view (hotkey: {1},\ralternative: double-click middle mouse button in window)\rdouble-click right mouse button in window to position rotation axis", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
+            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0})\rred beacon: player, green beacon: entrance, blue beacon: rotation axis\r\rright click: reset view (hotkey: {1})\r\rdouble-click left mouse button in window to center view on this map position\rdouble-click right mouse button in window to position rotation axis\rdouble-click middle mouse button in window to toggle focus", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
@@ -2048,7 +2048,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
         {
-            ActionSwitchFocusToNextBeaconObject();
+            Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
+            mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
+            automap.TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(mousePosition);
         }
 
         private void PanelAutomap_OnRightMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
@@ -2074,7 +2076,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMiddleMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
         {
-            ActionResetView();
+            ActionSwitchFocusToNextBeaconObject();
         }
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)

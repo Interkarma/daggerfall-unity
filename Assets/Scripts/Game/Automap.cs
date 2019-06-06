@@ -443,6 +443,31 @@ namespace DaggerfallWorkshop.Game
             return (gameobjectInFocus);
         }
 
+        public void TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        {
+            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
+
+            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);
+
+            RaycastHit? nearestHit = null;
+            float nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hits)
+            {
+                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
+                {
+                    nearestHit = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+
+            if (nearestHit.HasValue)
+            {
+                float distance = (cameraAutomap.transform.position - gameObjectPlayerAdvanced.transform.position).magnitude;
+                cameraAutomap.transform.position = (nearestHit.Value.point);
+                cameraAutomap.transform.position -= cameraAutomap.transform.forward * distance;
+            }
+        }
+
         public void TrySetRotationPivotAxisToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
