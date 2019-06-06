@@ -36,6 +36,9 @@ namespace DaggerfallWorkshop.Game
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
 
+        // Max time bow can be held drawn
+        private const int MaxBowHeldDrawnSeconds = 10;
+
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
         public float SphereCastRadius = 0.3f;       // Radius of SphereCast used to target attacks
@@ -311,7 +314,7 @@ namespace DaggerfallWorkshop.Game
             }
             if (isAttacking && bowEquipped && DaggerfallUnity.Settings.BowDrawback && ScreenWeapon.GetCurrentFrame() == 3)
             {
-                if (InputManager.Instance.HasAction(InputManager.Actions.ActivateCenterObject))
+                if (InputManager.Instance.HasAction(InputManager.Actions.ActivateCenterObject) || ScreenWeapon.GetAnimTime() > MaxBowHeldDrawnSeconds)
                 {   // Un-draw the bow without releasing an arrow.
                     ScreenWeapon.ChangeWeaponState(WeaponStates.Idle);
                 }
