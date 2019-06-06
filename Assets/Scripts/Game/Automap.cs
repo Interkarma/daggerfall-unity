@@ -1210,8 +1210,9 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            int width = 28;
-            int height = 28;
+            int microMapBlockSizeInPixels = 2;
+            int width = 7 * microMapBlockSizeInPixels;
+            int height = 7 * microMapBlockSizeInPixels;
             textureMicroMap = new Texture2D(width, height, TextureFormat.ARGB32, false);
             textureMicroMap.filterMode = FilterMode.Point;
 
@@ -1225,11 +1226,11 @@ namespace DaggerfallWorkshop.Game
             {
                 int xBlockPos = 3 + block.X;
                 int yBlockPos = 3 + block.Z;
-                for (int y = 0; y < 4; y++)
+                for (int y = 0; y < microMapBlockSizeInPixels; y++)
                 {
-                    for (int x = 0; x < 4; x++)
+                    for (int x = 0; x < microMapBlockSizeInPixels; x++)
                     {
-                        textureMicroMap.SetPixel(xBlockPos * 4 + x, yBlockPos * 4 + y, Color.yellow);
+                        textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, Color.yellow);
                     }
                 }
             }
@@ -1238,11 +1239,11 @@ namespace DaggerfallWorkshop.Game
             DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
             float entrancePosX = dungeon.StartMarker.transform.position.x / RDBLayout.RDBSide;
             float entrancePosY = dungeon.StartMarker.transform.position.z / RDBLayout.RDBSide;
-            int xPosOfBlock = 3 * 4 + (int)(Mathf.Floor(entrancePosX*2)) * 2; // * 0.5f);
-            int yPosOfBlock = 3 * 4 + (int)(Mathf.Floor(entrancePosY*2)) * 2; // * 0.5f);
-            for (int y = 0; y < 2; y++)
+            int xPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosX*2)) * (microMapBlockSizeInPixels / 2);
+            int yPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosY*2)) * (microMapBlockSizeInPixels / 2);
+            for (int y = 0; y < microMapBlockSizeInPixels / 2; y++)
             {
-                for (int x = 0; x < 2; x++)
+                for (int x = 0; x < microMapBlockSizeInPixels / 2; x++)
                 {
                     textureMicroMap.SetPixel(xPosOfBlock + x, yPosOfBlock + y, Color.green);
                 }
@@ -1251,11 +1252,11 @@ namespace DaggerfallWorkshop.Game
             // mark player position on micro map            
             float playerPosX = gameObjectPlayerAdvanced.transform.position.x / RDBLayout.RDBSide;
             float playerPosY = gameObjectPlayerAdvanced.transform.position.z / RDBLayout.RDBSide;
-            xPosOfBlock = 3 * 4 + (int)(Mathf.Floor(playerPosX * 2)) * 2; // * 0.5f);
-            yPosOfBlock = 3 * 4 + (int)(Mathf.Floor(playerPosY * 2)) * 2; // * 0.5f);
-            for (int y = 0; y < 2; y++)
+            xPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosX * 2)) * (microMapBlockSizeInPixels / 2);
+            yPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosY * 2)) * (microMapBlockSizeInPixels / 2);
+            for (int y = 0; y < microMapBlockSizeInPixels / 2; y++)
             {
-                for (int x = 0; x < 2; x++)
+                for (int x = 0; x < microMapBlockSizeInPixels / 2; x++)
                 {
                     textureMicroMap.SetPixel(xPosOfBlock + x, yPosOfBlock + y, Color.red);
                 }
