@@ -2050,7 +2050,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
             mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
-            automap.TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(mousePosition);
+            if (!GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                automap.TryToAddUserNoteMarkerOnDungeonSegmentAtScreenPosition(mousePosition);
+            }
+
+            //Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
+            //mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
+            //automap.TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(mousePosition);
         }
 
         private void PanelAutomap_OnRightMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
