@@ -294,6 +294,11 @@ namespace DaggerfallWorkshop.Game
             get { return textureMicroMap; }
         }
 
+        //public SortedList<int, string> ListUserNotes
+        //{
+        //    get { return listUserNotes; }
+        //}
+
         #endregion
 
         #region Public Methods
@@ -447,23 +452,29 @@ namespace DaggerfallWorkshop.Game
             }
             return (gameobjectInFocus);
         }
-        
-        public void TryToAddUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+
+        public string GetMouseHoverOverText(Vector2 screenPosition)
         {
-            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
-
-            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);
-
             RaycastHit? nearestHit = null;
-            float nearestDistance = float.MaxValue;
-            foreach (RaycastHit hit in hits)
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
+
+            if (nearestHit.HasValue)
             {
-                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
+                // if hit geometry is user note marker
+                if (nearestHit.Value.transform.name.StartsWith("UserNoteMarker_"))
                 {
-                    nearestHit = hit;
-                    nearestDistance = hit.distance;
+                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
+                    return listUserNotes[id]; // get user note by id
                 }
             }
+
+            return "";
+        }
+
+        public void TryToAddUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        {
+            RaycastHit? nearestHit = null;
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
 
             if (nearestHit.HasValue)
             {
@@ -500,28 +511,10 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void UserNote_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
-        {
-            listUserNotes[idOfUserMarkerNoteToBeChanged] = input;
-            messageboxUserNote = null;
-        }
-
         public void TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
-            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
-
-            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);
-
             RaycastHit? nearestHit = null;
-            float nearestDistance = float.MaxValue;
-            foreach (RaycastHit hit in hits)
-            {
-                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
-                {
-                    nearestHit = hit;
-                    nearestDistance = hit.distance;
-                }
-            }
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
 
             if (nearestHit.HasValue)
             {
@@ -533,20 +526,8 @@ namespace DaggerfallWorkshop.Game
 
         public void TrySetRotationPivotAxisToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
-            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
-
-            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);
-
             RaycastHit? nearestHit = null;
-            float nearestDistance = float.MaxValue;
-            foreach (RaycastHit hit in hits)
-            {
-                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
-                {
-                    nearestHit = hit;
-                    nearestDistance = hit.distance;
-                }
-            }
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
 
             if (nearestHit.HasValue)
             {
@@ -560,20 +541,8 @@ namespace DaggerfallWorkshop.Game
         /// <param name="screenPosition"> the screen position of interest - if a dungeon segment is shown at this position player will be teleported there </param>
         public void TryTeleportPlayerToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
-            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
-
-            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);            
-
             RaycastHit? nearestHit = null;
-            float nearestDistance = float.MaxValue;
-            foreach (RaycastHit hit in hits)
-            {
-                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
-                {
-                    nearestHit = hit;
-                    nearestDistance = hit.distance;
-                }
-            }
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
 
             if (nearestHit.HasValue)
             {
@@ -695,29 +664,29 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if (GameManager.Instance.IsPlayerInside)
+            if (!GameManager.Instance.IsPlayerInside)
+                return;
+
+            // I am not super happy with doing this in the update function, but found no other way to make starting in dungeon correctly initialize the automap geometry
+            if (!gameobjectGeometry)
             {
-                // I am not super happy with doing this in the update function, but found no other way to make starting in dungeon correctly initialize the automap geometry
-                if (!gameobjectGeometry)
+                // test if startup was inside dungeon or interior (and no transition event happened)                
+                InitWhenInInteriorOrDungeon();
+                // do initial geometry discovery
+                if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsideCastle are false
                 {
-                    // test if startup was inside dungeon or interior (and no transition event happened)                
-                    InitWhenInInteriorOrDungeon();
-                    // do initial geometry discovery
-                    if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsideCastle are false
-                    {
-                        gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-                        CheckForNewlyDiscoveredMeshes();
-                    }
-                }
-
-                if (isOpenAutomap) // only do this stuff if automap is indeed open
-                {
-                    UpdateSlicingPositionY();
-
-                    // update position of rotation pivot axis
-                    gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
+                    gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                    CheckForNewlyDiscoveredMeshes();
                 }
             }
+
+            if (isOpenAutomap) // only do this stuff if automap is indeed open
+            {
+                UpdateSlicingPositionY();
+
+                // update position of rotation pivot axis
+                gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
+            }            
         }
 
         #endregion
@@ -1155,7 +1124,7 @@ namespace DaggerfallWorkshop.Game
             if (!gameobjectBeaconPlayerPosition)
             {
                 gameobjectBeaconPlayerPosition = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
+                //UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
                 gameobjectBeaconPlayerPosition.name = "BeaconPlayerPosition";
                 gameobjectBeaconPlayerPosition.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconPlayerPosition.layer = layerAutomap;
@@ -1170,7 +1139,7 @@ namespace DaggerfallWorkshop.Game
             if (!gameobjectBeaconRotationPivotAxis)
             {
                 gameobjectBeaconRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
+                //UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
                 gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
                 gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconRotationPivotAxis.layer = layerAutomap;
@@ -1208,7 +1177,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconEntrancePosition.layer = layerAutomap;
 
                 GameObject gameobjectRay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.Destroy(gameobjectRay.GetComponent<Collider>());
+                //UnityEngine.Object.Destroy(gameobjectRay.GetComponent<Collider>());
                 gameobjectRay.name = "BeaconEntracePositionMarker";
                 gameobjectRay.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 gameobjectRay.layer = layerAutomap;
@@ -1219,7 +1188,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRay.GetComponent<MeshRenderer>().material = material;
 
                 gameObjectEntrancePositionCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker.GetComponent<Collider>());
+                //UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker.GetComponent<Collider>());
                 gameObjectEntrancePositionCubeMarker.name = "CubeEntracePositionMarker";
                 gameObjectEntrancePositionCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 Material materialCubeEntracePositionMarker = new Material(Shader.Find("Standard"));
@@ -1376,6 +1345,24 @@ namespace DaggerfallWorkshop.Game
             textureMicroMap.Apply(false);
         }
 
+        private void GetRayCastNearestHitOnAutomapLayer(Vector2 screenPosition, out RaycastHit? nearestHit)
+        {
+            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
+
+            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);
+
+            nearestHit = null;
+            float nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hits)
+            {
+                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
+                {
+                    nearestHit = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+        }
+
         /// <summary>
         /// creates the indoor geometry used for automap rendering
         /// </summary>
@@ -1511,7 +1498,7 @@ namespace DaggerfallWorkshop.Game
                 cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
                 cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraAutomap.cullingMask = 1 << layerAutomap;
-                cameraAutomap.renderingPath = Camera.main.renderingPath;
+                cameraAutomap.renderingPath = RenderingPath.Forward; // Camera.main.renderingPath;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 5000.0f;
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
@@ -2006,6 +1993,12 @@ namespace DaggerfallWorkshop.Game
                 gameobjectGeometry = null;
             }
             DestroyBeacons();
+        }
+
+        void UserNote_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            listUserNotes[idOfUserMarkerNoteToBeChanged] = input;
+            messageboxUserNote = null;
         }
 
         #endregion
