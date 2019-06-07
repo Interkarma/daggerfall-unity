@@ -12,7 +12,6 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -36,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         public float RidingVolumeScale = 1.0f;  // TODO: Should this be the same setting as PlayerFootsteps.FootstepVolumeScale?
 
         #endregion
+
         #region Properties
 
         public TransportModes TransportMode
@@ -57,8 +57,7 @@ namespace DaggerfallWorkshop.Game
         }
         
         #endregion
-
-
+        
         #region Public Methods
         /// <summary>True when there's a recorded position before boarding and player is on the ship</summary>
         public bool IsOnShip()
@@ -118,6 +117,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         #endregion
+
         #region Private Fields
 
         private TransportModes mode = TransportModes.Foot;
@@ -235,21 +235,6 @@ namespace DaggerfallWorkshop.Game
                 {
                     dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume);
                     neighTime = Time.time + Random.Range(2, 40);
-                }
-            }
-
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.MountHorse))
-            {
-                if (GameManager.Instance.IsPlayerInside)
-                {
-                    DaggerfallUI.AddHUDText(HardStrings.cannotChangeTransportationIndoors);
-                }
-                else
-                {
-                    if (GameManager.Instance.PlayerController.isGrounded)
-                    {
-                        ToggleHorse();
-                    }
                 }
             }
         }
