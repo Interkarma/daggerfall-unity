@@ -187,7 +187,6 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
         GameObject gameobjectRotationArrow1 = null; // GameObject which will hold rotation arrow1 (blue arrow)
         GameObject gameobjectRotationArrow2 = null; // GameObject which will hold rotation arrow2 (blue arrow)
-
         GameObject gameObjectEntrancePositionCubeMarker = null; // used for entrance marker discovery
 
         Collider playerCollider = null;
@@ -211,9 +210,21 @@ namespace DaggerfallWorkshop.Game
 
         Texture2D textureMicroMap = null;
 
-        SortedList<int, string> listUserNotes = new SortedList<int, string>(); // the dictionary containing the user notes, key is the id used when creating the user node marker
+        private class NoteMarker
+        {
+            public string note;
+            public Vector3 position;
+
+            public NoteMarker(Vector3 position, string note)
+            {
+                this.note = note;
+                this.position = position;
+            }
+        }
+        SortedList<int, NoteMarker> listUserNoteMarkers = new SortedList<int, NoteMarker>(); // the list containing the user note markers, key is the id used when creating the user note marker
         int idOfUserMarkerNoteToBeChanged; // used to identify id of last double-clicked user note marker when changing note text
         DaggerfallInputMessageBox messageboxUserNote;
+        GameObject gameObjectUserNoteMarkers = null; // container object for custom user notes markers
 
         #endregion
 
@@ -294,9 +305,9 @@ namespace DaggerfallWorkshop.Game
             get { return textureMicroMap; }
         }
 
-        //public SortedList<int, string> ListUserNotes
+        //public SortedList<int, string> listUserNoteMarkers
         //{
-        //    get { return listUserNotes; }
+        //    get { return listUserNoteMarkers; }
         //}
 
         #endregion
@@ -464,43 +475,48 @@ namespace DaggerfallWorkshop.Game
                 if (nearestHit.Value.transform.name.StartsWith("UserNoteMarker_"))
                 {
                     int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
-                    return listUserNotes[id]; // get user note by id
+                    if (listUserNoteMarkers.ContainsKey(id))
+                        return listUserNoteMarkers[id].note; // get user note by id
                 }
             }
 
             return "";
         }
 
-        public void TryToAddUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        public void TryToAddOrEditUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             RaycastHit? nearestHit = null;
             GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
 
             if (nearestHit.HasValue)
             {
-                if (!nearestHit.Value.transform.name.StartsWith("UserNoteMarker_"))
+                if (!nearestHit.Value.transform.name.StartsWith("UserNoteMarker_")) // if not a user note marker
                 {
-                    GameObject gameObjectUserNoteMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    int id = listUserNotes.AddNext("");
-                    gameObjectUserNoteMarker.name = "UserNoteMarker_" + id;
-                    gameObjectUserNoteMarker.transform.SetParent(gameobjectAutomap.transform);
-                    gameObjectUserNoteMarker.transform.position = (nearestHit.Value.point) + nearestHit.Value.normal * 1.0f;
-                    Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
-                    materialUserNoteMarker.color = new Color(1.0f, 0.5f, 0.0f);
-                    gameObjectUserNoteMarker.GetComponent<MeshRenderer>().material = materialUserNoteMarker;
-                    gameObjectUserNoteMarker.layer = layerAutomap;
-                    gameObjectUserNoteMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                    gameObjectUserNoteMarker.transform.rotation = Quaternion.Euler(0.0f, 45.0f, 45.0f);
+                    // add a new user note marker
+                    Vector3 spawningPosition = (nearestHit.Value.point) + nearestHit.Value.normal * 0.6f;
+                    for (int i = 0; i < listUserNoteMarkers.Count; i++)
+                    {
+                        var enumerator = listUserNoteMarkers.GetEnumerator();
+                        while (enumerator.MoveNext())
+                        {
+                            // test if there is already a user note marker near to the requested spawning position
+                            if (Vector3.Distance(enumerator.Current.Value.position, spawningPosition) < 1.0f)
+                                return; // if yes, do not add a new marker
+                        }
+                    }
+                    int id = listUserNoteMarkers.AddNext(new NoteMarker(spawningPosition, ""));
+                    GameObject gameObjectUserNoteMarker = CreateUserNoteMarker(id, spawningPosition);
                 }
                 else
                 {
+                    // edit user note marker
                     messageboxUserNote = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, DaggerfallUI.Instance.AutomapWindow);
-                    messageboxUserNote.SetTextBoxLabel("you note: ");
+                    messageboxUserNote.SetTextBoxLabel("the note says: ");
                     messageboxUserNote.TextPanelDistanceX = 5;
                     messageboxUserNote.TextPanelDistanceY = 8;
                     int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
-                    if (listUserNotes.ContainsKey(id))
-                        messageboxUserNote.TextBox.Text = listUserNotes[id];
+                    if (listUserNoteMarkers.ContainsKey(id))
+                        messageboxUserNote.TextBox.Text = listUserNoteMarkers[id].note;
                     messageboxUserNote.TextBox.Numeric = false;
                     messageboxUserNote.TextBox.MaxCharacters = 100;
                     messageboxUserNote.TextBox.WidthOverride = 286;
@@ -509,6 +525,25 @@ namespace DaggerfallWorkshop.Game
                     messageboxUserNote.Show();                    
                 }
             }
+        }
+
+        public bool TryToRemoveUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        {
+            RaycastHit? nearestHit = null;
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
+
+            if (nearestHit.HasValue)
+            {
+                if (nearestHit.Value.transform.name.StartsWith("UserNoteMarker_")) // if user note marker was hit
+                {                    
+                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
+                    if (listUserNoteMarkers.ContainsKey(id))
+                        listUserNoteMarkers.Remove(id); // remove it from list
+                    GameObject.Destroy(nearestHit.Value.transform.gameObject); // and destroy gameobject
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
@@ -1084,17 +1119,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void SetMaterialTransparency(Material material)
-        {
-            material.SetOverrideTag("RenderType", "Transparent");
-            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            material.SetInt("_ZWrite", 0);
-            material.DisableKeyword("_ALPHATEST_ON");
-            material.DisableKeyword("_ALPHABLEND_ON");
-            material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.renderQueue = 3000;
-        }
+        //private void SetMaterialTransparency(Material material)
+        //{
+        //    material.SetOverrideTag("RenderType", "Transparent");
+        //    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+        //    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        //    material.SetInt("_ZWrite", 0);
+        //    material.DisableKeyword("_ALPHATEST_ON");
+        //    material.DisableKeyword("_ALPHABLEND_ON");
+        //    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+        //    material.renderQueue = 3000;
+        //}
 
         /// <summary>
         /// setup beacons: lazy creation of player marker arrow and beacons including
@@ -1249,6 +1284,46 @@ namespace DaggerfallWorkshop.Game
                 //UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker);
                 gameObjectEntrancePositionCubeMarker = null;
             }
+        }
+
+        private void LoadUserMarkerNotes()
+        {
+            if (gameObjectUserNoteMarkers == null)
+            {
+                gameObjectUserNoteMarkers = new GameObject("UserMarkerNotes");
+            }
+        }
+
+        private void DestroyUserMarkerNotes()
+        {
+            if (gameObjectUserNoteMarkers != null)
+            {
+                foreach (Transform child in gameObjectUserNoteMarkers.transform)
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+            }
+            listUserNoteMarkers.Clear();
+        }
+
+        private GameObject CreateUserNoteMarker(int id, Vector3 spawningPosition)
+        {
+            if (gameObjectUserNoteMarkers == null)
+            {
+                gameObjectUserNoteMarkers = new GameObject("UserMarkerNotes");
+                gameObjectUserNoteMarkers.transform.SetParent(gameobjectAutomap.transform);
+            }
+            GameObject gameObjectUserNoteMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            gameObjectUserNoteMarker.transform.SetParent(gameObjectUserNoteMarkers.transform);
+            gameObjectUserNoteMarker.transform.position = spawningPosition;
+            gameObjectUserNoteMarker.name = "UserNoteMarker_" + id;
+            Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
+            materialUserNoteMarker.color = new Color(1.0f, 0.6f, 0.0f);
+            gameObjectUserNoteMarker.GetComponent<MeshRenderer>().material = materialUserNoteMarker;
+            gameObjectUserNoteMarker.layer = layerAutomap;
+            gameObjectUserNoteMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+            gameObjectUserNoteMarker.transform.rotation = Quaternion.Euler(0.0f, 45.0f, 45.0f);
+            return gameObjectUserNoteMarker;
         }
 
         /// <summary>
@@ -1997,7 +2072,7 @@ namespace DaggerfallWorkshop.Game
 
         void UserNote_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
-            listUserNotes[idOfUserMarkerNoteToBeChanged] = input;
+            listUserNoteMarkers[idOfUserMarkerNoteToBeChanged].note = input;
             messageboxUserNote = null;
         }
 
