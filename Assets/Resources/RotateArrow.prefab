@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33228929976931412}
   - component: {fileID: 23660424320144448}
   m_Layer: 0
-  m_Name: Arrow
+  m_Name: CurvedArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4154801709713318}
   m_Layer: 0
-  m_Name: RotateArrow2
+  m_Name: RotateArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

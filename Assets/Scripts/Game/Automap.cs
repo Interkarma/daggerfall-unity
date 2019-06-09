@@ -55,6 +55,8 @@ namespace DaggerfallWorkshop.Game
         }
         #endregion
 
+        #region classes
+
         /// <summary>
         /// class to store state of discovery of a dungeon block or interior, this state can be used to restore state of GameObject gameobjectGeometry
         /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
@@ -101,40 +103,16 @@ namespace DaggerfallWorkshop.Game
         public Dictionary<string, AutomapGeometryDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapGeometryDungeonState>();
 
 
-        int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
-
-        /// <summary>
-        /// sets the number of dungeons that are memorized
-        /// </summary>
-        public void SetNumberOfDungeonMemorized(int n)
-        {
-            numberOfDungeonMemorized = n;
-        }
-
-        /// <summary>
-        /// GetState() method for save system integration
-        /// </summary>
-        public Dictionary<string, AutomapGeometryDungeonState> GetState()
-        {
-            SaveStateAutomapDungeon(false);
-            return dictAutomapDungeonsDiscoveryState;
-        }
-        
-        /// <summary>
-        /// SetState() method for save system integration
-        /// </summary>
-        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
-        {
-            dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
-
-            if ((GameManager.Instance.IsPlayerInsideCastle)||(GameManager.Instance.IsPlayerInsideDungeon))
-            {                
-                InitWhenInInteriorOrDungeon(null, true);
-                RestoreStateAutomapDungeon();
-            }           
-        }
+        #endregion
 
         #region Fields
+
+        const string NameGameobjectPlayerMarkerArrow = "PlayerMarkerArrow";
+        const string NameGameobjectBeaconPlayerPosition = "BeaconPlayerPosition";
+        const string NameGameobjectBeaconRotationPivotAxis = "BeaconRotationPivotAxis";
+        const string NameGameobjectRotateArrow = "CurvedArrow";
+        const string NameGameobjectBeaconEntrancePositionMarker = "BeaconEntrancePositionMarker";
+        const string NameGameobjectCubeEntrancePositionMarker = "CubeEntrancePositionMarker";
 
         const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying too high will result in geometry not being revealed by this raycast
         const float raycastDistanceViewDirection = 30.0f; // don't want to make it too easy to discover big halls - although it shouldn't be to small as well
@@ -226,6 +204,31 @@ namespace DaggerfallWorkshop.Game
         DaggerfallInputMessageBox messageboxUserNote;
         GameObject gameObjectUserNoteMarkers = null; // container object for custom user notes markers
 
+        int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
+
+        /// <summary>
+        /// GetState() method for save system integration
+        /// </summary>
+        public Dictionary<string, AutomapGeometryDungeonState> GetState()
+        {
+            SaveStateAutomapDungeon(false);
+            return dictAutomapDungeonsDiscoveryState;
+        }
+
+        /// <summary>
+        /// SetState() method for save system integration
+        /// </summary>
+        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
+        {
+            dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
+
+            if ((GameManager.Instance.IsPlayerInsideCastle) || (GameManager.Instance.IsPlayerInsideDungeon))
+            {
+                InitWhenInInteriorOrDungeon(null, true);
+                RestoreStateAutomapDungeon();
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -313,6 +316,14 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// sets the number of dungeons that are memorized
+        /// </summary>
+        public void SetNumberOfDungeonMemorized(int n)
+        {
+            numberOfDungeonMemorized = n;
+        }
 
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
@@ -478,8 +489,27 @@ namespace DaggerfallWorkshop.Game
                     if (listUserNoteMarkers.ContainsKey(id))
                         return listUserNoteMarkers[id].note; // get user note by id
                 }
+                else if (nearestHit.Value.transform.name == NameGameobjectBeaconPlayerPosition)
+                {
+                    return "player position beacon";
+                }
+                else if (nearestHit.Value.transform.name == NameGameobjectBeaconRotationPivotAxis || nearestHit.Value.transform.name == NameGameobjectRotateArrow)
+                {
+                    return "rotation pivot axis";
+                }
+                else if (nearestHit.Value.transform.name == NameGameobjectBeaconEntrancePositionMarker)
+                {
+                    return "entrance/exit position beacon";
+                }
+                else if (nearestHit.Value.transform.name == NameGameobjectCubeEntrancePositionMarker)
+                {
+                    return "entrance/exit";
+                }
+                else if (nearestHit.Value.transform.name == NameGameobjectPlayerMarkerArrow)
+                {
+                    return "player marker";
+                }
             }
-
             return "";
         }
 
@@ -1150,8 +1180,9 @@ namespace DaggerfallWorkshop.Game
             if (!gameobjectPlayerMarkerArrow)
             {
                 gameobjectPlayerMarkerArrow = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectBeacons.transform, false, null, true);
-                gameobjectPlayerMarkerArrow.name = "PlayerMarkerArrow";
+                gameobjectPlayerMarkerArrow.name = NameGameobjectPlayerMarkerArrow;
                 gameobjectPlayerMarkerArrow.layer = layerAutomap;
+                gameobjectPlayerMarkerArrow.AddComponent<MeshCollider>();
             }
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
@@ -1160,7 +1191,7 @@ namespace DaggerfallWorkshop.Game
             {
                 gameobjectBeaconPlayerPosition = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 //UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
-                gameobjectBeaconPlayerPosition.name = "BeaconPlayerPosition";
+                gameobjectBeaconPlayerPosition.name = NameGameobjectBeaconPlayerPosition;
                 gameobjectBeaconPlayerPosition.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconPlayerPosition.layer = layerAutomap;
                 gameobjectBeaconPlayerPosition.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
@@ -1173,9 +1204,10 @@ namespace DaggerfallWorkshop.Game
 
             if (!gameobjectBeaconRotationPivotAxis)
             {
+                MeshCollider mc;
                 gameobjectBeaconRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 //UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
-                gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
+                gameobjectBeaconRotationPivotAxis.name = NameGameobjectBeaconRotationPivotAxis;
                 gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconRotationPivotAxis.layer = layerAutomap;
                 gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.15f, 50.2f, 0.15f);
@@ -1185,18 +1217,20 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
 
                 gameobjectRotationArrow1 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
-                gameobjectRotationArrow1.name = "RotateArrow1";
+                gameobjectRotationArrow1.name = NameGameobjectRotateArrow;
                 gameobjectRotationArrow1.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
                 gameobjectRotationArrow1.layer = layerAutomap;
+                gameobjectRotationArrow1.transform.GetChild(0).gameObject.AddComponent<MeshCollider>();
                 gameobjectRotationArrow1.transform.GetChild(0).gameObject.layer = layerAutomap;
                 gameobjectRotationArrow1.transform.localPosition = new Vector3(2.0f, -0.02f, -2.0f);
                 gameobjectRotationArrow1.transform.localScale = new Vector3(0.15f, 0.0005f, 0.15f);
                 gameobjectRotationArrow1.GetComponentInChildren<MeshRenderer>().material = material;
 
                 gameobjectRotationArrow2 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
-                gameobjectRotationArrow2.name = "RotateArrow2";
+                gameobjectRotationArrow2.name = NameGameobjectRotateArrow;
                 gameobjectRotationArrow2.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
                 gameobjectRotationArrow2.layer = layerAutomap;
+                gameobjectRotationArrow2.transform.GetChild(0).gameObject.AddComponent<MeshCollider>();
                 gameobjectRotationArrow2.transform.GetChild(0).gameObject.layer = layerAutomap;
                 gameobjectRotationArrow2.transform.localPosition = new Vector3(-2.0f, -0.02f, 2.0f);
                 gameobjectRotationArrow2.transform.localScale = new Vector3(0.15f, 0.0005f, 0.15f);
@@ -1207,13 +1241,13 @@ namespace DaggerfallWorkshop.Game
 
             if (!gameobjectBeaconEntrancePosition)
             {
-                gameobjectBeaconEntrancePosition = new GameObject("BeaconEntracePosition");
+                gameobjectBeaconEntrancePosition = new GameObject("BeaconEntrancePosition");
                 gameobjectBeaconEntrancePosition.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconEntrancePosition.layer = layerAutomap;
 
                 GameObject gameobjectRay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 //UnityEngine.Object.Destroy(gameobjectRay.GetComponent<Collider>());
-                gameobjectRay.name = "BeaconEntracePositionMarker";
+                gameobjectRay.name = NameGameobjectBeaconEntrancePositionMarker;
                 gameobjectRay.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 gameobjectRay.layer = layerAutomap;
                 gameobjectRay.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
@@ -1224,7 +1258,7 @@ namespace DaggerfallWorkshop.Game
 
                 gameObjectEntrancePositionCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 //UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker.GetComponent<Collider>());
-                gameObjectEntrancePositionCubeMarker.name = "CubeEntracePositionMarker";
+                gameObjectEntrancePositionCubeMarker.name = NameGameobjectCubeEntrancePositionMarker;
                 gameObjectEntrancePositionCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 Material materialCubeEntracePositionMarker = new Material(Shader.Find("Standard"));
                 materialCubeEntracePositionMarker.color = new Color(0.0f, 1.0f, 0.0f);
