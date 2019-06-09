@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game
         /// class to store state of discovery of a dungeon, this state can be used to restore state of GameObject gameobjectGeometry
         /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
         /// used for discovery state of the models inside GameObject gameobjectGeometry when a dungeon is loaded into this GameObject
+        /// it also stores list of user note markers
         /// </summary>
         public class AutomapGeometryDungeonState
         {
@@ -89,19 +90,20 @@ namespace DaggerfallWorkshop.Game
             public ulong timeInSecondsLastVisited; /// time in seconds (from DaggerfallDateTime) when player last visited the dungeon (used to store only the n last dungeons in save games)
             public bool entranceDiscovered; /// indicates if the dungeon entrance has already been discovered
             public List<AutomapGeometryBlockState> blocks;
+            public SortedList<int, NoteMarker> listUserNoteMarkers; // list of user note markers
         }
 
-        // dungeon state is of type AutomapGeometryDungeonState which has its models in 4th hierarchy level
-        AutomapGeometryDungeonState automapGeometryDungeonState = null;
-        // interior state is of type AutomapGeometryBlockState which has its models in 3rd hierarchy level
-        AutomapGeometryBlockState automapGeometryInteriorState = null;
+        public class NoteMarker
+        {
+            public string note;
+            public Vector3 position;
 
-        /// <summary>
-        /// this dictionary is used to store the discovery state of dungeons in the game world
-        /// the AutomapGeometryDungeonState is stored for each dungeon in this dictionary identified by its identifier string
-        /// </summary>
-        public Dictionary<string, AutomapGeometryDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapGeometryDungeonState>();
-
+            public NoteMarker(Vector3 position, string note)
+            {
+                this.note = note;
+                this.position = position;
+            }
+        }
 
         #endregion
 
@@ -188,17 +190,6 @@ namespace DaggerfallWorkshop.Game
 
         Texture2D textureMicroMap = null;
 
-        private class NoteMarker
-        {
-            public string note;
-            public Vector3 position;
-
-            public NoteMarker(Vector3 position, string note)
-            {
-                this.note = note;
-                this.position = position;
-            }
-        }
         SortedList<int, NoteMarker> listUserNoteMarkers = new SortedList<int, NoteMarker>(); // the list containing the user note markers, key is the id used when creating the user note marker
         int idOfUserMarkerNoteToBeChanged; // used to identify id of last double-clicked user note marker when changing note text
         DaggerfallInputMessageBox messageboxUserNote;
@@ -206,28 +197,16 @@ namespace DaggerfallWorkshop.Game
 
         int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
 
-        /// <summary>
-        /// GetState() method for save system integration
-        /// </summary>
-        public Dictionary<string, AutomapGeometryDungeonState> GetState()
-        {
-            SaveStateAutomapDungeon(false);
-            return dictAutomapDungeonsDiscoveryState;
-        }
+        // dungeon state is of type AutomapGeometryDungeonState which has its models in 4th hierarchy level
+        AutomapGeometryDungeonState automapGeometryDungeonState = null;
+        // interior state is of type AutomapGeometryBlockState which has its models in 3rd hierarchy level
+        AutomapGeometryBlockState automapGeometryInteriorState = null;
 
         /// <summary>
-        /// SetState() method for save system integration
+        /// this dictionary is used to store the discovery state of dungeons in the game world
+        /// the AutomapGeometryDungeonState is stored for each dungeon in this dictionary identified by its identifier string
         /// </summary>
-        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
-        {
-            dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
-
-            if ((GameManager.Instance.IsPlayerInsideCastle) || (GameManager.Instance.IsPlayerInsideDungeon))
-            {
-                InitWhenInInteriorOrDungeon(null, true);
-                RestoreStateAutomapDungeon();
-            }
-        }
+        public Dictionary<string, AutomapGeometryDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapGeometryDungeonState>();
 
         #endregion
 
@@ -303,6 +282,9 @@ namespace DaggerfallWorkshop.Game
             set { debugTeleportMode = value; }
         }
 
+        /// <summary>
+        /// returns the Texture2D containing the texture with the micro map (small texture with 2x2 pixels representing a dungeon block - note: rendering will render this texture at double size)
+        /// </summary>
         public Texture2D TextureMicroMap
         {
             get { return textureMicroMap; }
@@ -316,6 +298,23 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// GetState() method for save system integration
+        /// </summary>
+        public Dictionary<string, AutomapGeometryDungeonState> GetState()
+        {
+            SaveStateAutomapDungeon(false);
+            return dictAutomapDungeonsDiscoveryState;
+        }
+
+        /// <summary>
+        /// SetState() method for save system integration
+        /// </summary>
+        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
+        {
+            dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
+        }
 
         /// <summary>
         /// sets the number of dungeons that are memorized
@@ -475,6 +474,11 @@ namespace DaggerfallWorkshop.Game
             return (gameobjectInFocus);
         }
 
+        /// <summary>
+        /// gets the mouse hover over text that will be displayed in the status bar/info bar at the bottom of the automap window
+        /// </summary>
+        /// <param name="screenPosition">the mouse position to be used for raycast</param>
+        /// <returns>the string containing the hover over text</returns>
         public string GetMouseHoverOverText(Vector2 screenPosition)
         {
             RaycastHit? nearestHit = null;
@@ -513,6 +517,11 @@ namespace DaggerfallWorkshop.Game
             return "";
         }
 
+        /// <summary>
+        /// method which tries to add or edit an existing user marker on a given click position
+        /// raycast test: if automap geometry is hit -> add new marker, if marker is hit -> edit marker, otherwise: do nothing
+        /// </summary>
+        /// <param name="screenPosition">the mouse position to be used for raycast</param>
         public void TryToAddOrEditUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             RaycastHit? nearestHit = null;
@@ -535,7 +544,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
                     int id = listUserNoteMarkers.AddNext(new NoteMarker(spawningPosition, ""));
-                    GameObject gameObjectUserNoteMarker = CreateUserNoteMarker(id, spawningPosition);
+                    GameObject gameObjectUserNoteMarker = CreateUserMarker(id, spawningPosition);
                 }
                 else
                 {
@@ -557,6 +566,11 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// method which tries to delete an existing user marker on a given click position
+        /// </summary>
+        /// <param name="screenPosition">the mouse position to be used for raycast</param>
+        /// <returns>true if a marker was hit and thus deleted</returns>
         public bool TryToRemoveUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             RaycastHit? nearestHit = null;
@@ -576,6 +590,10 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
+        /// <summary>
+        /// method which tries if a raycast will hit automap geometry and if so will center camera on the click position
+        /// </summary>
+        /// <param name="screenPosition">the mouse position to be used for raycast</param>
         public void TryCenterAutomapCameraOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             RaycastHit? nearestHit = null;
@@ -589,6 +607,10 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// method which tries if a raycast will hit automap geometry and if so will center rotation pivot axis on the click position
+        /// </summary>
+        /// <param name="screenPosition">the mouse position to be used for raycast</param>
         public void TrySetRotationPivotAxisToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             RaycastHit? nearestHit = null;
@@ -1320,14 +1342,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void LoadUserMarkerNotes()
-        {
-            if (gameObjectUserNoteMarkers == null)
-            {
-                gameObjectUserNoteMarkers = new GameObject("UserMarkerNotes");
-            }
-        }
-
+        /// <summary>
+        /// destroys all user marker notes (will destroy all marker gameobjects and will also clear list of user note markers)
+        /// </summary>
         private void DestroyUserMarkerNotes()
         {
             if (gameObjectUserNoteMarkers != null)
@@ -1340,7 +1357,13 @@ namespace DaggerfallWorkshop.Game
             listUserNoteMarkers.Clear();
         }
 
-        private GameObject CreateUserNoteMarker(int id, Vector3 spawningPosition)
+        /// <summary>
+        /// creates gameobjects for user marker (it is just the marker, not the note - the marker and note info is stored seperately and not touched by this function)
+        /// </summary>
+        /// <param name="id">the target id of the marker</param>
+        /// <param name="spawningPosition">the requested spawning position of the marker</param>
+        /// <returns>the GameObject with the marker</returns>
+        private GameObject CreateUserMarker(int id, Vector3 spawningPosition)
         {
             if (gameObjectUserNoteMarkers == null)
             {
@@ -1375,6 +1398,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// updates the micro map texture
+        /// </summary>
         private void UpdateMicroMapTexture()
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
@@ -1388,6 +1414,10 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// updates the micro map texture depending on if player is inside or in dungeon
+        /// </summary>
+        /// <param name="currentLocation">provide null if player is interior, provide DFLocation if player is in dungeon</param>
         private void UpdateMicroMapTexture(DFLocation? currentLocation)
         {
             if (DaggerfallUnity.Settings.AutomapDisableMicroMap)
@@ -1454,6 +1484,11 @@ namespace DaggerfallWorkshop.Game
             textureMicroMap.Apply(false);
         }
 
+        /// <summary>
+        /// get the nearest RaycastHit with automap layer geometry
+        /// </summary>
+        /// <param name="screenPosition">the mouse position used for raycast</param>
+        /// <param name="nearestHit">[out] the nearest RaycastHit with automap layer geometry, might be null if no geometry was hit</param>
         private void GetRayCastNearestHitOnAutomapLayer(Vector2 screenPosition, out RaycastHit? nearestHit)
         {
             Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
@@ -1783,6 +1818,9 @@ namespace DaggerfallWorkshop.Game
                 automapGeometryDungeonState.blocks.Add(automapGeometryBlockState);
             }
 
+            // store list of user note markers
+            automapGeometryDungeonState.listUserNoteMarkers = listUserNoteMarkers;
+
             // replace or add discovery state for current dungeon
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
@@ -1884,6 +1922,8 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+
+            DestroyUserMarkerNotes();
         }
 
         void UpdateMeshRendererDungeonState(ref MeshRenderer meshRenderer, AutomapGeometryDungeonState automapGeometryDungeonState, int indexBlock, int indexElement, int indexModel, bool forceNotVisitedInThisRun)
@@ -1972,6 +2012,18 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
                 }
+            }
+
+            DestroyUserMarkerNotes();
+
+            // (try to) load user note markers
+            var loadedListUserNoteMarkers = automapGeometryDungeonState.listUserNoteMarkers;
+            if (loadedListUserNoteMarkers != null)
+                listUserNoteMarkers = loadedListUserNoteMarkers;            
+
+            foreach (var userMarkerNote in listUserNoteMarkers)
+            {
+                CreateUserMarker(userMarkerNote.Key, userMarkerNote.Value.position);
             }
         }
 
@@ -2212,9 +2264,12 @@ namespace DaggerfallWorkshop.Game
         #endregion
     }
 
+    /// <summary>
+    /// extension for SortedList class - we want to reuse id's if list items have been deleted from the list and thus the id is free - so we need to have a function that supports this
+    /// </summary>
     public static class SortedListExtensions
     {
-        ///Add item to sortedList (numeric key) to next (lowest) available key item, and return key
+        ///Add item to next (lowest free) numeric key in SortedList, returns id (key) of the newly added item
         public static int AddNext<T>(this SortedList<int, T> sortedList, T item)
         {
             int key = 0;
