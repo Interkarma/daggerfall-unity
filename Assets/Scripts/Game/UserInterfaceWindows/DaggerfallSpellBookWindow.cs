@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector2 spellNameLabelPos = new Vector2(123, 2);
         Vector2 spellPointsLabelPos = new Vector2(214, 2);
         Vector2 spellCostLabelPos = new Vector2(76, 154);
+        Vector2 goldLabelPos = new Vector2(116, 154);
 
         Rect mainPanelRect = new Rect(0, 0, 259, 164);
         Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel spellNameLabel;
         TextLabel spellPointsLabel;
         TextLabel spellCostLabel;
+        TextLabel goldLabel;
         TextLabel[] spellEffectLabels;
 
         SpellIconPickerWindow iconPicker;
@@ -434,6 +436,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 spellCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellCostLabelPos, string.Empty, mainPanel);
                 spellCostLabel.ShadowPosition = Vector2.zero;
+                goldLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, goldLabelPos, string.Empty, mainPanel);
+                goldLabel.ShadowPosition = Vector2.zero;
+                UpdateGold();
             }
 
             // Spell points
@@ -459,6 +464,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 spellEffectPanels[i / 2].Components.Add(spellEffectLabels[i]);
             }
+        }
+
+        void UpdateGold()
+        {
+            goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
         }
 
         void UpdateSelection()
@@ -910,6 +920,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Add to player entity spellbook
                 GameManager.Instance.PlayerEntity.AddSpell(offeredSpells[spellsListBox.SelectedIndex]);
+                UpdateGold();
             }
             CloseWindow();
         }
