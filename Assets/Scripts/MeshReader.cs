@@ -483,9 +483,9 @@ namespace DaggerfallWorkshop
                     // Assign tile index, setting random marker back to grass
                     int offset = (y * tileDim) + x;
                     if (tile.TextureRecord < 56)
-                        tileMap[offset] = new Color32(record, 0, 0, 0);
+                        tileMap[offset] = new Color32(record, 0, 0, record);
                     else
-                        tileMap[offset] = new Color32(8, 0, 0, 0);      // Index 8 is grass
+                        tileMap[offset] = new Color32(8, 0, 0, 8);      // Index 8 is grass
                 }
             }
 

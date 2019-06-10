@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game
         public float ShadowStrength = defaultShadowStrength;
         public Light IndirectLight;                         // Point light that follows player to simulate indirect lighting
         public GameObject LocalPlayer;                      // Player for indirect light positioning
+        public AnimationCurve LightCurve;                   // Animation curve for light intensity
         public Light[] OtherLights;                         // Other lights to scale and enable/disable
 
         Light myLight;
@@ -104,17 +105,14 @@ namespace DaggerfallWorkshop.Game
             // Get value 0-1 for dawn through dusk
             float dawn = DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
             float dayRange = DaggerfallDateTime.DuskHour * DaggerfallDateTime.MinutesPerHour - dawn;
-            float lerp = (dfUnity.WorldTime.Now.MinuteOfDay - dawn) / dayRange;
+            float time = (dfUnity.WorldTime.Now.MinuteOfDay - dawn) / dayRange;
 
             // Set angle of rotation based on time of day and user value
-            float xrot = 180f * lerp;
+            float xrot = 180f * time;
             myLight.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
 
-            // Set light intensity
-            if (lerp < 0.5f)
-                daylightScale = lerp * 2f;
-            else
-                daylightScale = 1f - ((lerp - 0.5f) * 2f);
+            // Set light intensity from curve
+            daylightScale = LightCurve.Evaluate(time);
 
             // Set sun direction and scale
             if (myLight.enabled)

@@ -125,7 +125,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 scale = 1;
 
             // Create scaled render texture
-            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 16);
+            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 0);
 
             // Create output texture
             paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
