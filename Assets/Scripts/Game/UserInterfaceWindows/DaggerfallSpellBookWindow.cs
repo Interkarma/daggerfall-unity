@@ -102,7 +102,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const SoundClips closeSpellBook = SoundClips.PageTurn;
 
         bool buyMode = false;
-        bool autoClose = false;
         EffectBundleSettings renamedSpellSettings;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
@@ -329,7 +328,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListBox.MaxCharacters = 22;
             spellsListBox.OnSelectItem += SpellsListBox_OnSelectItem;
             if (buyMode)
-                spellsListBox.OnMouseDoubleClick += SpellsListBox_OnMouseDoubleClick;
+                spellsListBox.OnMouseDoubleClick += BuyButton_OnMouseClick;
             else
                 spellsListBox.OnUseSelectedItem += SpellsListBox_OnUseSelectedItem;
             spellsListBox.OnMouseScrollDown += SpellsListBox_OnMouseScroll;
@@ -868,18 +867,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            autoClose = false;
-            BuySpellHandler();
-        }
-
-        private void SpellsListBox_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
-        {
-            autoClose = true;
-            BuySpellHandler();
-        }
-
-        private void BuySpellHandler()
-        {
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;
             int tradePrice = GetTradePrice();
@@ -924,13 +911,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Add to player entity spellbook
                 GameManager.Instance.PlayerEntity.AddSpell(offeredSpells[spellsListBox.SelectedIndex]);
             }
-            if (autoClose)
-            {
-                // Drop back to HUD like classic
-                DaggerfallUI.Instance.PopToHUD();
-            }
-            else
-                CloseWindow();
+            CloseWindow();
         }
 
         #endregion
