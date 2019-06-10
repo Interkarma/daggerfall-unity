@@ -532,7 +532,7 @@ namespace DaggerfallWorkshop.Game
                 if (!nearestHit.Value.transform.name.StartsWith("UserNoteMarker_")) // if not a user note marker
                 {
                     // add a new user note marker
-                    Vector3 spawningPosition = (nearestHit.Value.point) + nearestHit.Value.normal * 0.6f;
+                    Vector3 spawningPosition = (nearestHit.Value.point) + nearestHit.Value.normal * 0.7f;
                     for (int i = 0; i < listUserNoteMarkers.Count; i++)
                     {
                         var enumerator = listUserNoteMarkers.GetEnumerator();
@@ -1358,6 +1358,58 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// creates a diamond shaped primitive
+        /// </summary>
+        /// <returns>the diamond shaped primitive GameObject</returns>
+        private GameObject CreateDiamondShapePrimitive()
+        {
+            GameObject gameobjectDiamondShape= new GameObject("Diamond");
+            MeshFilter meshFilter = gameobjectDiamondShape.AddComponent<MeshFilter>();
+
+            Vector3 p0 = new Vector3(+0.5f, 0, -0.5f);
+            Vector3 p1 = new Vector3(-0.5f, 0, -0.5f);
+            Vector3 p2 = new Vector3(-0.5f, 0, +0.5f);
+            Vector3 p3 = new Vector3(+0.5f, 0, +0.5f);            
+            Vector3 s1 = new Vector3(0, 1.0f, 0);
+            Vector3 s2 = new Vector3(0, -1.0f, 0);
+
+            Mesh mesh = new Mesh();
+            mesh.Clear();
+
+            mesh.vertices = new Vector3[]{
+            p0,p1,s1,
+            p1,p2,s1,
+            p2,p3,s1,
+            p3,p0,s1,
+            p1,p0,s2,
+            p2,p1,s2,
+            p3,p2,s2,
+            p0,p3,s2
+            };
+            mesh.triangles = new int[]{
+                0,1,2,
+                3,4,5,
+                6,7,8,
+                9,10,11,
+                12,13,14,
+                15,16,17,
+                18,19,20,
+                21,22,23
+            };
+
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            meshFilter.sharedMesh = mesh;
+
+            gameobjectDiamondShape.AddComponent<MeshRenderer>();
+
+            gameobjectDiamondShape.AddComponent<MeshCollider>();
+
+            return gameobjectDiamondShape;
+        }
+
+        /// <summary>
         /// creates gameobjects for user marker (it is just the marker, not the note - the marker and note info is stored seperately and not touched by this function)
         /// </summary>
         /// <param name="id">the target id of the marker</param>
@@ -1370,16 +1422,15 @@ namespace DaggerfallWorkshop.Game
                 gameObjectUserNoteMarkers = new GameObject("UserMarkerNotes");
                 gameObjectUserNoteMarkers.transform.SetParent(gameobjectAutomap.transform);
             }
-            GameObject gameObjectUserNoteMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject gameObjectUserNoteMarker = CreateDiamondShapePrimitive();
             gameObjectUserNoteMarker.transform.SetParent(gameObjectUserNoteMarkers.transform);
             gameObjectUserNoteMarker.transform.position = spawningPosition;
             gameObjectUserNoteMarker.name = "UserNoteMarker_" + id;
             Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
-            materialUserNoteMarker.color = new Color(1.0f, 0.6f, 0.0f);
+            materialUserNoteMarker.color = new Color(1.0f, 0.55f, 0.0f);
             gameObjectUserNoteMarker.GetComponent<MeshRenderer>().material = materialUserNoteMarker;
             gameObjectUserNoteMarker.layer = layerAutomap;
-            gameObjectUserNoteMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-            gameObjectUserNoteMarker.transform.rotation = Quaternion.Euler(0.0f, 45.0f, 45.0f);
+            gameObjectUserNoteMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
             return gameObjectUserNoteMarker;
         }
 
@@ -1642,7 +1693,7 @@ namespace DaggerfallWorkshop.Game
                 cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
                 cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraAutomap.cullingMask = 1 << layerAutomap;
-                cameraAutomap.renderingPath = RenderingPath.Forward; // Camera.main.renderingPath;
+                cameraAutomap.renderingPath = RenderingPath.Forward;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 5000.0f;
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
@@ -1700,8 +1751,8 @@ namespace DaggerfallWorkshop.Game
                 Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
                 Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
 
-                keyLight.intensity = 0.5f;
-                fillLight.intensity = 0.5f;
+                keyLight.intensity = 0.9f;
+                fillLight.intensity = 0.7f;
                 backLight.intensity = 0.5f;
             }
         }
