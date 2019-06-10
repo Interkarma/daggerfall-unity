@@ -623,7 +623,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             dummyPanelAutomap = DaggerfallUI.AddPanel(rectDummyPanelAutomap, NativePanel);
 
-            // Setup automap render panel (into this the level geometry is rendered) - use dummyPanelAutomap to get size
+            // Setup automap render panel (the level geometry is rendered into this panel) - use dummyPanelAutomap to get size
             Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;            
             panelRenderAutomap = DaggerfallUI.AddPanel(positionPanelRenderAutomap, ParentPanel);
             panelRenderAutomap.AutoSize = AutoSizeModes.None;
@@ -647,7 +647,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rectPanelOverlay.size = new Vector2(28, 28);
             dummyPanelOverlay = DaggerfallUI.AddPanel(rectPanelOverlay, NativePanel);
 
-            // Setup automap overlay panel (into this overlay is rendered) - use dummyPanelOverlay to get size
+            // Setup automap overlay panel (overlay is rendered into this panel) - use dummyPanelOverlay to get size
             Rect positionPanelOverlay = dummyPanelOverlay.Rectangle;
             panelRenderOverlay = DaggerfallUI.AddPanel(positionPanelOverlay, ParentPanel);
             panelRenderOverlay.AutoSize = AutoSizeModes.None;
@@ -1252,12 +1252,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ActionDecreaseSliceLevel();
             }
 
-            UpdateHoverOverText();
+            UpdateMouseHoverOverText();
         }        
 
         #region Private Methods
 
-        private void UpdateHoverOverText()
+        /// <summary>
+        /// updates the mouse hover over text in the status bar in the bottom of the automap window
+        /// </summary>
+        private void UpdateMouseHoverOverText()
         {
             Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
             mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
