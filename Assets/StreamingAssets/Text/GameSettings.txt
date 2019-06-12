@@ -133,6 +133,8 @@ interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
 useLegacyDeferred,                                  Use Legacy Deferred
 useLegacyDeferredInfo,                              Legacy rendering path
+retroRenderingMode,                                 Retro Rendering Mode
+retroRenderingModeInfo,                             3D world rendered at lower resolution while UI remains at game resolution\rFor best results set game to use a 16:10 resolution (e.g. 1920x1200)
 
 - Options shared among sliders. Missing keys use default text.
 

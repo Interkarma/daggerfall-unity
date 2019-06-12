@@ -137,6 +137,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider fovSlider;
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
+        HorizontalSlider retroRenderingMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox useLegacyDeferred;
@@ -323,6 +324,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
+            retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
+                DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
         }
 
         private void SaveSettings()
@@ -409,6 +412,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
+            DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

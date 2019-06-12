@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop
         // [Video]
         public int ResolutionWidth { get; set; }
         public int ResolutionHeight { get; set; }
-        public bool Retro320x200World { get; set; }
+        public int RetroRenderingMode { get; set; }
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
         public int FieldOfView { get; set; }
@@ -182,7 +182,7 @@ namespace DaggerfallWorkshop
 
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
-            Retro320x200World = GetBool(sectionVideo, "Retro320x200World");
+            RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             VSync = GetBool(sectionVideo, "VSync");
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
-            SetBool(sectionVideo, "Retro320x200World", Retro320x200World);
+            SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
