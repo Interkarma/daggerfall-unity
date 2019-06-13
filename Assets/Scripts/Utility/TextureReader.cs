@@ -216,6 +216,12 @@ namespace DaggerfallWorkshop.Utility
                 albedoMap.Apply(true, !settings.stayReadable);
             }
 
+            // Adjust mipmap bias of albedo map when retro mode rendering is enabled
+            if (albedoMap && DaggerfallUnity.Settings.RetroRenderingMode > 0)
+            {
+                albedoMap.mipMapBias = -0.5f;
+            }
+
             // Set normal texture (always import normal if present on disk)
             Texture2D normalMap = null;
             bool normalMapImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Normal, textureImport, !settings.stayReadable, out normalMap);
