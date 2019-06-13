@@ -522,46 +522,40 @@ namespace DaggerfallWorkshop.Game
         /// raycast test: if automap geometry is hit -> add new marker, if marker is hit -> edit marker, otherwise: do nothing
         /// </summary>
         /// <param name="screenPosition">the mouse position to be used for raycast</param>
-        public void TryToAddOrEditUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        public void TryToAddOrEditUserNoteMarkerOnDungeonSegmentAtScreenPosition(Vector2 screenPosition, bool editUserNoteOnCreation)
         {
             RaycastHit? nearestHit = null;
             GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
-
+            
             if (nearestHit.HasValue)
             {
-                if (!nearestHit.Value.transform.name.StartsWith("UserNoteMarker_")) // if not a user note marker
+                // if hit gamobject is not a user note marker (so for now it is possible to create markers around beacons - this is intended)
+                if (!nearestHit.Value.transform.name.StartsWith("UserNoteMarker_"))
                 {
                     // add a new user note marker
                     Vector3 spawningPosition = (nearestHit.Value.point) + nearestHit.Value.normal * 0.7f;
-                    for (int i = 0; i < listUserNoteMarkers.Count; i++)
-                    {
-                        var enumerator = listUserNoteMarkers.GetEnumerator();
-                        while (enumerator.MoveNext())
-                        {
-                            // test if there is already a user note marker near to the requested spawning position
-                            if (Vector3.Distance(enumerator.Current.Value.position, spawningPosition) < 1.0f)
-                                return; // if yes, do not add a new marker
-                        }
+
+                    // test if there is already a user note marker near to the requested spawning position
+                    var enumerator = listUserNoteMarkers.GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {                        
+                        if (Vector3.Distance(enumerator.Current.Value.position, spawningPosition) < 1.0f)
+                            return; // if yes, do not add a new marker
                     }
+                    
                     int id = listUserNoteMarkers.AddNext(new NoteMarker(spawningPosition, ""));
-                    GameObject gameObjectUserNoteMarker = CreateUserMarker(id, spawningPosition);
+                    GameObject gameObjectNewUserNoteMarker = CreateUserMarker(id, spawningPosition);
+
+                    if (editUserNoteOnCreation)
+                    {
+                        EditUserNote(id);
+                    }
                 }
                 else
                 {
                     // edit user note marker
-                    messageboxUserNote = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, DaggerfallUI.Instance.AutomapWindow);
-                    messageboxUserNote.SetTextBoxLabel("the note says: ");
-                    messageboxUserNote.TextPanelDistanceX = 5;
-                    messageboxUserNote.TextPanelDistanceY = 8;
                     int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
-                    if (listUserNoteMarkers.ContainsKey(id))
-                        messageboxUserNote.TextBox.Text = listUserNoteMarkers[id].note;
-                    messageboxUserNote.TextBox.Numeric = false;
-                    messageboxUserNote.TextBox.MaxCharacters = 100;
-                    messageboxUserNote.TextBox.WidthOverride = 286;
-                    idOfUserMarkerNoteToBeChanged = id;
-                    messageboxUserNote.OnGotUserInput += UserNote_OnGotUserInput;
-                    messageboxUserNote.Show();                    
+                    EditUserNote(id);
                 }
             }
         }
@@ -1432,6 +1426,23 @@ namespace DaggerfallWorkshop.Game
             gameObjectUserNoteMarker.layer = layerAutomap;
             gameObjectUserNoteMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
             return gameObjectUserNoteMarker;
+        }
+
+        private void EditUserNote(int id)
+        {
+            // edit user note marker
+            messageboxUserNote = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, DaggerfallUI.Instance.AutomapWindow);
+            messageboxUserNote.SetTextBoxLabel("you note: ");
+            messageboxUserNote.TextPanelDistanceX = 5;
+            messageboxUserNote.TextPanelDistanceY = 8;            
+            if (listUserNoteMarkers.ContainsKey(id))
+                messageboxUserNote.TextBox.Text = listUserNoteMarkers[id].note;
+            messageboxUserNote.TextBox.Numeric = false;
+            messageboxUserNote.TextBox.MaxCharacters = 100;
+            messageboxUserNote.TextBox.WidthOverride = 286;
+            idOfUserMarkerNoteToBeChanged = id;
+            messageboxUserNote.OnGotUserInput += UserNote_OnGotUserInput;
+            messageboxUserNote.Show();
         }
 
         /// <summary>
