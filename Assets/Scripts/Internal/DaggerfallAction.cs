@@ -548,7 +548,7 @@ namespace DaggerfallWorkshop
             }
             GameManager.Instance.PlayerMotor.FreezeMotor = 0.5f;
 
-            RaiseOnTeleportActionEvent(triggerObj, thisAction.NextObject);
+            RaiseOnTeleportActionEvent(thisAction.gameObject, thisAction.NextObject);
 
             playerObject.transform.position = thisAction.NextObject.transform.position;
             playerObject.transform.rotation = thisAction.NextObject.transform.rotation;            

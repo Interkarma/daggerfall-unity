@@ -338,6 +338,9 @@ namespace DaggerfallWorkshop.Game
             if (gameObjectUserNoteMarkers != null)
                 gameObjectUserNoteMarkers.SetActive(true);
 
+            if (gameObjectTeleporterMarkers != null)
+                gameObjectTeleporterMarkers.SetActive(true);
+
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
@@ -369,6 +372,9 @@ namespace DaggerfallWorkshop.Game
 
             if (gameObjectUserNoteMarkers != null)
                 gameObjectUserNoteMarkers.SetActive(false);
+
+            if (gameObjectTeleporterMarkers != null)
+                gameObjectTeleporterMarkers.SetActive(false);
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)))
             {
@@ -1461,7 +1467,7 @@ namespace DaggerfallWorkshop.Game
             messageboxUserNote.Show();
         }
 
-        private void AddTeleporterOnMap(Transform startPoint, Transform endPoint)
+        private void AddTeleporterMarkerOnMap(Transform startPoint, Transform endPoint)
         {
             if (gameObjectTeleporterMarkers == null)
             {
@@ -1469,39 +1475,46 @@ namespace DaggerfallWorkshop.Game
                 gameObjectTeleporterMarkers.transform.SetParent(gameobjectAutomap.transform);
                 gameObjectTeleporterMarkers.layer = layerAutomap;
             }
+
+            gameObjectTeleporterMarkers.SetActive(false);
+
             GameObject gameObjectTeleporterEntrance = new GameObject("Teleporter - Portal Entrance");
             gameObjectTeleporterEntrance.transform.SetParent(gameObjectTeleporterMarkers.transform);
-            gameObjectTeleporterEntrance.transform.position = startPoint.position;
+            gameObjectTeleporterEntrance.transform.position = startPoint.position + Vector3.up * 1.0f;
             gameObjectTeleporterEntrance.transform.rotation = startPoint.rotation;
+            gameObjectTeleporterEntrance.transform.Rotate(0.0f, 90.0f, 0.0f);
             gameObjectTeleporterEntrance.layer = layerAutomap;
 
             GameObject gameObjectTeleporterEntranceMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
             gameObjectTeleporterEntranceMarker.name = "PortalMarker";
             Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
-            materialTeleporterEntranceMarker.color = new Color(0.4f, 0.0f, 0.7f);
+            materialTeleporterEntranceMarker.color = new Color(0.7f, 0.3f, 1.0f);
             gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
             gameObjectTeleporterEntranceMarker.layer = layerAutomap;
             gameObjectTeleporterEntranceMarker.transform.localPosition = Vector3.zero;
-            gameObjectTeleporterEntranceMarker.transform.localScale = new Vector3(1.6f, 0.1f, 1.0f);
-            gameObjectTeleporterEntranceMarker.transform.Rotate(0.0f, 0.0f, 90.0f);
+            gameObjectTeleporterEntranceMarker.transform.localScale = new Vector3(2.0f, 0.1f, 1.0f);
+            gameObjectTeleporterEntranceMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
 
             GameObject gameObjectTeleporterExit = new GameObject("Teleporter - Portal Exit");
             gameObjectTeleporterExit.transform.SetParent(gameObjectTeleporterMarkers.transform);
-            gameObjectTeleporterExit.transform.position = endPoint.position;
-            gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
+            gameObjectTeleporterExit.transform.position = endPoint.position + Vector3.up * 0.2f;
+            //gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
+            //gameObjectTeleporterExit.transform.Rotate(0.0f, 180.0f, 0.0f);
+            gameObjectTeleporterExit.transform.rotation = startPoint.rotation; // take rotation from portal entrance
+            gameObjectTeleporterExit.transform.Rotate(0.0f, 90.0f, 0.0f);
             gameObjectTeleporterExit.layer = layerAutomap;
 
             GameObject gameObjectTeleporterExitMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
             gameObjectTeleporterExitMarker.name = "PortalMarker";
             Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
-            materialTeleporterExitMarker.color = new Color(0.5f, 0.0f, 0.85f);
+            materialTeleporterExitMarker.color = new Color(0.4f, 0.0f, 0.7f);
             gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
             gameObjectTeleporterExitMarker.layer = layerAutomap;
             gameObjectTeleporterExitMarker.transform.localPosition = Vector3.zero;
-            gameObjectTeleporterExitMarker.transform.localScale = new Vector3(1.6f, 0.1f, 1.0f);
-            gameObjectTeleporterExitMarker.transform.Rotate(0.0f, 0.0f, 90.0f);
+            gameObjectTeleporterExitMarker.transform.localScale = new Vector3(2.0f, 0.1f, 1.0f);
+            gameObjectTeleporterExitMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
         }
 
         /// <summary>
@@ -2289,7 +2302,7 @@ namespace DaggerfallWorkshop.Game
 
         void OnTeleportAction(GameObject triggerObj, GameObject nextObj)
         {
-            AddTeleporterOnMap(triggerObj.transform, nextObj.transform);
+            AddTeleporterMarkerOnMap(triggerObj.transform, nextObj.transform);
         }
 
         #endregion
