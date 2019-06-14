@@ -195,6 +195,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallInputMessageBox messageboxUserNote;
         GameObject gameObjectUserNoteMarkers = null; // container object for custom user notes markers
 
+        GameObject gameObjectTeleporterMarkers = null; // container object for teleporter markers
+
         int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
 
         // dungeon state is of type AutomapGeometryDungeonState which has its models in 4th hierarchy level
@@ -683,6 +685,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             StartGameBehaviour.OnNewGame += OnNewGame;
             SaveLoadManager.OnLoad += OnLoadEvent;
+            DaggerfallAction.OnTeleportAction += OnTeleportAction;
         }
 
         void OnDisable()
@@ -693,6 +696,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
             StartGameBehaviour.OnNewGame -= OnNewGame;
             SaveLoadManager.OnLoad -= OnLoadEvent;
+            DaggerfallAction.OnTeleportAction -= OnTeleportAction;
         }
 
         void Start()
@@ -1416,6 +1420,7 @@ namespace DaggerfallWorkshop.Game
             {
                 gameObjectUserNoteMarkers = new GameObject("UserMarkerNotes");
                 gameObjectUserNoteMarkers.transform.SetParent(gameobjectAutomap.transform);
+                gameObjectUserNoteMarkers.layer = layerAutomap;
             }
             GameObject gameObjectUserNoteMarker = CreateDiamondShapePrimitive();
             gameObjectUserNoteMarker.transform.SetParent(gameObjectUserNoteMarkers.transform);
@@ -1429,6 +1434,10 @@ namespace DaggerfallWorkshop.Game
             return gameObjectUserNoteMarker;
         }
 
+        /// <summary>
+        /// edits the user note with a given id
+        /// </summary>
+        /// <param name="id">the id of the user note to be edited</param>
         private void EditUserNote(int id)
         {
             // edit user note marker
@@ -1444,6 +1453,49 @@ namespace DaggerfallWorkshop.Game
             idOfUserMarkerNoteToBeChanged = id;
             messageboxUserNote.OnGotUserInput += UserNote_OnGotUserInput;
             messageboxUserNote.Show();
+        }
+
+        private void AddTeleporterOnMap(Transform startPoint, Transform endPoint)
+        {
+            if (gameObjectTeleporterMarkers == null)
+            {
+                gameObjectTeleporterMarkers = new GameObject("TeleporterMarkers");
+                gameObjectTeleporterMarkers.transform.SetParent(gameobjectAutomap.transform);
+                gameObjectTeleporterMarkers.layer = layerAutomap;
+            }
+            GameObject gameObjectTeleporterEntrance = new GameObject("Teleporter - Portal Entrance");
+            gameObjectTeleporterEntrance.transform.SetParent(gameObjectTeleporterMarkers.transform);
+            gameObjectTeleporterEntrance.transform.position = startPoint.position;
+            gameObjectTeleporterEntrance.transform.rotation = startPoint.rotation;
+            gameObjectTeleporterEntrance.layer = layerAutomap;
+
+            GameObject gameObjectTeleporterEntranceMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
+            gameObjectTeleporterEntranceMarker.name = "PortalMarker";
+            Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
+            materialTeleporterEntranceMarker.color = new Color(0.4f, 0.0f, 0.7f);
+            gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
+            gameObjectTeleporterEntranceMarker.layer = layerAutomap;
+            gameObjectTeleporterEntranceMarker.transform.localPosition = Vector3.zero;
+            gameObjectTeleporterEntranceMarker.transform.localScale = new Vector3(1.6f, 0.1f, 1.0f);
+            gameObjectTeleporterEntranceMarker.transform.Rotate(0.0f, 0.0f, 90.0f);
+
+            GameObject gameObjectTeleporterExit = new GameObject("Teleporter - Portal Exit");
+            gameObjectTeleporterExit.transform.SetParent(gameObjectTeleporterMarkers.transform);
+            gameObjectTeleporterExit.transform.position = endPoint.position;
+            gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
+            gameObjectTeleporterExit.layer = layerAutomap;
+
+            GameObject gameObjectTeleporterExitMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
+            gameObjectTeleporterExitMarker.name = "PortalMarker";
+            Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
+            materialTeleporterExitMarker.color = new Color(0.5f, 0.0f, 0.85f);
+            gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
+            gameObjectTeleporterExitMarker.layer = layerAutomap;
+            gameObjectTeleporterExitMarker.transform.localPosition = Vector3.zero;
+            gameObjectTeleporterExitMarker.transform.localScale = new Vector3(1.6f, 0.1f, 1.0f);
+            gameObjectTeleporterExitMarker.transform.Rotate(0.0f, 0.0f, 90.0f);
         }
 
         /// <summary>
@@ -2170,6 +2222,16 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        void UserNote_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            listUserNoteMarkers[idOfUserMarkerNoteToBeChanged].note = input;
+            messageboxUserNote = null;
+        }
+
+        #endregion
+
+        #region events
+
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             InitWhenInInteriorOrDungeon(args.StaticDoor);
@@ -2219,10 +2281,9 @@ namespace DaggerfallWorkshop.Game
             DestroyBeacons();
         }
 
-        void UserNote_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        void OnTeleportAction(GameObject triggerObj, GameObject nextObj)
         {
-            listUserNoteMarkers[idOfUserMarkerNoteToBeChanged].note = input;
-            messageboxUserNote = null;
+            AddTeleporterOnMap(triggerObj.transform, nextObj.transform);
         }
 
         #endregion
