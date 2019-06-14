@@ -336,15 +336,15 @@ namespace DaggerfallWorkshop.Game
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
+            gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+
             // create camera (if not present) that will render automap level geometry
             CreateAutomapCamera();
 
             // create lights that will light automap level geometry
             CreateLightsForAutomapGeometry();
 
-            UpdateMicroMapTexture();
-
-            gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+            UpdateMicroMapTexture();            
 
             UpdateSlicingPositionY();
         }
@@ -612,7 +612,8 @@ namespace DaggerfallWorkshop.Game
 
             if (nearestHit.HasValue)
             {
-                rotationPivotAxisPosition = new Vector3(nearestHit.Value.point.x, gameobjectBeaconRotationPivotAxis.transform.position.y, nearestHit.Value.point.z);
+                float yOffset = +1.0f;
+                rotationPivotAxisPosition = new Vector3(nearestHit.Value.point.x, nearestHit.Value.point.y + yOffset, nearestHit.Value.point.z);
             }
         }
 
@@ -1300,7 +1301,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void DestroyBeacons()
+        private void DestroyBeacons()
         {
             if (gameobjectBeacons != null)
             {
@@ -2326,6 +2327,7 @@ namespace DaggerfallWorkshop.Game
         #endregion
     }
 
+    #region class extensions
     /// <summary>
     /// extension for SortedList class - we want to reuse id's if list items have been deleted from the list and thus the id is free - so we need to have a function that supports this
     /// </summary>
@@ -2360,4 +2362,6 @@ namespace DaggerfallWorkshop.Game
         }
 
     }
+
+    #endregion
 }

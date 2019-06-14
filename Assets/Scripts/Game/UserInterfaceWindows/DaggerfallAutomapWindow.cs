@@ -792,8 +792,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Setup();
 
                 // reset values to default on first automap window open
-                ResetRotationPivotAxisPosition(); // reset rotation pivot axis
                 automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+                //ResetRotationPivotAxisPosition(); // reset rotation pivot axis                
             }
             // check if global automap open/close hotkey has changed
             if (toggleClosedBinding != InputManager.Instance.GetBinding(InputManager.Actions.AutoMap))
@@ -837,6 +837,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // reset values to default whenever automap window is opened
                 automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
             }
+
+            // reset rotation pivot axis position to player position
+            ResetRotationPivotAxisPosition(); // reset rotation pivot axis
 
             if (automap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
