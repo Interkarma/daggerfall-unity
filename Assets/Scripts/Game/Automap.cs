@@ -333,6 +333,9 @@ namespace DaggerfallWorkshop.Game
 
             gameobjectBeacons.SetActive(true);
 
+            if (gameObjectUserNoteMarkers != null)
+                gameObjectUserNoteMarkers.SetActive(true);
+
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
@@ -361,6 +364,9 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
             
             gameobjectBeacons.SetActive(false);
+
+            if (gameObjectUserNoteMarkers != null)
+                gameObjectUserNoteMarkers.SetActive(false);
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)))
             {
