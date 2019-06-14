@@ -1439,8 +1439,8 @@ namespace DaggerfallWorkshop.Game
             if (listUserNoteMarkers.ContainsKey(id))
                 messageboxUserNote.TextBox.Text = listUserNoteMarkers[id].note;
             messageboxUserNote.TextBox.Numeric = false;
-            messageboxUserNote.TextBox.MaxCharacters = 100;
-            messageboxUserNote.TextBox.WidthOverride = 286;
+            messageboxUserNote.TextBox.MaxCharacters = 50;
+            messageboxUserNote.TextBox.WidthOverride = 306;
             idOfUserMarkerNoteToBeChanged = id;
             messageboxUserNote.OnGotUserInput += UserNote_OnGotUserInput;
             messageboxUserNote.Show();
