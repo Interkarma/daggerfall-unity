@@ -694,6 +694,11 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 Debug.Log("Player crime detected: rifling through private property!!");
 
+                // Send the guards
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
+                playerEntity.SpawnCityGuards(true);
+
                 // Open inventory window with activated private container as remote target (pre-set)
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
