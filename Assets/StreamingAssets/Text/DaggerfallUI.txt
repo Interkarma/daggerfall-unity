@@ -29,6 +29,10 @@ finishQuestHeader,  {0} {1} at {2}:
 quest,              Quest
 noteHeader,         {0} in {1}:
 
+- Character window:
+
+levelProgress,      Progress made to the next level: {0}%
+
 - Inventory & trade windows:
 
 readMap,            Discovered the location of %map after studying a map.
