@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game.Items
             List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
             // Reseed random
-            Random.InitState((int)(DaggerfallUnity.CurrentUID * Time.realtimeSinceStartup));
+            Random.InitState(items.GetHashCode());
 
             // Random gold
             int goldCount = Random.Range(matrix.MinGold, matrix.MaxGold + 1) * playerEntity.Level;
