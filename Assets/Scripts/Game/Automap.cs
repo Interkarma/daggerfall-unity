@@ -138,6 +138,11 @@ namespace DaggerfallWorkshop.Game
         const string NameGameobjectBeaconEntrancePositionMarker = "BeaconEntrancePositionMarker";
         const string NameGameobjectCubeEntrancePositionMarker = "CubeEntrancePositionMarker";
 
+        const string NameGameobjectPortalMarker = "PortalMarker";
+        const string NameGameobjectTeleporterSubStringStart = "Teleporter [";
+        const string NameGameobjectTeleporterEntranceSubStringEnd = "] - Portal Entrance";
+        const string NameGameobjectTeleporterExitSubStringEnd = "] - Portal Exit";
+
         const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying too high will result in geometry not being revealed by this raycast
         const float raycastDistanceViewDirection = 30.0f; // don't want to make it too easy to discover big halls - although it shouldn't be to small as well
         const float raycastDistanceEntranceMarkerReveal = 100.0f;
@@ -533,25 +538,48 @@ namespace DaggerfallWorkshop.Game
                     if (listUserNoteMarkers.ContainsKey(id))
                         return listUserNoteMarkers[id].note; // get user note by id
                 }
+                // if hit geometry is player position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconPlayerPosition)
                 {
                     return "player position beacon";
                 }
+                // if hit geometry is player rotation pivot axis or rotation indicator arrows
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconRotationPivotAxis || nearestHit.Value.transform.name == NameGameobjectRotateArrow)
                 {
                     return "rotation pivot axis";
                 }
+                // if hit geometry is dungeon entrance/exit position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconEntrancePositionMarker)
                 {
                     return "entrance/exit position beacon";
                 }
+                // if hit geometry is dungeon entrance/exit position marker
                 else if (nearestHit.Value.transform.name == NameGameobjectCubeEntrancePositionMarker)
                 {
                     return "entrance/exit";
                 }
+                // if hit geometry is player position marker arrow
                 else if (nearestHit.Value.transform.name == NameGameobjectPlayerMarkerArrow)
                 {
                     return "player marker";
+                }
+                // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter entrance
+                else if (
+                        nearestHit.Value.transform.name == NameGameobjectPortalMarker &&
+                        nearestHit.Value.transform.parent.transform.name.StartsWith(NameGameobjectTeleporterSubStringStart) &&
+                        nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterEntranceSubStringEnd)
+                        )
+                {
+                    return "teleporter (entrance)";
+                }
+                // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter exit
+                else if (
+                        nearestHit.Value.transform.name == NameGameobjectPortalMarker &&
+                        nearestHit.Value.transform.parent.transform.name.StartsWith(NameGameobjectTeleporterSubStringStart) &&
+                        nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterExitSubStringEnd)
+                        )
+                {
+                    return "teleporter (exit)";
                 }
             }
             return "";
@@ -1510,7 +1538,7 @@ namespace DaggerfallWorkshop.Game
 
             gameObjectTeleporterMarkers.SetActive(false);
 
-            string teleporterEntranceName = "Teleporter [" + dictkey + "] - Portal Entrance";
+            string teleporterEntranceName = NameGameobjectTeleporterSubStringStart + dictkey + NameGameobjectTeleporterEntranceSubStringEnd;
             if (gameObjectTeleporterMarkers.transform.Find(teleporterEntranceName) == null)
             {
                 GameObject gameObjectTeleporterEntrance = new GameObject(teleporterEntranceName);
@@ -1522,7 +1550,7 @@ namespace DaggerfallWorkshop.Game
 
                 GameObject gameObjectTeleporterEntranceMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
-                gameObjectTeleporterEntranceMarker.name = "PortalMarker";
+                gameObjectTeleporterEntranceMarker.name = NameGameobjectPortalMarker;
                 Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
                 materialTeleporterEntranceMarker.color = new Color(0.7f, 0.3f, 1.0f);
                 gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
@@ -1532,7 +1560,7 @@ namespace DaggerfallWorkshop.Game
                 gameObjectTeleporterEntranceMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
             }
 
-            string teleporterExitName = "Teleporter [" + dictkey + "] - Portal Exit";
+            string teleporterExitName = NameGameobjectTeleporterSubStringStart + dictkey + NameGameobjectTeleporterExitSubStringEnd;
             if (gameObjectTeleporterMarkers.transform.Find(teleporterExitName) == null)
             {
                 GameObject gameObjectTeleporterExit = new GameObject(teleporterExitName);
@@ -1546,7 +1574,7 @@ namespace DaggerfallWorkshop.Game
 
                 GameObject gameObjectTeleporterExitMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
-                gameObjectTeleporterExitMarker.name = "PortalMarker";
+                gameObjectTeleporterExitMarker.name = NameGameobjectPortalMarker;
                 Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
                 materialTeleporterExitMarker.color = new Color(0.2f, 0.0f, 0.4f);
                 gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
