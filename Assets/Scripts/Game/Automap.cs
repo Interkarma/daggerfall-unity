@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game
         /// class to store state of discovery of a dungeon block or interior, this state can be used to restore state of GameObject gameobjectGeometry
         /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
         /// used for discovery state of the models inside GameObject gameobjectGeometry when an interior is loaded into this GameObject
-        /// it is also used as type inside the blocks list in AutomapGeometryDungeonState
+        /// it is also used as type inside the blocks list in AutomapDungeonState
         /// </summary>
         public class AutomapGeometryBlockState
         {
@@ -84,13 +84,14 @@ namespace DaggerfallWorkshop.Game
         /// used for discovery state of the models inside GameObject gameobjectGeometry when a dungeon is loaded into this GameObject
         /// it also stores list of user note markers
         /// </summary>
-        public class AutomapGeometryDungeonState
+        public class AutomapDungeonState
         {
             public String locationName; /// name of the dungeon location
             public ulong timeInSecondsLastVisited; /// time in seconds (from DaggerfallDateTime) when player last visited the dungeon (used to store only the n last dungeons in save games)
             public bool entranceDiscovered; /// indicates if the dungeon entrance has already been discovered
-            public List<AutomapGeometryBlockState> blocks;
+            public List<AutomapGeometryBlockState> blocks; // automap geometry dungeon state
             public SortedList<int, NoteMarker> listUserNoteMarkers; // list of user note markers
+            public Dictionary<string, TeleporterConnection> dictTeleporterConnections; // dictionary of discovered teleporter connections
         }
 
         public class NoteMarker
@@ -103,6 +104,12 @@ namespace DaggerfallWorkshop.Game
                 this.note = note;
                 this.position = position;
             }
+        }
+
+        public class TeleporterConnection
+        {
+            public Transform teleporterEntrance;
+            public Transform teleporterExit;
         }
 
         #endregion
@@ -195,20 +202,26 @@ namespace DaggerfallWorkshop.Game
         DaggerfallInputMessageBox messageboxUserNote;
         GameObject gameObjectUserNoteMarkers = null; // container object for custom user notes markers
 
+
+        /// <summary>
+        /// this dictionary is used to store teleporter connections after being discovered by pc
+        /// </summary>
+        Dictionary<string, TeleporterConnection> dictTeleporterConnections = new Dictionary<string, TeleporterConnection>();
+
         GameObject gameObjectTeleporterMarkers = null; // container object for teleporter markers
 
         int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
 
-        // dungeon state is of type AutomapGeometryDungeonState which has its models in 4th hierarchy level
-        AutomapGeometryDungeonState automapGeometryDungeonState = null;
-        // interior state is of type AutomapGeometryBlockState which has its models in 3rd hierarchy level
+        // dungeon state is of type AutomapDungeonState which has its models in block field in a 4 level hierarchy
+        AutomapDungeonState automapDungeonState = null;
+        // interior state is of type AutomapGeometryBlockState which has its models in a 3 level hierarchy
         AutomapGeometryBlockState automapGeometryInteriorState = null;
 
         /// <summary>
         /// this dictionary is used to store the discovery state of dungeons in the game world
-        /// the AutomapGeometryDungeonState is stored for each dungeon in this dictionary identified by its identifier string
+        /// the AutomapDungeonState is stored for each dungeon in this dictionary identified by its identifier string
         /// </summary>
-        public Dictionary<string, AutomapGeometryDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapGeometryDungeonState>();
+        Dictionary<string, AutomapDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapDungeonState>();
 
         #endregion
 
@@ -304,7 +317,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// GetState() method for save system integration
         /// </summary>
-        public Dictionary<string, AutomapGeometryDungeonState> GetState()
+        public Dictionary<string, AutomapDungeonState> GetState()
         {
             SaveStateAutomapDungeon(false);
             return dictAutomapDungeonsDiscoveryState;
@@ -313,7 +326,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// SetState() method for save system integration
         /// </summary>
-        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
+        public void SetState(Dictionary<string, AutomapDungeonState> savedDictAutomapDungeonsDiscoveryState)
         {
             dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
         }
@@ -338,9 +351,6 @@ namespace DaggerfallWorkshop.Game
             if (gameObjectUserNoteMarkers != null)
                 gameObjectUserNoteMarkers.SetActive(true);
 
-            if (gameObjectTeleporterMarkers != null)
-                gameObjectTeleporterMarkers.SetActive(true);
-
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
@@ -352,7 +362,13 @@ namespace DaggerfallWorkshop.Game
             // create lights that will light automap level geometry
             CreateLightsForAutomapGeometry();
 
-            UpdateMicroMapTexture();            
+            UpdateMicroMapTexture();
+
+            // create teleport markers
+            CreateTeleporterMarkers();
+
+            if (gameObjectTeleporterMarkers != null)
+                gameObjectTeleporterMarkers.SetActive(true);
 
             UpdateSlicingPositionY();
         }
@@ -1467,7 +1483,13 @@ namespace DaggerfallWorkshop.Game
             messageboxUserNote.Show();
         }
 
-        private void AddTeleporterMarkerOnMap(Transform startPoint, Transform endPoint)
+        /// <summary>
+        /// add GameObjects for a teleport marker pair (entrance, exit) so it does show up on the map - if already present nothing is added
+        /// </summary>
+        /// <param name="startPoint">the transform of the entrance portal</param>
+        /// <param name="endPoint">the transform of the exit portal</param>
+        /// <param name="dictkey">the key used in the dictionary for this portal - will be used for unique naming of GameObjects</param>
+        private void AddTeleporterMarkerOnMap(Transform startPoint, Transform endPoint, string dictkey)
         {
             if (gameObjectTeleporterMarkers == null)
             {
@@ -1478,43 +1500,77 @@ namespace DaggerfallWorkshop.Game
 
             gameObjectTeleporterMarkers.SetActive(false);
 
-            GameObject gameObjectTeleporterEntrance = new GameObject("Teleporter - Portal Entrance");
-            gameObjectTeleporterEntrance.transform.SetParent(gameObjectTeleporterMarkers.transform);
-            gameObjectTeleporterEntrance.transform.position = startPoint.position + Vector3.up * 1.0f;
-            gameObjectTeleporterEntrance.transform.rotation = startPoint.rotation;
-            gameObjectTeleporterEntrance.transform.Rotate(0.0f, 90.0f, 0.0f);
-            gameObjectTeleporterEntrance.layer = layerAutomap;
+            string teleporterEntranceName = "Teleporter [" + dictkey + "] - Portal Entrance";
+            if (gameObjectTeleporterMarkers.transform.Find(teleporterEntranceName) == null)
+            {
+                GameObject gameObjectTeleporterEntrance = new GameObject(teleporterEntranceName);
+                gameObjectTeleporterEntrance.transform.SetParent(gameObjectTeleporterMarkers.transform);
+                gameObjectTeleporterEntrance.transform.position = startPoint.position + Vector3.up * 1.0f;
+                gameObjectTeleporterEntrance.transform.rotation = startPoint.rotation;
+                gameObjectTeleporterEntrance.transform.Rotate(0.0f, 90.0f, 0.0f);
+                gameObjectTeleporterEntrance.layer = layerAutomap;
 
-            GameObject gameObjectTeleporterEntranceMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
-            gameObjectTeleporterEntranceMarker.name = "PortalMarker";
-            Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
-            materialTeleporterEntranceMarker.color = new Color(0.7f, 0.3f, 1.0f);
-            gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
-            gameObjectTeleporterEntranceMarker.layer = layerAutomap;
-            gameObjectTeleporterEntranceMarker.transform.localPosition = Vector3.zero;
-            gameObjectTeleporterEntranceMarker.transform.localScale = new Vector3(2.0f, 0.1f, 1.0f);
-            gameObjectTeleporterEntranceMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+                GameObject gameObjectTeleporterEntranceMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
+                gameObjectTeleporterEntranceMarker.name = "PortalMarker";
+                Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
+                materialTeleporterEntranceMarker.color = new Color(0.7f, 0.3f, 1.0f);
+                gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
+                gameObjectTeleporterEntranceMarker.layer = layerAutomap;
+                gameObjectTeleporterEntranceMarker.transform.localPosition = Vector3.zero;
+                gameObjectTeleporterEntranceMarker.transform.localScale = new Vector3(2.0f, 0.1f, 1.0f);
+                gameObjectTeleporterEntranceMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+            }
 
-            GameObject gameObjectTeleporterExit = new GameObject("Teleporter - Portal Exit");
-            gameObjectTeleporterExit.transform.SetParent(gameObjectTeleporterMarkers.transform);
-            gameObjectTeleporterExit.transform.position = endPoint.position + Vector3.up * 0.2f;
-            //gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
-            //gameObjectTeleporterExit.transform.Rotate(0.0f, 180.0f, 0.0f);
-            gameObjectTeleporterExit.transform.rotation = startPoint.rotation; // take rotation from portal entrance
-            gameObjectTeleporterExit.transform.Rotate(0.0f, 90.0f, 0.0f);
-            gameObjectTeleporterExit.layer = layerAutomap;
+            string teleporterExitName = "Teleporter [" + dictkey + "] - Portal Exit";
+            if (gameObjectTeleporterMarkers.transform.Find(teleporterExitName) == null)
+            {
+                GameObject gameObjectTeleporterExit = new GameObject(teleporterExitName);
+                gameObjectTeleporterExit.transform.SetParent(gameObjectTeleporterMarkers.transform);
+                gameObjectTeleporterExit.transform.position = endPoint.position + Vector3.up * 0.2f;
+                //gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
+                //gameObjectTeleporterExit.transform.Rotate(0.0f, 180.0f, 0.0f);
+                gameObjectTeleporterExit.transform.rotation = startPoint.rotation; // take rotation from portal entrance
+                gameObjectTeleporterExit.transform.Rotate(0.0f, 90.0f, 0.0f);
+                gameObjectTeleporterExit.layer = layerAutomap;
 
-            GameObject gameObjectTeleporterExitMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
-            gameObjectTeleporterExitMarker.name = "PortalMarker";
-            Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
-            materialTeleporterExitMarker.color = new Color(0.4f, 0.0f, 0.7f);
-            gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
-            gameObjectTeleporterExitMarker.layer = layerAutomap;
-            gameObjectTeleporterExitMarker.transform.localPosition = Vector3.zero;
-            gameObjectTeleporterExitMarker.transform.localScale = new Vector3(2.0f, 0.1f, 1.0f);
-            gameObjectTeleporterExitMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+                GameObject gameObjectTeleporterExitMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
+                gameObjectTeleporterExitMarker.name = "PortalMarker";
+                Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
+                materialTeleporterExitMarker.color = new Color(0.2f, 0.0f, 0.4f);
+                gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
+                gameObjectTeleporterExitMarker.layer = layerAutomap;
+                gameObjectTeleporterExitMarker.transform.localPosition = Vector3.zero;
+                gameObjectTeleporterExitMarker.transform.localScale = new Vector3(2.0f, 0.1f, 1.0f);
+                gameObjectTeleporterExitMarker.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+            }
+        }
+
+        /// <summary>
+        /// creates GameObjects for the (already discovered) teleport markers if not already present
+        /// </summary>
+        void CreateTeleporterMarkers()
+        {
+            foreach (KeyValuePair<string, TeleporterConnection> connection in dictTeleporterConnections)
+            {
+                AddTeleporterMarkerOnMap(connection.Value.teleporterEntrance, connection.Value.teleporterExit, connection.Key);
+            }
+        }
+
+        /// <summary>
+        /// destroys all teleport markers (will destroy all teleport marker gameobjects and will also clear the dictionray of teleporter connections)
+        /// </summary>
+        void DestroyTeleporterMarkers()
+        {
+            if (gameObjectTeleporterMarkers != null)
+            {
+                foreach (Transform child in gameObjectTeleporterMarkers.transform)
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+            }
+            dictTeleporterConnections.Clear();
         }
 
         /// <summary>
@@ -1883,10 +1939,10 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// saves discovery state to object automapGeometryDungeonState
+        /// saves discovery state to object automapDungeonState
         /// this class is mapping the hierarchy inside the GameObject gameObjectGeometry in such way
         /// that the MeshRenderer enabled state for objects in the 4th hierarchy level (which are the actual models)
-        /// is matching value of field "discovered" in AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
+        /// is matching value of field "discovered" in AutomapDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
         /// dictionary of dungeon states of visited dungeons is then updated (which is used for save game mechanism)
         /// </summary>
         private void SaveStateAutomapDungeon(bool forceSaveOfDungeonDiscoveryState)
@@ -1910,11 +1966,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             Transform gameObjectGeometryDungeon = gameobjectGeometry.transform.GetChild(0);
-            automapGeometryDungeonState = new AutomapGeometryDungeonState();
-            automapGeometryDungeonState.locationName = gameObjectGeometryDungeon.name;
-            automapGeometryDungeonState.entranceDiscovered = ((gameobjectBeaconEntrancePosition) && (gameobjectBeaconEntrancePosition.activeSelf)); // get entrance marker discovery state
-            automapGeometryDungeonState.timeInSecondsLastVisited = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
-            automapGeometryDungeonState.blocks = new List<AutomapGeometryBlockState>();
+            automapDungeonState = new AutomapDungeonState();
+            automapDungeonState.locationName = gameObjectGeometryDungeon.name;
+            automapDungeonState.entranceDiscovered = ((gameobjectBeaconEntrancePosition) && (gameobjectBeaconEntrancePosition.activeSelf)); // get entrance marker discovery state
+            automapDungeonState.timeInSecondsLastVisited = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
+            automapDungeonState.blocks = new List<AutomapGeometryBlockState>();
 
             foreach (Transform currentBlock in gameObjectGeometryDungeon.transform)
             {
@@ -1949,29 +2005,29 @@ namespace DaggerfallWorkshop.Game
                     blockElements.Add(blockElement);
                 }
                 automapGeometryBlockState.blockElements = blockElements;
-                automapGeometryDungeonState.blocks.Add(automapGeometryBlockState);
+                automapDungeonState.blocks.Add(automapGeometryBlockState);
             }
 
             // store list of user note markers
-            automapGeometryDungeonState.listUserNoteMarkers = listUserNoteMarkers;
+            automapDungeonState.listUserNoteMarkers = listUserNoteMarkers;
 
             // replace or add discovery state for current dungeon
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
             if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
             {
-                dictAutomapDungeonsDiscoveryState[locationStringIdentifier] = automapGeometryDungeonState;
+                dictAutomapDungeonsDiscoveryState[locationStringIdentifier] = automapDungeonState;
             }
             else
             {
-                dictAutomapDungeonsDiscoveryState.Add(locationStringIdentifier, automapGeometryDungeonState);
+                dictAutomapDungeonsDiscoveryState.Add(locationStringIdentifier, automapDungeonState);
             }
 
             // make list out of dictionary and sort by last time visited - then get rid of dungeons in dictionary that weren't visited lately
-            List<KeyValuePair<string, AutomapGeometryDungeonState>> sortedList = new List<KeyValuePair<string, AutomapGeometryDungeonState>>(dictAutomapDungeonsDiscoveryState);
+            List<KeyValuePair<string, AutomapDungeonState>> sortedList = new List<KeyValuePair<string, AutomapDungeonState>>(dictAutomapDungeonsDiscoveryState);
             sortedList.Sort(
-                delegate (KeyValuePair<string, AutomapGeometryDungeonState> firstPair,
-                KeyValuePair<string, AutomapGeometryDungeonState> nextPair)
+                delegate (KeyValuePair<string, AutomapDungeonState> firstPair,
+                KeyValuePair<string, AutomapDungeonState> nextPair)
                 {
                     return nextPair.Value.timeInSecondsLastVisited.CompareTo(firstPair.Value.timeInSecondsLastVisited);
                 }
@@ -1982,7 +2038,7 @@ namespace DaggerfallWorkshop.Game
             {
                 ulong timeInSecondsLimit = sortedList[updatedNumberOfDungeonMemorized - 1].Value.timeInSecondsLastVisited;
 
-                foreach (KeyValuePair<string, AutomapGeometryDungeonState> entry in sortedList) // use sorted list and iterate over it - remove elements of dictionary
+                foreach (KeyValuePair<string, AutomapDungeonState> entry in sortedList) // use sorted list and iterate over it - remove elements of dictionary
                 {
                     if (entry.Value.timeInSecondsLastVisited < timeInSecondsLimit)
                     {
@@ -2058,15 +2114,16 @@ namespace DaggerfallWorkshop.Game
             }
 
             DestroyUserMarkerNotes();
+            DestroyTeleporterMarkers();
         }
 
-        void UpdateMeshRendererDungeonState(ref MeshRenderer meshRenderer, AutomapGeometryDungeonState automapGeometryDungeonState, int indexBlock, int indexElement, int indexModel, bool forceNotVisitedInThisRun)
+        void UpdateMeshRendererDungeonState(ref MeshRenderer meshRenderer, AutomapDungeonState automapDungeonState, int indexBlock, int indexElement, int indexModel, bool forceNotVisitedInThisRun)
         {
-            if (automapGeometryDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true)
+            if (automapDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true)
             {
                 meshRenderer.enabled = true;
 
-                if ((!forceNotVisitedInThisRun)&&(automapGeometryDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].visitedInThisRun))
+                if ((!forceNotVisitedInThisRun)&&(automapDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].visitedInThisRun))
                 {
                     Material[] materials = meshRenderer.materials;
                     foreach (Material mat in meshRenderer.materials)
@@ -2092,10 +2149,10 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// restores discovery state from automapGeometryDungeonState onto gameobjectGeometry
-        /// automapGeometryDungeonState is loaded from dictionary of dungeon states of visited dungeons
-        /// this class is mapping the value of field "discovered" (AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
-        /// inside object automapGeometryDungeonState to the objects inside the 4th hierarchy level of GameObject gameObjectGeometry (which are the actual models)
+        /// restores discovery state from automapDungeonState onto gameobjectGeometry
+        /// automapDungeonState is loaded from dictionary of dungeon states of visited dungeons
+        /// this class is mapping the value of field "discovered" (AutomapDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
+        /// inside object automapDungeonState to the objects inside the 4th hierarchy level of GameObject gameObjectGeometry (which are the actual models)
         /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
         /// </summary>
         /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
@@ -2109,26 +2166,26 @@ namespace DaggerfallWorkshop.Game
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
             if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
             {
-                automapGeometryDungeonState = dictAutomapDungeonsDiscoveryState[locationStringIdentifier];
+                automapDungeonState = dictAutomapDungeonsDiscoveryState[locationStringIdentifier];
             }
             else
             {
-                automapGeometryDungeonState = null;                
+                automapDungeonState = null;                
             }
 
-            if (automapGeometryDungeonState == null)
+            if (automapDungeonState == null)
                 return;
 
-            gameobjectBeaconEntrancePosition.SetActive(automapGeometryDungeonState.entranceDiscovered); // set entrance marker discovery state         
+            gameobjectBeaconEntrancePosition.SetActive(automapDungeonState.entranceDiscovered); // set entrance marker discovery state         
 
-            if (location.name != automapGeometryDungeonState.locationName)
+            if (location.name != automapDungeonState.locationName)
                 return;
 
             for (int indexBlock = 0; indexBlock < location.childCount; indexBlock++)
             {
                 Transform currentBlock = location.GetChild(indexBlock);
 
-                if (currentBlock.name != automapGeometryDungeonState.blocks[indexBlock].blockName)
+                if (currentBlock.name != automapDungeonState.blocks[indexBlock].blockName)
                     return;
 
                 for (int indexElement = 0; indexElement < currentBlock.childCount; indexElement++)
@@ -2142,7 +2199,7 @@ namespace DaggerfallWorkshop.Game
                         MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
                         if (meshRenderer)
                         {
-                            UpdateMeshRendererDungeonState(ref meshRenderer, automapGeometryDungeonState, indexBlock, indexElement, indexModel, forceNotVisitedInThisRun);
+                            UpdateMeshRendererDungeonState(ref meshRenderer, automapDungeonState, indexBlock, indexElement, indexModel, forceNotVisitedInThisRun);
                         }
                     }
                 }
@@ -2151,7 +2208,7 @@ namespace DaggerfallWorkshop.Game
             DestroyUserMarkerNotes();
 
             // (try to) load user note markers
-            var loadedListUserNoteMarkers = automapGeometryDungeonState.listUserNoteMarkers;
+            var loadedListUserNoteMarkers = automapDungeonState.listUserNoteMarkers;
             if (loadedListUserNoteMarkers != null)
                 listUserNoteMarkers = loadedListUserNoteMarkers;            
 
@@ -2159,6 +2216,10 @@ namespace DaggerfallWorkshop.Game
             {
                 CreateUserMarker(userMarkerNote.Key, userMarkerNote.Value.position);
             }
+
+            DestroyTeleporterMarkers();
+            // (try to) load teleporter connections
+
         }
 
         /// <summary>
@@ -2298,11 +2359,19 @@ namespace DaggerfallWorkshop.Game
                 gameobjectGeometry = null;
             }
             DestroyBeacons();
+            DestroyUserMarkerNotes();
+            DestroyTeleporterMarkers();
         }
 
         void OnTeleportAction(GameObject triggerObj, GameObject nextObj)
         {
-            AddTeleporterMarkerOnMap(triggerObj.transform, nextObj.transform);
+            TeleporterConnection connection = new TeleporterConnection();
+            connection.teleporterEntrance = triggerObj.transform;
+            connection.teleporterExit = nextObj.transform;
+            string key = "position: " + triggerObj.transform.position.ToString();
+            key += ", rotation: " + triggerObj.transform.rotation.ToString();
+            if (!dictTeleporterConnections.ContainsKey(key))
+                dictTeleporterConnections.Add(key, connection);
         }
 
         #endregion
