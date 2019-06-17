@@ -106,10 +106,25 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// we need to use this instead of Transform since Transform can not be serialized
+        /// </summary>
+        public class TeleporterTransform
+        {
+            public Vector3 position;
+            public Quaternion rotation;
+
+            public TeleporterTransform(Transform transform)
+            {
+                position = transform.position;
+                rotation = transform.rotation;
+            }
+        }
+
         public class TeleporterConnection
         {
-            public Transform teleporterEntrance;
-            public Transform teleporterExit;
+            public TeleporterTransform teleporterEntrance;
+            public TeleporterTransform teleporterExit;
         }
 
         #endregion
@@ -304,11 +319,6 @@ namespace DaggerfallWorkshop.Game
         {
             get { return textureMicroMap; }
         }
-
-        //public SortedList<int, string> listUserNoteMarkers
-        //{
-        //    get { return listUserNoteMarkers; }
-        //}
 
         #endregion
 
@@ -1489,7 +1499,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="startPoint">the transform of the entrance portal</param>
         /// <param name="endPoint">the transform of the exit portal</param>
         /// <param name="dictkey">the key used in the dictionary for this portal - will be used for unique naming of GameObjects</param>
-        private void AddTeleporterMarkerOnMap(Transform startPoint, Transform endPoint, string dictkey)
+        private void AddTeleporterMarkerOnMap(TeleporterTransform startPoint, TeleporterTransform endPoint, string dictkey)
         {
             if (gameObjectTeleporterMarkers == null)
             {
@@ -2011,6 +2021,9 @@ namespace DaggerfallWorkshop.Game
             // store list of user note markers
             automapDungeonState.listUserNoteMarkers = listUserNoteMarkers;
 
+            // store list of teleporter connections
+            automapDungeonState.dictTeleporterConnections = dictTeleporterConnections;
+
             // replace or add discovery state for current dungeon
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
@@ -2219,6 +2232,9 @@ namespace DaggerfallWorkshop.Game
 
             DestroyTeleporterMarkers();
             // (try to) load teleporter connections
+            var loadedDictTeleporterConnections = automapDungeonState.dictTeleporterConnections;
+            if (loadedDictTeleporterConnections != null)
+                dictTeleporterConnections = loadedDictTeleporterConnections;
 
         }
 
@@ -2366,8 +2382,8 @@ namespace DaggerfallWorkshop.Game
         void OnTeleportAction(GameObject triggerObj, GameObject nextObj)
         {
             TeleporterConnection connection = new TeleporterConnection();
-            connection.teleporterEntrance = triggerObj.transform;
-            connection.teleporterExit = nextObj.transform;
+            connection.teleporterEntrance = new TeleporterTransform(triggerObj.transform);
+            connection.teleporterExit = new TeleporterTransform(nextObj.transform);
             string key = "position: " + triggerObj.transform.position.ToString();
             key += ", rotation: " + triggerObj.transform.rotation.ToString();
             if (!dictTeleporterConnections.ContainsKey(key))
