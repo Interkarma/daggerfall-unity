@@ -2079,6 +2079,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
             if (!GameManager.Instance.IsPlayerInsideBuilding)
             {
+                // first check for teleporter portal marker hits
+                if (automap.TryForTeleporterPortalsAtScreenPosition(mousePosition))
+                    return;
+
+                // if no teleporter portal marker was hit, try to add or edit a user marker note
                 automap.TryToAddOrEditUserNoteMarkerOnDungeonSegmentAtScreenPosition(mousePosition, !Input.GetKey(KeyCode.LeftControl));
             }
         }
