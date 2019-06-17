@@ -1645,7 +1645,7 @@ namespace DaggerfallWorkshop.Game
                 gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
                 gameObjectTeleporterEntranceMarker.name = NameGameobjectTeleporterPortalMarker;
                 Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
-                materialTeleporterEntranceMarker.color = new Color(0.7f, 0.3f, 1.0f);
+                materialTeleporterEntranceMarker.color = new Color(0.8f, 0.4f, 1.0f);
                 gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
                 gameObjectTeleporterEntranceMarker.layer = layerAutomap;
                 gameObjectTeleporterEntranceMarker.transform.localPosition = Vector3.zero;
@@ -1669,7 +1669,7 @@ namespace DaggerfallWorkshop.Game
                 gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
                 gameObjectTeleporterExitMarker.name = NameGameobjectTeleporterPortalMarker;
                 Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
-                materialTeleporterExitMarker.color = new Color(0.2f, 0.0f, 0.4f);
+                materialTeleporterExitMarker.color = new Color(0.4f, 0.2f, 0.5f);
                 gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
                 gameObjectTeleporterExitMarker.layer = layerAutomap;
                 gameObjectTeleporterExitMarker.transform.localPosition = Vector3.zero;
