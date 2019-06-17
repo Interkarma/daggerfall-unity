@@ -953,6 +953,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // check if iTween camera animation is running
             if (automap.ITweenCameraAnimationIsRunning)
             {
+                // update oldMousePosition to prevent problems with drag and drog action that starts before animation is over 
+                oldMousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+
                 // if so update automap view so animation plays correctly
                 UpdateAutomapView();
                 // and then return and do nothing else (until animation is finished no control commands can be issued)
