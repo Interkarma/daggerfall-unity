@@ -248,6 +248,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         Dictionary<string, AutomapDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapDungeonState>();
 
+        bool iTweenCameraAnimationIsRunning = false; // indicates if iTween camera animation is running (i.e. teleporter portal jump animation plays)
+
         #endregion
 
         #region Properties
@@ -328,6 +330,16 @@ namespace DaggerfallWorkshop.Game
         public Texture2D TextureMicroMap
         {
             get { return textureMicroMap; }
+        }
+
+        /// <summary>
+        /// returns true if a iTween camera animation is running
+        /// (i.e. teleporter portal has been clicked and animation runs to jump to /
+        /// focus portal at other end of teleporter connection)
+        /// </summary>
+        public bool ITweenCameraAnimationIsRunning
+        {
+            get { return iTweenCameraAnimationIsRunning; }
         }
 
         #endregion
@@ -612,7 +624,21 @@ namespace DaggerfallWorkshop.Game
                             //Transform transformExitPortal = gameObjectTeleporterMarkers.transform.Find(searchName);
                             //float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - transformExitPortal.position);
                             float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - connection.teleporterEntrance.position);
-                            cameraAutomap.transform.position = connection.teleporterExit.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;
+                            //cameraAutomap.transform.position = connection.teleporterExit.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;
+
+                            if (computedCameraBackwardDistance > 0.0f)
+                            {
+                                iTweenCameraAnimationIsRunning = true;
+                                Hashtable moveParams = __ExternalAssets.iTween.Hash(
+                                "position", connection.teleporterExit.position - cameraAutomap.transform.forward * computedCameraBackwardDistance,
+                                "time", 1.0f,
+                                "ignoretimescale", true, // important since timescale == 0 in menus
+                                "easetype", __ExternalAssets.iTween.EaseType.easeInOutSine,
+                                "oncomplete", "ITweenAnimationComplete",
+                                "oncompletetarget", this.gameObject // important to specify target so that oncomplete function is found (since it is not part of camera gameobject)
+                                );
+                                __ExternalAssets.iTween.MoveTo(cameraAutomap.gameObject, moveParams); // MoveTo call on camera gameObject
+                            }
                         }
                     }
                     // hit portal marker is an exit portal
@@ -624,13 +650,32 @@ namespace DaggerfallWorkshop.Game
                         {
                             TeleporterConnection connection = dictTeleporterConnections[key];
                             float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - connection.teleporterExit.position);
-                            cameraAutomap.transform.position = connection.teleporterEntrance.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;
+                            //cameraAutomap.transform.position = connection.teleporterEntrance.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;
+
+                            if (computedCameraBackwardDistance > 0.0f)
+                            {
+                                iTweenCameraAnimationIsRunning = true; // 
+                                Hashtable moveParams = __ExternalAssets.iTween.Hash(
+                                "position", connection.teleporterEntrance.position - cameraAutomap.transform.forward * computedCameraBackwardDistance,
+                                "time", 1.0f,
+                                "ignoretimescale", true, // important since timescale == 0 in menus
+                                "easetype", __ExternalAssets.iTween.EaseType.easeInOutSine,
+                                "oncomplete", "ITweenAnimationComplete",
+                                "oncompletetarget", this.gameObject // important to specify target so that oncomplete function is found (since it is not part of camera gameobject)
+                                );
+                                __ExternalAssets.iTween.MoveTo(cameraAutomap.gameObject, moveParams); // MoveTo call on camera gameObject
+                            }
                         }
                     }
                     return true;
                 }
             }
             return false;
+        }
+
+        private void ITweenAnimationComplete()
+        {
+            iTweenCameraAnimationIsRunning = false;
         }
 
         /// <summary>
