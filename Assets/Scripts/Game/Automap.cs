@@ -620,25 +620,18 @@ namespace DaggerfallWorkshop.Game
                         if (dictTeleporterConnections.ContainsKey(key))
                         {
                             TeleporterConnection connection = dictTeleporterConnections[key];
-                            //string searchName = NameGameobjectTeleporterSubStringStart + connection.ToString() + NameGameobjectTeleporterExitSubStringEnd;
-                            //Transform transformExitPortal = gameObjectTeleporterMarkers.transform.Find(searchName);
-                            //float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - transformExitPortal.position);
-                            float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - connection.teleporterEntrance.position);
-                            //cameraAutomap.transform.position = connection.teleporterExit.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;
 
-                            if (computedCameraBackwardDistance > 0.0f)
-                            {
-                                iTweenCameraAnimationIsRunning = true;
-                                Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                                "position", connection.teleporterExit.position - cameraAutomap.transform.forward * computedCameraBackwardDistance,
-                                "time", 1.0f,
-                                "ignoretimescale", true, // important since timescale == 0 in menus
-                                "easetype", __ExternalAssets.iTween.EaseType.easeInOutSine,
-                                "oncomplete", "ITweenAnimationComplete",
-                                "oncompletetarget", this.gameObject // important to specify target so that oncomplete function is found (since it is not part of camera gameobject)
-                                );
-                                __ExternalAssets.iTween.MoveTo(cameraAutomap.gameObject, moveParams); // MoveTo call on camera gameObject
-                            }
+                            iTweenCameraAnimationIsRunning = true;
+                            Hashtable moveParams = __ExternalAssets.iTween.Hash(
+                            "position", cameraAutomap.transform.position - (connection.teleporterEntrance.position - connection.teleporterExit.position),
+                            //"position", connection.teleporterExit.position - cameraAutomap.transform.forward * computedCameraBackwardDistance,
+                            "time", 1.0f,
+                            "ignoretimescale", true, // important since timescale == 0 in menus
+                            "easetype", __ExternalAssets.iTween.EaseType.easeInOutSine,
+                            "oncomplete", "ITweenAnimationComplete",
+                            "oncompletetarget", this.gameObject // important to specify target so that oncomplete function is found (since it is not part of camera gameobject)
+                            );
+                            __ExternalAssets.iTween.MoveTo(cameraAutomap.gameObject, moveParams); // MoveTo call on camera gameObject
                         }
                     }
                     // hit portal marker is an exit portal
@@ -649,22 +642,18 @@ namespace DaggerfallWorkshop.Game
                         if (dictTeleporterConnections.ContainsKey(key))
                         {
                             TeleporterConnection connection = dictTeleporterConnections[key];
-                            float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - connection.teleporterExit.position);
-                            //cameraAutomap.transform.position = connection.teleporterEntrance.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;
 
-                            if (computedCameraBackwardDistance > 0.0f)
-                            {
-                                iTweenCameraAnimationIsRunning = true; // 
-                                Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                                "position", connection.teleporterEntrance.position - cameraAutomap.transform.forward * computedCameraBackwardDistance,
-                                "time", 1.0f,
-                                "ignoretimescale", true, // important since timescale == 0 in menus
-                                "easetype", __ExternalAssets.iTween.EaseType.easeInOutSine,
-                                "oncomplete", "ITweenAnimationComplete",
-                                "oncompletetarget", this.gameObject // important to specify target so that oncomplete function is found (since it is not part of camera gameobject)
-                                );
-                                __ExternalAssets.iTween.MoveTo(cameraAutomap.gameObject, moveParams); // MoveTo call on camera gameObject
-                            }
+                            iTweenCameraAnimationIsRunning = true;
+                            Hashtable moveParams = __ExternalAssets.iTween.Hash(
+                            "position", cameraAutomap.transform.position - (connection.teleporterExit.position - connection.teleporterEntrance.position),
+                            //"position", connection.teleporterEntrance.position - cameraAutomap.transform.forward * computedCameraBackwardDistance,
+                            "time", 1.0f,
+                            "ignoretimescale", true, // important since timescale == 0 in menus
+                            "easetype", __ExternalAssets.iTween.EaseType.easeInOutSine,
+                            "oncomplete", "ITweenAnimationComplete",
+                            "oncompletetarget", this.gameObject // important to specify target so that oncomplete function is found (since it is not part of camera gameobject)
+                            );
+                            __ExternalAssets.iTween.MoveTo(cameraAutomap.gameObject, moveParams); // MoveTo call on camera gameObject
                         }
                     }
                     return true;
