@@ -1319,7 +1319,10 @@ namespace DaggerfallWorkshop.Game
         /// is matching value of field "discovered" in AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
         /// </summary>
         private void saveStateAutomapInterior()
-        {            
+        {
+            if (!gameobjectGeometry)
+                return;
+
             Transform interiorBlock = gameobjectGeometry.transform.GetChild(0); // building interior should only have one block - so get it
             automapGeometryInteriorState = new AutomapGeometryBlockState();
             automapGeometryInteriorState.blockName = interiorBlock.name;
