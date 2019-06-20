@@ -90,6 +90,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public float IncreasedWeightAllowanceMultiplier { get; private set; }
         public int IncreasedArmorValueModifier { get; private set; }
         public int DecreasedArmorValueModifier { get; private set; }
+        public int ChanceToHitModifier { get; private set; }
         public bool ImprovedAcuteHearing { get; set; }
         public bool ImprovedAthleticism { get; set; }
         public bool ImprovedAdrenalineRush { get; set; }
@@ -410,6 +411,11 @@ namespace DaggerfallWorkshop.Game.Entity
             // In classic effects this never goes below -5
             if (amount < DecreasedArmorValueModifier)
                 DecreasedArmorValueModifier = amount;
+        }
+
+        public void ChangeChanceToHitModifier(int amount)
+        {
+            ChanceToHitModifier += amount;
         }
 
         public void SetMaxHealthLimiter(int amount)
@@ -833,6 +839,7 @@ namespace DaggerfallWorkshop.Game.Entity
             IncreasedWeightAllowanceMultiplier = 0;
             IncreasedArmorValueModifier = 0;
             DecreasedArmorValueModifier = 0;
+            ChanceToHitModifier = 0;
             ImprovedAcuteHearing = false;
             ImprovedAthleticism = false;
             ImprovedAdrenalineRush = false;
