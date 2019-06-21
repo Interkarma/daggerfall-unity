@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Fields
 
-        static Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
+        static readonly Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
 
         bool showBackgroundLayer = true;
         bool showCharacterLayer = true;
