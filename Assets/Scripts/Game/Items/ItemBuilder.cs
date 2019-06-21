@@ -373,6 +373,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
+                newItem.nativeMaterialValue = 0; // Arrows don't have a material
             }
 
             return newItem;

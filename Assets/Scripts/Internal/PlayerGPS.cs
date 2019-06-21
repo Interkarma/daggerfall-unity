@@ -933,7 +933,7 @@ namespace DaggerfallWorkshop
             if (onlyIfResidence && !RMBLayout.IsResidence(db.buildingType))
                 return;
 
-            if (dl.discoveredBuildings.ContainsKey(db.buildingKey))
+            if (dl.discoveredBuildings != null && dl.discoveredBuildings.ContainsKey(db.buildingKey))
                 dl.discoveredBuildings.Remove(db.buildingKey);
         }
 

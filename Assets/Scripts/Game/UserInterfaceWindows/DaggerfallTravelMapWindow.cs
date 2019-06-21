@@ -880,10 +880,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void AtButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             // Identify region or map location
-            if (RegionSelected == false)
-                StartIdentify();
-            else
-                StartIdentify();
+            findingLocation = false;
+            StartIdentify();
         }
 
         void FindlocationButtonClickHandler(BaseScreenComponent sender, Vector2 position)

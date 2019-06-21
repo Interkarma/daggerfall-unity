@@ -358,18 +358,19 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets/sets the key of the potion recipe allocated to this item.
         /// Has a side effect (ugh, sorry) of populating the item value from the recipe price.
-        /// (due to value not being encapsulated) Also populates texture record.
+        /// (due to value not being encapsulated) Also populates texture record for potions.
         /// </summary>
         public int PotionRecipeKey
         {
             get { return potionRecipeKey; }
             set {
-                MagicAndEffects.PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
                 if (potionRecipe != null)
                 {
                     potionRecipeKey = value;
                     this.value = potionRecipe.Price;
-                    worldTextureRecord = potionRecipe.TextureRecord;
+                    if (IsPotion)
+                        worldTextureRecord = potionRecipe.TextureRecord;
                 }
             }
         }
