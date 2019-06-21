@@ -11,6 +11,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -113,13 +114,28 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             public override string VampireNpcClan()
-            {   // %vcn
+            {
+                // %vcn
                 if (parent.LastResourceReferenced == null && !(parent.LastResourceReferenced is Person))
                     return null;
 
-                // TODO: How to find vampire clan of an NPC? Is faction data as used here the right method that covers all cases?
-                Person person = (Person) parent.LastResourceReferenced;
-                return (person.FactionData.type == (int)FactionFile.FactionTypes.VampireClan) ? person.FactionData.name : null;
+                // Use home Place region to determine vampire clan of NPC
+                // Fallback to current region if unable to determine home region of NPC
+                // Also fallback to using generic "vampire" faction name if clan not resolved
+                Person person = (Person)parent.LastResourceReferenced;
+                if (person.FactionData.type == (int)FactionFile.FactionTypes.VampireClan)
+                {
+                    int regionIndex = person.HomeRegionIndex;
+                    if (regionIndex == -1)
+                        regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+                    VampireClans vampireClan = FormulaHelper.GetVampireClan(regionIndex);
+                    if (vampireClan == VampireClans.None)
+                        return person.FactionData.name;
+                    else
+                        return TextManager.Instance.GetText("Races", vampireClan.ToString().ToLower());
+                }
+
+                return null;
             }
 
             public override string QuestDate()

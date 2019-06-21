@@ -116,6 +116,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return GetHomePlaceRegionName(); }
         }
 
+        public int HomeRegionIndex
+        {
+            get { return GetHomePlaceRegionIndex(); }
+        }
+
         public string HomeBuildingName
         {
             get { return GetHomeBuildingName(); }
@@ -460,6 +465,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 return BLANK;
 
             return place.SiteDetails.regionName;
+        }
+
+        /// <summary>
+        /// Gets region index of home Place (if any).
+        /// </summary>
+        /// <returns>Region index of home Place or -1 if none set or not resolved.</returns>
+        int GetHomePlaceRegionIndex()
+        {
+            Place place = GetHomePlace();
+            if (place == null)
+                return -1;
+
+            return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
         }
 
         /// <summary>
