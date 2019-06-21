@@ -69,11 +69,8 @@ namespace DaggerfallWorkshop.Game.Utility
             // Try placing foes near player
             PlaceFoeFreely(pendingFoeGameObjects, MinDistance, MaxDistance);
 
-            // Keep breaking rest if spawn in progress
-            if (spawnInProgress && DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallRestWindow)
-            {
-                (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallRestWindow).AbortRestForEnemySpawn();
-            }
+            if (spawnInProgress)
+                GameManager.Instance.RaiseOnEncounterEvent();
         }
 
         #region Public Methods
