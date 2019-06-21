@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -85,8 +86,8 @@ namespace DaggerfallWorkshop.Game
         {
             GUI.depth = 1;
 
-            // Must be ready
-            if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused)
+            // Must be ready and not loading the game
+            if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused || SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             // Must have current weapon texture atlas

@@ -625,6 +625,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update tracked weapons for setting equip delay
             SetEquipDelayTime(false);
 
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+                DungeonWagonAccessProximityCheck();
+
             // Refresh window
             Refresh();
         }
@@ -1020,6 +1023,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
         }
 
+        void DungeonWagonAccessProximityCheck()
+        {
+            // Set allow wagon access if close enough (10m) to exit.
+            GameObject playerAdvancedGO = GameObject.Find("PlayerAdvanced");
+            DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
+            Vector3 exitVector = dungeon.StartMarker.transform.position - playerAdvancedGO.transform.position;
+            if (exitVector.magnitude < 10)
+                allowDungeonWagonAccess = true;
+        }
+
         void UpdateItemInfoPanel(DaggerfallUnityItem item)
         {
             // Display info in local target icon panel, replacing justification tokens
@@ -1121,8 +1134,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon || allowDungeonWagonAccess)
-                if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
+            {
+                if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
                     ShowWagon(!usingWagon);
+                else
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
+            }
+            else
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

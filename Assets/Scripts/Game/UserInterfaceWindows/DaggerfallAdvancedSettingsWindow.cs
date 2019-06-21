@@ -71,6 +71,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallFont titleFont        = DaggerfallUI.Instance.Font2;
         DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
 
+        readonly Resolution[] resolutions = DaggerfallUI.GetDistinctResolutions();
+
         int currentPage = 0;
         float y = 0;
 
@@ -110,6 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox enableModernConversationStyleInTalkWindow;
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox geographicBackgrounds;
+        Checkbox dungeonExitWagonPrompt;
 
         // Enhancements
         Checkbox modSystem;
@@ -137,6 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider fovSlider;
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
+        HorizontalSlider retroRenderingMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox useLegacyDeferred;
@@ -259,6 +263,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
+            dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -294,8 +299,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Basic settings
             AddSectionTitle(leftPanel, "basic");
             resolution = AddSlider(leftPanel, "resolution",
-                Array.FindIndex(Screen.resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
-                Screen.resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
+                Array.FindIndex(resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
+                resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
             resolution.OnScroll += Resolution_OnScroll;
             fullscreen = AddCheckbox(leftPanel, "fullscreen", DaggerfallUnity.Settings.Fullscreen);
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
@@ -323,6 +328,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
+            retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
+                DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
         }
 
         private void SaveSettings()
@@ -365,6 +372,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
             DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableGeographicBackgrounds = geographicBackgrounds.IsChecked;
+            DaggerfallUnity.Settings.DungeonExitWagonPrompt = dungeonExitWagonPrompt.IsChecked;
 
             /* Enhancements */
 
@@ -390,7 +398,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (applyScreenChanges)
             {
-                Resolution selectedResolution = Screen.resolutions[resolution.ScrollIndex];
+                Resolution selectedResolution = resolutions[resolution.ScrollIndex];
                 DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
                 DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
                 DaggerfallUnity.Settings.Fullscreen = fullscreen.IsChecked;
@@ -409,6 +417,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
+            DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

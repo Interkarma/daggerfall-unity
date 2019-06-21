@@ -944,6 +944,16 @@ namespace DaggerfallWorkshop.Game
             Application.Quit();
         }
 
+
+        // OnEncounter
+        public delegate void OnEncounterEventHandler();
+        public static event OnEncounterEventHandler OnEncounter;
+        public virtual void RaiseOnEncounterEvent()
+        {
+            if (OnEncounter != null)
+                OnEncounter();
+        }
+
         #endregion
     }
 }

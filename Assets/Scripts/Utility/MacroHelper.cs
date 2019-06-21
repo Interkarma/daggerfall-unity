@@ -138,8 +138,8 @@ namespace DaggerfallWorkshop.Utility
             { "%mn", MaleName },  // Random First name (Male)
             { "%mn2", MaleFullname }, // Random Full name (Male)
             { "%mod", ArmourMod }, // Modification
-            { "%n", NameDialogPartner },   // A random female first name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
-            { "%nam", null }, // A random full name
+            { "%n", Name },   // A random name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
+            { "%nam", Name }, // A random full name
             { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", OldLordOfFaction1 }, // Old lord of _fx1
@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Utility
             { "%r5", UnderworldRep },  // Underworld rep
             { "%ra", PlayerRace },  // Player's race
             { "%reg", RegionInContext }, // Region in context
-            { "%rn", null },  // Regent's Name
+            { "%rn", RegentName },  // Regent's Name
             { "%rt", RegentTitle },  // Regent's Title
             { "%spc", Magicka }, // Current Spell Points
             { "%ski", Skill }, // Mastered skill name
@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Utility
             { "%thd", ToHitMod }, // Combat odds
             { "%tim", Time }, // Time
             { "%vam", VampireClan }, // PC's vampire clan
-            { "%vcn", null }, // Vampire's Clan
+            { "%vcn", VampireNpcClan }, // Vampire's Clan
             { "%vn", null },  // ?
             { "%wdm", WeaponDamage }, // Weapon damage
             { "%wep", ItemName }, // Weapon
@@ -385,7 +385,7 @@ namespace DaggerfallWorkshop.Utility
                         for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
                         {
                             int pos = words[wordIdx].IndexOf('%');
-                            if (pos >= 0)
+                            if (pos >= 0 && words[wordIdx].Length > pos + 1)
                             {
                                 string prefix = words[wordIdx].Substring(0, pos);
                                 string macro = words[wordIdx].Substring(pos);
@@ -587,8 +587,25 @@ namespace DaggerfallWorkshop.Utility
         {   // %rt %t
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             FactionFile.FactionData regionFaction;
-            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion(7, gps.CurrentRegionIndex, out regionFaction);
+            GameManager.Instance.PlayerEntity.FactionData.FindFactionByTypeAndRegion((int)FactionFile.FactionTypes.Province, gps.CurrentRegionIndex, out regionFaction);
             return GetRulerTitle(regionFaction.ruler);
+        }
+
+        public static string RegentName(IMacroContextProvider mcp)
+        {   // %rn
+            // Look for a defined ruler for the region.
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            PersistentFactionData factionData = GameManager.Instance.PlayerEntity.FactionData;
+            FactionFile.FactionData regionFaction;
+            if (factionData.FindFactionByTypeAndRegion((int)FactionFile.FactionTypes.Province, gps.CurrentRegionIndex, out regionFaction))
+            {
+                FactionFile.FactionData child;
+                foreach (int childID in regionFaction.children)
+                    if (factionData.GetFactionData(childID, out child) && child.type == (int)FactionFile.FactionTypes.Individual)
+                        return child.name;
+            }
+            // Use a random name if no defined individual ruler.
+            return Name(null);
         }
 
         private static string Crime(IMacroContextProvider mcp)
@@ -809,12 +826,6 @@ namespace DaggerfallWorkshop.Utility
             return ""; // return empty string for now - not known if it does something else in classic
         }
 
-        private static string NameDialogPartner(IMacroContextProvider mcp)
-        {
-            // %n
-            return GameManager.Instance.TalkManager.NameNPC;
-        }
-
         private static string FactionPC(IMacroContextProvider mcp)
         {   // %fpc
             return GameManager.Instance.TalkManager.GetFactionPC();
@@ -947,12 +958,48 @@ namespace DaggerfallWorkshop.Utility
             return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Male);
         }
 
+        private static string VampireClan(IMacroContextProvider mcp)
+        {   // %vam
+            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialEffect is VampirismEffect)
+                return (racialEffect as VampirismEffect).GetClanName();
+            else
+                return "%vam[ERROR: PC not a vampire]";
+        }
+
         #endregion
 
         //
         // Contextual macro handlers - delegate to the macro data source provided by macro context provider.
         //
         #region Contextual macro handlers
+
+        private static string Name(IMacroContextProvider mcp)
+        {   // %n %nam
+            // Call the MCP first for context.
+            if (mcp != null)
+            {
+                try {
+                    string name = mcp.GetMacroDataSource().Name();
+                    if (name != null)
+                        return name;
+                } catch (NotImplementedException) { }
+            }
+            
+            // Get appropriate nameBankType for this region and a random gender
+            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+            Genders gender = (UnityEngine.Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
+
+            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
+        }
+
+        private static string VampireNpcClan(IMacroContextProvider mcp)
+        {   // %vcn
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().VampireNpcClan();
+        }
 
         private static string GuildTitle(IMacroContextProvider mcp)
         {   // %lev %pct
@@ -1319,16 +1366,6 @@ namespace DaggerfallWorkshop.Utility
             // %hpw
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().GeographicalFeature();
-        }
-
-        private static string VampireClan(IMacroContextProvider mcp)
-        {
-            // %vam
-            RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
-            if (racialEffect is VampirismEffect)
-                return (racialEffect as VampirismEffect).GetClanName();
-            else
-                return "%vam[ERROR: PC not a vampire]";
         }
 
         public static string Q1(IMacroContextProvider mcp)

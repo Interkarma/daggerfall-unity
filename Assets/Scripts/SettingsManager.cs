@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop
         // [Video]
         public int ResolutionWidth { get; set; }
         public int ResolutionHeight { get; set; }
-        public bool Retro320x200World { get; set; }
+        public int RetroRenderingMode { get; set; }
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
         public int FieldOfView { get; set; }
@@ -111,6 +111,7 @@ namespace DaggerfallWorkshop
         public bool SDFFontRendering { get; set; }
         public bool EnableGeographicBackgrounds { get; set; }
         public bool EnableArrowCounter { get; set; }
+        public bool DungeonExitWagonPrompt { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -185,7 +186,7 @@ namespace DaggerfallWorkshop
 
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
-            Retro320x200World = GetBool(sectionVideo, "Retro320x200World");
+            RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             VSync = GetBool(sectionVideo, "VSync");
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
@@ -226,6 +227,7 @@ namespace DaggerfallWorkshop
             SDFFontRendering = GetBool(sectionGUI, "SDFFontRendering");
             EnableGeographicBackgrounds = GetBool(sectionGUI, "EnableGeographicBackgrounds");
             EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
+            DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -287,7 +289,7 @@ namespace DaggerfallWorkshop
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
-            SetBool(sectionVideo, "Retro320x200World", Retro320x200World);
+            SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
@@ -329,6 +331,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "SDFFontRendering", SDFFontRendering);
             SetBool(sectionGUI, "EnableGeographicBackgrounds", EnableGeographicBackgrounds);
             SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
+            SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

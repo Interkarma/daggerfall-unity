@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -12,7 +12,6 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -29,9 +28,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-
     //created with mod builder window, seralized to json, bundled into mod
-    [System.Serializable]
+    [Serializable]
     public class ModInfo
     {
         public string ModTitle;         //displayed in game
@@ -61,7 +59,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.mod = mod;
             this.mi = mi;
         }
-
 
         public int CompareTo(SetupOptions other)
         {
@@ -99,18 +96,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool isPreCompiled;
     }
 
-    //Used to specify functions to be called automaticlly by modmanager during mod setup.
-    //To work, must be on a non-generic, public, static, class method that only takes 
-    //an InitParams struct for a parameter
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
-    public class Invoke : System.Attribute
+    /// <summary>
+    /// Specify a non-generic, public, static, class method that only takes an <see cref="InitParams"/>
+    /// struct for a parameter, to be called automatically by Mod Manager during mod setup.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class Invoke : Attribute
     {
-        public readonly int priority;
-        public readonly StateManager.StateTypes startState;
+        public readonly int Priority;
+        public readonly StateManager.StateTypes StartState;
+
+        /// <summary>
+        /// Request the mod manager to invoke this method at the specified state.
+        /// </summary>
+        /// <param name="startState">At which state the ModManager will invoke this method; typically this the Start or the Game state.</param>
+        /// <param name="priority">Defines a per-mod order if there are multiple invoked methods for the same state.</param>
         public Invoke(StateManager.StateTypes startState = StateManager.StateTypes.Start, int priority = 99)
         {
-            this.priority = priority;
-            this.startState = startState;
+            this.Priority = priority;
+            this.StartState = startState;
         }
     }
 
@@ -119,18 +123,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     /// </summary>
     public interface IHasModSaveData
     {
-        Type SaveDataType { get; }                      // Type of save data object.
-        object NewSaveData();                           // Make empty/default save data.
-        object GetSaveData();                           // Gets data to be serialized or null.
-        void RestoreSaveData(object saveData);          // Apply deserialized data.
+        /// <summary>
+        /// The type of a custom class that holds save data and optionally use <see cref="FullSerializer.fsObjectAttribute"/> for versioning.
+        /// </summary>
+        Type SaveDataType { get; }
+
+        /// <summary>
+        /// Makes a new instance of <see cref="SaveDataType"/> with default values.
+        /// </summary>
+        object NewSaveData();
+
+        /// <summary>
+        /// Makes a new instance of <see cref="SaveDataType"/> for the current state or null if there is nothing to save.
+        /// </summary>
+        object GetSaveData();
+
+        /// <summary>
+        /// Restores retrieved data when a save is loaded.
+        /// </summary>
+        /// <param name="saveData">An instance of <see cref="SaveDataType"/>.</param>
+        void RestoreSaveData(object saveData);
     }
 
     //used by mod builder window
     public enum ModCompressionOptions
     {
-        LZ4=0,
-        LZMA=1,
-        Uncompressed=2,
+        LZ4 = 0,
+        LZMA = 1,
+        Uncompressed = 2,
     }
 
     public delegate void DFModMessageReceiver(string message, object data, DFModMessageCallback callBack);

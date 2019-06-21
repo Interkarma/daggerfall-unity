@@ -31,8 +31,6 @@ clickToAttack,              Click to attack
 clickToAttackInfo,          Enable a simple click to trigger attacks
 sdfFontRendering,           SDF Font Rendering
 sdfFontRenderingInfo,       Enable for smooth fonts at high resolutions\rUse Shift+F11 to change anytime
-retro320x200World,          Retro 320x200 World Rendering
-retro320x200WorldInfo,      3D world rendered as 320x200 while UI remains at game resolution\rFor best results set game to use a 16:10 resolution (e.g. 1920x1200)
 
 findArena2Tip,              Tip: Daggerfall contains a folder called 'arena2'
 foundArena2But,             Found 'arena2' but

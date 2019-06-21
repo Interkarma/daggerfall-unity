@@ -11,7 +11,6 @@
 
 /*
  * TODO:
- * - Support for Paperdoll (BODY00I0.IMG)
  * - Support for Sky (SKYxx.DAT)
  */
 
@@ -24,6 +23,7 @@ using System.Linq;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 
@@ -40,7 +40,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         Normal,
         Height,
         Emission,
-        MetallicGloss
+        MetallicGloss,
+        Mask
     }
 
     public enum TextureImport
@@ -218,11 +219,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation frame index</param>
         /// <param name="dye">Dye colour for armour, weapons, and clothing.</param>
+        /// <param name="textureMap">Texture type.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, out Texture2D tex)
+        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, dye), false, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, out tex);
         }
 
         /// <summary>
@@ -600,40 +602,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        public static string GetName(int archive, int record, int frame = 0)
+        /// <param name="textureMap">Texture type.</param>
+        /// <param name="dye">Color Dye.</param>
+        /// <returns>The name for the texture with requested options.</returns>
+        public static string GetName(int archive, int record, int frame = 0, TextureMap textureMap = TextureMap.Albedo, DyeColors dye = DyeColors.Unchanged)
         {
-            return string.Format("{0:000}_{1}-{2}", archive, record, frame);
-        }
+            string name = string.Format("{0:000}_{1}-{2}", archive, record, frame);
 
-        /// <summary>
-        /// Get name for a texture with a dye.
-        /// </summary>
-        /// <param name="archive">Archive index from TEXTURE.XXX</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <param name="dye">Color Dye</param>
-        public static string GetName(int archive, int record, int frame, DyeColors dye)
-        {
-            if (dye == DyeColors.Unchanged)
-                return GetName(archive, record, frame);
+            if (dye != DyeColors.Unchanged)
+                name = string.Format("{0}_{1}", name, dye);
 
-            return string.Format("{0}_{1}", GetName(archive, record, frame), dye);
-        }
+            if (textureMap != TextureMap.Albedo)
+                name = string.Format("{0}_{1}", name, textureMap);
 
-        /// <summary>
-        /// Get name for a specific texture map.
-        /// </summary>
-        /// <param name="archive">Archive index from TEXTURE.XXX</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <param name="textureMap">Shader texture type.</param>
-        /// <returns></returns>
-        public static string GetName(int archive, int record, int frame, TextureMap textureMap)
-        {
-            if (textureMap == TextureMap.Albedo)
-                return GetName(archive, record, frame);
-
-            return string.Format("{0}_{1}", GetName(archive, record, frame), textureMap);
+            return name;
         }
 
         /// <summary>
@@ -791,6 +773,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             size = new Vector2();
             return false;
+        }
+
+        /// <summary>
+        /// Read configuration for a paperdoll item with custom rect.
+        /// </summary>
+        /// <param name="item">Target item or null.</param>
+        /// <param name="imageData">Source image data.</param>
+        /// <param name="rect">Rect for the item on paperdoll.</param>
+        internal static void OverridePaperdollItemRect(DaggerfallUnityItem item, ImageData imageData, float paperdollScale, ref Rect rect)
+        {
+            DyeColors dyeColor = item != null ? item.dyeColor : DyeColors.Unchanged;
+
+            string directory;
+            string name;
+            XMLManager xml;
+            if (MakeName(imageData, dyeColor, out directory, out name) && XMLManager.TryReadXml(directory, name, out xml))
+                rect = xml.GetRect("rect", rect, paperdollScale);
         }
 
         public static int FileNameToArchive(string filename)
@@ -1019,6 +1018,34 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
                 (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
                 MaterialReader.CustomBlendMode.Cutout);
+        }
+
+        private static bool MakeName(ImageData imageData, DyeColors dyeColor, out string directory, out string name)
+        {
+            switch (imageData.type)
+            {
+                case ImageTypes.TEXTURE:
+                    directory = texturesPath;
+                    int archive = FileNameToArchive(imageData.filename);
+                    name = GetName(archive, imageData.record, imageData.frame, TextureMap.Albedo, dyeColor);
+                    return true;
+
+                case ImageTypes.IMG:
+                    directory = imgPath;
+                    name = imageData.filename;
+                    return true;
+
+                case ImageTypes.CIF:
+                case ImageTypes.RCI:
+                    directory = cifRciPath;
+                    name = GetNameCifRci(imageData.filename, imageData.record, imageData.frame);
+                    return true;
+
+                default:
+                    directory = null;
+                    name = null;
+                    return false;
+            }
         }
 
         #endregion

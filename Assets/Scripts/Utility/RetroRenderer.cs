@@ -25,20 +25,24 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public class RetroRenderer : MonoBehaviour
     {
-        public RenderTexture RetroTexture;
+        public RenderTexture RetroTexture320x200;
+        public RenderTexture RetroTexture640x400;
+
         DaggerfallSky sky;
+        RenderTexture retroTexture;
 
         private void Start()
         {
-            if (DaggerfallUnity.Settings.Retro320x200World && RetroTexture)
-            {
-                GameManager.Instance.MainCamera.targetTexture = RetroTexture;
-                sky = GameManager.Instance.SkyRig.GetComponent<DaggerfallSky>();
-            }
+            // 0 = retro rendering off
+            // 1 = retro 320x200 rendering on
+            // 2 = retro 640x400 rendering on
+            sky = GameManager.Instance.SkyRig.GetComponent<DaggerfallSky>();
+            if (DaggerfallUnity.Settings.RetroRenderingMode == 1 && RetroTexture320x200)
+                retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200;
+            else if (DaggerfallUnity.Settings.RetroRenderingMode == 2 && RetroTexture640x400)
+                retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400;
             else
-            {
                 gameObject.SetActive(false);
-            }
         }
 
         private void Update()
@@ -46,14 +50,14 @@ namespace DaggerfallWorkshop.Utility
             // Conditionally handle classic sky camera
             // Sky may not be enabled at startup (e.g starting in dungeon) so need to check
             // Does nothing when retro world setting disabled as this behaviour is also disabled
-            if (sky && sky.SkyCamera && sky.SkyCamera.targetTexture != RetroTexture)
-                sky.SkyCamera.targetTexture = RetroTexture;
+            if (sky && sky.SkyCamera && sky.SkyCamera.targetTexture != retroTexture)
+                sky.SkyCamera.targetTexture = retroTexture;
         }
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            if (RetroTexture)
-                Graphics.Blit(RetroTexture, null as RenderTexture);
+            if (retroTexture)
+                Graphics.Blit(retroTexture, null as RenderTexture);
         }
     }
 }

@@ -5,7 +5,7 @@ MyDaggerfallUnitySavePath=
 [Video]
 ResolutionWidth=1280
 ResolutionHeight=720
-Retro320x200World=False
+RetroRenderingMode=0
 VSync=True
 Fullscreen=False
 FieldOfView=65
@@ -49,6 +49,7 @@ EnableArrowCounter=True
 AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
+DungeonExitWagonPrompt=True
 
 [Spells]
 EnableSpellLighting=True

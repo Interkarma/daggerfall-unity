@@ -15,25 +15,23 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
     public class ModManager : MonoBehaviour
     {
-
-        #region fields
+        #region Fields
 
         public const string MODEXTENSION        = ".dfmod";
         public const string MODINFOEXTENSION    = ".dfmod.json";
         public const string MODCONFIGFILENAME   = "Mod_Settings.json";
-        static ModManager instance;
-        bool AlreadyAtStartMenuState            = false;
-        static bool AlreadyStartedInit          = false;
-        string modDirectory;
+        bool alreadyAtStartMenuState            = false;
+        static bool alreadyStartedInit          = false;
         int loadedModCount = 0;
         [SerializeField]
         List<Mod> Mods;
-        public static FullSerializer.fsSerializer _serializer = new FullSerializer.fsSerializer();
+        public static readonly fsSerializer _serializer = new fsSerializer();
 
         public static string[] textExtensions = new string[]
         {
@@ -50,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #endregion
 
-        #region properties
+        #region Properties
 
         public int LoadedModCount
         {
@@ -58,25 +56,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             private set { loadedModCount = value; }
         }
 
-        public string ModDirectory
-        {
-            get { return modDirectory; }
-            set { modDirectory = value; }
-        }
+        public string ModDirectory { get; set; }
 
-        public static ModManager Instance
-        {
-            get { return instance; }
-            private set { instance = value; }
-        }
+        public static ModManager Instance { get; private set; }
 
         #endregion
 
+        #region Unity
 
-        #region unity
         void Awake()
         {
-            if(string.IsNullOrEmpty(ModDirectory))
+            if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
             if (!Directory.Exists(ModDirectory))
             {
@@ -89,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             SetupSingleton();
 
-            if (instance == this)
+            if (Instance == this)
                 StateManager.OnStateChange += StateManager_OnStateChange;
         }
 
@@ -112,21 +102,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             LoadedModCount = Mods.Count;
         }
 
-
         #endregion
 
-        #region public methods
+        #region Public Methods
+
         /// <summary>
         /// Get index for mod by title
         /// </summary>
-        /// <param name="modTitle"></param>
-        /// <returns></returns>
+        /// <param name="modTitle">The title of a mod.</param>
+        /// <returns>The index of the mod with the given title or -1 if not found.</returns>
         public int GetModIndex(string modTitle)
         {
             if (string.IsNullOrEmpty(modTitle))
                 return -1;
 
-            for(int i = 0; i < Mods.Count; i++)
+            for (int i = 0; i < Mods.Count; i++)
             {
                 if (Mods[i].Title == modTitle)
                     return i;
@@ -137,35 +127,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Get mod using index
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="index">The index of a mod.</param>
+        /// <returns>The mod at the given index or null if the index is invalid.</returns>
         public Mod GetMod(int index)
         {
-            Mod mod = null;
             if (index < 0 || index > Mods.Count)
                 return null;
             else
-            {
-                mod = Mods[index];
-                return mod;
-            }
+                return Mods[index];
         }
 
         /// <summary>
         /// Get mod using Mod Title
         /// </summary>
-        /// <param name="modTitle"></param>
-        /// <returns></returns>
+        /// <param name="modTitle">The title of a mod.</param>
+        /// <returns>The mod with the given title or null if not found.</returns>
         public Mod GetMod(string modTitle)
         {
-            Mod mod = null;
             int index = GetModIndex(modTitle);
 
-            if(GetModIndex(modTitle) >= 0)
-            {
-                mod = Mods[index];
-                return mod;
-            }
+            if (index >= 0)
+                return Mods[index];
             else
                 return null;
         }
@@ -173,8 +155,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Get mod from GUID
         /// </summary>
-        /// <param name="modGUID"></param>
-        /// <returns></returns>
+        /// <param name="modGUID">The unique identifier of a mod.</param>
+        /// <returns>The mod with the given GUID or null if not found.</returns>
         public Mod GetModFromGUID(string modGUID)
         {
             if (string.IsNullOrEmpty(modGUID))
@@ -191,14 +173,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 return null;
             }
-
         }
 
         /// <summary>
         /// Get mod title from GUID
         /// </summary>
-        /// <param name="modGUID"></param>
-        /// <returns></returns>
+        /// <param name="modGUID">The unique identifier of a mod.</param>
+        /// <returns>The title of the mod with the given GUID or null if not found.</returns>
         public string GetModTitleFromGUID(string modGUID)
         {
             if (string.IsNullOrEmpty(modGUID))
@@ -214,14 +195,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 }
                 return null;
             }
-
         }
 
         /// <summary>
         /// Returns all loaded mods in array
         /// </summary>
         /// <param name="loadOrder">ordered by load priority if true</param>
-        /// <returns></returns>
+        /// <returns>A collection with all the mods.</returns>
         public Mod[] GetAllMods(bool loadOrder = false)
         {
             var selection = from mod in Mods
@@ -235,7 +215,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Get modtitle string for each loaded mod
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A collection with all mod titles.</returns>
         public string[] GetAllModTitles()
         {
             var selection = from modInfo in GetAllModInfo()
@@ -246,19 +226,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Get mod file name string for each loaded mod
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A collection with all mod file names.</returns>
         public string[] GetAllModFileNames()
         {
             var selection = from mod in Mods
                             select mod.FileName;
             return selection.ToArray();
-
         }
 
         /// <summary>
         /// Get array of ModInfo objects for each loaded mod
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A collection with all mod informations.</returns>
         public ModInfo[] GetAllModInfo()
         {
             var selection = from mod in GetAllMods()
@@ -267,7 +246,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return selection.ToArray();
         }
 
-
+        /// <summary>
+        /// Gets all the mod GUIDs which are defined and valid.
+        /// </summary>
+        /// <returns>A collection of valid mod GUIDs.</returns>
         public string[] GetAllModGUID()
         {
             var selection = from mod in Mods
@@ -276,6 +258,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return selection.ToArray();
         }
 
+        /// <summary>
+        /// Gets all mods wich provide contributes to save data.
+        /// </summary>
+        /// <returns>An enumeration of mods with save data.</returns>
         public IEnumerable<Mod> GetAllModsWithSaveData()
         {
             return from mod in Mods
@@ -286,8 +272,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Get all asset names from mod
         /// </summary>
-        /// <param name="modTitle"></param>
-        /// <returns></returns>
+        /// <param name="modTitle">The title of a mod.</param>
+        /// <returns>A collection with the names of all assets from a mod or null if not found.</returns>
         public string[] GetModAssetNames(string modTitle)
         {
             int index = GetModIndex(modTitle);
@@ -305,7 +291,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="modTitle">title of mod</param>
         /// <param name="clone">return copy of asset</param>
         ///<param name="check">true if loaded sucessfully</param>
-        /// <returns></returns>
+        /// <returns>The loaded asset or null if not found.</returns>
         public T GetAssetFromMod<T>(string assetName, string modTitle, bool clone, out bool check) where T : UnityEngine.Object
         {
             check = false;
@@ -316,7 +302,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (index < 0)
                 return null;
 
-            asset =  Mods[index].GetAsset<T>(assetName, clone);
+            asset = Mods[index].GetAsset<T>(assetName, clone);
             check = asset != null;
             return asset;
         }
@@ -367,8 +353,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// convert full relative path to just the asset name for example:
         /// /Assets/examples/myscript.cs to myscript.cs
         /// </summary>
-        /// <param name="assetPath"></param>
-        /// <returns></returns>
+        /// <param name="assetPath">The full path of an asset.</param>
+        /// <returns>The name of the file in the given path with the extension.</returns>
         public static string GetAssetName(string assetPath)
         {
             if (string.IsNullOrEmpty(assetPath))
@@ -384,7 +370,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             List<string> lines = new List<string>();
             string line;
-            using (StringReader reader = new StringReader(asset.text)) {
+            using (StringReader reader = new StringReader(asset.text))
+            {
                 while ((line = reader.ReadLine()) != null)
                     lines.Add(line);
             }
@@ -393,46 +380,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #endregion
 
-        private static string GetModNameFromPath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return null;
-            return path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1).Replace(MODEXTENSION, "");
-        }
-
-        private void SetupSingleton()
-        {
-            if (instance == null)
-            {
-                DontDestroyOnLoad(this.gameObject);
-                instance = this;
-            }
-            else if (instance != this)
-            {
-                if (Application.isPlaying)
-                {
-                    DaggerfallUnity.LogMessage("Multiple ModManager instances detected in scene!", true);
-                    Destroy(this);
-                }
-            }
-        }
-
         #region Mod Loading & setup
 
-        //look for changes in mod directory before the compiling / loading process has begun
+        /// <summary>
+        /// Look for changes in mod directory before the compiling / loading process has begun.
+        /// </summary>
         public void Refresh()
         {
-            if (!AlreadyAtStartMenuState)
+            if (!alreadyAtStartMenuState)
                 FindModsFromDirectory(true);
         }
 
         /// <summary>
         /// Locates all the .dfmod files in the mod path
         /// </summary>
-        /// <param name="refresh"></param>
+        /// <param name="refresh">Checks for mods to unload.</param>
         private void FindModsFromDirectory(bool refresh = false)
         {
-            if(!Directory.Exists(ModDirectory))
+            if (!Directory.Exists(ModDirectory))
             {
                 Debug.Log("invalid mod directory: " + ModDirectory);
                 return;
@@ -444,13 +409,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             for (int i = 0; i < modFiles.Length; i++)
             {
-
                 string modFilePath = modFiles[i];
 
                 string DirPath = modFilePath.Substring(0, modFilePath.LastIndexOf(Path.DirectorySeparatorChar));
                 modFileNames[i] = GetModNameFromPath(modFilePath);
 
-                if(string.IsNullOrEmpty(modFileNames[i]))
+                if (string.IsNullOrEmpty(modFileNames[i]))
                 {
                     Debug.Log("failed to get name of mod");
                     continue;
@@ -515,7 +479,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             try
             {
                 int index = GetModIndex(modTitle);
-                if(index < 0)
+                if (index < 0)
                 {
                     Debug.Log("Failed to unload mod as mod title wasn't found: " + modTitle);
                     return false;
@@ -525,21 +489,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 OnUnloadMod(modTitle);
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError(ex.Message);
                 return false;
             }
-
         }
 
         //begin setting up mods
         private void Init()
         {
-            if (AlreadyStartedInit)
+            if (alreadyStartedInit)
                 return;
 
-            AlreadyStartedInit = true;
+            alreadyStartedInit = true;
             WriteModSettings();
 
             Mod[] mods = GetAllMods();
@@ -560,14 +523,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             Debug.Log("ModManager - init finished.  Mod Count: " + LoadedModCount);
         }
 
-
         private void InvokeModLoaders(StateManager.StateTypes state)
         {
 #if DEBUG
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             timer.Start();
 #endif
-            if (AlreadyAtStartMenuState)
+            if (alreadyAtStartMenuState)
             {
                 Mod[] mods = GetAllMods(true);
 
@@ -603,7 +565,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 Debug.Log("InvokeModLoaders() finished...time: " + timer.ElapsedMilliseconds);
 #endif
             }
-
         }
 
         #endregion
@@ -613,8 +574,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Compile source files in mod bundle to assembly
         /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
+        /// <param name="source">The content of source files.</param>
+        /// <returns>The compiled assembly or null.</returns>
         public static Assembly CompileFromSourceAssets(string[] source)
         {
             if (source == null || source.Length < 1)
@@ -623,7 +584,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return null;
             }
 
-            System.Reflection.Assembly assembly;
+            Assembly assembly;
 
             try
             {
@@ -639,95 +600,92 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #endregion
 
+        #region Public Helpers
+
         /// <summary>
         /// Writes mod settings (title, priority, enabled) to file
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if settings written successfully.</returns>
         public static bool WriteModSettings()
         {
             try
             {
-                if (ModManager.Instance.Mods == null || ModManager.instance.Mods.Count <= 0)
+                if (ModManager.Instance.Mods == null || ModManager.Instance.Mods.Count <= 0)
                 {
                     return false;
                 }
 
-                FullSerializer.fsData sdata = null;
-                var result = _serializer.TrySerialize<List<Mod>>(ModManager.instance.Mods, out sdata);
+                fsData sdata = null;
+                var result = _serializer.TrySerialize<List<Mod>>(ModManager.Instance.Mods, out sdata);
 
                 if (result.Failed)
                 {
                     return false;
                 }
 
-                File.WriteAllText(Path.Combine(ModManager.instance.modDirectory, MODCONFIGFILENAME), FullSerializer.fsJsonPrinter.PrettyJson(sdata));
+                File.WriteAllText(Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME), fsJsonPrinter.PrettyJson(sdata));
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError(string.Format("Failed to write mod settings: {0}", ex.Message));
                 return false;
             }
-
         }
 
         /// <summary>
-        /// Attempts to load saved mod settings from file & updates loaded mods
+        /// Attempts to load saved mod settings from file and updates loaded mods.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if settings loaded successfully.</returns>
         public static bool LoadModSettings()
         {
-            FullSerializer.fsResult result = new FullSerializer.fsResult();
+           fsResult result = new fsResult();
 
             try
             {
-                string filepath = Path.Combine(ModManager.instance.modDirectory,MODCONFIGFILENAME);
-                if(!File.Exists(filepath))
+                string filepath = Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME);
+                if (!File.Exists(filepath))
                     return false;
 
                 var serializedData = File.ReadAllText(filepath);
                 if (string.IsNullOrEmpty(serializedData))
                     return false;
 
-
                 List<Mod> temp = new List<Mod>();
-                FullSerializer.fsData data = FullSerializer.fsJsonParser.Parse(serializedData);
+                fsData data = fsJsonParser.Parse(serializedData);
                 result = _serializer.TryDeserialize<List<Mod>>(data, ref temp);
 
                 if (result.Failed || temp.Count <= 0)
                     return false;
 
-
                 foreach (Mod _mod in temp)
                 {
-                    if (ModManager.instance.GetModIndex(_mod.Title) >= 0)
+                    if (ModManager.Instance.GetModIndex(_mod.Title) >= 0)
                     {
                         Mod mod = ModManager.Instance.GetMod(_mod.Title);
                         if (mod == null)
                             continue;
                         mod.Enabled = _mod.Enabled;
                         mod.LoadPriority = _mod.LoadPriority;
-                        ModManager.instance.Mods[ModManager.instance.GetModIndex(_mod.Title)] = mod;
+                        ModManager.Instance.Mods[ModManager.Instance.GetModIndex(_mod.Title)] = mod;
                     }
                 }
 
                 return true;
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError(string.Format("Error trying to load mod settings: {0}", ex.Message));
                 return false;
             }
-
         }
 
         /// <summary>
-        /// helper function to assist w/ serializing & deserializing prefabs
+        /// Helper function to assist with serializing and deserializing prefabs.
         /// </summary>
-        /// <param name="trans">parent transform</param>
-        /// <param name="transforms"></param>
-        /// <returns></returns>
+        /// <param name="trans">Parent transform.</param>
+        /// <param name="transforms">A list already containing data or null to request a new list.</param>
+        /// <returns>The list of transforms.</returns>
         public static List<Transform> GetAllChildren(Transform trans, ref List<Transform> transforms)
         {
             if (transforms == null)
@@ -743,14 +701,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return transforms;
         }
 
-
         /// <summary>
-        /// Send data to a mod that has a valid DFModMessageReceiver delegate 
+        /// Send data to a mod that has a valid DFModMessageReceiver delegate.
         /// </summary>
-        /// <param name="modTitle"></param>
-        /// <param name="message"></param>
-        /// <param name="data"></param>
-        /// <param name="callback"></param>
+        /// <param name="modTitle">The title of the target mod.</param>
+        /// <param name="message">A string to be sent to the target mod.</param>
+        /// <param name="data">Data to send with the message.</param>
+        /// <param name="callback">An optional message callback.</param>
         public void SendModMessage(string modTitle, string message, object data = null, DFModMessageCallback callback = null)
         {
             if (Mods == null || Mods.Count < 1)
@@ -762,6 +719,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.MessageReceiver(message, data, callback);
         }
 
+        #endregion
+
+        #region Internal methods
+
         /// <summary>
         /// Gets a localized string for a mod system text.
         /// </summary>
@@ -770,7 +731,38 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return TextManager.Instance.GetText("ModSystem", key);
         }
 
-        #region events
+        #endregion
+
+        #region Private Methods
+
+        private static string GetModNameFromPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return null;
+            return path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1).Replace(MODEXTENSION, "");
+        }
+
+        private void SetupSingleton()
+        {
+            if (Instance == null)
+            {
+                DontDestroyOnLoad(this.gameObject);
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                if (Application.isPlaying)
+                {
+                    DaggerfallUnity.LogMessage("Multiple ModManager instances detected in scene!", true);
+                    Destroy(this);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Events
+
         //public delegate void NewObjectCreatedHandler(object obj, SetupOptions options);
         //public static event NewObjectCreatedHandler OnNewObjectCreated;
 
@@ -797,23 +789,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public void StateManager_OnStateChange(StateManager.StateTypes state)
         {
-            if(state == StateManager.StateTypes.Start)
+            if (state == StateManager.StateTypes.Start)
             {
-                AlreadyAtStartMenuState = true;
+                alreadyAtStartMenuState = true;
                 Init();
                 InvokeModLoaders(state);
             }
-            else if(state == StateManager.StateTypes.Game)
+            else if (state == StateManager.StateTypes.Game)
             {
-                AlreadyAtStartMenuState = true;
+                alreadyAtStartMenuState = true;
                 InvokeModLoaders(state);
                 StateManager.OnStateChange -= StateManager_OnStateChange;
             }
-
         }
 
         #endregion
-
     }
-
 }

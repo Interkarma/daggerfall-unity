@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -213,12 +214,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get references
             playerEntity = GameManager.Instance.PlayerEntity;
             hud = DaggerfallUI.Instance.DaggerfallHUD;
+
+            GameManager.OnEncounter += GameManager_OnEncounter;
+
         }
 
         public override void OnPop()
         {
             base.OnPop();
             ignoreAllocatedBed = false;
+            GameManager.OnEncounter -= GameManager_OnEncounter;
 
             Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
@@ -625,6 +630,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemaining = time;
             waitTimer = Time.realtimeSinceStartup;
             currentRestMode = RestModes.Loiter;
+        }
+
+
+        private void GameManager_OnEncounter()
+        {
+            AbortRestForEnemySpawn();
         }
 
         // OnSleepTick - does not fire while loitering

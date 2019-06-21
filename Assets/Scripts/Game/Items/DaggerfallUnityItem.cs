@@ -358,18 +358,19 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets/sets the key of the potion recipe allocated to this item.
         /// Has a side effect (ugh, sorry) of populating the item value from the recipe price.
-        /// (due to value not being encapsulated) Also populates texture record.
+        /// (due to value not being encapsulated) Also populates texture record for potions.
         /// </summary>
         public int PotionRecipeKey
         {
             get { return potionRecipeKey; }
             set {
-                MagicAndEffects.PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
                 if (potionRecipe != null)
                 {
                     potionRecipeKey = value;
                     this.value = potionRecipe.Price;
-                    worldTextureRecord = potionRecipe.TextureRecord;
+                    if (IsPotion)
+                        worldTextureRecord = potionRecipe.TextureRecord;
                 }
             }
         }
@@ -562,6 +563,11 @@ namespace DaggerfallWorkshop.Game.Items
             int archive, record;
             DaggerfallUnity.Instance.ItemHelper.GetArtifactTextureIndices((ArtifactsSubTypes)groupIndex, out archive, out record);
 
+            // Correct material value for armor artifacts
+            int materialValue = magicItemTemplate.material;
+            if (magicItemTemplate.group == (int)ItemGroups.Armor)
+                materialValue = 0x200 + materialValue;
+
             // Assign new data
             shortName = magicItemTemplate.name;
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
@@ -570,7 +576,7 @@ namespace DaggerfallWorkshop.Game.Items
             playerTextureRecord = record;
             worldTextureArchive = archive;                  // Not sure about artifact world textures, just using player texture for now
             worldTextureRecord = record;
-            nativeMaterialValue = magicItemTemplate.material;
+            nativeMaterialValue = materialValue;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
@@ -1029,42 +1035,56 @@ namespace DaggerfallWorkshop.Game.Items
 
         public int GetMaterialArmorValue()
         {
+            int result = 0;
             if (!IsShield)
             {
                 switch (nativeMaterialValue)
                 {
                     case (int)ArmorMaterialTypes.Leather:
-                        return 3;
+                        result = 3;
+                        break;
                     case (int)ArmorMaterialTypes.Chain:
                     case (int)ArmorMaterialTypes.Chain2:
-                        return 6;
+                        result = 6;
+                        break;
                     case (int)ArmorMaterialTypes.Iron:
-                        return 7;
+                        result = 7;
+                        break;
                     case (int)ArmorMaterialTypes.Steel:
                     case (int)ArmorMaterialTypes.Silver:
-                        return 9;
+                        result = 9;
+                        break;
                     case (int)ArmorMaterialTypes.Elven:
-                        return 11;
+                        result = 11;
+                        break;
                     case (int)ArmorMaterialTypes.Dwarven:
-                        return 13;
+                        result = 13;
+                        break;
                     case (int)ArmorMaterialTypes.Mithril:
                     case (int)ArmorMaterialTypes.Adamantium:
-                        return 15;
+                        result = 15;
+                        break;
                     case (int)ArmorMaterialTypes.Ebony:
-                        return 17;
+                        result = 17;
+                        break;
                     case (int)ArmorMaterialTypes.Orcish:
-                        return 19;
+                        result = 19;
+                        break;
                     case (int)ArmorMaterialTypes.Daedric:
-                        return 21;
-
-                    default:
-                        return 0;
+                        result = 21;
+                        break;
                 }
             }
             else
             {
                 return GetShieldArmorValue();
             }
+
+            // Armor artifact appear to use armor rating divided by 2 rounded down
+            if (IsArtifact && ItemGroup == ItemGroups.Armor)
+                result /= 2;
+
+            return result;
         }
 
         public int GetShieldArmorValue()

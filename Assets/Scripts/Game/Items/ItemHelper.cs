@@ -331,14 +331,16 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Get mask texture where alpha 0 is umasked areas of image and alpha 1 are masked areas of image
-            // Note: Texture replacement will need to support import of an optional mask texture for each replacement
-            ImageReader.UpdateMaskTexture(ref data);
+            Texture2D maskTexture;
+            if (TextureReplacement.TryImportTexture(archive, record, 0, item.dyeColor, TextureMap.Mask, out maskTexture))
+                data.maskTexture = maskTexture;
+            else
+                ImageReader.UpdateMaskTexture(ref data);
 
             Texture2D tex;
-            if (!forPaperDoll && TextureReplacement.TryImportTexture(archive, record, 0, item.dyeColor, out tex))
+            if (TextureReplacement.TryImportTexture(archive, record, 0, item.dyeColor, TextureMap.Albedo, out tex))
             {
                 // Assign imported texture
-                // Paperdoll is disabled for now
                 data.texture = tex;
             }
             else
