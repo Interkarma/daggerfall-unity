@@ -38,7 +38,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         static Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
-        DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
 
         bool showBackgroundLayer = true;
         bool showCharacterLayer = true;
