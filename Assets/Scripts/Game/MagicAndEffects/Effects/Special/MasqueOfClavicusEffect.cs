@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void MagicRound()
         {
-            const int adjustmentAmount = 20;
+            const int adjustmentAmount = 30; // TODO: this is a placeholder value, need to determine actual adjustment in classic
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Improve reactions with all social groups
@@ -43,11 +43,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 playerEntity.ChangeReactionMod(group, adjustmentAmount);
             }
-        }
-
-        public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
-        {
-            RoundsRemaining = 1; // permanently stay at >0
         }
         #endregion
     }
