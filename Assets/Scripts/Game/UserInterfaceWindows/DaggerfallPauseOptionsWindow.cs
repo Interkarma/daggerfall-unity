@@ -116,10 +116,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             controlsButton.OnMouseClick += ControlsButton_OnMouseClick;
 
             // Full screen
-            Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
+
 #if UNITY_EDITOR
+            //Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
             //fullScreenButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
 #else
+            Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
             fullScreenButton.OnMouseClick += FullScreenButton_OnMouseClick;
             fullScreenTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), fullScreenButton);
             fullScreenTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
