@@ -517,7 +517,7 @@ namespace DaggerfallWorkshop.Game
             
             int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
-            if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length) // One of the five general social groups
+            if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length)
                 reaction += player.SGroupReputations[(int)socialGroup];
 
             return reaction;

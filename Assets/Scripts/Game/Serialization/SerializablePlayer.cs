@@ -153,6 +153,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.reputationScholars = entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars];
             data.playerEntity.reputationNobility = entity.SGroupReputations[(int)FactionFile.SocialGroups.Nobility];
             data.playerEntity.reputationUnderworld = entity.SGroupReputations[(int)FactionFile.SocialGroups.Underworld];
+            data.playerEntity.reputationSGroup5 = entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup5];
+            data.playerEntity.reputationSupernaturalBeings = entity.SGroupReputations[(int)FactionFile.SocialGroups.SupernaturalBeings];
+            data.playerEntity.reputationGuildMembers = entity.SGroupReputations[(int)FactionFile.SocialGroups.GuildMembers];
+            data.playerEntity.reputationSGroup8 = entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup8];
+            data.playerEntity.reputationSGroup9 = entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup9];
+            data.playerEntity.reputationSGroup10 = entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup10];
             data.playerEntity.previousVampireClan = entity.PreviousVampireClan;
 
             data.playerEntity.regionData = entity.RegionData;
@@ -304,6 +310,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Scholars] = data.playerEntity.reputationScholars;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Nobility] = data.playerEntity.reputationNobility;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Underworld] = data.playerEntity.reputationUnderworld;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup5] = data.playerEntity.reputationSGroup5;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.GuildMembers] = data.playerEntity.reputationGuildMembers;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup8] = data.playerEntity.reputationSGroup8;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup9] = data.playerEntity.reputationSGroup9;
+            entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup10] = data.playerEntity.reputationSGroup10;
             entity.PreviousVampireClan = data.playerEntity.previousVampireClan;
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();

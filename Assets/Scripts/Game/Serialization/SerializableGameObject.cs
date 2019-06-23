@@ -202,6 +202,12 @@ namespace DaggerfallWorkshop.Game.Serialization
         public short reputationNobility;
         public short reputationScholars;
         public short reputationUnderworld;
+        public short reputationSGroup5;
+        public short reputationSupernaturalBeings;
+        public short reputationGuildMembers;
+        public short reputationSGroup8;
+        public short reputationSGroup9;
+        public short reputationSGroup10;
         public VampireClans previousVampireClan;
     }
 

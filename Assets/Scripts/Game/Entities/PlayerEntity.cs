@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected bool readyToLevelUp = false;
         protected bool oghmaLevelUp = false;
 
-        protected short[] sGroupReputations = new short[5];
+        protected short[] sGroupReputations = new short[11];
 
         protected int biographyResistDiseaseMod = 0;
         protected int biographyResistMagicMod = 0;
