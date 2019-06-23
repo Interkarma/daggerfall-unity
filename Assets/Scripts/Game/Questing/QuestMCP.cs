@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     case Game.Entity.Genders.Male:
                         return HardStrings.pronounHis;
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounHers;
+                        return HardStrings.pronounHer;
                 }
             }
 

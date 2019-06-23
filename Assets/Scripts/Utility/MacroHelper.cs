@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g1", Pronoun },  // He/She ???
             { "%g2", Pronoun2 },  // Him/Her etc...
             { "%g2self", Pronoun2self },// Himself/Herself etc...
-            { "%g3", Pronoun3 },  // His/Hers/Theirs etc...
+            { "%g3", Pronoun3 },  // His/Her
             { "%gii", GoldCarried }, // Amount of gold in hand
             { "%gdd", GodDesc }, // God description i.e. God of Logic
             { "%god", God }, // Some god (listed in TEXT.RSC)
@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Utility
             { "%pg1", PlayerPronoun },  // His/Her (player)
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
-            { "%pg3", PlayerPronoun3 },  // His/Hers (player)
+            { "%pg3", PlayerPronoun3 },  // His/Her (player)
             { "%hrn", HomeRegion },  // Home region (of person)
         };
 
@@ -744,7 +744,7 @@ namespace DaggerfallWorkshop.Utility
         }
         private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHers : HardStrings.pronounHis;
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHis;
         }
 
         private static string Honorific(IMacroContextProvider mcp)
