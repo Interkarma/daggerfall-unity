@@ -766,8 +766,8 @@ Prefab:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_Intensity
-      value: 1
+      propertyPath: m_CullingMask.m_Bits
+      value: 31543
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114583161180529142, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
@@ -2084,6 +2084,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40a1801474a7dae4599734df630cd5f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameobjectRotationArrow1: {fileID: 0}
+  gameobjectRotationArrow2: {fileID: 0}
 --- !u!4 &1844948392
 Transform:
   m_ObjectHideFlags: 0
