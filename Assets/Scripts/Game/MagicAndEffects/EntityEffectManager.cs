@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] directStatMods = new int[DaggerfallStats.Count];
         int[] directSkillMods = new int[DaggerfallSkills.Count];
         int[] combinedStatMods = new int[DaggerfallStats.Count];
+        int[] combinedStatMaxMods = new int[DaggerfallStats.Count];
         int[] combinedSkillMods = new int[DaggerfallSkills.Count];
         int[] combinedResistanceMods = new int[DaggerfallResistances.Count];
         float refreshModsTimer = 0;
@@ -1572,6 +1573,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Clear all mods
             Array.Clear(combinedStatMods, 0, DaggerfallStats.Count);
+            Array.Clear(combinedStatMaxMods, 0, DaggerfallStats.Count);
             Array.Clear(combinedSkillMods, 0, DaggerfallSkills.Count);
             Array.Clear(combinedResistanceMods, 0, DaggerfallResistances.Count);
 
@@ -1581,6 +1583,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     MergeStatMods(effect);
+                    MergeStatMaxMods(effect);
                     MergeSkillMods(effect);
                     MergeResistanceMods(effect);
                 }
@@ -1590,7 +1593,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             MergeDirectMods();
 
             // Assign to host entity
-            entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
+            entityBehaviour.Entity.Stats.AssignMods(combinedStatMods, combinedStatMaxMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
             entityBehaviour.Entity.Resistances.AssignMods(combinedResistanceMods);
 
@@ -1610,6 +1613,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             for (int i = 0; i < effect.StatMods.Length; i++)
             {
                 combinedStatMods[i] += effect.StatMods[i];
+            }
+        }
+
+        void MergeStatMaxMods(IEntityEffect effect)
+        {
+            for (int i = 0; i < effect.StatMaxMods.Length; i++)
+            {
+                combinedStatMaxMods[i] += effect.StatMaxMods[i];
             }
         }
 
@@ -1873,6 +1884,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public int roundsRemaining;
             public bool chanceSuccess;
             public int[] statMods;
+            public int[] statMaxMods;
             public int[] skillMods;
             public bool isIncumbent;
             public int variantCount;
@@ -1927,6 +1939,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             effectData.roundsRemaining = effect.RoundsRemaining;
             effectData.chanceSuccess = effect.ChanceSuccess;
             effectData.statMods = effect.StatMods;
+            effectData.statMaxMods = effect.StatMaxMods;
             effectData.skillMods = effect.SkillMods;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
             effectData.variantCount = effect.VariantCount;

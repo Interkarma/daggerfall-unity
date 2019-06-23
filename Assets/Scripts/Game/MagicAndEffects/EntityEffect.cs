@@ -83,6 +83,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] StatMods { get; }
 
         /// <summary>
+        /// Gets array DaggerfallStats.Count items wide.
+        /// Array items represent Strength, Intelligence, Willpower, etc.
+        /// Allows an effect to temporarily override stat maximum value.
+        /// </summary>
+        int[] StatMaxMods { get; }
+
+        /// <summary>
         /// Get array DaggerfallSkills.Count items wide.
         /// Array items represent Medical, Etiquette, Streetwise, etc.
         /// Effect implementation should set modifier values for skills when part of payload.
@@ -226,6 +233,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int roundsRemaining;
         bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
+        int[] statMaxMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
         int[] resistanceMods = new int[DaggerfallResistances.Count];
         LiveEffectBundle parentBundle;
@@ -311,6 +319,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int[] StatMods
         {
             get { return statMods; }
+        }
+
+        public int[] StatMaxMods
+        {
+            get { return statMaxMods; }
         }
 
         public int[] SkillMods
@@ -445,6 +458,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             roundsRemaining = effectData.roundsRemaining;
             chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
+            statMaxMods = (effectData.statMaxMods != null) ? effectData.statMaxMods : new int[DaggerfallStats.Count];
             skillMods = effectData.skillMods;
             variantCount = effectData.variantCount;
             currentVariant = effectData.currentVariant;
@@ -504,6 +518,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return 0;
 
             return statMods[(int)stat];
+        }
+
+        /// <summary>
+        /// Gets the attribute maximum modifier of this effect.
+        /// </summary>
+        /// <param name="stat">Attribute to query.</param>
+        /// <returns>Current attribute maximum modifier.</returns>
+        public int GetAttributeMaximumMod(DFCareer.Stats stat)
+        {
+            if (stat == DFCareer.Stats.None)
+                return 0;
+
+            return statMaxMods[(int)stat];
         }
 
         /// <summary>
@@ -682,12 +709,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             statMods[(int)stat] = value;
         }
 
+        protected void SetStatMaxMod(DFCareer.Stats stat, int value)
+        {
+            if (stat == DFCareer.Stats.None)
+                return;
+
+            statMaxMods[(int)stat] = value;
+        }
+
         protected void ChangeStatMod(DFCareer.Stats stat, int amount)
         {
             if (stat == DFCareer.Stats.None)
                 return;
 
             statMods[(int)stat] += amount;
+        }
+
+        protected void ChangeStatMaxMod(DFCareer.Stats stat, int amount)
+        {
+            if (stat == DFCareer.Stats.None)
+                return;
+
+            statMaxMods[(int)stat] += amount;
         }
 
         protected void SetSkillMod(DFCareer.Skills skill, int value)
