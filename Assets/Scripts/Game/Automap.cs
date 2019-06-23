@@ -694,7 +694,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     
                     int id = listUserNoteMarkers.AddNext(new NoteMarker(spawningPosition, ""));
-                    GameObject gameObjectNewUserNoteMarker = CreateUserMarker(id, spawningPosition);
+                    /*GameObject gameObjectNewUserNoteMarker =*/ CreateUserMarker(id, spawningPosition);
 
                     if (editUserNoteOnCreation)
                     {
@@ -1373,7 +1373,7 @@ namespace DaggerfallWorkshop.Game
 
             if (!gameobjectBeaconRotationPivotAxis)
             {
-                MeshCollider mc;
+                //MeshCollider mc;
                 gameobjectBeaconRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 //UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
                 gameobjectBeaconRotationPivotAxis.name = NameGameobjectBeaconRotationPivotAxis;
