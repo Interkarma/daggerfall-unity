@@ -634,7 +634,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listboxConversation.ClearItems();
 
                 ListBox.ListItem textLabelNPCGreeting;
-                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingText(), out textLabelNPCGreeting);
+                listboxConversation.AddItem(TalkManager.Instance.NPCGreetingText, out textLabelNPCGreeting);
                 textLabelNPCGreeting.selectedTextColor = textcolorHighlighted;
                 textLabelNPCGreeting.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
                 textLabelNPCGreeting.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;

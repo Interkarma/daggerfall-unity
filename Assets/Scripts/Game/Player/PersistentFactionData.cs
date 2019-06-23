@@ -291,6 +291,19 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
+        /// Gets faction name from id.
+        /// </summary>
+        /// <param name="id">ID of faction to get name of.</param>
+        /// <returns>Faction name if name found, otherwise an empty string.</returns>
+        public string GetFactionName(int id)
+        {
+            if (factionDict.ContainsKey(id))
+                return factionDict[id].name;
+
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Resets faction state back to starting point from FACTION.TXT.
         /// </summary>
         public void Reset()
