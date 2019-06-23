@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Hazelnut
 // 
 // Notes:
 //
@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game
         WeaponAnimation[] weaponAnims;
         WeaponStates weaponState = WeaponStates.Idle;
         int currentFrame = 0;
+        int animTicks = 0;
         Rect curAnimRect;
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
@@ -111,10 +112,7 @@ namespace DaggerfallWorkshop.Game
             // Get state based on attack direction
             WeaponStates state;
 
-            // Bows has only one type of attack
-            if (WeaponType == WeaponTypes.Bow)
-                state = WeaponStates.StrikeDown;
-            else switch (direction)
+            switch (direction)
             {
                 case WeaponManager.MouseDirections.Down:
                     state = WeaponStates.StrikeDown;
@@ -138,8 +136,8 @@ namespace DaggerfallWorkshop.Game
                     return;
             }
 
-            // Do not change if already playing attack animation
-            if (!IsPlayingOneShot())
+            // Do not change if already playing attack animation, unless releasing an arrow (bow & state=up->down)
+            if (!IsPlayingOneShot() || (WeaponType == WeaponTypes.Bow && weaponState == WeaponStates.StrikeUp && state == WeaponStates.StrikeDown))
                 ChangeWeaponState(state);
         }
 
@@ -147,8 +145,9 @@ namespace DaggerfallWorkshop.Game
         {
             weaponState = state;
 
-            if (!(WeaponType == WeaponTypes.Bow && state == WeaponStates.StrikeDown))
-                currentFrame = 0;
+            // Only reset frame to 0 for bows if idle state
+            if (WeaponType != WeaponTypes.Bow || state == WeaponStates.Idle)
+                currentFrame = animTicks = 0;
 
             UpdateWeapon();
         }
@@ -169,6 +168,11 @@ namespace DaggerfallWorkshop.Game
         public int GetCurrentFrame()
         {
             return currentFrame;
+        }
+
+        public float GetAnimTime()
+        {
+            return animTicks * GetAnimTickTime();
         }
 
         public void PlayActivateSound()
@@ -213,10 +217,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool IsPlayingOneShot()
         {
-            if (weaponState != WeaponStates.Idle)
-                return true;
-
-            return false;
+            return (weaponState != WeaponStates.Idle);
         }
 
         private void UpdateWeapon()
@@ -379,19 +380,7 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-                float speed = 0;
-                float time = 0;
-                if (player != null)
-                {
-                    if (WeaponType == WeaponTypes.Bow)
-                        time = GameManager.classicUpdateInterval;
-                    else
-                    {
-                        speed = 3 * (115 - player.Stats.LiveSpeed);
-                        time = speed / 980; // Approximation of classic frame update
-                    }
-                }
+                float time = GetAnimTickTime();
 
                 if (weaponAnims != null && ShowWeapon)
                 {
@@ -410,6 +399,14 @@ namespace DaggerfallWorkshop.Game
                             leftUnarmedAnimIndex = 0;
                         }
                     }
+                    else if (WeaponType == WeaponTypes.Bow && weaponState == WeaponStates.StrikeUp)
+                    {
+                        // Step each frame for drawing the bow until reach frame for ready to release arrow
+                        if (currentFrame < weaponAnims[(int)weaponState].NumFrames - 1)
+                            currentFrame++;
+                        // Record animation ticks for drawing and then holding a bow
+                        animTicks++;
+                    }
                     else
                     {
                         // Step frame
@@ -422,7 +419,7 @@ namespace DaggerfallWorkshop.Game
                                 if (WeaponType == WeaponTypes.Bow)
                                     ShowWeapon = false;                 // Immediately hide bow so its idle frame doesn't show before it is hidden for its cooldown
                             }
-                            else if (WeaponType == WeaponTypes.Bow)
+                            else if (WeaponType == WeaponTypes.Bow && !DaggerfallUnity.Settings.BowDrawback)
                                 currentFrame = 3;
                             else
                                 currentFrame = 0;                       // Otherwise keep looping frames
@@ -435,6 +432,19 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 yield return new WaitForSeconds(time);
+            }
+        }
+
+        private float GetAnimTickTime()
+        {
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float speed = 0;
+            if (WeaponType == WeaponTypes.Bow || player == null)
+                return GameManager.classicUpdateInterval;
+            else
+            {
+                speed = 3 * (115 - player.Stats.LiveSpeed);
+                return speed / 980; // Approximation of classic frame update
             }
         }
 

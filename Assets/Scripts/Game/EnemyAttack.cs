@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Calculate damage
-            damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, weapon, -1);
+            damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, -1, 0, weapon);
 
             // Break any "normal power" concealment effects on enemy
             if (entity.IsMagicallyConcealedNormalPower && damage > 0)
@@ -290,7 +290,7 @@ namespace DaggerfallWorkshop.Game
             EnemyMotor targetMotor = senses.Target.transform.GetComponent<EnemyMotor>();
 
             // Calculate damage
-            damage = FormulaHelper.CalculateAttackDamage(entity, targetEntity, weapon, -1);
+            damage = FormulaHelper.CalculateAttackDamage(entity, targetEntity, -1, 0, weapon);
 
             // Break any "normal power" concealment effects on enemy
             if (entity.IsMagicallyConcealedNormalPower && damage > 0)

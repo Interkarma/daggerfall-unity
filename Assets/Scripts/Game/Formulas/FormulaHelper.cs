@@ -40,8 +40,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public delegate int Formula_2i(int a, int b);
         public delegate int Formula_3i(int a, int b, int c);
         public delegate int Formula_1i_1f(int a, float b);
-        public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0);
-        public delegate int Formula_2de_1dui_1i(DaggerfallEntity de1, DaggerfallEntity de2 = null, DaggerfallUnityItem a = null, int b = 0);
+        public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0, DaggerfallUnityItem item = null);
         public delegate bool Formula_1pe_1sk(PlayerEntity pe, DFCareer.Skills sk);
 
         // Registries for overridden formula
@@ -51,7 +50,6 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static Dictionary<string, Formula_3i>        formula_3i = new Dictionary<string, Formula_3i>();
         public static Dictionary<string, Formula_1i_1f>     formula_1i_1f = new Dictionary<string, Formula_1i_1f>();
         public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
-        public static Dictionary<string, Formula_2de_1dui_1i> formula_2de_1dui_1i = new Dictionary<string, Formula_2de_1dui_1i>();
         public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
 
         #region Basic Formulas
@@ -402,14 +400,23 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, DaggerfallUnityItem weapon, int enemyAnimStateRecord)
+        /// <summary>
+        /// Calculate the damage caused by an attack.
+        /// </summary>
+        /// <param name="attacker">Attacking entity</param>
+        /// <param name="target">Target entity</param>
+        /// <param name="enemyAnimStateRecord">Record # of the target, used for backstabbing</param>
+        /// <param name="weaponAnimTime">Time the weapon animation lasted before the attack in ms, used for bow drawing </param>
+        /// <param name="weapon">The weapon item being used</param>
+        /// <returns>Damage inflicted to target, can be 0</returns>
+        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int enemyAnimStateRecord, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             if (attacker == null || target == null)
                 return 0;
 
-            Formula_2de_1dui_1i del;
-            if (formula_2de_1dui_1i.TryGetValue("CalculateAttackDamage", out del))
-                return del(attacker, target, weapon, enemyAnimStateRecord);
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateAttackDamage", out del))
+                return del(attacker, target, enemyAnimStateRecord, weaponAnimTime, weapon);
 
             int minBaseDamage = 0;
             int maxBaseDamage = 0;
@@ -602,9 +609,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     chanceToHitMod += (weapon.GetWeaponMaterialModifier() * 10);
                 }
+                // Mod hook for adjusting final hit chance mod. (is a no-op in DFU)
+                chanceToHitMod = AdjustWeaponHitChanceMod(attacker, target, chanceToHitMod, weaponAnimTime, weapon);
+
                 if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
                 {
-                    damage = CalculateWeaponAttackDamage(attacker, target, damageModifiers, weapon);
+                    damage = CalculateWeaponAttackDamage(attacker, target, damageModifiers, weaponAnimTime, weapon);
 
                     damage = CalculateBackstabDamage(damage, backstabChance);
                 }
@@ -640,6 +650,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                 }
             }
+            Debug.LogFormat("Damage {0} applied, animTime={1}  ({2})", damage, weaponAnimTime, GameManager.Instance.WeaponManager.ScreenWeapon.WeaponState);
 
             return damage;
         }
@@ -690,8 +701,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        private static int CalculateWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, DaggerfallUnityItem weapon)
+        private static int CalculateWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateWeaponAttackDamage", out del))
+                return del(attacker, target, damageModifier, weaponAnimTime, weapon);
+
             int damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1) + damageModifier;
 
             EnemyEntity AITarget = null;
@@ -722,6 +737,28 @@ namespace DaggerfallWorkshop.Game.Formulas
                 damage = 0;
 
             damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
+
+            // Mod hook for adjusting final damage. (is a no-op in DFU)
+            damage = AdjustWeaponAttackDamage(attacker, target, damage, weaponAnimTime, weapon);
+
+            return damage;
+        }
+
+        private static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("AdjustWeaponHitChanceMod", out del))
+                return del(attacker, target, hitChanceMod, weaponAnimTime, weapon);
+
+            return hitChanceMod;
+        }
+
+        private static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("AdjustWeaponAttackDamage", out del))
+                return del(attacker, target, damage, weaponAnimTime, weapon);
+
             return damage;
         }
 

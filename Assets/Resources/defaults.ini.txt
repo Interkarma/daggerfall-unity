@@ -70,6 +70,7 @@ SoundVolume = 1.0
 MusicVolume = 1.0
 InstantRepairs = False
 AllowMagicRepairs = False
+BowDrawback = False
 
 [Map]
 AutomapNumberOfDungeons=5
