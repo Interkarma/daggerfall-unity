@@ -54,6 +54,13 @@ namespace DaggerfallWorkshop.Utility
         TextFile.Token[] CreateTokens(TextFile.Formatting formatting, params string[] lines);
 
         /// <summary>
+        /// Gets string from token array.
+        /// </summary>
+        /// <param name="id">Text resource ID.</param>
+        /// <returns>String from text resource.</returns>
+        string GetText(int id);
+
+        /// <summary>
         /// Gets random string from separated token array.
         /// Example would be flavour text variants when finding dungeon exterior.
         /// </summary>
@@ -282,6 +289,20 @@ namespace DaggerfallWorkshop.Utility
             index = (tokenStreams[index].Length == 0 ? index - 1 : index);
 
             return tokenStreams[index];
+        }
+
+        /// <summary>
+        /// Gets string from token array.
+        /// </summary>
+        /// <param name="id">Text resource ID.</param>
+        /// <returns>String from single text resource.</returns>
+        public virtual string GetText(int id)
+        {
+            TextFile.Token[] tokens = GetRSCTokens(id);
+            if (tokens == null || tokens.Length == 0)
+                return string.Empty;
+
+            return tokens[0].text;
         }
 
         public virtual string GetRandomText(int id)
