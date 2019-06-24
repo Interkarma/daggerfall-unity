@@ -374,6 +374,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new CurePcDisease(null));
             RegisterAction(new CastSpellDo(null));
             RegisterAction(new CastEffectDo(null));
+            RegisterAction(new CastSpellOnFoe(null));
             RegisterAction(new RemoveFoe(null));
             RegisterAction(new LegalRepute(null));
             RegisterAction(new MuteNpc(null));
