@@ -30,7 +30,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         uint lastStrikeTime;
         int currentMaxMagickaIncrease;
-        int currentMaxStrengthIncrease;
 
         public override void SetProperties()
         {
@@ -73,6 +72,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() > lastStrikeTime + maxIncreaseRounds)
             {
                 currentMaxMagickaIncrease = 0;
+                SetStatMaxMod(DFCareer.Stats.Strength, 0);
+                SetStatMod(DFCareer.Stats.Strength, 0);
             }
         }
 
@@ -130,8 +131,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 int strengthDrained = Random.Range(1, 6);
                 DrainTargetStrength(targetEntity, strengthDrained);
 
-                //if (liveEffect != null)
-                //    liveEffect.currentMaxStrengthIncrease += drainAmount;
+                // Accumulate drain amount as a strength buff in live effect
+                // These modifiers are automatically serialized/deserialized as part of effect framework
+                if (liveEffect != null)
+                {
+                    liveEffect.ChangeStatMaxMod(DFCareer.Stats.Strength, strengthDrained);
+                    liveEffect.ChangeStatMod(DFCareer.Stats.Strength, strengthDrained);
+                }
             }
 
             // Record last strike time
@@ -203,7 +209,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = new CustomSaveData_v1();
             data.lastStrikeTime = lastStrikeTime;
             data.currentMaxMagickaIncrease = currentMaxMagickaIncrease;
-            data.currentMaxStrengthIncrease = currentMaxStrengthIncrease;
 
             return data;
         }
@@ -216,7 +221,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
             lastStrikeTime = data.lastStrikeTime;
             currentMaxMagickaIncrease = data.currentMaxMagickaIncrease;
-            currentMaxStrengthIncrease = data.currentMaxStrengthIncrease;
 
             // Immediately assign current max spell point modifier
             // This ensures saved spell points at time of save can be restored if greater than normal
