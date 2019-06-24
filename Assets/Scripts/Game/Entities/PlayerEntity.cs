@@ -624,10 +624,28 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                     }
 
-                    // If no guards spawned from nearby NPCs, spawn randomly with a foeSpawner
+                    // If no guards spawned from nearby NPCs, handle special spawn cases
                     if (guardsSpawnedFromNPCs == 0)
                     {
-                        GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, UnityEngine.Random.Range(2, 5 + 1), 12.8f, 51.2f);
+                        // If the player is inside an open shop then spawn guards at the ground-level door of the building
+                        if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
+                        {
+                            Vector3 lowestDoorPos;
+                            Vector3 lowestDoorNormal;
+                            if (GameManager.Instance.PlayerEnterExit.Interior.FindLowestInteriorDoor(out lowestDoorPos, out lowestDoorNormal))
+                            {
+                                lowestDoorPos += lowestDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
+                                int guardCount = UnityEngine.Random.Range(1, 3);
+                                for (int i = 0; i < guardCount; i++)
+                                {
+                                    SpawnCityGuard(lowestDoorPos, Vector3.forward);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, UnityEngine.Random.Range(2, 5 + 1), 12.8f, 51.2f);
+                        }
                     }
                 }
                 else

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Nystul, Hazelnut
+// Contributors:    Nystul, Hazelnut, Numidium
 // 
 // Notes:
 //
@@ -212,6 +212,29 @@ namespace DaggerfallWorkshop
             if (interiorDoors.FindClosestDoorToPlayer(playerPos, -1, out closestDoorPositionOut, out doorIndex))
             {
                 closestDoorNormalOut = interiorDoors.GetDoorNormal(doorIndex);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Finds the interior door that is closest to ground level.
+        /// </summary>
+        /// <param name="lowestDoorPositionOut">Position of lowest door in scene.</param>
+        /// <param name="lowestDoorNormalOut">Normal vector of lowest door in scene.</param>
+        /// <returns>True if successful.</returns>
+        public bool FindLowestInteriorDoor(out Vector3 lowestDoorPositionOut, out Vector3 lowestDoorNormalOut)
+        {
+            lowestDoorPositionOut = lowestDoorNormalOut = Vector3.zero;
+            DaggerfallStaticDoors interiorDoors = GetComponent<DaggerfallStaticDoors>();
+            if (!interiorDoors)
+                return false;
+
+            int doorIndex;
+            if (interiorDoors.FindLowestDoor(-1, out lowestDoorPositionOut, out doorIndex))
+            {
+                lowestDoorNormalOut = interiorDoors.GetDoorNormal(doorIndex);
                 return true;
             }
 
