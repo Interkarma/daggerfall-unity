@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         uint lastStrikeTime;
         int currentMaxMagickaIncrease;
-        //int currentMaxStrengthIncrease;
+        int currentMaxStrengthIncrease;
 
         public override void SetProperties()
         {
@@ -94,6 +94,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (liveEffect == null)
                 Debug.LogError("MaceOfMolagBalEffect.EnchantmentPayloadCallback could not find live effect instance on source entity.");
 
+            // Seed random
+            Random.InitState(Time.frameCount);
+
             // "The Mace of Molag Bal drains its victim's spell points and gives them to the bearer.
             // "If the victim has no spell points, he is drained of strength, which is also transferred to the wielder."
             // "Using the Mace of Molag Bal can actually give its bearer more spell points or more strength than he would have fully rested."
@@ -123,7 +126,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else
             {
-                // TODO: If target is out of spell points then transfer 1-6 strength from target to source
+                // If target is out of spell points then drain 1-6 strength from target
+                int strengthDrained = Random.Range(1, 6);
+                DrainTargetStrength(targetEntity, strengthDrained);
+
+                //if (liveEffect != null)
+                //    liveEffect.currentMaxStrengthIncrease += drainAmount;
             }
 
             // Record last strike time
@@ -149,6 +157,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return targetManager.FindIncumbentEffect<MaceOfMolagBalEffect>() as MaceOfMolagBalEffect;
         }
 
+        void DrainTargetStrength(DaggerfallEntityBehaviour entity, int amount)
+        {
+            if (entity == null)
+                return;
+
+            EntityEffectManager targetManager = entity.GetComponent<EntityEffectManager>();
+            if (targetManager == null)
+                return;
+
+            // Find incumbent strength drain effect on target or assign new drain
+            DrainStrength drain = targetManager.FindIncumbentEffect<DrainStrength>() as DrainStrength;
+            if (drain == null)
+            {
+                // Create and assign bundle
+                // We bypass saving throws as target already had a chance at start of payload delivery
+                EntityEffectBundle bundle = targetManager.CreateSpellBundle(DrainStrength.EffectKey);
+                targetManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+
+                // Find new bundle now its assigned
+                drain = targetManager.FindIncumbentEffect<DrainStrength>() as DrainStrength;
+            }
+
+            // Increment incumbent drain magnitude on target
+            if (drain != null)
+            {
+                drain.IncreaseMagnitude(amount);
+            }
+        }
+
         #endregion
 
         #region Serialization
@@ -158,7 +195,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             public uint lastStrikeTime;
             public int currentMaxMagickaIncrease;
-            //public int currentMaxStrengthIncrease;
+            public int currentMaxStrengthIncrease;
         }
 
         public override object GetSaveData()
@@ -166,7 +203,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = new CustomSaveData_v1();
             data.lastStrikeTime = lastStrikeTime;
             data.currentMaxMagickaIncrease = currentMaxMagickaIncrease;
-            //data.currentMaxStrengthIncrease = currentMaxStrengthIncrease;
+            data.currentMaxStrengthIncrease = currentMaxStrengthIncrease;
 
             return data;
         }
@@ -179,7 +216,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             CustomSaveData_v1 data = (CustomSaveData_v1)dataIn;
             lastStrikeTime = data.lastStrikeTime;
             currentMaxMagickaIncrease = data.currentMaxMagickaIncrease;
-            //currentMaxStrengthIncrease = data.currentMaxStrengthIncrease;
+            currentMaxStrengthIncrease = data.currentMaxStrengthIncrease;
+
+            // Immediately assign current max spell point modifier
+            // This ensures saved spell points at time of save can be restored if greater than normal
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (entityBehaviour)
+                entityBehaviour.Entity.ChangeMaxMagickaModifier(currentMaxMagickaIncrease);
         }
 
         #endregion
