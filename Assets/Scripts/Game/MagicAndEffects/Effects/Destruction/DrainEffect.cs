@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youFeelDrained"));
         }
 
-        void IncreaseMagnitude(int amount)
+        public void IncreaseMagnitude(int amount)
         {
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
 
@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetStatMod(drainStat, -magnitude);
         }
 
-        int DecreaseMagnitude(int amount)
+        public int DecreaseMagnitude(int amount)
         {
             magnitude -= amount;
             if (magnitude < 0)
