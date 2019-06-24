@@ -79,6 +79,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return killCount; }
         }
 
+        public List<SpellReference> SpellQueue
+        {
+            get { return spellQueue; }
+        }
+
         #endregion
 
         #region Constructors
