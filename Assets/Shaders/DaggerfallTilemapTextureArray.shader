@@ -99,28 +99,11 @@ Shader "Daggerfall/TilemapTextureArray" {
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
 			// since there is currently a bug with seams when using the UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
 			// mip map level is selected manually dependent on fragment's distance from camera
-			float scale = sqrt(_TileTexArr_TexelSize.x * 64.0f);
-			float scaledDist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz) / scale;
+			float scale = sqrt(_TileTexArr_TexelSize.x * 64.0f) * 12.38;
+			float relativeHeight = max(_WorldSpaceCameraPos.y - IN.worldPos.y, 1.8);
+			float dist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz);
 
-			float mipMapLevel;
-			if (scaledDist < 17.5f)
-				mipMapLevel = 0.0;
-			else if (scaledDist < 25.0f)
-				mipMapLevel = 1.0;
-			else if (scaledDist < 35.0f)
-				mipMapLevel = 2.0;
-			else if (scaledDist < 50.0f)
-				mipMapLevel = 3.0;
-			else if (scaledDist < 70.0f)
-				mipMapLevel = 4.0;
-			else if (scaledDist < 100.0f)
-				mipMapLevel = 5.0;
-			else if (scaledDist < 140.0f)
-				mipMapLevel = 6.0;
-			else if (scaledDist < 200.0f)
-				mipMapLevel = 7.0;
-			else
-				mipMapLevel = 8.0;
+			float mipMapLevel = clamp(2 * log2(dist / scale) - log2(relativeHeight / 1.8), 0, 8);
 			half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, mipMapLevel);
 
 			o.Albedo = c.rgb;
