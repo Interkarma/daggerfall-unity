@@ -96,6 +96,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(IngredientUsage.name, IngredientUsage.description, IngredientUsage.usage, IngredientUsage.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PlayVID.name, PlayVID.description, PlayVID.usage, PlayVID.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(UnmuteQuestNPCs.name, UnmuteQuestNPCs.description, UnmuteQuestNPCs.usage, UnmuteQuestNPCs.Execute);
 
@@ -2028,6 +2029,26 @@ namespace Wenzil.Console
                 DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow window = new DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow(DaggerfallUI.Instance.UserInterfaceManager);
                 window.Filename = args[0];
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(window);
+
+                return "Finished";
+            }
+        }
+
+        private static class PlayVID
+        {
+            public static readonly string name = "playvid";
+            public static readonly string description = "Play the specified .VID file";
+            public static readonly string usage = "playvid {filename.vid} (e.g. playvid anim0000.vid)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+
+                // Start video and set to exit on escape only, as enter keypress can fall through and close video instantly
+                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, args[0]);
+                vidPlayerWindow.EndOnAnyKey = false;
+                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(vidPlayerWindow);
 
                 return "Finished";
             }
