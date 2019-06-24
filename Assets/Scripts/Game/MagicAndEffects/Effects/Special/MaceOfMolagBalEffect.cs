@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             else
             {
                 // If target is out of spell points then drain 1-6 strength from target
-                int strengthDrained = Random.Range(1, 6);
+                int strengthDrained = Random.Range(1, 7);
                 DrainTargetStrength(targetEntity, strengthDrained);
 
                 // Accumulate drain amount as a strength buff in live effect
