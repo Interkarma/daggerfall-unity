@@ -9,8 +9,10 @@
 // Notes:
 //
 
+using System;
 using System.Text.RegularExpressions;
 using FullSerializer;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -21,17 +23,21 @@ namespace DaggerfallWorkshop.Game.Questing
     /// If the Foe has not been spawned: All spells currently in queue will be cast on Foe the moment they spawn.
     /// If the Foe has been spawned: The next spell(s) added to queue will be cast on spawned Foes on next quest tick.
     /// This allows quest author to cast spells on Foe both before and after spawn or at different stages of quest (e.g. after foe injured).
+    /// Notes:
+    ///  -As spells have durations recommend casting spells on "place foe" dungeon foes after being injured or spell will likely expire by the time player locates foe.
+    ///  -For "create foe" foes spell can be queued at any time as spell is cast when foe is directly spawned near player.
     /// </summary>
     public class CastSpellOnFoe : ActionTemplate
     {
-        int spellID = -1;
+        SpellReference spell;
         Symbol foeSymbol;
 
         public override string Pattern
         {
             get
             {
-                return @"cast (?<aSpell>[a-zA-Z0-9_.-]+) spell on (?<aFoe>[a-zA-Z0-9_.-]+)";
+                return @"cast (?<aSpell>[a-zA-Z0-9_.-]+) spell on (?<aFoe>[a-zA-Z0-9_.-]+)|" +
+                       @"cast (?<aCustomSpell>[a-zA-Z0-9_.-]+) custom spell on (?<aFoe>[a-zA-Z0-9_.-]+)";
             }
         }
 
@@ -50,14 +56,39 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             CastSpellOnFoe action = new CastSpellOnFoe(parentQuest);
             string sourceSpellName = match.Groups["aSpell"].Value;
+            action.spell.CustomKey = match.Groups["aCustomSpell"].Value;
             action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
+
+            // Get classic spell ID
+            if (string.IsNullOrEmpty(action.spell.CustomKey))
+            {
+                Table spellsTable = QuestMachine.Instance.SpellsTable;
+                if (spellsTable.HasValue(sourceSpellName))
+                {
+                    action.spell.ClassicID = int.Parse(spellsTable.GetValue("id", sourceSpellName));
+                }
+                else
+                {
+                    QuestMachine.LogFormat("CastSpellOnFoe could not resolve classic spell '{0}' in Quests-Spells data table", sourceSpellName);
+                    SetComplete();
+                }
+            }
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // TODO: Add spell to Foe resource queue
+            // Get the Foe resource
+            Foe foe = ParentQuest.GetFoe(foeSymbol);
+            if (foe == null)
+            {
+                SetComplete();
+                throw new Exception(string.Format("CastSpellOnFoe could not find Foe with symbol name {0}", Symbol.Name));
+            }
+
+            // Add spell to Foe resource queue
+            foe.QueueSpell(spell);
 
             SetComplete();
         }
@@ -67,14 +98,14 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public int spellID;
+            public SpellReference spell;
             public Symbol foeSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.spellID = spellID;
+            data.spell = spell;
             data.foeSymbol = foeSymbol;
 
             return data;
@@ -86,7 +117,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            spellID = data.spellID;
+            spell = data.spell;
             foeSymbol = data.foeSymbol;
         }
 
