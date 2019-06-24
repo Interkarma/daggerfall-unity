@@ -766,6 +766,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 DaggerfallUI.Instance.DaggerfallHUD.ActiveSpells.UpdateIcons();
         }
 
+        /// <summary>
+        /// Creates a simple single-effect spell bundle from the specified effect key.
+        /// </summary>
+        /// <param name="effectKey">Effect key to create bundle from.</param>
+        /// <param name="element">Element type for bundle. Defaults to Magic.</param>
+        /// <param name="effectSettings">Effect settings. Uses full defaults if null.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateSpellBundle(string effectKey, ElementTypes element = ElementTypes.Magic, EffectSettings? effectSettings = null)
+        {
+            if (effectSettings == null)
+                effectSettings = BaseEntityEffect.DefaultEffectSettings();
+
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.Spell,
+                ElementType = element,
+                Effects = new EffectEntry[] { new EffectEntry(effectKey, effectSettings.Value) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         #endregion
 
         #region Potions
