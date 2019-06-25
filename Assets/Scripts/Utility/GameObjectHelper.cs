@@ -920,7 +920,7 @@ namespace DaggerfallWorkshop.Utility
 
             foreach (QuestResourceBehaviour resourceBehaviour in resourceBehaviours)
             {
-                if (resourceBehaviour.TargetResource == resource)
+                if (resourceBehaviour.TargetSymbol == resource.Symbol)
                     return true;
             }
 
