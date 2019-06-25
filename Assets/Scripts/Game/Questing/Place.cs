@@ -581,14 +581,6 @@ namespace DaggerfallWorkshop.Game.Questing
             if (regionData.LocationCount == 0)
                 return false;
 
-            // Convert House4-House5 back to House2 - not sure where these house types even exist?
-            if (requiredBuildingType == DFLocation.BuildingTypes.House4 ||
-                requiredBuildingType == DFLocation.BuildingTypes.House5)
-            {
-                requiredBuildingType = DFLocation.BuildingTypes.House2;
-                p2 = (int)DFLocation.BuildingTypes.House2;
-            }
-
             // Find random town containing building
             int attempts = 0;
             bool found = false;
@@ -913,6 +905,14 @@ namespace DaggerfallWorkshop.Game.Questing
             // Need to check our parent quest resources separately as not loaded to quest machine during compile
             SiteDetails[] activeQuestSites = QuestMachine.Instance.GetAllActiveQuestSites();
             QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
+
+            // Convert House4-House5 back to House2 - not sure where these house types even exist?
+            if (buildingType == DFLocation.BuildingTypes.House4 ||
+                buildingType == DFLocation.BuildingTypes.House5)
+            {
+                buildingType = DFLocation.BuildingTypes.House2;
+                p2 = (int)DFLocation.BuildingTypes.House2;
+            }
 
             // Iterate through all blocks
             DFBlock[] blocks;
