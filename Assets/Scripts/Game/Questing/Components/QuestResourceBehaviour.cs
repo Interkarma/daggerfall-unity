@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using FullSerializer;
@@ -362,10 +363,45 @@ namespace DaggerfallWorkshop.Game.Questing
             if (!enemyEffectManager)
                 return;
 
-            // Process spell queue
-            for (int i = 0;  i < foe.SpellQueue.Count; i++)
+            // Cast queued spells on foe from current position
+            for (int i = foeSpellQueuePosition; i < foe.SpellQueue.Count; i++)
             {
-                // TODO: Cast spell on foe
+                SpellReference spell = foe.SpellQueue[i];
+                EntityEffectBundle spellBundle = null;
+
+                // Create classic or custom spell bundle
+                if (string.IsNullOrEmpty(spell.CustomKey))
+                {
+                    // Get classic spell data
+                    SpellRecord.SpellRecordData spellData;
+                    if (!GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spell.ClassicID, out spellData))
+                        continue;
+
+                    // Create classic spell bundle settings
+                    EffectBundleSettings bundleSettings;
+                    if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundleSettings))
+                        continue;
+
+                    // Create classic spell bundle
+                    spellBundle = new EntityEffectBundle(bundleSettings, enemyEntityBehaviour);
+                }
+                else
+                {
+                    // Create custom spell bundle - must be previously registered to broker
+                    try
+                    {
+                        EntityEffectBroker.CustomSpellBundleOffer offer = GameManager.Instance.EntityEffectBroker.GetCustomSpellBundleOffer(spell.CustomKey);
+                        spellBundle = new EntityEffectBundle(offer.BundleSetttings, enemyEntityBehaviour);
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.LogErrorFormat("QuestResourceBehaviour.CastSpellQueue() could not find custom spell offer with key: {0}, exception: {1}", spell.CustomKey, ex.Message);
+                    }
+                }
+
+                // Assign spell bundle to enemy
+                if (spellBundle != null)
+                    enemyEffectManager.AssignBundle(spellBundle, AssignBundleFlags.BypassSavingThrows);
             }
 
             // Set index positon to end of queue
