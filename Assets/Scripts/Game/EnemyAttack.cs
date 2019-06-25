@@ -48,7 +48,8 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
-            if (GameManager.Instance.DisableAI)
+            // Unable to attack if AI disabled or paralyzed
+            if (GameManager.Instance.DisableAI || entityBehaviour.Entity.IsParalyzed)
                 return;
 
             // Countdown to next melee attack
@@ -73,6 +74,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Unable to attack if paralyzed
+            if (entityBehaviour.Entity.IsParalyzed)
+                return;
+
             // If a melee attack has reached the damage frame we can run a melee attempt
             if (mobile.DoMeleeDamage)
             {
