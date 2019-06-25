@@ -644,7 +644,6 @@ namespace DaggerfallWorkshop.Game.Entity
                     // If no guards spawned from nearby NPCs, spawn randomly with a foeSpawner
                     if (guardsSpawnedFromNPCs == 0)
                     {
-                        // If the player is inside an open shop then spawn guards at the ground-level door of the building
                         GameObjectHelper.CreateFoeSpawner(true, MobileTypes.Knight_CityWatch, UnityEngine.Random.Range(2, 5 + 1), 12.8f, 51.2f);
                     }
                 }
