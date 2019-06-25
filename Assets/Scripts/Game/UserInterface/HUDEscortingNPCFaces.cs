@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        const int faceCount = 10;
         const int maxFaces = 3;
         const string factionFaceFile = "FACES.CIF";
 
@@ -85,9 +86,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Public Methods
 
         /// <summary>
-        /// Adds a face to HUD.
+        /// Adds a Person face to HUD.
         /// </summary>
-        /// <param name="person">Symbol of target Person resource to add.</param>
+        /// <param name="person">Target Person resource to add.</param>
         public void AddFace(Person person)
         {
             faces.Add(CreateFaceDetails(person));
@@ -95,12 +96,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Drops a face from HUD.
+        /// Adds a Foe face to HUD.
+        /// Foe faces should always be humanoid as there are no portraits for monstrous enemies.
+        /// Always creates a Breton face for now.
         /// </summary>
-        /// <param name="person">Symbol of target Person resource to remove.</param>
+        /// <param name="foe">Target Foe resource to add.</param>
+        public void AddFace(Foe foe)
+        {
+            faces.Add(CreateFaceDetails(foe));
+            RefreshFaces();
+        }
+
+        /// <summary>
+        /// Drops a Person face from HUD.
+        /// </summary>
+        /// <param name="person">Target Person resource to remove.</param>
         public void DropFace(Person person)
         {
             faces.Remove(CreateFaceDetails(person));
+            RefreshFaces();
+        }
+
+        /// <summary>
+        /// Drops a Foe face from HUD.
+        /// </summary>
+        /// <param name="foe">Target Foe resource to remove.</param>
+        public void DropFace(Foe foe)
+        {
+            faces.Remove(CreateFaceDetails(foe));
             RefreshFaces();
         }
 
@@ -110,6 +133,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         FaceDetails CreateFaceDetails(Person person)
         {
+            // TODO: Support child portrait selection
+
             FaceDetails face = new FaceDetails();
             face.questUID = person.ParentQuest.UID;
             face.targetPerson = person.Symbol;
@@ -127,6 +152,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     face.factionFaceIndex = fd.face;
                 }
             }
+
+            return face;
+        }
+
+        FaceDetails CreateFaceDetails(Foe foe)
+        {
+            UnityEngine.Random.InitState(Time.frameCount);
+
+            FaceDetails face = new FaceDetails();
+            face.questUID = foe.ParentQuest.UID;
+            face.targetFoe = foe.Symbol;
+            face.targetRace = Races.Breton;
+            face.gender = foe.Gender;
+            face.faceIndex = UnityEngine.Random.Range(0, faceCount);
+            face.factionFaceIndex = -1;
 
             return face;
         }

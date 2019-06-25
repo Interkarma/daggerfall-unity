@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,21 +9,26 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
+    /// <summary>
+    /// Drops an NPC or Foe portrait from HUD that player is currently escorting.
+    /// </summary>
     public class DropFace : ActionTemplate
     {
         Symbol personSymbol;
+        Symbol foeSymbol;
 
         public override string Pattern
         {
-            get { return @"drop (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
+            get {
+                return
+                    @"drop (?<anNPC>[a-zA-Z0-9_.-]+) face|" +
+                    @"drop foe (?<aFoe>[a-zA-Z0-9_.-]+) face";
+            }
         }
 
         public DropFace(Quest parentQuest)
@@ -41,6 +46,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             DropFace action = new DropFace(parentQuest);
             action.personSymbol = new Symbol(match.Groups["anNPC"].Value);
+            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
 
             return action;
         }
@@ -49,13 +55,19 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
-            // Get related Person resource
-            Person person = ParentQuest.GetPerson(personSymbol);
-            if (person == null)
-                return;
-
-            // Drop face from HUD
-            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.DropFace(person);
+            // Drop related Person or Foe resource
+            if (personSymbol != null)
+            {
+                Person person = ParentQuest.GetPerson(personSymbol);
+                if (person != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.DropFace(person);
+            }
+            else if (foeSymbol != null)
+            {
+                Foe foe = ParentQuest.GetFoe(foeSymbol);
+                if (foe != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.DropFace(foe);
+            }
 
             SetComplete();
         }
@@ -66,12 +78,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public struct SaveData_v1
         {
             public Symbol personSymbol;
+            public Symbol foeSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.personSymbol = personSymbol;
+            data.foeSymbol = foeSymbol;
 
             return data;
         }
@@ -83,6 +97,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             SaveData_v1 data = (SaveData_v1)dataIn;
             personSymbol = data.personSymbol;
+            foeSymbol = data.foeSymbol;
         }
 
         #endregion
