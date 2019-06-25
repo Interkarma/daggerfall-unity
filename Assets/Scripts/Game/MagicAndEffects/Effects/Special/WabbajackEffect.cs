@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                 // Switch entity
                 targetEntity.gameObject.SetActive(false);
-                GameObject gameObject = GameObjectHelper.CreateEnemy(HardStrings.enemyNames[(int)enemyType], enemyType, targetEntity.transform.localPosition, parentTransform);
+                GameObject gameObject = GameObjectHelper.CreateEnemy(HardStrings.enemyNames[(int)enemyType], enemyType, targetEntity.transform.localPosition, MobileGender.Unspecified, parentTransform);
                 DaggerfallEntityBehaviour newEnemyBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
                 EnemyEntity newEnemy = (EnemyEntity)newEnemyBehaviour.Entity;
                 newEnemy.WabbajackActive = true;
