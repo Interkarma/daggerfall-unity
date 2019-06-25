@@ -584,6 +584,23 @@ namespace DaggerfallWorkshop.Game.Entity
             // Only spawn if player is not in a dungeon, and if there are 10 or fewer existing guards
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= 10)
             {
+                // Handle indoor guard spawning
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInside && GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
+                {
+                    Vector3 lowestDoorPos;
+                    Vector3 lowestDoorNormal;
+                    if (GameManager.Instance.PlayerEnterExit.Interior.FindLowestInteriorDoor(out lowestDoorPos, out lowestDoorNormal))
+                    {
+                        lowestDoorPos += lowestDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
+                        int guardCount = UnityEngine.Random.Range(2, 6);
+                        for (int i = 0; i < guardCount; i++)
+                        {
+                            SpawnCityGuard(lowestDoorPos, Vector3.forward);
+                        }
+                    }
+                    return;
+                }
+
                 DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
                 if (dfLocation == null)
                     return;
