@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem, sourceDamage);
 
             // Validate
-            if (context != EnchantmentPayloadFlags.Strikes || targetEntity == null || param == null)
+            if (context != EnchantmentPayloadFlags.Strikes || targetEntity == null || param == null || sourceDamage == 0)
                 return null;
 
             // Get target effect manager
