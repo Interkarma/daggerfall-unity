@@ -77,9 +77,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // What transport options does the player have?
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
-            bool hasHorse = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Horse);
-            bool hasCart = inventory.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart);
-            bool hasShip = DaggerfallBankManager.OwnsShip;
+            bool hasHorse = GameManager.Instance.TransportManager.HasHorse();
+            bool hasCart = GameManager.Instance.TransportManager.HasCart();
+            bool hasShip = GameManager.Instance.TransportManager.HasShip();
 
             // Load all textures
             LoadTextures();
