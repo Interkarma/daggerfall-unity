@@ -1824,6 +1824,7 @@ namespace Wenzil.Console
             {
                 if (args == null || args.Length < 1)
                     return usage;
+                UnityEngine.Random.InitState(Time.frameCount);
                 DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
                 return "Finished";
             }
