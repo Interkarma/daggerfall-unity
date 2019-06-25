@@ -120,8 +120,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 {
                     if (GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
                     {
+                        // Self-cast spells are all assigned directly to self, "click to cast" spells are loaded to ready spell
+                        // TODO: Support multiple ready spells so all loaded spells are launched on click
                         bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
-                        effectManager.SetReadySpell(bundle, true);
+                        if (bundle.Settings.TargetType == TargetTypes.CasterOnly)
+                            effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                        else
+                            effectManager.SetReadySpell(bundle, true);
                     }
                 }
             }
