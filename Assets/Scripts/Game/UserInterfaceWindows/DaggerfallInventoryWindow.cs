@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: InconsolableCellist, Hazelnut
+// Contributors: InconsolableCellist, Hazelnut, Numidium
 //
 // Notes:
 //
@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Banking;
 using System.Linq;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -162,6 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected ItemCollection localItems = null;
         protected ItemCollection remoteItems = null;
+        protected ItemCollection theftBasket = null;
         ItemCollection droppedItems = new ItemCollection();
         protected List<DaggerfallUnityItem> localItemsFiltered = new List<DaggerfallUnityItem>();
         protected List<DaggerfallUnityItem> remoteItemsFiltered = new List<DaggerfallUnityItem>();
@@ -171,6 +173,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool allowDungeonWagonAccess = false;
         bool chooseOne = false;
         bool shopShelfStealing = false;
+        bool isPrivateProperty = false;
         int lootTargetStartCount = 0;
 
         private DaggerfallUnityItem stackItem;
@@ -239,6 +242,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return lootTarget; }
             set { lootTarget = value; }
+        }
+
+        public ItemCollection TheftBasket
+        {
+            get { return theftBasket; }
         }
 
         public void AllowDungeonWagonAccess()
@@ -567,6 +575,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (lootTarget != null)
             {
                 remoteItems = lootTarget.Items;
+                isPrivateProperty = lootTarget.houseOwned;
+                theftBasket = isPrivateProperty ? new ItemCollection() : null;
                 remoteTargetType = RemoteTargetTypes.Loot;
                 lootTargetStartCount = remoteItems.Count;
                 lootTarget.OnInventoryOpen();
@@ -587,6 +597,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         }
                     }
                 }
+                OnClose += OnCloseWindow;
             }
 
             // Clear wagon button state on open
@@ -1692,6 +1703,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void AttemptPrivatePropertyTheft()
+        {
+            GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
+            PlayerGPS.DiscoveredBuilding buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
+            int weightAndNumItems = (int)theftBasket.GetWeight() + theftBasket.Count;
+            int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(playerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
+            // Send the guards if detected
+            if (!Dice100.FailedRoll(chanceBeingDetected))
+            {
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
+                playerEntity.SpawnCityGuards(true);
+            }
+            else
+            {
+                PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
+            }
+        }
+
         #endregion
 
         #region Item Click Event Handlers
@@ -1782,6 +1811,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (usingWagon)
                         canHold = WagonCanHoldAmount(item);
                     TransferItem(item, localItems, remoteItems, canHold, true);
+                    if (lootTarget.houseOwned)
+                        theftBasket.RemoveItem(item);
                 }
             }
             else if (selectedActionMode == ActionModes.Info)
@@ -1810,6 +1841,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to local items
                 if (localItems != null)
                     TransferItem(item, remoteItems, localItems, CanCarryAmount(item), equip: true);
+                if (lootTarget.houseOwned)
+                    theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
             {
@@ -1821,6 +1854,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedActionMode == ActionModes.Remove)
             {
                 TransferItem(item, remoteItems, localItems, CanCarryAmount(item));
+                if (lootTarget.houseOwned)
+                    theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -1954,5 +1989,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        #region Window event handlers
+
+        private void OnCloseWindow()
+        {
+            if (isPrivateProperty && theftBasket != null && theftBasket.Count != 0)
+            {
+                AttemptPrivatePropertyTheft();
+            }
+            OnClose -= OnCloseWindow;
+        }
+
+        #endregion  
     }
 }

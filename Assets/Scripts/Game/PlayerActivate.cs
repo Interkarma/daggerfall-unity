@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -633,6 +634,7 @@ namespace DaggerfallWorkshop.Game
                     // If no contents, do nothing
                     if (loot.Items.Count == 0)
                         return;
+                    loot.houseOwned = true;
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, PrivatePropertyId, uiManager.TopWindow);
                     messageBox.OnButtonClick += PrivateProperty_OnButtonClick;
                     uiManager.PushWindow(messageBox);
@@ -690,15 +692,6 @@ namespace DaggerfallWorkshop.Game
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                // Record player crime
-                GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
-                Debug.Log("Player crime detected: rifling through private property!!");
-
-                // Send the guards
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
-                playerEntity.SpawnCityGuards(true);
-
                 // Open inventory window with activated private container as remote target (pre-set)
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
