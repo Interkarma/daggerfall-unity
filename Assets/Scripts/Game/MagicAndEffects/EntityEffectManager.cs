@@ -476,12 +476,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
 
                     // Spell Reflection
-                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
+                    if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
                         continue;
                 }
 
                 // Spell Resistance
-                if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
+                if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
                     continue;
 
                 // Start effect
