@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             {
                 return
                     @"add (?<anNPC>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add (?<anNPC>[a-zA-Z0-9_.-]+) face|" +
-                    @"add foe (?<aFoe>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add for (?<aFoe>[a-zA-Z0-9_.-]+) face";
+                    @"add foe (?<aFoe>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add foe (?<aFoe>[a-zA-Z0-9_.-]+) face";
             }
         }
 
@@ -59,13 +59,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             base.Update(caller);
 
             // Add related Person or Foe resource
-            if (personSymbol != null)
+            if (personSymbol != null && !string.IsNullOrEmpty(personSymbol.Name))
             {
                 Person person = ParentQuest.GetPerson(personSymbol);
                 if (person != null)
                     DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
             }
-            else if (foeSymbol != null)
+            else if (foeSymbol != null && !string.IsNullOrEmpty(foeSymbol.Name))
             {
                 Foe foe = ParentQuest.GetFoe(foeSymbol);
                 if (foe != null)

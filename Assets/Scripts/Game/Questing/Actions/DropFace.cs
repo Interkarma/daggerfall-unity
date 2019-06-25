@@ -56,13 +56,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             base.Update(caller);
 
             // Drop related Person or Foe resource
-            if (personSymbol != null)
+            if (personSymbol != null && !string.IsNullOrEmpty(personSymbol.Name))
             {
                 Person person = ParentQuest.GetPerson(personSymbol);
                 if (person != null)
                     DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.DropFace(person);
             }
-            else if (foeSymbol != null)
+            else if (foeSymbol != null && !string.IsNullOrEmpty(foeSymbol.Name))
             {
                 Foe foe = ParentQuest.GetFoe(foeSymbol);
                 if (foe != null)
