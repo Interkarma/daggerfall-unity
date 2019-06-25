@@ -24,7 +24,7 @@ confirmFind,        Do you want to open the world map to travel to:
 confirmFind2,       (Note: you can cancel travel from the world map)
 enterNote,          Enter your note:
 completedQuest,     completed
-failedQuest,        failed
+endedQuest,         ended
 finishQuestHeader,  {0} {1} at {2}:
 quest,              Quest
 noteHeader,         {0} in {1}:

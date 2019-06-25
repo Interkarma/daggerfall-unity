@@ -241,7 +241,7 @@ namespace DaggerfallWorkshop.Game.Player
 
         private static List<TextFile.Token> CreateFinishedQuest(string questName, bool success)
         {
-            string status = TextManager.Instance.GetText(textDatabase, success ? "completedQuest" : "failedQuest");
+            string status = TextManager.Instance.GetText(textDatabase, success ? "completedQuest" : "endedQuest");
             List<TextFile.Token> entry = new List<TextFile.Token>();
             entry.Add(new TextFile.Token() {
                 text = string.Format(TextManager.Instance.GetText(textDatabase, "finishQuestHeader"),

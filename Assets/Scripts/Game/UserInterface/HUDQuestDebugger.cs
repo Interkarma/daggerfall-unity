@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string noQuestsRunning = "NO QUESTS RUNNING";
         const string questRunning = "Running";
         const string questFinishedSuccess = "Finished (success)";
-        const string questFinishedFailedOrExpired = "Finished (failed/expired)";
+        const string questFinishedEnded = "Finished (ended)";
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
         const int globalLabelPoolCount = 64;
@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (currentQuest.QuestSuccess)
                     processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedSuccess);
                 else
-                    processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedFailedOrExpired);
+                    processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinishedEnded);
             }
         }
 
