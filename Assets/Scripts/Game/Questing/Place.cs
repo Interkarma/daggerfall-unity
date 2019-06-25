@@ -569,7 +569,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         bool SelectRemoteTownSite(DFLocation.BuildingTypes requiredBuildingType)
         {
-            const int maxAttempts = 500;
+            const int maxAttemptsBeforeFallback = 250;
+            const int maxAttemptsBeforeFailure = 500;
 
             // Get player region
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
@@ -580,21 +581,20 @@ namespace DaggerfallWorkshop.Game.Questing
             if (regionData.LocationCount == 0)
                 return false;
 
-            // Hack: Convert House4-House5 back to House2 - not sure where these house types even exist?
-            if (requiredBuildingType == DFLocation.BuildingTypes.House4 ||
-                requiredBuildingType == DFLocation.BuildingTypes.House5)
-            {
-                requiredBuildingType = DFLocation.BuildingTypes.House2;
-                p2 = (int)DFLocation.BuildingTypes.House2;
-            }
-
             // Find random town containing building
             int attempts = 0;
             bool found = false;
             while (!found)
             {
-                // Increment attempts
-                if (++attempts >= maxAttempts)
+                // Increment attempts and do some fallback
+                if (++attempts >= maxAttemptsBeforeFallback &&
+                    requiredBuildingType >= DFLocation.BuildingTypes.House1 &&
+                    requiredBuildingType <= DFLocation.BuildingTypes.House6)
+                {
+                    requiredBuildingType = DFLocation.BuildingTypes.AnyHouse;
+                    p2 = -1;
+                }
+                if (attempts >= maxAttemptsBeforeFailure)
                 {
                     Debug.LogErrorFormat("Could not find remote town site with building type {0} within {1} attempts", requiredBuildingType.ToString(), attempts);
                     break;
