@@ -47,8 +47,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ModNPCRep.name, ModNPCRep.description, ModNPCRep.usage, ModNPCRep.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ClearMQState.name, ClearMQState.description, ClearMQState.usage, ClearMQState.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(SetMQStage.name, SetMQStage.description, SetMQStage.usage, SetMQStage.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ClearQuests.name, ClearQuests.description, ClearQuests.usage, ClearQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetLevel.name, SetLevel.description, SetLevel.usage, SetLevel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Levitate.name, Levitate.description, Levitate.usage, Levitate.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
@@ -1235,40 +1234,18 @@ namespace Wenzil.Console
             }
         }
 
-        private static class ClearMQState
+        private static class ClearQuests
         {
-            public static readonly string name = "clearmqstate";
-            public static readonly string error = "Could not clear main quest state.";
-            public static readonly string description = "Clears all main quest state. CAUTION: Will purge all active quests, clear all reputations to 0, and reset all global variables.";
-            public static readonly string usage = "clearmqstate";
+            public static readonly string name = "clearquests";
+            public static readonly string error = "Could not clear quests.";
+            public static readonly string description = "Clears all quests from quest machine.";
+            public static readonly string usage = "clearquests";
 
             public static string Execute(params string[] args)
             {
-                QuestMachine.Instance.ClearMainQuestState();
+                QuestMachine.Instance.ClearQuests();
 
                 return "Finished";
-            }
-        }
-
-        private static class SetMQStage
-        {
-            public static readonly string name = "setmqstage";
-            public static readonly string error = "Could not set main quest stage.";
-            public static readonly string description = "Configure quest system for a particular stage of main quest for testing. CAUTION: Will also call 'resetmqstate' and purge all other quest state.";
-            public static readonly string usage = "setmqstage <stage>";
-
-            public static string Execute(params string[] args)
-            {
-                if (args == null || args.Length != 1)
-                    return HelpCommand.Execute(SetMQStage.name);
-
-                int stage;
-                if (!int.TryParse(args[0], out stage))
-                    return HelpCommand.Execute(SetMQStage.name);
-
-                int stageSet = QuestMachine.Instance.SetMainQuestStage(stage);
-
-                return string.Format("Set main quest stage to {0}", stageSet);
             }
         }
 
