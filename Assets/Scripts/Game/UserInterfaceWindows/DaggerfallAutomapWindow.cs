@@ -1268,6 +1268,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             UpdateMouseHoverOverText();
+            UpdateMouseHoverOverGameObjects();
         }        
 
         #region Private Methods
@@ -1281,6 +1282,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
             string hoverOverText = automap.GetMouseHoverOverText(mousePosition);
             labelHoverText.Text = hoverOverText;
+        }
+
+        /// <summary>
+        /// updates the mouse hover over gameobjects in the automap window (e.g. connections of portals)
+        /// </summary>
+        private void UpdateMouseHoverOverGameObjects()
+        {
+            Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
+            mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
+            if (automap.UpdateMouseHoverOverGameObjects(mousePosition))
+                UpdateAutomapView();
         }
 
         /// <summary>

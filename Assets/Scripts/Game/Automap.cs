@@ -119,6 +119,12 @@ namespace DaggerfallWorkshop.Game
                 position = transform.position;
                 rotation = transform.rotation;
             }
+
+            public TeleporterTransform(Transform transform, Vector3 positionOffset)
+            {
+                position = transform.position + positionOffset;
+                rotation = transform.rotation;
+            }
         }
 
         public class TeleporterConnection
@@ -233,7 +239,9 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         Dictionary<string, TeleporterConnection> dictTeleporterConnections = new Dictionary<string, TeleporterConnection>();
 
-        GameObject gameObjectTeleporterMarkers = null; // container object for teleporter markers
+        GameObject gameobjectTeleporterMarkers = null; // container object for teleporter markers
+
+        GameObject gameobjectTeleporterConnection = null; // on mouse hover over connection between portal entrance and exit is shown
 
         int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
 
@@ -399,8 +407,8 @@ namespace DaggerfallWorkshop.Game
             // create teleport markers
             CreateTeleporterMarkers();
 
-            if (gameObjectTeleporterMarkers != null)
-                gameObjectTeleporterMarkers.SetActive(true);
+            if (gameobjectTeleporterMarkers != null)
+                gameobjectTeleporterMarkers.SetActive(true);
 
             UpdateSlicingPositionY();
         }
@@ -421,8 +429,8 @@ namespace DaggerfallWorkshop.Game
             if (gameObjectUserNoteMarkers != null)
                 gameObjectUserNoteMarkers.SetActive(false);
 
-            if (gameObjectTeleporterMarkers != null)
-                gameObjectTeleporterMarkers.SetActive(false);
+            if (gameobjectTeleporterMarkers != null)
+                gameobjectTeleporterMarkers.SetActive(false);
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)))
             {
@@ -600,6 +608,81 @@ namespace DaggerfallWorkshop.Game
                 }
             }
             return ""; // otherwise return empty string (= no mouse hover over text will be displayed)
+        }
+
+        /// <summary>
+        /// will make the mouse hover over gameobjects appear in the automap window
+        /// </summary>
+        /// <param name="screenPosition">the mouse position to be used for raycast</param>
+        /// <returns>a flag that will indicate that the automap render panel will need to be updated</returns>
+        public bool UpdateMouseHoverOverGameObjects(Vector2 screenPosition)
+        {
+            RaycastHit? nearestHit = null;
+            GetRayCastNearestHitOnAutomapLayer(screenPosition, out nearestHit);
+
+            if (nearestHit.HasValue)
+            {
+                // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter entrance
+                if (nearestHit.Value.transform.name == NameGameobjectTeleporterPortalMarker && gameobjectTeleporterConnection == null)
+                {
+                    gameobjectTeleporterConnection = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    UnityEngine.Object.Destroy(gameobjectTeleporterConnection.GetComponent<Collider>());
+                    gameobjectTeleporterConnection.name = "Teleporter Connection";
+                    gameobjectTeleporterConnection.transform.SetParent(gameobjectAutomap.transform);
+                    gameobjectTeleporterConnection.layer = layerAutomap;
+                    Material material = new Material(Shader.Find("Standard"));
+                    material.color = new Color(0.9f, 0.7f, 1.0f, 0.5f);
+                    gameobjectTeleporterConnection.GetComponent<MeshRenderer>().material = material;
+
+                    TeleporterConnection connection = null;
+                    // hit portal marker is an entrance portal
+                    if (nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterEntranceSubStringEnd))
+                    {
+                        string key = nearestHit.Value.transform.parent.transform.name.Replace(NameGameobjectTeleporterSubStringStart, "");
+                        key = key.Replace(NameGameobjectTeleporterEntranceSubStringEnd, "");
+                        if (dictTeleporterConnections.ContainsKey(key))
+                        {
+                            connection = dictTeleporterConnections[key];
+                        }
+                    }
+                    // hit portal marker is an exit portal
+                    else if (nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterExitSubStringEnd))
+                    {
+                        string key = nearestHit.Value.transform.parent.transform.name.Replace(NameGameobjectTeleporterSubStringStart, "");
+                        key = key.Replace(NameGameobjectTeleporterExitSubStringEnd, "");
+                        if (dictTeleporterConnections.ContainsKey(key))
+                        {
+                            connection = dictTeleporterConnections[key];
+                        }
+                    }
+
+                    gameobjectTeleporterConnection.transform.position = (connection.teleporterEntrance.position + connection.teleporterExit.position) * 0.5f;
+                    gameobjectTeleporterConnection.transform.localScale = new Vector3(0.2f, (connection.teleporterEntrance.position - connection.teleporterExit.position).magnitude * 0.5f, 0.2f);
+                    gameobjectTeleporterConnection.transform.rotation = Quaternion.FromToRotation(Vector3.up, (connection.teleporterEntrance.position - connection.teleporterExit.position));
+
+                    return true; // signalize to update automap render panel
+                }
+
+                if (nearestHit.Value.transform.name != NameGameobjectTeleporterPortalMarker)// if no teleporter portal was hit
+                {
+                    // destroy teleporter connection gameobject
+                    if (gameobjectTeleporterConnection != null)
+                    {
+                        UnityEngine.GameObject.Destroy(gameobjectTeleporterConnection);                        
+                    }
+                    return true; // signalize to update automap render panel
+                }
+            }
+            else
+            {
+                if (gameobjectTeleporterConnection != null)
+                {
+                    UnityEngine.GameObject.Destroy(gameobjectTeleporterConnection);                    
+                }
+                return true; // signalize to update automap render panel
+            }
+
+            return false; // no update required in the automap render panel
         }
 
         public bool TryForTeleporterPortalsAtScreenPosition(Vector2 screenPosition)
@@ -1611,21 +1694,21 @@ namespace DaggerfallWorkshop.Game
         /// <param name="dictkey">the key used in the dictionary for this portal - will be used for unique naming of GameObjects</param>
         private void AddTeleporterMarkerOnMap(TeleporterTransform startPoint, TeleporterTransform endPoint, string dictkey)
         {
-            if (gameObjectTeleporterMarkers == null)
+            if (gameobjectTeleporterMarkers == null)
             {
-                gameObjectTeleporterMarkers = new GameObject("TeleporterMarkers");
-                gameObjectTeleporterMarkers.transform.SetParent(gameobjectAutomap.transform);
-                gameObjectTeleporterMarkers.layer = layerAutomap;
+                gameobjectTeleporterMarkers = new GameObject("TeleporterMarkers");
+                gameobjectTeleporterMarkers.transform.SetParent(gameobjectAutomap.transform);
+                gameobjectTeleporterMarkers.layer = layerAutomap;
             }
 
-            gameObjectTeleporterMarkers.SetActive(false);
+            gameobjectTeleporterMarkers.SetActive(false);
 
             string teleporterEntranceName = NameGameobjectTeleporterSubStringStart + dictkey + NameGameobjectTeleporterEntranceSubStringEnd;
-            if (gameObjectTeleporterMarkers.transform.Find(teleporterEntranceName) == null)
+            if (gameobjectTeleporterMarkers.transform.Find(teleporterEntranceName) == null)
             {
                 GameObject gameObjectTeleporterEntrance = new GameObject(teleporterEntranceName);
-                gameObjectTeleporterEntrance.transform.SetParent(gameObjectTeleporterMarkers.transform);
-                gameObjectTeleporterEntrance.transform.position = startPoint.position + Vector3.up * 1.0f;
+                gameObjectTeleporterEntrance.transform.SetParent(gameobjectTeleporterMarkers.transform);
+                gameObjectTeleporterEntrance.transform.position = startPoint.position; // + Vector3.up * 1.0f;
                 gameObjectTeleporterEntrance.transform.rotation = startPoint.rotation;
                 gameObjectTeleporterEntrance.transform.Rotate(0.0f, 90.0f, 0.0f);
                 gameObjectTeleporterEntrance.layer = layerAutomap;
@@ -1643,11 +1726,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             string teleporterExitName = NameGameobjectTeleporterSubStringStart + dictkey + NameGameobjectTeleporterExitSubStringEnd;
-            if (gameObjectTeleporterMarkers.transform.Find(teleporterExitName) == null)
+            if (gameobjectTeleporterMarkers.transform.Find(teleporterExitName) == null)
             {
                 GameObject gameObjectTeleporterExit = new GameObject(teleporterExitName);
-                gameObjectTeleporterExit.transform.SetParent(gameObjectTeleporterMarkers.transform);
-                gameObjectTeleporterExit.transform.position = endPoint.position + Vector3.up * 0.2f;
+                gameObjectTeleporterExit.transform.SetParent(gameobjectTeleporterMarkers.transform);
+                gameObjectTeleporterExit.transform.position = endPoint.position; // + Vector3.up * 0.2f;
                 //gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
                 //gameObjectTeleporterExit.transform.Rotate(0.0f, 180.0f, 0.0f);
                 gameObjectTeleporterExit.transform.rotation = startPoint.rotation; // take rotation from portal entrance
@@ -1683,9 +1766,9 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void DestroyTeleporterMarkers()
         {
-            if (gameObjectTeleporterMarkers != null)
+            if (gameobjectTeleporterMarkers != null)
             {
-                foreach (Transform child in gameObjectTeleporterMarkers.transform)
+                foreach (Transform child in gameobjectTeleporterMarkers.transform)
                 {
                     GameObject.Destroy(child.gameObject);
                 }
@@ -2495,8 +2578,8 @@ namespace DaggerfallWorkshop.Game
         void OnTeleportAction(GameObject triggerObj, GameObject nextObj)
         {
             TeleporterConnection connection = new TeleporterConnection();
-            connection.teleporterEntrance = new TeleporterTransform(triggerObj.transform);
-            connection.teleporterExit = new TeleporterTransform(nextObj.transform);
+            connection.teleporterEntrance = new TeleporterTransform(triggerObj.transform, (Vector3.up * 1.0f));
+            connection.teleporterExit = new TeleporterTransform(nextObj.transform, (Vector3.up * 0.2f));
             if (!dictTeleporterConnections.ContainsKey(connection.ToString()))
                 dictTeleporterConnections.Add(connection.ToString(), connection);
         }
