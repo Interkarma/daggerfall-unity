@@ -236,53 +236,14 @@ namespace DaggerfallWorkshop.Game
                     StaticNPC npc;
                     if (NPCCheck(hit, out npc))
                     {
-                        switch (currentMode)
-                        {
-                            case PlayerActivateModes.Info:
-                                PresentNPCInfo(npc);
-                                break;
-                            case PlayerActivateModes.Grab:
-                            case PlayerActivateModes.Talk:
-                            case PlayerActivateModes.Steal:
-                                if (hit.distance > StaticNPCActivationDistance)
-                                {
-                                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                    break;
-                                }
-                                StaticNPCClick(npc);
-                                break;
-                        }
+                        ActivateStaticNPC(hit, npc);
                     }
 
                     // Check for mobile NPC hit
                     MobilePersonNPC mobileNpc = null;
                     if (MobilePersonMotorCheck(hit, out mobileNpc))
                     {
-                        switch (currentMode)
-                        {
-                            case PlayerActivateModes.Info:
-                            case PlayerActivateModes.Grab:
-                            case PlayerActivateModes.Talk:
-                                if (hit.distance > MobileNPCActivationDistance)
-                                {
-                                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                    break;
-                                }
-                                GameManager.Instance.TalkManager.TalkToMobileNPC(mobileNpc);
-                                break;
-                            case PlayerActivateModes.Steal:
-                                if (!mobileNpc.PickpocketByPlayerAttempted)
-                                {
-                                    if (hit.distance > PickpocketDistance)
-                                    {
-                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                        break;
-                                    }
-                                    mobileNpc.PickpocketByPlayerAttempted = true;
-                                    Pickpocket();
-                                }
-                                break;
-                        }
+                        ActivateMobileNPC(hit, mobileNpc);
                     }
 
                     // Check for mobile enemy hit
@@ -525,6 +486,55 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 actionDoor.ToggleDoor(true);
+        }
+
+        void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)
+        {
+            switch (currentMode)
+            {
+                case PlayerActivateModes.Info:
+                    PresentNPCInfo(npc);
+                    break;
+                case PlayerActivateModes.Grab:
+                case PlayerActivateModes.Talk:
+                case PlayerActivateModes.Steal:
+                    if (hit.distance > StaticNPCActivationDistance)
+                    {
+                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                        break;
+                    }
+                    StaticNPCClick(npc);
+                    break;
+            }
+        }
+
+        void ActivateMobileNPC(RaycastHit hit, MobilePersonNPC mobileNpc)
+        {
+            switch (currentMode)
+            {
+                case PlayerActivateModes.Info:
+                case PlayerActivateModes.Grab:
+                case PlayerActivateModes.Talk:
+                    if (hit.distance > MobileNPCActivationDistance)
+                    {
+                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                        break;
+                    }
+                    GameManager.Instance.TalkManager.TalkToMobileNPC(mobileNpc);
+                    break;
+                case PlayerActivateModes.Steal:
+                    if (!mobileNpc.PickpocketByPlayerAttempted)
+                    {
+                        if (hit.distance > PickpocketDistance)
+                        {
+                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            break;
+                        }
+                        mobileNpc.PickpocketByPlayerAttempted = true;
+                        Pickpocket();
+                    }
+                    break;
+            }
         }
 
         #endregion
