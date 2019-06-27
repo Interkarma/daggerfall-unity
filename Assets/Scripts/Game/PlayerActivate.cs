@@ -250,45 +250,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallEntityBehaviour mobileEnemyBehaviour;
                     if (MobileEnemyCheck(hit, out mobileEnemyBehaviour))
                     {
-                        EnemyEntity enemyEntity = mobileEnemyBehaviour.Entity as EnemyEntity;
-                        switch (currentMode)
-                        {
-                            case PlayerActivateModes.Info:
-                            case PlayerActivateModes.Grab:
-                            case PlayerActivateModes.Talk:
-                                if (enemyEntity != null)
-                                {
-                                    MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
-                                    bool startsWithVowel = "aeiouAEIOU".Contains(mobileEnemy.Name[0].ToString());
-                                    string message;
-                                    if (startsWithVowel)
-                                        message = HardStrings.youSeeAn;
-                                    else
-                                        message = HardStrings.youSeeA;
-                                    message = message.Replace("%s", mobileEnemy.Name);
-                                    DaggerfallUI.Instance.PopupMessage(message);
-                                }
-                                break;
-                            case PlayerActivateModes.Steal:
-                                // Classic allows pickpocketing of NPC mobiles and enemy mobiles.
-                                // In early versions the only enemy mobiles that can be pickpocketed are classes,
-                                // but patch 1.07.212 allows pickpocketing of creatures.
-                                // For now, the only enemy mobiles being allowed by DF Unity are classes.
-                                if (mobileEnemyBehaviour && (mobileEnemyBehaviour.EntityType != EntityTypes.EnemyClass))
-                                    break;
-                                // Classic doesn't set any flag when pickpocketing enemy mobiles, so infinite attempts are possible
-                                if (enemyEntity != null && !enemyEntity.PickpocketByPlayerAttempted)
-                                {
-                                    if (hit.distance > PickpocketDistance)
-                                    {
-                                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                        break;
-                                    }
-                                    enemyEntity.PickpocketByPlayerAttempted = true;
-                                    Pickpocket(mobileEnemyBehaviour);
-                                }
-                                break;
-                        }
+                        ActivateMobileEnemy(hit, mobileEnemyBehaviour);
                     }
 
                     // Check for functional interior furniture: Ladders, Bookshelves.
@@ -532,6 +494,49 @@ namespace DaggerfallWorkshop.Game
                         }
                         mobileNpc.PickpocketByPlayerAttempted = true;
                         Pickpocket();
+                    }
+                    break;
+            }
+        }
+
+        void ActivateMobileEnemy(RaycastHit hit, DaggerfallEntityBehaviour mobileEnemyBehaviour)
+        {
+            EnemyEntity enemyEntity = mobileEnemyBehaviour.Entity as EnemyEntity;
+            switch (currentMode)
+            {
+                case PlayerActivateModes.Info:
+                case PlayerActivateModes.Grab:
+                case PlayerActivateModes.Talk:
+                    if (enemyEntity != null)
+                    {
+                        MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
+                        bool startsWithVowel = "aeiouAEIOU".Contains(mobileEnemy.Name[0].ToString());
+                        string message;
+                        if (startsWithVowel)
+                            message = HardStrings.youSeeAn;
+                        else
+                            message = HardStrings.youSeeA;
+                        message = message.Replace("%s", mobileEnemy.Name);
+                        DaggerfallUI.Instance.PopupMessage(message);
+                    }
+                    break;
+                case PlayerActivateModes.Steal:
+                    // Classic allows pickpocketing of NPC mobiles and enemy mobiles.
+                    // In early versions the only enemy mobiles that can be pickpocketed are classes,
+                    // but patch 1.07.212 allows pickpocketing of creatures.
+                    // For now, the only enemy mobiles being allowed by DF Unity are classes.
+                    if (mobileEnemyBehaviour && (mobileEnemyBehaviour.EntityType != EntityTypes.EnemyClass))
+                        break;
+                    // Classic doesn't set any flag when pickpocketing enemy mobiles, so infinite attempts are possible
+                    if (enemyEntity != null && !enemyEntity.PickpocketByPlayerAttempted)
+                    {
+                        if (hit.distance > PickpocketDistance)
+                        {
+                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            break;
+                        }
+                        enemyEntity.PickpocketByPlayerAttempted = true;
+                        Pickpocket(mobileEnemyBehaviour);
                     }
                     break;
             }
