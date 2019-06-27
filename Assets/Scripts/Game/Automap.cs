@@ -631,7 +631,9 @@ namespace DaggerfallWorkshop.Game
                     gameobjectTeleporterConnection.transform.SetParent(gameobjectAutomap.transform);
                     gameobjectTeleporterConnection.layer = layerAutomap;
                     Material material = new Material(Shader.Find("Standard"));
-                    material.color = new Color(0.9f, 0.7f, 1.0f, 0.5f);
+                    material.color = new Color(0.43f, 0.34f, 0.85f, 1.0f);
+                    material.SetFloat("_Metallic", 0.0f);
+                    material.SetFloat("_Glossiness", 0.0f);
                     gameobjectTeleporterConnection.GetComponent<MeshRenderer>().material = material;
 
                     TeleporterConnection connection = null;
@@ -1717,7 +1719,9 @@ namespace DaggerfallWorkshop.Game
                 gameObjectTeleporterEntranceMarker.transform.SetParent(gameObjectTeleporterEntrance.transform);
                 gameObjectTeleporterEntranceMarker.name = NameGameobjectTeleporterPortalMarker;
                 Material materialTeleporterEntranceMarker = new Material(Shader.Find("Standard"));
-                materialTeleporterEntranceMarker.color = new Color(0.8f, 0.4f, 1.0f);
+                materialTeleporterEntranceMarker.color = new Color(0.513f, 0.4f, 1.0f);
+                materialTeleporterEntranceMarker.SetFloat("_Metallic", 0.0f);
+                materialTeleporterEntranceMarker.SetFloat("_Glossiness", 0.0f);
                 gameObjectTeleporterEntranceMarker.GetComponent<MeshRenderer>().material = materialTeleporterEntranceMarker;
                 gameObjectTeleporterEntranceMarker.layer = layerAutomap;
                 gameObjectTeleporterEntranceMarker.transform.localPosition = Vector3.zero;
@@ -1741,7 +1745,9 @@ namespace DaggerfallWorkshop.Game
                 gameObjectTeleporterExitMarker.transform.SetParent(gameObjectTeleporterExit.transform);
                 gameObjectTeleporterExitMarker.name = NameGameobjectTeleporterPortalMarker;
                 Material materialTeleporterExitMarker = new Material(Shader.Find("Standard"));
-                materialTeleporterExitMarker.color = new Color(0.4f, 0.2f, 0.5f);
+                materialTeleporterExitMarker.color = new Color(0.355f, 0.279f, 0.7f);
+                materialTeleporterExitMarker.SetFloat("_Metallic", 0.0f);
+                materialTeleporterExitMarker.SetFloat("_Glossiness", 0.0f);
                 gameObjectTeleporterExitMarker.GetComponent<MeshRenderer>().material = materialTeleporterExitMarker;
                 gameObjectTeleporterExitMarker.layer = layerAutomap;
                 gameObjectTeleporterExitMarker.transform.localPosition = Vector3.zero;
