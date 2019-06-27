@@ -47,7 +47,6 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ModNPCRep.name, ModNPCRep.description, ModNPCRep.usage, ModNPCRep.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ClearQuests.name, ClearQuests.description, ClearQuests.usage, ClearQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetLevel.name, SetLevel.description, SetLevel.usage, SetLevel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Levitate.name, Levitate.description, Levitate.usage, Levitate.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
@@ -1231,21 +1230,6 @@ namespace Wenzil.Console
                 }
 
                 return "Could not raise rep - unknown error.";
-            }
-        }
-
-        private static class ClearQuests
-        {
-            public static readonly string name = "clearquests";
-            public static readonly string error = "Could not clear quests.";
-            public static readonly string description = "Clears all quests from quest machine.";
-            public static readonly string usage = "clearquests";
-
-            public static string Execute(params string[] args)
-            {
-                QuestMachine.Instance.ClearQuests();
-
-                return "Finished";
             }
         }
 
