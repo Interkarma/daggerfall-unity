@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game
                         if (currentMode != PlayerActivateModes.Steal)
                         {
                             DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
-                            LookAtLock(buildingLockValue);
+                            LookAtInteriorLock(buildingLockValue);
                             return;
                         }
                         else // Breaking into building
@@ -348,14 +348,26 @@ namespace DaggerfallWorkshop.Game
                             int lastAttempt = GameManager.Instance.PlayerGPS.GetLastLockpickAttempt(building.buildingKey);
                             if (skillValue <= lastAttempt)
                             {
-                                LookAtLock(buildingLockValue);
+                                LookAtInteriorLock(buildingLockValue);
                                 return;
                             }
 
                             // Attempt to unlock building
+                            Random.InitState(Time.frameCount);
                             player.TallySkill(DFCareer.Skills.Lockpicking, 1);
                             int chance = FormulaHelper.CalculateExteriorLockpickingChance(buildingLockValue, skillValue);
-                            if (Dice100.FailedRoll(chance))
+                            int roll = Random.Range(1, 101);
+                            Debug.LogFormat("Attempting pick against lock strength {0}. Chance={1}, Roll={2}.", buildingLockValue, chance, roll);
+                            if (chance > roll)
+                            {
+                                // Show success and play unlock sound
+                                player.TallyCrimeGuildRequirements(true, 1);
+                                DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingSuccess);
+                                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                                if (dfAudioSource != null)
+                                    dfAudioSource.PlayOneShot(SoundClips.ActivateLockUnlock);
+                            }
+                            else
                             {
                                 // Show failure and record attempt skill level in discovery data
                                 // Have not been able to create a guard response in classic, even when early morning NPCs are nearby
@@ -364,7 +376,6 @@ namespace DaggerfallWorkshop.Game
                                 GameManager.Instance.PlayerGPS.SetLastLockpickAttempt(building.buildingKey, skillValue);
                                 return;
                             }
-                            player.TallyCrimeGuildRequirements(true, 1);
                         }
                     }
 
@@ -683,7 +694,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Static Methods
 
-        public static void LookAtLock(int lockValue)
+        public static void LookAtInteriorLock(int lockValue)
         {
             if (lockValue < 20)
             {
@@ -691,6 +702,7 @@ namespace DaggerfallWorkshop.Game
                 // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
                 // but the difficulty text is always based on the exterior function.
                 // DF Unity doesn't have exterior locked doors yet, so the below uses the interior function.
+                // TODO: Implement LookAtExteriorLock variant for exterior doors
                 int chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, lockValue, player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking));
 
                 if (chance >= 30)

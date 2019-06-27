@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop
             if ((IsLocked && !ignoreLocks) || IsOpen)
             {
                 if(!IsOpen)
-                    PlayerActivate.LookAtLock(CurrentLockValue);
+                    PlayerActivate.LookAtInteriorLock(CurrentLockValue);
                 return;
             }
 
