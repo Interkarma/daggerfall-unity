@@ -605,6 +605,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                 return;
             }
+            Random.InitState(Time.frameCount);
             UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
             switch (loot.ContainerType)
             {

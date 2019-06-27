@@ -290,11 +290,7 @@ namespace DaggerfallWorkshop
                         }
                         else if (itemGroup == ItemGroups.Books)
                         {
-                            int groupIndex = (buildingQuality + 3) / 5;
-                            if (groupIndex == (int)ItemGroups.Books)
-                                items.AddItem(ItemBuilder.CreateRandomBook());
-                            else
-                                item = new DaggerfallUnityItem(itemGroup, groupIndex);
+                            item = ItemBuilder.CreateRandomBook();
                         }
                         else
                         {
