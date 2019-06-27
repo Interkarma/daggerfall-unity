@@ -198,43 +198,9 @@ namespace DaggerfallWorkshop.Game
                         if (!buildingDirectory.GetBuildingSummary(building.buildingKey, out buildingSummary))
                             return;
 
-                        // Check if door is unlocked
                         buildingUnlocked = BuildingIsUnlocked(buildingSummary);
-
-                        // Store building type
                         buildingType = buildingSummary.BuildingType;
-
-                        if (currentMode == PlayerActivateModes.Info)
-                        {
-                            // Discover building
-                            GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
-
-                            // Get discovered building
-                            PlayerGPS.DiscoveredBuilding db;
-                            if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
-                            {
-                                // TODO: Check against quest system for an overriding quest-assigned display name for this building
-                                DaggerfallUI.AddHUDText(db.displayName);
-
-                                if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
-                                    && buildingType != DFLocation.BuildingTypes.HouseForSale)
-                                {
-                                    string storeClosedMessage = HardStrings.storeClosed;
-                                    storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
-                                    storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
-                                    DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
-                                }
-
-                                //// Add debug info
-                                //if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State != HUDQuestDebugger.DisplayState.Nothing)
-                                //{
-                                //    DaggerfallUI.AddHUDText(string.Format("Debugger: BuildingKey = {0}", building.buildingKey));
-                                //}
-                            }
-
-                            //// Debug model ID
-                            //Debug.LogFormat("Building ModelID={0}", buildingSummary.ModelID);
-                        }
+                        ActivateBuilding(building, buildingType, buildingUnlocked);
                     }
 
                     // Check for a static door hit
@@ -249,25 +215,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallActionDoor actionDoor;
                     if (ActionDoorCheck(hit, out actionDoor))
                     {
-                        // Check if close enough to activate
-                        if (hit.distance > DoorActivationDistance)
-                        {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                            return;
-                        }
-
-                        // Handle Lock/Open spell effects (if active)
-                        if (HandleLockEffect(actionDoor))
-                            return;
-                        if (HandleOpenEffect(actionDoor))
-                            return;
-
-                        if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
-                        {
-                            actionDoor.AttemptLockpicking();
-                        }
-                        else
-                            actionDoor.ToggleDoor(true);
+                        ActivateActionDoor(hit, actionDoor);
                     }
 
                     // Check for action record hit
@@ -418,6 +366,35 @@ namespace DaggerfallWorkshop.Game
 
         #region Activation Logic
 
+        void ActivateBuilding(
+            StaticBuilding building,
+            DFLocation.BuildingTypes buildingType,
+            bool buildingUnlocked)
+        {
+            if (currentMode == PlayerActivateModes.Info)
+            {
+                // Discover building
+                GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
+
+                // Get discovered building
+                PlayerGPS.DiscoveredBuilding db;
+                if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
+                {
+                    // Check against quest system for an overriding quest-assigned display name for this building
+                    DaggerfallUI.AddHUDText(db.displayName);
+
+                    if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
+                        && buildingType != DFLocation.BuildingTypes.HouseForSale)
+                    {
+                        string storeClosedMessage = HardStrings.storeClosed;
+                        storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
+                        storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
+                        DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
+                    }
+                }
+            }
+        }
+
         void ActivateStaticDoor(
             DaggerfallStaticDoors doors,
             RaycastHit hit,
@@ -525,6 +502,29 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+        }
+
+        void ActivateActionDoor(RaycastHit hit, DaggerfallActionDoor actionDoor)
+        {
+            // Check if close enough to activate
+            if (hit.distance > DoorActivationDistance)
+            {
+                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                return;
+            }
+
+            // Handle Lock/Open spell effects (if active)
+            if (HandleLockEffect(actionDoor))
+                return;
+            if (HandleOpenEffect(actionDoor))
+                return;
+
+            if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
+            {
+                actionDoor.AttemptLockpicking();
+            }
+            else
+                actionDoor.ToggleDoor(true);
         }
 
         #endregion
