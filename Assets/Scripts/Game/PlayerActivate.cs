@@ -242,104 +242,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
                     if (doors && playerEnterExit)
                     {
-                        StaticDoor door;
-                        if (doors.HasHit(hit.point, out door) || CustomDoor.HasHit(hit, out door))
-                        {
-                            // Check if close enough to activate
-                            if (hit.distance > DoorActivationDistance)
-                            {
-                                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                                return;
-                            }
-
-                            if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
-                            {
-                                // Discover building
-                                GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
-
-                                // Handle clicking exterior door with Open spell active
-                                bool magicallyOpened = HandleOpenEffectOnExteriorDoor();
-
-                                // TODO: Implement lockpicking and door bashing for exterior doors
-                                // For now, any locked building door can be entered by using steal mode
-                                if (!buildingUnlocked && !magicallyOpened)
-                                {
-                                    if (currentMode != PlayerActivateModes.Steal)
-                                    {
-                                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
-                                        return;
-                                    }
-                                    else // Breaking into building
-                                    {
-                                        PlayerEntity player = GameManager.Instance.PlayerEntity;
-                                        player.TallyCrimeGuildRequirements(true, 1);
-                                    }
-                                }
-
-                                // If entering a shop let player know the quality level
-                                // If entering an open home, show greeting
-                                if (hitBuilding)
-                                {
-                                    const int houseGreetingsTextId = 256;
-
-                                    DaggerfallMessageBox mb;
-
-                                    if (buildingUnlocked &&
-                                        buildingType >= DFLocation.BuildingTypes.House1 &&
-                                        buildingType <= DFLocation.BuildingTypes.House4 &&
-                                        !DaggerfallBankManager.IsHouseOwned(building.buildingKey))
-                                    {
-                                        string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
-                                        mb = DaggerfallUI.MessageBox(greetingText);
-                                    }
-                                    else
-                                        mb = PresentShopQuality(building);
-
-                                    if (mb != null)
-                                    {
-                                        // Defer transition to interior to after user closes messagebox
-                                        deferredInteriorDoorOwner = doorOwner;
-                                        deferredInteriorDoor = door;
-                                        mb.OnClose += BuildingGreetingPopup_OnClose;
-                                        return;
-                                    }
-                                }
-
-                                // Hit door while outside, transition inside
-                                TransitionInterior(doorOwner, door, true);
-                                return;
-                            }
-                            else if (door.doorType == DoorTypes.Building && playerEnterExit.IsPlayerInside)
-                            {
-                                // Hit door while inside, transition outside
-                                playerEnterExit.TransitionExterior(true);
-                                return;
-                            }
-                            else if (door.doorType == DoorTypes.DungeonEntrance && !playerEnterExit.IsPlayerInside)
-                            {
-                                if (playerGPS)
-                                {
-                                    // Hit dungeon door while outside, transition inside
-                                    playerEnterExit.TransitionDungeonInterior(doorOwner, door, playerGPS.CurrentLocation, true);
-                                    return;
-                                }
-                            }
-                            else if (door.doorType == DoorTypes.DungeonExit && playerEnterExit.IsPlayerInside)
-                            {
-                                // Hit dungeon exit while inside, ask if access wagon or transition outside
-                                if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart) && DaggerfallUnity.Settings.DungeonExitWagonPrompt)
-                                {
-                                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38, DaggerfallUI.UIManager.TopWindow);
-                                    messageBox.OnButtonClick += DungeonWagonAccess_OnButtonClick;
-                                    DaggerfallUI.UIManager.PushWindow(messageBox);
-                                    return;
-                                }
-                                else
-                                {
-                                    playerEnterExit.TransitionDungeonExterior(true);
-                                }
-                            }
-                        }
+                        ActivateStaticDoor(doors, hit, hitBuilding, building, buildingType, buildingUnlocked, doorOwner);
                     }
 
                     // Check for an action door hit
@@ -512,6 +415,119 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+
+        #region Activation Logic
+
+        void ActivateStaticDoor(
+            DaggerfallStaticDoors doors,
+            RaycastHit hit,
+            bool hitBuilding,
+            StaticBuilding building,
+            DFLocation.BuildingTypes buildingType,
+            bool buildingUnlocked,
+            Transform doorOwner)
+        {
+            StaticDoor door;
+            if (doors.HasHit(hit.point, out door) || CustomDoor.HasHit(hit, out door))
+            {
+                // Check if close enough to activate
+                if (hit.distance > DoorActivationDistance)
+                {
+                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                    return;
+                }
+
+                if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
+                {
+                    // Discover building
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
+
+                    // Handle clicking exterior door with Open spell active
+                    bool magicallyOpened = HandleOpenEffectOnExteriorDoor();
+
+                    // TODO: Implement lockpicking and door bashing for exterior doors
+                    // For now, any locked building door can be entered by using steal mode
+                    if (!buildingUnlocked && !magicallyOpened)
+                    {
+                        if (currentMode != PlayerActivateModes.Steal)
+                        {
+                            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
+                            return;
+                        }
+                        else // Breaking into building
+                        {
+                            PlayerEntity player = GameManager.Instance.PlayerEntity;
+                            player.TallyCrimeGuildRequirements(true, 1);
+                        }
+                    }
+
+                    // If entering a shop let player know the quality level
+                    // If entering an open home, show greeting
+                    if (hitBuilding)
+                    {
+                        const int houseGreetingsTextId = 256;
+
+                        DaggerfallMessageBox mb;
+
+                        if (buildingUnlocked &&
+                            buildingType >= DFLocation.BuildingTypes.House1 &&
+                            buildingType <= DFLocation.BuildingTypes.House4 &&
+                            !DaggerfallBankManager.IsHouseOwned(building.buildingKey))
+                        {
+                            string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
+                            mb = DaggerfallUI.MessageBox(greetingText);
+                        }
+                        else
+                            mb = PresentShopQuality(building);
+
+                        if (mb != null)
+                        {
+                            // Defer transition to interior to after user closes messagebox
+                            deferredInteriorDoorOwner = doorOwner;
+                            deferredInteriorDoor = door;
+                            mb.OnClose += BuildingGreetingPopup_OnClose;
+                            return;
+                        }
+                    }
+
+                    // Hit door while outside, transition inside
+                    TransitionInterior(doorOwner, door, true);
+                    return;
+                }
+                else if (door.doorType == DoorTypes.Building && playerEnterExit.IsPlayerInside)
+                {
+                    // Hit door while inside, transition outside
+                    playerEnterExit.TransitionExterior(true);
+                    return;
+                }
+                else if (door.doorType == DoorTypes.DungeonEntrance && !playerEnterExit.IsPlayerInside)
+                {
+                    if (playerGPS)
+                    {
+                        // Hit dungeon door while outside, transition inside
+                        playerEnterExit.TransitionDungeonInterior(doorOwner, door, playerGPS.CurrentLocation, true);
+                        return;
+                    }
+                }
+                else if (door.doorType == DoorTypes.DungeonExit && playerEnterExit.IsPlayerInside)
+                {
+                    // Hit dungeon exit while inside, ask if access wagon or transition outside
+                    if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart) && DaggerfallUnity.Settings.DungeonExitWagonPrompt)
+                    {
+                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, 38, DaggerfallUI.UIManager.TopWindow);
+                        messageBox.OnButtonClick += DungeonWagonAccess_OnButtonClick;
+                        DaggerfallUI.UIManager.PushWindow(messageBox);
+                        return;
+                    }
+                    else
+                    {
+                        playerEnterExit.TransitionDungeonExterior(true);
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         bool HandleLockEffect(DaggerfallActionDoor actionDoor)
         {
