@@ -266,8 +266,7 @@ namespace DaggerfallWorkshop.Game
                                 {
                                     if (currentMode != PlayerActivateModes.Steal)
                                     {
-                                        string Locked = "Locked.";
-                                        DaggerfallUI.Instance.PopupMessage(Locked);
+                                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
                                         return;
                                     }
                                     else // Breaking into building

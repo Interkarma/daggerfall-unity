@@ -2,6 +2,9 @@
 
 schema: *key,$text
 
+--General strings
+lockedExteriorDoor,             "Locked."
+
 --Lycanthropy strings
 
 canOnlyCastOncePerDay,          "Can only be cast once per day..."
