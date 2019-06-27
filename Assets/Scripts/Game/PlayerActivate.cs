@@ -342,7 +342,28 @@ namespace DaggerfallWorkshop.Game
                         }
                         else // Breaking into building
                         {
+                            // Reject if player has already failed this building at current skill level
                             PlayerEntity player = GameManager.Instance.PlayerEntity;
+                            int skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking);
+                            int lastAttempt = GameManager.Instance.PlayerGPS.GetLastLockpickAttempt(building.buildingKey);
+                            if (skillValue <= lastAttempt)
+                            {
+                                LookAtLock(buildingLockValue);
+                                return;
+                            }
+
+                            // Attempt to unlock building
+                            player.TallySkill(DFCareer.Skills.Lockpicking, 1);
+                            int chance = FormulaHelper.CalculateExteriorLockpickingChance(buildingLockValue, skillValue);
+                            if (Dice100.FailedRoll(chance))
+                            {
+                                // Show failure and record attempt skill level in discovery data
+                                // Have not been able to create a guard response in classic, even when early morning NPCs are nearby
+                                // Assuming for now that exterior lockpicking is discrete enough that no response on failure is required
+                                DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                                GameManager.Instance.PlayerGPS.SetLastLockpickAttempt(building.buildingKey, skillValue);
+                                return;
+                            }
                             player.TallyCrimeGuildRequirements(true, 1);
                         }
                     }
