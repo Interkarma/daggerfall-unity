@@ -163,7 +163,6 @@ namespace DaggerfallWorkshop.Game
                     StaticBuilding building = new StaticBuilding();
 
                     #region Hit Checks
-
                     // Trigger quest resource behaviour click on anything but NPCs
                     QuestResourceBehaviour questResourceBehaviour;
                     if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour) && !(questResourceBehaviour.TargetResource is Person))
@@ -254,24 +253,7 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     // Check for functional interior furniture: Ladders, Bookshelves.
-                    DaggerfallLadder ladder = hit.transform.GetComponent<DaggerfallLadder>();
-                    DaggerfallBookshelf bookshelf = hit.transform.GetComponent<DaggerfallBookshelf>();
-                    if (ladder || bookshelf)
-                    {
-                        if (hit.distance > DefaultActivationDistance)
-                        {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                            return;
-                        }
-                        if (ladder)
-                        {   // Ladders:
-                            ladder.ClimbLadder();
-                        }
-                        else if (bookshelf)
-                        {   // Bookshelves:
-                            bookshelf.ReadBook();
-                        }
-                    }
+                    ActivateLaddersAndShelves(hit);
 
                     // Invoke any matched custom model activations registered by mods.
                     ModelActivation activation;
@@ -539,6 +521,28 @@ namespace DaggerfallWorkshop.Game
                         Pickpocket(mobileEnemyBehaviour);
                     }
                     break;
+            }
+        }
+
+        void ActivateLaddersAndShelves(RaycastHit hit)
+        {
+            DaggerfallLadder ladder = hit.transform.GetComponent<DaggerfallLadder>();
+            DaggerfallBookshelf bookshelf = hit.transform.GetComponent<DaggerfallBookshelf>();
+            if (ladder || bookshelf)
+            {
+                if (hit.distance > DefaultActivationDistance)
+                {
+                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                    return;
+                }
+                if (ladder)
+                {   // Ladders:
+                    ladder.ClimbLadder();
+                }
+                else if (bookshelf)
+                {   // Bookshelves:
+                    bookshelf.ReadBook();
+                }
             }
         }
 
