@@ -159,6 +159,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     bool hitBuilding = false;
                     bool buildingUnlocked = false;
+                    int buildingLockValue = 0;
                     DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.AllValid;
                     StaticBuilding building = new StaticBuilding();
 
@@ -198,6 +199,7 @@ namespace DaggerfallWorkshop.Game
                             return;
 
                         buildingUnlocked = BuildingIsUnlocked(buildingSummary);
+                        buildingLockValue = GetBuildingLockValue(buildingSummary);
                         buildingType = buildingSummary.BuildingType;
                         ActivateBuilding(building, buildingType, buildingUnlocked);
                     }
@@ -207,7 +209,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
                     if (doors && playerEnterExit)
                     {
-                        ActivateStaticDoor(doors, hit, hitBuilding, building, buildingType, buildingUnlocked, doorOwner);
+                        ActivateStaticDoor(doors, hit, hitBuilding, building, buildingType, buildingUnlocked, buildingLockValue, doorOwner);
                     }
 
                     // Check for an action door hit
@@ -307,6 +309,7 @@ namespace DaggerfallWorkshop.Game
             StaticBuilding building,
             DFLocation.BuildingTypes buildingType,
             bool buildingUnlocked,
+            int buildingLockValue,
             Transform doorOwner)
         {
             StaticDoor door;
@@ -334,6 +337,7 @@ namespace DaggerfallWorkshop.Game
                         if (currentMode != PlayerActivateModes.Steal)
                         {
                             DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
+                            LookAtLock(buildingLockValue);
                             return;
                         }
                         else // Breaking into building
@@ -407,6 +411,15 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+        }
+
+        int GetBuildingLockValue(BuildingSummary buildingSummary)
+        {
+            // Currently unknown how classic calculates building lock value but suspect related to building quality level
+            // No exterior buildings are known to have magically held locks, so 20 quality buildings (e.g. The Odd Blades) must have a lower lock value
+            // Using building quality / 2 for now until a more accurate method is known
+
+            return buildingSummary.Quality / 2;
         }
 
         void ActivateActionDoor(RaycastHit hit, DaggerfallActionDoor actionDoor)
@@ -643,6 +656,37 @@ namespace DaggerfallWorkshop.Game
                 if (sphereCollider)
                     sphereCollider.enabled = false;
             }
+        }
+
+        #endregion
+
+        #region Public Static Methods
+
+        public static void LookAtLock(int lockValue)
+        {
+            if (lockValue < 20)
+            {
+                PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
+                // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
+                // but the difficulty text is always based on the exterior function.
+                // DF Unity doesn't have exterior locked doors yet, so the below uses the interior function.
+                int chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, lockValue, player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking));
+
+                if (chance >= 30)
+                    if (chance >= 35)
+                        if (chance >= 95)
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[9]);
+                        else if (chance >= 45)
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
+                        else
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance3);
+                    else
+                        Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance2);
+                else
+                    Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance1);
+            }
+            else
+                Game.DaggerfallUI.SetMidScreenText(HardStrings.magicLock);
         }
 
         #endregion
