@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallLoot loot;
                     if (LootCheck(hit, out loot))
                     {
-                        HandleLootContainer(hit, loot);
+                        ActivateLootContainer(hit, loot);
                     }
 
                     // Check for static NPC hit
@@ -537,83 +537,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        #endregion
-
-        bool HandleLockEffect(DaggerfallActionDoor actionDoor)
-        {
-            // Check if player has Lock effect running
-            Lock lockEffect = (Lock)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Lock>();
-            if (lockEffect == null)
-                return false;
-
-            lockEffect.TriggerLockEffect(actionDoor);
-            return true;
-        }
-
-        bool HandleOpenEffect(DaggerfallActionDoor actionDoor)
-        {
-            // Check if player has Open effect running
-            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
-            if (openEffect == null)
-                return false;
-
-            openEffect.TriggerOpenEffect(actionDoor);
-            return true;
-        }
-
-        // NOTE: Open effect currently ALWAYS works on exterior doors, should operate on lock level
-        // Lockpick and lock level not fully implemented on exterior doors
-        bool HandleOpenEffectOnExteriorDoor()
-        {
-            // Check if player has Open effect running
-            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
-            if (openEffect == null)
-                return false;
-
-            // Cancel effect
-            openEffect.CancelEffect();
-
-            return true;
-        }
-
-        /// <summary>
-        /// Set a click delay before new clicks are accepted, usually when exiting UI.
-        /// </summary>
-        /// <param name="delay">Delay in seconds. Valid range is 0.0 - 1.0</param>
-        public void SetClickDelay(float delay = 0.3f)
-        {
-            clickDelay = Mathf.Clamp01(delay);
-            clickDelayStartTime = Time.realtimeSinceStartup;
-        }
-
-        public bool AttemptExteriorDoorBash(RaycastHit hit)
-        {
-            Transform doorOwner;
-            DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
-            StaticDoor door;
-            if (doors && doors.HasHit(hit.point, out door))
-            {
-                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                if (dfAudioSource != null)
-                    dfAudioSource.PlayOneShot(SoundClips.PlayerDoorBash);
-
-                // Roll for chance to open
-                // TODO: Factor door lock value into chance to open
-                int chance = 20;
-                if (Dice100.SuccessRoll(chance))
-                {
-                    TransitionInterior(doorOwner, door, true);
-                    return true;
-                }
-                // Bashing doors in cities is a crime
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
-                playerEntity.SpawnCityGuards(false);
-            }
-            return false;
-        }
-
-        private void HandleLootContainer(RaycastHit hit, DaggerfallLoot loot)
+        void ActivateLootContainer(RaycastHit hit, DaggerfallLoot loot)
         {
             // Check if close enough to activate for all types, except for corpses
             if (loot.ContainerType != LootContainerTypes.CorpseMarker &&
@@ -702,7 +626,7 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
         }
 
-        private void DisableEmptyCorpseContainer(GameObject go)
+        void DisableEmptyCorpseContainer(GameObject go)
         {
             if (go)
             {
@@ -710,6 +634,82 @@ namespace DaggerfallWorkshop.Game
                 if (sphereCollider)
                     sphereCollider.enabled = false;
             }
+        }
+
+        #endregion
+
+        bool HandleLockEffect(DaggerfallActionDoor actionDoor)
+        {
+            // Check if player has Lock effect running
+            Lock lockEffect = (Lock)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Lock>();
+            if (lockEffect == null)
+                return false;
+
+            lockEffect.TriggerLockEffect(actionDoor);
+            return true;
+        }
+
+        bool HandleOpenEffect(DaggerfallActionDoor actionDoor)
+        {
+            // Check if player has Open effect running
+            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
+            if (openEffect == null)
+                return false;
+
+            openEffect.TriggerOpenEffect(actionDoor);
+            return true;
+        }
+
+        // NOTE: Open effect currently ALWAYS works on exterior doors, should operate on lock level
+        // Lockpick and lock level not fully implemented on exterior doors
+        bool HandleOpenEffectOnExteriorDoor()
+        {
+            // Check if player has Open effect running
+            Open openEffect = (Open)GameManager.Instance.PlayerEffectManager.FindIncumbentEffect<Open>();
+            if (openEffect == null)
+                return false;
+
+            // Cancel effect
+            openEffect.CancelEffect();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Set a click delay before new clicks are accepted, usually when exiting UI.
+        /// </summary>
+        /// <param name="delay">Delay in seconds. Valid range is 0.0 - 1.0</param>
+        public void SetClickDelay(float delay = 0.3f)
+        {
+            clickDelay = Mathf.Clamp01(delay);
+            clickDelayStartTime = Time.realtimeSinceStartup;
+        }
+
+        public bool AttemptExteriorDoorBash(RaycastHit hit)
+        {
+            Transform doorOwner;
+            DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
+            StaticDoor door;
+            if (doors && doors.HasHit(hit.point, out door))
+            {
+                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                if (dfAudioSource != null)
+                    dfAudioSource.PlayOneShot(SoundClips.PlayerDoorBash);
+
+                // Roll for chance to open
+                // TODO: Factor door lock value into chance to open
+                int chance = 20;
+                if (Dice100.SuccessRoll(chance))
+                {
+                    TransitionInterior(doorOwner, door, true);
+                    return true;
+                }
+                // Bashing doors in cities is a crime
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
+                playerEntity.SpawnCityGuards(false);
+            }
+            return false;
         }
 
         public void PrivateProperty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
