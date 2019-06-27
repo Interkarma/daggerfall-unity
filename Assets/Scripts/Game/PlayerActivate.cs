@@ -445,13 +445,18 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        int GetBuildingLockValue(BuildingSummary buildingSummary)
+        int GetBuildingLockValue(int quality)
         {
             // Currently unknown how classic calculates building lock value but suspect related to building quality level
             // No exterior buildings are known to have magically held locks, so 20 quality buildings (e.g. The Odd Blades) must have a lower lock value
             // Using building quality / 2 for now until a more accurate method is known
 
-            return buildingSummary.Quality / 2;
+            return quality / 2;
+        }
+
+        int GetBuildingLockValue(BuildingSummary buildingSummary)
+        {
+            return GetBuildingLockValue(buildingSummary.Quality);
         }
 
         void ActivateActionDoor(RaycastHit hit, DaggerfallActionDoor actionDoor)
@@ -778,22 +783,41 @@ namespace DaggerfallWorkshop.Game
             StaticDoor door;
             if (doors && doors.HasHit(hit.point, out door))
             {
+                // Discover building - this is needed to check lock level and transition to interior
+                GameManager.Instance.PlayerGPS.DiscoverBuilding(door.buildingKey);
+
+                // Play bashing sound
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                 if (dfAudioSource != null)
                     dfAudioSource.PlayOneShot(SoundClips.PlayerDoorBash);
 
-                // Roll for chance to open
-                // TODO: Factor door lock value into chance to open
-                int chance = 20;
+                // Get lock value from discovered building
+                int lockValue = 0;
+                PlayerGPS.DiscoveredBuilding discoveredBuilding;
+                if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(door.buildingKey, out discoveredBuilding))
+                    lockValue = GetBuildingLockValue(discoveredBuilding.quality);
+
+                // Roll for chance to open - Lower lock values have a higher chance
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                Random.InitState(Time.frameCount);
+                int chance = 25 - lockValue;
                 if (Dice100.SuccessRoll(chance))
                 {
+                    // Success - player has forced their way into building
+                    playerEntity.TallyCrimeGuildRequirements(true, 1);
                     TransitionInterior(doorOwner, door, true);
                     return true;
                 }
-                // Bashing doors in cities is a crime
-                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
-                playerEntity.SpawnCityGuards(false);
+                else
+                {
+                    // Bashing doors in cities is a crime - 10% chance of summoning guards on each failed bash attempt
+                    if (Dice100.SuccessRoll(10))
+                    {
+                        Debug.Log("Breaking and entering detected - spawning city guards.");
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Attempted_Breaking_And_Entering;
+                        playerEntity.SpawnCityGuards(true);
+                    }
+                }
             }
             return false;
         }
