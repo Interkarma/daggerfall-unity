@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop
             public int factionID;
             public int quality;
             public DFLocation.BuildingTypes buildingType;
+            public int lastLockpickAttempt;
         }
 
         public struct NearbyObject
@@ -1017,6 +1018,56 @@ namespace DaggerfallWorkshop
                 discoveredBuildingOut.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets skill value of last lockpick attempt on this building in current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        public int GetLastLockpickAttempt(int buildingKey)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (!GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+                return 0;
+
+            return discoveredBuilding.lastLockpickAttempt;
+        }
+
+        /// <summary>
+        /// Sets skill value at time of last lockpicking attempt after failure in current location.
+        /// Player must increase skill past this value before they can try again.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="skillValue">Skill value at time attempt failed.</param>
+        public void SetLastLockpickAttempt(int buildingKey, int skillValue)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (!GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+                return;
+
+            discoveredBuilding.lastLockpickAttempt = skillValue;
+            UpdateDiscoveredBuilding(discoveredBuilding);
+        }
+
+        /// <summary>
+        /// Updates discovered building data in current location.
+        /// </summary>
+        /// <param name="discoveredBuilding">Updated data to write back to live discovery database.</param>
+        void UpdateDiscoveredBuilding(DiscoveredBuilding discoveredBuildingIn)
+        {
+            // Must have discovered building
+            if (!HasDiscoveredBuilding(discoveredBuildingIn.buildingKey))
+                return;
+
+            // Get the location discovery for this mapID
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            if (dl.discoveredBuildings == null)
+                return;
+
+            // Replace discovery data for building
+            dl.discoveredBuildings.Remove(discoveredBuildingIn.buildingKey);
+            dl.discoveredBuildings.Add(discoveredBuildingIn.buildingKey, discoveredBuildingIn);
         }
 
         /// <summary>

@@ -416,8 +416,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
             lastStartMethod = StartMethods.NewCharacter;
 
-            // Offer main quest during pre-alpha
-            QuestMachine.Instance.InstantiateQuest("__MQSTAGE00");
+            // Start main quest
+            QuestMachine.Instance.InstantiateQuest("_TUTOR__");
+            QuestMachine.Instance.InstantiateQuest("_BRISIEN");
 
             // Launch startup optional quest
             if (!string.IsNullOrEmpty(LaunchQuest))

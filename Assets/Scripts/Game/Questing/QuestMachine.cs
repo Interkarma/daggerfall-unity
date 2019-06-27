@@ -1088,95 +1088,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 factionListeners.Remove(factionID);
         }
 
-        public void ClearMainQuestState()
+        public void ClearQuests()
         {
-            // Reset current state
-            Instance.PurgeAllQuests();
-            GameManager.Instance.PlayerEntity.FactionData.ZeroAllReputations();
-            GameManager.Instance.PlayerEntity.GlobalVars.ZeroAllGlobalVars();
-            QuestMachine.Instance.LastNPCClicked = null;
-        }
-
-        /// <summary>
-        /// Sets main quest stage from 1-7 (currently).
-        /// </summary>
-        /// <param name="stage">Stage value.</param>
-        public int SetMainQuestStage(int stage)
-        {
-            // Clamp to valid range
-            stage = Mathf.Clamp(stage, 1, 7);
-
-            // Setup current stage
-            ClearMainQuestState();
-            if (stage == 1)
-            {
-                //GameManager.Instance.PlayerEntity.Level = 1;
-                InstantiateQuest("_BRISIEN"); // Also starts backbone S0000999
-                InstantiateQuest("S0000977"); // Normally started by tutorial
-            }
-            else if (stage == 2)
-            {
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Queen_Aubki, 20);
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Princess_Morgiah, 20);
-
-                GameManager.Instance.PlayerEntity.Level = 3;
-                InstantiateQuest("S0000999");
-                InstantiateQuest("S0000977");
-            }
-            else if (stage == 3)
-            {
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Queen_Barenziah, 20);
-                GameManager.Instance.PlayerEntity.Level = 9;
-                InstantiateQuest("__MQSTAGE03");
-                InstantiateQuest("S0000977");
-            }
-            else if (stage == 4)
-            {
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Queen_Akorithi, 20);
-                GameManager.Instance.PlayerEntity.Level = 8;
-                InstantiateQuest("__MQSTAGE04");
-                InstantiateQuest("S0000977");
-            }
-            else if (stage == 5)
-            {
-                GameManager.Instance.PlayerEntity.Level = 8;
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.The_Merchants, 60);
-                InstantiateQuest("__MQSTAGE05");
-                InstantiateQuest("S0000977");
-            }
-            else if (stage == 6)
-            {
-                GameManager.Instance.PlayerEntity.Level = 10;
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.Medora, 20);
-                GameManager.Instance.PlayerEntity.FactionData.ChangeReputation((int)FactionFile.FactionIDs.King_of_Worms, 20);
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(29, true);        // MyniseraSatisfied globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(33, true);        // KingOfWormsSatisfied globalvar
-                InstantiateQuest("__MQSTAGE06");
-                InstantiateQuest("S0000977");
-            }
-            else if (stage == 7)
-            {
-                // Only raise level
-                if (GameManager.Instance.PlayerEntity.Level < 10)
-                    GameManager.Instance.PlayerEntity.Level = 10;
-
-                // Set global variables
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(0, true);         // LiftedCurse globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(9, true);         // MedoraGotHorn globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(23, true);        // MorgiahSatisfied globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(28, true);        // BarenziahSatisfied globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(29, true);        // MyniseraSatisfied globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(31, true);        // MetLadyBrisienna globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(33, true);        // KingOfWormsSatisfied globalvar
-                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(43, true);        // LysandusSatisfied globalvar
-
-                // Start final quest line
-                InstantiateQuest("S0000008");
-            }
-
-            return stage;
+            PurgeAllQuests();
+            LastNPCClicked = null;
         }
 
         /// <summary>
