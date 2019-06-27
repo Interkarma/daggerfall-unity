@@ -849,11 +849,15 @@ namespace DaggerfallWorkshop.Game
             return questResourceBehaviour != null;
         }
 
-        // Check if non-house building is unlocked and enterable
+        // Check if building is unlocked and enterable
         private bool BuildingIsUnlocked(BuildingSummary buildingSummary)
         {
             // Player owned house is always unlocked
             if (DaggerfallBankManager.IsHouseOwned(buildingSummary.buildingKey))
+                return true;
+
+            // Buildings part of an active quest are always unlocked
+            if (IsActiveQuestBuilding(buildingSummary))
                 return true;
 
             bool unlocked = false;
@@ -900,6 +904,20 @@ namespace DaggerfallWorkshop.Game
                 unlocked = true;
 
             return unlocked;
+        }
+
+        // Check if building is used in an active quest inside current map
+        bool IsActiveQuestBuilding(BuildingSummary buildingSummary)
+        {
+            SiteDetails[] siteDetails = QuestMachine.Instance.GetAllActiveQuestSites();
+            foreach (SiteDetails site in siteDetails)
+            {
+                if (site.buildingKey == buildingSummary.buildingKey &&
+                    site.mapId == GameManager.Instance.PlayerGPS.CurrentMapID)
+                    return true;
+            }
+
+            return false;
         }
 
         // Display a shop quality level
