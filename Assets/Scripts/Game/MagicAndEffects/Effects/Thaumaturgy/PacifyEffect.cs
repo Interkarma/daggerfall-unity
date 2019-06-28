@@ -112,11 +112,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             vp.targetGroup = targetGroup;
 
             if (targetGroup == DFCareer.EnemyGroups.Animals)
-                properties.ChanceCosts = MakeEffectCosts(60, 100, 160);
+                vp.effectProperties.ChanceCosts = MakeEffectCosts(60, 100, 160);
             else if (targetGroup == DFCareer.EnemyGroups.Daedra)
-                properties.ChanceCosts = MakeEffectCosts(60, 120, 36);
+                vp.effectProperties.ChanceCosts = MakeEffectCosts(60, 120, 36);
             else if (targetGroup == DFCareer.EnemyGroups.Humanoid || targetGroup == DFCareer.EnemyGroups.Undead)
-                properties.ChanceCosts = MakeEffectCosts(80, 140, 60);
+                vp.effectProperties.ChanceCosts = MakeEffectCosts(80, 140, 60);
 
             variantProperties[variantIndex] = vp;
         }
