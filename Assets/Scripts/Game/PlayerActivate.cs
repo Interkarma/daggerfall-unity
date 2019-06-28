@@ -328,11 +328,8 @@ namespace DaggerfallWorkshop.Game
                     GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
 
                     // Handle clicking exterior door with Open spell active
-                    bool magicallyOpened = HandleOpenEffectOnExteriorDoor(buildingLockValue);
-                    if (magicallyOpened)
+                    if (HandleOpenEffectOnExteriorDoor(buildingLockValue))
                         buildingUnlocked = true;
-                    else
-                        return;
 
                     // TODO: Implement lockpicking and door bashing for exterior doors
                     // For now, any locked building door can be entered by using steal mode
