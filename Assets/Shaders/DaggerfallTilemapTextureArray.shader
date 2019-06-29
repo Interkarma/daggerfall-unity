@@ -63,7 +63,6 @@ Shader "Daggerfall/TilemapTextureArray" {
 		{
 			float2 uv_MainTex;
 			//float2 uv_BumpMap;
-			float3 worldPos;
 		};
 
 	float GetMipLevel(float2 iUV, float4 iTextureSize)
