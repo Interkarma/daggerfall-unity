@@ -727,6 +727,7 @@ namespace DaggerfallWorkshop.Game
 
             FactionFile.FactionData factionData;
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionID, out factionData);
+            int factionType = factionData.type;
 
             // Matched to classic. For dialog, NPCs that are not of type 2, 7 or 9 use their first parent that is, if such a parent exists
             while (factionData.parent != 0 && factionData.type != 2 && factionData.type != 7 && factionData.type != 9)
@@ -745,13 +746,17 @@ namespace DaggerfallWorkshop.Game
             npcData.isSpyMaster = false;
 
             // Social group assignment. Matched to classic.
-            if (factionData.sgroup >= 5)
+            if (factionType == 14)
+            {
+                npcData.socialGroup = FactionFile.SocialGroups.Nobility;
+            }
+            else if (factionType == 15)
+            {
+                npcData.socialGroup = FactionFile.SocialGroups.Commoners;
+            }
+            else if (factionData.sgroup >= 5)
             {
                 npcData.socialGroup = FactionFile.SocialGroups.Merchants;
-            }
-            else
-            {
-                npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
             }
 
             AssembleTopicListPerson(); // Update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
