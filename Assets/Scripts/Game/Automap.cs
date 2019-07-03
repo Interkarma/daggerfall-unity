@@ -2221,10 +2221,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             // store list of user note markers
-            automapDungeonState.listUserNoteMarkers = listUserNoteMarkers;
+            automapDungeonState.listUserNoteMarkers = new SortedList<int, NoteMarker>(listUserNoteMarkers);
 
             // store list of teleporter connections
-            automapDungeonState.dictTeleporterConnections = dictTeleporterConnections;
+            automapDungeonState.dictTeleporterConnections = new Dictionary<string, TeleporterConnection>(dictTeleporterConnections);
+
+            // delete all user marker notes (in automap gameobject and internal list)
+            DestroyUserMarkerNotes();
+            // delete all teleporter markers (in automap gameobject and internal dict)
+            DestroyTeleporterMarkers();
 
             // replace or add discovery state for current dungeon
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
@@ -2377,6 +2382,11 @@ namespace DaggerfallWorkshop.Game
 
             HideAll(); // clear discovery state of geometry as initial starting point
 
+            // make sure no user note markers are left over from previous dungeon run
+            DestroyUserMarkerNotes();
+            // make sure no teleporter markers are left over from previous dungeon run
+            DestroyTeleporterMarkers();
+
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
             if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
@@ -2420,21 +2430,18 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            DestroyUserMarkerNotes();
-
             // (try to) load user note markers
             var loadedListUserNoteMarkers = automapDungeonState.listUserNoteMarkers;
             if (loadedListUserNoteMarkers != null)
-                listUserNoteMarkers = loadedListUserNoteMarkers;            
+                listUserNoteMarkers = loadedListUserNoteMarkers; //new SortedList<int, NoteMarker>(loadedListUserNoteMarkers);
 
             foreach (var userMarkerNote in listUserNoteMarkers)
             {
                 CreateUserMarker(userMarkerNote.Key, userMarkerNote.Value.position);
             }
 
-            DestroyTeleporterMarkers();
             // (try to) load teleporter connections
-            var loadedDictTeleporterConnections = automapDungeonState.dictTeleporterConnections;
+            var loadedDictTeleporterConnections = automapDungeonState.dictTeleporterConnections; // new Dictionary<string, TeleporterConnection>(automapDungeonState.dictTeleporterConnections);
             if (loadedDictTeleporterConnections != null)
                 dictTeleporterConnections = loadedDictTeleporterConnections;
 
