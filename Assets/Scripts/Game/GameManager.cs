@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game
 
         public RetroRenderer RetroRenderer
         {
-            get { return (retroRenderer) ? retroRenderer : retroRenderer = GetMonoBehaviour<RetroRenderer>(); }
+            get { return (retroRenderer) ? retroRenderer : retroRenderer = GetMonoBehaviour<RetroRenderer>(false); }
             set { retroRenderer = value; }
         }
 
@@ -848,10 +848,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetMonoBehaviour<T>() where T : MonoBehaviour
+        public static T GetMonoBehaviour<T>(bool errorIfNotFound = true) where T : MonoBehaviour
         {
             T result = (T)GameObject.FindObjectOfType<T>();
-            if (result == null)
+            if (result == null && errorIfNotFound)
             {
                 string errorText = string.Format("GameManager could not find {0}.", typeof(T));
                 Debug.LogError(errorText);
