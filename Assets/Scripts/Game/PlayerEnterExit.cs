@@ -993,6 +993,8 @@ namespace DaggerfallWorkshop.Game
             world.suppressWorld = false;
             isPlayerInside = false;
             isPlayerInsideDungeon = false;
+
+            GameManager.UpdateShadowDistance();
         }
 
         /// <summary>
@@ -1009,6 +1011,8 @@ namespace DaggerfallWorkshop.Game
 
             isPlayerInside = true;
             isPlayerInsideDungeon = false;
+
+            GameManager.UpdateShadowDistance();
         }
 
         /// <summary>
@@ -1025,6 +1029,8 @@ namespace DaggerfallWorkshop.Game
 
             isPlayerInside = true;
             isPlayerInsideDungeon = true;
+
+            GameManager.UpdateShadowDistance();
         }
 
         public void MovePlayerToMarker(GameObject marker)

@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game
         float savedTimeScale;
         float classicUpdateTimer = 0;                       // Timer for matching classic's update loop
         bool classicUpdate = false;                         // True when reached a classic update
+        float initialQualitySettingsShadowDistance;
         //Texture2D pauseScreenshot;
 
         GameObject playerObject = null;
@@ -441,6 +442,9 @@ namespace DaggerfallWorkshop.Game
             // Try to set all properties at startup
             //GetProperties();
 
+            // Cache initial QualitySettings shadow distance
+            initialQualitySettingsShadowDistance = QualitySettings.shadowDistance;
+
             // Always start game paused
             PauseGame(true);
 
@@ -725,6 +729,18 @@ namespace DaggerfallWorkshop.Game
             }
 
             return true;
+        }
+
+        public static void UpdateShadowDistance()
+        {
+            if (Instance.playerEnterExit.IsPlayerInsideDungeon)
+                QualitySettings.shadowDistance = DaggerfallUnity.Settings.DungeonShadowDistance;
+            else if (Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                QualitySettings.shadowDistance = DaggerfallUnity.Settings.InteriorShadowDistance;
+            else if (!Instance.PlayerEnterExit.IsPlayerInside)
+                QualitySettings.shadowDistance = DaggerfallUnity.Settings.ExteriorShadowDistance;
+            else
+                QualitySettings.shadowDistance = Instance.initialQualitySettingsShadowDistance;
         }
 
         #endregion

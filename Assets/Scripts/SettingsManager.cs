@@ -79,6 +79,9 @@ namespace DaggerfallWorkshop
         public bool DungeonLightShadows { get; set; }
         public bool InteriorLightShadows { get; set; }
         public bool ExteriorLightShadows { get; set; }
+        public float DungeonShadowDistance { get; set; }
+        public float InteriorShadowDistance { get; set; }
+        public float ExteriorShadowDistance { get; set; }
         public bool EnableTextureArrays { get; set; }
         public int RandomDungeonTextures { get; set; }
 
@@ -201,6 +204,9 @@ namespace DaggerfallWorkshop
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
             ExteriorLightShadows = GetBool(sectionVideo, "ExteriorLightShadows");
+            DungeonShadowDistance = GetFloat(sectionVideo, "DungeonShadowDistance", 0.1f, 50.0f);
+            InteriorShadowDistance = GetFloat(sectionVideo, "InteriorShadowDistance", 0.1f, 50.0f);
+            ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
@@ -307,6 +313,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
             SetBool(sectionVideo, "ExteriorLightShadows", ExteriorLightShadows);
+            SetFloat(sectionVideo, "DungeonShadowDistance", DungeonShadowDistance);
+            SetFloat(sectionVideo, "InteriorShadowDistance", InteriorShadowDistance);
+            SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
