@@ -86,6 +86,10 @@ namespace DaggerfallWorkshop.Utility
                 makeNoLongerReadable = false;
             }
 
+            // Disable mipmaps in retro mode
+            if (DaggerfallUnity.Settings.RetroRenderingMode > 0 && !DaggerfallUnity.Settings.UseMipMapsInRetroMode)
+                createMipMaps = false;
+
             Texture2D texture;
             if (TextureReplacement.TryImportImage(image.FileName, makeNoLongerReadable, out texture))
                 return texture;
@@ -111,6 +115,10 @@ namespace DaggerfallWorkshop.Utility
             {
                 makeNoLongerReadable = false;
             }
+
+            // Disable mipmaps in retro mode
+            if (DaggerfallUnity.Settings.RetroRenderingMode > 0 && !DaggerfallUnity.Settings.UseMipMapsInRetroMode)
+                createMipMaps = false;
 
             Texture2D texture = new Texture2D(width, height, TextureFormat.ARGB32, createMipMaps);
             Color32[] colors = new Color32[width * height];
@@ -182,6 +190,10 @@ namespace DaggerfallWorkshop.Utility
                 settings.stayReadable = true;
             }
 
+            // Disable mipmaps in retro mode
+            if (DaggerfallUnity.Settings.RetroRenderingMode > 0 && !DaggerfallUnity.Settings.UseMipMapsInRetroMode)
+                mipMaps = false;
+
             // Assign texture file
             TextureFile textureFile;
             if (settings.textureFile == null)
@@ -219,7 +231,7 @@ namespace DaggerfallWorkshop.Utility
             // Adjust mipmap bias of albedo map when retro mode rendering is enabled
             if (albedoMap && DaggerfallUnity.Settings.RetroRenderingMode > 0)
             {
-                albedoMap.mipMapBias = -0.5f;
+                albedoMap.mipMapBias = -0.75f;
             }
 
             // Set normal texture (always import normal if present on disk)
@@ -352,6 +364,10 @@ namespace DaggerfallWorkshop.Utility
                 int frames = textureFile.GetFrameCount(record);
                 if (frames > 1)
                     hasAnimation = true;
+
+                // Disable mipmaps in retro mode
+                if (DaggerfallUnity.Settings.RetroRenderingMode > 0 && !DaggerfallUnity.Settings.UseMipMapsInRetroMode)
+                    mipMaps = false;
 
                 // Get record information
                 DFSize size = textureFile.GetSize(record);
