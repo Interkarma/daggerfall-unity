@@ -1051,11 +1051,14 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Check if building is used in an active quest inside current map
-        bool IsActiveQuestBuilding(BuildingSummary buildingSummary)
+        bool IsActiveQuestBuilding(BuildingSummary buildingSummary, bool residencesOnly = true)
         {
             SiteDetails[] siteDetails = QuestMachine.Instance.GetAllActiveQuestSites();
             foreach (SiteDetails site in siteDetails)
             {
+                if (residencesOnly &&
+                    (buildingSummary.BuildingType < DFLocation.BuildingTypes.House1 || buildingSummary.BuildingType > DFLocation.BuildingTypes.House6))
+                    continue;
                 if (site.buildingKey == buildingSummary.buildingKey &&
                     site.mapId == GameManager.Instance.PlayerGPS.CurrentMapID)
                     return true;
