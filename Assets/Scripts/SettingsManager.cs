@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop
         public bool UseLegacyDeferred { get; set; }
         public bool DungeonLightShadows { get; set; }
         public bool InteriorLightShadows { get; set; }
+        public bool ExteriorLightShadows { get; set; }
         public bool EnableTextureArrays { get; set; }
         public int RandomDungeonTextures { get; set; }
 
@@ -199,6 +200,7 @@ namespace DaggerfallWorkshop
             UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
+            ExteriorLightShadows = GetBool(sectionVideo, "ExteriorLightShadows");
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
@@ -304,6 +306,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
+            SetBool(sectionVideo, "ExteriorLightShadows", ExteriorLightShadows);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 

@@ -135,6 +135,8 @@ dungeonLightShadows,                                Dungeon Light Shadows
 dungeonLightShadowsInfo,                            Dungeon lights cast shadows
 interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
+exteriorLightShadows,                               Exterior Light Shadows
+exteriorLightShadowsInfo,                           Exterior sunlight cast shadows
 useLegacyDeferred,                                  Use Legacy Deferred
 useLegacyDeferredInfo,                              Legacy rendering path
 retroRenderingMode,                                 Retro Rendering Mode

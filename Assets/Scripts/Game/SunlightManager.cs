@@ -58,6 +58,10 @@ namespace DaggerfallWorkshop.Game
             // Save initial intensity of all lights at start
             // This is the value our daily operates against
             SaveLightIntensity();
+
+            // Disable exterior sunlight shadows
+            if (!DaggerfallUnity.Settings.ExteriorLightShadows)
+                myLight.shadows = LightShadows.None;
         }
 
         void Update()

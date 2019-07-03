@@ -16,6 +16,8 @@ ShadowResolutionMode=0
 UseLegacyDeferred=False
 DungeonLightShadows=False
 InteriorLightShadows=True
+ExteriorLightShadows=True
+
 EnableTextureArrays=True
 RandomDungeonTextures=0
 
