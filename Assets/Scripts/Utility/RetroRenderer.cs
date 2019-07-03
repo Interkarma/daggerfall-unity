@@ -31,6 +31,11 @@ namespace DaggerfallWorkshop.Utility
         DaggerfallSky sky;
         RenderTexture retroTexture;
 
+        public RenderTexture RetroTexture
+        {
+            get { return retroTexture; }
+        }
+
         private void Start()
         {
             // 0 = retro rendering off

@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game
 
         GameObject playerObject = null;
         Camera mainCamera = null;
+        RetroRenderer retroRenderer = null;
         PlayerMouseLook playerMouseLook = null;
         PlayerHealth playerHealth = null;
         VitalsChangeDetector vitalsChangeDetector = null;
@@ -116,6 +117,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (mainCamera) ? mainCamera : mainCamera = GetComponentFromObject<Camera>(MainCameraObject, "MainCamera"); }
             set { mainCamera = value;}
+        }
+
+        public RetroRenderer RetroRenderer
+        {
+            get { return (retroRenderer) ? retroRenderer : retroRenderer = GetMonoBehaviour<RetroRenderer>(); }
+            set { retroRenderer = value; }
         }
 
         public GameObject PlayerObject
