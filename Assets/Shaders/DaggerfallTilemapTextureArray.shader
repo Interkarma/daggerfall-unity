@@ -63,8 +63,15 @@ Shader "Daggerfall/TilemapTextureArray" {
 		{
 			float2 uv_MainTex;
 			//float2 uv_BumpMap;
-			float3 worldPos;
 		};
+
+	float GetMipLevel(float2 iUV, float4 iTextureSize)
+	{
+		float2 dx = ddx(iUV * iTextureSize.z);
+		float2 dy = ddy(iUV * iTextureSize.w);
+		float d = max(dot(dx, dx), dot(dy,dy));
+		return 0.5 * log2(d);
+	}
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
@@ -72,38 +79,30 @@ Shader "Daggerfall/TilemapTextureArray" {
 			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex;
 
 			// Offset to fragment position inside tile
-			float2 uv = fmod(IN.uv_MainTex * _TilemapDim, 1.0f);
+			float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
+			float2 uv = fmod(unwrappedUV, 1.0f);
 	
 			// compute all 4 posible configurations of terrain tiles (normal, rotated, flipped, rotated and flipped)
+			// so correct uv coordinates according to index
+			uint indexMod4 = ((uint)index) % 4;
 			// normal texture tiles (no operation required) are those with index % 4 == 0
-			// rotated texture tiles are those with (index+1) % 4 == 0
-			// flipped texture tiles are those with (index+2) % 4 == 0
-			// rotated and flipped texture tiles are those with (index+3) % 4 == 0
-			// so correct uv coordinates according to index 
-			if (((uint)index+1) % 4 == 0)
-			{
+			if (indexMod4 == 3)
+				// rotated texture tile
 				uv = float2(1.0f - uv.y, uv.x);
-			}
-			else if (((uint)index+2) % 4 == 0)
-			{
+			else if (indexMod4 == 2)
+				// flipped texture tile
 				uv = 1.0f - uv;
-			}
-			else if (((uint)index+3) % 4 == 0)
-			{
+			else if (indexMod4 == 1)
+				// rotated and flipped texture tile
 				uv = float2(uv.y, 1.0f - uv.x);
-			}
 
 			// Sample based on gradient and set output
 			float3 uv3 = float3(uv, ((uint)index)/4); // compute correct texture array index from index
 			
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
 			// since there is currently a bug with seams when using the UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
-			// mip map level is selected manually dependent on fragment's distance from camera
-			float scale = sqrt(_TileTexArr_TexelSize.x * 64.0f) * 12.38;
-			float relativeHeight = max(_WorldSpaceCameraPos.y - IN.worldPos.y, 1.8);
-			float dist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz);
 
-			float mipMapLevel = clamp(2 * log2(dist / scale) - log2(relativeHeight / 1.8), 0, 8);
+			float mipMapLevel = GetMipLevel(unwrappedUV, _TileTexArr_TexelSize);
 			half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, mipMapLevel);
 
 			o.Albedo = c.rgb;
