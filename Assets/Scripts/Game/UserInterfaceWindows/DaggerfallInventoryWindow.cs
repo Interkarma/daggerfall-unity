@@ -1811,7 +1811,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (usingWagon)
                         canHold = WagonCanHoldAmount(item);
                     TransferItem(item, localItems, remoteItems, canHold, true);
-                    if (lootTarget.houseOwned)
+                    if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                         theftBasket.RemoveItem(item);
                 }
             }
