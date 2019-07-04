@@ -321,13 +321,7 @@ namespace DaggerfallWorkshop.Game.Utility
         // Start new character to location specified in INI
         void StartNewCharacter()
         {
-            DaggerfallUnity.ResetUID();
-            QuestMachine.Instance.ClearState();
-            RaiseOnNewGameEvent();
-            DaggerfallUI.Instance.PopToHUD();
-            ResetWeaponManager();
-            SaveLoadManager.ClearSceneCache(true);
-            GameManager.Instance.GuildManager.ClearMembershipData();
+            NewCharacterCleanup();
 
             // Must have a character document
             if (characterDocument == null)
@@ -433,6 +427,19 @@ namespace DaggerfallWorkshop.Game.Utility
                 OnStartGame(this, null);
         }
 
+        // Performs cleanup before starting a new character or loading a classic save
+        void NewCharacterCleanup()
+        {
+            DaggerfallUnity.ResetUID();
+            QuestMachine.Instance.ClearState();
+            DaggerfallUI.Instance.PopToHUD();
+            SaveLoadManager.ClearSceneCache(true);
+            GameManager.Instance.GuildManager.ClearMembershipData();
+            GameManager.Instance.PlayerGPS.ClearDiscoveryData();
+            RaiseOnNewGameEvent();
+            ResetWeaponManager();
+        }
+
         #endregion
 
         #region Daggerfall Unity Save Startup
@@ -452,10 +459,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartFromClassicSave()
         {
-            DaggerfallUnity.ResetUID();
-            QuestMachine.Instance.ClearState();
-            RaiseOnNewGameEvent();
-            ResetWeaponManager();
+            NewCharacterCleanup();
 
             // Save index must be in range
             if (classicSaveIndex < 0 || classicSaveIndex >= 6)
