@@ -2206,6 +2206,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public void CourtWindow()
         {
+            // Transition outside if player inside or they are hurled into void
+            // Doing this before showing court window so exterior transition takes place first
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+                GameManager.Instance.PlayerEnterExit.TransitionExterior(true);
+
             arrested = true;
             halfOfLegalRepPlayerLostFromCrime = (short)(reputationLossPerCrime[(int)crimeCommitted] / 2);
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCourtWindow);
