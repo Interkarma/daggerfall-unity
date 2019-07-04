@@ -179,11 +179,11 @@ namespace DaggerfallWorkshop.Game
             ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
         }
 
-        private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale)
+        private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale, float spatialBlend = 1f)
         {
             AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
             ambientAudioSource.transform.position = position;
-            ambientAudioSource.spatialBlend = 1f;
+            ambientAudioSource.spatialBlend = spatialBlend;
             ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
         }
 
@@ -206,11 +206,12 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void PlaySomewhereAround(SoundClips clip, float volumeScale)
+        private void PlaySomewhereAround(SoundClips clip, float volumeScale, float spatialBlend = 1f)
         {
+            //Debug.LogFormat("Playing clip {0}", clip.ToString());
             Vector3 randomPos = playerBehaviour.transform.position +
                 Random.onUnitSphere * 5.2f;
-            SpatializedPlayOneShot(clip, randomPos, volumeScale);
+            SpatializedPlayOneShot(clip, randomPos, volumeScale, spatialBlend);
         }
 
         private void PlaySomewhereOnHorizon(SoundClips clip, float volumeScale)
@@ -262,7 +263,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Play ambient sound as a one-shot 3D sound
                 SoundClips clip = ambientSounds[index];
-                PlaySomewhereAround(clip, 5f);
+                PlaySomewhereAround(clip, 10f, 0.25f);
                 RaiseOnPlayEffectEvent(clip);
             }
         }
