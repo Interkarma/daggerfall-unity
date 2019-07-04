@@ -65,8 +65,8 @@ namespace DaggerfallConnect.Save
 
         void ReadNativeContainerData()
         {
-            // Must be a trapped soul type
-            if (recordType != RecordTypes.TrappedSoul)
+            // Must be a trapped soul type and record must not be failed
+            if (recordType != RecordTypes.TrappedSoul || IsFailedRecord)
                 return;
 
             // Prepare stream

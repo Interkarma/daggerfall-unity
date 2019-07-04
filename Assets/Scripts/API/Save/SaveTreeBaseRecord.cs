@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -38,6 +38,8 @@ namespace DaggerfallConnect.Save
         // Tree management
         protected SaveTreeBaseRecord parent;
         protected List<SaveTreeBaseRecord> children = new List<SaveTreeBaseRecord>();
+
+        protected bool failedRecord = false;
 
         #endregion
 
@@ -116,6 +118,14 @@ namespace DaggerfallConnect.Save
         public List<SaveTreeBaseRecord> Children
         {
             get { return children; }
+        }
+
+        /// <summary>
+        /// True if record failed to read (e.g. end of stream reached unexpectedly).
+        /// </summary>
+        public bool IsFailedRecord
+        {
+            get { return failedRecord; }
         }
 
         #endregion
@@ -215,6 +225,7 @@ namespace DaggerfallConnect.Save
             // Must have RecordRootLength of bytes to read or something has gone wrong
             if (stream.Length < RecordRootLength)
             {
+                failedRecord = true;
                 stream.Close();
                 return;
             }
