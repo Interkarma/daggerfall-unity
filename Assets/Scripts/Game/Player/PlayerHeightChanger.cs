@@ -130,7 +130,19 @@ namespace DaggerfallWorkshop.Game
             bool riding = playerMotor.IsRiding;
             bool pressedCrouch = InputManager.Instance.ActionComplete(InputManager.Actions.Crouch);
             bool climbing = climbingMotor.IsClimbing;
+            bool levitating = playerMotor.IsLevitating;
             //timerMax = timerSlow;
+
+            // Handle uncrouch and levitating while swimming
+            if (levitating)
+            {
+                if (crouching)
+                {
+                    heightAction = HeightChangeAction.DoStanding;
+                    return;
+                }
+                onWater = false;
+            }
 
             if (onWater && !toggleSink)
             {
@@ -156,7 +168,7 @@ namespace DaggerfallWorkshop.Game
                 heightAction = HeightChangeAction.DoDismounting;
                 toggleRiding = false;
             }
-            else if (!riding && !onWater)
+            else if (!riding && !onWater && !levitating)
             {
                 // if we crouch out of water or while on solid ground
                 if ((!swimming || playerMotor.IsGrounded) && pressedCrouch)

@@ -183,7 +183,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Check whether player is on foot and abort playing footsteps if not.
-            if (!transportManager.IsOnFoot && GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.None)
+            if (playerMotor.IsLevitating || !transportManager.IsOnFoot && GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.None)
             {
                 distance = 0f;
                 return;
