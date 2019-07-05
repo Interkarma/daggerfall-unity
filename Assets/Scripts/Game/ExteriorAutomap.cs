@@ -156,6 +156,8 @@ namespace DaggerfallWorkshop.Game
         int layoutWidth;
         int layoutHeight;
 
+        bool isCustomLocation;
+
         private const float layoutMultiplier = 1.0f;
 
         private BlockLayout[] exteriorLayout = null;
@@ -1298,13 +1300,23 @@ namespace DaggerfallWorkshop.Game
             playerPos.z = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
             playerPos.y = 0.0f;
 
+
+            float xOffset = 0.0f;
+            float yOffset = 0.0f;
+            if (isCustomLocation)
+            {
+                xOffset = -64f;           
+                yOffset =  +3f;
+            }
+
             int refWidth = (int)(blockSizeWidth * numMaxBlocksX * layoutMultiplier); // layoutWidth / layoutMultiplier
             int refHeight = (int)(blockSizeHeight * numMaxBlocksY * layoutMultiplier); // layoutHeight / layoutMultiplier
             playerPos.x *= refWidth;
             playerPos.y = 0.1f;
             playerPos.z *= refHeight;
-            playerPos.x -= refWidth * 0.5f;
-            playerPos.z -= refHeight * 0.5f;
+            playerPos.x += -(refWidth * 0.5f) + xOffset;
+            playerPos.z += -(refHeight * 0.5f) + yOffset;
+
             gameobjectPlayerMarkerArrow.transform.position = playerPos;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
@@ -1363,6 +1375,19 @@ namespace DaggerfallWorkshop.Game
                 }
                 ypos += blockSizeHeight;
                 xpos = 0;
+            }
+
+            // test if it is a custom location (layouting is different there)
+            isCustomLocation = false;
+            // But some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
+            // Seems to be 1x1 blocks using CUST prefix, but possibly more research needed
+            const int custPrefixIndex = 40;
+            if (locationWidth == 1 && locationHeight == 1)
+            {
+                if (location.Exterior.ExteriorData.BlockIndex[0] == custPrefixIndex)
+                {
+                    isCustomLocation = true;
+                }
             }
 
             // Create layout image (texture)
