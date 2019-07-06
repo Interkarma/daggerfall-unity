@@ -187,13 +187,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        // TODO: Classic seems deterministic so when re-visiting each mages guildhall, player sees same stuff.
-        // Does it change with level? Is it always generated but uses a consistent seed? How should DFU do this?
         ItemCollection GetMerchantMagicItems()
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             ItemCollection items = new ItemCollection();
             int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
+
+            // Seed random from game time to rotate magic stock every 24 game hours
+            // This more or less resolves issue of magic item stock not being deterministic every time player opens window
+            // Doesn't match classic exactly as classic stocking method unknown, but should be "good enough" for now
+            int seed = (int)(DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay);
+            UnityEngine.Random.InitState(seed);
 
             for (int i = 0; i <= numOfItems; i++)
             {
@@ -209,17 +213,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int i = 0; i <= numOfItems; i++)
                 {
-                    DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-                    magicItem.value = 5000;
-
+                    DaggerfallUnityItem magicItem;
                     if (Dice100.FailedRoll(25))
+                    {
+                        // Empty soul trap
+                        magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                        magicItem.value = 5000;
                         magicItem.TrappedSoulType = MobileTypes.None;
+                    }
                     else
                     {
-                        int id = UnityEngine.Random.Range(0, 43);
-                        magicItem.TrappedSoulType = (MobileTypes)id;
-                        MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[id];
-                        magicItem.value += mobileEnemy.SoulPts;
+                        // Filled soul trap
+                        magicItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
                     }
                     items.AddItem(magicItem);
                 }

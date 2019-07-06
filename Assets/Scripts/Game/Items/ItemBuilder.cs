@@ -284,6 +284,29 @@ namespace DaggerfallWorkshop.Game.Items
             return newItem;
         }
 
+        public static DaggerfallUnityItem CreateRandomlyFilledSoulTrap()
+        {
+            // Create a trapped soul type and filter invalid creatures
+            MobileTypes soul = MobileTypes.None;
+            while (soul == MobileTypes.None)
+            {
+                MobileTypes randomSoul = (MobileTypes)UnityEngine.Random.Range((int)MobileTypes.Rat, (int)MobileTypes.Lamia + 1);
+                if (randomSoul == MobileTypes.Horse_Invalid ||
+                    randomSoul == MobileTypes.Dragonling)       // NOTE: Dragonling (34) is soulless, only soul of Dragonling_Alternate (40) from B0B70Y16 has a soul
+                    continue;
+                else
+                    soul = randomSoul;
+            }
+
+            // Generate item
+            DaggerfallUnityItem newItem = CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+            newItem.TrappedSoulType = soul;
+            MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[(int)soul];
+            newItem.value = 5000 + mobileEnemy.SoulPts;
+
+            return newItem;
+        }
+
         /// <summary>
         /// Creates a new random gem.
         /// </summary>
