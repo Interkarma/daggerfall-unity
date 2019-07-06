@@ -867,8 +867,17 @@ namespace DaggerfallWorkshop.Game.Entity
                 DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
 
                 // Import spells if this is a spellbook record
-                if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 0)
-                    ImportSpells(containerRecord);
+                try
+                {
+                    if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 0)
+                        ImportSpells(containerRecord);
+                }
+                catch (Exception ex)
+                {
+                    // Failed to import spellbook - log and give player empty spellbook
+                    Debug.LogWarningFormat("Failed to import spellbook record. Exception {0}", ex.Message);
+                    GameManager.Instance.ItemHelper.AddSpellbookItem(GameManager.Instance.PlayerEntity);
+                }
 
                 // Grabbed trapped soul if needed
                 if (newItem.ItemGroup == ItemGroups.MiscItems && newItem.GroupIndex == 1)
