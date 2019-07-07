@@ -112,6 +112,8 @@ enemyInfighting,                                    Enemy infighting
 enemyInfightingInfo,                                AI characters will fight others that they aren't allied with
 enhancedCombatAI,                                   Enhanced combat AI
 enhancedCombatAIInfo,                               Enable various enhancements to combat AI not in original Daggerfall
+allowMagicRepairs,                                  Allow magic item repairs
+allowMagicRepairsInfo,                              Allow magic items to be repaired like mundane items
 
 resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution

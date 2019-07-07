@@ -126,6 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox combatVoices;
         Checkbox enemyInfighting;
         Checkbox enhancedCombatAI;
+        Checkbox allowMagicRepairs;
         Checkbox playerTorchFromItems;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
@@ -286,6 +287,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             combatVoices = AddCheckbox(leftPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
             enemyInfighting = AddCheckbox(leftPanel, "enemyInfighting", DaggerfallUnity.Settings.EnemyInfighting);
             enhancedCombatAI = AddCheckbox(leftPanel, "enhancedCombatAI", DaggerfallUnity.Settings.EnhancedCombatAI);
+            allowMagicRepairs = AddCheckbox(leftPanel, "allowMagicRepairs", DaggerfallUnity.Settings.AllowMagicRepairs);
 
             y = 0;
 
@@ -393,6 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.CombatVoices = combatVoices.IsChecked;
             DaggerfallUnity.Settings.EnemyInfighting = enemyInfighting.IsChecked;
             DaggerfallUnity.Settings.EnhancedCombatAI = enhancedCombatAI.IsChecked;
+            DaggerfallUnity.Settings.AllowMagicRepairs = allowMagicRepairs.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
