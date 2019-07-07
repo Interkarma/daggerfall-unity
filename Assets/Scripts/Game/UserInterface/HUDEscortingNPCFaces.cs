@@ -15,6 +15,7 @@ using UnityEngine;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
             Serialization.SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         #endregion
@@ -281,6 +283,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         private void SaveLoadManager_OnStartLoad(Serialization.SaveData_v1 saveData)
+        {
+            faces.Clear();
+            RefreshFaces();
+        }
+
+        private void StartGameBehaviour_OnNewGame()
         {
             faces.Clear();
             RefreshFaces();

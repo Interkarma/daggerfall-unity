@@ -436,7 +436,6 @@ namespace DaggerfallWorkshop.Game.Utility
             SaveLoadManager.ClearSceneCache(true);
             GameManager.Instance.GuildManager.ClearMembershipData();
             GameManager.Instance.PlayerGPS.ClearDiscoveryData();
-            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.ClearFaces();
             RaiseOnNewGameEvent();
             ResetWeaponManager();
         }
