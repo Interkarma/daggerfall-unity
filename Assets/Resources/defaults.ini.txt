@@ -56,6 +56,7 @@ AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
+IllegalRestWarning=True
 
 [Spells]
 EnableSpellLighting=True

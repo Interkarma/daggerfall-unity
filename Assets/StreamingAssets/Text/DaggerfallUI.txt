@@ -100,3 +100,7 @@ serviceMembersOnly, My services are reserved for members only.
 serviceDonateHowMuch, Donate how much money : 
 curedDisease,       You are cured.
 freeHolidayCuring,  You are cured free from cost due to todays' holiday.
+
+- Rest window
+
+illegalRestWarning, It is illegal to camp in or near a city. Continue?
