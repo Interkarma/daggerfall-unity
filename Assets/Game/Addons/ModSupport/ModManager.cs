@@ -732,6 +732,43 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.MessageReceiver(message, data, callback);
         }
 
+#if UNITY_EDITOR
+        /// <summary>
+        /// Seeks asset contributes for the target mod, reading the folder name of each asset.
+        /// </summary>
+        /// <param name="modInfo">Manifest data for a mod, which will be filled with retrieved contributes.</param>
+        /// <remarks>
+        /// Assets are imported from loose files according to folder name,
+        /// for example all textures inside `SpellIcons` are considered icon atlases.
+        /// This method replicates the same behaviour for mods, doing all the hard work at build time.
+        /// Results are stored to json manifest file for performant queries at runtime.
+        /// </remarks>
+        public static void SeekModContributes(ModInfo modInfo)
+        {
+            List<string> spellIcons = null;
+
+            foreach (string file in modInfo.Files)
+            {
+                string directory = Path.GetDirectoryName(file);
+                if (directory.EndsWith("SpellIcons"))
+                {
+                    if (spellIcons == null)
+                        spellIcons = new List<string>();
+
+                    string name = Path.GetFileNameWithoutExtension(file);
+                    if (!spellIcons.Contains(name))
+                        spellIcons.Add(name);
+                }
+            }
+
+            if (spellIcons != null)
+            {
+                var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
+                contributes.SpellIcons = spellIcons.ToArray();
+            }
+        }
+#endif
+
         #endregion
 
         #region Internal methods

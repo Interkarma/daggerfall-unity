@@ -376,6 +376,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         bool SaveModFile(bool supressWindow = false)
         {
+            ModManager.SeekModContributes(modInfo);
+
             string path = currentFilePath;
             string outPut = JsonUtility.ToJson(modInfo, true);
             string directory = "";
