@@ -38,6 +38,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         CreateCharRaceSelect createCharRaceSelectWindow;
         CreateCharGenderSelect createCharGenderSelectWindow;
+        CreateCharChooseClassGen createCharChooseClassGenWindow;
+        CreateCharClassQuestions createCharClassQuestionsWindow;
         CreateCharClassSelect createCharClassSelectWindow;
         CreateCharCustomClass createCharCustomClassWindow;
         CreateCharChooseBio createCharChooseBioWindow;
@@ -58,7 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             SelectRace,
             SelectGender,
-            SelectClassMethod,      // Class questions not implemented, goes straight to SelectClassFromList
+            SelectClassMethod,
+            GenerateClass,
             SelectClassFromList,
             CustomClassBuilder,
             SelectBiographyMethod,
@@ -130,6 +133,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             wizardStage = WizardStages.SelectGender;
             uiManager.PushWindow(createCharGenderSelectWindow);
+        }
+
+        void SetChooseClassGenWindow()
+        {
+            createCharChooseClassGenWindow = new CreateCharChooseClassGen(uiManager, createCharRaceSelectWindow);
+            createCharChooseClassGenWindow.OnClose += ChooseClassGen_OnClose;
+            wizardStage = WizardStages.SelectClassMethod;
+            uiManager.PushWindow(createCharChooseClassGenWindow);
+        }
+
+        void SetClassQuestionsWindow()
+        {
+            createCharClassQuestionsWindow = new CreateCharClassQuestions(uiManager);
+            createCharClassQuestionsWindow.OnClose += CreateCharClassQuestions_OnClose;
+            wizardStage = WizardStages.GenerateClass;
+            uiManager.PushWindow(createCharClassQuestionsWindow);
         }
 
         void SetClassSelectWindow()
@@ -293,12 +312,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!createCharGenderSelectWindow.Cancelled)
             {
                 characterDocument.gender = createCharGenderSelectWindow.SelectedGender;
-                SetClassSelectWindow();
+                SetChooseClassGenWindow();
             }
             else
             {
                 SetRaceSelectWindow();
             }
+        }
+
+        void ChooseClassGen_OnClose()
+        {
+            if (createCharChooseClassGenWindow.ChoseGenerate)
+            {
+                SetClassQuestionsWindow();
+            }
+            else
+            {
+                SetClassSelectWindow();
+            }
+        }
+
+        void CreateCharClassQuestions_OnClose()
+        {
+
         }
 
         void ClassSelectWindow_OnClose()
