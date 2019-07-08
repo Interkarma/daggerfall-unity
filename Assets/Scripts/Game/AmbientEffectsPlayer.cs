@@ -190,10 +190,15 @@ namespace DaggerfallWorkshop.Game
             ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
         }
 
+        private float sqr(float x) 
+        {
+            return x * x;
+        }
+
         private void PlaySomewhereAround(SoundClips clip, float volumeScale)
         {
             Vector3 randomPos = playerBehaviour.transform.position +
-                Random.onUnitSphere * Random.Range(10f, 20f);
+                Random.onUnitSphere * Mathf.Sqrt(Random.Range(sqr(10f), sqr(20f)));
             SpatializedPlayOneShot(clip, randomPos, volumeScale, 13f);
         }
 
@@ -201,7 +206,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Somewhere around, 20° above horizon
             Vector3 randomPos = playerBehaviour.transform.position + 
-                Quaternion.AngleAxis(Random.Range(0f, 10000f), Vector3.up) * new Vector3(0.94f, 0.34f, 0f);
+                Quaternion.AngleAxis(Mathf.Sqrt(Random.Range(0f, sqr(10000f))), Vector3.up) * new Vector3(0.94f, 0.34f, 0f);
             SpatializedPlayOneShot(clip, randomPos, volumeScale, 3000f);
         }
 
