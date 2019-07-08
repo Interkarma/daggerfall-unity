@@ -14,6 +14,7 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using FullSerializer;
 
 
 /*
@@ -109,7 +110,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     return new ModInfo();
 
                 string inPut = File.ReadAllText(currentFilePath);
-                info = (ModInfo)JsonUtility.FromJson(inPut, typeof(ModInfo));
+                ModManager._serializer.TryDeserialize(fsJsonParser.Parse(inPut), ref info).AssertSuccessWithoutWarnings();
                 if (string.IsNullOrEmpty(info.GUID) || info.GUID == "invalid")
                     info.GUID = System.Guid.NewGuid().ToString();
             }
@@ -379,7 +380,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             ModManager.SeekModContributes(modInfo);
 
             string path = currentFilePath;
-            string outPut = JsonUtility.ToJson(modInfo, true);
+            fsData fsData;
+            ModManager._serializer.TrySerialize(modInfo, out fsData).AssertSuccessWithoutWarnings();
+            string outPut = fsJsonPrinter.PrettyJson(fsData);
             string directory = "";
 
             if (!supressWindow)
