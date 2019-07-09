@@ -50,46 +50,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
          * Possible values are 00 (Warrior), 01 (Rogue), and 02 (Mage).
          * Ripped from FALL.EXE v1.07.213 at offset 0x59820C.
          */
-        int[] answerTable = {   00, 02, 01,
-                                00, 02, 01,
-                                00, 01, 02,
-                                02, 00, 01,
-                                00, 01, 02,
-                                01, 00, 02,
-                                00, 01, 02,
-                                02, 00, 01,
-                                00, 02, 01,
-                                00, 01, 02,
-                                00, 01, 02,
-                                00, 01, 02,
-                                00, 02, 01,
-                                00, 01, 02,
-                                01, 00, 02,
-                                01, 02, 00,
-                                02, 00, 01,
-                                01, 00, 02,
-                                00, 01, 02,
-                                02, 00, 01,
-                                01, 00, 02,
-                                00, 01, 02,
-                                00, 02, 01,
-                                02, 01, 00,
-                                01, 00, 02,
-                                00, 02, 01,
-                                02, 01, 00,
-                                02, 00, 01,
-                                02, 01, 00,
-                                02, 01, 00,
-                                02, 00, 01,
-                                01, 00, 02,
-                                00, 02, 01,
-                                02, 01, 00,
-                                01, 02, 00,
-                                02, 00, 01,
-                                02, 00, 01,
-                                01, 02, 00,
-                                00, 01, 02,
-                                01, 02, 00 };
+        readonly byte[] answerTable = {     00, 02, 01,
+                                            00, 02, 01,
+                                            00, 01, 02,
+                                            02, 00, 01,
+                                            00, 01, 02,
+                                            01, 00, 02,
+                                            00, 01, 02,
+                                            02, 00, 01,
+                                            00, 02, 01,
+                                            00, 01, 02,
+                                            00, 01, 02,
+                                            00, 01, 02,
+                                            00, 02, 01,
+                                            00, 01, 02,
+                                            01, 00, 02,
+                                            01, 02, 00,
+                                            02, 00, 01,
+                                            01, 00, 02,
+                                            00, 01, 02,
+                                            02, 00, 01,
+                                            01, 00, 02,
+                                            00, 01, 02,
+                                            00, 02, 01,
+                                            02, 01, 00,
+                                            01, 00, 02,
+                                            00, 02, 01,
+                                            02, 01, 00,
+                                            02, 00, 01,
+                                            02, 01, 00,
+                                            02, 01, 00,
+                                            02, 00, 01,
+                                            01, 00, 02,
+                                            00, 02, 01,
+                                            02, 01, 00,
+                                            01, 02, 00,
+                                            02, 00, 01,
+                                            02, 00, 01,
+                                            01, 02, 00,
+                                            00, 01, 02,
+                                            01, 02, 00 };
         #endregion
 
         Texture2D nativeTexture;
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<int> questionIndices;
         int questionIndex = 0;
         int[] weights = new int[] { 0, 0, 0 }; // Number of answers that steer class toward warrior/rogue/mage paths
-        Dictionary<int, int> resultToClassMappings;
+        Dictionary<uint, int> resultToClassMappings;
         int classIndex = 0;
 
         public CreateCharClassQuestions(IUserInterfaceManager uiManager)
@@ -121,15 +121,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Map results to class indices
-            /*
             FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
             byte[] classData = classFile.GetBytes();
-            */
+            resultToClassMappings = GetClassMappings(classData);
 
             GetQuestions();
             DisplayQuestion(questionIndices[0]);
 
             IsSetup = true;
+        }
+
+        private Dictionary<uint, int> GetClassMappings(byte[] data)
+        {
+            Dictionary<uint, int> result = new Dictionary<uint, int>();
+            List<byte> classOffsets = new List<byte>();
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i] != 0)
+                {
+                    classOffsets.Add(data[i]);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            int j = 0;
+            foreach (byte offset in classOffsets)
+            {
+                resultToClassMappings[(uint)(data[offset] | data[offset + 1] >> 1 | data[offset + 2] >> 2)] = j;
+                resultToClassMappings[(uint)(data[offset + 3] | data[offset + 4] >> 1 | data[offset + 5] >> 2)] = j;
+                resultToClassMappings[(uint)(data[offset + 6] | data[offset + 7] >> 1 | data[offset + 8] >> 2)] = j;
+                j++;
+            }
+
+            return result;
         }
 
         private void GetQuestions()
