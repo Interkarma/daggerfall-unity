@@ -313,10 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
-            if (lootTarget != null)
-                SelectActionMode(ActionModes.Remove);
-            else
-                SelectActionMode(ActionModes.Equip);
+            SetupDefaultActionMode();
 
             // Setup initial display
             FilterLocalItems();
@@ -545,6 +542,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void SetupDefaultActionMode()
+        {
+            if (lootTarget != null)
+                SelectActionMode(ActionModes.Remove);
+            // Start with wagon if accessing from dungeon
+            else if (allowDungeonWagonAccess)
+            {
+                ShowWagon(true);
+                SelectActionMode(ActionModes.Remove);
+            }
+            else
+                SelectActionMode(ActionModes.Equip);
+        }
+
         public override void OnPush()
         {
             // Racial override can suppress inventory
@@ -620,11 +631,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (IsSetup)
             {
-                // Start with wagon if accessing from dungeon
-                if (allowDungeonWagonAccess) {
-                    ShowWagon(true);
-                    SelectActionMode(ActionModes.Remove);
-                }
+                SetupDefaultActionMode();
                 // Reset item list scroll
                 localItemListScroller.ResetScroll();
                 remoteItemListScroller.ResetScroll();
