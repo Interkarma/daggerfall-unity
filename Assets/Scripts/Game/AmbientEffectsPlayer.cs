@@ -174,20 +174,26 @@ namespace DaggerfallWorkshop.Game
 
         private void AmbientPlayOneShot(SoundClips clip, float volumeScale)
         {
-            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
-            ambientAudioSource.spatialBlend = 0;
-            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
+            if (!ambientAudioSource.isPlaying)
+            {
+                AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
+                ambientAudioSource.spatialBlend = 0;
+                ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
+            }
         }
 
 
         private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale, float minDistance = 8f)
         {
-            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
-            ambientAudioSource.transform.position = position;
-            ambientAudioSource.spatialBlend = 1f;
-            ambientAudioSource.minDistance = minDistance;
-            ambientAudioSource.maxDistance = minDistance * 8;
-            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
+            if (!ambientAudioSource.isPlaying)
+            {
+                AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
+                ambientAudioSource.transform.position = position;
+                ambientAudioSource.spatialBlend = 1f;
+                ambientAudioSource.minDistance = minDistance;
+                ambientAudioSource.maxDistance = minDistance * 8;
+                ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
+            }
         }
 
         private float sqr(float x) 
