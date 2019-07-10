@@ -212,7 +212,7 @@ namespace Wenzil.Console
                 DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockIndex);
                 if (blockData.Type == DFBlock.BlockTypes.Rmb)
                 {
-                    string fileName = WorldDataReplacement.GetBuildingReplacementFilename(blockData.Name, blockIndex, recordIndex);
+                    string fileName = WorldDataReplacement.GetBuildingInstanceReplacementFilename(blockData.Name, blockIndex, recordIndex);
                     BuildingReplacementData buildingData = new BuildingReplacementData()
                     {
                         RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
