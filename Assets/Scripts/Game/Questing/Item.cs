@@ -134,10 +134,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             base.SetResource(line);
 
-            string declMatchStr = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<artifact>artifact) (?<itemName>[a-zA-Z0-9_.-]+)|(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+)";
+            string declMatchStr = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) item class (?<itemClass>\d+) subclass (?<itemSubClass>\d+)|"+
+                                  @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<artifact>artifact) (?<itemName>[a-zA-Z0-9_.-]+)|"+
+                                  @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+)";
 
-            string optionsMatchStr = @"range (?<rangeLow>\d+) to (?<rangeHigh>\d+)|" +
-                                     @"item class (?<itemClass>\d+) subclass (?<itemSubClass>\d+)";
+            string optionsMatchStr = @"range (?<rangeLow>\d+) to (?<rangeHigh>\d+)";
 
             // Try to match source line with pattern
             string itemName = string.Empty;
@@ -154,6 +155,16 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Item or artifact name
                 itemName = match.Groups["itemName"].Value;
+
+                // Item class value
+                Group itemClassGroup = match.Groups["itemClass"];
+                if (itemClassGroup.Success)
+                    itemClass = Parser.ParseInt(itemClassGroup.Value);
+
+                // Item subclass value
+                Group itemSubClassGroup = match.Groups["itemSubClass"];
+                if (itemClassGroup.Success)
+                    itemSubClass = Parser.ParseInt(itemSubClassGroup.Value);
 
                 // Artifact status
                 if (!string.IsNullOrEmpty(match.Groups["artifact"].Value))
@@ -179,23 +190,13 @@ namespace DaggerfallWorkshop.Game.Questing
                     Group rangeHighGroup = option.Groups["rangeHigh"];
                     if (rangeHighGroup.Success)
                         rangeHigh = Parser.ParseInt(rangeHighGroup.Value);
-
-                    // Item class value
-                    Group itemClassGroup = option.Groups["itemClass"];
-                    if (itemClassGroup.Success)
-                        itemClass = Parser.ParseInt(itemClassGroup.Value);
-
-                    // Item subclass value
-                    Group itemSubClassGroup = option.Groups["itemSubClass"];
-                    if (itemClassGroup.Success)
-                        itemSubClass = Parser.ParseInt(itemSubClassGroup.Value);
                 }
 
                 // Create item
-                if (!string.IsNullOrEmpty(itemName) && !isGold)
-                    item = CreateItem(itemName);                        // Create by name of item in lookup table
-                else if (itemClass != -1 && !isGold)
+                if (itemClass != -1 && itemSubClass != -1 && !isGold)
                     item = CreateItem(itemClass, itemSubClass);         // Create item by class and subclass (a.k.a ItemGroup and GroupIndex)
+                else if (!string.IsNullOrEmpty(itemName) && !isGold)
+                    item = CreateItem(itemName);                        // Create by name of item in lookup table
                 else if (isGold)
                     item = CreateGold(rangeLow, rangeHigh);             // Create gold pieces of amount by level or range values
                 else
