@@ -544,19 +544,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetupDefaultActionMode()
         {
+            bool proximityWagonAccess = false;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+                proximityWagonAccess = DungeonWagonAccessProximityCheck();
+
             if (lootTarget != null)
                 SelectActionMode(ActionModes.Remove);
             // Start with wagon if accessing from dungeon
-            else if (allowDungeonWagonAccess)
-            {
-                ShowWagon(true);
-                SelectActionMode(ActionModes.Remove);
-            }
             else
-                SelectActionMode(ActionModes.Equip);
-                
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                DungeonWagonAccessProximityCheck();
+            {
+                // Fast access: autoselect wagon when nearby
+                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt)
+                    allowDungeonWagonAccess |= proximityWagonAccess;
+
+                if (allowDungeonWagonAccess)
+                {
+                    ShowWagon(true);
+                    SelectActionMode(ActionModes.Remove);
+                }
+                else
+                    SelectActionMode(ActionModes.Equip);
+            }
+            allowDungeonWagonAccess |= proximityWagonAccess;
         }
 
         public override void OnPush()
@@ -1041,7 +1050,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
         }
 
-        void DungeonWagonAccessProximityCheck()
+        bool DungeonWagonAccessProximityCheck()
         {
             // Set allow wagon access if close enough (10m) to exit.
             GameObject playerAdvancedGO = GameObject.Find("PlayerAdvanced");
@@ -1049,7 +1058,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Vector3 exitVector = playerAdvancedGO.transform.position - dungeon.StartMarker.transform.position;
             if (exitVector.magnitude < 2)
                 // fix bad case when you've just been spawned on StartMarker
-                allowDungeonWagonAccess = true;
+                return true;
             else if (exitVector.magnitude < 10f)
             {
                 RaycastHit hit;
@@ -1057,9 +1066,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (Physics.Raycast(ray, out hit))
                 {
                     if (hit.transform.gameObject == playerAdvancedGO)
-                        allowDungeonWagonAccess = true;
+                        return true;
                 }
             }
+            return false;
         }
 
         void UpdateItemInfoPanel(DaggerfallUnityItem item)
