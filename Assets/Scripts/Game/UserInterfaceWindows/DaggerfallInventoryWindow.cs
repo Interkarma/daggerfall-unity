@@ -554,6 +554,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
                 SelectActionMode(ActionModes.Equip);
+                
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+                DungeonWagonAccessProximityCheck();
         }
 
         public override void OnPush()
@@ -642,9 +645,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Update tracked weapons for setting equip delay
             SetEquipDelayTime(false);
-
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                DungeonWagonAccessProximityCheck();
 
             // Refresh window
             Refresh();
