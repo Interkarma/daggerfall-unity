@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int faceCount = 10;
         const int maxFaces = 3;
         const string factionFaceFile = "FACES.CIF";
+        const string factionChildrenFaceFile = "KIDS00I0.CIF";
 
         List<FaceDetails> faces = new List<FaceDetails>();
         List<Panel> facePanels = new List<Panel>();
@@ -135,13 +136,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         FaceDetails CreateFaceDetails(Person person)
         {
-            // TODO: Support child portrait selection
-
             FaceDetails face = new FaceDetails();
             face.questUID = person.ParentQuest.UID;
             face.targetPerson = person.Symbol;
             face.targetRace = person.Race;
             face.gender = person.Gender;
+            face.isChild = person.FactionData.id == (int)FactionFile.FactionIDs.Children;
             face.faceIndex = person.FaceIndex;
             face.factionFaceIndex = -1;
             
@@ -153,6 +153,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     face.factionFaceIndex = fd.face;
                 }
+            }
+
+            // Determine child faction portrait - there are only 2 variants of each gender indexed 0-3
+            if (face.isChild)
+            {
+                UnityEngine.Random.InitState(Time.frameCount);
+                int variantOffset = (UnityEngine.Random.Range(0, 2) == 0) ? 0 : 2;
+                face.faceIndex = variantOffset + (int)face.gender;
             }
 
             return face;
@@ -224,10 +232,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else
                 {
                     // Use generic NPC face
-                    if (face.gender == Genders.Male)
-                        faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
-                    else if (face.gender == Genders.Female)
-                        faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                    if (!face.isChild)
+                    {
+                        // Get a racial portrait
+                        if (face.gender == Genders.Male)
+                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
+                        else if (face.gender == Genders.Female)
+                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                    }
+                    else
+                    {
+                        // Get a child portrait
+                        faceTexture = DaggerfallUI.GetTextureFromCifRci(factionChildrenFaceFile, face.faceIndex);
+                    }
 
                     facePanel.Size = new Vector2(faceTexture.width, faceTexture.height);
                 }
