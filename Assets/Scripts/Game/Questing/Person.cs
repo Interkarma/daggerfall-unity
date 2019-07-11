@@ -1080,6 +1080,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int GetCareerFactionID(string careerAllianceName)
         {
             const int magesGuild = 40;
+            const int nobles = 242;
             const int genericTemple = 450;
             const int merchants = 510;
 
@@ -1118,7 +1119,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 case 14:
                     return genericTemple;                   // Generic Temple seems to link all the temples together
                 case 16:
-                    return GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();       // Not sure if "Noble" career maps to regional "court of" in classic
+                    return nobles;                          // Random Noble
                 case 17:
                 case 18:
                 case 19:
