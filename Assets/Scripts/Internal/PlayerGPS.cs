@@ -1010,12 +1010,7 @@ namespace DaggerfallWorkshop
                 return false;
 
             // Get discovery data for building
-            discoveredBuildingOut = dl.discoveredBuildings[buildingKey];
-
-            // Check if name should be overridden (owned house / quest site)
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
-                discoveredBuildingOut.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
+            bool discovered = GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut);
 
             return true;
         }
@@ -1138,6 +1133,8 @@ namespace DaggerfallWorkshop
         /// Does not change discovery state for building.
         /// </summary>
         /// <param name="buildingKey">Key of building to query.</param>
+        /// <param name="buildingDiscoveryData">[out] building discovery data of queried building</param>
+        /// <returns>True if building discovered, false if building not discovered.</returns>
         bool GetBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
         {
             buildingDiscoveryData = new DiscoveredBuilding();
@@ -1196,6 +1193,11 @@ namespace DaggerfallWorkshop
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;
             buildingDiscoveryData.buildingType = buildingSummary.BuildingType;
+
+            // Check if name should be overridden (owned house / quest site)
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
+                buildingDiscoveryData.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
 
             return true;
         }
