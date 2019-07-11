@@ -270,6 +270,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Gets all mods, in reverse order, that provide contributes that match the given filter.
+        /// </summary>
+        /// <param name="filter">A filter that accepts or rejects a mod; can be used to check if a contribute is present.</param>
+        /// <returns>An enumeration of mods with contributes.</returns>
+        internal IOrderedEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
+        {
+            return from mod in Mods
+                   where mod.ModInfo.Contributes != null && (filter == null || filter(mod.ModInfo.Contributes))
+                   orderby mod.LoadPriority descending
+                   select mod;
+        }
+
+        /// <summary>
         /// Get all asset names from mod
         /// </summary>
         /// <param name="modTitle">The title of a mod.</param>
@@ -718,6 +731,43 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             else
                 mod.MessageReceiver(message, data, callback);
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Seeks asset contributes for the target mod, reading the folder name of each asset.
+        /// </summary>
+        /// <param name="modInfo">Manifest data for a mod, which will be filled with retrieved contributes.</param>
+        /// <remarks>
+        /// Assets are imported from loose files according to folder name,
+        /// for example all textures inside `SpellIcons` are considered icon atlases.
+        /// This method replicates the same behaviour for mods, doing all the hard work at build time.
+        /// Results are stored to json manifest file for performant queries at runtime.
+        /// </remarks>
+        public static void SeekModContributes(ModInfo modInfo)
+        {
+            List<string> spellIcons = null;
+
+            foreach (string file in modInfo.Files)
+            {
+                string directory = Path.GetDirectoryName(file);
+                if (directory.EndsWith("SpellIcons"))
+                {
+                    if (spellIcons == null)
+                        spellIcons = new List<string>();
+
+                    string name = Path.GetFileNameWithoutExtension(file);
+                    if (!spellIcons.Contains(name))
+                        spellIcons.Add(name);
+                }
+            }
+
+            if (spellIcons != null)
+            {
+                var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
+                contributes.SpellIcons = spellIcons.ToArray();
+            }
+        }
+#endif
 
         #endregion
 
