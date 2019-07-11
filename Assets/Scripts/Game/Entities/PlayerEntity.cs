@@ -2120,6 +2120,8 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void NormalizeReputations()
         {
+            ClampLegalReputations();
+
             for (int i = 0; i < 62; ++i)
             {
                 if (regionData[i].LegalRep < 0)
@@ -2135,6 +2137,20 @@ namespace DaggerfallWorkshop.Game.Entity
                     factionData.ChangeReputation(factionData.FactionDict[key].id, 1);
                 else if (factionData.FactionDict[key].rep > 0)
                     factionData.ChangeReputation(factionData.FactionDict[key].id, -1);
+            }
+        }
+
+        public void ClampLegalReputations()
+        {
+            const short legalRepMin = -100;
+            const short legalRepMax = 100;
+
+            for (int i = 0; i < 62; ++i)
+            {
+                if (regionData[i].LegalRep < legalRepMin)
+                    regionData[i].LegalRep = legalRepMin;
+                else if (regionData[i].LegalRep > legalRepMax)
+                    regionData[i].LegalRep = legalRepMax;
             }
         }
 

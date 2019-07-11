@@ -1209,6 +1209,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 }
             }
 
+            // Clamp legal reputation
+            playerEntity.ClampLegalReputations();
+
             // Lower load in progress flag
             loadInProgress = false;
 
