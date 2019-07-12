@@ -55,6 +55,23 @@ namespace DaggerfallWorkshop.Game.Items
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// The total number of books available.
+        /// These are 1-111, plus custom books (112+), plus 10000.
+        /// </summary>
+        public int BooksCount
+        {
+            get
+            {
+                BookReplacement.AssertCustomBooksImportEnabled();
+                return bookIDNameMapping.Count;
+            }
+        }
+
+        #endregion
+
         #region Constructors
 
         public ItemHelper()
@@ -442,6 +459,18 @@ namespace DaggerfallWorkshop.Game.Items
         public String getBookNameByMessage(int message, string defaultBookName)
         {
             return getBookNameByID(message & 0xFF, defaultBookName);
+        }
+
+        /// <summary>
+        /// Gets the filename for a book (classic or imported).
+        /// </summary>
+        /// <param name="message">The message field for the book Item, containing the book ID.</param>
+        /// <returns>The filename of the book.</returns>
+        internal string GetBookFileNameByMessage(int message)
+        {
+            BookReplacement.AssertCustomBooksImportEnabled();
+
+            return message <= 111 || message == 10000 ? BookFile.messageToBookFilename(message) : BookReplacement.FileNames[message];
         }
 
         /// <summary>
@@ -1205,6 +1234,9 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 Debug.Log("Could not load the BookIDName mapping from Resources. Check file exists and is in correct format.");
             }
+
+            if (DaggerfallUnity.Settings.CustomBooksImport)
+                BookReplacement.FindAdditionalBooks(bookIDNameMapping);
         }
 
         /// <summary>

@@ -96,6 +96,7 @@ StartInDungeon=True
 TerrainDistance=3
 TerrainHeightmapPixelError=5
 SmallerDungeons=False
+CustomBooksImport=False
 
 [Enhancements]
 LypyL_GameConsole=True

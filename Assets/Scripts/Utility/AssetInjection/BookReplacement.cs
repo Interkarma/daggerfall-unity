@@ -9,13 +9,32 @@
 // Notes:
 //
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
+    [Serializable]
+    internal struct BookMappingEntry
+    {
+        /// <summary>
+        /// The file name without extension; for example `example-book` for `StreamingAssets\Books\example-book.TXT`.
+        /// </summary>
+        [SerializeField]
+        internal string Name;
+
+        /// <summary>
+        /// A readable book title.
+        /// </summary>
+        [SerializeField]
+        internal string Title;
+    }
+
     /// <summary>
     /// Handles import and injection of custom books with the purpose of providing modding support.
     /// Book files are imported from mod bundles with load order or loaded directly from disk.
@@ -26,12 +45,61 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         static readonly string booksPath = Path.Combine(Application.streamingAssetsPath, "Books");
 
+        internal static readonly Dictionary<int, string> FileNames = new Dictionary<int, string>();
+
         /// <summary>
         /// Path to custom books on disk.
         /// </summary>
         public static string BooksPath
         {
             get { return booksPath; }
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        internal static void AssertCustomBooksImportEnabled()
+        {
+            if (!DaggerfallUnity.Settings.CustomBooksImport)
+                throw new InvalidOperationException("Custom books import is disabled.");
+        }
+
+        /// <summary>
+        /// Read maps data for additional custom books from modding locations.
+        /// </summary>
+        /// <param name="bookIDNameMapping">Map that associates id to title.</param>
+        /// <remarks>
+        /// Each entry is associated to a numeric id; 1-111 and 10000 are reserved by classic books.
+        /// Titles are added to given bookID dictionary with classic ids.
+        /// File names (without TXT extension) are added to another dictionary for retrieval of book resource.
+        /// </remarks>
+        internal static void FindAdditionalBooks(Dictionary<int, string> bookIDNameMapping)
+        {
+            AssertCustomBooksImportEnabled();
+
+            int id = 111;
+            // TODO: Import maps from mods; loose files only for now.
+            foreach (string path in Directory.GetFiles(Path.Combine(booksPath, "Mapping"), "*.json"))
+            {
+                var map = new List<BookMappingEntry>();
+                fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(path)), ref map);
+                if (fsResult.HasWarnings)
+                    Debug.LogWarning(fsResult.FormattedMessages);
+
+                if (fsResult.Succeeded)
+                {
+                    foreach (var book in map)
+                    {
+                        bookIDNameMapping.Add(++id != 10000 ? id : ++id, book.Title);
+                        FileNames.Add(id, book.Name + ".TXT");
+                    }
+                }
+            }
+
+            if (FileNames.Count > 0)
+                Debug.LogWarningFormat("Imported {0} custom books. Addition of custom books is EXPERIMENTAL and may introduce bugs! " +
+                    "Breaking changes to this feature can also be expected until is considered stable.", FileNames.Count);
         }
 
         #endregion
