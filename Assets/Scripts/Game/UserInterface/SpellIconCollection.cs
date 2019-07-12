@@ -252,20 +252,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     {
                         // Try to load existing metadata and icons
                         pack = ReadMetadata(metadataPath);
-                        if (!LoadPackIcons(pack, atlasTexture, metadataPath))
-                            continue;
+                        if (TryLoadPackIcons(pack, atlasTexture, metadataPath))
+                            spellIconPacks.Add(packKey, pack);
                     }
                     else
                     {
                         // Create empty metadata file if none found
                         pack = CreateIconPackEmptyMetadata(atlasTexture, metadataPath);
-                        return;
-                    }
-
-                    // If pack is populated then add to dictionary
-                    if (pack != null && pack.rowCount > 0 && pack.iconCount > 0 && pack.icons != null)
-                    {
-                        spellIconPacks.Add(packKey, pack);
                     }
                 }
             }    
@@ -288,7 +281,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                         // Add pack to dictionary
                         var pack = SaveLoadManager.Deserialize(typeof(SpellIconPack), metaData.ToString()) as SpellIconPack;
-                        if (LoadPackIcons(pack, atlas) && pack.iconCount > 0)
+                        if (TryLoadPackIcons(pack, atlas))
                             spellIconPacks.Add(packName, pack);
                     }
                 }
@@ -337,10 +330,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 WriteMetadata(pack, path);
         }
 
-        bool LoadPackIcons(SpellIconPack pack, Texture2D atlas, string path = null)
+        bool TryLoadPackIcons(SpellIconPack pack, Texture2D atlas, string path = null)
         {
-            if (pack == null)
+            // Check pack is valid
+            if (pack == null || pack.rowCount == 0 || pack.iconCount == 0 || pack.icons == null)
+            {
+                string debugInfo = pack != null ? pack.displayName : (path ?? "<unknown>");
+                Debug.LogErrorFormat("Failed to import icon pack {0} because metadata is missing or invalid.", debugInfo);
                 return false;
+            }
 
             // Might need to generate empty icon settings for first time
             if (pack.icons == null)
