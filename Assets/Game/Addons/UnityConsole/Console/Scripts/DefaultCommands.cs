@@ -217,6 +217,10 @@ namespace Wenzil.Console
                     {
                         RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
                     };
+
+                    buildingData.BuildingType = (int)blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].BuildingType;
+                    buildingData.FactionId = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].FactionId;
+                    buildingData.Quality = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].Quality;
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
                     File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), buildingJson);
                     return "Building data written to " + Path.Combine(Application.persistentDataPath, fileName);
@@ -915,47 +919,47 @@ namespace Wenzil.Console
                         switch (n)
                         {
                             case 0:
-                                int xpos, ypos;
-                                while (true)
+                            int xpos, ypos;
+                            while (true)
+                            {
+                                xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX);
+                                ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY);
+                                DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
+                                if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
                                 {
-                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX);
-                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY);
-                                    DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
-                                    if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
-                                    {
-                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location - locations always seem to be one pixel to the northern east - so compensate for this (since locations are never at the border - there should not occur a index out of bounds...)
-                                        return (string.Format("Teleported player to location at: {0}, {1}", xpos, ypos));
-                                    }
+                                    streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location - locations always seem to be one pixel to the northern east - so compensate for this (since locations are never at the border - there should not occur a index out of bounds...)
+                                    return (string.Format("Teleported player to location at: {0}, {1}", xpos, ypos));
                                 }
+                            }
                             case 1:
-                                streamingWorld.TeleportToCoordinates(207, 213, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Daggerfall/Daggerfall");
+                            streamingWorld.TeleportToCoordinates(207, 213, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Daggerfall/Daggerfall");
                             case 2:
-                                streamingWorld.TeleportToCoordinates(859, 244, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Wayrest/Wayrest");
+                            streamingWorld.TeleportToCoordinates(859, 244, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Wayrest/Wayrest");
                             case 3:
-                                streamingWorld.TeleportToCoordinates(397, 343, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Sentinel/Sentinel");
+                            streamingWorld.TeleportToCoordinates(397, 343, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Sentinel/Sentinel");
                             case 4:
-                                streamingWorld.TeleportToCoordinates(892, 146, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Orsinium Area/Orsinium");
+                            streamingWorld.TeleportToCoordinates(892, 146, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Orsinium Area/Orsinium");
                             case 5:
-                                streamingWorld.TeleportToCoordinates(67, 119, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Tulune/The Old Copperham Place");
+                            streamingWorld.TeleportToCoordinates(67, 119, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Tulune/The Old Copperham Place");
                             case 6:
-                                streamingWorld.TeleportToCoordinates(254, 408, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Pothago/The Stronghold of Cirden");
+                            streamingWorld.TeleportToCoordinates(254, 408, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Pothago/The Stronghold of Cirden");
                             case 7:
-                                streamingWorld.TeleportToCoordinates(109, 158, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Daggerfall/Privateer's Hold");
+                            streamingWorld.TeleportToCoordinates(109, 158, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Daggerfall/Privateer's Hold");
                             case 8:
-                                streamingWorld.TeleportToCoordinates(860, 245, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Wayrest/Merwark Hollow");
+                            streamingWorld.TeleportToCoordinates(860, 245, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Wayrest/Merwark Hollow");
                             case 9:
-                                streamingWorld.TeleportToCoordinates(718, 204, StreamingWorld.RepositionMethods.RandomStartMarker);
-                                return ("Teleported player to Isle of Balfiera/Direnni Tower");
+                            streamingWorld.TeleportToCoordinates(718, 204, StreamingWorld.RepositionMethods.RandomStartMarker);
+                            return ("Teleported player to Isle of Balfiera/Direnni Tower");
                             default:
-                                break;
+                            break;
                         }
                         return "Teleported successfully.";
                     }
@@ -1545,43 +1549,43 @@ namespace Wenzil.Console
                     switch (args[0])
                     {
                         case "book":
-                            newItem = ItemBuilder.CreateRandomBook();
-                            break;
+                        newItem = ItemBuilder.CreateRandomBook();
+                        break;
                         case "weapon":
-                            newItem = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
-                            break;
+                        newItem = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
+                        break;
                         case "armor":
-                            newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                            break;
+                        newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                        break;
                         case "cloth":
-                            newItem = ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race);
-                            break;
+                        newItem = ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race);
+                        break;
                         case "ingr":
-                            newItem = ItemBuilder.CreateRandomIngredient();
-                            break;
+                        newItem = ItemBuilder.CreateRandomIngredient();
+                        break;
                         case "relig":
-                            newItem = ItemBuilder.CreateRandomReligiousItem();
-                            break;
+                        newItem = ItemBuilder.CreateRandomReligiousItem();
+                        break;
                         case "soul":
-                            newItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
-                            break;
+                        newItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
+                        break;
                         case "magic":
-                            newItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                            break;
+                        newItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                        break;
                         case "drug":
-                            newItem = ItemBuilder.CreateRandomDrug();
-                            break;
+                        newItem = ItemBuilder.CreateRandomDrug();
+                        break;
                         case "map":
-                            newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Map);
-                            break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Map);
+                        break;
                         case "torch":
-                            newItem = ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch);
-                            break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch);
+                        break;
                         case "soultrap":
-                            newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-                            break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                        break;
                         default:
-                            return "unrecognized keyword. see usage";
+                        return "unrecognized keyword. see usage";
                     }
                     items.AddItem(newItem);
                 }
@@ -1613,76 +1617,76 @@ namespace Wenzil.Console
                 switch (args[0])
                 {
                     case "0":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Masque_of_Clavicus);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Masque_of_Clavicus);
+                    break;
                     case "1":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mehrunes_Razor);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mehrunes_Razor);
+                    break;
                     case "2":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mace_of_Molag_Bal);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mace_of_Molag_Bal);
+                    break;
                     case "3":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Hircine_Ring);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Hircine_Ring);
+                    break;
                     case "4":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Sanguine_Rose);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Sanguine_Rose);
+                    break;
                     case "5":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Oghma_Infinium);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Oghma_Infinium);
+                    break;
                     case "6":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Wabbajack);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Wabbajack);
+                    break;
                     case "7":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Namira);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Namira);
+                    break;
                     case "8":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skull_of_Corruption);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skull_of_Corruption);
+                    break;
                     case "9":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Azuras_Star);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Azuras_Star);
+                    break;
                     case "10":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Volendrung);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Volendrung);
+                    break;
                     case "11":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Warlocks_Ring);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Warlocks_Ring);
+                    break;
                     case "12":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Bow);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Bow);
+                    break;
                     case "13":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Necromancers_Amulet);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Necromancers_Amulet);
+                    break;
                     case "14":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Chrysamere);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Chrysamere);
+                    break;
                     case "15":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Lords_Mail);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Lords_Mail);
+                    break;
                     case "16":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Staff_of_Magnus);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Staff_of_Magnus);
+                    break;
                     case "17":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Khajiit);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Khajiit);
+                    break;
                     case "18":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Mail);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Mail);
+                    break;
                     case "19":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Shield);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Shield);
+                    break;
                     case "20":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Spell_Breaker);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Spell_Breaker);
+                    break;
                     case "21":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skeletons_Key);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skeletons_Key);
+                    break;
                     case "22":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Blade);
-                        break;
+                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Blade);
+                    break;
                     default:
-                        return "Invalid artifact ID.";
+                    return "Invalid artifact ID.";
                 }
                 items.AddItem(newItem);
 
@@ -1819,17 +1823,17 @@ namespace Wenzil.Console
                 switch (args[0].ToLower())
                 {
                     case "vampire":
-                        diseaseType = CommandDiseaseTypes.Vampire;
-                        break;
+                    diseaseType = CommandDiseaseTypes.Vampire;
+                    break;
                     case "werewolf":
-                        diseaseType = CommandDiseaseTypes.Werewolf;
-                        break;
+                    diseaseType = CommandDiseaseTypes.Werewolf;
+                    break;
                     case "wereboar":
-                        diseaseType = CommandDiseaseTypes.Wereboar;
-                        break;
+                    diseaseType = CommandDiseaseTypes.Wereboar;
+                    break;
                     default:
-                        diseaseType = CommandDiseaseTypes.Numerical;
-                        break;
+                    diseaseType = CommandDiseaseTypes.Numerical;
+                    break;
                 }
 
                 // Disease player by index
