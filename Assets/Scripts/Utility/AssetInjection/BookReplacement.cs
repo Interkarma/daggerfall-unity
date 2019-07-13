@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Fields & Properties
 
         static readonly string booksPath = Path.Combine(Application.streamingAssetsPath, "Books");
+        static readonly string mappingPath = Path.Combine(booksPath, "Mapping");
 
         internal static readonly Dictionary<int, string> FileNames = new Dictionary<int, string>();
 
@@ -79,22 +80,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             AssertCustomBooksImportEnabled();
 
-            string directory = Path.Combine(booksPath, "Mapping");
-
             // Book IDs are stored inside Mapping folder.
             // They are associated to game installation (with mods) and not specific saves. 
             var ids = new Dictionary<string, int>();
-            string idsPath = Path.Combine(directory, "IDs.json");
+            string idsPath = Path.Combine(mappingPath, "IDs.json");
             if (File.Exists(idsPath))
                 ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(idsPath)), ref ids);
             int idsCount = ids.Count;
 
             int currentId = 111;
-            // TODO: Import maps from mods; loose files only for now.
-            foreach (string path in Directory.GetFiles(directory, "*.json").Where(x => !x.EndsWith("IDs.json")))
+            foreach (string mapContent in GetBooksMaps())
             {
                 var map = new List<BookMappingEntry>();
-                fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(path)), ref map);
+                fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(mapContent), ref map);
                 if (fsResult.HasWarnings)
                     Debug.LogWarning(fsResult.FormattedMessages);
 
@@ -121,7 +119,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 fsData fsData;
                 ModManager._serializer.TrySerialize(ids, out fsData).AssertSuccessWithoutWarnings();
-                Directory.CreateDirectory(directory);
+                Directory.CreateDirectory(mappingPath);
                 File.WriteAllText(idsPath, fsJsonPrinter.PrettyJson(fsData));
             }
 
@@ -164,6 +162,25 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Gets content of book mapping json files from loose files and mods.
+        /// </summary>
+        private static IEnumerable<string> GetBooksMaps()
+        {
+            var looseFilesMaps = Directory.Exists(mappingPath) ?
+                Directory.GetFiles(mappingPath, "*.json").Where(x => !x.EndsWith("IDs.json")).Select(x => File.ReadAllText(x)) :
+                null;
+
+            var modsMaps = ModManager.Instance.GetAllModsWithContributes(x => x.BooksMapping != null).SelectMany(mod =>
+                mod.ModInfo.Contributes.BooksMapping.Select(x => mod.GetAsset<TextAsset>(x).ToString()));
+
+            return looseFilesMaps != null ? looseFilesMaps.Concat(modsMaps) : modsMaps;
         }
 
         #endregion
