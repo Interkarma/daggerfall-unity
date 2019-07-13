@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
@@ -78,9 +79,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             AssertCustomBooksImportEnabled();
 
-            int id = 111;
+            string directory = Path.Combine(booksPath, "Mapping");
+
+            // Book IDs are stored inside Mapping folder.
+            // They are associated to game installation (with mods) and not specific saves. 
+            var ids = new Dictionary<string, int>();
+            string idsPath = Path.Combine(directory, "IDs.json");
+            if (File.Exists(idsPath))
+                ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(idsPath)), ref ids);
+            int idsCount = ids.Count;
+
+            int currentId = 111;
             // TODO: Import maps from mods; loose files only for now.
-            foreach (string path in Directory.GetFiles(Path.Combine(booksPath, "Mapping"), "*.json"))
+            foreach (string path in Directory.GetFiles(directory, "*.json").Where(x => !x.EndsWith("IDs.json")))
             {
                 var map = new List<BookMappingEntry>();
                 fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(path)), ref map);
@@ -91,10 +102,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     foreach (var book in map)
                     {
-                        bookIDNameMapping.Add(++id != 10000 ? id : ++id, book.Title);
-                        FileNames.Add(id, book.Name + ".TXT");
+                        string name = book.Name + ".TXT";
+
+                        // Assign book id
+                        int id;
+                        if (!ids.TryGetValue(name, out id))
+                            ids.Add(name, id = ++currentId != 10000 ? currentId : ++currentId);
+
+                        // Store results
+                        bookIDNameMapping.Add(id, book.Title);
+                        FileNames.Add(id, name);
                     }
                 }
+            }
+
+            // Sync IDs with persistent json file
+            if (ids.Count > idsCount)
+            {
+                fsData fsData;
+                ModManager._serializer.TrySerialize(ids, out fsData).AssertSuccessWithoutWarnings();
+                Directory.CreateDirectory(directory);
+                File.WriteAllText(idsPath, fsJsonPrinter.PrettyJson(fsData));
             }
 
             if (FileNames.Count > 0)

@@ -121,6 +121,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void LayoutPage()
         {
+            if (!dfUnity.TextProvider.IsBookOpen)
+                return;
+
             ClearPage();
             TextFile.Token[] tokens = dfUnity.TextProvider.PageTokens;
 

@@ -465,12 +465,20 @@ namespace DaggerfallWorkshop.Game.Items
         /// Gets the filename for a book (classic or imported).
         /// </summary>
         /// <param name="message">The message field for the book Item, containing the book ID.</param>
-        /// <returns>The filename of the book.</returns>
+        /// <returns>The filename of the book or null.</returns>
         internal string GetBookFileNameByMessage(int message)
         {
             BookReplacement.AssertCustomBooksImportEnabled();
 
-            return message <= 111 || message == 10000 ? BookFile.messageToBookFilename(message) : BookReplacement.FileNames[message];
+            if (message <= 111 || message == 10000)
+                return BookFile.messageToBookFilename(message);
+
+            string name;
+            if (BookReplacement.FileNames.TryGetValue(message, out name))
+                return name;
+
+            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
+            return null;
         }
 
         /// <summary>
