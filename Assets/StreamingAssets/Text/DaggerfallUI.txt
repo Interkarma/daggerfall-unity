@@ -71,6 +71,7 @@ northern,           (northern)
 southern,           (southern)
 noWagon,            You don't own a wagon.
 exitTooFar,         The exit is too far away for you to access your wagon.
+bookUnavailable,    The book is ruined and is now unreadable.
 
 - Potion mixing window:
 
