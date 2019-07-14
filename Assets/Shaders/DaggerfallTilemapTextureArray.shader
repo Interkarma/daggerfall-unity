@@ -65,13 +65,15 @@ Shader "Daggerfall/TilemapTextureArray" {
 			//float2 uv_BumpMap;
 		};
 
-	float GetMipLevel(float2 iUV, float4 iTextureSize)
-	{
-		float2 dx = ddx(iUV * iTextureSize.z);
-		float2 dy = ddy(iUV * iTextureSize.w);
-		float d = max(dot(dx, dx), dot(dy,dy));
-		return 0.5 * log2(d);
-	}
+		#define MIPMAP_BIAS (-0.5)
+
+		float GetMipLevel(float2 iUV, float4 iTextureSize)
+		{
+			float2 dx = ddx(iUV * iTextureSize.z);
+			float2 dy = ddy(iUV * iTextureSize.w);
+			float d = max(dot(dx, dx), dot(dy,dy));
+			return 0.5 * log2(d) + MIPMAP_BIAS;
+		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
