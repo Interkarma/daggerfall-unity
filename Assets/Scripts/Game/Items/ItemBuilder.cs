@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.FallExe;
@@ -250,6 +251,41 @@ namespace DaggerfallWorkshop.Game.Items
             SetVariant(newItem, UnityEngine.Random.Range(0, newItem.TotalVariants));
 
             return newItem;
+        }
+
+        /// <summary>
+        /// Creates a new book from resource provided by mods.
+        /// Use <see cref="CreateBook(int)"/> for classic books.
+        /// </summary>
+        /// <param name="fileName">The name of the books resource.</param>
+        /// <returns>An instance of the book item or null.</returns>
+        public static DaggerfallUnityItem CreateBook(string fileName)
+        {
+            if (!Path.HasExtension(fileName))
+                fileName += ".TXT";
+
+            var entry = BookReplacement.FileNames.FirstOrDefault(x => x.Value == fileName);
+            return !entry.Equals(default(KeyValuePair<int, string>)) ? CreateBook(entry.Key) : null;
+        }
+
+        /// <summary>
+        /// Creates a new book from resource provided by classic game data or mods.
+        /// </summary>
+        /// <param name="id">The numeric id of book resource.</param>
+        /// <returns>An instance of the book item or null.</returns>
+        public static DaggerfallUnityItem CreateBook(int id)
+        {
+            var bookFile = new BookFile();
+            string name = DaggerfallUnity.Instance.ItemHelper.GetBookFileNameByMessage(id);
+            if (!BookReplacement.TryImportBook(name, bookFile) &&
+                !bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
+                return null;
+
+            return new DaggerfallUnityItem(ItemGroups.Books, 0)
+            {
+                message = id,
+                value = bookFile.Price
+            };
         }
 
         /// <summary>
