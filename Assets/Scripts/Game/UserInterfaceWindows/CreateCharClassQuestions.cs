@@ -42,7 +42,194 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int questionWidth = 156;
         const int questionHeight = 45;
         const int classQuestionsToken = 9000;
+        const int classDescriptionsTokenBase = 2100;
         const int questionCount = 10;
+
+        Texture2D nativeTexture;
+        List<TextLabel> questionLabels;
+        MultiFormatTextLabel questionLabel = new MultiFormatTextLabel();
+        int labelOffset = 0;
+        Dictionary<int, string> questionLibrary;
+        List<int> questionIndices;
+        Dictionary<uint, int> resultToClassMappings;
+        int classIndex = -1;
+        byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
+        int questionsAnswered = 0;
+
+        public CreateCharClassQuestions(IUserInterfaceManager uiManager)
+            : base(uiManager)
+        {
+        }
+
+        #region Unity
+        protected override void Setup()
+        {
+            if (IsSetup)
+                return;
+            
+            // Load native texture
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
+            if (!nativeTexture)
+                throw new Exception("CreateCharClassQuestions: Could not load native texture.");
+
+            // Set background
+            NativePanel.BackgroundTexture = nativeTexture;
+
+            // Map results to class indices
+            FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
+            if (classFile == null)
+                throw new Exception("CreateCharClassQuestions: Could not load CLASSES.DAT.");
+            byte[] classData = classFile.GetBytes();
+            resultToClassMappings = GetClassMappings(classData);
+
+            questionIndices = GetQuestions();
+            DisplayQuestion(questionIndices[questionsAnswered]);
+
+            IsSetup = true;
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                AnswerAndContinue(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.B))
+            {
+                AnswerAndContinue(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                AnswerAndContinue(2);
+            }
+        }
+        #endregion Unity
+
+        #region Helper Methods
+        private Dictionary<uint, int> GetClassMappings(byte[] data)
+        {
+            Dictionary<uint, int> result = new Dictionary<uint, int>();
+            // TODO: Determine how classic matches results to a class
+            return result;
+        }
+
+        private List<int> GetQuestions()
+        {
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(classQuestionsToken);
+            StringBuilder question = new StringBuilder();
+            int questionInd = 0;
+            questionLibrary = new Dictionary<int, string>();
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                if (tokens[i].text != null)
+                {
+                    string[] tokenText = Regex.Split(tokens[i].text, @"{\d+.");
+                    if (tokenText.Length > 1) // If true the line contains the expression, which means it is the start of a question.
+                    {
+                        if (question.Length != 0)
+                        {
+                            // Finished parsing question - add to library and continue
+                            questionLibrary.Add(questionInd++, question.ToString());
+                            question = new StringBuilder();
+                        }
+                        question.AppendLine(tokenText[1]);
+                    }
+                    else
+                    {
+                        question.AppendLine(tokenText[0]);
+                    }
+                }
+            }
+            questionLibrary.Add(questionInd, question.ToString()); // add the final question
+
+            Dictionary<int, bool> pickedQuestions = new Dictionary<int, bool>();
+            List<int> indices = new List<int>();
+            for (int i = 0; i < questionCount; i++)
+            {
+                int index = UnityEngine.Random.Range(0, questionLibrary.Count);
+                while (pickedQuestions.ContainsKey(index)) // Ensure all picked questions are unique.
+                {
+                    index = (index + 1) % questionLibrary.Count;
+                }
+
+                pickedQuestions[index] = true;
+                indices.Add(index);
+            }
+
+            return indices;
+        }
+
+        private void DisplayQuestion(int questionIndex)
+        {
+            questionLabel.Clear();
+            questionLabel = new MultiFormatTextLabel
+            {
+                Position = new Vector2(questionLeft, questionTop),
+                Size = new Vector2(320, 240) // make sure it has enough space - allow it to run off the screen
+            };
+            string[] lines = questionLibrary[questionIndex].Split("\r\n".ToCharArray()).Where(x => x != string.Empty).ToArray();
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+            foreach (string line in lines)
+            {
+                tokens.Add(TextFile.CreateTextToken(line));
+                tokens.Add(TextFile.CreateFormatToken(TextFile.Formatting.NewLine));
+            }
+            questionLabel.SetText(tokens.ToArray());
+            NativePanel.Components.Add(questionLabel);
+        }
+
+        private uint WeightsToUint(byte w1, byte w2, byte w3)
+        {
+            return (uint)(w1 | (w2 << 8) | (w3 << 16));
+        }
+
+        private int GetWeightIndex(int chosenIndex, int column)
+        {
+            return answerTable[questionIndices[chosenIndex] * 3 + column];
+        }
+
+        private void AnswerAndContinue(int choice)
+        {
+            weights[GetWeightIndex(questionsAnswered, choice)]++;
+            if (questionsAnswered == questionCount - 1)
+            {
+                questionLabel.Clear();
+                NativePanel.BackgroundTexture = null;
+                //classIndex = resultToClassMappings[WeightsToUint(weights[0], weights[1], weights[2])];
+                classIndex = 0;
+                DaggerfallMessageBox confirmDialog = new DaggerfallMessageBox(uiManager,
+                                                                              DaggerfallMessageBox.CommonMessageBoxButtons.YesNo,
+                                                                              classDescriptionsTokenBase + classIndex,
+                                                                              uiManager.TopWindow);
+                confirmDialog.OnButtonClick += ConfirmDialog_OnButtonClick;
+                uiManager.PushWindow(confirmDialog);
+            }
+            else
+            {
+                DisplayQuestion(questionIndices[++questionsAnswered]);
+            }
+        }
+        #endregion Helper Methods
+
+        public int ClassIndex
+        {
+            get { return classIndex; }
+        }
+
+        #region Event Handlers
+        private void ConfirmDialog_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
+            {
+                classIndex = -1;
+            }
+            sender.CloseWindow();
+            CloseWindow();
+        }
+        #endregion Event Handlers
+
         #region Data
         /*
          * This table determines the path that each answer corresponds to.
@@ -90,153 +277,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                             01, 02, 00,
                                             00, 01, 02,
                                             01, 02, 00 };
-        #endregion
-
-        Texture2D nativeTexture;
-        List<TextLabel> questionLabels;
-        int labelOffset = 0;
-        Dictionary<int, string> questionLibrary;
-        List<int> questionIndices;
-        int questionIndex = 0;
-        int[] weights = new int[] { 0, 0, 0 }; // Number of answers that steer class toward warrior/rogue/mage paths
-        Dictionary<uint, int> resultToClassMappings;
-        int classIndex = 0;
-
-        public CreateCharClassQuestions(IUserInterfaceManager uiManager)
-            : base(uiManager)
-        {
-        }
-
-        protected override void Setup()
-        {
-            if (IsSetup)
-                return;
-            
-            // Load native texture
-            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
-            if (!nativeTexture)
-                throw new Exception("CreateCharClassQuestions: Could not load native texture.");
-
-            // Set background
-            NativePanel.BackgroundTexture = nativeTexture;
-
-            // Map results to class indices
-            FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
-            byte[] classData = classFile.GetBytes();
-            resultToClassMappings = GetClassMappings(classData);
-
-            GetQuestions();
-            DisplayQuestion(questionIndices[0]);
-
-            IsSetup = true;
-        }
-
-        private Dictionary<uint, int> GetClassMappings(byte[] data)
-        {
-            Dictionary<uint, int> result = new Dictionary<uint, int>();
-            List<byte> classOffsets = new List<byte>();
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (data[i] != 0)
-                {
-                    classOffsets.Add(data[i]);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            int j = 0;
-            foreach (byte offset in classOffsets)
-            {
-                resultToClassMappings[(uint)(data[offset] | data[offset + 1] >> 1 | data[offset + 2] >> 2)] = j;
-                resultToClassMappings[(uint)(data[offset + 3] | data[offset + 4] >> 1 | data[offset + 5] >> 2)] = j;
-                resultToClassMappings[(uint)(data[offset + 6] | data[offset + 7] >> 1 | data[offset + 8] >> 2)] = j;
-                j++;
-            }
-
-            return result;
-        }
-
-        private void GetQuestions()
-        {
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(classQuestionsToken);
-            StringBuilder question = new StringBuilder();
-            int questionInd = 0;
-            questionLibrary = new Dictionary<int, string>();
-            for (int i = 0; i < tokens.Length; i++)
-            {
-                if (tokens[i].text != null)
-                {
-                    string[] tokenText = Regex.Split(tokens[i].text, @"{\d+.");
-                    if (tokenText.Length > 1) // If true the line contains the expression, which means it is the start of a question.
-                    {
-                        if (question.Length != 0)
-                        {
-                            // Finished parsing question - add to library and continue
-                            questionLibrary.Add(questionInd++, question.ToString());
-                            question = new StringBuilder();
-                        }
-                        question.AppendLine(tokenText[1]);
-                    }
-                    else
-                    {
-                        question.AppendLine(tokenText[0]);
-                    }
-                }
-            }
-            questionLibrary.Add(questionInd, question.ToString()); // add the final question
-
-            Dictionary<int, bool> pickedQuestions = new Dictionary<int, bool>();
-            questionIndices = new List<int>();
-            for (int i = 0; i < questionCount; i++)
-            {
-                int index = UnityEngine.Random.Range(0, questionLibrary.Count);
-                while (pickedQuestions.ContainsKey(index)) // Ensure all picked questions are unique.
-                {
-                    index = (index + 1) % questionLibrary.Count;
-                }
-
-                pickedQuestions[index] = true;
-                questionIndices.Add(index);
-            }
-        }
-
-        private void DisplayQuestion(int questionIndex)
-        {
-            questionLabels = new List<TextLabel>();
-            string[] lines = questionLibrary[questionIndex].Split("\r\n".ToCharArray()).Where(x => x != string.Empty).ToArray();
-            for (int i = 0; i < lines.Length; i++)
-            {
-                questionLabels.Add(DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont,
-                                                  new Vector2(questionLeft, labelOffset + questionTop + i * questionLineSpace),
-                                                  lines[i],
-                                                  NativePanel));
-            }
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-
-            }
-            else if (Input.GetKeyDown(KeyCode.B))
-            {
-
-            }
-            else if (Input.GetKeyDown(KeyCode.C))
-            {
-
-            }
-        }
-
-        public int ClassIndex
-        {
-            get { return classIndex; }
-        }
+        #endregion Data
     }
 }

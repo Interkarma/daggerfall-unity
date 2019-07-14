@@ -334,7 +334,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateCharClassQuestions_OnClose()
         {
-
+            int classIndex = createCharClassQuestionsWindow.ClassIndex;
+            if (classIndex != -1)
+            {
+                string fileName = "CLASS" + classIndex.ToString("00") + ".CFG";
+                string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, fileName);
+                if (files == null)
+                {
+                    throw new Exception("Could not load class file: " + fileName);
+                }
+                ClassFile classFile = new ClassFile(files[0]);
+                characterDocument.career = classFile.Career;
+                characterDocument.classIndex = classIndex;
+                SetChooseBioWindow();
+            }
+            else
+            {
+                SetClassSelectWindow();
+            }
         }
 
         void ClassSelectWindow_OnClose()
