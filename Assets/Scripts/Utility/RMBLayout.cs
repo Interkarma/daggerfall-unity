@@ -527,33 +527,35 @@ namespace DaggerfallWorkshop.Utility
                     for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
                     {
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
+                        buildingReplacementData = new BuildingReplacementData();
+
                         if (IsNamedBuilding(building.BuildingType))
                         {
-                            // Check for replacement building data and use it if found
-                            if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
+                            // Try to find next building and merge data
+                            BuildingPoolItem item;
+                            if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
                             {
-                                // Use custom building values from replacement data, don't use pool or maps file
-                                building.NameSeed = location.Exterior.Buildings[0].NameSeed;
-                                building.FactionId = buildingReplacementData.FactionId;
-                                building.BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.BuildingType;
-                                building.LocationId = location.Exterior.Buildings[0].LocationId;
-                                building.Quality = buildingReplacementData.Quality;
+                                Debug.LogFormat("End of city building list reached without finding building type {0} in location {1}.{2}", building.BuildingType, location.RegionName, location.Name);
                             }
                             else
                             {
-                                // Try to find next building and merge data
-                                BuildingPoolItem item;
-                                if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
+                                // Always get the Building NameSeed, location ID and Sector
+                                building.NameSeed = item.buildingData.NameSeed;
+                                building.LocationId = item.buildingData.LocationId;
+                                building.Sector = item.buildingData.Sector;
+
+                                // Check for replacement building data and use it if found
+                                if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
                                 {
-                                    Debug.LogFormat("End of city building list reached without finding building type {0} in location {1}.{2}", building.BuildingType, location.RegionName, location.Name);
+                                    // Use custom building values from replacement data, don't use pool or maps file
+                                    building.FactionId = buildingReplacementData.FactionId;
+                                    building.BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
+                                    building.Quality = buildingReplacementData.Quality;
                                 }
                                 else
                                 {
-                                    // Copy found city building data to block level
                                     building.NameSeed = item.buildingData.NameSeed;
-                                    building.FactionId = item.buildingData.FactionId;
-                                    building.Sector = item.buildingData.Sector;
-                                    building.LocationId = item.buildingData.LocationId;
+                                    building.FactionId = item.buildingData.FactionId;                                
                                     building.Quality = item.buildingData.Quality;
                                 }
                             }
@@ -561,16 +563,13 @@ namespace DaggerfallWorkshop.Utility
                             block.RmbBlock.FldHeader.BuildingDataList[i] = building;
                         }
                     }
-
                     // Save block data
                     blocks.Add(block);
                 }
             }
-
             // Send blocks array back to caller
             blocksOut = blocks.ToArray();
         }
-
         /// <summary>
         /// Draws and consume building from pool.
         /// Checking if buildings are ordered by special type.
@@ -703,7 +702,7 @@ namespace DaggerfallWorkshop.Utility
                 {
                     // Get model transform
                     Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-                    Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
+                    Vector3 modelRotation = new Vector3(0 -obj.YRotation / BlocksFile.RotationDivisor, 0);
                     Matrix4x4 modelMatrix = subRecordMatrix * Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
                     // Get model data
@@ -774,7 +773,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Get model transform
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos + propsOffsetY, obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
-                Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
+                Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
                 // Get model data
@@ -867,7 +866,7 @@ namespace DaggerfallWorkshop.Utility
 
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             SoundClips sound = SoundClips.None;
-            switch(dfBillboard.Summary.Record)
+            switch (dfBillboard.Summary.Record)
             {
                 case 0:
                 case 1:
