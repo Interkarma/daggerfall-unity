@@ -414,6 +414,13 @@ namespace DaggerfallConnect
             /// <summary>Y rotation.</summary>
             public Int16 YRotation;
 
+
+            /// <summary>X rotation. (extended)</summary>
+            public Int16 XRotation;
+
+            /// <summary>Z rotation. (extended)</summary>
+            public Int16 ZRotation;
+
             /// <summary>Unknown.</summary>
             internal UInt16 Unknown4;
 
