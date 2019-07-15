@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:
+// Contributors: Uncanny
 //
 
 using System.IO;
@@ -68,9 +68,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
-        public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
+        public static string GetBuildingInstanceReplacementFilename(string blockName, int blockIndex, int recordIndex)
         {
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
+        }
+
+        public static string GetBuildingBlockReplacementFilename(string blockName, int recordIndex)
+        {
+            return string.Format("{0}-building{1}.json", blockName,  recordIndex);
         }
 
         public static bool GetBuildingReplacementData(string blockName, int blockIndex, int recordIndex, out BuildingReplacementData buildingData)
@@ -85,9 +90,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
                 else
                 {
-                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
+                    //Get specific location replacement
+                    string fileName = GetBuildingInstanceReplacementFilename(blockName, blockIndex, recordIndex);
 
-                    // Seek from loose files
+                    // Seek from loose files for replacment for the specific instance of the location
                     if (File.Exists(Path.Combine(worldDataPath, fileName)))
                     {
                         string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
@@ -97,7 +103,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 #endif
                         return true;
                     }
-                    // Seek from mods
+                    // Seek from mods for replacment for the specific instance of the location
                     TextAsset buildingReplacementJsonAsset;
                     if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out buildingReplacementJsonAsset))
                     {
@@ -107,6 +113,28 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 #endif
                         return true;
                     }
+                    //Get shared block location
+                    fileName = GetBuildingBlockReplacementFilename(blockName, recordIndex);
+
+                    // Seek from loose files for replacment for the block shared location
+                    if (File.Exists(Path.Combine(worldDataPath, fileName))) {
+                        string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
+                        buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
+#if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
+                        Buildings.Add(blockRecordId, buildingData);
+#endif
+                        return true;
+                    }
+                    // Seek from mods for replacment for the block shared location
+                    if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out buildingReplacementJsonAsset)) {
+                        buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJsonAsset.text);
+#if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
+                        Buildings.Add(blockRecordId, buildingData);
+#endif
+                        return true;
+                    }
+
+
 #if !UNITY_EDITOR   // Only look for replacement data once, unless running in editor
                     Buildings.Add(blockRecordId, noReplacementData);
 #endif
