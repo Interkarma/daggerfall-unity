@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
@@ -278,6 +279,46 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, bool readOnly, out Texture2D tex)
         {
             return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), readOnly, out tex);
+        }
+
+        /// <summary>
+        /// Seeks a texture array asset or an archive of individual textures to merge with <see cref="Graphics.CopyTexture(Texture, Texture)"/>.
+        /// NOTE: It is possible to make a texture array on the cpu with <see cref="Texture2DArray.SetPixels32(Color32[], int)"/> but current
+        /// implementation doesn't use this feature. It is up to the caller to potentially do it as a fallback if this method return false.
+        /// </summary>
+        /// <param name="archive">The requested texture archive.</param>
+        /// <param name="depth">The expected number of layer.</param>
+        /// <param name="textureMap">The texture type.</param>
+        /// <param name="fallbackColor">If provided is used silenty for missing layers.</param>
+        /// <param name="textureArray">Imported or created texture array or null.</param>
+        /// <returns>True if the texture array has been imported or created.</returns>
+        internal static bool TryImportTextureArray(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
+        {
+            if (!DaggerfallUnity.Settings.AssetInjection)
+            {
+                textureArray = null;
+                return false;
+            }
+
+            if (ModManager.Instance && !TextureExistsAmongLooseFiles(archive, 0, 0, textureMap))
+            {
+                string[] names = { GetNameTexArray(archive, textureMap), GetName(archive, 0, 0, textureMap) };
+
+                // Seek texture array or individual textures with load order.
+                // If the first match is a texture array, is returned successfully.
+                // If the first match is the first texture in the archive, an array is created at runtime.
+                Texture texture;
+                if (ModManager.Instance.TryGetAsset(names, false, out texture) && texture.dimension == TextureDimension.Tex2DArray)
+                {
+                    if ((textureArray = texture as Texture2DArray).depth == depth)
+                        return true;
+
+                    Debug.LogErrorFormat("{0}: expected depth {0} but got {1}.", textureArray.name, depth, textureArray.depth);
+                }
+            }
+
+            // Seek individual textures from mods and loose files
+            return TryMakeTextureArrayCopyTexture(archive, depth, textureMap, fallbackColor, out textureArray);
         }
 
         /// <summary>
@@ -619,6 +660,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Gets name for a texture array.
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="textureMap">Texture type.</param>
+        /// <returns>The name for the texture array with requested options.</returns>
+        public static string GetNameTexArray(int archive, TextureMap textureMap = TextureMap.Albedo)
+        {
+            string name = string.Format("{0}-TexArray", archive);
+
+            if (textureMap != TextureMap.Albedo)
+                name = string.Format("{0}_{1}", name, textureMap);
+
+            return name;
+        }
+
+        /// <summary>
         /// Get archive and record from "archive_record-0" string.
         /// </summary>
         /// <param name="name">"archive_record-frame string."</param>
@@ -916,6 +973,80 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             tex = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Makes a texture array from textures loaded from mods, using <see cref="Graphics.CopyTexture"/> which is very efficient.
+        /// The result texture array respects format and settings of individual textures and is not available on the cpu side.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Graphics.CopyTexture"/> provides a very fast copy operation between textures, but is not supported on some platforms.
+        /// The result is also not available for further edits from the cpu.
+        /// The first record must be available and defines size and format that all records must match. A fallback color can be provided for other layers.
+        /// </remarks>
+        /// <param name="archive">The requested texture archive.</param>
+        /// <param name="depth">The expected number of layer.</param>
+        /// <param name="textureMap">The texture type.</param>
+        /// <param name="fallbackColor">If provided is used silenty for missing layers.</param>
+        /// <param name="textureArray">The created texture array or null.</param>
+        /// <returns>True if the texture array has been created.</returns>
+        private static bool TryMakeTextureArrayCopyTexture(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
+        {
+            textureArray = null;
+
+            if ((SystemInfo.copyTextureSupport & CopyTextureSupport.DifferentTypes) == CopyTextureSupport.None)
+                return false;
+
+            bool mipMaps = false;
+            Texture2D fallback = null;
+
+            for (int record = 0; record < depth; record++)
+            {
+                Texture2D tex;
+                if (!TryImportTexture(archive, record, 0, textureMap, true, out tex))
+                {
+                    if (!textureArray)
+                        return false;
+
+                    if (!fallbackColor.HasValue)
+                    {
+                        Debug.LogErrorFormat("Failed to inject record {0} for texture archive {1} ({2}) because texture data is not available.", record, archive, textureMap);
+                        continue;
+                    }
+
+                    if (!fallback)
+                    {
+                        fallback = new Texture2D(textureArray.width, textureArray.height, textureArray.format, mipMaps);
+                        Color32[] colors = new Color32[fallback.width * fallback.height];
+                        for (int i = 0; i < colors.Length; i++)
+                            colors[i] = fallbackColor.Value;
+                        fallback.SetPixels32(colors);
+                        fallback.Apply(mipMaps, true);
+                    }
+
+                    tex = fallback;
+                }
+
+                if (!textureArray)
+                    textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1);
+
+                if (tex.width == textureArray.width && tex.height == textureArray.height && tex.format == textureArray.format)
+                    Graphics.CopyTexture(tex, 0, textureArray, record);
+                else
+                    Debug.LogErrorFormat("Failed to inject record {0} for texture archive {1} ({2}) due to size or format mismatch.", record, archive, textureMap);
+            }
+
+            if (fallback)
+                Texture2D.Destroy(fallback);
+
+            if (textureArray)
+            {
+                textureArray.wrapMode = TextureWrapMode.Clamp;
+                textureArray.anisoLevel = 8;
+                return true;
+            }
+
             return false;
         }
 
