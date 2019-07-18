@@ -121,7 +121,16 @@ _S.01_ task:
 	toting _jewelry_ and _qgiver_ clicked 
 	give pc nothing 
 	change repute with _qgiver_ by +5 
-	end quest 
+	end quest
+
+_qgtalk_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _S.01_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
 
 _S.02_ task:
 	create foe _F.03_ every 11 minutes 3 times with 15% success 

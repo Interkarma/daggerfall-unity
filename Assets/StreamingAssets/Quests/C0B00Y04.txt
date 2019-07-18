@@ -123,7 +123,7 @@ QBN:
 Person _qgiver_ group Questor
 
 Place _mondung_ remote dungeon
-Place qGiverSpot remote dungeon
+--removed fake dungeon
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 
@@ -140,7 +140,8 @@ _bonk_ task:
 	injured _priest_ 
 	say 1011 
 	add foe _priest_ face 
-	place foe _priest_ at qGiverSpot 
+	remove foe _priest_
+	--changed "place foe in fake dungeon" to remove foe action.
 
 _queston_ task:
 	end quest 

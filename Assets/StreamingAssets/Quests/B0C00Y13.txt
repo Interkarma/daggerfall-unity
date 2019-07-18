@@ -100,8 +100,8 @@ Foe _bats_ is Giant_bat
 
 --	Quest start-up:
 	start timer _oneday_ 
-	location _house_ 100 1440 
 	log 1010 step 0 
+	--location action removed. not defined and not needed.
 	pc at _house_ set _S.01_ 
 
 _oneday_ task:

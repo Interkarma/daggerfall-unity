@@ -167,12 +167,14 @@ _S.02_ task:
 
 _S.03_ task:
 	clicked npc _thief_ 
-	get item _religitem_ saying 1020 
+	get item _religitem_ saying 1011
 	hide npc _thief_ 
-	say 1011 
+	say 1020
+--exchanged 1011 and 1020 for better dialogue
 
 variable _S.04_
 _S.05_ task:
 	when _S.04_ and _S.03_ 
-	create foe _rogue_ every 50 minutes 2 times with 3% success 
-	create foe _burglar_ every 50 minutes 2 times with 2% success 
+	create foe _rogue_ every 5 minutes 2 times with 80% success 
+	create foe _burglar_ every 5 minutes 2 times with 70% success 
+--drastically increased spawn chance, from 3 and 2%. Nearly impossible to see them otherwise. Also reduced spawn time from 50 to 5.

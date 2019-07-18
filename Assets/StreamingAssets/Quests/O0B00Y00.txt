@@ -161,6 +161,15 @@ _npcclicked_ task:
 	get item _gems_ 
 	say 1010 
 
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
 _1stparton_ task:
 	start timer _delay_ 
 	have _metal_ set _keptmetal_ 

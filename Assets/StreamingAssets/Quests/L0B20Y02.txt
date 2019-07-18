@@ -158,4 +158,5 @@ _S.09_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.02_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 

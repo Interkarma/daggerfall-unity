@@ -155,6 +155,7 @@ _1stparton_ task:
 variable _2ndparton_
 _clearclick_ task:
 	when not _mondead_ and _qgclicked_
+	say 1003
 	clear _qgclicked_ _clearclick_
 
 _delay_ task:

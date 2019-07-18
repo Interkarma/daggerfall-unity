@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 100
 Quest: K0C00Y07
 -- Message panels
@@ -289,7 +290,7 @@ _S.07_ task:
 	say 1018 
 
 _S.08_ task:
-	reveal _mondung_ readmap
+	reveal _mondung_
 
 _S.09_ task:
 	clicked npc _victim_ 

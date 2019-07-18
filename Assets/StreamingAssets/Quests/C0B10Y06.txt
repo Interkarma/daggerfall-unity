@@ -120,4 +120,6 @@ _questdone_ task:
 	end quest 
 
 _S.02_ task:
-	clicked item _ingredient_ say 1011 
+	clicked item _ingredient_
+	say 1011 
+	--illegal argument

@@ -4,6 +4,7 @@
 -- Questor: knight
 -- Repute: 0
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: B0C00Y05
 -- Message panels
@@ -137,6 +138,7 @@ _qgclicked_ task:
 
 _clearclick_ task:
 	when not _mondead_ and _qgclicked_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 
 
 variable _map_
@@ -144,4 +146,5 @@ variable _nomap_
 _S.07_ task:
 	when _map_ and _pcgetsgold_
     say 1080
-	reveal _newdung_ readmap
+	reveal _newdung_
+--this readmap argument appears often but serves no purpose. the reveal action happens independently, and no phyusical map is givedn

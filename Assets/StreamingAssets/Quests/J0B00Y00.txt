@@ -125,7 +125,8 @@ _1stparton_ task:
 	end quest 
 
 _clearclick_ task:
-	when _qgclicked_ and not _mondead_ 
+	when _qgclicked_ and not _mondead_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 
 
 _S.05_ task:

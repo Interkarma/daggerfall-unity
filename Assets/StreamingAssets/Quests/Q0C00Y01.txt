@@ -4,6 +4,7 @@
 -- Questor: witch
 -- Repute: 0
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: Q0C00Y01
 -- Message panels
@@ -119,7 +120,8 @@ Message:  1013
 --          _temple_ occurs 2 times.
 
 QBN:
-Item document letter used 1012
+Item _document_ letter used 1012
+--added underscores to document
 Item _mitem_ magic_item
 
 Person _qgiver_ group Questor male
@@ -132,7 +134,7 @@ Clock _queston_ 00:00 0 flag 17 range 0 2
 Foe _guardian_ is Spellsword
 
 --	Quest start-up:
-	place item document at _temple_ 
+	place item _document_ at _temple_ 
 	dialog link for person _daedra_ 
 	start timer _queston_ 
 	log 1010 step 0 
@@ -141,7 +143,7 @@ _queston_ task:
 	end quest 
 
 _S.01_ task:
-	clicked item document 
+	clicked item _document_ 
 	create foe _guardian_ every 1 minutes 1 times with 100% success 
 	say 1011 
 
@@ -150,6 +152,6 @@ _S.02_ task:
 	say 1013 
 
 _reward_ task:
-	toting document and _qgiver_ clicked 
+	toting _document_ and _qgiver_ clicked 
 	give pc _mitem_ 
 	end quest 

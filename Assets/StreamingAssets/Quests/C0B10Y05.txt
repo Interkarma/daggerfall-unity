@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 10
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 13
 Quest: C0B10Y05
 -- Message panels
@@ -147,4 +148,6 @@ _S.06_ task:
 
 _S.07_ task:
 	when _traveltime_ and not _S.01_ 
-	make pc ill with Witches'_Pox saying 1012 
+	make pc ill with Witches'_Pox
+	say 1012 
+	--moved saying 1012 to its own line

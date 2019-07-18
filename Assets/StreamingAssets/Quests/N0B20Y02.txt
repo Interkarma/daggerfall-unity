@@ -4,6 +4,7 @@
 -- Questor: mage
 -- Repute: 20
 -- QuestId: 2
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: N0B20Y02
 -- Message panels
@@ -146,9 +147,10 @@ Person _qgiver_ group Questor male
 
 Place _magesguild_ local magery
 
-Clock _oneday_ 1.03:00 0 flag 1 range 0 1
-Clock _S.09_ 7.00:00 0 flag 1 range 0 1
-Clock _S.12_ 03:00 0 flag 1 range 0 1
+Clock _oneday_ 1.03:00
+Clock _S.09_ 7.00:00
+Clock _S.12_ 03:00
+--precise timers set due to quest time constraints
 
 Foe _F.00_ is 3 Nightblade
 Foe _mage_ is Mage

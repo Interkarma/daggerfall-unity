@@ -151,7 +151,8 @@ Person _questg_ face 4 group Questor
 Person _sister_ face 2 group Resident2
 Person _merchant_ face 1 faction The_Merchants
 
-Place item0 local house2
+Place _item0_ local house2
+-added underscores to item0
 Place _store_ local generalstore
 
 Clock _questtime_ 31.00:00 0 flag 1 range 0 1
@@ -161,8 +162,9 @@ Clock _shortdelay_ 01:00 0 flag 1 range 0 1
 --	Quest start-up:
 	start timer _questtime_ 
 	log 1025 step 0 
-	pick one of _S.01_ _S.02_ _S.01_ _S.02_ 
-	create npc _sister_ 
+	pick one of _S.01_ _S.02_ _S.01_ _S.02_
+--replaced create npc sister with place npc. She was spawning in remote cities.
+	place npc _sister_ at _item0_
 	place npc _merchant_ at _store_ 
 
 _questtime_ task:

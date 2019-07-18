@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0X
 -- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C0XY04
 -- Message panels
@@ -204,9 +205,10 @@ _giveingredient_ task:
 
 _hitguardian_ task:
 	injured _guardian_ 
-	prompt 1012 yes yes no _no_ 
+	prompt 1012 yes _yes_ no _no_ 
+--a task yes without underscores is a prima facie danger, though it hasn't caused any problems yet. tasks, items, and so forth should have underscores for style and execution
 
-yes task:
+_yes_ task:
 	log 1011 step 1 
 	get item _token_ 
 	say 1030 
@@ -215,6 +217,7 @@ yes task:
 _no_ task:
 	say 1035 
 
+--unused variable _clickonqgiver_
 variable _clickonqgiver_
 _givetoken_ task:
 	toting _token_ and _qgiver_ clicked saying 1014 
@@ -226,8 +229,10 @@ _shamandead_ task:
 
 _givereward_ task:
 	when _givetoken_ and _shamandead_ 
-	change repute with _dummymage_ by +25 saying +1015 
+	change repute with _dummymage_ by +25
 	change repute with _dummyorc_ by -10 
+	say 1015
+	--"saying ###" as an argument here is unsupported, I gave it its own line
 
 _extratime_ task:
 	make _ingredient_ permanent 
@@ -247,7 +252,7 @@ _S.11_ task:
 	killed 1 _guardian_ 
 
 _betrayguardian_ task:
-	when yes and _S.11_ 
+	when _yes_ and _S.11_ 
 	create foe _daedras_ every 1 minutes 3 times with 100% success 
 	take _token_ from pc saying 1020 
 	change repute with _dummydarkb_ by -75 

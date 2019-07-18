@@ -110,7 +110,7 @@ Message:  1020
     The Dark Brotherhood has been watching
  you. You have slain without sanction several
  times. You must now join us, or be counted
- as our foe. Travel to ___apothecary_
+ as our foe. Travel to ___apo_
  in %reg and see _apothecary_,
  who will give you further instructions.
  
@@ -136,7 +136,7 @@ Message:  1020
 
 QBN:
 Item _letter_ letter used 1020
-Item decanter decanter
+Item _decanter_ decanter
 Item _poison_ snake_venom
 Item _gold_ gold range 1 to 1
 
@@ -145,6 +145,7 @@ Person _apothecary_ face 144 group Chemist
 Person _npc_ face 1 group Resident1
 
 Place _mansion_ remote house1
+Place _apo_ remote apothecary
 
 Clock _traveltime_ 14.00:00 0 flag 1 range 2 5
 Clock _S.01_ 30.00:00 0 flag 1 range 1 4
@@ -158,7 +159,8 @@ Foe _F.02_ is 2 Nightblade
 	start timer _S.01_ 
 	log 1012 step 0 
 	get item _letter_ 
-	say 1011 
+	say 1011
+	place npc _apothecary_ at _apo_
 
 _traveltime_ task:
 	change repute with _darkbmember_ by -35 
@@ -168,7 +170,7 @@ variable _S.01_
 _S.02_ task:
 	clicked npc _apothecary_ 
 	pc at _mansion_ set _S.08_ 
-	place item decanter at _mansion_ 
+	place item _decanter_ at _mansion_ 
 	add dialog for location _mansion_ person _darkbmember_ 
 	start timer _traveltime_
     stop timer _S.01_
@@ -177,18 +179,18 @@ _S.02_ task:
 	say 1015 
 
 _S.03_ task:
-    when hasDecanter and hasPoison
+    when _hasDecanter_ and _hasPoison_
 	give item _poison_ to _F.00_ 
 	say 1019 
 
-variable hasDecanter
-variable hasPoison
+variable _hasDecanter_
+variable _hasPoison_
 
 _S.04_ task:
-	clicked item decanter 
+	clicked item _decanter_
 --	have decanter and _poison_ do _S.03_
-    have decanter set hasDecanter
-    have poison set hasPoison
+    have _decanter_ set _hasDecanter_
+    have _poison_ set _hasPoison_
 	clear _S.11_ 
 
 _S.05_ task:
@@ -217,7 +219,7 @@ _S.09_ task:
 
 variable _S.10_
 _S.11_ task:
-	dropped decanter at _mansion_ 
+	dropped _decanter_ at _mansion_ 
 	clear _S.04_
     -- End the quest here until quest system supports finding _darkbmember_
     give pc nothing

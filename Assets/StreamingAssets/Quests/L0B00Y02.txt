@@ -97,12 +97,12 @@ After slaying %n,
  for your reward.
  
  
- -- =boss_
+ =boss_
 
 Message:  1012
 %qdt:
- I found a note on =assassin_'s body
- -- %g3 employer is =boss_, and %g3
+ I found a note on =assassin_'s body.
+ %g3 employer is =boss_, and %g3
  stronghold is ___stronghold_.
 
 Message:  1013

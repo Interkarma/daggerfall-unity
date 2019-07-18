@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 32
 Quest: A0C00Y00
 -- Message panels
@@ -163,6 +164,10 @@ Honorable _npc1_,
  the guild many times.
                   _npc2_
 
+Message:  1022
+<ce>  You were caught and you know it.
+<ce>  Get out of my sight, %ra.
+
 Message:  1030
 <ce>                      _qgiver_ is a real weasel.
 
@@ -191,16 +196,16 @@ Message:  1031
 --          _qgiver_ occurs 6 times.
 
 QBN:
-Item letter3a letter used 1012
+Item _letter3a_ letter used 1012
 Item _falseletter1_ letter used 1011
 Item _gold_ gold
 Item _treasure_ trinket
 Item _falseletter2_ letter used 1016
 Item _falseletter3_ letter used 1017
 Item _falseletter4_ letter used 1018
-Item letter4a letter used 1019
-Item letter5 letter used 1020
-Item letter6 letter used 1021
+Item _letter4a_ letter used 1019
+Item _letter5_ letter used 1020
+Item _letter6_ letter used 1021
 
 Person _qgiver_ face 1 group Questor anyInfo 1030 rumors 1031
 Person _npc1_ face 4 group Local_4.0 male
@@ -229,11 +234,17 @@ _questdone_ task:
 	give pc _gold_ 
 	end quest 
 
+_badend_ task:
+	when _S.02_ and _S.04_
+	say 1022
+	end quest
+--added badend task and msg 1022. Previously if the PC grabbed the treasure and completed the quest, the questgiver would ignore entirely.
+
 _S.02_ task:
-	toting letter6 and _qgiver_ clicked 
-	toting letter4a and _qgiver_ clicked 
-	toting letter3a and _qgiver_ clicked 
-	toting letter5 and _qgiver_ clicked 
+	toting _letter6_ and _qgiver_ clicked 
+	toting _letter4a_ and _qgiver_ clicked 
+	toting _letter3a_ and _qgiver_ clicked 
+	toting _letter5_ and _qgiver_ clicked 
 
 _S.03_ task:
 	dropped _falseletter3_ at _inn_ saying 1015 
@@ -262,19 +273,19 @@ _S.06_ task:
 	say 1014 
 
 _letter1_ task:
-	place item letter3a at _inn_ 
+	place item _letter3a_ at _inn_ 
 	get item _falseletter1_ 
 
 _letter2_ task:
-	place item letter4a at _inn_ 
+	place item _letter4a_ at _inn_ 
 	get item _falseletter2_ 
 
 _letter3_ task:
-	place item letter5 at _inn_ 
+	place item _letter5_ at _inn_ 
 	get item _falseletter3_ 
 
 _letter4_ task:
-	place item letter6 at _inn_ 
+	place item _letter6_ at _inn_ 
 	get item _falseletter4_ 
 
 _S.11_ task:
@@ -284,13 +295,22 @@ _S.12_ task:
 	create foe _monk_ every 1 minutes 1 times with 100% success 
 
 _S.13_ task:
-	create foe _spellsword_ every 1 minutes 1 times with 10% success 
+	create foe _spellsword_ every 1 minutes 1 times with 100% success 
 
 _S.14_ task:
-	create foe _ranger_ every 1 minutes 1 times with 10% success 
+	create foe _ranger_ every 1 minutes 1 times with 100% success 
+--increased spawn rate to 100% in S13 and S14. Doesn't seem to make much sense for the enemy to follow you off to another town and spawn there.
 
 _S.15_ task:
 	clicked item _falseletter4_ 
 	clicked item _falseletter1_ 
 	clicked item _falseletter2_ 
 	clicked item _falseletter3_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_
+	say 1003
+	clear _clearclick_ _qgclicked_
