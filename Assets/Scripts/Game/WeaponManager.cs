@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: Numidium   
+// Contributors:    Numidium, Hazelnut
 // 
 // Notes:
 //
@@ -31,10 +31,13 @@ namespace DaggerfallWorkshop.Game
     public class WeaponManager : MonoBehaviour
     {
         const float defaultBowReach = 50f;
-        const float defaultWeaponReach = 2.25f;
+        public const float defaultWeaponReach = 2.25f;
 
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
+
+        // Max time bow can be held drawn
+        private const int MaxBowHeldDrawnSeconds = 10;
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
@@ -297,7 +300,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Ensure attack button was released before starting the next attack
                     if (lastAttackHand == Hand.None)
-                        attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
+                        attackDirection = DaggerfallUnity.Settings.BowDrawback ? MouseDirections.Up : MouseDirections.Down; // Force attack without tracking a swing for Bow
                 }
                 else if (isClickAttack)
                 {
@@ -307,6 +310,17 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
+                }
+            }
+            if (isAttacking && bowEquipped && DaggerfallUnity.Settings.BowDrawback && ScreenWeapon.GetCurrentFrame() == 3)
+            {
+                if (InputManager.Instance.HasAction(InputManager.Actions.ActivateCenterObject) || ScreenWeapon.GetAnimTime() > MaxBowHeldDrawnSeconds)
+                {   // Un-draw the bow without releasing an arrow.
+                    ScreenWeapon.ChangeWeaponState(WeaponStates.Idle);
+                }
+                else if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
+                {   // Release arrow. Debug.Log("Release arrow!");
+                    attackDirection = MouseDirections.Down;
                 }
             }
 
@@ -321,7 +335,7 @@ namespace DaggerfallWorkshop.Game
             if (!isAttacking)
                 return;
 
-            if (!isBowSoundFinished && ScreenWeapon.WeaponType == WeaponTypes.Bow && ScreenWeapon.GetCurrentFrame() == 3)
+            if (!isBowSoundFinished && ScreenWeapon.WeaponType == WeaponTypes.Bow && ScreenWeapon.GetCurrentFrame() == 4)
             {
                 ScreenWeapon.PlaySwingSound();
                 isBowSoundFinished = true;
@@ -333,8 +347,12 @@ namespace DaggerfallWorkshop.Game
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
+                // Racial override can suppress optional attack voice
+                RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                bool suppressCombatVoices = racialOverride != null && racialOverride.SuppressOptionalCombatVoices;
+
                 // Chance to play attack voice
-                if (DaggerfallUnity.Settings.CombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && Dice100.SuccessRoll(20))
+                if (DaggerfallUnity.Settings.CombatVoices && !suppressCombatVoices && ScreenWeapon.WeaponType != WeaponTypes.Bow && Dice100.SuccessRoll(20))
                     ScreenWeapon.PlayAttackVoice();
 
                 // Transfer damage.
@@ -398,9 +416,13 @@ namespace DaggerfallWorkshop.Game
         // Returns true if hit an enemy entity
         public bool WeaponDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
         {
-            DaggerfallUnityItem strikingWeapon = null;
+            DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
 
-            if (!arrowHit)
+            if (arrowHit)
+            {
+                strikingWeapon = lastBowUsed;
+            }
+            else
             {
                 // Check if hit has an DaggerfallAction component
                 DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
@@ -425,42 +447,19 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Set up for use below
-            DaggerfallEntityBehaviour entityBehaviour = null;
-            DaggerfallMobileUnit entityMobileUnit = null;
-            EnemyMotor enemyMotor = null;
-            EnemySounds enemySounds = null;
-            if (!arrowHit)
-            {
-                entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                entityMobileUnit = hit.transform.GetComponentInChildren<DaggerfallMobileUnit>();
-                enemyMotor = hit.transform.GetComponent<EnemyMotor>();
-                enemySounds = hit.transform.GetComponent<EnemySounds>();
-            }
-            else if (arrowHitCollider != null)
-            {
-                entityBehaviour = arrowHitCollider.gameObject.transform.GetComponent<DaggerfallEntityBehaviour>();
-                entityMobileUnit = arrowHitCollider.gameObject.transform.GetComponentInChildren<DaggerfallMobileUnit>();
-                enemyMotor = arrowHitCollider.gameObject.transform.GetComponent<EnemyMotor>();
-                enemySounds = arrowHitCollider.gameObject.transform.GetComponent<EnemySounds>();
-            }
+            Transform transform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
+            DaggerfallEntityBehaviour entityBehaviour = transform.GetComponent<DaggerfallEntityBehaviour>();
+            DaggerfallMobileUnit entityMobileUnit = transform.GetComponentInChildren<DaggerfallMobileUnit>();
+            EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
+            EnemySounds enemySounds = transform.GetComponent<EnemySounds>();
 
             // Check if hit a mobile NPC
-            MobilePersonNPC mobileNpc = null;
-            if (!arrowHit)
-                mobileNpc = hit.transform.GetComponent<MobilePersonNPC>();
-            else if (arrowHitCollider != null)
-                mobileNpc = arrowHitCollider.gameObject.transform.GetComponent<MobilePersonNPC>();
-
+            MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
             if (mobileNpc)
             {
                 if (!mobileNpc.Billboard.IsUsingGuardTexture)
                 {
-                    EnemyBlood blood = null;
-                    if (!arrowHit)
-                        blood = hit.transform.GetComponent<EnemyBlood>();
-                    else if (arrowHitCollider != null)
-                        blood = arrowHitCollider.gameObject.transform.GetComponent<EnemyBlood>();
-
+                    EnemyBlood blood = transform.GetComponent<EnemyBlood>();
                     if (blood)
                     {
                         if (!arrowHit)
@@ -472,6 +471,15 @@ namespace DaggerfallWorkshop.Game
                     playerEntity.TallyCrimeGuildRequirements(false, 5);
                     playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
                     playerEntity.SpawnCityGuards(true);
+
+                    // Allow custom race handling of weapon hit against mobile NPCs, e.g. vampire feeding or lycanthrope killing
+                    if (entityBehaviour)
+                    {
+                        entityBehaviour.Entity.SetHealth(0);
+                        RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                        if (racialOverride != null)
+                            racialOverride.OnWeaponHitEntity(GameManager.Instance.PlayerEntity, entityBehaviour.Entity);
+                    }
                 }
                 else
                 {
@@ -493,24 +501,8 @@ namespace DaggerfallWorkshop.Game
                     EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
                     // Calculate damage
-                    int damage;
-                    if (!arrowHit)
-                    {
-                        if (usingRightHand)
-                        {
-                            strikingWeapon = currentRightHandWeapon;
-                        }
-                        else
-                        {
-                            strikingWeapon = currentLeftHandWeapon;
-                        }
-                    }
-                    else
-                    {
-                        strikingWeapon = lastBowUsed;
-                    }
-
-                    damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, strikingWeapon, entityMobileUnit.Summary.AnimStateRecord);
+                    int animTime = (int)(ScreenWeapon.GetAnimTime() * 1000);    // Get animation time, converted to ms. 
+                    int damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, entityMobileUnit.Summary.AnimStateRecord, animTime, strikingWeapon);
 
                     // Break any "normal power" concealment effects on player
                     if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
@@ -531,12 +523,7 @@ namespace DaggerfallWorkshop.Game
                         else
                             enemySounds.PlayHitSound(currentLeftHandWeapon);
 
-                        EnemyBlood blood = null;
-                        if (!arrowHit)
-                            blood = hit.transform.GetComponent<EnemyBlood>();
-                        else if (arrowHitCollider != null)
-                            blood = arrowHitCollider.gameObject.transform.GetComponent<EnemyBlood>();
-
+                        EnemyBlood blood = transform.GetComponent<EnemyBlood>();
                         if (blood)
                         {
                             blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
@@ -545,7 +532,7 @@ namespace DaggerfallWorkshop.Game
                         // Knock back enemy based on damage and enemy weight
                         if (enemyMotor)
                         {
-                            if (enemyMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
+                            if (enemyMotor.KnockbackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
                                 entityBehaviour.EntityType == EntityTypes.EnemyClass ||
                                 enemyEntity.MobileEnemy.Weight > 0)
                             {
@@ -554,13 +541,13 @@ namespace DaggerfallWorkshop.Game
                                 float twoTimesDamage = damage * 2;
 
                                 float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
-                                float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
-                                knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
+                                float KnockbackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
+                                KnockbackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
 
-                                if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                                    knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                                enemyMotor.KnockBackSpeed = knockBackSpeed;
-                                enemyMotor.KnockBackDirection = direction;
+                                if (KnockbackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                                    KnockbackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                                enemyMotor.KnockbackSpeed = KnockbackSpeed;
+                                enemyMotor.KnockbackDirection = direction;
                             }
                         }
 
@@ -584,17 +571,17 @@ namespace DaggerfallWorkshop.Game
                             enemySounds.PlayParrySound();
                     }
 
-                    // Remove health
-                    enemyEntity.DecreaseHealth(damage);
-
-                    // Assign "cast when strikes" to target entity and raise special strike handling event
+                    // Handle weapon striking enchantments - this could change damage amount
                     if (strikingWeapon != null && strikingWeapon.IsEnchanted)
                     {
-                        EntityEffectManager enemyEffectManager = enemyEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                        if (enemyEffectManager)
-                            enemyEffectManager.StrikeWithItem(strikingWeapon, GameManager.Instance.PlayerEntityBehaviour);
+                        EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                        if (effectManager)
+                            damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, strikingWeapon, GameManager.Instance.PlayerEntity.Items, enemyEntity.EntityBehaviour, damage);
                         strikingWeapon.RaiseOnWeaponStrikeEvent(entityBehaviour, damage);
                     }
+
+                    // Remove health
+                    enemyEntity.DecreaseHealth(damage);
 
                     // Make foe attack their aggressor
                     // Currently this is just player, but should be expanded later
@@ -615,10 +602,10 @@ namespace DaggerfallWorkshop.Game
                         playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
                     }
 
-                    // Allow custom race handling of weapon hit, e.g. vampire feeding
+                    // Allow custom race handling of weapon hit against enemies, e.g. vampire feeding or lycanthrope killing
                     RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
                     if (racialOverride != null)
-                        racialOverride.OnWeaponHitEnemy(GameManager.Instance.PlayerEntity, enemyEntity);
+                        racialOverride.OnWeaponHitEntity(GameManager.Instance.PlayerEntity, entityBehaviour.Entity);
 
                     return true;
                 }
@@ -696,7 +683,12 @@ namespace DaggerfallWorkshop.Game
             if (!ScreenWeapon)
                 return;
 
-            if (usingRightHand)
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null && racialOverride.SetFPSWeapon(ScreenWeapon))
+            {
+                return;
+            }
+            else if (usingRightHand)
             {
                 if (currentRightHandWeapon == null)
                     SetMelee(ScreenWeapon);
@@ -808,7 +800,7 @@ namespace DaggerfallWorkshop.Game
 
         void ExecuteAttacks(MouseDirections direction)
         { 
-            if(ScreenWeapon)
+            if (ScreenWeapon)
             {
                 // Fire screen weapon animation
                 ScreenWeapon.OnAttackDirection(direction);

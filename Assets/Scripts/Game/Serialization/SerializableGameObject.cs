@@ -202,6 +202,12 @@ namespace DaggerfallWorkshop.Game.Serialization
         public short reputationNobility;
         public short reputationScholars;
         public short reputationUnderworld;
+        public short reputationSGroup5;
+        public short reputationSupernaturalBeings;
+        public short reputationGuildMembers;
+        public short reputationSGroup8;
+        public short reputationSGroup9;
+        public short reputationSGroup10;
         public VampireClans previousVampireClan;
     }
 
@@ -264,6 +270,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int enchantmentPoints;
         public int message;
         public int[] legacyMagic;
+        public CustomEnchantment[] customMagic;
         public int playerTextureArchive;
         public int playerTextureRecord;
         public int worldTextureArchive;
@@ -280,6 +287,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int potionRecipe;
         public ItemRepairData_v1 repairData;
         public uint timeForItemToDisappear;
+        public uint timeHealthLeechLastUsed;
     }
 
     [fsObject("v1")]
@@ -361,6 +369,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public QuestResourceBehaviour.QuestResourceSaveData_v1 questResource;
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
         public bool alliedToPlayer;
+        public int questFoeSpellQueueIndex;
+        public bool wabbajackActive;
     }
 
     #endregion

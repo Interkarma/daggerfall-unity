@@ -116,6 +116,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return GetHomePlaceRegionName(); }
         }
 
+        public int HomeRegionIndex
+        {
+            get { return GetHomePlaceRegionIndex(); }
+        }
+
         public string HomeBuildingName
         {
             get { return GetHomeBuildingName(); }
@@ -463,6 +468,19 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets region index of home Place (if any).
+        /// </summary>
+        /// <returns>Region index of home Place or -1 if none set or not resolved.</returns>
+        int GetHomePlaceRegionIndex()
+        {
+            Place place = GetHomePlace();
+            if (place == null)
+                return -1;
+
+            return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
+        }
+
+        /// <summary>
         /// Gets location name of home Place (if any).
         /// </summary>
         /// <returns>Location name of home Place or BLANK if not set.</returns>
@@ -493,28 +511,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Use faction race only for individuals
             if (isIndividualNPC)
             {
-                FactionFile.FactionRaces factionRace = (FactionFile.FactionRaces)factionData.race;
-                if (factionRace != FactionFile.FactionRaces.None)
+                race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)factionData.race);
+                if (race != Races.None)
                 {
-                    switch (factionRace)
-                    {
-                        case FactionFile.FactionRaces.Redguard:
-                            race = Races.Redguard;
-                            return;
-                        case FactionFile.FactionRaces.Nord:
-                            race = Races.Nord;
-                            return;
-                        case FactionFile.FactionRaces.DarkElf:
-                            race = Races.DarkElf;
-                            return;
-                        case FactionFile.FactionRaces.WoodElf:
-                            race = Races.WoodElf;
-                            return;
-                        case FactionFile.FactionRaces.Breton:
-                        default:
-                            race = Races.Breton;
-                            return;
-                    }
+                    return;
                 }
             }
 
@@ -635,6 +635,7 @@ namespace DaggerfallWorkshop.Game.Questing
             homePlace = new Place(ParentQuest, source);
             homePlaceSymbol = homePlace.Symbol.Clone();
             ParentQuest.AddResource(homePlace);
+            lastAssignedPlaceSymbol = homePlace.Symbol;
             LogHomePlace(homePlace);
 
 
@@ -1035,7 +1036,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Assign an NPC from current player region
                 case FactionFile.FactionTypes.Province:
-                    return GetCurrentRegionFaction();
+                    return GameManager.Instance.PlayerGPS.GetCurrentRegionFaction();
 
                 // Not all regions have a witches coven associated
                 // Just select a random coven for now
@@ -1064,7 +1065,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Get "court of" current region
                 case FactionFile.FactionTypes.Courts:
-                    return GetCourtOfCurrentRegion();
+                    return GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();
 
                 // Get "people of" current region
                 case FactionFile.FactionTypes.People:
@@ -1080,6 +1081,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int GetCareerFactionID(string careerAllianceName)
         {
             const int magesGuild = 40;
+            const int nobles = 242;
             const int genericTemple = 450;
             const int merchants = 510;
 
@@ -1118,7 +1120,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 case 14:
                     return genericTemple;                   // Generic Temple seems to link all the temples together
                 case 16:
-                    return GetCourtOfCurrentRegion();       // Not sure if "Noble" career maps to regional "court of" in classic
+                    return nobles;                          // Random Noble
                 case 17:
                 case 18:
                 case 19:
@@ -1128,37 +1130,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 default:                                    // Not sure if "Resident1-4" career really maps to regional "people of" in classic
                     return GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
             }
-        }
-
-        int GetCurrentRegionFaction()
-        {
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
-
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetCurrentRegionFaction() did not find exactly 1 match.");
-
-            return factions[0].id;
-        }
-
-        // Gets the noble court faction in current region
-        int GetCourtOfCurrentRegion()
-        {
-            // Find court in current region
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Courts,
-                (int)FactionFile.SocialGroups.Nobility,
-                (int)FactionFile.GuildGroups.Region,
-                oneBasedPlayerRegion);
-
-            // Should always find a single court
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetCourtOfCurrentRegion() did not find exactly 1 match.");
-
-            return factions[0].id;
         }
 
         int GetRandomFactionOfType(int factionType)

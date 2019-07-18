@@ -47,8 +47,6 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ModNPCRep.name, ModNPCRep.description, ModNPCRep.usage, ModNPCRep.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ClearMQState.name, ClearMQState.description, ClearMQState.usage, ClearMQState.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(SetMQStage.name, SetMQStage.description, SetMQStage.usage, SetMQStage.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetLevel.name, SetLevel.description, SetLevel.usage, SetLevel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Levitate.name, Levitate.description, Levitate.usage, Levitate.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
@@ -64,6 +62,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddPopupText.name, AddPopupText.description, AddPopupText.usage, AddPopupText.Execute);
 
             //ConsoleCommandsDatabase.RegisterCommand(SetMouseSmoothing.name, SetMouseSmoothing.description, SetMouseSmoothing.usage, SetMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetVSync.name, SetVSync.description, SetVSync.usage, SetVSync.Execute);
@@ -95,6 +94,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(IngredientUsage.name, IngredientUsage.description, IngredientUsage.usage, IngredientUsage.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PlayVID.name, PlayVID.description, PlayVID.usage, PlayVID.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(UnmuteQuestNPCs.name, UnmuteQuestNPCs.description, UnmuteQuestNPCs.usage, UnmuteQuestNPCs.Execute);
 
@@ -1233,43 +1233,6 @@ namespace Wenzil.Console
             }
         }
 
-        private static class ClearMQState
-        {
-            public static readonly string name = "clearmqstate";
-            public static readonly string error = "Could not clear main quest state.";
-            public static readonly string description = "Clears all main quest state. CAUTION: Will purge all active quests, clear all reputations to 0, and reset all global variables.";
-            public static readonly string usage = "clearmqstate";
-
-            public static string Execute(params string[] args)
-            {
-                QuestMachine.Instance.ClearMainQuestState();
-
-                return "Finished";
-            }
-        }
-
-        private static class SetMQStage
-        {
-            public static readonly string name = "setmqstage";
-            public static readonly string error = "Could not set main quest stage.";
-            public static readonly string description = "Configure quest system for a particular stage of main quest for testing. CAUTION: Will also call 'resetmqstate' and purge all other quest state.";
-            public static readonly string usage = "setmqstage <stage>";
-
-            public static string Execute(params string[] args)
-            {
-                if (args == null || args.Length != 1)
-                    return HelpCommand.Execute(SetMQStage.name);
-
-                int stage;
-                if (!int.TryParse(args[0], out stage))
-                    return HelpCommand.Execute(SetMQStage.name);
-
-                int stageSet = QuestMachine.Instance.SetMainQuestStage(stage);
-
-                return string.Format("Set main quest stage to {0}", stageSet);
-            }
-        }
-
         private static class SetLevel
         {
             public static readonly string name = "setlevel";
@@ -1549,7 +1512,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add";
             public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
-            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|gold|magic|drug|map|torch) [n]";
+            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|soul|gold|magic|drug|map|torch) [n]";
 
             public static string Execute(params string[] args)
             {
@@ -1575,6 +1538,7 @@ namespace Wenzil.Console
                     return string.Format("Added {0} gold pieces", n);
                 }
 
+                UnityEngine.Random.InitState(Time.frameCount);
                 while (n >= 1)
                 {
                     n--;
@@ -1597,6 +1561,9 @@ namespace Wenzil.Console
                             break;
                         case "relig":
                             newItem = ItemBuilder.CreateRandomReligiousItem();
+                            break;
+                        case "soul":
+                            newItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
                             break;
                         case "magic":
                             newItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
@@ -1822,6 +1789,7 @@ namespace Wenzil.Console
             {
                 if (args == null || args.Length < 1)
                     return usage;
+                UnityEngine.Random.InitState(Time.frameCount);
                 DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
                 return "Finished";
             }
@@ -1886,18 +1854,22 @@ namespace Wenzil.Console
                 {
                     // Infect player with vampirism stage one
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
-                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                     return "Player infected with vampirism.";
                 }
                 else if (diseaseType == CommandDiseaseTypes.Werewolf)
                 {
-                    // Infect player with werewolf stage one
-                    return "Werewolf disease not implemented yet.";
+                    // Infect player with werewolf lycanthropy stage one
+                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                    return "Player infected with werewolf lycanthropy.";
                 }
                 else if (diseaseType == CommandDiseaseTypes.Wereboar)
                 {
-                    // Infect player with wereboar stage one
-                    return "Wereboar disease not implemented yet.";
+                    // Infect player with wereboar lycanthropy stage one
+                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
+                    GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                    return "Player infected with wereboar lycanthropy.";
                 }
                 else
                 {
@@ -2028,6 +2000,26 @@ namespace Wenzil.Console
             }
         }
 
+        private static class PlayVID
+        {
+            public static readonly string name = "playvid";
+            public static readonly string description = "Play the specified .VID file";
+            public static readonly string usage = "playvid {filename.vid} (e.g. playvid anim0000.vid)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+
+                // Start video and set to exit on escape only, as enter keypress can fall through and close video instantly
+                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, args[0]);
+                vidPlayerWindow.EndOnAnyKey = false;
+                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(vidPlayerWindow);
+
+                return "Finished";
+            }
+        }
+
         private static class PrintLegalRep
         {
             public static readonly string name = "print_legalrep";
@@ -2097,5 +2089,27 @@ namespace Wenzil.Console
             }
         }
 
+        private static class AddPopupText
+        {
+            public static readonly string name = "addpopuptext";
+            public static readonly string description = "Fill HUD buffer with messages";
+            public static readonly string usage = "addpopuptext count";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length < 1) return "see usage";
+
+                int n = 1;
+                Int32.TryParse(args[0], out n);
+
+                if (n < 1 || n > 100000)
+                    return "Error - see usage";
+
+                for (int i = 1; i <= n; i++)
+                    DaggerfallUI.Instance.PopupMessage("message " + i);
+                return "Finished";
+            }
+        }
     }
+
 }

@@ -10,14 +10,15 @@
 //
 
 using System;
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -44,8 +45,10 @@ namespace DaggerfallWorkshop.Game.Items
         public int enchantmentPoints;
         public int message;
         public DaggerfallEnchantment[] legacyMagic = null;
+        public CustomEnchantment[] customMagic = null;
         public int stackCount = 1;
         public Poisons poisonType = Poisons.None;
+        public uint timeHealthLeechLastUsed;
 
         // Private item fields
         int playerTextureArchive;
@@ -246,17 +249,41 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public virtual bool IsEnchanted
         {
-            get { return GetIsEnchanted(); }
+            get { return HasLegacyEnchantments || HasCustomEnchantments; }
         }
 
         /// <summary>
-        /// Gets enchantments on this item. Can be null or empty.
-        /// Enchantments on items are stored and generated using the classic enchantment format.
-        /// At runtime this is instantiated to an effect bundle for execution by entity effect manager.
+        /// Gets legacy enchantments on this item. Can be null or empty.
+        /// Legacy enchantments on items are stored and generated using the classic type/param enchantment format.
         /// </summary>
-        public DaggerfallEnchantment[] Enchantments
+        public DaggerfallEnchantment[] LegacyEnchantments
         {
             get { return legacyMagic; }
+        }
+
+        /// <summary>
+        /// True if item has any legacy enchantments.
+        /// </summary>
+        public bool HasLegacyEnchantments
+        {
+            get { return GetHasLegacyEnchantment(); }
+        }
+
+        /// <summary>
+        /// Gets custom enchantments on this item. Can be null or empty.
+        /// Custom enchantments on items are stored and generated using an effectKey/customParam pair.
+        /// </summary>
+        public CustomEnchantment[] CustomEnchantments
+        {
+            get { return customMagic; }
+        }
+
+        /// <summary>
+        /// True is item has any custom enchantments.
+        /// </summary>
+        public bool HasCustomEnchantments
+        {
+            get { return customMagic != null && customMagic.Length > 0; }
         }
 
         /// <summary>
@@ -331,18 +358,19 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets/sets the key of the potion recipe allocated to this item.
         /// Has a side effect (ugh, sorry) of populating the item value from the recipe price.
-        /// (due to value not being encapsulated) Also populates texture record.
+        /// (due to value not being encapsulated) Also populates texture record for potions.
         /// </summary>
         public int PotionRecipeKey
         {
             get { return potionRecipeKey; }
             set {
-                MagicAndEffects.PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
+                PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
                 if (potionRecipe != null)
                 {
                     potionRecipeKey = value;
                     this.value = potionRecipe.Price;
-                    worldTextureRecord = potionRecipe.TextureRecord;
+                    if (IsPotion)
+                        worldTextureRecord = potionRecipe.TextureRecord;
                 }
             }
         }
@@ -535,6 +563,11 @@ namespace DaggerfallWorkshop.Game.Items
             int archive, record;
             DaggerfallUnity.Instance.ItemHelper.GetArtifactTextureIndices((ArtifactsSubTypes)groupIndex, out archive, out record);
 
+            // Correct material value for armor artifacts
+            int materialValue = magicItemTemplate.material;
+            if (magicItemTemplate.group == (int)ItemGroups.Armor)
+                materialValue = 0x200 + materialValue;
+
             // Assign new data
             shortName = magicItemTemplate.name;
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
@@ -543,7 +576,7 @@ namespace DaggerfallWorkshop.Game.Items
             playerTextureRecord = record;
             worldTextureArchive = archive;                  // Not sure about artifact world textures, just using player texture for now
             worldTextureRecord = record;
-            nativeMaterialValue = magicItemTemplate.material;
+            nativeMaterialValue = materialValue;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
@@ -731,6 +764,7 @@ namespace DaggerfallWorkshop.Game.Items
                     j++;
                 }
             }
+            data.customMagic = customMagic;
             data.playerTextureArchive = playerTextureArchive;
             data.playerTextureRecord = playerTextureRecord;
             data.worldTextureArchive = worldTextureArchive;
@@ -749,6 +783,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.potionRecipe = potionRecipeKey;
             data.repairData = repairData.GetSaveData();
             data.timeForItemToDisappear = timeForItemToDisappear;
+            data.timeHealthLeechLastUsed = timeHealthLeechLastUsed;
 
             return data;
         }
@@ -1000,42 +1035,56 @@ namespace DaggerfallWorkshop.Game.Items
 
         public int GetMaterialArmorValue()
         {
+            int result = 0;
             if (!IsShield)
             {
                 switch (nativeMaterialValue)
                 {
                     case (int)ArmorMaterialTypes.Leather:
-                        return 3;
+                        result = 3;
+                        break;
                     case (int)ArmorMaterialTypes.Chain:
                     case (int)ArmorMaterialTypes.Chain2:
-                        return 6;
+                        result = 6;
+                        break;
                     case (int)ArmorMaterialTypes.Iron:
-                        return 7;
+                        result = 7;
+                        break;
                     case (int)ArmorMaterialTypes.Steel:
                     case (int)ArmorMaterialTypes.Silver:
-                        return 9;
+                        result = 9;
+                        break;
                     case (int)ArmorMaterialTypes.Elven:
-                        return 11;
+                        result = 11;
+                        break;
                     case (int)ArmorMaterialTypes.Dwarven:
-                        return 13;
+                        result = 13;
+                        break;
                     case (int)ArmorMaterialTypes.Mithril:
                     case (int)ArmorMaterialTypes.Adamantium:
-                        return 15;
+                        result = 15;
+                        break;
                     case (int)ArmorMaterialTypes.Ebony:
-                        return 17;
+                        result = 17;
+                        break;
                     case (int)ArmorMaterialTypes.Orcish:
-                        return 19;
+                        result = 19;
+                        break;
                     case (int)ArmorMaterialTypes.Daedric:
-                        return 21;
-
-                    default:
-                        return 0;
+                        result = 21;
+                        break;
                 }
             }
             else
             {
                 return GetShieldArmorValue();
             }
+
+            // Armor artifact appear to use armor rating divided by 2 rounded down
+            if (IsArtifact && ItemGroup == ItemGroups.Armor)
+                result /= 2;
+
+            return result;
         }
 
         public int GetShieldArmorValue()
@@ -1144,7 +1193,31 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public void ItemBreaks(DaggerfallEntity owner)
+        public void LowerCondition(int amount, DaggerfallEntity unequipFromOwner = null, ItemCollection removeFromCollectionWhenBreaks = null)
+        {
+            currentCondition -= amount;
+            if (currentCondition <= 0)
+            {
+                currentCondition = 0;
+                ItemBreaks(unequipFromOwner);
+                if (removeFromCollectionWhenBreaks != null)
+                    removeFromCollectionWhenBreaks.RemoveItem(this);
+            }
+        }
+
+        public void UnequipItem(DaggerfallEntity owner)
+        {
+            if (owner == null)
+                return;
+
+            foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
+            {
+                if (owner.ItemEquipTable.GetItem(slot) == this)
+                    owner.ItemEquipTable.UnequipItem(slot);
+            }
+        }
+
+        protected void ItemBreaks(DaggerfallEntity owner)
         {
             // Classic does not have the plural version of this string, and uses the short name rather than the long one.
             // Also the classic string says "is" instead of "has"
@@ -1155,10 +1228,19 @@ namespace DaggerfallWorkshop.Game.Items
                 itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
             itemBroke = itemBroke.Replace("%s", LongName);
             DaggerfallUI.Instance.PopupMessage(itemBroke);
-            foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
+
+            // Unequip item if owner specified
+            if (owner != null)
+                UnequipItem(owner);
+            else
+                return;
+
+            // Breaks payload callback on owner effect manager
+            if (owner.EntityBehaviour)
             {
-                if (owner.ItemEquipTable.GetItem(slot) == this)
-                    owner.ItemEquipTable.UnequipItem(slot);
+                EntityEffectManager ownerEffectManager = owner.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (ownerEffectManager)
+                    ownerEffectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Breaks, this, owner.Items, owner.EntityBehaviour);
             }
         }
 
@@ -1193,6 +1275,198 @@ namespace DaggerfallWorkshop.Game.Items
         public void IdentifyItem()
         {
             flags = (ushort)(flags | identifiedMask);
+        }
+
+        /// <summary>
+        /// Set enchantments on this item. Any existing enchantments will be overwritten.
+        /// </summary>
+        /// <param name="enchantments">Array of enchantment settings. Maximum of 10 enchantments are applied.</param>
+        /// <param name="owner">Owner of this item for unequip test.</param>
+        public void SetEnchantments(EnchantmentSettings[] enchantments, DaggerfallEntity owner = null)
+        {
+            const int maxEnchantments = 10;
+
+            // Validate list
+            if (enchantments == null || enchantments.Length == 0)
+                throw new Exception("SetEnchantments() enchantments cannot be null or empty.");
+
+            // Build enchantment lists
+            int count = 0;
+            List<DaggerfallEnchantment> legacyEnchantments = new List<DaggerfallEnchantment>();
+            List<CustomEnchantment> customEnchantments = new List<CustomEnchantment>();
+            foreach (EnchantmentSettings settings in enchantments)
+            {
+                // Enchantment must have an effect key
+                if (string.IsNullOrEmpty(settings.EffectKey))
+                    throw new Exception(string.Format("SetEnchantments() effect key is null or empty at index {0}", count));
+
+                // Created payload callback
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(settings.EffectKey);
+                if (effectTemplate != null)
+                {
+                    EnchantmentParam param = new EnchantmentParam()
+                    {
+                        ClassicParam = settings.ClassicParam,
+                        CustomParam = settings.CustomParam,
+                    };
+                    if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Enchanted))
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Enchanted, param, null, null, this);
+                }
+
+                // Add custom or legacy enchantment
+                if (!string.IsNullOrEmpty(settings.CustomParam))
+                {
+                    CustomEnchantment customEnchantment = new CustomEnchantment()
+                    {
+                        EffectKey = settings.EffectKey,
+                        CustomParam = settings.CustomParam,
+                    };
+                    customEnchantments.Add(customEnchantment);
+                }
+                else
+                {
+                    if (settings.ClassicType == EnchantmentTypes.None)
+                        throw new Exception(string.Format("SetEnchantments() not a valid enchantment type at index {0}", count));
+
+                    DaggerfallEnchantment legacyEnchantment = new DaggerfallEnchantment()
+                    {
+                        type = settings.ClassicType,
+                        param = settings.ClassicParam,
+                    };
+                    legacyEnchantments.Add(legacyEnchantment);
+                }
+
+                // Cap enchanting at limit
+                if (++count > maxEnchantments)
+                    break;
+            }
+
+            // Do nothing if no enchantments found
+            if (customEnchantments.Count == 0 && legacyEnchantments.Count == 0)
+                throw new Exception("SetEnchantments() no enchantments provided");
+
+            // Unequip item - entity must equip again
+            // This ensures "on equip" effect payloads execute correctly
+            UnequipItem(owner);
+
+            // Set new enchantments and identified flag
+            legacyMagic = legacyEnchantments.ToArray();
+            customMagic = customEnchantments.ToArray();
+            IdentifyItem();
+        }
+
+        /// <summary>
+        /// Rename item.
+        /// </summary>
+        /// <param name="name">New name of item. Cannot be null or empty.</param>
+        public void RenameItem(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                shortName = name;
+            }
+        }
+
+        /// <summary>
+        /// Check if item contains a specific legacy enchantment.
+        /// </summary>
+        /// <param name="type">Legacy type.</param>
+        /// <param name="param">Legacy param.</param>
+        /// <returns>True if item contains enchantment.</returns>
+        public bool ContainsEnchantment(EnchantmentTypes type, short param)
+        {
+            if (legacyMagic == null || legacyMagic.Length == 0)
+                return false;
+
+            foreach (DaggerfallEnchantment enchantment in LegacyEnchantments)
+            {
+                if (enchantment.type == type && enchantment.param == param)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if item contains a specific custom enchantment.
+        /// </summary>
+        /// <param name="key">Effect key.</param>
+        /// <param name="param">Effect param.</param>
+        /// <returns>True if item contains enchantment.</returns>
+        public bool ContainsEnchantment(string key, string param)
+        {
+            if (customMagic == null || customMagic.Length == 0)
+                return false;
+
+            foreach (CustomEnchantment enchantment in CustomEnchantments)
+            {
+                if (enchantment.EffectKey == key && enchantment.CustomParam == param)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Combines all legacy and custom enchantments into a single array.
+        /// Using EnchantmentSettings to store relavent combined enchantment information.
+        /// Not all properties of EnchantmentSettings are set here, just what is needed to identify enchantment.
+        /// </summary>
+        /// <returns>Array of enchantment settings, can be null or empty.</returns>
+        public EnchantmentSettings[] GetCombinedEnchantmentSettings()
+        {
+            List<EnchantmentSettings> combinedEnchantments = new List<EnchantmentSettings>();
+
+            // Item must have enchancements
+            if (!IsEnchanted)
+                return null;
+
+            // Legacy enchantments
+            if (legacyMagic != null && legacyMagic.Length > 0)
+            {
+                foreach (DaggerfallEnchantment enchantment in legacyMagic)
+                {
+                    // Ignore empty enchantment slots
+                    if (enchantment.type == EnchantmentTypes.None)
+                        continue;
+
+                    // Get classic effect key - enchantments use EnchantmentTypes string as key, artifacts use ArtifactsSubTypes string
+                    string effectKey;
+                    if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect)
+                        effectKey = ((ArtifactsSubTypes)enchantment.param).ToString();
+                    else
+                        effectKey = enchantment.type.ToString();
+
+                    // Add enchantment settings
+                    combinedEnchantments.Add(new EnchantmentSettings()
+                    {
+                        EffectKey = effectKey,
+                        ClassicType = enchantment.type,
+                        ClassicParam = enchantment.param,
+                    });
+                }
+            }
+
+            // Custom enchantments
+            if (customMagic != null && customMagic.Length > 0)
+            {
+                foreach (CustomEnchantment enchantment in customMagic)
+                {
+                    // Ignore enchantment with null or empty key
+                    if (string.IsNullOrEmpty(enchantment.EffectKey))
+                        continue;
+
+                    // Add enchantment settings
+                    combinedEnchantments.Add(new EnchantmentSettings()
+                    {
+                        EffectKey = enchantment.EffectKey,
+                        CustomParam = enchantment.CustomParam,
+                        ClassicType = EnchantmentTypes.None,
+                    });
+                }
+            }
+
+            return combinedEnchantments.ToArray();
         }
 
         #endregion
@@ -1252,9 +1526,13 @@ namespace DaggerfallWorkshop.Game.Items
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
             potionRecipeKey = other.potionRecipeKey;
+            timeHealthLeechLastUsed = other.timeHealthLeechLastUsed;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();
+
+            if (other.customMagic != null)
+                customMagic = (CustomEnchantment[])other.customMagic.Clone();
         }
 
         /// <summary>
@@ -1379,6 +1657,7 @@ namespace DaggerfallWorkshop.Game.Items
                     j++;
                 }
             }
+            customMagic = data.customMagic;
             playerTextureArchive = data.playerTextureArchive;
             playerTextureRecord = data.playerTextureRecord;
             worldTextureArchive = data.worldTextureArchive;
@@ -1395,6 +1674,7 @@ namespace DaggerfallWorkshop.Game.Items
             if ((int)data.poisonType < MagicAndEffects.MagicEffects.PoisonEffect.startValue)
                 poisonType = Poisons.None;
             potionRecipeKey = data.potionRecipe;
+            timeHealthLeechLastUsed = data.timeHealthLeechLastUsed;
             // Convert any old classic recipe items in saves to DFU recipe key.
             if (potionRecipeKey == 0 && (IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
                 potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
@@ -1482,10 +1762,8 @@ namespace DaggerfallWorkshop.Game.Items
             return false;
         }
 
-        // Basic check for magic items
-        // Currently uses legacyMagic data for imported items
-        // New items cannot currently have magical properties
-        bool GetIsEnchanted()
+        // Check if item has any valid legacy enchantments
+        bool GetHasLegacyEnchantment()
         {
             if (legacyMagic == null || legacyMagic.Length == 0)
                 return false;
@@ -1517,10 +1795,10 @@ namespace DaggerfallWorkshop.Game.Items
             return false;
         }
 
-        // Check if this item is identified. (only relevant if legacymagic != null)
+        // Check if this item is identified. (only relevant if item has some enchantments)
         bool GetIsIdentified()
         {
-            if (legacyMagic == null)
+            if (!IsEnchanted)
                 return true;
             return (flags & identifiedMask) > 0;
         }

@@ -12,10 +12,13 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -34,6 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int classicSpellIconsCount = 69;
         const int spellTargetIconsCount = 5;
         const int spellElementIconsCount = 5;
+
+        readonly static DFSize spellTargetAndElementIconsSize = new DFSize(40, 80);
 
         List<Texture2D> spellIcons = new List<Texture2D>();
         List<Texture2D> spellTargetIcons = new List<Texture2D>();
@@ -225,42 +230,67 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Start with all the atlases in the spell icons streaming assets path
             string sourcePath = Path.Combine(Application.streamingAssetsPath, sourceFolderName);
             string[] atlasPaths = Directory.GetFiles(sourcePath, "*.png");
-            if (atlasPaths == null || atlasPaths.Length == 0)
-                return;
-
-            // Read each atlas found and its metadata
-            foreach (string path in atlasPaths)
+            if (atlasPaths != null && atlasPaths.Length != 0)
             {
-                // Get source atlas
-                Texture2D atlasTexture = LoadAtlasTextureFromPNG(path);
-                if (atlasTexture == null)
+                // Read each atlas found and its metadata
+                foreach (string path in atlasPaths)
                 {
-                    Debug.LogWarningFormat("LoadSpellIconPacks(): Could not load spell icons atlas texture '{0}'", path);
-                    continue;
-                }
+                    // Get source atlas
+                    Texture2D atlasTexture = LoadAtlasTextureFromPNG(path);
+                    if (atlasTexture == null)
+                    {
+                        Debug.LogWarningFormat("LoadSpellIconPacks(): Could not load spell icons atlas texture '{0}'", path);
+                        continue;
+                    }
 
-                // Attempt to load metadata JSON file
-                SpellIconPack pack = null;
-                string packKey = Path.GetFileNameWithoutExtension(path);
-                string metadataFilename = packKey + ".txt";
-                string metadataPath = Path.Combine(sourcePath, metadataFilename);
-                if (File.Exists(metadataPath))
-                {
-                    // Try to load existing metadata and icons
-                    pack = ReadMetadata(metadataPath);
-                    LoadPackIcons(pack, atlasTexture, metadataPath);
-                }
-                else
-                {
-                    // Create empty metadata file if none found
-                    pack = CreateIconPackEmptyMetadata(atlasTexture, metadataPath);
-                    return;
-                }
+                    // Attempt to load metadata JSON file
+                    SpellIconPack pack = null;
+                    string packKey = Path.GetFileNameWithoutExtension(path);
+                    string metadataFilename = packKey + ".txt";
+                    string metadataPath = Path.Combine(sourcePath, metadataFilename);
+                    if (File.Exists(metadataPath))
+                    {
+                        // Try to load existing metadata and icons
+                        pack = ReadMetadata(metadataPath);
+                        if (!LoadPackIcons(pack, atlasTexture, metadataPath))
+                            continue;
+                    }
+                    else
+                    {
+                        // Create empty metadata file if none found
+                        pack = CreateIconPackEmptyMetadata(atlasTexture, metadataPath);
+                        return;
+                    }
 
-                // If pack is populated then add to dictionary
-                if (pack != null && pack.rowCount > 0 && pack.iconCount > 0 && pack.icons != null)
+                    // If pack is populated then add to dictionary
+                    if (pack != null && pack.rowCount > 0 && pack.iconCount > 0 && pack.icons != null)
+                    {
+                        spellIconPacks.Add(packKey, pack);
+                    }
+                }
+            }    
+
+            // Import icon packs from mods with load order
+            if (ModManager.Instance)
+            {
+                foreach (Mod mod in ModManager.Instance.GetAllModsWithContributes(x => x.SpellIcons != null))
                 {
-                    spellIconPacks.Add(packKey, pack);
+                    foreach (string packName in mod.ModInfo.Contributes.SpellIcons.Where(x => !spellIconPacks.ContainsKey(x)))
+                    {
+                        // Both atlas and metadata must be provided
+                        var atlas = mod.GetAsset<Texture2D>(packName);
+                        var metaData = mod.GetAsset<TextAsset>(packName + ".json");
+                        if (!atlas || !metaData)
+                        {
+                            Debug.LogWarningFormat("Failed to retrieve assets for icon pack {0} from {1}.", packName, mod.Title);
+                            continue;
+                        }
+
+                        // Add pack to dictionary
+                        var pack = SaveLoadManager.Deserialize(typeof(SpellIconPack), metaData.ToString()) as SpellIconPack;
+                        if (LoadPackIcons(pack, atlas) && pack.iconCount > 0)
+                            spellIconPacks.Add(packName, pack);
+                    }
                 }
             }
         }
@@ -268,7 +298,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D LoadAtlasTextureFromPNG(string path)
         {
             byte[] data = File.ReadAllBytes(path);
-            Texture2D atlas = new Texture2D(0, 0);
+            Texture2D atlas = new Texture2D(0, 0, TextureFormat.ARGB32, false);
             if (atlas.LoadImage(data))
                 return atlas;
 
@@ -292,7 +322,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return pack;
         }
 
-        void CreateEmptyIconSettings(SpellIconPack pack, string path)
+        void CreateEmptyIconSettings(SpellIconPack pack, string path = null)
         {
             pack.icons = new SpellIconSettings[pack.iconCount];
             for (int i = 0; i < pack.iconCount; i++)
@@ -302,13 +332,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     index = i,
                 };
             }
-            WriteMetadata(pack, path);
+
+            if (path != null)
+                WriteMetadata(pack, path);
         }
 
-        void LoadPackIcons(SpellIconPack pack, Texture2D atlas, string path)
+        bool LoadPackIcons(SpellIconPack pack, Texture2D atlas, string path = null)
         {
             if (pack == null)
-                return;
+                return false;
 
             // Might need to generate empty icon settings for first time
             if (pack.icons == null)
@@ -316,6 +348,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Derive dimension of each icon from atlas width
             int dim = atlas.width / pack.rowCount;
+
+            // Check icons size
+            if (atlas.width % dim != 0 || atlas.height % dim != 0)
+            {
+                Debug.LogErrorFormat("Failed to extract icons from {0} because atlas size is not multiple of icons size.", pack.displayName);
+                return false;
+            }
 
             // Read icons to their own texture (remembering Unity textures are flipped vertically)
             int srcX = 0, srcY = atlas.height - dim;
@@ -335,6 +374,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     srcY -= dim;
                 }
             }
+
+            return true;
         }
 
         void WriteMetadata(SpellIconPack pack, string path)
@@ -421,7 +462,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect targetIconRect = new Rect(0, 0, targetIconWidth, height);
             for (int i = 0; i < spellTargetIconsCount; i++)
             {
-                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, targetIconRect);
+                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, targetIconRect, spellTargetAndElementIconsSize);
                 spellTargetIcons.Add(iconTexture);
                 targetIconRect.y = targetIconRect.y + height;
             }
@@ -430,7 +471,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect elementIconRect = new Rect(targetIconWidth, 0, elementIconWidth, height);
             for (int i = 0; i < spellElementIconsCount; i++)
             {
-                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, elementIconRect);
+                Texture2D iconTexture = ImageReader.GetSubTexture(spellTargetAndElementIconAtlas, elementIconRect, spellTargetAndElementIconsSize);
                 spellElementIcons.Add(iconTexture);
                 elementIconRect.y = elementIconRect.y + height;
             }

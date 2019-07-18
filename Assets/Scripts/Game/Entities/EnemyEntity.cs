@@ -13,16 +13,16 @@ using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect.Save;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
     /// Implements DaggerfallEntity with properties specific to enemies.
-    /// Currently enemy setup is bridging between old "demo" components and newer "game" systems.
-    /// TODO: Migrate completely to "game" methods and simplify enemy instantiation and setup.
     /// </summary>
     public class EnemyEntity : DaggerfallEntity
     {
@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.Entity
         EntityTypes entityType = EntityTypes.None;
         MobileEnemy mobileEnemy;
         bool pickpocketByPlayerAttempted = false;
+        int questFoeSpellQueueIndex = -1;
 
         // From FALL.EXE offset 0x1C0F14
         static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
@@ -72,6 +73,12 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return (pickpocketByPlayerAttempted); }
             set { pickpocketByPlayerAttempted = value; }
+        }
+
+        public int QuestFoeSpellQueueIndex
+        {
+            get { return questFoeSpellQueueIndex; }
+            set { questFoeSpellQueueIndex = value; }
         }
 
         public bool SoulTrapActive { get; set; }
@@ -140,13 +147,15 @@ namespace DaggerfallWorkshop.Game.Entity
             // If trap succeeds and player has a free soul gem then entity should die after storing soul
             // If trap succeeds and player has no free soul gems then entity will not die until effect expires or fails
             bool azurasStarEquipped = false;
-            Items.DaggerfallUnityItem azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(Game.Items.EquipSlots.Amulet0);
-            if (azurasStar != null && azurasStar.Enchantments[0].type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect && azurasStar.Enchantments[0].param == 9)
+            DaggerfallUnityItem azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(EquipSlots.Amulet0);
+            if (azurasStar != null && azurasStar.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Azuras_Star))
+            {
                 azurasStarEquipped = true;
+            }
             else
             {
                 azurasStar = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(Game.Items.EquipSlots.Amulet1);
-                if (azurasStar != null && azurasStar.Enchantments[0].type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect && azurasStar.Enchantments[0].param == 9)
+                if (azurasStar != null && azurasStar.ContainsEnchantment(EnchantmentTypes.SpecialArtifactEffect, (short)ArtifactsSubTypes.Azuras_Star))
                     azurasStarEquipped = true;
             }
 
@@ -319,6 +328,11 @@ namespace DaggerfallWorkshop.Game.Entity
             Genders playerGender = player.Gender;
             Races race = player.Race;
             int chance = 0;
+
+            // City watch never have items above iron or steel
+            if (entityType == EntityTypes.EnemyClass && mobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                itemLevel = 1;
+
             if (variant == 0)
             {
                 // right-hand weapon

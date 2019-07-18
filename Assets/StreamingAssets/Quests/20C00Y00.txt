@@ -172,8 +172,6 @@ _qgclicked_ task:
 _1stparton_ task:
 	end quest 
 
-variable _2ndparton_
---unused variable
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 
 	--this used the timer 2ndparton erroneously. properly changed to mondead.

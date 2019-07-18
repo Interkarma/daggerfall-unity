@@ -504,8 +504,10 @@ namespace DaggerfallWorkshop
     {
         public ulong questUID;
         public Symbol targetPerson;
+        public Symbol targetFoe;
         public Races targetRace;
         public Genders gender;
+        public bool isChild;
         public int faceIndex;
         public int factionFaceIndex;
     }

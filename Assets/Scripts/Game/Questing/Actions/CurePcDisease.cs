@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             else if (isCureLycanthropy)
             {
-                //GameManager.Instance.PlayerEffectManager.EndLycanthropy();
+                GameManager.Instance.PlayerEffectManager.EndLycanthropy();
             }
 
             SetComplete();

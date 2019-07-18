@@ -255,6 +255,29 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
+        /// Gets the faction data corresponding to the given region index.
+        /// </summary>
+        /// <param name="regionIndex">The index of the region to get faction data of.</param>
+        /// <param name="factionData">Receives faction data.</param>
+        /// <param name="duplicateException">Throw exception if duplicate region faction found, otherwise just log warning.</param>
+        public void GetRegionFaction(int regionIndex, out FactionFile.FactionData factionData, bool duplicateException = true)
+        {
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province, -1, -1, regionIndex);
+
+            // Should always find a single region
+            if (factions == null || factions.Length != 1)
+            {
+                if (duplicateException)
+                    throw new Exception(string.Format("GetRegionFaction() found more than 1 matching NPC faction for region {0}.", regionIndex));
+                else
+                    Debug.LogWarningFormat("GetRegionFaction() found more than 1 matching NPC faction for region {0}.", regionIndex);
+            }
+
+            factionData = factions[0];
+        }
+
+        /// <summary>
         /// Gets faction ID from name. Experimental.
         /// </summary>
         /// <param name="name">Name of faction to get ID of.</param>
@@ -265,6 +288,19 @@ namespace DaggerfallWorkshop.Game.Player
                 return factionNameToIDDict[name];
 
             return -1;
+        }
+
+        /// <summary>
+        /// Gets faction name from id.
+        /// </summary>
+        /// <param name="id">ID of faction to get name of.</param>
+        /// <returns>Faction name if name found, otherwise an empty string.</returns>
+        public string GetFactionName(int id)
+        {
+            if (factionDict.ContainsKey(id))
+                return factionDict[id].name;
+
+            return string.Empty;
         }
 
         /// <summary>

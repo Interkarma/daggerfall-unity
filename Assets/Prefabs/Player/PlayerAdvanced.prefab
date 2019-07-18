@@ -828,8 +828,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1.78
-  m_Radius: 0.23
+  m_Height: 1.8
+  m_Radius: 0.35
   m_SlopeLimit: 70
   m_StepOffset: 0.5
   m_SkinWidth: 0.06
@@ -1167,7 +1167,7 @@ MonoBehaviour:
 --- !u!114 &114306241537309130
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
@@ -1190,7 +1190,7 @@ MonoBehaviour:
 --- !u!114 &114374011142275900
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
@@ -1209,9 +1209,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08cdc78d3cb770b41a8c9c17d2ccc0c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExteriorNoonAmbientLight: {r: 0.627451, g: 0.627451, b: 0.627451, a: 1}
+  ExteriorNoonAmbientLight: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
   ExteriorNightAmbientLight: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  InteriorAmbientLight: {r: 0.5294118, g: 0.5294118, b: 0.5294118, a: 1}
+  InteriorAmbientLight: {r: 0.627451, g: 0.627451, b: 0.627451, a: 1}
   InteriorNightAmbientLight: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 1}
   DungeonAmbientLight: {r: 0.29411766, g: 0.29411766, b: 0.29411766, a: 1}
   CastleAmbientLight: {r: 0.64705884, g: 0.64705884, b: 0.64705884, a: 1}

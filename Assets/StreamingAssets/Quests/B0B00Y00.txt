@@ -152,8 +152,7 @@ QBN:
 Item letter31 letter used 1014
 
 Person _qgiver_ group Questor
-Person _lady_ faction Random_Noble female
--rewrote lady from "face 2 group Noble" to "faction Random_Noble female". nothing else provided the expected NPC.
+Person _lady_ face 2 group Noble female
 Person _vamp_ face 40 factiontype Vampire_Clan
 
 Place _mondung_ remote dungeon

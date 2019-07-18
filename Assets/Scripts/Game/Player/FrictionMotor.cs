@@ -1,5 +1,6 @@
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace DaggerfallWorkshop.Game
         public float slideSpeed = 12.0f;
 
         private PlayerMotor playerMotor;
+        private PlayerHeightChanger heightChanger;
         private Transform myTransform;
         private RaycastHit hit;
         private CharacterController controller;
@@ -46,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         private void Start()
         {
             controller = GetComponent<CharacterController>();
+            heightChanger = GetComponent<PlayerHeightChanger>();
             playerMotor = GameManager.Instance.PlayerMotor;
             myTransform = playerMotor.transform;
             slideLimit = controller.slopeLimit - .1f;
@@ -85,7 +88,11 @@ namespace DaggerfallWorkshop.Game
                 playerControl = true;
 
                 // Somewhat experimental handling for automatically unsticking player controller in very specific cases
-                UnstickHandling();
+                if (!GameManager.Instance.PlayerEntity.IsParalyzed)
+                {
+                    HeadDipHandling();
+                    UnstickHandling();
+                }
             }
         }
 
@@ -123,7 +130,6 @@ namespace DaggerfallWorkshop.Game
             //  -Works best when player is standing as spherecast test has more clearance
             //  -Enemies will still become stuck as their motor does not have this handling
             const float stuckMovementThreshold = 0.25f;
-            const float stuckSampleRadius = 0.1f;
             const float stuckSampleDistance = 0.5f;
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
@@ -148,7 +154,7 @@ namespace DaggerfallWorkshop.Game
                         // But large enough not to pass through small cracks or openings the player should not traverse
                         Vector3 sampleDirection = (tryingToMoveForwards) ? myTransform.forward : -myTransform.forward;
                         Ray sampleRay = new Ray(myTransform.position, sampleDirection);
-                        if (!Physics.SphereCast(sampleRay, stuckSampleRadius, stuckSampleDistance))
+                        if (!Physics.SphereCast(sampleRay, controller.radius - 0.01f, stuckSampleDistance))
                         {
                             //Debug.LogFormat("Trying to resolve stuck for {0} frames", stuckFrameCount);
 
@@ -163,6 +169,47 @@ namespace DaggerfallWorkshop.Game
                     lastMovePosition = myTransform.position;
                     stuckFrameCount = 0;
                 }
+            }
+        }
+
+        // Preferential resolution of case B in UnstickHandling()
+        // Smoothly dips and undips height of player capsule, like a very tall person ducking through a low doorway
+        void HeadDipHandling()
+        {
+            const float raySampleDistance = 0.5f;
+            const float clearanceAdjustment = -0.28f;
+
+            if (!heightChanger || playerMotor.IsCrouching)
+                return;
+
+            // Sample forward from very top of player's head and from eye level
+            Ray headRay = new Ray(myTransform.position + new Vector3(0, heightChanger.FixedControllerStandingHeight / 2 + 0.25f, 0), myTransform.forward);
+            Ray eyeRay = new Ray(GameManager.Instance.MainCamera.transform.position, myTransform.forward);
+            RaycastHit headHit;
+            bool headRayHit = Physics.Raycast(headRay, out headHit, raySampleDistance);
+            bool eyeRayHit = Physics.Raycast(eyeRay, raySampleDistance);
+
+            //Debug.LogFormat("Ray contact: HeadRay: {0}, EyeRay {1}", headRayHit, eyeRayHit);
+
+            // If top of head hits something but eyes are clear, try dipping controller height
+            if (headRayHit && !eyeRayHit && GameObjectHelper.IsStaticGeometry(headHit.transform.gameObject))
+            {
+                // Dip controller height by clearance amount
+                heightChanger.StandingHeightAdjustment = clearanceAdjustment;
+
+                //Debug.Log("Dipping controller");
+            }
+            else
+            {
+                // Undip player once head/eye test is clear
+                // Technically the player will stand up again within a frame or two
+                // But in practice it is only required to clear the initial obstacle and player will fit through
+                // Player might experience a short "bounce" if they approach problem geometry very slowly
+                // Adding extra logic to maintain dip while something is above player's head adds complexity and can result in pronounced "bouncing"
+                // After testing several approaches, the most simple one still yielded the best results
+                heightChanger.StandingHeightAdjustment = 0;
+
+                //Debug.Log("Undipping controller");
             }
         }
     }

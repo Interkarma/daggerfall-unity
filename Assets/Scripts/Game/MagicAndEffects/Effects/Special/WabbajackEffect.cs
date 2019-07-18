@@ -4,13 +4,14 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Numidium
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 
@@ -21,7 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class WabbajackEffect : BaseEntityEffect
     {
-        public static readonly string EffectKey = "WabbajackEffect";
+        public static readonly string EffectKey = ArtifactsSubTypes.Wabbajack.ToString();
         public static readonly MobileTypes[] careerIDs = {
                                                            MobileTypes.Rat,
                                                            MobileTypes.Imp,
@@ -42,44 +43,55 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                                                            MobileTypes.Lich
                                                           };
 
-        public override void MagicRound()
+        public override void SetProperties()
         {
-            base.MagicRound();
-            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
-            if (!entityBehaviour)
-                return;
-            if (entityBehaviour.Entity is EnemyEntity)
-            {
-                EnemyEntity enemy = (EnemyEntity)entityBehaviour.Entity;
-                if (enemy.WabbajackActive)
-                    return;
+            properties.Key = EffectKey;
+            properties.ShowSpellIcon = false;
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Strikes;
+            bypassSavingThrows = true;
+        }
 
+        #region Payloads
+
+        public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
+        {
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem, sourceDamage);
+
+            // Validate
+            if (context != EnchantmentPayloadFlags.Strikes || targetEntity == null)
+                return null;
+
+            // Change target enemy
+            if (targetEntity.Entity is EnemyEntity)
+            {
+                // Get enemy entity - cannot have Wabbajack active already
+                EnemyEntity enemy = (EnemyEntity)targetEntity.Entity;
+                if (enemy == null || enemy.WabbajackActive)
+                    return null;
+
+                // Get new enemy career and transform
                 MobileTypes enemyType = careerIDs[Random.Range(0, careerIDs.Length)];
                 if ((int)enemyType == enemy.CareerIndex)
-                {
                     enemyType = (MobileTypes)(((int)enemyType + 1) % careerIDs.Length);
-                }
-                Transform parentTransform = entityBehaviour.gameObject.transform.parent;
+                Transform parentTransform = targetEntity.gameObject.transform.parent;
+
                 // Do not disable enemy if in use by the quest system
-                QuestResourceBehaviour questResourceBehaviour = entityBehaviour.GetComponent<QuestResourceBehaviour>();
-                if (questResourceBehaviour)
-                {
-                    if (!questResourceBehaviour.IsFoeDead)
-                        return;
-                }
-                entityBehaviour.gameObject.SetActive(false);
-                GameObject gameObject = GameObjectHelper.CreateEnemy(HardStrings.enemyNames[(int)enemyType], enemyType, entityBehaviour.transform.localPosition, parentTransform);
+                QuestResourceBehaviour questResourceBehaviour = targetEntity.GetComponent<QuestResourceBehaviour>();
+                if (questResourceBehaviour && !questResourceBehaviour.IsFoeDead)
+                    return null;
+
+                // Switch entity
+                targetEntity.gameObject.SetActive(false);
+                GameObject gameObject = GameObjectHelper.CreateEnemy(HardStrings.enemyNames[(int)enemyType], enemyType, targetEntity.transform.localPosition, MobileGender.Unspecified, parentTransform);
                 DaggerfallEntityBehaviour newEnemyBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
                 EnemyEntity newEnemy = (EnemyEntity)newEnemyBehaviour.Entity;
                 newEnemy.WabbajackActive = true;
                 newEnemy.CurrentHealth -= enemy.MaxHealth - enemy.CurrentHealth; // carry over damage to new monster
             }
+
+            return null;
         }
 
-        public override void SetProperties()
-        {
-            properties.Key = EffectKey;
-            bypassSavingThrows = true;
-        }
+        #endregion
     }
 }

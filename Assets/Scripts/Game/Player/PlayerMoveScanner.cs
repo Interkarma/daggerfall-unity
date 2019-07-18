@@ -314,7 +314,7 @@ namespace DaggerfallWorkshop.Game
             else
                 inFrontDirection = controller.transform.forward;
                
-            HitSomethingInFront = (Physics.Raycast(controller.transform.position, inFrontDirection, out hit, 0.3f));
+            HitSomethingInFront = (Physics.Raycast(controller.transform.position, inFrontDirection, out hit, controller.radius + 0.1f));
         }
     }
 }

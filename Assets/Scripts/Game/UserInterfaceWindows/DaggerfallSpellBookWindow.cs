@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector2 spellNameLabelPos = new Vector2(123, 2);
         Vector2 spellPointsLabelPos = new Vector2(214, 2);
         Vector2 spellCostLabelPos = new Vector2(76, 154);
+        Vector2 goldLabelPos = new Vector2(116, 154);
 
         Rect mainPanelRect = new Rect(0, 0, 259, 164);
         Rect spellsListBoxRect = new Rect(5, 13, 110, 130);
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel spellNameLabel;
         TextLabel spellPointsLabel;
         TextLabel spellCostLabel;
+        TextLabel goldLabel;
         TextLabel[] spellEffectLabels;
 
         SpellIconPickerWindow iconPicker;
@@ -95,12 +97,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string spellBookBuyModeTextureFilename = "SPBK01I0.IMG";
         const string spellsFilename = "SPELLS.STD";
 
+        const int noSpellBook = 1703;
+
         const SoundClips openSpellBook = SoundClips.OpenBook;
         const SoundClips openSpellBookBuyMode = SoundClips.ButtonClick;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
 
         bool buyMode = false;
-        bool autoClose = false;
         EffectBundleSettings renamedSpellSettings;
         int deleteSpellIndex = -1;
         KeyCode toggleClosedBinding;
@@ -318,8 +321,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
-            if (buyMode)
-                mainPanel.BackgroundColor = Color.black;
 
             // Spells list
             spellsListBox = new ListBox();
@@ -329,7 +330,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListBox.MaxCharacters = 22;
             spellsListBox.OnSelectItem += SpellsListBox_OnSelectItem;
             if (buyMode)
-                spellsListBox.OnMouseDoubleClick += SpellsListBox_OnMouseDoubleClick;
+                spellsListBox.OnMouseDoubleClick += BuyButton_OnMouseClick;
             else
                 spellsListBox.OnUseSelectedItem += SpellsListBox_OnUseSelectedItem;
             spellsListBox.OnMouseScrollDown += SpellsListBox_OnMouseScroll;
@@ -435,6 +436,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 spellCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellCostLabelPos, string.Empty, mainPanel);
                 spellCostLabel.ShadowPosition = Vector2.zero;
+                goldLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, goldLabelPos, string.Empty, mainPanel);
+                goldLabel.ShadowPosition = Vector2.zero;
+                UpdateGold();
             }
 
             // Spell points
@@ -460,6 +464,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 spellEffectPanels[i / 2].Components.Add(spellEffectLabels[i]);
             }
+        }
+
+        void UpdateGold()
+        {
+            goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
         }
 
         void UpdateSelection()
@@ -868,24 +877,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            autoClose = false;
-            BuySpellHandler();
-        }
-
-        private void SpellsListBox_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
-        {
-            autoClose = true;
-            BuySpellHandler();
-        }
-
-        private void BuySpellHandler()
-        {
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;
             int tradePrice = GetTradePrice();
             int msgOffset = 0;
 
-            if (GameManager.Instance.PlayerEntity.GetGoldAmount() < tradePrice)
+            if (!GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+            {
+                DaggerfallUI.MessageBox(noSpellBook);
+            }
+            else if (GameManager.Instance.PlayerEntity.GetGoldAmount() < tradePrice)
             {
                 DaggerfallUI.MessageBox(notEnoughGoldId);
             }
@@ -919,14 +920,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Add to player entity spellbook
                 GameManager.Instance.PlayerEntity.AddSpell(offeredSpells[spellsListBox.SelectedIndex]);
+                UpdateGold();
             }
-            if (autoClose)
-            {
-                // Drop back to HUD like classic
-                DaggerfallUI.Instance.PopToHUD();
-            }
-            else
-                CloseWindow();
+            CloseWindow();
         }
 
         #endregion

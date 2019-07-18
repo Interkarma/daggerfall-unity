@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color closeButtonColor          = new Color(0.2f, 0.2f, 0.2f, 0.6f);
         Color itemColor                 = new Color(0.0f, 0.8f, 0.0f, 1.0f);
         //Color unselectedTextColor       = new Color(0.6f, 0.6f, 0.6f, 1f);
-        Color selectedTextColor         = new Color32(243, 239, 44, 255);
+        //Color selectedTextColor         = new Color32(243, 239, 44, 255);
         //Color listBoxBackgroundColor    = new Color(0.1f, 0.1f, 0.1f, 0.5f);
         //Color sliderBackgroundColor     = new Color(0.0f, 0.5f, 0.0f, 0.4f);
         Color pageButtonSelected        = Color.white;
@@ -70,6 +70,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Fonts
         DaggerfallFont titleFont        = DaggerfallUI.Instance.Font2;
         DaggerfallFont pageButtonFont   = DaggerfallUI.Instance.Font3;
+
+        readonly Resolution[] resolutions = DaggerfallUI.GetDistinctResolutions();
 
         int currentPage = 0;
         float y = 0;
@@ -93,6 +95,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox spellLighting;
         Checkbox spellShadows;
         Checkbox instantRepairs;
+        Checkbox bowDrawback;
 
         // Interface
         Checkbox toolTips;
@@ -110,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox enableModernConversationStyleInTalkWindow;
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox geographicBackgrounds;
+        Checkbox dungeonExitWagonPrompt;
 
         // Enhancements
         Checkbox modSystem;
@@ -122,6 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox combatVoices;
         Checkbox enemyInfighting;
         Checkbox enhancedCombatAI;
+        Checkbox allowMagicRepairs;
         Checkbox playerTorchFromItems;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
@@ -137,8 +142,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider fovSlider;
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
+        HorizontalSlider retroRenderingMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
+        Checkbox exteriorLightShadows;
         Checkbox useLegacyDeferred;
 
         #endregion
@@ -209,10 +216,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Controls
             AddSectionTitle(leftPanel, "controls");
-            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 4.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
             movementAcceleration = AddSlider(leftPanel, "moveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
+            bowDrawback = AddCheckbox(leftPanel, "bowDrawback", DaggerfallUnity.Settings.BowDrawback);
 
             y = 0;
 
@@ -259,6 +267,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
+            dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -278,6 +287,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             combatVoices = AddCheckbox(leftPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
             enemyInfighting = AddCheckbox(leftPanel, "enemyInfighting", DaggerfallUnity.Settings.EnemyInfighting);
             enhancedCombatAI = AddCheckbox(leftPanel, "enhancedCombatAI", DaggerfallUnity.Settings.EnhancedCombatAI);
+            allowMagicRepairs = AddCheckbox(leftPanel, "allowMagicRepairs", DaggerfallUnity.Settings.AllowMagicRepairs);
 
             y = 0;
 
@@ -294,8 +304,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Basic settings
             AddSectionTitle(leftPanel, "basic");
             resolution = AddSlider(leftPanel, "resolution",
-                Array.FindIndex(Screen.resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
-                Screen.resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
+                Array.FindIndex(resolutions, x => x.width == DaggerfallUnity.Settings.ResolutionWidth && x.height == DaggerfallUnity.Settings.ResolutionHeight),
+                resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
             resolution.OnScroll += Resolution_OnScroll;
             fullscreen = AddCheckbox(leftPanel, "fullscreen", DaggerfallUnity.Settings.Fullscreen);
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
@@ -316,6 +326,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.ShadowResolutionMode, "Low", "Medium", "High", "Very High");
             dungeonLightShadows = AddCheckbox(rightPanel, "dungeonLightShadows", DaggerfallUnity.Settings.DungeonLightShadows);
             interiorLightShadows = AddCheckbox(rightPanel, "interiorLightShadows", DaggerfallUnity.Settings.InteriorLightShadows);
+            exteriorLightShadows = AddCheckbox(rightPanel, "exteriorLightShadows", DaggerfallUnity.Settings.ExteriorLightShadows);
             useLegacyDeferred = AddCheckbox(rightPanel, "useLegacyDeferred", DaggerfallUnity.Settings.UseLegacyDeferred);
             string textureArrayLabel = "Texture Arrays: ";
             if (!SystemInfo.supports2DArrayTextures)
@@ -323,6 +334,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
+            retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
+                DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
         }
 
         private void SaveSettings()
@@ -339,6 +352,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
+            DaggerfallUnity.Settings.BowDrawback = bowDrawback.IsChecked;
 
             DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
             DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
@@ -365,6 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
             DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableGeographicBackgrounds = geographicBackgrounds.IsChecked;
+            DaggerfallUnity.Settings.DungeonExitWagonPrompt = dungeonExitWagonPrompt.IsChecked;
 
             /* Enhancements */
 
@@ -380,6 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.CombatVoices = combatVoices.IsChecked;
             DaggerfallUnity.Settings.EnemyInfighting = enemyInfighting.IsChecked;
             DaggerfallUnity.Settings.EnhancedCombatAI = enhancedCombatAI.IsChecked;
+            DaggerfallUnity.Settings.AllowMagicRepairs = allowMagicRepairs.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
@@ -390,7 +406,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (applyScreenChanges)
             {
-                Resolution selectedResolution = Screen.resolutions[resolution.ScrollIndex];
+                Resolution selectedResolution = resolutions[resolution.ScrollIndex];
                 DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
                 DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
                 DaggerfallUnity.Settings.Fullscreen = fullscreen.IsChecked;
@@ -408,7 +424,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.ShadowResolutionMode = shadowResolutionMode.ScrollIndex;
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
+            DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
+            DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
         }
@@ -616,7 +634,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textBox.MaxCharacters = 5;
             textBox.Cursor.Enabled = false;
             textBox.DefaultText = text;
-            textBox.DefaultTextColor = selectedTextColor;
+            textBox.DefaultTextColor = Color.white;
             textBox.UseFocus = true;
             panel.Components.Add(textBox);
 

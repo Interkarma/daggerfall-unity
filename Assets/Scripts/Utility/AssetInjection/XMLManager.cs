@@ -59,6 +59,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
+        public bool GetBool(string key, bool defaultValue = false)
+        {
+            XElement element;
+            return TryGetElement(key, out element) ? bool.Parse((string)element) : defaultValue;
+        }
+
         public bool TryGetFloat(string key, out float value)
         {
             XElement element;
@@ -131,6 +137,29 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 );
         }
 
+        /// <summary>
+        /// Gets a rect and scale all its value to the requested <paramref name="requestedScale"/>.
+        /// The xml element can provide an attribute with a specified scale different than one.
+        /// </summary>
+        /// <param name="name">The name of the rect element.</param>
+        /// <param name="baseRect">Default values for the rect.</param>
+        /// <param name="requestedScale">A value to scale the rect.</param>
+        /// <returns>Rect read from xml file.</returns>
+        public Rect GetRect(string name, Rect baseRect, float requestedScale = 1)
+        {
+            XElement element;
+            if (!TryGetElement(name, out element))
+                return baseRect;
+
+            float scale = requestedScale / ParseFloat((string)element.Attribute("scale")) ?? 1;
+            return new Rect(
+                ParseFloat((string)element.Element("x"), scale) ?? baseRect.x,
+                ParseFloat((string)element.Element("y"), scale) ?? baseRect.y,
+                ParseFloat((string)element.Element("width"), scale) ?? baseRect.width,
+                ParseFloat((string)element.Element("height"), scale) ?? baseRect.height
+                );
+        }
+
         #endregion
 
         #region Private Methods
@@ -194,6 +223,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (!path.EndsWith(extension))
                 path += extension;
+        }
+
+        private static float? ParseFloat(string element = null, float scale = 1)
+        {
+            float value;
+            if (element != null && float.TryParse(element, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+                return value * scale;
+
+            return null;
         }
 
         #endregion

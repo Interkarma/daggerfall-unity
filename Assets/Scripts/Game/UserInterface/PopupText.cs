@@ -23,8 +23,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class PopupText : Panel
     {
         const float textSpacing = 1;
+
         const float popDelay = 1.0f;
         const int maxRows = 7;
+
+        const float rubberbandFactor = 0.8f;
 
         LinkedList<TextLabel> textRows = new LinkedList<TextLabel>();
         // Text scrolls away when timer becomes negative
@@ -44,8 +47,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (textRows.Count > 0)
             {
-                timer -= Time.deltaTime;
-                if (timer < -popDelay)
+                int rowsLate = textRows.Count - maxRows;
+                if (rowsLate > 0)
+                {
+                    // Accelerate to keep up
+                    float speedup = 1f + rubberbandFactor * rowsLate;
+                    timer -= Time.deltaTime * speedup;
+                }
+                else
+                    timer -= Time.deltaTime;
+
+                while (timer < -popDelay)
                 {
                     timer += nextPopDelay;
                     // Remove item from front of list
@@ -100,7 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 timer = Mathf.Max(timer, delayInSeconds);
             else
                 // set next no-scroll delay
-                nextPopDelay = delayInSeconds;
+                nextPopDelay = Mathf.Max(nextPopDelay, delayInSeconds);
             TextLabel label = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, text);
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.Parent = Parent;

@@ -49,6 +49,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color healthGainColor = new Color(0.60f, 1f, 0.60f);
         Color fatigueGainColor = new Color(1f, 0.50f, 0.50f);
         Color magickaGainColor = new Color(0.70f, 0.70f, 1f);
+
+        Color32 normalBreathColor = new Color32(247, 239, 41, 255);
+        Color32 shortOnBreathColor = new Color32(148, 12, 0, 255);
+
         /// <summary>
         /// Gets or sets current health as value between 0 and 1.
         /// </summary>
@@ -82,8 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float Breath
         {
             get { return breathBar.Amount; }
-            set { breathBar.Amount = value;
-                  SetRemainingBreathColor(value); }
+            set { breathBar.Amount = value; UpdateBreathBar(); }
         }
 
         public HUDVitals()
@@ -127,46 +130,109 @@ namespace DaggerfallWorkshop.Game.UserInterface
             VitalsChangeDetector.OnReset += VitalChangeDetector_OnReset;
         }
 
+        void LoadAssets()
+        {
+            if (DaggerfallUnity.Settings.SwapHealthAndFatigueColors)
+            {
+                healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
+                fatigueBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
+                healthBarLoss.Color = fatigueLossColor;
+                fatigueBarLoss.Color = healthLossColor;
+                healthBarGain.Color = fatigueGainColor;
+                fatigueBarGain.Color = healthGainColor;
+            }
+            else
+            {
+                healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
+                fatigueBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
+                healthBarLoss.Color = healthLossColor;
+                fatigueBarLoss.Color = fatigueLossColor;
+                healthBarGain.Color = healthGainColor;
+                fatigueBarGain.Color = fatigueGainColor;
+            }
+            magickaBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(magickaBarFilename);
+            magickaBarLoss.Color = magickaLossColor;
+            magickaBarGain.Color = magickaGainColor;
+        }
+
         public override void Update()
         {
             if (Enabled)
             {
                 base.Update();
-
-                float barWidth = nativeBarWidth * Scale.x;
-                float breathBarWidth = nativeBreathBarWidth * Scale.x;
-                float barHeight = nativeBarHeight * Scale.y;
-                float breathBarHeight = playerEntity.Stats.LiveEndurance * Scale.y;
-
-                Size = new Vector2(barWidth * 5, barHeight);
-
-                healthBar.Position = new Vector2(0, 0);
-                healthBar.Size = new Vector2(barWidth, barHeight);
-
-                fatigueBar.Position = new Vector2(barWidth * 2, 0);
-                fatigueBar.Size = new Vector2(barWidth, barHeight);
-
-                magickaBar.Position = new Vector2(barWidth * 4, 0);
-                magickaBar.Size = new Vector2(barWidth, barHeight);
-
-                breathBar.Position = new Vector2(306 * Scale.x, (-60 * Scale.y) - breathBarHeight);
-                breathBar.Size = new Vector2(breathBarWidth, breathBarHeight);
+                PositionIndicators();
 
                 if (DaggerfallUnity.Settings.EnableVitalsIndicators)
-                {
                     UpdateAllVitals();
-                    PositionIndicators();
-                }
                 else
-                {
-                    // Adjust vitals based on current player state
-                    healthBar.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
-                    fatigueBar.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
-                    magickaBar.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
-                }
-                breathBar.Amount = playerEntity.CurrentBreath / (float)playerEntity.MaxBreath;
-                SetRemainingBreathColor(breathBar.Amount);
+                    SynchronizeImmediately();
             }
+        }
+
+        void PositionIndicators()
+        {
+            // Most of this depends on Scale and LiveEndurance only,
+            // so does not change from frame to frame; Is it worth optimizing?
+            float barWidth = nativeBarWidth * Scale.x;
+            float barHeight = nativeBarHeight * Scale.y;
+
+            float breathBarWidth = nativeBreathBarWidth * Scale.x;
+            float breathBarHeight = playerEntity.Stats.LiveEndurance * Scale.y;
+
+            Size = new Vector2(barWidth * 5, barHeight);
+
+            healthBar.Position = new Vector2(0, 0);
+            healthBar.Size = new Vector2(barWidth, barHeight);
+
+            fatigueBar.Position = new Vector2(barWidth * 2, 0);
+            fatigueBar.Size = new Vector2(barWidth, barHeight);
+
+            magickaBar.Position = new Vector2(barWidth * 4, 0);
+            magickaBar.Size = new Vector2(barWidth, barHeight);
+
+            breathBar.Position = new Vector2(306 * Scale.x, (-60 * Scale.y) - breathBarHeight);
+            breathBar.Size = new Vector2(breathBarWidth, breathBarHeight);
+
+            if (DaggerfallUnity.Settings.EnableVitalsIndicators)
+            {
+                healthBarLoss.Position = healthBar.Position;
+                healthBarLoss.Size = healthBar.Size;
+
+                fatigueBarLoss.Position = fatigueBar.Position;
+                fatigueBarLoss.Size = fatigueBar.Size;
+
+                magickaBarLoss.Position = magickaBar.Position;
+                magickaBarLoss.Size = magickaBar.Size;
+
+                healthBarGain.Position = healthBar.Position;
+                healthBarGain.Size = healthBar.Size;
+
+                fatigueBarGain.Position = fatigueBar.Position;
+                fatigueBarGain.Size = fatigueBar.Size;
+
+                magickaBarGain.Position = magickaBar.Position;
+                magickaBarGain.Size = magickaBar.Size;
+            }
+        }
+
+        private void SynchronizeImmediately()
+        {
+            // Adjust vitals based on current player state
+            healthBar.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
+            fatigueBar.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
+            magickaBar.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
+
+            if (DaggerfallUnity.Settings.EnableVitalsIndicators)
+            {
+                healthBarGain.Amount = healthBar.Amount;
+                healthBarLoss.Amount = healthBar.Amount;
+                fatigueBarGain.Amount = fatigueBar.Amount;
+                fatigueBarLoss.Amount = fatigueBar.Amount;
+                magickaBarGain.Amount = magickaBar.Amount;
+                magickaBarLoss.Amount = magickaBar.Amount;
+            }
+
+            UpdateBreathBar();
         }
 
         void UpdateAllVitals()
@@ -221,75 +287,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthBar.Cycle();
             fatigueBar.Cycle();
             magickaBar.Cycle();
+
+            UpdateBreathBar();
         }
 
-        void PositionIndicators()
+        void UpdateBreathBar()
         {
-            healthBarLoss.Position = healthBar.Position;
-            healthBarLoss.Size = healthBar.Size;
+            breathBar.Amount = playerEntity.CurrentBreath / (float)playerEntity.MaxBreath;
 
-            fatigueBarLoss.Position = fatigueBar.Position;
-            fatigueBarLoss.Size = fatigueBar.Size;
-
-            magickaBarLoss.Position = magickaBar.Position;
-            magickaBarLoss.Size = magickaBar.Size;
-
-            healthBarGain.Position = healthBar.Position;
-            healthBarGain.Size = healthBar.Size;
-
-            fatigueBarGain.Position = fatigueBar.Position;
-            fatigueBarGain.Size = fatigueBar.Size;
-
-            magickaBarGain.Position = magickaBar.Position;
-            magickaBarGain.Size = magickaBar.Size;
-        }
-        void LoadAssets()
-        {
-            if (DaggerfallUnity.Settings.SwapHealthAndFatigueColors)
-            {
-                healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
-                fatigueBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
-                healthBarLoss.Color = fatigueLossColor;
-                fatigueBarLoss.Color = healthLossColor;
-                healthBarGain.Color = fatigueGainColor;
-                fatigueBarGain.Color = healthGainColor;
-            }
-            else
-            {
-                healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
-                fatigueBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
-                healthBarLoss.Color = healthLossColor;
-                fatigueBarLoss.Color = fatigueLossColor;
-                healthBarGain.Color = healthGainColor;
-                fatigueBarGain.Color = fatigueGainColor;
-            }
-            magickaBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(magickaBarFilename);
-            magickaBarLoss.Color = magickaLossColor;
-            magickaBarGain.Color = magickaGainColor;
-        }
-
-        void SetRemainingBreathColor(float amount)
-        {
             int threshold = ((GameManager.Instance.PlayerEntity.Stats.LiveEndurance) >> 3) + 4;
             if (threshold > GameManager.Instance.PlayerEntity.CurrentBreath)
-                breathBar.Color = new Color32(148, 12, 0, 255);
+                breathBar.Color = shortOnBreathColor;
             else
-                breathBar.Color = new Color32(247, 239, 41, 255);
-        }
-
-        private void SynchronizeImmediately()
-        {
-            // sync health bar
-            healthBarLoss.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
-            healthBar.Amount = healthBarLoss.Amount;
-
-            // sync fatigue bar
-            fatigueBarLoss.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
-            fatigueBar.Amount = fatigueBarLoss.Amount;
-
-            // sync magicka bar
-            magickaBarLoss.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
-            magickaBar.Amount = magickaBarLoss.Amount;
+                breathBar.Color = normalBreathColor;
         }
 
         private void VitalChangeDetector_OnReset()

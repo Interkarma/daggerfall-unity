@@ -316,6 +316,8 @@ namespace DaggerfallWorkshop.Game
             // Update on water check
             onExteriorWaterMethod = GetOnExteriorWaterMethod();
 
+            heightChanger.DecideHeightAction();
+
             // Do nothing if player levitating - replacement motor will take over movement.
             // Don't return here for swimming because player should still be able to crouch when swimming.
             if (levitateMotor && levitateMotor.IsLevitating)
@@ -325,8 +327,6 @@ namespace DaggerfallWorkshop.Game
             speedChanger.HandleInputSpeedAdjustment(ref speed);
             if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 speed = speedChanger.GetSwimSpeed(speed);
-
-            heightChanger.DecideHeightAction();
 
             UpdateSmoothFollower();
         }

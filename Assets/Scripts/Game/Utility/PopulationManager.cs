@@ -171,16 +171,24 @@ namespace DaggerfallWorkshop.Game.Utility
         /// </summary>
         void UpdateMobiles()
         {
+            // Racial override can suppress population, e.g. transformed lycanthrope
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            bool suppressPopulationSpawns = racialOverride != null && racialOverride.SuppressPopulationSpawns;
+
             bool isDaytime = DaggerfallUnity.Instance.WorldTime.Now.IsDay;
             for (int i = 0; i < populationPool.Count; i++)
             {
                 PoolItem poolItem = populationPool[i];
 
+                // Get distance to player
+                poolItem.distanceToPlayer = Vector3.Distance(playerGPS.transform.position, poolItem.npc.Motor.transform.position);
+
                 // Show pending mobiles when available
                 if (poolItem.active &&
                     poolItem.scheduleEnable &&
                     AllowMobileActivationChange(ref poolItem) &&
-                    isDaytime)
+                    isDaytime &&
+                    !suppressPopulationSpawns)
                 {
                     poolItem.npc.Motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;
@@ -192,9 +200,6 @@ namespace DaggerfallWorkshop.Game.Utility
                     if (Mathf.Abs(size.y - 2f) > 0.1f)
                         poolItem.npc.Billboard.transform.Translate(0, (size.y - 2f) * 0.52f, 0);
                 }
-
-                // Get distance to player
-                poolItem.distanceToPlayer = Vector3.Distance(playerGPS.transform.position, poolItem.npc.Motor.transform.position);
 
                 // Mark for recycling
                 if (poolItem.npc.Motor.SeekCount > 4 ||

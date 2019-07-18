@@ -119,6 +119,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.equipTable = entity.ItemEquipTable.SerializeEquipTable();
             data.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
             data.alliedToPlayer = mobileEnemy.Summary.Enemy.Team == MobileTeams.PlayerAlly;
+            data.questFoeSpellQueueIndex = entity.QuestFoeSpellQueueIndex;
+            data.wabbajackActive = entity.WabbajackActive;
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -161,6 +163,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore enemy data
             entityBehaviour.gameObject.name = data.gameObjectName;
             enemy.transform.rotation = data.currentRotation;
+            entity.QuestFoeSpellQueueIndex = data.questFoeSpellQueueIndex;
+            entity.WabbajackActive = data.wabbajackActive;
             entity.Items.DeserializeItems(data.items);
             entity.ItemEquipTable.DeserializeEquipTable(data.equipTable, entity.Items);
             entity.MaxHealth = data.startingHealth;

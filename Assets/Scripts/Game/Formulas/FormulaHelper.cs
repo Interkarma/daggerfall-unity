@@ -40,8 +40,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public delegate int Formula_2i(int a, int b);
         public delegate int Formula_3i(int a, int b, int c);
         public delegate int Formula_1i_1f(int a, float b);
-        public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0);
-        public delegate int Formula_2de_1dui_1i(DaggerfallEntity de1, DaggerfallEntity de2 = null, DaggerfallUnityItem a = null, int b = 0);
+        public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0, DaggerfallUnityItem item = null);
         public delegate bool Formula_1pe_1sk(PlayerEntity pe, DFCareer.Skills sk);
 
         // Registries for overridden formula
@@ -51,7 +50,6 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static Dictionary<string, Formula_3i>        formula_3i = new Dictionary<string, Formula_3i>();
         public static Dictionary<string, Formula_1i_1f>     formula_1i_1f = new Dictionary<string, Formula_1i_1f>();
         public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
-        public static Dictionary<string, Formula_2de_1dui_1i> formula_2de_1dui_1i = new Dictionary<string, Formula_2de_1dui_1i>();
         public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
 
         #region Basic Formulas
@@ -347,77 +345,34 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Gets vampire clan based on region
-        public static VampireClans GetVampireClan(DaggerfallRegions region)
+        public static VampireClans GetVampireClan(int regionIndex)
         {
-            // Clan assignment according to UESP https://en.uesp.net/wiki/Daggerfall:Vampirism
-            switch (region)
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(regionIndex, out factionData);
+            switch ((FactionFile.FactionIDs) factionData.vam)
             {
-                // Anthotis
-                case DaggerfallRegions.AlikrDesert:
-                case DaggerfallRegions.Antiphyllos:
-                case DaggerfallRegions.Bergama:
-                case DaggerfallRegions.Dakfron:
-                case DaggerfallRegions.Tigonus:
-                    return VampireClans.Anthotis;
-
-                // Garlythi
-                case DaggerfallRegions.Northmoor:
-                case DaggerfallRegions.Phrygias:
-                    return VampireClans.Garlythi;
-
-                // Haarvenu
-                case DaggerfallRegions.Anticlere:
-                case DaggerfallRegions.IlessanHills:
-                case DaggerfallRegions.Shalgora:
-                    return VampireClans.Haarvenu;
-
-                // Khulari
-                case DaggerfallRegions.DragontailMountains:
-                case DaggerfallRegions.Ephesus:
-                case DaggerfallRegions.Kozanset:
-                case DaggerfallRegions.Santaki:
-                case DaggerfallRegions.Totambu:
-                    return VampireClans.Khulari;
-
-                // Lyrezi (default bloodline)
-                default:
-                    return VampireClans.Lyrezi;
-
-                // Montalion
-                case DaggerfallRegions.Bhoraine:
-                case DaggerfallRegions.Gavaudon:
-                case DaggerfallRegions.Lainlyn:
-                case DaggerfallRegions.Mournoth:
-                case DaggerfallRegions.Satakalaam:
-                case DaggerfallRegions.Wayrest:
-                    return VampireClans.Montalion;
-
-                // Selenu
-                case DaggerfallRegions.AbibonGora:
-                case DaggerfallRegions.Ayasofya:
-                case DaggerfallRegions.Cybiades:
-                case DaggerfallRegions.Kairou:
-                case DaggerfallRegions.Myrkwasa:
-                case DaggerfallRegions.Pothago:
-                case DaggerfallRegions.Sentinel:
-                    return VampireClans.Selenu;
-
-                // Thrafey
-                case DaggerfallRegions.Daenia:
-                case DaggerfallRegions.Dwynnen:
-                case DaggerfallRegions.Ykalon:
-                case DaggerfallRegions.Urvaius:
-                    return VampireClans.Thrafey;
-
-                // Vraseth
-                case DaggerfallRegions.Betony:
-                case DaggerfallRegions.Daggerfall:
-                case DaggerfallRegions.Glenpoint:
-                case DaggerfallRegions.GlenumbraMoors:
-                case DaggerfallRegions.Kambria:
-                case DaggerfallRegions.Tulune:
+                case FactionFile.FactionIDs.The_Vraseth:
                     return VampireClans.Vraseth;
+                case FactionFile.FactionIDs.The_Haarvenu:
+                    return VampireClans.Haarvenu;
+                case FactionFile.FactionIDs.The_Thrafey:
+                    return VampireClans.Thrafey;
+                case FactionFile.FactionIDs.The_Lyrezi:
+                    return VampireClans.Lyrezi;
+                case FactionFile.FactionIDs.The_Montalion:
+                    return VampireClans.Montalion;
+                case FactionFile.FactionIDs.The_Khulari:
+                    return VampireClans.Khulari;
+                case FactionFile.FactionIDs.The_Garlythi:
+                    return VampireClans.Garlythi;
+                case FactionFile.FactionIDs.The_Anthotis:
+                    return VampireClans.Anthotis;
+                case FactionFile.FactionIDs.The_Selenu:
+                    return VampireClans.Selenu;
             }
+
+            // The Lyrezi are the default like in classic
+            return VampireClans.Lyrezi;
         }
 
         #endregion
@@ -445,14 +400,23 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, DaggerfallUnityItem weapon, int enemyAnimStateRecord)
+        /// <summary>
+        /// Calculate the damage caused by an attack.
+        /// </summary>
+        /// <param name="attacker">Attacking entity</param>
+        /// <param name="target">Target entity</param>
+        /// <param name="enemyAnimStateRecord">Record # of the target, used for backstabbing</param>
+        /// <param name="weaponAnimTime">Time the weapon animation lasted before the attack in ms, used for bow drawing </param>
+        /// <param name="weapon">The weapon item being used</param>
+        /// <returns>Damage inflicted to target, can be 0</returns>
+        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int enemyAnimStateRecord, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             if (attacker == null || target == null)
                 return 0;
 
-            Formula_2de_1dui_1i del;
-            if (formula_2de_1dui_1i.TryGetValue("CalculateAttackDamage", out del))
-                return del(attacker, target, weapon, enemyAnimStateRecord);
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateAttackDamage", out del))
+                return del(attacker, target, enemyAnimStateRecord, weaponAnimTime, weapon);
 
             int minBaseDamage = 0;
             int maxBaseDamage = 0;
@@ -631,8 +595,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                             if (hitDamage > 0)
                                 OnMonsterHit(AIAttacker, target, hitDamage);
 
-                            // TODO: Apply Ring of Namira effect
-
                             damage += hitDamage;
                         }
                         ++attackNumber;
@@ -647,9 +609,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     chanceToHitMod += (weapon.GetWeaponMaterialModifier() * 10);
                 }
+                // Mod hook for adjusting final hit chance mod. (is a no-op in DFU)
+                chanceToHitMod = AdjustWeaponHitChanceMod(attacker, target, chanceToHitMod, weaponAnimTime, weapon);
+
                 if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
                 {
-                    damage = CalculateWeaponAttackDamage(attacker, target, damageModifiers, weapon);
+                    damage = CalculateWeaponAttackDamage(attacker, target, damageModifiers, weaponAnimTime, weapon);
 
                     damage = CalculateBackstabDamage(damage, backstabChance);
                 }
@@ -666,7 +631,33 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
+            // Apply Ring of Namira effect
+            if (target == player)
+            {
+                DaggerfallUnityItem[] equippedItems = target.ItemEquipTable.EquipTable;
+                DaggerfallUnityItem item = null;
+                if (equippedItems.Length != 0)
+                {
+                    item = IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) ? equippedItems[(int)EquipSlots.Ring0] : equippedItems[(int)EquipSlots.Ring1];
+                    item = IsRingOfNamira(item) ? item : null;
+                    if (item != null)
+                    {
+                        IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
+                        effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
+                            targetEntity: AIAttacker.EntityBehaviour,
+                            sourceItem: item,
+                            sourceDamage: damage);
+                    }
+                }
+            }
+            //Debug.LogFormat("Damage {0} applied, animTime={1}  ({2})", damage, weaponAnimTime, GameManager.Instance.WeaponManager.ScreenWeapon.WeaponState);
+
             return damage;
+        }
+
+        private static bool IsRingOfNamira(DaggerfallUnityItem item)
+        {
+            return item != null && item.ContainsEnchantment(DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect, (int)ArtifactsSubTypes.Ring_of_Namira);
         }
 
         private static int CalculateStruckBodyPart()
@@ -710,8 +701,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        private static int CalculateWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, DaggerfallUnityItem weapon)
+        private static int CalculateWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateWeaponAttackDamage", out del))
+                return del(attacker, target, damageModifier, weaponAnimTime, weapon);
+
             int damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1) + damageModifier;
 
             EnemyEntity AITarget = null;
@@ -742,6 +737,28 @@ namespace DaggerfallWorkshop.Game.Formulas
                 damage = 0;
 
             damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
+
+            // Mod hook for adjusting final damage. (is a no-op in DFU)
+            damage = AdjustWeaponAttackDamage(attacker, target, damage, weaponAnimTime, weapon);
+
+            return damage;
+        }
+
+        private static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("AdjustWeaponHitChanceMod", out del))
+                return del(attacker, target, hitChanceMod, weaponAnimTime, weapon);
+
+            return hitChanceMod;
+        }
+
+        private static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("AdjustWeaponAttackDamage", out del))
+                return del(attacker, target, damage, weaponAnimTime, weapon);
+
             return damage;
         }
 
@@ -817,10 +834,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     random = UnityEngine.Random.Range(0f, 100f);
                     if (random <= 0.6f)
                     {
-                        // TODO: Werewolf
-                        //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWerewolfDisease();
-                        //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
-                        //Debug.Log("Player infected by werewolf.");
+                        // Werewolf
+                        EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                        Debug.Log("Player infected by werewolf.");
                     }
                     break;
                 case (int)MonsterCareers.Nymph:
@@ -830,10 +847,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                     random = UnityEngine.Random.Range(0f, 100f);
                     if (random <= 0.6f)
                     {
-                        // TODO: Wereboar
-                        //EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateWereboarDisease();
-                        //GameManager.Instance.PlayerEffectManager.AssignBundle(bundle);
-                        //Debug.Log("Player infected by wereboar.");
+                        // Wereboar
+                        EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
+                        Debug.Log("Player infected by wereboar.");
                     }
                     break;
                 case (int)MonsterCareers.Zombie:
@@ -853,7 +870,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     {
                         // Inflict stage one vampirism disease
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
-                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                        GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                         Debug.Log("Player infected by vampire.");
                     }
                     else if (random <= 2.0f)
@@ -898,21 +915,26 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Get armor value for struck body part
             if (struckBodyPart <= target.ArmorValues.Length)
             {
-                armorValue = target.ArmorValues[struckBodyPart];
+                armorValue = target.ArmorValues[struckBodyPart] + target.IncreasedArmorValueModifier + target.DecreasedArmorValueModifier;
             }
 
             chanceToHit += armorValue;
 
             // Apply adrenaline rush modifiers.
+            const int adrenalineRushModifier = 5;
+            const int improvedAdrenalineRushModifier = 8;
             if (attacker.Career.AdrenalineRush && attacker.CurrentHealth < (attacker.MaxHealth / 8))
             {
-                chanceToHit += 5;
+                chanceToHit += (attacker.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
             }
 
             if (target.Career.AdrenalineRush && target.CurrentHealth < (target.MaxHealth / 8))
             {
-                chanceToHit -= 5;
+                chanceToHit -= (target.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
             }
+
+            // Apply enchantment modifier
+            chanceToHit += attacker.ChanceToHitModifier;
 
             // Apply luck modifier.
             chanceToHit += ((attacker.Stats.LiveLuck - target.Stats.LiveLuck) / 10);
@@ -1554,6 +1576,29 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                 }
             }
+        }
+
+        public static float BonusChanceToKnowWhereIs(float bonusPerBlockLess = 0.0078f)
+        {
+            const int maxArea = 64;
+
+            // Must be in a location
+            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
+                return 0;
+
+            // Get area of current location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            int locationArea = location.Exterior.ExteriorData.Width * location.Exterior.ExteriorData.Height;
+
+            // The largest possible location has an area of 64 (e.g. Daggerfall/Wayrest/Sentinel)
+            // The smallest possible location has an area of 1 (e.g. a tavern town)
+            // In a big city NPCs could be ignorant of all buildings, but in a small town it's unlikely they don't know the local tavern or smith
+            // So we apply a bonus that INCREASES the more city area size DECREASES
+            // With default inputs, a tiny 1x1 town NPC will get a +0.4914 to the default 0.5 chance for a total of 0.9914 chance to know building
+            // This is a big help as small towns also have less NPCs, and it gets frustrating when multiple NPCs don't knows where something is
+            float bonus = (maxArea - locationArea) * bonusPerBlockLess;
+
+            return bonus;
         }
 
         #endregion

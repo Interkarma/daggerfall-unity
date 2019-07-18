@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -22,12 +22,16 @@ namespace DaggerfallWorkshop.Game
     public class SunlightManager : MonoBehaviour
     {
         public const float defaultScaleFactor = 1;
+        public const float defaultShadowStrength = 1;
 
         public float Angle = -90f;                          // Sunlight direction throughout day
         [Range(0, 1)]
         public float ScaleFactor = defaultScaleFactor;      // Scale all lights by this amount
+        [Range(0, 1)]
+        public float ShadowStrength = defaultShadowStrength;
         public Light IndirectLight;                         // Point light that follows player to simulate indirect lighting
         public GameObject LocalPlayer;                      // Player for indirect light positioning
+        public AnimationCurve LightCurve;                   // Animation curve for light intensity
         public Light[] OtherLights;                         // Other lights to scale and enable/disable
 
         Light myLight;
@@ -54,6 +58,10 @@ namespace DaggerfallWorkshop.Game
             // Save initial intensity of all lights at start
             // This is the value our daily operates against
             SaveLightIntensity();
+
+            // Disable exterior sunlight shadows
+            if (!DaggerfallUnity.Settings.ExteriorLightShadows)
+                myLight.shadows = LightShadows.None;
         }
 
         void Update()
@@ -101,17 +109,14 @@ namespace DaggerfallWorkshop.Game
             // Get value 0-1 for dawn through dusk
             float dawn = DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
             float dayRange = DaggerfallDateTime.DuskHour * DaggerfallDateTime.MinutesPerHour - dawn;
-            float lerp = (dfUnity.WorldTime.Now.MinuteOfDay - dawn) / dayRange;
+            float time = (dfUnity.WorldTime.Now.MinuteOfDay - dawn) / dayRange;
 
             // Set angle of rotation based on time of day and user value
-            float xrot = 180f * lerp;
+            float xrot = 180f * time;
             myLight.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
 
-            // Set light intensity
-            if (lerp < 0.5f)
-                daylightScale = lerp * 2f;
-            else
-                daylightScale = 1f - ((lerp - 0.5f) * 2f);
+            // Set light intensity from curve
+            daylightScale = LightCurve.Evaluate(time);
 
             // Set sun direction and scale
             if (myLight.enabled)
@@ -119,7 +124,7 @@ namespace DaggerfallWorkshop.Game
                 // Adjust for custom scale factor
                 daylightScale *= ScaleFactor;
 
-                SetLightIntensity(daylightScale);
+                SetLightIntensity(daylightScale, ShadowStrength);
             }
         }
 
@@ -165,10 +170,13 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void SetLightIntensity(float scale)
+        void SetLightIntensity(float scale, float shadowStrength)
         {
             if (myLight)
+            {
                 myLight.intensity = keyLightIntensity * scale;
+                myLight.shadowStrength = shadowStrength;
+            }
 
             if (OtherLights != null)
             {
@@ -177,11 +185,13 @@ namespace DaggerfallWorkshop.Game
                     if (OtherLights[i] == null)
                         continue;
                     OtherLights[i].intensity = otherLightsIntensity[i] * scale;
+                    OtherLights[i].shadowStrength = shadowStrength;
                 }
             }
             if (IndirectLight != null)
             {
                 IndirectLight.intensity = indirectLightIntensity * scale;
+                IndirectLight.shadowStrength = shadowStrength;
             }
         }
 

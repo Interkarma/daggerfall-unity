@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -45,7 +46,7 @@ namespace DaggerfallWorkshop.Game
                     // Do nothing if move scanner has detected a static gameobject
                     // This prevents player from being crushed under sloping non-moving geometry found on boat and inside buildings
                     // Also stops player being forced into a crouch from just brushing up against sloping geometry
-                    if (moveScanner.HeadRaycastHit.transform.gameObject.isStatic)
+                    if (GameObjectHelper.IsStaticGeometry(moveScanner.HeadRaycastHit.transform.gameObject))
                         return;
 
                     // We found a non-static object, but it really an action object (e.g. moving platform)?

@@ -1,4 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
@@ -15,7 +15,6 @@
 
 Shader "Daggerfall/Automap"
 {
-
 	// Surface Shader for Automap Geometry
 	Properties {
 		_Color("Color", Color) = (1,1,1,1)
@@ -33,7 +32,9 @@ Shader "Daggerfall/Automap"
 
     	Pass 
     	{
-			//ZWrite On // not really necessary here since default setting
+			ZWrite On // not really necessary here since default setting
+			ZTest LEqual
+            //Cull Off
 
 			CGPROGRAM
 
@@ -45,6 +46,8 @@ Shader "Daggerfall/Automap"
 			#pragma multi_compile __ RENDER_IN_GRAYSCALE
 			#pragma multi_compile __ AUTOMAP_RENDER_MODE_TRANSPARENT
 			
+			#define PI 3.1416f
+
 			half4 _Color;
 			sampler2D _MainTex;
 			sampler2D _BumpMap;
@@ -58,6 +61,8 @@ Shader "Daggerfall/Automap"
     			float4  pos : SV_POSITION;				
     			float2  uv : TEXCOORD0;
 				float3 worldPos : TEXCOORD5;
+				float3 normal : NORMAL;
+                //fixed4 color : COLOR;
 			};		
 
 			void vert(appdata_full v, out v2f OUT)
@@ -65,22 +70,28 @@ Shader "Daggerfall/Automap"
     			OUT.pos = UnityObjectToClipPos(v.vertex);
     			OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				OUT.normal = v.normal;
+                //OUT.color.xyz = _Color;
 			}
 
 
 			half4 frag(v2f IN) : COLOR
 			{
 				float4 outColor;
-				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
+                half4 albedo = tex2D(_MainTex, IN.uv) *_Color;
+				//half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
+				//half4 albedo = tex2Dlod(_MainTex, float4(IN.uv.x, IN.uv.y, 0.0f, 7.0f));
+				                
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
-				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
+                outColor.rgb = albedo.rgb; // -emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{				
 					discard;				
 				}
 
-				float dist = distance(IN.worldPos.y, _SclicingPositionY);
+			    float dist = distance(IN.worldPos.y, _SclicingPositionY);
+				//float dist = 40.0f / distance(IN.worldPos.y, 20.0f); // _SclicingPositionY);
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
 				#if defined(RENDER_IN_GRAYSCALE)
@@ -88,6 +99,19 @@ Shader "Daggerfall/Automap"
 					float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
 					outColor.rgb = half3(grayValue, grayValue, grayValue);
 				#endif
+					
+				//float3 surfaceNormal = IN.normal;
+				//const float3 upVec = float3(0.0f, 1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), upVec);
+				//if (dotResult == 0.0f)
+				//	discard;
+
+				//float3 surfaceNormal = IN.normal;
+				//const float3 downVec = float3(0.0f, -1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), downVec);
+				//float angle = abs(acos(dotResult));
+				//if (angle < 90.0f * PI / 180.0f)
+				//	discard;
 
 				return outColor;
 
@@ -97,28 +121,35 @@ Shader "Daggerfall/Automap"
 
     	}
 
-		Pass
-		{
-			ColorMask 0
-		}
+		//Pass
+		//{
+  //          ZWrite On
+		//	ColorMask Off
+		//}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha
-		//Blend OneMinusSrcAlpha SrcAlpha		
+        //Blend SrcAlpha OneMinusSrcAlpha, One One
+        Blend SrcAlpha OneMinusSrcAlpha
+		//Blend OneMinusSrcAlpha SrcAlpha
+        //Blend SrcColor OneMinusSrcColor, SrcAlpha OneMinusSrcAlpha        
 		//Blend One One
 		//Blend One OneMinusSrcAlpha
 		//Blend One DstAlpha
 		//Blend SrcAlpha One
 		//Blend OneMinusSrcAlpha One
+		//Blend SrcAlpha OneMinusSrcAlpha, SrcAlpha OneMinusSrcAlpha
 
-		BlendOp Add, Max
+		//BlendOp Add, Max
+		BlendOp Add, Add
 
 		Pass
 		{
-			ZWrite Off
-			//ZTest Always
-			//ColorMask RGBA
-
+			//ZWrite On
+			//ZTest LEqual
+			ZWrite On
+			//ZTest LEqual
+            //Cull Off
+            
 			CGPROGRAM
 
 			#include "UnityCG.cginc"
@@ -129,6 +160,8 @@ Shader "Daggerfall/Automap"
 
 			#pragma multi_compile __ RENDER_IN_GRAYSCALE
 			#pragma multi_compile __ AUTOMAP_RENDER_MODE_WIREFRAME AUTOMAP_RENDER_MODE_TRANSPARENT
+
+			#define PI 3.1416f
 
 			half4 _Color;
 			sampler2D _MainTex;
@@ -143,6 +176,7 @@ Shader "Daggerfall/Automap"
 				float4  pos : SV_POSITION;
 				float2  uv : TEXCOORD0;
 				float3 worldPos : TEXCOORD5;
+				float3 normal : NORMAL;
 			};
 
 			void vert(appdata_full v, out v2g OUT)
@@ -150,6 +184,7 @@ Shader "Daggerfall/Automap"
 				OUT.pos = UnityObjectToClipPos(v.vertex);
 				OUT.uv = v.texcoord;
 				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				OUT.normal = v.normal;
 			}
 
 			struct g2f
@@ -158,6 +193,7 @@ Shader "Daggerfall/Automap"
 				float2  uv : TEXCOORD0;
 				float3 dist : TEXCOORD1;
 				float3 worldPos : TEXCOORD5;
+				float3 normal : NORMAL;
 			};
 
 			[maxvertexcount(3)]
@@ -183,28 +219,29 @@ Shader "Daggerfall/Automap"
 				OUT.uv = IN[0].uv;
 				OUT.dist = float3(area / length(v0),0,0);
 				OUT.worldPos = IN[0].worldPos;
+				OUT.normal = IN[0].normal;
 				triStream.Append(OUT);
 
 				OUT.pos = IN[1].pos;
 				OUT.uv = IN[1].uv;
 				OUT.dist = float3(0,area / length(v1),0);
 				OUT.worldPos = IN[1].worldPos;
+				OUT.normal = IN[1].normal;
 				triStream.Append(OUT);
 
 				OUT.pos = IN[2].pos;
 				OUT.uv = IN[2].uv;
 				OUT.dist = float3(0,0,area / length(v2));
 				OUT.worldPos = IN[2].worldPos;
+				OUT.normal = IN[2].normal;
 				triStream.Append(OUT);
-
-
-
 			}
 
 			half4 frag(g2f IN) : COLOR
 			{
 				float4 outColor;
 				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
+                //half4 albedo = tex2Dlod(_MainTex, float4(IN.uv.x, IN.uv.y, 0.0f, 7.0f));
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
 				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
@@ -230,7 +267,7 @@ Shader "Daggerfall/Automap"
 							#endif
 						}
 					#elif defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
-						outColor.a = 0.65;
+					outColor.a = 0.75;
 					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
 						clip(-1.0);
 						outColor = half4(1.0, 0.0, 0.0, 1.0);
@@ -250,6 +287,19 @@ Shader "Daggerfall/Automap"
 					float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
 					outColor.rgb = half3(grayValue, grayValue, grayValue);
 				#endif
+
+				//float3 surfaceNormal = IN.normal;
+				//const float3 upVec = float3(0.0f, 1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), upVec);
+				//if (dotResult == 0.0f)
+				//	discard;
+
+				//float3 surfaceNormal = IN.normal;
+				//const float3 downVec = float3(0.0f, -1.0f, 0.0f);
+				//float dotResult = dot(normalize(surfaceNormal), downVec);
+				//float angle = abs(acos(dotResult));
+				//if (angle < 90.0f * PI / 180.0f)
+				//	discard;
 
 				return outColor;
 

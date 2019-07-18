@@ -12,8 +12,8 @@
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Using a static helper in FoeSpawner to find best scene parent
             // We want the light to be assigned to one of the scene parents so it will be cleaned up on scene reset
-            Transform parent = FoeSpawner.GetBestParent();
+            Transform parent = GameObjectHelper.GetBestParent();
 
             // Create the light object
             GameObject go = new GameObject(effectKey);

@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
         string displayName;                 // Foe display name for quest system macros
         string typeName;                    // Foe type name for quest system macros
+        List<SpellReference> spellQueue;    // Virtual spell queue to cast on entity
 
         #endregion
 
@@ -75,6 +77,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public int KillCount
         {
             get { return killCount; }
+        }
+
+        public List<SpellReference> SpellQueue
+        {
+            get { return spellQueue; }
         }
 
         #endregion
@@ -202,6 +209,18 @@ namespace DaggerfallWorkshop.Game.Questing
             killCount += amount;
         }
 
+        /// <summary>
+        /// Queues a spell to cast on this Foe.
+        /// </summary>
+        /// <param name="spell">Spell to cast.</param>
+        public void QueueSpell(SpellReference spell)
+        {
+            if (spellQueue == null)
+                spellQueue = new List<SpellReference>();
+            else
+                spellQueue.Add(spell);
+        }
+
         #endregion
 
         #region Private Methods
@@ -248,6 +267,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public int killCount;
             public string displayName;
             public string typeName;
+            public List<SpellReference> spellQueue;
         }
 
         public override object GetSaveData()
@@ -261,6 +281,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.killCount = killCount;
             data.displayName = displayName;
             data.typeName = typeName;
+            data.spellQueue = spellQueue;
 
             return data;
         }
@@ -279,6 +300,7 @@ namespace DaggerfallWorkshop.Game.Questing
             killCount = data.killCount;
             displayName = data.displayName;
             typeName = data.typeName;
+            spellQueue = data.spellQueue;
         }
 
         #endregion

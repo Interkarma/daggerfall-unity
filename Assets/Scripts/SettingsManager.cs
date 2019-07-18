@@ -67,6 +67,8 @@ namespace DaggerfallWorkshop
         // [Video]
         public int ResolutionWidth { get; set; }
         public int ResolutionHeight { get; set; }
+        public int RetroRenderingMode { get; set; }
+        public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
         public int FieldOfView { get; set; }
@@ -76,6 +78,10 @@ namespace DaggerfallWorkshop
         public bool UseLegacyDeferred { get; set; }
         public bool DungeonLightShadows { get; set; }
         public bool InteriorLightShadows { get; set; }
+        public bool ExteriorLightShadows { get; set; }
+        public float DungeonShadowDistance { get; set; }
+        public float InteriorShadowDistance { get; set; }
+        public float ExteriorShadowDistance { get; set; }
         public bool EnableTextureArrays { get; set; }
         public int RandomDungeonTextures { get; set; }
 
@@ -110,6 +116,8 @@ namespace DaggerfallWorkshop
         public bool SDFFontRendering { get; set; }
         public bool EnableGeographicBackgrounds { get; set; }
         public bool EnableArrowCounter { get; set; }
+        public bool DungeonExitWagonPrompt { get; set; }
+        public bool IllegalRestWarning { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -130,9 +138,13 @@ namespace DaggerfallWorkshop
         public float SoundVolume { get; set; }
         public bool InstantRepairs { get; set; }
         public bool AllowMagicRepairs { get; set; }
+        public bool BowDrawback { get; set; }
 
         // [Map]
         public int AutomapNumberOfDungeons { get; set; }
+        public bool AutomapDisableMicroMap { get; set; }
+        public bool AutomapRememberSliceLevel { get; set; }
+        public bool AutomapAlwaysMaxOutSliceLevel { get; set; }
         public float ExteriorMapDefaultZoomLevel { get; set; }
         public bool ExteriorMapResetZoomLevelOnNewLocation { get; set; }
 
@@ -181,6 +193,8 @@ namespace DaggerfallWorkshop
 
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
+            RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
+            UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
@@ -190,6 +204,10 @@ namespace DaggerfallWorkshop
             UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
+            ExteriorLightShadows = GetBool(sectionVideo, "ExteriorLightShadows");
+            DungeonShadowDistance = GetFloat(sectionVideo, "DungeonShadowDistance", 0.1f, 50.0f);
+            InteriorShadowDistance = GetFloat(sectionVideo, "InteriorShadowDistance", 0.1f, 50.0f);
+            ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
@@ -221,13 +239,15 @@ namespace DaggerfallWorkshop
             SDFFontRendering = GetBool(sectionGUI, "SDFFontRendering");
             EnableGeographicBackgrounds = GetBool(sectionGUI, "EnableGeographicBackgrounds");
             EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
+            DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
+            IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
 
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
-            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
+            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
             MoveSpeedAcceleration = GetFloat(sectionControls, "MoveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration);
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
@@ -239,8 +259,12 @@ namespace DaggerfallWorkshop
             MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
             InstantRepairs = GetBool(sectionControls, "InstantRepairs");
             AllowMagicRepairs = GetBool(sectionControls, "AllowMagicRepairs");
+            BowDrawback = GetBool(sectionControls, "BowDrawback");
 
             AutomapNumberOfDungeons = GetInt(sectionMap, "AutomapNumberOfDungeons", 0, 100);
+            AutomapDisableMicroMap = GetBool(sectionMap, "AutomapDisableMicroMap");
+            AutomapRememberSliceLevel = GetBool(sectionMap, "AutomapRememberSliceLevel");
+            AutomapAlwaysMaxOutSliceLevel = GetBool(sectionMap, "AutomapAlwaysMaxOutSliceLevel");            
             ExteriorMapDefaultZoomLevel = GetFloat(sectionMap, "ExteriorMapDefaultZoomLevel", 4, 31);
             ExteriorMapResetZoomLevelOnNewLocation = GetBool(sectionMap, "ExteriorMapResetZoomLevelOnNewLocation");
 
@@ -279,6 +303,8 @@ namespace DaggerfallWorkshop
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
+            SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
+            SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
@@ -288,6 +314,10 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
+            SetBool(sectionVideo, "ExteriorLightShadows", ExteriorLightShadows);
+            SetFloat(sectionVideo, "DungeonShadowDistance", DungeonShadowDistance);
+            SetFloat(sectionVideo, "InteriorShadowDistance", InteriorShadowDistance);
+            SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
@@ -320,6 +350,8 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "SDFFontRendering", SDFFontRendering);
             SetBool(sectionGUI, "EnableGeographicBackgrounds", EnableGeographicBackgrounds);
             SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
+            SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
+            SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
@@ -338,6 +370,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionControls, "MusicVolume", MusicVolume);
             SetBool(sectionControls, "InstantRepairs", InstantRepairs);
             SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
+            SetBool(sectionControls, "BowDrawback", BowDrawback);
 
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);

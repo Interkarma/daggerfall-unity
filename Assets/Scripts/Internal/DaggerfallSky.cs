@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop
         public bool ShowStars = true;                                       // Draw stars onto night skies
         public Color SkyTintColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);      // Modulates output texture colour
         public float SkyColorScale = 1.0f;                                  // Scales sky color brighter or darker
+        public AnimationCurve SkyCurve;                                     // Animation curve of sky
         public WeatherStyle WeatherStyle = WeatherStyle.Normal;             // Style of weather for texture changes
 
         const int myCameraDepth = -3;           // Relative camera depth to main camera
@@ -84,6 +85,11 @@ namespace DaggerfallWorkshop
         }
 
         #endregion
+
+        public Camera SkyCamera
+        {
+            get { return myCamera; }
+        }
 
         void Start()
         {
@@ -364,13 +370,19 @@ namespace DaggerfallWorkshop
             else
                 showNightSky = true;
 
-            // Adjust sky frame by time of day
+            // Adjust sky frame by time of day curve
+            // Classic Daggerfall does not evenly spread frames across the day
+            // Morning ramp-up bewteen 6am-8am and afternoon ramp-down between 4pm-6pm happens relatively quickly
+            // Sky animation then slows down between 10am-2pm during brightest hours of day
             if (!IsNight)
             {
-                float minute = dfUnity.WorldTime.Now.MinuteOfDay - DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
-                float divisor = ((DaggerfallDateTime.DuskHour - DaggerfallDateTime.DawnHour) * DaggerfallDateTime.MinutesPerHour) / 64f;   // Total of 64 steps in daytime cycle
-                float frame = minute / divisor;
-                SkyFrame = (int)frame;
+                // Get value 0-1 for dawn through dusk
+                float dawn = DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
+                float dayRange = DaggerfallDateTime.DuskHour * DaggerfallDateTime.MinutesPerHour - dawn;
+                float time = (dfUnity.WorldTime.Now.MinuteOfDay - dawn) / dayRange;
+
+                // Set sky frame based on curve
+                SkyFrame = (int)(SkyCurve.Evaluate(time) * 64);
             }
             else
             {

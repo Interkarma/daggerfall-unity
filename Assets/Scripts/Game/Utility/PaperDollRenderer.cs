@@ -18,14 +18,14 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
     /// <summary>
-    /// Experimental class to render paper doll at higher pixel densities using custom layer flags.
-    /// Ideally this will lead to support for texture replacements of body and items.
-    /// Starting with problems of rendering while managing stacking, masking, and picking.
-    /// Nowhere near complete and may be replaced with a different approach later.
+    /// Render paper doll at higher pixel densities using custom layer flags.
+    /// Maintains layout data to sample equip index of item texture under mouse.
+    /// Replacement paper doll textures must be readable.
     /// </summary>
     public class PaperDollRenderer
     {
@@ -37,14 +37,24 @@ namespace DaggerfallWorkshop.Game.Utility
 
         const string paperDollMaterialName = "Daggerfall/PaperDoll";
 
-        Material paperDollMaterial = null;
+        readonly Material paperDollMaterial;
         RenderTexture target = null;
         Texture2D paperDollTexture = null;
-        DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
+        readonly DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
+
+        float scale;
+        readonly List<ItemElement> itemLayout = new List<ItemElement>();
 
         #endregion
 
-        #region Enums
+        #region Structs & Enums
+
+        struct ItemElement
+        {
+            public DaggerfallUnityItem item;
+            public Rect rect;
+            public Texture2D texture;
+        }
 
         /// <summary>
         /// These flags determine which parts of paper doll build are rendered into output texture.
@@ -113,8 +123,10 @@ namespace DaggerfallWorkshop.Game.Utility
             if (scale < 1)
                 scale = 1;
 
+            this.scale = scale;
+
             // Create scaled render texture
-            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 16);
+            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 0);
 
             // Create output texture
             paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
@@ -128,42 +140,102 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <param name="playerEntity">Player entity to use for paper doll construction. Use null for live player entity.</param>
         public void Refresh(LayerFlags layers = LayerFlags.All, PlayerEntity playerEntity = null)
         {
+            // Clear current item layout
+            itemLayout.Clear();
+
             // Get current player entity if one not provided
             if (playerEntity == null)
                 playerEntity = GameManager.Instance.PlayerEntity;
 
+            // Racial override can suppress body and items
+            bool suppressBody = false;
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressBody = racialOverride.SuppressPaperDollBodyAndItems;
+
             // Start rendering to paper doll target
             RenderTexture oldRT = RenderTexture.active;
             RenderTexture.active = target;
+            GL.PushMatrix();
+            GL.LoadPixelMatrix(0, target.width, target.height, 0);
 
             // Clear render target
             GL.Clear(true, true, Color.clear);
 
-            // Cloak interior
-            if ((layers & LayerFlags.CloakInterior) == LayerFlags.CloakInterior)
-                BlitCloakInterior(playerEntity);
+            if (!suppressBody)
+            {
+                // Cloak interior
+                if ((layers & LayerFlags.CloakInterior) == LayerFlags.CloakInterior)
+                    BlitCloakInterior(playerEntity);
 
-            // Body
-            if ((layers & LayerFlags.Body) == LayerFlags.Body)
-                BlitBody(playerEntity);
+                // Body
+                if ((layers & LayerFlags.Body) == LayerFlags.Body)
+                    BlitBody(playerEntity);
 
-            // Items
-            if ((layers & LayerFlags.Items) == LayerFlags.Items)
-                BlitItems(playerEntity);
+                // Items
+                if ((layers & LayerFlags.Items) == LayerFlags.Items)
+                    BlitItems(playerEntity);
+            }
 
             // Copy render to new output
             paperDollTexture.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);
             paperDollTexture.Apply();
 
             // Switch back to previous render target
+            GL.PopMatrix();
             RenderTexture.active = oldRT;
+        }
+
+        /// <summary>
+        /// Gets equip index at position. Must be in unscaled PaperDoll native coordinates.
+        /// </summary>
+        /// <param name="x">X position to sample.</param>
+        /// <param name="y">Y position to sample.</param>
+        /// <returns>Equip index or 0xff if point empty.</returns>
+        public byte GetEquipIndex(int x, int y)
+        {
+            // Source mouse position is in classic coordinates
+            // Item elements are in scaled coordinates
+            // First scale mouse point to match scaled coordinates
+            float scaleX = target.width / (float)paperDollWidth;
+            float scaleY = target.height / (float)paperDollHeight;
+            Vector2 point = new Vector2(x * scaleX, y * scaleY);
+
+            // Look for item texture pixel under mouse position
+            // Iterating backwards over list as higher draw order added last
+            // Return item equip slot index of first non-transparent pixel found under mouse
+            for (int i = itemLayout.Count - 1; i >= 0; i--)
+            {
+                ItemElement element = itemLayout[i];
+                if (element.item == null || element.texture == null)
+                    continue;
+
+                if (element.rect.Contains(point))
+                {
+                    // Get relative coordinates inside of item in 0-1 domain
+                    float u = (point.x - element.rect.x) / element.rect.width;
+                    float v = (point.y - element.rect.y) / element.rect.height;
+
+                    // Read pixel colour at image coordinates inside of texture
+                    // Remembering that Unity texture origin is bottom-left
+                    int imageX = (int)(element.texture.width * u);
+                    int imageY = (int)(element.texture.height * v);
+                    Color color = element.texture.GetPixel(imageX, element.texture.height - 1 - imageY);
+
+                    // Return equip slot index if found, otherwise keep on searching down stack
+                    if (color.a != 0)
+                        return (byte)element.item.EquipSlot;
+                }
+            }
+
+            return 0xff;
         }
 
         #endregion
 
         #region Common Rendering Methods
 
-        void DrawTexture(ImageData srcImage, bool item = false)
+        void DrawTexture(ImageData srcImage, DaggerfallUnityItem item = null)
         {
             DrawTexture(
                 srcImage,
@@ -172,15 +244,15 @@ namespace DaggerfallWorkshop.Game.Utility
                 item);
         }
 
-        void DrawTexture(ImageData srcImage, Rect srcRect, Rect targetRect, bool item = false)
+        void DrawTexture(ImageData srcImage, Rect srcRect, Rect targetRect, DaggerfallUnityItem item = null)
         {
             // Calculate image position relative to origin
             int posX = (int)targetRect.xMin - paperDollOrigin.X;
             int posY = (int)targetRect.yMin - paperDollOrigin.Y;
 
-            // Scaled coordinates and dimensions must be relative to screen dimensions
-            float scaleX = Screen.width / (float)paperDollWidth;
-            float scaleY = Screen.height / (float)paperDollHeight;
+            // Scale to paper doll render texture
+            float scaleX = target.width / (float)paperDollWidth;
+            float scaleY = target.height / (float)paperDollHeight;
 
             // Get target rect
             Rect screenRect = new Rect(
@@ -189,8 +261,11 @@ namespace DaggerfallWorkshop.Game.Utility
                 targetRect.width * scaleX,
                 targetRect.height * scaleY);
 
+            // Allow for some adjustment so artist can finetune how their new item images should be positioned.
+            TextureReplacement.OverridePaperdollItemRect(item, srcImage, scale, ref screenRect);
+
             // Draw with custom shader for paper doll item masking
-            if (item)
+            if (item != null)
             {
                 paperDollMaterial.SetTexture("_MaskTex", srcImage.maskTexture);
                 Graphics.DrawTexture(screenRect, srcImage.texture, srcRect, 0, 0, 0, 0, paperDollMaterial);
@@ -198,6 +273,16 @@ namespace DaggerfallWorkshop.Game.Utility
             else
             {
                 Graphics.DrawTexture(screenRect, srcImage.texture, srcRect, 0, 0, 0, 0);
+            }
+
+            // Store layout element for mouse picking
+            if (item != null)
+            {
+                ItemElement element = new ItemElement();
+                element.item = item;
+                element.rect = screenRect;
+                element.texture = srcImage.texture;
+                itemLayout.Add(element);
             }
         }
 
@@ -297,7 +382,7 @@ namespace DaggerfallWorkshop.Game.Utility
             if (cloak2 != null)
             {
                 ImageData interior2 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak2);
-                DrawTexture(interior2);
+                DrawTexture(interior2, cloak2);
                 return;
             }
 
@@ -306,7 +391,7 @@ namespace DaggerfallWorkshop.Game.Utility
             if (cloak1 != null)
             {
                 ImageData interior1 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak1);
-                DrawTexture(interior1);
+                DrawTexture(interior1, cloak1);
             }
         }
 
@@ -341,7 +426,7 @@ namespace DaggerfallWorkshop.Game.Utility
         void BlitItem(DaggerfallUnityItem item)
         {
             ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, true, true);
-            DrawTexture(source, true);
+            DrawTexture(source, item);
         }
 
         #endregion

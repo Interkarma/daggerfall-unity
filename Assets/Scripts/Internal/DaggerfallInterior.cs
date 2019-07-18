@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Nystul, Hazelnut
+// Contributors:    Nystul, Hazelnut, Numidium
 // 
 // Notes:
 //
@@ -199,6 +199,46 @@ namespace DaggerfallWorkshop
             AddModels(mapBD);
 
             return true;
+        }
+
+        public bool FindClosestInteriorDoor(Vector3 playerPos, out Vector3 closestDoorPositionOut, out Vector3 closestDoorNormalOut)
+        {
+            closestDoorPositionOut = closestDoorNormalOut = Vector3.zero;
+            DaggerfallStaticDoors interiorDoors = GetComponent<DaggerfallStaticDoors>();
+            if (!interiorDoors)
+                return false;
+
+            int doorIndex;
+            if (interiorDoors.FindClosestDoorToPlayer(playerPos, -1, out closestDoorPositionOut, out doorIndex))
+            {
+                closestDoorNormalOut = interiorDoors.GetDoorNormal(doorIndex);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Finds the interior door that is closest to ground level.
+        /// </summary>
+        /// <param name="lowestDoorPositionOut">Position of lowest door in scene.</param>
+        /// <param name="lowestDoorNormalOut">Normal vector of lowest door in scene.</param>
+        /// <returns>True if successful.</returns>
+        public bool FindLowestInteriorDoor(out Vector3 lowestDoorPositionOut, out Vector3 lowestDoorNormalOut)
+        {
+            lowestDoorPositionOut = lowestDoorNormalOut = Vector3.zero;
+            DaggerfallStaticDoors interiorDoors = GetComponent<DaggerfallStaticDoors>();
+            if (!interiorDoors)
+                return false;
+
+            int doorIndex;
+            if (interiorDoors.FindLowestDoor(-1, out lowestDoorPositionOut, out doorIndex))
+            {
+                lowestDoorNormalOut = interiorDoors.GetDoorNormal(doorIndex);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -844,12 +884,6 @@ namespace DaggerfallWorkshop
                 }
                 // Disable people if this is TG/DB house and player is not a member
                 else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && !isMemberOfBuildingGuild)
-                {
-                    go.SetActive(false);
-                }
-                // Disable people if they are TG spymaster, but not in a legit TG house (TODO: spot any other instances for TG/DB)
-                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID == 0 &&
-                         npc.Data.factionID == (int)GuildNpcServices.TG_Spymaster)
                 {
                     go.SetActive(false);
                 }

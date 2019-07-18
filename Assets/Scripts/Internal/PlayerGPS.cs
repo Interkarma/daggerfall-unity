@@ -72,6 +72,8 @@ namespace DaggerfallWorkshop
 
         Dictionary<int, DiscoveredLocation> discoveredLocations = new Dictionary<int, DiscoveredLocation>();
 
+        Vector3 lastFramePosition;
+
         #endregion
 
         #region Structs & Enums
@@ -95,6 +97,7 @@ namespace DaggerfallWorkshop
             public int factionID;
             public int quality;
             public DFLocation.BuildingTypes buildingType;
+            public int lastLockpickAttempt;
         }
 
         public struct NearbyObject
@@ -312,6 +315,19 @@ namespace DaggerfallWorkshop
                 UpdateNearbyObjects();
                 nearbyObjectsUpdateTimer = 0;
             }
+
+            // Snap back to physical world boundary to prevent player running off edge of world
+            // Setting to approx. 10000 inches (254 metres) in from edge so end of world not so visible
+            if (WorldX < 10000 ||       // West
+                WorldZ > 16370000 ||    // North
+                WorldZ < 10000 ||       // South
+                WorldX > 32750000)      // East
+            {    
+                gameObject.transform.position = lastFramePosition;
+            }
+            
+            // Record player's last frame position
+            lastFramePosition = gameObject.transform.position;
         }
 
         #endregion
@@ -356,34 +372,15 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets NameHelper.BankType in player's current region.
-        /// In practice this will always be Redguard/Breton/Nord.
-        /// Supporting a few other name banks for possible diversity later.
+        /// In practice this will always be Redguard/Breton.
+        /// Supporting other name banks for possible diversity later.
         /// </summary>
         public NameHelper.BankTypes GetNameBankOfCurrentRegion()
         {
-            DFLocation.ClimateSettings settings = MapsFile.GetWorldClimateSettings(climateSettings.WorldClimate);
-            NameHelper.BankTypes bankType;
-            switch (settings.Names)
-            {
-                case FactionFile.FactionRaces.Redguard:
-                    bankType = NameHelper.BankTypes.Redguard;
-                    break;
-                case FactionFile.FactionRaces.Nord:
-                    bankType = NameHelper.BankTypes.Nord;
-                    break;
-                case FactionFile.FactionRaces.DarkElf:
-                    bankType = NameHelper.BankTypes.DarkElf;
-                    break;
-                case FactionFile.FactionRaces.WoodElf:
-                    bankType = NameHelper.BankTypes.WoodElf;
-                    break;
-                default:
-                case FactionFile.FactionRaces.Breton:
-                    bankType = NameHelper.BankTypes.Breton;
-                    break;
-            }
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                return (NameHelper.BankTypes) MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
 
-            return bankType;
+            return NameHelper.BankTypes.Breton;
         }
 
         /// <summary>
@@ -433,22 +430,17 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Gets the factionID of player's current region.
         /// </summary>
-        int GetCurrentRegionFaction()
+        public int GetCurrentRegionFaction()
         {
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, -1, CurrentRegionIndex);
-
-            // Should always find a single region
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetCurrentRegionFaction() did not find exactly 1 match.");
-
-            return factions[0].id;
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(CurrentRegionIndex, out factionData);
+            return factionData.id;
         }
 
         /// <summary>
         /// Gets the factionID of noble court in player's current region 
         /// </summary>
-        int GetCourtOfCurrentRegion()
+        public int GetCourtOfCurrentRegion()
         {
             // Find court in current region
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
@@ -957,7 +949,7 @@ namespace DaggerfallWorkshop
             if (onlyIfResidence && !RMBLayout.IsResidence(db.buildingType))
                 return;
 
-            if (dl.discoveredBuildings.ContainsKey(db.buildingKey))
+            if (dl.discoveredBuildings != null && dl.discoveredBuildings.ContainsKey(db.buildingKey))
                 dl.discoveredBuildings.Remove(db.buildingKey);
         }
 
@@ -1018,14 +1010,59 @@ namespace DaggerfallWorkshop
                 return false;
 
             // Get discovery data for building
-            discoveredBuildingOut = dl.discoveredBuildings[buildingKey];
-
-            // Check if name should be overridden (owned house / quest site)
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
-                discoveredBuildingOut.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
+            bool discovered = GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut);
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets skill value of last lockpick attempt on this building in current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        public int GetLastLockpickAttempt(int buildingKey)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (!GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+                return 0;
+
+            return discoveredBuilding.lastLockpickAttempt;
+        }
+
+        /// <summary>
+        /// Sets skill value at time of last lockpicking attempt after failure in current location.
+        /// Player must increase skill past this value before they can try again.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="skillValue">Skill value at time attempt failed.</param>
+        public void SetLastLockpickAttempt(int buildingKey, int skillValue)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (!GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+                return;
+
+            discoveredBuilding.lastLockpickAttempt = skillValue;
+            UpdateDiscoveredBuilding(discoveredBuilding);
+        }
+
+        /// <summary>
+        /// Updates discovered building data in current location.
+        /// </summary>
+        /// <param name="discoveredBuilding">Updated data to write back to live discovery database.</param>
+        void UpdateDiscoveredBuilding(DiscoveredBuilding discoveredBuildingIn)
+        {
+            // Must have discovered building
+            if (!HasDiscoveredBuilding(discoveredBuildingIn.buildingKey))
+                return;
+
+            // Get the location discovery for this mapID
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            if (dl.discoveredBuildings == null)
+                return;
+
+            // Replace discovery data for building
+            dl.discoveredBuildings.Remove(discoveredBuildingIn.buildingKey);
+            dl.discoveredBuildings.Add(discoveredBuildingIn.buildingKey, discoveredBuildingIn);
         }
 
         /// <summary>
@@ -1096,6 +1133,8 @@ namespace DaggerfallWorkshop
         /// Does not change discovery state for building.
         /// </summary>
         /// <param name="buildingKey">Key of building to query.</param>
+        /// <param name="buildingDiscoveryData">[out] building discovery data of queried building</param>
+        /// <returns>True if building discovered, false if building not discovered.</returns>
         bool GetBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
         {
             buildingDiscoveryData = new DiscoveredBuilding();
@@ -1154,6 +1193,11 @@ namespace DaggerfallWorkshop
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;
             buildingDiscoveryData.buildingType = buildingSummary.BuildingType;
+
+            // Check if name should be overridden (owned house / quest site)
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
+                buildingDiscoveryData.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
 
             return true;
         }

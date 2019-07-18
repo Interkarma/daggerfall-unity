@@ -547,8 +547,11 @@ namespace DaggerfallWorkshop
                 return;
             }
             GameManager.Instance.PlayerMotor.FreezeMotor = 0.5f;
+
+            RaiseOnTeleportActionEvent(thisAction.gameObject, thisAction.NextObject);
+
             playerObject.transform.position = thisAction.NextObject.transform.position;
-            playerObject.transform.rotation = thisAction.NextObject.transform.rotation;
+            playerObject.transform.rotation = thisAction.NextObject.transform.rotation;            
         }
 
         /// <summary>
@@ -841,6 +844,19 @@ namespace DaggerfallWorkshop
                     GameManager.Instance.MakeEnemiesHostile();
                 }
             }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnMapPixelChanged
+        public delegate void OnTeleportActionEventHandler(GameObject triggerObj, GameObject nextObj);
+        public static event OnTeleportActionEventHandler OnTeleportAction;
+        protected static void RaiseOnTeleportActionEvent(GameObject triggerObj, GameObject nextObj)
+        {
+            if (OnTeleportAction != null)
+                OnTeleportAction(triggerObj, nextObj);
         }
 
         #endregion

@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                 // Need to load some other part of the world again - player could be anywhere
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
-                playerEnterExit.RestorePositionHelper(anchorPosition, false);
+                playerEnterExit.RestorePositionHelper(anchorPosition, false, true);
 
                 // Restore building summary data
                 if (anchorPosition.insideBuilding)
@@ -211,7 +211,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Compare building key
                 if (anchorPosition.buildingDiscoveryData.buildingKey == playerEnterExit.BuildingDiscoveryData.buildingKey)
-                    return true;
+                {
+                    // Also compare map pixel, in case we're unlucky https://forums.dfworkshop.net/viewtopic.php?f=24&t=2018
+                    DaggerfallConnect.Utility.DFPosition anchorMapPixel = DaggerfallConnect.Arena2.MapsFile.WorldCoordToMapPixel(anchorPosition.worldPosX, anchorPosition.worldPosZ);
+                    DaggerfallConnect.Utility.DFPosition playerMapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                    if (anchorMapPixel.X == playerMapPixel.X && anchorMapPixel.Y == playerMapPixel.Y)
+                        return true;
+                }
             }
             else if (playerEnterExit.IsPlayerInsideDungeon && anchorPosition.insideDungeon)
             {

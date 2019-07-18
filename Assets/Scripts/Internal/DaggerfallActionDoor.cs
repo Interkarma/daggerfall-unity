@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
@@ -127,33 +128,6 @@ namespace DaggerfallWorkshop
                 Open(duration, ignoreLocks);
             else
                 Close(duration);
-        }
-
-        public void LookAtLock()
-        {
-            if (CurrentLockValue < 20)
-            {
-                PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
-                // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
-                // but the difficulty text is always based on the exterior function.
-                // DF Unity doesn't have exterior locked doors yet, so the below uses the interior function.
-                int chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking));
-
-                if (chance >= 30)
-                    if (chance >= 35)
-                        if (chance >= 95)
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[9]);
-                        else if (chance >= 45)
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
-                        else
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance3);
-                    else
-                        Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance2);
-                else
-                    Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance1);
-            }
-            else
-                Game.DaggerfallUI.SetMidScreenText(HardStrings.magicLock);
         }
 
         public void AttemptLockpicking()
@@ -281,7 +255,7 @@ namespace DaggerfallWorkshop
             if ((IsLocked && !ignoreLocks) || IsOpen)
             {
                 if(!IsOpen)
-                    LookAtLock();
+                    PlayerActivate.LookAtInteriorLock(CurrentLockValue);
                 return;
             }
 

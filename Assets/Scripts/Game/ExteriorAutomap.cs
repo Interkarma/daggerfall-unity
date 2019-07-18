@@ -156,6 +156,8 @@ namespace DaggerfallWorkshop.Game
         int layoutWidth;
         int layoutHeight;
 
+        bool isCustomLocation;
+
         private const float layoutMultiplier = 1.0f;
 
         private BlockLayout[] exteriorLayout = null;
@@ -191,7 +193,7 @@ namespace DaggerfallWorkshop.Game
 
         public BlockLayout[] ExteriorLayout
         {
-            get { if (exteriorLayout == null) { loadAndCreateLocationExteriorAutomap(); }; return (exteriorLayout); }
+            get { if (exteriorLayout == null) { LoadAndCreateLocationExteriorAutomap(); }; return (exteriorLayout); }
         }
 
         public int LocationWidth
@@ -254,29 +256,29 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
-        public void updateAutomapStateOnWindowPush()
+        public void UpdateAutomapStateOnWindowPush()
         {
             // create camera (if not present) that will render automap level geometry
-            createExteriorAutomapCamera();
+            CreateExteriorAutomapCamera();
 
             // restore camera rotation and zoom
             gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
             //cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
 
             // recreate building nameplates (since a discovery could have happened since exterior automap has been opened last time)
-            createBuildingNameplates(location);
+            CreateBuildingNameplates(location);
 
             // focus player position
             cameraExteriorAutomap.transform.position = GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
 
             // update player marker position and rotation
-            updatePlayerMarker();
+            UpdatePlayerMarker();
         }
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
-        public void updateAutomapStateOnWindowPop()
+        public void UpdateAutomapStateOnWindowPop()
         {
             cameraTransformRotationSaved = gameObjectCameraExteriorAutomap.transform.rotation;
             //cameraOrthographicSizeSaved = cameraExteriorAutomap.orthographicSize;
@@ -288,7 +290,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public void switchToNextExteriorAutomapViewMode()
+        public void SwitchToNextExteriorAutomapViewMode()
         {
             int numberOfExteriorAutomapViewModes = Enum.GetNames(typeof(ExteriorAutomapViewMode)).Length;
             currentExteriorAutomapViewMode++;
@@ -298,36 +300,36 @@ namespace DaggerfallWorkshop.Game
             {
                 default:
                 case ExteriorAutomapViewMode.Original:
-                    switchToExteriorAutomapViewModeOriginal();
+                    SwitchToExteriorAutomapViewModeOriginal();
                     break;
                 case ExteriorAutomapViewMode.Extra:
-                    switchToExteriorAutomapViewModeExtra();
+                    SwitchToExteriorAutomapViewModeExtra();
                     break;
                 case ExteriorAutomapViewMode.All:
-                    switchToExteriorAutomapViewModeAll();
+                    SwitchToExteriorAutomapViewModeAll();
                     break;
             }
         }
 
-        public void switchToExteriorAutomapViewModeOriginal()
+        public void SwitchToExteriorAutomapViewModeOriginal()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original;
-            createExteriorLayoutTexture(location, false, true, false);
-            assignExteriorLayoutTextureToCustomCanvas();
+            CreateExteriorLayoutTexture(location, false, true, false);
+            AssignExteriorLayoutTextureToCustomCanvas();
         }
 
-        public void switchToExteriorAutomapViewModeExtra()
+        public void SwitchToExteriorAutomapViewModeExtra()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Extra;
-            createExteriorLayoutTexture(location, true, true, false);
-            assignExteriorLayoutTextureToCustomCanvas();
+            CreateExteriorLayoutTexture(location, true, true, false);
+            AssignExteriorLayoutTextureToCustomCanvas();
         }
 
-        public void switchToExteriorAutomapViewModeAll()
+        public void SwitchToExteriorAutomapViewModeAll()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.All;
-            createExteriorLayoutTexture(location, true, false, false);
-            assignExteriorLayoutTextureToCustomCanvas();
+            CreateExteriorLayoutTexture(location, true, false, false);
+            AssignExteriorLayoutTextureToCustomCanvas();
         }
 
         public enum LocationBorder
@@ -338,7 +340,7 @@ namespace DaggerfallWorkshop.Game
             Right = 3
         };
 
-        public Vector3 getLocationBorderPos(LocationBorder locationBorder)
+        public Vector3 GetLocationBorderPos(LocationBorder locationBorder)
         {
             int locationWidth = (int)(layoutWidth * layoutMultiplier);
             int locationHeight = (int)(layoutHeight * layoutMultiplier);
@@ -361,7 +363,7 @@ namespace DaggerfallWorkshop.Game
             return (pos);
         }
 
-        public void rotateBuildingNameplates(float angle)
+        public void RotateBuildingNameplates(float angle)
         {
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
@@ -379,7 +381,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public void resetRotationBuildingNameplates()
+        public void ResetRotationBuildingNameplates()
         {
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
@@ -521,7 +523,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// creates the exterior automap camera if not present and sets camera default settings, registers camera to compass
         /// </summary>
-        private void createExteriorAutomapCamera()
+        private void CreateExteriorAutomapCamera()
         {
             if (!cameraExteriorAutomap)
             {
@@ -595,7 +597,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// creates the quad that is used for exterior automap drawing
         /// </summary>        
-        private void createCustomCanvasForExteriorAutomap()
+        private void CreateCustomCanvasForExteriorAutomap()
         {
             if (gameobjectCustomCanvas != null)
             {
@@ -621,7 +623,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectCustomCanvas.transform.SetParent(gameobjectExteriorAutomap.transform);
         }
 
-        private void assignExteriorLayoutTextureToCustomCanvas()
+        private void AssignExteriorLayoutTextureToCustomCanvas()
         {
             if (gameobjectCustomCanvas != null)
             {
@@ -630,9 +632,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void createBuildingNameplates(DFLocation location)
+        private void CreateBuildingNameplates(DFLocation location)
         {
-            deleteBuildingNameplates();
+            DeleteBuildingNameplates();
 
             List<BuildingNameplate> buildingNameplatesList = new List<BuildingNameplate>();
 
@@ -642,8 +644,7 @@ namespace DaggerfallWorkshop.Game
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
-            int height = location.Exterior.ExteriorData.Height;            
-          
+            int height = location.Exterior.ExteriorData.Height;
             int uniqueIndex = 0;
 
             for (int y = 0; y < height; y++)
@@ -816,10 +817,10 @@ namespace DaggerfallWorkshop.Game
             buildingNameplatesList.Clear();
 
             if (cameraExteriorAutomap != null)
-                rotateBuildingNameplates(cameraExteriorAutomap.transform.rotation.eulerAngles.y);
+                RotateBuildingNameplates(cameraExteriorAutomap.transform.rotation.eulerAngles.y);
         }
 
-        private void deleteBuildingNameplates()
+        private void DeleteBuildingNameplates()
         {
             if (buildingNameplates != null)
             {
@@ -855,7 +856,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="ySize"> the computed y size (vertical in local nameplate coordinate space) that needs to be between nameplates' anchor points so that no collision happens between the two </param>
         /// <param name="distanceVertical"> the distance (vertical in local nameplate coordinate space) that needs to be added to make both nameplates not collide </param>
         /// <returns> returns true if nameplates with given offsets intersect/collide, otherwise false </returns>
-        private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 tryOffset1, BuildingNameplate nameplate2, Vector2 tryOffset2, out Vector2 vectorNameplate1VerticalOffset, out Vector2 vectorNameplate2VerticalOffset, out float ySize, out float distanceVertical)
+        private bool CheckIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 tryOffset1, BuildingNameplate nameplate2, Vector2 tryOffset2, out Vector2 vectorNameplate1VerticalOffset, out Vector2 vectorNameplate2VerticalOffset, out float ySize, out float distanceVertical)
         {
             //Vector2 anchorPoint1 = nameplate1.textLabel.Position;
             ////anchorPoint1.y += nameplate1.height * 0.5f;
@@ -946,11 +947,11 @@ namespace DaggerfallWorkshop.Game
         /// <param name="nameplate2"> the second nameplate as part of the check </param>
         /// <param name="tryOffset2"> offset in world coordinates for the second nameplate to be tried/tested (without a former computed nameplate offset, since this is taken into account automatically) </param>
         /// <returns> returns true if nameplates with given offsets intersect/collide, otherwise false </returns>
-        private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 tryOffset1, BuildingNameplate nameplate2, Vector2 tryOffset2)
+        private bool CheckIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 tryOffset1, BuildingNameplate nameplate2, Vector2 tryOffset2)
         {
             Vector2 vectorNameplate1VerticalOffset, vectorNameplate2VerticalOffset;
             float ySize, distanceVertical;
-            return (checkIntersectionOfNameplates(nameplate1, tryOffset1, nameplate2, tryOffset2, out vectorNameplate1VerticalOffset, out vectorNameplate2VerticalOffset, out ySize, out distanceVertical));
+            return (CheckIntersectionOfNameplates(nameplate1, tryOffset1, nameplate2, tryOffset2, out vectorNameplate1VerticalOffset, out vectorNameplate2VerticalOffset, out ySize, out distanceVertical));
         }
 
         /// <summary>
@@ -962,7 +963,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="onlyCheckUnplaced"> if true only unplaced nameplates are considered in this check </param>
         /// <param name="skipNameplate"> an optional nameplate that can be skipped in the check </param>
         /// <returns> returns true if the nameplate does not collide on the test position </returns>
-        private bool checkIntersectionOffsetNameplateAgainstOthers(BuildingNameplate nameplate, Vector2 tryOffset, bool onlyCheckPlaced = false, bool onlyCheckUnplaced = false, BuildingNameplate? skipNameplate = null)
+        private bool CheckIntersectionOffsetNameplateAgainstOthers(BuildingNameplate nameplate, Vector2 tryOffset, bool onlyCheckPlaced = false, bool onlyCheckUnplaced = false, BuildingNameplate? skipNameplate = null)
         {
             bool check = false;
             for (int i=0; i < buildingNameplates.Length; i++)
@@ -976,7 +977,7 @@ namespace DaggerfallWorkshop.Game
                     continue;
                 if (onlyCheckUnplaced && otherNameplate.placed)
                     continue;
-                check |= checkIntersectionOfNameplates(nameplate, tryOffset, otherNameplate, Vector2.zero);
+                check |= CheckIntersectionOfNameplates(nameplate, tryOffset, otherNameplate, Vector2.zero);
                 if (check)
                     break;                
             }
@@ -991,7 +992,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="onlyCountPlaced"> if true only already placed nameplates are taken into account when counting </param>
         /// <param name="onlyCountUnplaced"> if true only unplaced nameplates are taken into account when counting </param>
         /// <returns> the number of collisions counted </returns>
-        private int numberOfCollisionsNameplatesWithOffsetNameplate(BuildingNameplate nameplate, Vector2 tryOffset, bool onlyCountPlaced, bool onlyCountUnplaced = false)
+        private int GetNumberOfCollisionsNameplatesWithOffsetNameplate(BuildingNameplate nameplate, Vector2 tryOffset, bool onlyCountPlaced, bool onlyCountUnplaced = false)
         {
             int numCollisions = 0;
             for (int i = 0; i < buildingNameplates.Length; i++)
@@ -1003,7 +1004,7 @@ namespace DaggerfallWorkshop.Game
                     continue;
                 if (onlyCountUnplaced && otherNameplate.placed)
                     continue;
-                if (checkIntersectionOfNameplates(nameplate, tryOffset, otherNameplate, Vector2.zero))
+                if (CheckIntersectionOfNameplates(nameplate, tryOffset, otherNameplate, Vector2.zero))
                 {
                     numCollisions++;
                 }
@@ -1016,7 +1017,7 @@ namespace DaggerfallWorkshop.Game
         /// note: since it is expensive to compute collision for all nameplates this should only be done when necessary (use parameter recomputeNumberOfCollision to enable or disable recomputing)
         /// </summary>
         /// <param name="recomputeNumberOfCollision"> if true recomputes the number of collisions </param>
-        private void computeAndPlaceZeroCollisionsNameplates(bool recomputeNumberOfCollision = true)
+        private void ComputeAndPlaceZeroCollisionsNameplates(bool recomputeNumberOfCollision = true)
         {
             // compute number of collisions for every nameplate and directly place those with numCollisionsDetected == 0
             for (int i = 0; i < buildingNameplates.Length; i++)
@@ -1024,7 +1025,7 @@ namespace DaggerfallWorkshop.Game
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
                 if (recomputeNumberOfCollision)
                 {
-                    buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, Vector2.zero, false, false);
+                    buildingNameplate.numCollisionsDetected = GetNumberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, Vector2.zero, false, false);
                 }
                 if (buildingNameplate.numCollisionsDetected == 0)
                 {
@@ -1043,7 +1044,7 @@ namespace DaggerfallWorkshop.Game
                     if (buildingNameplate.placed)
                         continue;
                     Vector2 vectorNormalBiasNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.upperRightCorner);
-                    buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasNameplate, false, false);
+                    buildingNameplate.numCollisionsDetected = GetNumberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasNameplate, false, false);
                     if (buildingNameplate.numCollisionsDetected == 0)
                     {
                         buildingNameplate.offset = vectorNormalBiasNameplate;
@@ -1058,12 +1059,12 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// this is the main function for computing offsets of nameplates
         /// </summary>
-        public void computeNameplateOffsets()
+        public void ComputeNameplateOffsets()
         {
             for (int t = 0; t < 3; t++) // main loop max n times (then everything should either be solved or is considered unsolveable)
             {
                 // compute number of collisions for every nameplate and directly place those with numCollisionsDetected == 0
-                computeAndPlaceZeroCollisionsNameplates(t == 0); // only compute number of collisions for nameplates on first loop iteration, afterwards it is just updated in-place (performance reasons)
+                ComputeAndPlaceZeroCollisionsNameplates(t == 0); // only compute number of collisions for nameplates on first loop iteration, afterwards it is just updated in-place (performance reasons)
 
                 for (int i = 0; i < buildingNameplates.Length; i++)
                 {
@@ -1086,7 +1087,7 @@ namespace DaggerfallWorkshop.Game
                                 continue;
                             if (otherBuildingNameplate.placed) // don't check for already placed nameplates for collisions - they are fixed and are only used for checks when trying to place unplaced nameplates
                                 continue;
-                            if (checkIntersectionOfNameplates(first, Vector2.zero, otherBuildingNameplate, Vector2.zero, out vectorNameplate1VerticalOffset, out vectorNameplate2VerticalOffset, out ySize, out distanceVertical))
+                            if (CheckIntersectionOfNameplates(first, Vector2.zero, otherBuildingNameplate, Vector2.zero, out vectorNameplate1VerticalOffset, out vectorNameplate2VerticalOffset, out ySize, out distanceVertical))
                                 break; // if found break loop
                         }
 
@@ -1112,7 +1113,7 @@ namespace DaggerfallWorkshop.Game
                             //string stringNameplate2 = "";
 
                             // try to place both nameplates by shifting half amount to up/down - but check if they then don't collide with already placed nameplates
-                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
+                            if (!CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !CheckIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
                             {
                                 first.offset = vectorBiasNameplate1;
                                 first.placed = true;
@@ -1123,7 +1124,7 @@ namespace DaggerfallWorkshop.Game
                                 //stringNameplate2 = String.Format("{0} {1}", second.name, "v");
                             }
                             // if previous placement was not possible, try same with right-alligned first nameplate (if right-alligned nameplates are allowed)
-                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 + vectorNormalBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
+                            else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 + vectorNormalBiasNameplate1, true, false, second) && !CheckIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
                             {
                                 first.offset = vectorBiasNameplate1 + vectorNormalBiasNameplate1;
                                 first.placed = true;
@@ -1132,7 +1133,7 @@ namespace DaggerfallWorkshop.Game
                                 second.placed = true;
                             }
                             // if previous placement was not possible, try same with right-alligned second nameplate (if right-alligned nameplates are allowed)
-                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 + vectorNormalBiasNameplate2, true, false, first))
+                            else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !CheckIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 + vectorNormalBiasNameplate2, true, false, first))
                             {
                                 first.offset = vectorBiasNameplate1;
                                 first.placed = true;
@@ -1141,47 +1142,47 @@ namespace DaggerfallWorkshop.Game
                                 second.placed = true;
                             }
                             // if previous placement was not possible, try to place first (and maybe second) nameplate by shifting first the required amount away from second - but check if first doesn't collide with already placed nameplates
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f, true, false))
+                            else if (!CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f, true, false))
                             {
                                 first.offset = vectorBiasNameplate1 * 2.0f;
                                 first.placed = true;
                                 buildingNameplates[i] = first; // important so next check can succeed
                                 // then check if second doesn't collide with already placed nameplates if it is placed at its current place
-                                if (!checkIntersectionOffsetNameplateAgainstOthers(second, Vector2.zero, true, false))
+                                if (!CheckIntersectionOffsetNameplateAgainstOthers(second, Vector2.zero, true, false))
                                     second.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "_^");
                                 //stringNameplate2 = String.Format("{0} {1}", second.name, "!");
                             }
                             // if previous placement was not possible, try to place second (and maybe first) nameplate by shifting second the required amount away from first - but check if second doesn't collide with already placed nameplates
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 * 2.0f, true, false))
+                            else if (!CheckIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 * 2.0f, true, false))
                             {
                                 second.offset = vectorBiasNameplate2 * 2.0f;
                                 second.placed = true;
                                 buildingNameplates[j] = second; // important so next check can succeed
                                 // then check if first doesn't collide with already placed nameplates if it is placed at its current place
-                                if (!checkIntersectionOffsetNameplateAgainstOthers(first, Vector2.zero, true, false))
+                                if (!CheckIntersectionOffsetNameplateAgainstOthers(first, Vector2.zero, true, false))
                                     first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "_v");
                                 //stringNameplate2 = String.Format("{0} {1}", second.name, "!");
                             }
                             // if previous placement was not possible, try to place first (and maybe second) nameplate by right-aligning (if allowed) and shifting first the required amount away from second - but check if first doesn't collide with already placed nameplates
-                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
+                            else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
                             {
                                 first.offset = vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1;
                                 first.placed = true;
                                 buildingNameplates[i] = first; // important so next check can succeed
                                 // then check if second doesn't collide with already placed nameplates if it is placed at its current place
-                                if (!checkIntersectionOffsetNameplateAgainstOthers(second, Vector2.zero, true, false))
+                                if (!CheckIntersectionOffsetNameplateAgainstOthers(second, Vector2.zero, true, false))
                                     second.placed = true;
                             }
                             // if previous placement was not possible, try to place second (and maybe first) nameplate by right-aligning (if allowed) and shifting second the required amount away from first - but check if second doesn't collide with already placed nameplates
-                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 * 2.0f + vectorNormalBiasNameplate2, true, false))
+                            else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 * 2.0f + vectorNormalBiasNameplate2, true, false))
                             {
                                 second.offset = vectorBiasNameplate2 * 2.0f + vectorNormalBiasNameplate2;
                                 second.placed = true;
                                 buildingNameplates[j] = second; // important so next check can succeed
                                 // then check if first doesn't collide with already placed nameplates if it is placed at its current place
-                                if (!checkIntersectionOffsetNameplateAgainstOthers(first, Vector2.zero, true, false))
+                                if (!CheckIntersectionOffsetNameplateAgainstOthers(first, Vector2.zero, true, false))
                                     first.placed = true;
                             }
 
@@ -1195,24 +1196,24 @@ namespace DaggerfallWorkshop.Game
 
                             //string stringNameplate1 = "";
 
-                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate, true, false))
+                            if (!CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate, true, false))
                             {
                                 first.offset = vectorBiasNameplate;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "__^");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate, true, false))
+                            else if (!CheckIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate, true, false))
                             {
                                 first.offset = -vectorBiasNameplate;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "__v");
                             }
-                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                            else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                             {
                                 first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
                                 first.placed = true;
                             }
-                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                            else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                             {
                                 first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
                                 first.placed = true;
@@ -1229,7 +1230,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // place those with numCollisionsDetected == 0, don't recompute number of collisions (performance reasons) since they should be correct anyway
-                computeAndPlaceZeroCollisionsNameplates(false);
+                ComputeAndPlaceZeroCollisionsNameplates(false);
 
                 // now try to place remaining nameplates (all nameplates with more than 1 collisions)
                 for (int i = 0; i < buildingNameplates.Length; i++)
@@ -1245,24 +1246,24 @@ namespace DaggerfallWorkshop.Game
 
                     //string stringNameplate1 = "";
 
-                    if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate, true, false))
+                    if (!CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate, true, false))
                     {
                         first.offset += vectorBiasNameplate;
                         first.placed = true;
                         //stringNameplate1 = String.Format("{0} {1}", first.name, "___^");
                     }
-                    else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate, true, false))
+                    else if (!CheckIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate, true, false))
                     {
                         first.offset -= vectorBiasNameplate;
                         first.placed = true;
                         //stringNameplate1 = String.Format("{0} {1}", first.name, "___v");
                     }
-                    else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                    else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                     {
                         first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
                         first.placed = true;
                     }
-                    else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                    else if (allowRightAlignedNameplates && !CheckIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                     {
                         first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
                         first.placed = true;
@@ -1274,7 +1275,7 @@ namespace DaggerfallWorkshop.Game
             } // for (int t = 0; t < 3; t++)
 
             // final pass to check if now some nameplates can be set that no longer have collisions, don't recompute number of collisions (performance reasons) since they should be correct anyway
-            computeAndPlaceZeroCollisionsNameplates(false);
+            ComputeAndPlaceZeroCollisionsNameplates(false);
 
             // now place all remaining nameplates (that could not be placed without collisions) as "*" nameplates
             for (int i = 0; i < buildingNameplates.Length; i++)
@@ -1290,7 +1291,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void updatePlayerMarker()
+        private void UpdatePlayerMarker()
         {
             // place player marker            
             Vector3 playerPos;
@@ -1299,13 +1300,23 @@ namespace DaggerfallWorkshop.Game
             playerPos.z = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
             playerPos.y = 0.0f;
 
+
+            float xOffset = 0.0f;
+            float yOffset = 0.0f;
+            if (isCustomLocation)
+            {
+                xOffset = -64f;           
+                yOffset =  +3f;
+            }
+
             int refWidth = (int)(blockSizeWidth * numMaxBlocksX * layoutMultiplier); // layoutWidth / layoutMultiplier
             int refHeight = (int)(blockSizeHeight * numMaxBlocksY * layoutMultiplier); // layoutHeight / layoutMultiplier
             playerPos.x *= refWidth;
             playerPos.y = 0.1f;
             playerPos.z *= refHeight;
-            playerPos.x -= refWidth * 0.5f;
-            playerPos.z -= refHeight * 0.5f;
+            playerPos.x += -(refWidth * 0.5f) + xOffset;
+            playerPos.z += -(refHeight * 0.5f) + yOffset;
+
             gameobjectPlayerMarkerArrow.transform.position = playerPos;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
@@ -1324,7 +1335,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// creates the map layout in the exterior layout texture
         /// </summary>  
-        private void createExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true, bool createNameplates = true)
+        private void CreateExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true, bool createNameplates = true)
         {
             if (exteriorLayoutTexture != null)
             {
@@ -1364,6 +1375,19 @@ namespace DaggerfallWorkshop.Game
                 }
                 ypos += blockSizeHeight;
                 xpos = 0;
+            }
+
+            // test if it is a custom location (layouting is different there)
+            isCustomLocation = false;
+            // But some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
+            // Seems to be 1x1 blocks using CUST prefix, but possibly more research needed
+            const int custPrefixIndex = 40;
+            if (locationWidth == 1 && locationHeight == 1)
+            {
+                if (location.Exterior.ExteriorData.BlockIndex[0] == custPrefixIndex)
+                {
+                    isCustomLocation = true;
+                }
             }
 
             // Create layout image (texture)
@@ -1484,11 +1508,11 @@ namespace DaggerfallWorkshop.Game
 
             if (createNameplates)
             {
-                createBuildingNameplates(location);
+                CreateBuildingNameplates(location);
             }
         }
 
-        private void loadAndCreateLocationExteriorAutomap()
+        private void LoadAndCreateLocationExteriorAutomap()
         {
             ContentReader.MapSummary mapSummary;
             DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
@@ -1514,7 +1538,7 @@ namespace DaggerfallWorkshop.Game
                 return; // do nothing
             }
 
-            unloadLocationExteriorAutomap(); // first make sure to unload location exterior automap and destroy resources
+            UnloadLocationExteriorAutomap(); // first make sure to unload location exterior automap and destroy resources
 
             location = currentPlayerLocation; // set current location as new location
 
@@ -1532,13 +1556,13 @@ namespace DaggerfallWorkshop.Game
             switch (currentExteriorAutomapViewMode)
             {
                 case ExteriorAutomapViewMode.Original:
-                    createExteriorLayoutTexture(location, false, true);
+                    CreateExteriorLayoutTexture(location, false, true);
                     break;
                 case ExteriorAutomapViewMode.Extra:
-                    createExteriorLayoutTexture(location, true, true);
+                    CreateExteriorLayoutTexture(location, true, true);
                     break;
                 case ExteriorAutomapViewMode.All:
-                    createExteriorLayoutTexture(location, true, false);
+                    CreateExteriorLayoutTexture(location, true, false);
                     break;
             }
 
@@ -1593,22 +1617,22 @@ namespace DaggerfallWorkshop.Game
                 gameobjectPlayerMarkerCircle.transform.localScale = new Vector3(12.0f, 1.0f, 12.0f) * layoutMultiplier;
             }
 
-            updatePlayerMarker();
+            UpdatePlayerMarker();
 
             //byte[] png = exteriorLayoutTexture.EncodeToPNG();
             //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
             //File.WriteAllBytes(Application.dataPath + "/test.png", png);
 
-            createCustomCanvasForExteriorAutomap();
+            CreateCustomCanvasForExteriorAutomap();
 
             ResetAutomapSettingsSignalForExternalScript = true; // force automap settings reset in next OnPush() function of DaggerfallExteriorAutomapWindow (for reset of camera settings)
 
             location.Loaded = true;
         }
 
-        private void unloadLocationExteriorAutomap()
+        private void UnloadLocationExteriorAutomap()
         {
-            deleteBuildingNameplates();
+            DeleteBuildingNameplates();
 
             if (gameobjectCustomCanvas != null)
             {
@@ -1652,7 +1676,7 @@ namespace DaggerfallWorkshop.Game
                 ContentReader.MapSummary mapSummary;
                 if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
                 {
-                    loadAndCreateLocationExteriorAutomap();
+                    LoadAndCreateLocationExteriorAutomap();
                 }
             }
             else
@@ -1670,7 +1694,7 @@ namespace DaggerfallWorkshop.Game
             ContentReader.MapSummary mapSummary;
             if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
             {
-                loadAndCreateLocationExteriorAutomap();
+                LoadAndCreateLocationExteriorAutomap();
             }
         }
 
@@ -1691,7 +1715,7 @@ namespace DaggerfallWorkshop.Game
             ContentReader.MapSummary mapSummary;
             if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
             {
-                loadAndCreateLocationExteriorAutomap();
+                LoadAndCreateLocationExteriorAutomap();
             }
         }
 
@@ -1702,7 +1726,7 @@ namespace DaggerfallWorkshop.Game
             ContentReader.MapSummary mapSummary;
             if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
             {
-                loadAndCreateLocationExteriorAutomap();
+                LoadAndCreateLocationExteriorAutomap();
             }
         }
 

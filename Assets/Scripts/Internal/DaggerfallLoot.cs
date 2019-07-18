@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop
 {
@@ -34,6 +35,7 @@ namespace DaggerfallWorkshop
         public int TextureArchive = 0;
         public int TextureRecord = 0;
         public bool playerOwned = false;
+        public bool houseOwned = false;
         public bool customDrop = false;         // Custom drop loot is not part of base scene and must be respawned on deserialization
         public bool isEnemyClass = false;
         public int stockedDate = 0;
@@ -97,9 +99,9 @@ namespace DaggerfallWorkshop
         {
             if (Dice100.SuccessRoll(chance))
             {
-                DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4);
-                byte recipe = (byte)Random.Range(0, 20);
-                potionRecipe.typeDependentData = recipe;
+                int recipeIdx = Random.Range(0, PotionRecipe.classicRecipeKeys.Length);
+                int recipeKey = PotionRecipe.classicRecipeKeys[recipeIdx];
+                DaggerfallUnityItem potionRecipe = new DaggerfallUnityItem(ItemGroups.MiscItems, 4) { PotionRecipeKey = recipeKey };
                 collection.AddItem(potionRecipe);
             }
         }
@@ -210,6 +212,10 @@ namespace DaggerfallWorkshop
                                         item = ItemBuilder.CreateWomensClothing(j + WomensClothing.Brassier, playerEntity.Race);
                                         item.dyeColor = ItemBuilder.RandomClothingDye();
                                     }
+                                    else if (itemGroup == ItemGroups.MagicItems)
+                                    {
+                                        item = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                                    }
                                     else
                                     {
                                         item = new DaggerfallUnityItem(itemGroup, j);
@@ -284,11 +290,7 @@ namespace DaggerfallWorkshop
                         }
                         else if (itemGroup == ItemGroups.Books)
                         {
-                            int groupIndex = (buildingQuality + 3) / 5;
-                            if (groupIndex == (int)ItemGroups.Books)
-                                items.AddItem(ItemBuilder.CreateRandomBook());
-                            else
-                                item = new DaggerfallUnityItem(itemGroup, groupIndex);
+                            item = ItemBuilder.CreateRandomBook();
                         }
                         else
                         {

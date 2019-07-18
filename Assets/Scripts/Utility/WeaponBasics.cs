@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -85,13 +85,13 @@ namespace DaggerfallWorkshop.Utility
         // Animations for bow
         public static WeaponAnimation[] BowWeaponAnims = new WeaponAnimation[]
         {
-            new WeaponAnimation() {Record = 0, NumFrames = 4, FramePerSecond = IdleAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 1, FramePerSecond = IdleAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
             new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
             new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
             new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
             new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
             new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
-            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 4, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
         };
 
         // Animations for werecreature - alignment changes
@@ -100,8 +100,8 @@ namespace DaggerfallWorkshop.Utility
             new WeaponAnimation() {Record = 0, NumFrames = 1, FramePerSecond = IdleAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0.02f},
             new WeaponAnimation() {Record = 1, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0.2f},
             new WeaponAnimation() {Record = 2, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
-            new WeaponAnimation() {Record = 3, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0.2f},
-            new WeaponAnimation() {Record = 4, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0.2f},
+            new WeaponAnimation() {Record = 3, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 4, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
             new WeaponAnimation() {Record = 5, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Left, Offset = 0f},
             new WeaponAnimation() {Record = 6, NumFrames = 5, FramePerSecond = WereStrikeAnimSpeed, Alignment = WeaponAlignment.Left, Offset = 0.2f},
         };

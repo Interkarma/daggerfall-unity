@@ -118,7 +118,7 @@ Dagon's prey returns to Oblivion.
 --          _tavern_ occurs 8 times.
 
 QBN:
-Item _artifact_ artifact Mehrune's_Razor anyInfo 1013
+Item _artifact_ artifact Mehrunes_Razor anyInfo 1013
 
 Person _contact_ face 239 faction The_Cabal anyInfo 1012
 

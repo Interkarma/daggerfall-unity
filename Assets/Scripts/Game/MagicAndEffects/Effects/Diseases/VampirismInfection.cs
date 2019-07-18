@@ -56,7 +56,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public VampireClans InfectionVampireClan
         {
-            get { return FormulaHelper.GetVampireClan((DaggerfallRegions)infectionRegionIndex); }
+            get { return FormulaHelper.GetVampireClan(infectionRegionIndex); }
+        }
+
+        protected override void BecomeIncumbent()
+        {
+            base.BecomeIncumbent();
+
+            // If player already has a racial override in place (e.g. vampire/lycanthrope) then just cancel infection process
+            if (manager.GetRacialOverrideEffect() != null)
+                EndDisease();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)

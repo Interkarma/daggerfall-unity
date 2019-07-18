@@ -28,6 +28,9 @@ namespace DaggerfallWorkshop.Game.Questing
     public class Parser
     {
         #region Fields
+
+        const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
+
         #endregion
 
         #region Constructors
@@ -50,8 +53,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         public Quest Parse(string[] source)
         {
-            const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
-
             Quest quest = new Quest();
             string questName = string.Empty;
             string displayName = string.Empty;
@@ -73,10 +74,6 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Trim trailing white space from either end of source line data
                 string text = line.Trim();
-
-                // Skip other comment lines
-                if (text.StartsWith("-", comparison))
-                    continue;
 
                 // Handle basic structure
                 if (text.StartsWith("quest:", comparison))
@@ -102,16 +99,24 @@ namespace DaggerfallWorkshop.Game.Questing
                     continue;
                 }
 
-                // Add full lines to QRC section
+                // Add full lines to QRC or QBN sections
                 if (inQRC)
                 {
                     qrcLines.Add(line);
                 }
-
-                // Add full lines to QBN section
-                if (inQBN)
+                else if (inQBN)
                 {
+                    // Always skip comment lines in QBN
+                    if (text.StartsWith("-", comparison))
+                        continue;
+
                     qbnLines.Add(line);
+                }
+                else
+                {
+                    // Always skip comment lines when in neither QBN or QRC
+                    if (text.StartsWith("-", comparison))
+                        continue;
                 }
             }
 
@@ -164,6 +169,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
             for (int i = 0; i < lines.Count; i++)
             {
+                // Skip comment lines while scanning for start of message block
+                if (lines[i].StartsWith("-", comparison))
+                    continue;
+
                 // Skip empty lines while scanning for start of message block
                 if (string.IsNullOrEmpty(lines[i].Trim()))
                     continue;
@@ -240,6 +249,7 @@ namespace DaggerfallWorkshop.Game.Questing
         // This will occur if next line matches one of the following:
         // - End of stream
         // - A second empty line
+        // - A comment line after an empty line
         // - Start of a new message block tab or QBN: tag
         // Returns true if this appears to be end of message
         bool PeekMessageEnd(List<string> lines, int line)
@@ -248,7 +258,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return true;
 
             string nextLine = lines[line + 1];
-            if (nextLine.Contains(":") || string.IsNullOrEmpty(nextLine.Trim()))
+            if (nextLine.Contains(":") || nextLine.StartsWith("-") || string.IsNullOrEmpty(nextLine.Trim()))
                 return true;
 
             return false;

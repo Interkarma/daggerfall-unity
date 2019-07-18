@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:
+// Contributors:    Pango
 //
 // Notes:
 //
@@ -100,6 +100,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int cost = 0;
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
+
+        bool suppressInventory = false;
+        string suppressInventoryMessage = string.Empty;
 
         static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
@@ -237,6 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateRemoteTargetIcon();
             // UpdateRepairTimes(false);
             UpdateCostAndGold();
+            SelectWagon(false);
         }
 
         Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
@@ -299,8 +303,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Public Methods
 
+        public override void Update()
+        {
+            base.Update();
+
+            // Close window immediately if trade suppressed
+            if (suppressInventory)
+            {
+                CloseWindow();
+                if (!string.IsNullOrEmpty(suppressInventoryMessage))
+                    DaggerfallUI.MessageBox(suppressInventoryMessage);
+                return;
+            }
+        }
+
         public override void OnPush()
         {
+            // Racial override can suppress trade
+            // We still setup and push window normally, actual suppression is done in Update()
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressInventory = racialOverride.GetSuppressInventory(out suppressInventoryMessage);
+
             // Identify spell can run anywhere - only get building info when not using spell
             if (!usingIdentifySpell)
             {
@@ -322,8 +346,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear wagon button state
             if (wagonButton != null)
             {
-                usingWagon = false;
-                wagonButton.BackgroundTexture = wagonNotSelected;
+                SelectWagon(false);
             }
 
             // Refresh window
@@ -357,11 +380,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (windowMode == WindowModes.Buy && basketItems != null)
             {
+                // Check holidays for half price sales:
+                // - Merchants Festival, suns height 10th for normal shops
+                // - Tales and Tallows hearth fire 3rd for mages guild
+                // - Weapons on Warriors Festival suns dusk 20th
+                uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+
                 for (int i = 0; i < basketItems.Count; i++)
                 {
                     DaggerfallUnityItem item = basketItems.GetItem(i);
                     modeActionEnabled = true;
-                    cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                    int itemPrice = FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                    if ((holidayId == (int)DFLocation.Holidays.Merchants_Festival && guild == null) ||
+                        (holidayId == (int)DFLocation.Holidays.Tales_and_Tallow && guild != null && guild.GetFactionId() == (int)FactionFile.FactionIDs.The_Mages_Guild) ||
+                        (holidayId == (int)DFLocation.Holidays.Warriors_Festival && guild == null && item.ItemGroup == ItemGroups.Weapons))
+                    {
+                        itemPrice /= 2;
+                    }
+                    cost += itemPrice;
                 }
             }
             else if (remoteItems != null)
@@ -433,8 +470,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Debug.Log("UpdateRepairTimes called");
             int totalRepairTime = 0, longestRepairTime = 0;
             DaggerfallUnityItem itemLongestTime = null;
+            Dictionary<DaggerfallUnityItem, int> previousRepairTimes = new Dictionary<DaggerfallUnityItem, int>();
             foreach (DaggerfallUnityItem item in remoteItemsFiltered)
             {
+                bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
+                if (repairDone)
+                    continue;
+
+                if (item.RepairData.IsBeingRepaired())
+                    previousRepairTimes.Add(item, item.RepairData.RepairTime);
+
                 int repairTime = FormulaHelper.CalculateItemRepairTime(item.currentCondition, item.maxCondition);
                 if (commit && !item.RepairData.IsBeingRepaired())
                 {
@@ -460,6 +505,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     itemLongestTime.RepairData.RepairTime = modifiedLongestTime;
                 else
                     itemLongestTime.RepairData.EstimatedRepairTime = modifiedLongestTime;
+            }
+
+            // Don't allow repair times to decrease (when removing other now repaired items)
+            // https://forums.dfworkshop.net/viewtopic.php?f=24&t=2053
+            foreach (KeyValuePair<DaggerfallUnityItem, int> entry in previousRepairTimes)
+            {
+                if (commit)
+                    entry.Key.RepairData.RepairTime = Mathf.Max(entry.Key.RepairData.RepairTime, entry.Value);
+                else
+                    entry.Key.RepairData.EstimatedRepairTime = Mathf.Max(entry.Key.RepairData.EstimatedRepairTime, entry.Value);
             }
         }
 
@@ -509,6 +564,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {   // Return items to player inventory. 
                 // Note: ignoring weight here, like classic. Priority is to not lose any items.
+                if (usingWagon)
+                {
+                    // Always clear transport items into player's inventory
+                    for (int i = remoteItems.Count; i-- > 0;)
+                    {
+                        DaggerfallUnityItem item = remoteItems.GetItem(i);
+                        if (item.ItemGroup == ItemGroups.Transportation)
+                            TransferItem(item, remoteItems, PlayerEntity.Items);
+                    }
+                }
                 localItems.TransferAll(remoteItems);
             }
         }
@@ -613,8 +678,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 base.FilterRemoteItems();
         }
 
-        protected void ShowWagon(bool show)
+        protected void SelectWagon(bool show)
         {
+            if (wagonButton == null)
+                return;
+
             if (show)
             {   // Switch to wagon
                 wagonButton.BackgroundTexture = wagonSelected;
@@ -627,7 +695,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             usingWagon = show;
             localItemListScroller.ResetScroll();
-            Refresh(false);
+            // Caller must now use Refresh
+            // Refresh(false);
         }
 
         protected override void LoadTextures()
@@ -666,7 +735,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
                         if (remoteItems != null)
-                            TransferItem(item, localItems, remoteItems, blockTransport: true);
+                        {
+                            // Are we trying to sell the non empty wagon?
+                            if (item.ItemGroup == ItemGroups.Transportation && PlayerEntity.WagonItems.Count > 0)
+                            {
+                                DaggerfallUnityItem usedWagon = PlayerEntity.Items.GetItem(ItemGroups.Transportation, (int)Transportation.Small_cart);
+                                if (usedWagon.Equals(item))
+                                    return;
+                            }
+                            TransferItem(item, localItems, remoteItems);
+                        }
                         break;
 
                     case WindowModes.Buy:
@@ -725,7 +803,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         TakeItemFromRepair(item);
                 }
                 else
-                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
+                    TransferItem(item, remoteItems, localItems, usingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item), blockTransport: usingWagon);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -756,7 +834,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
-                ShowWagon(!usingWagon);
+            {
+                SelectWagon(!usingWagon);
+                Refresh(false);
+            }
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

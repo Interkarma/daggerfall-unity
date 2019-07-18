@@ -883,6 +883,30 @@ namespace DaggerfallConnect.Arena2
             }
         }
 
+        /// <summary>
+        /// Check if a faction is another faction ally.
+        /// </summary>
+        /// <param name="firstFaction">The faction to check the allies of.</param>
+        /// <param name="secondFaction">The potential allied faction.</param>
+        /// <returns>True if factions are allied, otherwise false.</returns>
+        public static bool IsAlly(ref FactionData firstFaction, ref FactionData secondFaction)
+        {
+            return firstFaction.ally1 == secondFaction.id || firstFaction.ally2 == secondFaction.id ||
+                   firstFaction.ally3 == secondFaction.id;
+        }
+
+        /// <summary>
+        /// Check if a faction is another faction enemy.
+        /// </summary>
+        /// <param name="firstFaction">The faction to check the enemies of.</param>
+        /// <param name="secondFaction">The potential enemy faction.</param>
+        /// <returns></returns>
+        public static bool IsEnemy(ref FactionData firstFaction, ref FactionData secondFaction)
+        {
+            return firstFaction.enemy1 == secondFaction.id || firstFaction.enemy2 == secondFaction.id ||
+                   firstFaction.enemy3 == secondFaction.id;
+        }
+
         #endregion
 
         #region Private Methods

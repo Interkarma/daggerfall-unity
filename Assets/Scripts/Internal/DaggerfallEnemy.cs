@@ -41,13 +41,17 @@ namespace DaggerfallWorkshop
             // https://en.uesp.net/wiki/Daggerfall:ClassMaker#Special_Advantages
             // Assuming this means enemy sounds specficially, rather than *all sounds* (which could get annoying)
             // If player has acute hearing advantage then enemy audio source max distance is increased by 25%
+            // If player also has improved acute hearing enchantment then enemy audio source max distance is increased by 50%
             // TODO: Learn more about acute hearing and refine how this works
             // NOTE: This should feel like a fun advantage and not just bombard player with audio!
             if (GameManager.Instance.PlayerEntity.Career.AcuteHearing)
             {
+                const float acuteHearingMultiplier = 1.25f;
+                const float improvedAcuteHearingMultiplier = 1.5f;
+
                 AudioSource audioSource = GetComponent<AudioSource>();
                 if (audioSource)
-                    audioSource.maxDistance *= 1.25f;
+                    audioSource.maxDistance *= (GameManager.Instance.PlayerEntity.ImprovedAcuteHearing) ? improvedAcuteHearingMultiplier : acuteHearingMultiplier;
             }
         }
     }

@@ -312,6 +312,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, factionDataFilename));
             File.Delete(Path.Combine(path, questDataFilename));
             File.Delete(Path.Combine(path, bioFileName));
+            File.Delete(Path.Combine(path, notebookDataFilename));
             if (ModManager.Instance != null)
             {
                 foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
@@ -997,7 +998,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Save automap state
             try
             {
-                Dictionary<string, Automap.AutomapGeometryDungeonState> automapState = GameManager.Instance.InteriorAutomap.GetState();
+                Dictionary<string, Automap.AutomapDungeonState> automapState = GameManager.Instance.InteriorAutomap.GetState();
                 string automapDataJson = Serialize(automapState.GetType(), automapState);
                 WriteSaveFile(Path.Combine(path, automapDataFilename), automapDataJson);
             }
@@ -1151,7 +1152,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Restore player position to world
-            playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true);
+            playerEnterExit.RestorePositionHelper(saveData.playerData.playerPosition, true, false);
 
             //Restore Travel Map settings
             DaggerfallUI.Instance.DfTravelMapWindow.SetTravelMapFromSaveData(saveData.travelMapData);
@@ -1175,10 +1176,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             try
             {
                 string automapDataJson = ReadSaveFile(Path.Combine(path, automapDataFilename));
-                Dictionary<string, Automap.AutomapGeometryDungeonState> automapState = null;
+                Dictionary<string, Automap.AutomapDungeonState> automapState = null;
 
                 if (!string.IsNullOrEmpty(automapDataJson))
-                    automapState = Deserialize(typeof(Dictionary<string, Automap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, Automap.AutomapGeometryDungeonState>;
+                    automapState = Deserialize(typeof(Dictionary<string, Automap.AutomapDungeonState>), automapDataJson) as Dictionary<string, Automap.AutomapDungeonState>;
 
                 if (automapState != null)
                     GameManager.Instance.InteriorAutomap.SetState(automapState);
@@ -1207,6 +1208,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                     mod.SaveDataInterface.RestoreSaveData(modData);
                 }
             }
+
+            // Clamp legal reputation
+            playerEntity.ClampLegalReputations();
 
             // Lower load in progress flag
             loadInProgress = false;

@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign static
             if (makeStatic)
-                go.isStatic = true;
+                TagStaticGeometry(go);
 
             return go;
         }
@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign static
             if (makeStatic)
-                go.isStatic = true;
+                TagStaticGeometry(go);
 
             return go;
         }
@@ -329,6 +329,56 @@ namespace DaggerfallWorkshop.Utility
 #endif
 
             return go;
+        }
+
+        /// <summary>
+        /// Gets best parent for an object at spawn time.
+        /// Objects should always be placed to some child object in world rather than directly into root of scene.
+        /// </summary>
+        /// <returns>Best parent transform, or null as fallback.</returns>
+        public static Transform GetBestParent()
+        {
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            // Place in world near player depending on local area
+            if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                return playerEnterExit.Interior.transform;
+            }
+            else if (playerEnterExit.IsPlayerInsideDungeon)
+            {
+                return playerEnterExit.Dungeon.transform;
+            }
+            else if (!playerEnterExit.IsPlayerInside && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+            {
+                return GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
+            }
+            else if (!playerEnterExit.IsPlayerInside)
+            {
+                return GameManager.Instance.StreamingTarget.transform;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static void TagStaticGeometry(GameObject go)
+        {
+            if (go)
+            {
+                go.tag = DaggerfallUnity.staticGeometryTag;
+            }
+        }
+
+        public static bool IsStaticGeometry(GameObject go)
+        {
+            if (go)
+            {
+                return go.CompareTag(DaggerfallUnity.staticGeometryTag);
+            }
+
+            return false;
         }
 
         #region RMB & RDB Block Helpers
@@ -870,7 +920,7 @@ namespace DaggerfallWorkshop.Utility
 
             foreach (QuestResourceBehaviour resourceBehaviour in resourceBehaviours)
             {
-                if (resourceBehaviour.TargetResource == resource)
+                if (resourceBehaviour.TargetSymbol == resource.Symbol)
                     return true;
             }
 
@@ -939,9 +989,16 @@ namespace DaggerfallWorkshop.Utility
             if (SaveLoadManager.Instance.LoadInProgress)
                 return;
 
+            // Get foe gender
+            MobileGender mobileGender = MobileGender.Unspecified;
+            if (foe.Gender == Genders.Male)
+                mobileGender = MobileGender.Male;
+            else if (foe.Gender == Genders.Female)
+                mobileGender = MobileGender.Female;
+
             // Create enemy GameObject
             Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
-            GameObject go = CreateEnemy("Quest Foe", foe.FoeType, dungeonBlockPosition + marker.flatPosition, parent);
+            GameObject go = CreateEnemy("Quest Foe", foe.FoeType, dungeonBlockPosition + marker.flatPosition, mobileGender, parent);
 
             // Assign loadID and custom spawn
             DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
@@ -1051,7 +1108,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Create an enemy in the world and perform common setup tasks.
         /// </summary>
-        public static GameObject CreateEnemy(string name, MobileTypes mobileType, Vector3 localPosition, Transform parent = null, MobileReactions mobileReaction = MobileReactions.Hostile)
+        public static GameObject CreateEnemy(string name, MobileTypes mobileType, Vector3 localPosition, MobileGender mobileGender = MobileGender.Unspecified, Transform parent = null, MobileReactions mobileReaction = MobileReactions.Hostile)
         {
             // Create target GameObject
             string displayName = string.Format("{0} [{1}]", name, mobileType.ToString());
@@ -1061,13 +1118,20 @@ namespace DaggerfallWorkshop.Utility
             // Set position
             go.transform.localPosition = localPosition;
 
-            // Assign humanoid gender randomly
+            // Assign humanoid gender randomly if unspecfied
             // This does not affect monsters like rats, bats, etc
             MobileGender gender;
-            if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
-                gender = MobileGender.Male;
+            if (mobileGender == MobileGender.Unspecified)
+            {
+                if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
+                    gender = MobileGender.Male;
+                else
+                    gender = MobileGender.Female;
+            }
             else
-                gender = MobileGender.Female;
+            {
+                gender = mobileGender;
+            }
 
             // Configure enemy
             setupEnemy.ApplyEnemySettings(mobileType, mobileReaction, gender);
@@ -1100,7 +1164,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Generate enemy
                 string name = string.Format("DaggerfallEnemy [{0}]", foeType.ToString());
-                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, FoeSpawner.GetBestParent(), position);
+                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, GetBestParent(), position);
                 SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
                 if (setupEnemy != null)
                 {

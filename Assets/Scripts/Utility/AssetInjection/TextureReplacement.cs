@@ -11,7 +11,6 @@
 
 /*
  * TODO:
- * - Support for Paperdoll (BODY00I0.IMG)
  * - Support for Sky (SKYxx.DAT)
  */
 
@@ -24,6 +23,7 @@ using System.Linq;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 
@@ -40,7 +40,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         Normal,
         Height,
         Emission,
-        MetallicGloss
+        MetallicGloss,
+        Mask
     }
 
     public enum TextureImport
@@ -50,6 +51,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         AllLocations
     }
 
+    /// <summary>
+    /// Textures for all frames of a billboard texture record.
+    /// </summary>
     public struct BillboardImportedTextures
     {
         public bool HasImportedTextures;            // Contains imported textures ?
@@ -59,10 +63,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public List<Texture2D> Emission;            // EmissionMaps for all frames.
     }
 
+    /// <summary>
+    /// Imported textures for an archive used by a wandering npc or a foe.
+    /// </summary>
     public struct MobileBillboardImportedTextures
     {
-        public bool HasImportedTextures;            // Contains imported textures ?  
-        public List<List<Texture2D>> Textures;      // Textures for all records and frames.
+        public bool HasImportedTextures;            // Contains imported textures ?
+        public bool IsEmissive;                     // Is billboard emissive ?
+        public Texture2D[][] Albedo;                // Textures for all records and frames.
+        public Texture2D[][] EmissionMaps;          // Emission maps for all records and frames.
     }
 
     #endregion
@@ -82,6 +91,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
         static readonly string imgPath = Path.Combine(texturesPath, "Img");
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
+
+        static readonly Type customBlendModeType = typeof(MaterialReader.CustomBlendMode);
 
         #endregion
 
@@ -175,11 +186,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation frame index.</param>
         /// <param name="textureMap">Texture type.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, out Texture2D tex)
+        public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), false, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, out tex);
         }
 
         /// <summary>
@@ -190,13 +202,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="frame">Animation frame index.</param>
         /// <param name="textureMap">Texture type.</param>
         /// <param name="textureImport">Texture import options.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, TextureImport textureImport, out Texture2D tex)
+        public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, TextureImport textureImport, bool readOnly, out Texture2D tex)
         {
             tex = null;
-            return (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), false, out tex))
-                || (textureImport == TextureImport.LooseFiles && TryImportTextureFromLooseFiles(archive, record, frame, textureMap, out tex));
+            return (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, out tex))
+                || (textureImport == TextureImport.LooseFiles && TryImportTextureFromLooseFiles(archive, record, frame, textureMap, readOnly, out tex));
         }
 
         /// <summary>
@@ -206,22 +219,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation frame index</param>
         /// <param name="dye">Dye colour for armour, weapons, and clothing.</param>
+        /// <param name="textureMap">Texture type.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, out Texture2D tex)
+        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, dye), false, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, out tex);
         }
 
         /// <summary>
         /// Seek texture from modding locations.
         /// </summary>
         /// <param name="name">Texture name.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTexture(string name, out Texture2D tex)
+        public static bool TryImportTexture(string name, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, name, false, out tex);
+            return TryImportTexture(texturesPath, name, readOnly, out tex);
         }
 
         /// <summary>
@@ -262,7 +277,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if CifRci imported.</returns>
         public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), false, out tex);
+            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), readOnly, out tex);
         }
 
         /// <summary>
@@ -272,14 +287,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         /// <param name="frame">Animation index.</param>
         /// <param name="textureMap">Texture type.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
-        public static bool TryImportTextureFromLooseFiles(int archive, int record, int frame, TextureMap textureMap, out Texture2D tex)
+        public static bool TryImportTextureFromLooseFiles(int archive, int record, int frame, TextureMap textureMap, bool readOnly, out Texture2D tex)
         { 
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
-                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, false, out tex);
+                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, readOnly, out tex);
             }
 
             tex = null;
@@ -341,11 +357,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index</param>
         /// <param name="frame">Texture frame</param>
         /// <param name="material">Material.</param>
-        static public void CustomizeMaterial(int archive, int record, int frame, Material material)
+        public static void CustomizeMaterial(int archive, int record, int frame, Material material)
         {
             // MetallicGloss map
             Texture2D metallicGloss;
-            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.MetallicGloss, out metallicGloss))
+            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.MetallicGloss, true, out metallicGloss))
             {
                 metallicGloss.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.MetallicGlossMap);
@@ -354,7 +370,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Height Map
             Texture2D height;
-            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.Height, out height))
+            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.Height, true, out height))
             {
                 height.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.HeightMap);
@@ -380,48 +396,39 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import textures and emission maps for all frames of this billboard. Also set other material properties from xml.
+        /// Gets a custom material for a static billboard with textures and configuration imported from mods.
         /// </summary>
-        public static void SetBillboardImportedTextures(GameObject go, ref DaggerfallBillboard.BillboardSummary summary)
+        /// <param name="go">The billboard object.</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="summary">Summary data of the billboard object.</param>
+        /// <remarks>
+        /// Seek the texture for the first frame of the given record. If found, it imports all other frames.
+        /// Always creates an emission map for textures marked as emissive by TextureReader, import emission maps for others only if available.
+        /// </remarks>
+        /// <returns>A material or null.</returns>
+        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref DaggerfallBillboard.BillboardSummary summary)
         {
             if (!DaggerfallUnity.Settings.AssetInjection)
-                return;
+                return null;
 
-            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-
-            int archive = summary.Archive;
-            int record = summary.Record;
+            //MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
             int frame = 0;
-            bool isEmissive = DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
 
-            // Check first frame
             Texture2D albedo, emission;
-            bool hasImportedTextures = LoadFromCacheOrImport(archive, record, frame, isEmissive, out albedo, out emission);
-
-            if (summary.ImportedTextures.HasImportedTextures = hasImportedTextures)
+            if (summary.ImportedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission))
             {
-                // Set textures on material; emission is always overriden, with actual texture or null.
-                meshRenderer.material.SetTexture(Uniforms.MainTex, albedo);
-                meshRenderer.material.SetTexture(Uniforms.EmissionMap, emission);
-                if (!isEmissive)
-                    meshRenderer.material.DisableKeyword(KeyWords.Emission);
+                bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
 
-                // Import animation frames
-                var albedoTextures = new List<Texture2D>();
-                var emissionTextures = new List<Texture2D>();
-                do
-                {
-                    albedoTextures.Add(albedo);
-                    if (isEmissive)
-                        emissionTextures.Add(emission);
-                }
-                while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, out albedo, out emission));
-
-                // Set scale and uv
+                // Read xml configuration
                 Vector2 uv = Vector2.zero;
+                string renderMode = null;
                 XMLManager xml;
                 if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
                 {
+                    xml.TryGetString("renderMode", out renderMode);
+                    isEmissive |= xml.GetBool("emission");
+
                     // Set billboard scale
                     Transform transform = go.GetComponent<Transform>();
                     transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
@@ -431,57 +438,109 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     // Get UV
                     uv = xml.GetVector2("uvX", "uvY", uv);
                 }
-                SetUv(go.GetComponent<MeshFilter>(), uv.x, uv.y);
+
+                // Make material
+                Material material = MakeBillboardMaterial(renderMode);
+                summary.Rect = new Rect(uv.x, uv.y, 1 - 2 * uv.x, 1 - 2 * uv.y);
+
+                // Set textures on material; emission is always overriden, with actual texture or null.
+                material.SetTexture(Uniforms.MainTex, albedo);
+                material.SetTexture(Uniforms.EmissionMap, isEmissive ? emission ?? albedo : null);
+                ToggleEmission(material, isEmissive);
+
+                // Import animation frames
+                var albedoTextures = new List<Texture2D>();
+                var emissionTextures = isEmissive ? new List<Texture2D>() : null;
+                do
+                {
+                    albedoTextures.Add(albedo);
+                    if (isEmissive)
+                        emissionTextures.Add(emission ?? albedo);
+                }
+                while (LoadFromCacheOrImport(archive, record, ++frame, isEmissive, true, out albedo, out emission));
 
                 // Save results
                 summary.ImportedTextures.FrameCount = frame;
                 summary.ImportedTextures.IsEmissive = isEmissive;
                 summary.ImportedTextures.Albedo = albedoTextures;
                 summary.ImportedTextures.Emission = emissionTextures;
-            }        
+
+                return material;
+            }
+
+            return null;
         }
 
         /// <summary>
-        /// Import textures for all records and frames of a mobile billboard.
+        /// Gets a custom material for a mobile billboard with textures and configuration imported from mods.
         /// </summary>
-        public static void SetMobileBillboardImportedTextures(int archive, MeshFilter meshFilter, ref MobileBillboardImportedTextures importedTextures)
+        /// <param name="archive">Archive index.</param>
+        /// <param name="meshFilter">The MeshFilter of the billboard object.</param>
+        /// <param name="importedTextures">All the imported textures for the archive.</param>
+        /// <remarks>
+        /// Seek the texture for the first frame of the first record. If found, it imports the entire archive.
+        /// If this texture has an emission map the material is considered emissive and all emission maps are imported.
+        /// </remarks>
+        /// <returns>A material or null.</returns>
+        public static Material GetMobileBillboardMaterial(int archive, MeshFilter meshFilter, ref MobileBillboardImportedTextures importedTextures)
         {
             if (!DaggerfallUnity.Settings.AssetInjection)
-                return;
+                return null;
 
-            // Check first texture.
-            Texture2D tex;
-            bool hasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, out tex);
-
-            if (importedTextures.HasImportedTextures = hasImportedTextures)
+            Texture2D tex, emission;
+            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
             {
+                string renderMode = null;
+
+                // Read xml configuration
+                XMLManager xml;
+                if (XMLManager.TryReadXml(ImagesPath, string.Format("{0:000}", archive), out xml))
+                {
+                    xml.TryGetString("renderMode", out renderMode);
+                    importedTextures.IsEmissive = xml.GetBool("emission");
+                }
+
+                // Make material
+                Material material = MakeBillboardMaterial(renderMode);
+
+                // Enable emission
+                ToggleEmission(material, importedTextures.IsEmissive |= emission != null);
+
+                // Load texture file to get record and frame count
                 string fileName = TextureFile.IndexToFileName(archive);
                 var textureFile = new TextureFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, true);
 
                 // Import all textures in this archive
-                var textures = new List<List<Texture2D>>();
+                importedTextures.Albedo = new Texture2D[textureFile.RecordCount][];
+                importedTextures.EmissionMaps = importedTextures.IsEmissive ? new Texture2D[textureFile.RecordCount][] : null;
                 for (int record = 0; record < textureFile.RecordCount; record++)
                 {
                     int frames = textureFile.GetFrameCount(record);
-                    var frameTextures = new List<Texture2D>();
+                    var frameTextures = new Texture2D[frames];
+                    var frameEmissionMaps = importedTextures.IsEmissive ? new Texture2D[frames] : null;
+
                     for (int frame = 0; frame < frames; frame++)
                     {
-                        if ((record != 0 || frame != 0) && !LoadFromCacheOrImport(archive, record, frame, out tex))
-                        {
-                            Debug.LogErrorFormat("Imported archive {0} does not contain texture for record {1}, frame {2}!", archive, record, frame);
-                            tex = ImageReader.GetTexture(fileName, record, frame, true);
-                        }
-                        frameTextures.Add(tex);
+                        if (record != 0 || frame != 0)
+                            LoadFromCacheOrImport(archive, record, frame, importedTextures.IsEmissive, true, out tex, out emission);
+
+                        frameTextures[frame] = tex ?? ImageReader.GetTexture(fileName, record, frame, true);
+                        if (frameEmissionMaps != null)
+                            frameEmissionMaps[frame] = emission ?? frameTextures[frame];
                     }
-                    textures.Add(frameTextures);
+
+                    importedTextures.Albedo[record] = frameTextures;
+                    if (importedTextures.EmissionMaps != null)
+                        importedTextures.EmissionMaps[record] = frameEmissionMaps;
                 }
 
                 // Update UV map
                 SetUv(meshFilter);
 
-                // Save results
-                importedTextures.Textures = textures;
+                return material;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -509,7 +568,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public bool TryCustomizeButton(ref Button button, string colorName)
         {
             Texture2D tex;
-            if (!TryImportTexture(colorName, out tex))
+            if (!TryImportTexture(colorName, true, out tex))
                 return false;
 
             // Load texture
@@ -543,40 +602,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        public static string GetName(int archive, int record, int frame = 0)
+        /// <param name="textureMap">Texture type.</param>
+        /// <param name="dye">Color Dye.</param>
+        /// <returns>The name for the texture with requested options.</returns>
+        public static string GetName(int archive, int record, int frame = 0, TextureMap textureMap = TextureMap.Albedo, DyeColors dye = DyeColors.Unchanged)
         {
-            return string.Format("{0:000}_{1}-{2}", archive, record, frame);
-        }
+            string name = string.Format("{0:000}_{1}-{2}", archive, record, frame);
 
-        /// <summary>
-        /// Get name for a texture with a dye.
-        /// </summary>
-        /// <param name="archive">Archive index from TEXTURE.XXX</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <param name="dye">Color Dye</param>
-        public static string GetName(int archive, int record, int frame, DyeColors dye)
-        {
-            if (dye == DyeColors.Unchanged)
-                return GetName(archive, record, frame);
+            if (dye != DyeColors.Unchanged)
+                name = string.Format("{0}_{1}", name, dye);
 
-            return string.Format("{0}_{1}", GetName(archive, record, frame), dye);
-        }
+            if (textureMap != TextureMap.Albedo)
+                name = string.Format("{0}_{1}", name, textureMap);
 
-        /// <summary>
-        /// Get name for a specific texture map.
-        /// </summary>
-        /// <param name="archive">Archive index from TEXTURE.XXX</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <param name="textureMap">Shader texture type.</param>
-        /// <returns></returns>
-        public static string GetName(int archive, int record, int frame, TextureMap textureMap)
-        {
-            if (textureMap == TextureMap.Albedo)
-                return GetName(archive, record, frame);
-
-            return string.Format("{0}_{1}", GetName(archive, record, frame), textureMap);
+            return name;
         }
 
         /// <summary>
@@ -736,6 +775,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
+        /// <summary>
+        /// Read configuration for a paperdoll item with custom rect.
+        /// </summary>
+        /// <param name="item">Target item or null.</param>
+        /// <param name="imageData">Source image data.</param>
+        /// <param name="rect">Rect for the item on paperdoll.</param>
+        internal static void OverridePaperdollItemRect(DaggerfallUnityItem item, ImageData imageData, float paperdollScale, ref Rect rect)
+        {
+            DyeColors dyeColor = item != null ? item.dyeColor : DyeColors.Unchanged;
+
+            string directory;
+            string name;
+            XMLManager xml;
+            if (MakeName(imageData, dyeColor, out directory, out name) && XMLManager.TryReadXml(directory, name, out xml))
+                rect = xml.GetRect("rect", rect, paperdollScale);
+        }
+
         public static int FileNameToArchive(string filename)
         {
             return int.Parse(filename.Substring("TEXTURE.".Length));
@@ -879,24 +935,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Seek albedo from cache, loose files and mods.
-        /// </summary>
-        private static bool LoadFromCacheOrImport(int archive, int record, int frame, out Texture2D albedo)
-        {
-            Texture2D emission;
-            return LoadFromCacheOrImport(archive, record, frame, false, out albedo, out emission);
-        }
-
-        /// <summary>
         /// Seek albedo and, if requested, emission map from cache, loose files and mods.
         /// </summary>
-        /// <param name="isEmissive">Request emission map. If missing, albedo is used as a fully emissive surface.</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Texture frame.</param>
+        /// <param name="allowEmissionMap">Should the emission map be seeked?</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="albedo">Imported albedo or null.</param>
+        /// <param name="emission">Imported emission map or null.</param>
         /// <returns>True if textures found and loaded.</returns>
         private static bool LoadFromCacheOrImport(
             int archive,
             int record,
             int frame,
-            bool isEmissive,
+            bool allowEmissionMap,
+            bool readOnly,
             out Texture2D albedo,
             out Texture2D emission)
         {
@@ -915,17 +969,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Try to import and save in cache
-            if (TryImportTexture(archive, record, frame, out albedo))
+            if (TryImportTexture(archive, record, frame, TextureMap.Albedo, readOnly, out albedo))
             {
                 var filterMode = MainFilterMode;
 
                 albedo.filterMode = filterMode;
                 cachedMaterial.albedoMap = albedo;
 
-                if (isEmissive)
+                if (allowEmissionMap && TryImportTexture(archive, record, frame, TextureMap.Emission, readOnly, out emission))
                 {
-                    if (!TryImportTexture(archive, record, frame, TextureMap.Emission, out emission))
-                        emission = albedo;
                     emission.filterMode = filterMode;
                     cachedMaterial.emissionMap = emission;
                 }
@@ -940,6 +992,60 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private static Texture2D GetTextureOrDefault(Material material, int propertyID)
         {
             return material.HasProperty(propertyID) ? (Texture2D)material.GetTexture(propertyID) : null;
+        }
+
+        private static void ToggleEmission(Material material, bool isEmissive)
+        {
+            bool isEnabled = material.IsKeywordEnabled(KeyWords.Emission);
+
+            if (isEmissive)
+            {
+                if (!isEnabled)
+                {
+                    material.EnableKeyword(KeyWords.Emission);
+                    material.SetColor(Uniforms.EmissionColor, Color.white);
+                }
+            }
+            else
+            {
+                if (isEnabled)
+                    material.DisableKeyword(KeyWords.Emission);
+            }
+        }
+
+        private static Material MakeBillboardMaterial(string renderMode = null)
+        {
+            return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
+                (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
+                MaterialReader.CustomBlendMode.Cutout);
+        }
+
+        private static bool MakeName(ImageData imageData, DyeColors dyeColor, out string directory, out string name)
+        {
+            switch (imageData.type)
+            {
+                case ImageTypes.TEXTURE:
+                    directory = texturesPath;
+                    int archive = FileNameToArchive(imageData.filename);
+                    name = GetName(archive, imageData.record, imageData.frame, TextureMap.Albedo, dyeColor);
+                    return true;
+
+                case ImageTypes.IMG:
+                    directory = imgPath;
+                    name = imageData.filename;
+                    return true;
+
+                case ImageTypes.CIF:
+                case ImageTypes.RCI:
+                    directory = cifRciPath;
+                    name = GetNameCifRci(imageData.filename, imageData.record, imageData.frame);
+                    return true;
+
+                default:
+                    directory = null;
+                    name = null;
+                    return false;
+            }
         }
 
         #endregion

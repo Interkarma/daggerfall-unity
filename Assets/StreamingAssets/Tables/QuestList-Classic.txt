@@ -232,7 +232,7 @@ R0C11Y16, Nobility, N, 1, 1,
 R0C11Y19, Nobility, N, 1, 1,
 R0C11Y26, Nobility, N, 1, 1, Adds journal entries which need %qdat - assuming thats the date of entry and not quest start
 R0C11Y27, Nobility, N, 1, 1,
-R0C11Y28, Nobility, N, 1, 1,
+R0C11Y28, Nobility, N, 1, 1, Needs %vcn macro implementation to get vamp clan of _vamp_ npc to be tested
 R0C20Y07, Nobility, N, 2, 0,
 R0C20Y22, Nobility, N, 2, 0,
 -R0C30Y25, Nobility, N, 3, 0, Needs support for: reveal totambuCoven in province 46 at 423290

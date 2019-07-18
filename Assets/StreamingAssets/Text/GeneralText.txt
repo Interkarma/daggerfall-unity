@@ -1,0 +1,14 @@
+- General text database for classic effects. These text items were previously hardcoded into FALL.EXE.
+
+schema: *key,$text
+
+--General strings
+lockedExteriorDoor,             "Locked."
+
+--Lycanthropy strings
+
+canOnlyCastOncePerDay,          "Can only be cast once per day..."
+youNeedToHuntTheInnocent,       "You feel the need to hunt the innocent..."
+youDreamOfTheMoon,              "You dream, once again, of the moon..."
+inventoryWhileShapechanged,     "You cannot access the inventory while shapechanged..."
+youGetNoResponse,               "You get no response."

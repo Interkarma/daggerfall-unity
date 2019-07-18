@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
@@ -69,6 +70,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int[] directStatMods = new int[DaggerfallStats.Count];
         int[] directSkillMods = new int[DaggerfallSkills.Count];
         int[] combinedStatMods = new int[DaggerfallStats.Count];
+        int[] combinedStatMaxMods = new int[DaggerfallStats.Count];
         int[] combinedSkillMods = new int[DaggerfallSkills.Count];
         int[] combinedResistanceMods = new int[DaggerfallResistances.Count];
         float refreshModsTimer = 0;
@@ -185,7 +187,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
 
             // Run any per-frame constant effects
-            entityBehaviour.Entity.ClearConstantEffects();
             DoConstantEffects();
 
             // Refresh mods more frequently than magic rounds, but not too frequently
@@ -210,6 +211,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 // Player must always have passive specials effect
                 PassiveSpecialsCheck();
+
+                // Fire no anim spells
+                if (readySpell != null && readySpell.Settings.NoCastingAnims)
+                {
+                    CastNoAnimSpell();
+                    return;
+                }
 
                 // Fire instant cast spells
                 if (readySpell != null && instantCast)
@@ -299,11 +307,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             bool godModeCast = (IsPlayerEntity && GameManager.Instance.PlayerEntity.GodMode);
 
             // Enforce spell point costs - Daggerfall does this when setting ready spell
-            if (entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
+            // Classic does not enforce this for enemies, they can cast any spell as long as they still have at least 1 spell point.
+            // Doing the same here. This also matters for classic AI combat logic, as it uses the existence of any remaining spell points
+            // to determine whether or not it can still cast spells.
+            if (IsPlayerEntity && entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
             {
-                // Output message only for player
-                if (IsPlayerEntity)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
 
                 readySpell = null;
                 readySpellCastingCost = 0;
@@ -328,6 +337,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void AbortReadySpell()
         {
             readySpell = null;
+            readySpellDoesNotCostSpellPoints = false;
+        }
+
+        public void CastNoAnimSpell()
+        {
+            // Must have a spell loaded
+            if (readySpell == null)
+                return;
+
+            // Assign bundle directly to self if target is caster
+            // Otherwise instatiate missile prefab based on element type
+            if (readySpell.Settings.TargetType == TargetTypes.CasterOnly)
+            {
+                AssignBundle(readySpell);
+            }
+            else
+            {
+                DaggerfallMissile missile = InstantiateSpellMissile(readySpell.Settings.ElementType);
+                if (missile)
+                    missile.Payload = readySpell;
+            }
+
+            // Deduct spellpoint cost from entity if not free (magic item, innate ability)
+            if (!readySpellDoesNotCostSpellPoints)
+                entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
+
+            // Clear ready spell and reset casting - do not store last spell for no anim spells (prevent spamming)
+            RaiseOnCastReadySpell(readySpell);
+            lastSpell = null;
+            readySpell = null;
+            readySpellCastingCost = 0;
+            instantCast = false;
+            castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
         }
 
@@ -365,6 +407,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Check flags
             bool showNonPlayerFailures = (flags & AssignBundleFlags.ShowNonPlayerFailures) == AssignBundleFlags.ShowNonPlayerFailures;
             bool bypassSavingThrows = (flags & AssignBundleFlags.BypassSavingThrows) == AssignBundleFlags.BypassSavingThrows;
+            bool specialInfection = (flags & AssignBundleFlags.SpecialInfection) == AssignBundleFlags.SpecialInfection;
 
             // Source bundle must have one or more effects
             if (sourceBundle.Settings.Effects == null || sourceBundle.Settings.Effects.Length == 0)
@@ -402,8 +445,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
+                // Assign any enchantment params to live effect
+                effect.EnchantmentParam = sourceBundle.Settings.Effects[i].EnchantmentParam;
+
                 // Incoming disease and paralysis effects are blocked if entity is hard immune (e.g. vampires/lycanthropes)
-                if (effect is DiseaseEffect && IsEntityImmuneToDisease() ||
+                // The exceptions are vampirism/lycanthropy special infections themselves which ignore disease resistance
+                if (effect is DiseaseEffect && IsEntityImmuneToDisease() && !specialInfection ||
                     effect is Paralyze && IsEntityImmuneToParalysis())
                 {
                     continue;
@@ -429,12 +476,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
 
                     // Spell Reflection
-                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
+                    if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
                         continue;
                 }
 
                 // Spell Resistance
-                if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
+                if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
                     continue;
 
                 // Start effect
@@ -505,7 +552,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 instancedBundles.Add(instancedBundle);
                 RaiseOnAssignBundle(instancedBundle);
-                Debug.LogFormat("Adding bundle {0}", instancedBundle.GetHashCode());
+                Debug.LogFormat("Adding bundle [{0}] {1}", instancedBundle.name, instancedBundle.GetHashCode());
             }
         }
 
@@ -679,21 +726,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>DaggerfallMissile.</returns>
         public DaggerfallMissile InstantiateSpellMissile(ElementTypes elementType)
         {
+            DaggerfallMissile missile = null;
             switch (elementType)
             {
                 case ElementTypes.Cold:
-                    return Instantiate(ColdMissilePrefab);
+                    missile = Instantiate(ColdMissilePrefab);
+                    break;
                 case ElementTypes.Fire:
-                    return Instantiate(FireMissilePrefab);
+                    missile = Instantiate(FireMissilePrefab);
+                    break;
                 case ElementTypes.Poison:
-                    return Instantiate(PoisonMissilePrefab);
+                    missile = Instantiate(PoisonMissilePrefab);
+                    break;
                 case ElementTypes.Shock:
-                    return Instantiate(ShockMissilePrefab);
+                    missile = Instantiate(ShockMissilePrefab);
+                    break;
                 case ElementTypes.Magic:
-                    return Instantiate(MagicMissilePrefab);
+                    missile = Instantiate(MagicMissilePrefab);
+                    break;
                 default:
                     return null;
             }
+
+            if (missile)
+            {
+                missile.transform.parent = GameObjectHelper.GetBestParent();
+            }
+
+            return missile;
         }
 
         /// <summary>
@@ -704,6 +764,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (DaggerfallUI.Instance.enableHUD && DaggerfallUI.Instance.DaggerfallHUD.ActiveSpells != null)
                 DaggerfallUI.Instance.DaggerfallHUD.ActiveSpells.UpdateIcons();
+        }
+
+        /// <summary>
+        /// Creates a simple single-effect spell bundle from the specified effect key.
+        /// </summary>
+        /// <param name="effectKey">Effect key to create bundle from.</param>
+        /// <param name="element">Element type for bundle. Defaults to Magic.</param>
+        /// <param name="effectSettings">Effect settings. Uses full defaults if null.</param>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateSpellBundle(string effectKey, ElementTypes element = ElementTypes.Magic, EffectSettings? effectSettings = null)
+        {
+            if (effectSettings == null)
+                effectSettings = BaseEntityEffect.DefaultEffectSettings();
+
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.Spell,
+                ElementType = element,
+                Effects = new EffectEntry[] { new EffectEntry(effectKey, effectSettings.Value) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
         }
 
         #endregion
@@ -760,217 +843,157 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #region Magic Items
 
         /// <summary>
-        /// Handles any magic-related work of equipping an item to this entity.
+        /// Executes payloads on enchanted items.
         /// </summary>
-        /// <param name="item">Item just equipped.</param>
-        public void StartEquippedItem(DaggerfallUnityItem item)
+        /// <param name="flags">Payloads to execute. Required by all payloads.</param>
+        /// <param name="sourceItem">Item to execute payloads from. Required by all payloads. Item must be enchanted.</param>
+        /// <param name="sourceCollection">ItemCollection the enchanted item belongs to. Required by Used payload.</param>
+        /// <param name="targetEntity">Target entity of attack by this entity. Required by Strikes payload.</param>
+        /// <param name="damageIn">Input damage before effects. Required by Strikes payload.</param>
+        /// <returns>Output damage after effect. Only changes for Strikes payload.</returns>
+        public int DoItemEnchantmentPayloads(
+            EnchantmentPayloadFlags flags,
+            DaggerfallUnityItem sourceItem,
+            ItemCollection sourceCollection = null,
+            DaggerfallEntityBehaviour targetEntity = null,
+            int damageIn = 0)
         {
-            // Item must have enchancements
-            if (item == null || !item.IsEnchanted)
-                return;
+            int damageOut = damageIn;
 
-            // All equipped magic items add a passive item specials effect
-            // This may or may not deliver any payload based on passive enchanment settings
-            EffectBundleSettings passiveItemSpecialsSettings = new EffectBundleSettings()
+            // Must specify an item
+            if (sourceItem == null)
+                return damageOut;
+
+            // Get combined enchantments
+            EnchantmentSettings[] enchantments = sourceItem.GetCombinedEnchantmentSettings();
+            if (enchantments == null || enchantments.Length == 0)
+                return damageOut;
+
+            // Process all enchantments
+            foreach (EnchantmentSettings settings in enchantments)
+            {
+                // Get effect template
+                IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(settings.EffectKey);
+                if (effectTemplate == null)
+                {
+                    Debug.LogWarningFormat("DoItemEnchantmentPayloads() effect key {0} not found in broker.", settings.EffectKey);
+                    return damageOut;
+                }
+
+                // Equipped payload
+                if ((flags & EnchantmentPayloadFlags.Equipped) == EnchantmentPayloadFlags.Equipped && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Equipped))
+                    StartEquippedItem(effectTemplate, sourceItem, settings);
+
+                // Held payload
+                // Note: EnchantmentPayloadFlags.Held means the effect wants a long-running bundle assigned, it is unrelated to "cast when held" legacy enchantment
+                if ((flags & EnchantmentPayloadFlags.Held) == EnchantmentPayloadFlags.Held && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Held))
+                    StartHeldItem(effectTemplate, sourceItem, settings);
+
+                // Unequip payload
+                if ((flags & EnchantmentPayloadFlags.Unequipped) == EnchantmentPayloadFlags.Unequipped)
+                    UnequipHeldItem(effectTemplate, sourceItem, settings);
+
+                // Used payload
+                if ((flags & EnchantmentPayloadFlags.Used) == EnchantmentPayloadFlags.Used && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Used))
+                    UseItem(effectTemplate, sourceItem, settings, sourceCollection);
+
+                // Strikes payload
+                if ((flags & EnchantmentPayloadFlags.Strikes) == EnchantmentPayloadFlags.Strikes && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Strikes))
+                    damageOut += StrikeWithItem(effectTemplate, sourceItem, settings, targetEntity, damageIn);
+
+                // Breaks payload
+                if ((flags & EnchantmentPayloadFlags.Breaks) == EnchantmentPayloadFlags.Breaks && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Breaks))
+                    BrokenItem(effectTemplate, sourceItem, settings);
+                    
+            }
+
+            // Clamp damageOut to 0
+            if (damageOut < 0)
+                damageOut = 0;
+
+            return damageOut;
+        }
+
+        void StartEquippedItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // Equipped payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Equipped, param, entityBehaviour, entityBehaviour, item);
+            if (results != null && results.Value.durabilityLoss > 0)
+                item.LowerCondition(results.Value.durabilityLoss, entityBehaviour.Entity, entityBehaviour.Entity.Items);
+        }
+
+        void StartHeldItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // Held payload assigns a new bundle with a fully stateful effect instance - does not use callback to effect template
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            EffectBundleSettings heldEffectSettings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
                 BundleType = BundleTypes.HeldMagicItem,
                 TargetType = TargetTypes.None,
                 ElementType = ElementTypes.None,
-                Name = "Item Specials",
-                Effects = new EffectEntry[] { new EffectEntry(PassiveItemSpecialsEffect.EffectKey) },
+                Name = settings.EffectKey,
+                Effects = new EffectEntry[] { new EffectEntry(effectTemplate.Key, param) },
             };
-            EntityEffectBundle passiveItemSpecialsBundle = new EntityEffectBundle(passiveItemSpecialsSettings, entityBehaviour);
-            passiveItemSpecialsBundle.FromEquippedItem = item;
-            AssignBundle(passiveItemSpecialsBundle, AssignBundleFlags.BypassSavingThrows);
-
-            // Some equipped magic items have "cast when held" enchantments
-            DaggerfallEnchantment[] enchantments = item.Enchantments;
-            foreach (DaggerfallEnchantment enchantment in enchantments)
-            {
-                if (enchantment.type == EnchantmentTypes.CastWhenHeld)
-                {
-                    SpellRecord.SpellRecordData spell;
-                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
-                    {
-                        //Debug.LogFormat("EntityEffectManager.StartEquippedItem: Found CastWhenHeld enchantment '{0}'", spell.spellName);
-
-                        // Create effect bundle settings from classic spell
-                        EffectBundleSettings bundleSettings;
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.HeldMagicItem, out bundleSettings))
-                            continue;
-
-                        // Assign bundle
-                        EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                        bundle.FromEquippedItem = item;
-                        AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
-
-                        // Play cast sound on equip for player only
-                        if (IsPlayerEntity)
-                            PlayCastSound(entityBehaviour, GetCastSoundID(bundle.Settings.ElementType));
-
-                        // TODO: Use correct icon - the index in spell record data is the not the icon displayed by classic
-                        // Not sure how this is determined by classic for equipped items, but it is consistent
-
-                        // TODO: Apply durability loss to equipped item on equip and over time
-                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                    }
-                }
-            }
+            EntityEffectBundle heldEffectBundle = new EntityEffectBundle(heldEffectSettings, entityBehaviour);
+            heldEffectBundle.FromEquippedItem = item;
+            AssignBundle(heldEffectBundle, AssignBundleFlags.BypassSavingThrows);
+            DoConstantEffects();
         }
 
-        /// <summary>
-        /// Handles any magic-related work of unequipping an item from this entity
-        /// </summary>
-        /// <param name="item">Item just unequipped.</param>
-        public void StopEquippedItem(DaggerfallUnityItem item)
+        void UnequipHeldItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
         {
-            // Item must have enchancements
-            if (item == null || !item.IsEnchanted)
-                return;
+            // Unequipped payload callback
+            if (effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Unequipped))
+            {
+                EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+                effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Unequipped, param, entityBehaviour, entityBehaviour, item);
+            }
 
             // Check all running bundles for any linked to this item and schedule instant removal
             foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID)
-                    bundlesToRemove.Add(bundle);
+                {
+                    if (!bundlesToRemove.Contains(bundle))
+                        bundlesToRemove.Add(bundle);
+                }
             }
+            RemovePendingBundles();
+            DoConstantEffects();
         }
 
-        /// <summary>
-        /// Offers item to effect manager when used by player in inventory.
-        /// </summary>
-        /// <param name="item">Item just used.</param>
-        /// <param name="collection">Collection containing item.</param>
-        public void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
+        void UseItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings, ItemCollection sourceCollection)
         {
-            // Item must have enchancements
-            if (item == null || !item.IsEnchanted)
-                return;
-
-            // Cast first "cast when used" enchantment
-            // This works by sending effect to readySpell which currently cannot queue more than one spell
-            // Not sure how classic handles multiple "cast when used" effects, especially for "press to release" styled spells
-            DaggerfallEnchantment[] enchantments = item.Enchantments;
-            foreach (DaggerfallEnchantment enchantment in enchantments)
-            {
-                SpellRecord.SpellRecordData spell;
-                EffectBundleSettings bundleSettings;
-                EntityEffectBundle bundle;
-                if (enchantment.type == EnchantmentTypes.CastWhenUsed)
-                {
-                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
-                    {
-                        //Debug.LogFormat("EntityEffectManager.UseItem: Found CastWhenUsed enchantment '{0}'", spell.spellName);
-
-                        // Create effect bundle settings from classic spell
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
-                            continue;
-
-                        // Assign bundle to ready spell 
-                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                        SetReadySpell(bundle, true);
-
-                        // Apply durability loss to used item on use
-                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                        item.currentCondition -= 10;
-                        if (item.currentCondition <= 0 && collection != null)
-                        {
-                            item.ItemBreaks(GameManager.Instance.PlayerEntity);
-                            collection.RemoveItem(item);
-                        }
-                    }
-                }
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 4) // Handle Sanguine Rose
-                {
-                    // Use for any artifact that simply assigns a bundle
-                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
-                        continue;
-                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                    AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
-                }
-
-                // Handle Oghma Infinium
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 5)
-                {
-                    GameManager.Instance.PlayerEntity.ReadyToLevelUp = true;
-                    GameManager.Instance.PlayerEntity.OghmaLevelUp = true;
-                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
-                    collection.RemoveItem(item);
-                }
-
-                // Handle Azura's Star
-                if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect && enchantment.param == 9)
-                {
-                    const int soulReleasedID = 32;
-                    const int noSoulToReleaseID = 20;
-
-                    if (item.TrappedSoulType != MobileTypes.None)
-                    {
-                        item.TrappedSoulType = MobileTypes.None;
-                        DaggerfallUI.MessageBox(soulReleasedID);
-                    }
-                    else
-                    {
-                        DaggerfallUI.MessageBox(noSoulToReleaseID);
-                    }
-                }
-            }
+            // Used payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Used, param, entityBehaviour, entityBehaviour, item);
+            if (results != null && results.Value.durabilityLoss > 0)
+                item.LowerCondition(results.Value.durabilityLoss, GameManager.Instance.PlayerEntity, sourceCollection);
         }
 
-        /// <summary>
-        /// Assigns "cast when strikes" effects to this manager.
-        /// </summary>
-        /// <param name="item">Item striking this entity.</param>
-        /// <param name="caster">Entity attacking with item.</param>
-        public void StrikeWithItem(DaggerfallUnityItem item, DaggerfallEntityBehaviour caster)
+        int StrikeWithItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings, DaggerfallEntityBehaviour targetEntity, int damageIn)
         {
-            // Item must have enchancements
-            if (item == null || !item.IsEnchanted)
-                return;
-
-            // Create bundle for every "cast when strikes" enchantment
-            List<EntityEffectBundle> bundles = new List<EntityEffectBundle>();
-            DaggerfallEnchantment[] enchantments = item.Enchantments;
-            foreach (DaggerfallEnchantment enchantment in enchantments)
+            // Strikes payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Strikes, param, entityBehaviour, targetEntity, item, damageIn);
+            if (results != null)
             {
-                EffectBundleSettings bundleSettings;
-                EntityEffectBundle bundle;
-                if (enchantment.type == EnchantmentTypes.CastWhenStrikes)
-                {
-                    SpellRecord.SpellRecordData spell;
-                    if (GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(enchantment.param, out spell))
-                    {
-                        //Debug.LogFormat("EntityEffectManager.StrikeWithItem: Found CastWhenStrikes enchantment '{0}'", spell.spellName);
+                if (results.Value.durabilityLoss > 0)
+                    item.LowerCondition(results.Value.durabilityLoss, entityBehaviour.Entity, entityBehaviour.Entity.Items);
 
-                        // Create effect bundle settings from classic spell
-                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out bundleSettings))
-                            continue;
-
-                        // Assign bundle to list
-                        bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                        bundle.CasterEntityBehaviour = caster;
-                        bundles.Add(bundle);
-
-                        // TODO: Apply durability loss to used item on strike
-                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-                    }
-                }
-                else if (enchantment.type == EnchantmentTypes.SpecialArtifactEffect) // For artifact weapons
-                {
-                    if (!GameManager.Instance.EntityEffectBroker.GetArtifactBundleSettings(out bundleSettings, enchantment.param))
-                        continue;
-                    bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-                    bundle.CasterEntityBehaviour = caster;
-                    bundles.Add(bundle);
-                }
+                return results.Value.strikesModulateDamage;
             }
 
-            // Assign bundles to this entity
-            foreach (EntityEffectBundle bundle in bundles)
-            {
-                AssignBundle(bundle, AssignBundleFlags.ShowNonPlayerFailures);
-            }
+            return 0;
+        }
+
+        void BrokenItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // Breaks payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Breaks, param, entityBehaviour, entityBehaviour, item);
         }
 
         #endregion
@@ -1224,6 +1247,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return new EntityEffectBundle(settings, entityBehaviour);
         }
 
+        public EntityEffectBundle CreateLycanthropyDisease(LycanthropyTypes infectionType)
+        {
+            string effectKey;
+            switch (infectionType)
+            {
+                case LycanthropyTypes.Werewolf:
+                    effectKey = WerewolfInfection.WerewolfInfectionKey;
+                    break;
+                case LycanthropyTypes.Wereboar:
+                    effectKey = WereboarInfection.WereboarInfectionKey;
+                    break;
+                default:
+                    throw new Exception("CreateLycanthropyInfection() infectionType cannot be LycanthropyTypes.None");
+            }
+
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(effectKey) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
         /// <summary>
         /// Helper to create stage two curse of vampirism.
         /// </summary>
@@ -1235,6 +1283,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 Version = EntityEffectBroker.CurrentSpellVersion,
                 BundleType = BundleTypes.None,
                 Effects = new EffectEntry[] { new EffectEntry(VampirismEffect.VampirismCurseKey) },
+            };
+
+            return new EntityEffectBundle(settings, entityBehaviour);
+        }
+
+        /// <summary>
+        /// Helper to create stage two curse of lycanthropy.
+        /// </summary>
+        /// <returns>EntityEffectBundle.</returns>
+        public EntityEffectBundle CreateLycanthropyCurse()
+        {
+            EffectBundleSettings settings = new EffectBundleSettings()
+            {
+                Version = EntityEffectBroker.CurrentSpellVersion,
+                BundleType = BundleTypes.None,
+                Effects = new EffectEntry[] { new EffectEntry(LycanthropyEffect.LycanthropyCurseKey) },
             };
 
             return new EntityEffectBundle(settings, entityBehaviour);
@@ -1349,10 +1413,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return racialOverrideEffect is VampirismEffect;
         }
 
+        public bool HasLycanthropy()
+        {
+            return racialOverrideEffect is LycanthropyEffect;
+        }
+
+        public bool IsTransformedLycanthrope()
+        {
+            if (HasLycanthropy())
+                return (racialOverrideEffect as LycanthropyEffect).IsTransformed;
+            else
+                return false;
+        }
+
         public void EndVampirism()
         {
             if (HasVampirism())
                 (racialOverrideEffect as VampirismEffect).CureVampirism();
+        }
+
+        public void EndLycanthropy()
+        {
+            if (HasLycanthropy())
+                (racialOverrideEffect as LycanthropyEffect).CureLycanthropy();
         }
 
         #endregion
@@ -1388,6 +1471,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoConstantEffects()
         {
+            // Clear existing constant effects
+            entityBehaviour.Entity.ClearConstantEffects();
+
             // Do nothing further if entity has perished or object disabled
             if (entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
                 return;
@@ -1415,6 +1501,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear direct mods
             Array.Clear(directStatMods, 0, DaggerfallStats.Count);
             Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
+            if (IsPlayerEntity)
+                (entityBehaviour.Entity as PlayerEntity).ClearReactionMods();
 
             // Run all bundles
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -1472,7 +1560,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 foreach (LiveEffectBundle bundle in bundlesToRemove)
                 {
                     RemoveBundle(bundle);
-                    Debug.LogFormat("Removing bundle {0}", bundle.GetHashCode());
+                    Debug.LogFormat("Removing bundle [{0}] {1}", bundle.name, bundle.GetHashCode());
                 }
                 bundlesToRemove.Clear();
             }
@@ -1485,7 +1573,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             readySpellDoesNotCostSpellPoints = false;
         }
 
-        int GetCastSoundID(ElementTypes elementType)
+        public int GetCastSoundID(ElementTypes elementType)
         {
             switch (elementType)
             {
@@ -1508,6 +1596,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Clear all mods
             Array.Clear(combinedStatMods, 0, DaggerfallStats.Count);
+            Array.Clear(combinedStatMaxMods, 0, DaggerfallStats.Count);
             Array.Clear(combinedSkillMods, 0, DaggerfallSkills.Count);
             Array.Clear(combinedResistanceMods, 0, DaggerfallResistances.Count);
 
@@ -1517,6 +1606,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     MergeStatMods(effect);
+                    MergeStatMaxMods(effect);
                     MergeSkillMods(effect);
                     MergeResistanceMods(effect);
                 }
@@ -1526,7 +1616,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             MergeDirectMods();
 
             // Assign to host entity
-            entityBehaviour.Entity.Stats.AssignMods(combinedStatMods);
+            entityBehaviour.Entity.Stats.AssignMods(combinedStatMods, combinedStatMaxMods);
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
             entityBehaviour.Entity.Resistances.AssignMods(combinedResistanceMods);
 
@@ -1546,6 +1636,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             for (int i = 0; i < effect.StatMods.Length; i++)
             {
                 combinedStatMods[i] += effect.StatMods[i];
+            }
+        }
+
+        void MergeStatMaxMods(IEntityEffect effect)
+        {
+            for (int i = 0; i < effect.StatMaxMods.Length; i++)
+            {
+                combinedStatMaxMods[i] += effect.StatMaxMods[i];
             }
         }
 
@@ -1608,7 +1706,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
-        void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID)
+        public void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID)
         {
             if (casterEntityBehaviour)
             {
@@ -1805,9 +1903,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             public string key;
             public EffectSettings effectSettings;
+            public EnchantmentParam? enchantmentParam;
             public int roundsRemaining;
             public bool chanceSuccess;
             public int[] statMods;
+            public int[] statMaxMods;
             public int[] skillMods;
             public bool isIncumbent;
             public int variantCount;
@@ -1858,9 +1958,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectSaveData_v1 effectData = new EffectSaveData_v1();
             effectData.key = effect.Key;
             effectData.effectSettings = effect.Settings;
+            effectData.enchantmentParam = effect.EnchantmentParam;
             effectData.roundsRemaining = effect.RoundsRemaining;
             effectData.chanceSuccess = effect.ChanceSuccess;
             effectData.statMods = effect.StatMods;
+            effectData.statMaxMods = effect.StatMaxMods;
             effectData.skillMods = effect.SkillMods;
             effectData.isIncumbent = (effect is IncumbentEffect) ? (effect as IncumbentEffect).IsIncumbent : false;
             effectData.variantCount = effect.VariantCount;
@@ -1919,6 +2021,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                     // Resume effect
                     effect.ParentBundle = instancedBundle;
+                    effect.EnchantmentParam = effectData.enchantmentParam;
                     effect.Resume(effectData, this, instancedBundle.caster);
                     effect.RestoreSaveData(effectData.effectSpecific);
                     instancedBundle.liveEffects.Add(effect);
@@ -1926,6 +2029,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Cache racial override effect
                     if (effect is RacialOverrideEffect)
                         racialOverrideEffect = (RacialOverrideEffect)effect;
+                }
+
+                // Do not instantiate bundle if no live effects restored
+                // This can happen when effects are removed from game (e.g. mod removed or code refactor)
+                if (instancedBundle.liveEffects.Count == 0)
+                {
+                    Debug.LogWarningFormat("RestoreInstancedBundleSaveData() not restoring bundle {0} as it restored no live effects.", instancedBundle.name);
+                    continue;
                 }
 
                 instancedBundles.Add(instancedBundle);

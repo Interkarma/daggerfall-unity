@@ -41,10 +41,12 @@ namespace DaggerfallWorkshop.Game
         float savedTimeScale;
         float classicUpdateTimer = 0;                       // Timer for matching classic's update loop
         bool classicUpdate = false;                         // True when reached a classic update
+        float initialQualitySettingsShadowDistance;
         //Texture2D pauseScreenshot;
 
         GameObject playerObject = null;
         Camera mainCamera = null;
+        RetroRenderer retroRenderer = null;
         PlayerMouseLook playerMouseLook = null;
         PlayerHealth playerHealth = null;
         VitalsChangeDetector vitalsChangeDetector = null;
@@ -115,6 +117,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (mainCamera) ? mainCamera : mainCamera = GetComponentFromObject<Camera>(MainCameraObject, "MainCamera"); }
             set { mainCamera = value;}
+        }
+
+        public RetroRenderer RetroRenderer
+        {
+            get { return (retroRenderer) ? retroRenderer : retroRenderer = GetMonoBehaviour<RetroRenderer>(false); }
+            set { retroRenderer = value; }
         }
 
         public GameObject PlayerObject
@@ -441,6 +449,9 @@ namespace DaggerfallWorkshop.Game
             // Try to set all properties at startup
             //GetProperties();
 
+            // Cache initial QualitySettings shadow distance
+            initialQualitySettingsShadowDistance = QualitySettings.shadowDistance;
+
             // Always start game paused
             PauseGame(true);
 
@@ -601,7 +612,7 @@ namespace DaggerfallWorkshop.Game
                             // Is it hostile or pacified?
                             EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
                             EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
-                            if (includingPacified || (enemyMotor.IsHostile || enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly))
+                            if (includingPacified || (enemyMotor.IsHostile && enemyEntity.MobileEnemy.Team != MobileTeams.PlayerAlly))
                             {
                                 areEnemiesNearby = true;
                                 break;
@@ -646,7 +657,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         // Is it hostile or pacified?
                         EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
-                        if (includingPacified || enemyMotor.IsHostile)
+                        if (includingPacified || (enemyMotor.IsHostile && entity.Team != MobileTeams.PlayerAlly))
                         {
                             numberOfEnemies++;
                             if (stopLookingIfFound)
@@ -725,6 +736,18 @@ namespace DaggerfallWorkshop.Game
             }
 
             return true;
+        }
+
+        public static void UpdateShadowDistance()
+        {
+            if (Instance.playerEnterExit.IsPlayerInsideDungeon)
+                QualitySettings.shadowDistance = DaggerfallUnity.Settings.DungeonShadowDistance;
+            else if (Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                QualitySettings.shadowDistance = DaggerfallUnity.Settings.InteriorShadowDistance;
+            else if (!Instance.PlayerEnterExit.IsPlayerInside)
+                QualitySettings.shadowDistance = DaggerfallUnity.Settings.ExteriorShadowDistance;
+            else
+                QualitySettings.shadowDistance = Instance.initialQualitySettingsShadowDistance;
         }
 
         #endregion
@@ -825,10 +848,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetMonoBehaviour<T>() where T : MonoBehaviour
+        public static T GetMonoBehaviour<T>(bool errorIfNotFound = true) where T : MonoBehaviour
         {
             T result = (T)GameObject.FindObjectOfType<T>();
-            if (result == null)
+            if (result == null && errorIfNotFound)
             {
                 string errorText = string.Format("GameManager could not find {0}.", typeof(T));
                 Debug.LogError(errorText);
@@ -942,6 +965,16 @@ namespace DaggerfallWorkshop.Game
         void PathErrorMessageBox_OnClose()
         {
             Application.Quit();
+        }
+
+
+        // OnEncounter
+        public delegate void OnEncounterEventHandler();
+        public static event OnEncounterEventHandler OnEncounter;
+        public virtual void RaiseOnEncounterEvent()
+        {
+            if (OnEncounter != null)
+                OnEncounter();
         }
 
         #endregion

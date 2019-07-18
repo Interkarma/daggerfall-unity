@@ -31,6 +31,42 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Allow racial override to suppress Combat Voices option as required.
+        /// </summary>
+        public virtual bool SuppressOptionalCombatVoices
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Allow racial override to suppress paper doll body and items to show background only.
+        /// </summary>
+        public virtual bool SuppressPaperDollBodyAndItems
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Allows racial override to suppress crimes by player.
+        /// </summary>
+        public virtual bool SuppressCrime
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Allows racial override to suppress population spawns.
+        /// </summary>
+        public virtual bool SuppressPopulationSpawns
+        {
+            get { return false; }
+        }
+
+        #endregion
+
         #region Overrides
 
         // Always present at least one round remaining so effect system does not remove
@@ -89,9 +125,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         }
 
         /// <summary>
-        /// Called by WeaponManager when player hits an enemy with a weapon (includes hand-to-hand).
+        /// Called by WeaponManager when player hits an entity with a weapon (includes hand-to-hand).
+        /// Target entity may be null, racial overrides should handle this.
         /// </summary>
-        public virtual void OnWeaponHitEnemy(PlayerEntity playerEntity, EnemyEntity enemyEntity)
+        public virtual void OnWeaponHitEntity(PlayerEntity playerEntity, DaggerfallEntity targetEntity = null)
         {
         }
 
@@ -123,6 +160,40 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// <param name="isCureQuest">True when this should start cure quest.</param>
         public virtual void StartQuest(bool isCureQuest)
         {
+        }
+
+        /// <summary>
+        /// Set state of current FPS weapon from WeaponManager.
+        /// Allows the racial override to set a unique weapon type such as wereclaws.
+        /// </summary>
+        /// <param name="target">Target FPSWeapon to change.</param>
+        /// <returns>True if weapon changed.</returns>
+        public virtual bool SetFPSWeapon(FPSWeapon target)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Allow racial override to suppress inventory UI.
+        /// Some care might need to be taken by other systems this does not crash game like classic.
+        /// </summary>
+        /// <param name="suppressInventoryMessage">Optional message to display when inventory suppressed.</param>
+        /// <returns>True if inventory should be suppressed.</returns>
+        public virtual bool GetSuppressInventory(out string suppressInventoryMessage)
+        {
+            suppressInventoryMessage = string.Empty;
+            return false;
+        }
+
+        /// <summary>
+        /// Allow racial overrides to suppress talk UI.
+        /// </summary>
+        /// <param name="suppressTalkMessage">Optional message to display when talk suppressed.</param>
+        /// <returns>True if talk should be suppressed.</returns>
+        public virtual bool GetSuppressTalk(out string suppressTalkMessage)
+        {
+            suppressTalkMessage = string.Empty;
+            return false;
         }
 
         #endregion

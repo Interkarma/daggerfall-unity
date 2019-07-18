@@ -112,11 +112,7 @@ namespace DaggerfallWorkshop.Game
         Color CalcDaytimeAmbientLight()
         {
             float scale = sunlightManager.DaylightScale * sunlightManager.ScaleFactor;
-
-            Color startColor = ExteriorNightAmbientLight;
-            if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
-                startColor *= DaggerfallUnity.Settings.NightAmbientLightScale;
-
+            Color startColor = ExteriorNightAmbientLight * DaggerfallUnity.Settings.NightAmbientLightScale;
             return Color.Lerp(startColor, ExteriorNoonAmbientLight, scale);
         }
     }

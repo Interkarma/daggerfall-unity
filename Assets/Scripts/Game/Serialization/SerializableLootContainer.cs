@@ -117,9 +117,14 @@ namespace DaggerfallWorkshop.Game.Serialization
                     if (billboard) Destroy(billboard);
                     Destroy(GetComponent<MeshRenderer>());
                 }
-                else if (billboard)
+                else
                 {
-                    // Restore billboard appearance if present
+                    // Restore billboard if previously replaced by custom model
+                    // This happens when the record is changed and new model is not provided by mods
+                    if (!billboard)
+                        billboard = loot.transform.gameObject.AddComponent<DaggerfallBillboard>();
+
+                    // Restore billboard appearance
                     billboard.SetMaterial(data.textureArchive, data.textureRecord);
                 }
             }

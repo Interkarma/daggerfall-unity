@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -32,6 +33,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets or sets current effect settings.
         /// </summary>
         EffectSettings Settings { get; set; }
+
+        /// <summary>
+        /// Gets or sets enchantment param for enchantment effects.
+        /// If this property is null then effect is not a live enchantment.
+        /// </summary>
+        EnchantmentParam? EnchantmentParam { get; set; }
 
         /// <summary>
         /// Gets effect potion properties (if any).
@@ -74,6 +81,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Use (int)DFCareer.State.StatName to get index.
         /// </summary>
         int[] StatMods { get; }
+
+        /// <summary>
+        /// Gets array DaggerfallStats.Count items wide.
+        /// Array items represent Strength, Intelligence, Willpower, etc.
+        /// Allows an effect to temporarily override stat maximum value.
+        /// </summary>
+        int[] StatMaxMods { get; }
 
         /// <summary>
         /// Get array DaggerfallSkills.Count items wide.
@@ -164,6 +178,24 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool HasItemMakerFlags(ItemMakerFlags flags);
 
         /// <summary>
+        /// Helper to check if properties contain the specified enchantment payload flags
+        /// </summary>
+        bool HasEnchantmentPayloadFlags(EnchantmentPayloadFlags flags);
+
+        /// <summary>
+        /// Enchantment payload callback for enchantment to perform custom execution based on context.
+        /// These callbacks are performed directly from template, not from a live instance of effect. Do not store state in effect during callbacks.
+        /// Not used by EnchantmentPayloadFlags.Held - rather, an effect instance bundle is assigned to entity's effect manager to execute as normal.
+        /// </summary>
+        PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0);
+
+        /// <summary>
+        /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
+        /// Used by enchanting window to prevent certain enchantments from being selected together.
+        /// </summary>
+        bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null);
+
+        /// <summary>
         /// Get effect state data to serialize.
         /// </summary>
         object GetSaveData();
@@ -201,6 +233,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         int roundsRemaining;
         bool chanceSuccess = false;
         int[] statMods = new int[DaggerfallStats.Count];
+        int[] statMaxMods = new int[DaggerfallStats.Count];
         int[] skillMods = new int[DaggerfallSkills.Count];
         int[] resistanceMods = new int[DaggerfallResistances.Count];
         LiveEffectBundle parentBundle;
@@ -260,6 +293,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             set { settings = value; }
         }
 
+        public EnchantmentParam? EnchantmentParam { get; set; }
+
         public virtual PotionProperties PotionProperties
         {
             get { return potionProperties; }
@@ -284,6 +319,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public int[] StatMods
         {
             get { return statMods; }
+        }
+
+        public int[] StatMaxMods
+        {
+            get { return statMaxMods; }
         }
 
         public int[] SkillMods
@@ -366,6 +406,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Helper to check if properties contain the specified enchantment payload flags
+        /// </summary>
+        /// <param name="flags">Flags to check.</param>
+        /// <returns>True if flags specified.</returns>
+        public virtual bool HasEnchantmentPayloadFlags(EnchantmentPayloadFlags flags)
+        {
+            return (Properties.EnchantmentPayloadFlags & flags) == flags;
+        }
+
+        /// <summary>
+        /// Enchantment payload callback for enchantment to perform custom execution based on context.
+        /// These callbacks are performed directly from template, not from a live instance of effect. Do not store state in effect during callbacks.
+        /// Not used by EnchantmentPayloadFlags.Held - rather, an effect instance bundle is assigned to entity's effect manager to execute as normal.
+        /// </summary>
+        public virtual PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
+        /// Used by enchanting window to prevent certain enchantments from being selected together.
+        /// </summary>
+        public virtual bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Starts effect running when first attached to an entity.
         /// Executes a MagicRound() tick immediately.
         /// Child classes must call base.Start() when overriding.
@@ -389,6 +458,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             roundsRemaining = effectData.roundsRemaining;
             chanceSuccess = effectData.chanceSuccess;
             statMods = effectData.statMods;
+            statMaxMods = (effectData.statMaxMods != null) ? effectData.statMaxMods : new int[DaggerfallStats.Count];
             skillMods = effectData.skillMods;
             variantCount = effectData.variantCount;
             currentVariant = effectData.currentVariant;
@@ -448,6 +518,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return 0;
 
             return statMods[(int)stat];
+        }
+
+        /// <summary>
+        /// Gets the attribute maximum modifier of this effect.
+        /// </summary>
+        /// <param name="stat">Attribute to query.</param>
+        /// <returns>Current attribute maximum modifier.</returns>
+        public int GetAttributeMaximumMod(DFCareer.Stats stat)
+        {
+            if (stat == DFCareer.Stats.None)
+                return 0;
+
+            return statMaxMods[(int)stat];
         }
 
         /// <summary>
@@ -626,12 +709,28 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             statMods[(int)stat] = value;
         }
 
+        protected void SetStatMaxMod(DFCareer.Stats stat, int value)
+        {
+            if (stat == DFCareer.Stats.None)
+                return;
+
+            statMaxMods[(int)stat] = value;
+        }
+
         protected void ChangeStatMod(DFCareer.Stats stat, int amount)
         {
             if (stat == DFCareer.Stats.None)
                 return;
 
             statMods[(int)stat] += amount;
+        }
+
+        protected void ChangeStatMaxMod(DFCareer.Stats stat, int amount)
+        {
+            if (stat == DFCareer.Stats.None)
+                return;
+
+            statMaxMods[(int)stat] += amount;
         }
 
         protected void SetSkillMod(DFCareer.Skills skill, int value)

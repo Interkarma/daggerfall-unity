@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Game
                         waterSoundPosition.y = playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale;
                         waterSoundPosition.x += Random.Range(-3f, 3f);
                         waterSoundPosition.z += Random.Range(-3f, 3f);
-                        SpatializedPlayOneShot(SoundClips.WaterGentle, waterSoundPosition, 3f);
+                        SpatializedPlayOneShot(SoundClips.WaterGentle, waterSoundPosition, 1f);
                     }
 
                     // Chance to play water bubbles sound if player is underwater
@@ -174,50 +174,46 @@ namespace DaggerfallWorkshop.Game
 
         private void AmbientPlayOneShot(SoundClips clip, float volumeScale)
         {
-            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
-            ambientAudioSource.spatialBlend = 0;
-            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
-        }
-
-        private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale)
-        {
-            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
-            ambientAudioSource.transform.position = position;
-            ambientAudioSource.spatialBlend = 1f;
-            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
-        }
-
-        private void RelativePlayOneShot(SoundClips clip, Vector3 relativePosition, float volumeScale)
-        {
-            AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
-            ambientAudioSource.spatialBlend = 1f;
-            ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
-            if (relativePositionCoroutine != null)
-                StopCoroutine(relativePositionCoroutine);
-            relativePositionCoroutine = StartCoroutine(UpdateAmbientSoundRelativePosition(relativePosition));
-        }
-
-        private IEnumerator UpdateAmbientSoundRelativePosition(Vector3 relativePosition)
-        {
-            while (ambientAudioSource.isPlaying)
+            if (!ambientAudioSource.isPlaying)
             {
-                ambientAudioSource.transform.position = playerBehaviour.transform.position + relativePosition;
-                yield return new WaitForEndOfFrame();
+                AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
+                ambientAudioSource.spatialBlend = 0;
+                ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
             }
+        }
+
+
+        private void SpatializedPlayOneShot(SoundClips clip, Vector3 position, float volumeScale, float minDistance = 8f)
+        {
+            if (!ambientAudioSource.isPlaying)
+            {
+                AudioClip audioClip = dfAudioSource.GetAudioClip((int)clip);
+                ambientAudioSource.transform.position = position;
+                ambientAudioSource.spatialBlend = 1f;
+                ambientAudioSource.minDistance = minDistance;
+                ambientAudioSource.maxDistance = minDistance * 8;
+                ambientAudioSource.PlayOneShotWhenReady(audioClip, volumeScale);
+            }
+        }
+
+        private float sqr(float x) 
+        {
+            return x * x;
         }
 
         private void PlaySomewhereAround(SoundClips clip, float volumeScale)
         {
             Vector3 randomPos = playerBehaviour.transform.position +
-                Random.onUnitSphere * 5.2f;
-            SpatializedPlayOneShot(clip, randomPos, volumeScale);
+                Random.onUnitSphere * Mathf.Sqrt(Random.Range(sqr(10f), sqr(20f)));
+            SpatializedPlayOneShot(clip, randomPos, volumeScale, 13f);
         }
 
         private void PlaySomewhereOnHorizon(SoundClips clip, float volumeScale)
         {
             // Somewhere around, 20° above horizon
-            Vector3 randomPos = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up) * new Vector3(0.94f, 0.34f, 0f);
-            RelativePlayOneShot(clip, randomPos, volumeScale);
+            Vector3 randomPos = playerBehaviour.transform.position + 
+                Quaternion.AngleAxis(Mathf.Sqrt(Random.Range(0f, sqr(10000f))), Vector3.up) * new Vector3(0.94f, 0.34f, 0f);
+            SpatializedPlayOneShot(clip, randomPos, volumeScale, 3000f);
         }
 
         private void PlayEffects()
@@ -241,7 +237,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Play ambient sound as a one-shot 3D sound
                     SoundClips clip = ambientSounds[index];
-                    PlaySomewhereOnHorizon(clip, 5f);
+                    PlaySomewhereOnHorizon(clip, 1f);
 
                     // AmbientPlayOneShot(clip, 5f);
                     RaiseOnPlayEffectEvent(clip);
@@ -262,7 +258,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Play ambient sound as a one-shot 3D sound
                 SoundClips clip = ambientSounds[index];
-                PlaySomewhereAround(clip, 5f);
+                PlaySomewhereAround(clip, 1f);
                 RaiseOnPlayEffectEvent(clip);
             }
         }
@@ -338,7 +334,7 @@ namespace DaggerfallWorkshop.Game
                 yield return new WaitForSeconds(soundDelay);
 
             // Play sound effect
-            PlaySomewhereOnHorizon(clip, 5f);
+            PlaySomewhereOnHorizon(clip, 1f);
 
             // Raise event
             RaiseOnPlayEffectEvent(clip);
@@ -372,6 +368,7 @@ namespace DaggerfallWorkshop.Game
                     SoundClips.AmbientBirdCall,
                     SoundClips.AmbientDoorClose,
                 };
+                AmbientInteriorPresets();
             }
             else if (Presets == AmbientSoundPresets.Storm)
             {
@@ -381,6 +378,7 @@ namespace DaggerfallWorkshop.Game
                     SoundClips.StormLightningThunder,
                     SoundClips.StormThunderRoll,
                 };
+                AmbientExteriorPresets();
             }
             else if (Presets == AmbientSoundPresets.SunnyDay)
             {
@@ -389,6 +387,7 @@ namespace DaggerfallWorkshop.Game
                     SoundClips.BirdCall1,
                     SoundClips.BirdCall2,
                 };
+                AmbientExteriorPresets();
             }
             else
             {
@@ -396,6 +395,18 @@ namespace DaggerfallWorkshop.Game
             }
 
             lastPresets = Presets;
+        }
+
+        private void AmbientInteriorPresets()
+        {
+            // Wider spread angle because of environment reverberation
+            ambientAudioSource.spread = 45f;
+        }
+
+        private void AmbientExteriorPresets()
+        {
+            // Narroer spread angle because of lesser environment reverberation
+            ambientAudioSource.spread = 15f;
         }
 
         #endregion

@@ -235,6 +235,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // used to guard execution of function SelectTopicFromTopicList - see this function for more detail why this guarding is necessary
         bool inListboxTopicContentUpdate = false;
 
+        bool suppressTalk = false;
+        string suppressTalkMessage = string.Empty;
+
         // Used to store indexes of copied talk fragments so they can be entered into Notebook in chronological order
         List<int> copyIndexes;
 
@@ -246,6 +249,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void OnPush()
         {
             base.OnPush();
+
+            // Racial override can suppress talk
+            // We still setup and push window normally, actual suppression is done in Update()
+            MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null)
+                suppressTalk = racialOverride.GetSuppressTalk(out suppressTalkMessage);
 
             copyIndexes = new List<int>();
             if (listboxTopic != null)
@@ -311,13 +320,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+
+            // Close window immediately if talk suppressed
+            if (suppressTalk)
+            {
+                CloseWindow();
+                if (!string.IsNullOrEmpty(suppressTalkMessage))
+                    DaggerfallUI.MessageBox(suppressTalkMessage);
+                return;
+            }
         }
 
         public void UpdateListboxTopic()
         {               
             if (listboxTopic != null)
             {
-                string oldTopic = listboxTopic.SelectedItem;
+                string oldTopic = listboxTopic.SelectedIndex >= 0 ? listboxTopic.SelectedItem : null;
                 if (selectedTalkOption == TalkOption.TellMeAbout)
                 {
                     SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicTellMeAbout);
@@ -330,8 +348,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicPerson);
                     else if (selectedTalkCategory == TalkCategory.Things)
                         SetListboxTopics(ref listboxTopic, TalkManager.Instance.ListTopicThings);
-                }                
-                listboxTopic.SelectedIndex = listboxTopic.FindIndex(oldTopic);
+                }
+                if (oldTopic != null)
+                    listboxTopic.SelectedIndex = listboxTopic.FindIndex(oldTopic);
                 UpdateQuestion(listboxTopic.SelectedIndex);
             }                
         }
@@ -615,7 +634,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listboxConversation.ClearItems();
 
                 ListBox.ListItem textLabelNPCGreeting;
-                listboxConversation.AddItem(TalkManager.Instance.GetNPCGreetingText(), out textLabelNPCGreeting);
+                listboxConversation.AddItem(TalkManager.Instance.NPCGreetingText, out textLabelNPCGreeting);
                 textLabelNPCGreeting.selectedTextColor = textcolorHighlighted;
                 textLabelNPCGreeting.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
                 textLabelNPCGreeting.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;

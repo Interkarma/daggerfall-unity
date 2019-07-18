@@ -16,7 +16,7 @@ spells,                                             Spells
 tooltips,                                           Tooltips
 hud,                                                HUD
 gui,                                                GUI
-light,												Light
+light,                                              Light
 basic,                                              Basic
 advanced,                                           Advanced
 
@@ -48,6 +48,8 @@ spellShadows,                                       Spell shadows
 spellShadowsInfo,                                   Enable spell shadows
 instantRepairs,                                     Instant repair services
 instantRepairsInfo,                                 Disables waiting for repairs and makes them instantaneous
+bowDrawback,                                        Bows - draw and release
+bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
 
 toolTips,                                           Tool Tips
 toolTipsInfo,                                       Shows informations about GUI items
@@ -59,14 +61,14 @@ toolTipBackgroundColor,                             Background Color
 toolTipBackgroundColorInfo,                         Background color for tooltips
 crosshair,                                          Crosshair
 crosshairInfo,                                      Enable Crosshair on HUD
-vitalsIndicators,									Vitals Indicators
-vitalsIndicatorsInfo,								Show indicators on vitals bars that display changes in vitals
+vitalsIndicators,                                   Vitals Indicators
+vitalsIndicatorsInfo,                               Show indicators on vitals bars that display changes in vitals
 interactionModeIcon,                                Interaction Mode Icon
 interactionModeIconInfo,                            Style of contex icon for interaction mode
 arrowCounter,                                       Arrow counter
 arrowCounterInfo,                                   Enable an arrow counter on the HUD when using bows
-freeScaling,										Free scaling
-freeScalingInfo,									UI is stretched as required to fill entire viewport with no regard to aspect ratio
+freeScaling,                                        Free scaling
+freeScalingInfo,                                    UI is stretched as required to fill entire viewport with no regard to aspect ratio
 showQuestJournalClocksAsCountdown,                  Countdown quest journal clocks
 showQuestJournalClocksAsCountdownInfo,              Show the remaining time instead of the time from start
 inventoryInfoPanel,                                 Inventory Info Panel
@@ -79,6 +81,8 @@ helmAndShieldMaterialDisplay,                       Helm and Shield Material Dis
 helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
 geographicBackgrounds,                              Geographic backgrounds
 geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
+dungeonExitWagonPrompt,                             Dungeon wagon access prompt
+dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 10m of exit)
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
@@ -88,26 +92,28 @@ compressModdedTextures,                             Compress Modded Textures
 compressModdedTexturesInfo,                         Import textures with a compressed format which uses less graphics memory.
 gameConsole,                                        Game Console
 gameConsoleInfo,                                    Enable input for console commands
-nearDeathWarning,									Near Death Warning
-nearDeathWarningInfo,								Show blinking/pulsating screen effects to warn when near death.
-alternateRandomEnemySelection,						Alternate Random Enemy Selection
-alternateRandomEnemySelectionInfo,					Create random enemies in dungeons with more variability.
-advancedClimbing,									Advanced Climbing System
-advancedClimbingInfo,								Climb walls in all directions & jump off them and grab them.
-dungeonAmbientLightScale,							Dungeon ambient light
-dungeonAmbientLightScaleInfo,						Scale of the ambient light inside dungeons
-nightAmbientLightScale,								Night ambient light
-nightAmbientLightScaleInfo,							Scale of the ambient light at night in interiors and exteriors
-playerTorchLightScale,								Player torch light 
-playerTorchLightScaleInfo,							Scale of player personal light
-playerTorchFromItems,								Item based player torch
-playerTorchFromItemsInfo,							Player torch light is enabled by in-game light sources
-combatVoices,										Combat vocalizations
-combatVoicesInfo,									Player and NPCs will vocalize when attacking or being hit
-enemyInfighting,									Enemy infighting
+nearDeathWarning,                                   Near Death Warning
+nearDeathWarningInfo,                               Show blinking/pulsating screen effects to warn when near death.
+alternateRandomEnemySelection,                      Alternate Random Enemy Selection
+alternateRandomEnemySelectionInfo,                  Create random enemies in dungeons with more variability.
+advancedClimbing,                                   Advanced Climbing System
+advancedClimbingInfo,                               Climb walls in all directions & jump off them and grab them.
+dungeonAmbientLightScale,                           Dungeon ambient light
+dungeonAmbientLightScaleInfo,                       Scale of the ambient light inside dungeons
+nightAmbientLightScale,                             Night ambient light
+nightAmbientLightScaleInfo,                         Scale of the ambient light at night in interiors and exteriors
+playerTorchLightScale,                              Player torch light 
+playerTorchLightScaleInfo,                          Scale of player personal light
+playerTorchFromItems,                               Item based player torch
+playerTorchFromItemsInfo,                           Player torch light is enabled by in-game light sources
+combatVoices,                                       Combat vocalizations
+combatVoicesInfo,                                   Player and NPCs will vocalize when attacking or being hit
+enemyInfighting,                                    Enemy infighting
 enemyInfightingInfo,                                AI characters will fight others that they aren't allied with
 enhancedCombatAI,                                   Enhanced combat AI
 enhancedCombatAIInfo,                               Enable various enhancements to combat AI not in original Daggerfall
+allowMagicRepairs,                                  Allow magic item repairs
+allowMagicRepairsInfo,                              Allow magic items to be repaired like mundane items
 
 resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution
@@ -131,8 +137,12 @@ dungeonLightShadows,                                Dungeon Light Shadows
 dungeonLightShadowsInfo,                            Dungeon lights cast shadows
 interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
+exteriorLightShadows,                               Exterior Light Shadows
+exteriorLightShadowsInfo,                           Exterior sunlight cast shadows
 useLegacyDeferred,                                  Use Legacy Deferred
 useLegacyDeferredInfo,                              Legacy rendering path
+retroRenderingMode,                                 Retro Rendering Mode
+retroRenderingModeInfo,                             3D world rendered at low resolution while UI remains at set resolution
 
 - Options shared among sliders. Missing keys use default text.
 

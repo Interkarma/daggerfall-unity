@@ -154,14 +154,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetChooseBioWindow()
         {
-            if (createCharChooseBioWindow == null)
-            {
-                createCharChooseBioWindow = new CreateCharChooseBio(uiManager, createCharRaceSelectWindow);
-                createCharChooseBioWindow.OnClose += CreateCharChooseBioWindow_OnClose;
-            }
-
-            // Reset biography window in case user already answered it then cancelled
-            createCharBiographyWindow = null;
+            createCharChooseBioWindow = new CreateCharChooseBio(uiManager, createCharRaceSelectWindow);
+            createCharChooseBioWindow.OnClose += CreateCharChooseBioWindow_OnClose;
 
             wizardStage = WizardStages.SelectBiographyMethod;
             uiManager.PushWindow(createCharChooseBioWindow);
@@ -169,15 +163,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetBiographyWindow()
         {
-            if (createCharBiographyWindow == null)
+            if (!characterDocument.isCustom)
             {
-                if (!characterDocument.isCustom)
-                {
-                    characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
-                }
-                createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
-                createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
+                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
             }
+            createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
+            createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
                 
             createCharBiographyWindow.ClassIndex = characterDocument.classIndex;
             wizardStage = WizardStages.BiographyQuestions;
@@ -334,30 +325,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateCharCustomClassWindow_OnClose()
         {
-            characterDocument.career = createCharCustomClassWindow.CreatedClass;
-            characterDocument.career.Name = createCharCustomClassWindow.ClassName;
+            if (!createCharCustomClassWindow.Cancelled)
+            {
+                characterDocument.career = createCharCustomClassWindow.CreatedClass;
+                characterDocument.career.Name = createCharCustomClassWindow.ClassName;
 
-            // Determine the most similar class so that we can choose the biography quiz
-            characterDocument.classIndex = BiogFile.GetClassAffinityIndex(characterDocument.career, createCharClassSelectWindow.ClassList);
+                // Determine the most similar class so that we can choose the biography quiz
+                characterDocument.classIndex = BiogFile.GetClassAffinityIndex(characterDocument.career, createCharClassSelectWindow.ClassList);
 
-            // Set reputation adjustments
-            characterDocument.reputationMerchants = createCharCustomClassWindow.MerchantsRep;
-            characterDocument.reputationCommoners = createCharCustomClassWindow.PeasantsRep;
-            characterDocument.reputationScholars = createCharCustomClassWindow.ScholarsRep;
-            characterDocument.reputationNobility = createCharCustomClassWindow.NobilityRep;
-            characterDocument.reputationUnderworld = createCharCustomClassWindow.UnderworldRep;
+                // Set reputation adjustments
+                characterDocument.reputationMerchants = createCharCustomClassWindow.MerchantsRep;
+                characterDocument.reputationCommoners = createCharCustomClassWindow.PeasantsRep;
+                characterDocument.reputationScholars = createCharCustomClassWindow.ScholarsRep;
+                characterDocument.reputationNobility = createCharCustomClassWindow.NobilityRep;
+                characterDocument.reputationUnderworld = createCharCustomClassWindow.UnderworldRep;
 
-            // Set attributes
-            characterDocument.career.Strength = createCharCustomClassWindow.Stats.WorkingStats.LiveStrength;
-            characterDocument.career.Intelligence = createCharCustomClassWindow.Stats.WorkingStats.LiveIntelligence;
-            characterDocument.career.Willpower = createCharCustomClassWindow.Stats.WorkingStats.LiveWillpower;
-            characterDocument.career.Agility = createCharCustomClassWindow.Stats.WorkingStats.LiveAgility;
-            characterDocument.career.Endurance = createCharCustomClassWindow.Stats.WorkingStats.LiveEndurance;
-            characterDocument.career.Personality = createCharCustomClassWindow.Stats.WorkingStats.LivePersonality;
-            characterDocument.career.Speed = createCharCustomClassWindow.Stats.WorkingStats.LiveSpeed;
-            characterDocument.career.Luck = createCharCustomClassWindow.Stats.WorkingStats.LiveLuck;
+                // Set attributes
+                characterDocument.career.Strength = createCharCustomClassWindow.Stats.WorkingStats.LiveStrength;
+                characterDocument.career.Intelligence = createCharCustomClassWindow.Stats.WorkingStats.LiveIntelligence;
+                characterDocument.career.Willpower = createCharCustomClassWindow.Stats.WorkingStats.LiveWillpower;
+                characterDocument.career.Agility = createCharCustomClassWindow.Stats.WorkingStats.LiveAgility;
+                characterDocument.career.Endurance = createCharCustomClassWindow.Stats.WorkingStats.LiveEndurance;
+                characterDocument.career.Personality = createCharCustomClassWindow.Stats.WorkingStats.LivePersonality;
+                characterDocument.career.Speed = createCharCustomClassWindow.Stats.WorkingStats.LiveSpeed;
+                characterDocument.career.Luck = createCharCustomClassWindow.Stats.WorkingStats.LiveLuck;
 
-            SetChooseBioWindow();
+                SetChooseBioWindow();
+            }
+            else
+            {
+                SetClassSelectWindow();
+            }
         }
 
         void CreateCharChooseBioWindow_OnClose()

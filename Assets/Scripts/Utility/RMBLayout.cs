@@ -423,7 +423,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign static
             if (dfUnity.Option_SetStaticFlags)
-                go.isStatic = true;
+                GameObjectHelper.TagStaticGeometry(go);
 
             return go;
         }
@@ -812,10 +812,10 @@ namespace DaggerfallWorkshop.Utility
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
 
             // Is this a city gate?
-            /*if (IsCityGate(modelID))
+            if (IsCityGate(modelID))
             {
-                DaggerfallCityGate gate = go.AddComponent<DaggerfallCityGate>();
-            }*/
+                go.AddComponent<DaggerfallCityGate>();
+            }
 
             return go;
         }

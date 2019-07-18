@@ -24,17 +24,21 @@ confirmFind,        Do you want to open the world map to travel to:
 confirmFind2,       (Note: you can cancel travel from the world map)
 enterNote,          Enter your note:
 completedQuest,     completed
-failedQuest,        failed
+endedQuest,         ended
 finishQuestHeader,  {0} {1} at {2}:
 quest,              Quest
 noteHeader,         {0} in {1}:
+
+- Character window:
+
+levelProgress,      Progress made to the next level: {0}%
 
 - Inventory & trade windows:
 
 readMap,            Discovered the location of %map after studying a map.
 readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
 readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
-readMapFail,        You have already recorded all locations in this region!
+readMapFail,        You have already discovered the location shown by this map.
 howManyItems,       Pick how many items (max {0})?
 wagonFullGold,      Your wagon could only hold {0} gold pieces.
 itemsIdentified,    Items identified.
@@ -65,6 +69,8 @@ arSrc,              armor rating
 arRep,              armor
 northern,           (northern)
 southern,           (southern)
+noWagon,            You don't own a wagon.
+exitTooFar,         The exit is too far away for you to access your wagon.
 
 - Potion mixing window:
 
@@ -73,7 +79,28 @@ potionMixed,        Your potion has been mixed.
 potionFailed,       Those ingredients did not concoct an effective potion.
 reqIngredients,     You do not have the ingredients required.
 
+- Banking status:
+
+region,             Region
+account,            Account
+loan,               Loan
+dueDate,            Loan Due Date
+noAccount,          None
+loanReminder,       You have a loan of {0} gold pieces due in
+loanReminder2,      less than {0} months in {1}
+
 - Icon picker window:
 
 classicIcons,       Classic
 suggestedIcons,     Suggested
+
+- Guild service window:
+
+serviceMembersOnly, My services are reserved for members only.
+serviceDonateHowMuch, Donate how much money : 
+curedDisease,       You are cured.
+freeHolidayCuring,  You are cured free from cost due to todays' holiday.
+
+- Rest window
+
+illegalRestWarning, It is illegal to camp in or near a city. Continue?

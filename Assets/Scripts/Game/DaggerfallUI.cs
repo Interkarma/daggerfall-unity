@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -307,11 +308,8 @@ namespace DaggerfallWorkshop.Game
 
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
 
-            // TEST: 4x scale paper doll renderer
-            // This will be used to display visual paper doll during testing
-            // Old paper doll still refreshed and used for mouse-over picking
-            // Will switch back to old method if any significant issues found with new paper doll rendering
-            paperDollRenderer = new PaperDollRenderer(4);
+            // Create 8x scale paper doll renderer
+            paperDollRenderer = new PaperDollRenderer(8);
 
             SetupSingleton();
         }
@@ -1099,7 +1097,7 @@ namespace DaggerfallWorkshop.Game
         public static Texture2D GetTextureFromResources(string name)
         {
             Texture2D tex;
-            return TextureReplacement.TryImportTexture(name, out tex) ? tex : Resources.Load<Texture2D>(name);
+            return TextureReplacement.TryImportTexture(name, true, out tex) ? tex : Resources.Load<Texture2D>(name);
         }
 
         /// <summary>
@@ -1141,6 +1139,15 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
+        public static DaggerfallMessageBox MessageBox(TextFile.Token[] tokens, IMacroContextProvider mcp = null)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            messageBox.SetTextTokens(tokens, mcp);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.Show();
+            return messageBox;
+        }
+
         public static Texture2D CreateSolidTexture(Color color, int dim)
         {
             Texture2D texture = null;
@@ -1156,6 +1163,32 @@ namespace DaggerfallWorkshop.Game
             texture.filterMode = FilterMode.Point;
 
             return texture;
+        }
+
+        /// <summary>
+        /// Gets all resolutions without duplicates; when the same resolution support different refresh rates, the highest one is chosen.
+        /// </summary>
+        /// <returns>All supported distinct resolutions.</returns>
+        public static Resolution[] GetDistinctResolutions()
+        {
+            Resolution[] resolutions = Screen.resolutions;
+            var distinctResolutions = new List<Resolution>(resolutions.Length);
+
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                Resolution current = resolutions[i];
+
+                if (i + 1 < resolutions.Length)
+                {
+                    Resolution next = resolutions[i + 1];
+                    if (current.width == next.width && current.height == next.height)
+                        continue;
+                }
+
+                distinctResolutions.Add(current);
+            }
+
+            return distinctResolutions.ToArray();
         }
 
         #endregion

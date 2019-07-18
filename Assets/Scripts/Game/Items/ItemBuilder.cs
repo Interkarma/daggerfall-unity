@@ -260,8 +260,6 @@ namespace DaggerfallWorkshop.Game.Items
         {
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
             DaggerfallUnityItem book = new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book0));
-
-            // TODO: Change DaggerfallUnityItem.message from int to ushort
             book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
             book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
             // Update item value for this book.
@@ -282,6 +280,29 @@ namespace DaggerfallWorkshop.Game.Items
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.ReligiousItems);
             int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.ReligiousItems, groupIndex);
+
+            return newItem;
+        }
+
+        public static DaggerfallUnityItem CreateRandomlyFilledSoulTrap()
+        {
+            // Create a trapped soul type and filter invalid creatures
+            MobileTypes soul = MobileTypes.None;
+            while (soul == MobileTypes.None)
+            {
+                MobileTypes randomSoul = (MobileTypes)UnityEngine.Random.Range((int)MobileTypes.Rat, (int)MobileTypes.Lamia + 1);
+                if (randomSoul == MobileTypes.Horse_Invalid ||
+                    randomSoul == MobileTypes.Dragonling)       // NOTE: Dragonling (34) is soulless, only soul of Dragonling_Alternate (40) from B0B70Y16 has a soul
+                    continue;
+                else
+                    soul = randomSoul;
+            }
+
+            // Generate item
+            DaggerfallUnityItem newItem = CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+            newItem.TrappedSoulType = soul;
+            MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[(int)soul];
+            newItem.value = 5000 + mobileEnemy.SoulPts;
 
             return newItem;
         }
@@ -375,6 +396,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
+                newItem.nativeMaterialValue = 0; // Arrows don't have a material
             }
 
             return newItem;

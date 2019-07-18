@@ -12,12 +12,12 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -732,43 +732,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //const int notEnoughGold = 1702;
-            //const int noSpellBook = 1703;
+            const int notEnoughGold = 1702;
+            const int noSpellBook = 1703;
             const int youMustChooseAName = 1704;
             const int spellHasBeenInscribed = 1705;
 
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            // TODO:
-            //   Implement costs and remove gold from player and block if user does not have enough gold (message 1702)
-            //   Spells will be free (both gold and spell points) during build-out of effect system.
-
-            // NOTES:
-            //  In classic, player must have a spellbook item in their inventory (message 1703).
-            //  In Daggerfall Unity, the spellbook is a permanent item that all players own and cannot be removed.
-            //  This is to prevent player accidentally dropping or selling their spellbook.
-            //  So not performing spellbook check at this time and 1703 is never shown.
+            // Presence of spellbook is also checked earlier
+            if (!GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+            {
+                DaggerfallUI.MessageBox(noSpellBook);
+                return;
+            }
 
             // Spell must have at least one effect - adding custom message
             List<EffectEntry> effects = GetEffectEntries();
             if (effects.Count == 0)
             {
-                DaggerfallMessageBox mbNoEffects = DaggerfallUI.MessageBox(TextManager.Instance.GetText("SpellmakerUI", "noEffectsError"));
-                mbNoEffects.ClickAnywhereToClose = true;
-                mbNoEffects.PreviousWindow = this;
-                mbNoEffects.Show();
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noEffectsError"));
                 return;
             }
 
-            // Spell must have a name
-            if (string.IsNullOrEmpty(spellNameLabel.Text))
+            // Enough money?
+            var moneyAvailable = GameManager.Instance.PlayerEntity.GetGoldAmount();
+            if (moneyAvailable < totalGoldCost)
             {
-                DaggerfallMessageBox mbNoName = DaggerfallUI.MessageBox(youMustChooseAName);
-                mbNoName.ClickAnywhereToClose = true;
-                mbNoName.PreviousWindow = this;
-                mbNoName.Show();
+                DaggerfallUI.MessageBox(notEnoughGold);
                 return;
             }
+
+            // Spell must have a name; Only bother the player if everything else is correct
+            if (string.IsNullOrEmpty(spellNameLabel.Text))
+            {
+                DaggerfallUI.MessageBox(youMustChooseAName);
+                return;
+            }
+
+            GameManager.Instance.PlayerEntity.DeductGoldAmount(totalGoldCost);
 
             // Create effect bundle settings
             EffectBundleSettings spell = new EffectBundleSettings();
@@ -933,7 +934,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enumeratedEffectTemplates.Sort((s1, s2) => s1.Properties.SubGroupName.CompareTo(s2.Properties.SubGroupName));
 
             // Populate subgroup names in list box
-            foreach(IEntityEffect effect in enumeratedEffectTemplates)
+            foreach (IEntityEffect effect in enumeratedEffectTemplates)
             {
                 effectSubGroupPicker.ListBox.AddItem(effect.Properties.SubGroupName);
             }

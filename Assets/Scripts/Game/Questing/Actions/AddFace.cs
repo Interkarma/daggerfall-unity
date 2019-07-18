@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,25 +9,28 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Adds an NPC portrait to HUD which indicates player is escorting this NPC.
+    /// Adds an NPC or Foe portrait to HUD which indicates player is escorting this NPC or Foe.
     /// </summary>
     public class AddFace : ActionTemplate
     {
         Symbol personSymbol;
+        Symbol foeSymbol;
         int sayingID;
 
         public override string Pattern
         {
-            get { return @"add (?<anNPC>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
+            get
+            {
+                return
+                    @"add (?<anNPC>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add (?<anNPC>[a-zA-Z0-9_.-]+) face|" +
+                    @"add foe (?<aFoe>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add foe (?<aFoe>[a-zA-Z0-9_.-]+) face";
+            }
         }
 
         public AddFace(Quest parentQuest)
@@ -45,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             AddFace action = new AddFace(parentQuest);
             action.personSymbol = new Symbol(match.Groups["anNPC"].Value);
+            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
             action.sayingID = Parser.ParseInt(match.Groups["sayingID"].Value);
 
             return action;
@@ -54,13 +58,19 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
-            // Get related Person resource
-            Person person = ParentQuest.GetPerson(personSymbol);
-            if (person == null)
-                return;
-
-            // Add face to HUD
-            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
+            // Add related Person or Foe resource
+            if (personSymbol != null && !string.IsNullOrEmpty(personSymbol.Name))
+            {
+                Person person = ParentQuest.GetPerson(personSymbol);
+                if (person != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
+            }
+            else if (foeSymbol != null && !string.IsNullOrEmpty(foeSymbol.Name))
+            {
+                Foe foe = ParentQuest.GetFoe(foeSymbol);
+                if (foe != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(foe);
+            }
 
             // Popup saying message
             if (sayingID != 0)
@@ -75,6 +85,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public struct SaveData_v1
         {
             public Symbol personSymbol;
+            public Symbol foeSymbol;
             public int sayingID;
         }
 
@@ -82,6 +93,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             SaveData_v1 data = new SaveData_v1();
             data.personSymbol = personSymbol;
+            data.foeSymbol = foeSymbol;
             data.sayingID = sayingID;
 
             return data;
@@ -94,6 +106,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             SaveData_v1 data = (SaveData_v1)dataIn;
             personSymbol = data.personSymbol;
+            foeSymbol = data.foeSymbol;
             data.sayingID = sayingID;
         }
 

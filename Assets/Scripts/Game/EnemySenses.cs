@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
@@ -231,7 +232,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (distanceToPlayer < 1094 * MeshReader.GlobalScale)
                 {
-                    float upperXZ = 0;
+                    float upperXZ;
                     float upperY = 0;
                     float lowerY = 0;
                     bool playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
@@ -392,14 +393,9 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    Vector3 toTarget = ResetPlayerPos;
-                    toTarget = target.transform.position - transform.position;
-
-                    if (toTarget != ResetPlayerPos)
-                    {
-                        distanceToTarget = toTarget.magnitude;
-                        directionToTarget = toTarget.normalized;
-                    }
+                    Vector3 toTarget = target.transform.position - transform.position;
+                    distanceToTarget = toTarget.magnitude;
+                    directionToTarget = toTarget.normalized;
                     targetInSight = CanSeeTarget(target);
                 }
 
@@ -532,9 +528,7 @@ namespace DaggerfallWorkshop.Game
             if (targetPosPredictTimer != 0)
             {
                 divisor = targetPosPredictTimer;
-                targetPosPredictTimer = 0;
                 lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
-                oldLastKnownTargetPos = lastKnownTargetPos;
             }
 
             Vector3 prediction = assumedCurrentPosition + (lastPositionDiff / divisor * secondsToPredictedPos);
@@ -859,7 +853,7 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit))
             {
                 //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                if (hit.transform.gameObject.isStatic)
+                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
                     return false;
             }
 

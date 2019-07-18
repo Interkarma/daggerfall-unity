@@ -334,7 +334,7 @@ Person _priest_ face 40 group Cleric
 Person _child_ face 1 faction Children
 Person _hunter_ face 1 factiontype Temple anyInfo 1011 rumors 1012
 Person _alchemist_ group Chemist female
-Person _father_ face 5 group Noble anyInfo 1013 rumors 1014
+Person _father_ face 5 group Noble male anyInfo 1013 rumors 1014
 Person _local_ group Resident1 female
 
 Place _mapdung_ remote dungeon4
@@ -343,7 +343,7 @@ Place _childhouse_ remote house2
 Place _hintdung_ remote dungeon11
 
 Clock _S.05_ 7.00:00 27.23:40
-Clock _huntstart_ 00:00 0 flag 1 range 3 5
+Clock _huntstart_ 60.00:00 0
 
 Foe _F.00_ is Knight
 Foe _wereboar_ is Wereboar
@@ -356,7 +356,7 @@ Foe _wereboar_ is Wereboar
 	dialog link for person _local_ 
 	dialog link for location _hintdung_ person _alchemist_ 
 	dialog link for person _father_ 
-	dialog link for location _childhouse_ person _child_ 
+	dialog link for person _child_ 
 	_letter_ used do _readletter_ 
 	_map_ used do _S.10_ 
 	map2 used do _S.16_ 

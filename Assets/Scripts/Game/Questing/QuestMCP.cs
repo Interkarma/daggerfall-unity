@@ -6,12 +6,12 @@
 // Original Author: Hazelnut
 
 using UnityEngine;
-using System;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -31,6 +31,23 @@ namespace DaggerfallWorkshop.Game.Questing
             public QuestMacroDataSource(Quest parent)
             {
                 this.parent = parent;
+            }
+
+            public override string Name()
+            {
+                // Set seed to the quest UID before falling through to random name generation. (See t=2108)
+                DFRandom.srand((int) parent.UID);
+                return null;
+            }
+
+            public override string FactionOrderName()
+            {
+                // Only used for knightly order quests, %kno macro. (removing 'The ' prefix from name for readability)
+                FactionFile.FactionData factionData;
+                if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(parent.FactionId, out factionData))
+                    return factionData.name.StartsWith("The ") ? factionData.name.Substring(4) : factionData.name;
+                else
+                    return null;
             }
 
             // He/She
@@ -92,8 +109,33 @@ namespace DaggerfallWorkshop.Game.Questing
                     case Game.Entity.Genders.Male:
                         return HardStrings.pronounHis;
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounHers;
+                        return HardStrings.pronounHer;
                 }
+            }
+
+            public override string VampireNpcClan()
+            {
+                // %vcn
+                if (parent.LastResourceReferenced == null && !(parent.LastResourceReferenced is Person))
+                    return null;
+
+                // Use home Place region to determine vampire clan of NPC
+                // Fallback to current region if unable to determine home region of NPC
+                // Also fallback to using generic "vampire" faction name if clan not resolved
+                Person person = (Person)parent.LastResourceReferenced;
+                if (person.FactionData.type == (int)FactionFile.FactionTypes.VampireClan)
+                {
+                    int regionIndex = person.HomeRegionIndex;
+                    if (regionIndex == -1)
+                        regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+                    VampireClans vampireClan = FormulaHelper.GetVampireClan(regionIndex);
+                    if (vampireClan == VampireClans.None)
+                        return person.FactionData.name;
+                    else
+                        return TextManager.Instance.GetText("Races", vampireClan.ToString().ToLower());
+                }
+
+                return null;
             }
 
             public override string QuestDate()

@@ -5,6 +5,8 @@ MyDaggerfallUnitySavePath=
 [Video]
 ResolutionWidth=1280
 ResolutionHeight=720
+RetroRenderingMode=0
+UseMipMapsInRetroMode=False
 VSync=True
 Fullscreen=False
 FieldOfView=65
@@ -14,6 +16,11 @@ ShadowResolutionMode=0
 UseLegacyDeferred=False
 DungeonLightShadows=False
 InteriorLightShadows=True
+ExteriorLightShadows=True
+DungeonShadowDistance=20.0
+InteriorShadowDistance=30.0
+ExteriorShadowDistance=90.0
+
 EnableTextureArrays=True
 RandomDungeonTextures=0
 
@@ -48,6 +55,8 @@ EnableArrowCounter=True
 AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
+DungeonExitWagonPrompt=True
+IllegalRestWarning=True
 
 [Spells]
 EnableSpellLighting=True
@@ -68,9 +77,13 @@ SoundVolume = 1.0
 MusicVolume = 1.0
 InstantRepairs = False
 AllowMagicRepairs = False
+BowDrawback = False
 
 [Map]
 AutomapNumberOfDungeons=5
+AutomapDisableMicroMap=False
+AutomapRememberSliceLevel=False
+AutomapAlwaysMaxOutSliceLevel=False
 ExteriorMapDefaultZoomLevel=8
 ExteriorMapResetZoomLevelOnNewLocation=True
 

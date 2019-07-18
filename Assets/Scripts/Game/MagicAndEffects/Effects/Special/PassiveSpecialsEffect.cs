@@ -164,11 +164,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!fromCareer && !fromRace)
                 return;
 
-            // Must be outside during the day
-            // Note: Active entities are always where the player is, so we can just use player context
-            if (GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Exterior && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            // Apply damage while in sunlight
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInSunlight)
             {
-                // Assign sunDamageAmount points of damage
                 entityBehaviour.Entity.DecreaseHealth(sunDamageAmount);
                 //Debug.LogFormat("Applied {0} points of sun damage after {1} magic (game minutes)", sunDamageAmount, sunDamagePerRounds);
             }
@@ -196,20 +194,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!fromCareer && !fromRace)
                 return;
 
-            // Must be inside
-            // Note: Active entities are always where the player is, so we can just use player context
-            if (GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Interior)
+            // Apply damage when inside a holy place
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInHolyPlace)
             {
-                // Holy places include all Temples and guildhalls of the Fighter Trainers (faction #849)
-                // https://en.uesp.net/wiki/Daggerfall:ClassMaker#Special_Disadvantages
-                DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
-                if (interior.BuildingData.BuildingType == DFLocation.BuildingTypes.Temple ||
-                    interior.BuildingData.FactionId == (int)FactionFile.FactionIDs.Fighter_Trainers)
-                {
-                    // Assign holyDamageAmount points of damage
-                    entityBehaviour.Entity.DecreaseHealth(holyDamageAmount);
-                    //Debug.LogFormat("Applied {0} points of holy damage after {1} magic rounds (game minutes)", holyDamageAmount, holyDamagePerRounds);
-                }
+                entityBehaviour.Entity.DecreaseHealth(holyDamageAmount);
+                //Debug.LogFormat("Applied {0} points of holy damage after {1} magic rounds (game minutes)", holyDamageAmount, holyDamagePerRounds);
             }
         }
 
@@ -239,9 +228,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void DarknessPoweredMagery()
         {
-            // Entity suffers light disadvantage during the day while outside of dungeons
-            // Even well-lit daytime buildings will make entity unable to cast
-            if (DaggerfallUnity.Instance.WorldTime.Now.IsDay && GameManager.Instance.PlayerEnterExit.WorldContext != WorldContext.Dungeon)
+            // Entity suffers light disadvantage during the day while outside
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInSunlight)
             {
                 // Disadvantage has two variants
                 switch (entityBehaviour.Entity.Career.DarknessPoweredMagery)

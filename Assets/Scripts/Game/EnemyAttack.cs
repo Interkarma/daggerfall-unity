@@ -48,7 +48,8 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
-            if (GameManager.Instance.DisableAI)
+            // Unable to attack if AI disabled or paralyzed
+            if (GameManager.Instance.DisableAI || entityBehaviour.Entity.IsParalyzed)
                 return;
 
             // Countdown to next melee attack
@@ -73,6 +74,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Unable to attack if paralyzed
+            if (entityBehaviour.Entity.IsParalyzed)
+                return;
+
             // If a melee attack has reached the damage frame we can run a melee attempt
             if (mobile.DoMeleeDamage)
             {
@@ -229,7 +234,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Calculate damage
-            damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, weapon, -1);
+            damage = FormulaHelper.CalculateAttackDamage(entity, playerEntity, -1, 0, weapon);
 
             // Break any "normal power" concealment effects on enemy
             if (entity.IsMagicallyConcealedNormalPower && damage > 0)
@@ -237,6 +242,14 @@ namespace DaggerfallWorkshop.Game
 
             // Tally player's dodging skill
             playerEntity.TallySkill(DFCareer.Skills.Dodging, 1);
+
+            // Handle Strikes payload from enemy to player target - this could change damage amount
+            if (damage > 0 && weapon != null && weapon.IsEnchanted)
+            {
+                EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                if (effectManager)
+                    damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, weapon, entity.Items, playerEntity.EntityBehaviour, damage);
+            }
 
             if (damage > 0)
             {
@@ -282,7 +295,7 @@ namespace DaggerfallWorkshop.Game
             EnemyMotor targetMotor = senses.Target.transform.GetComponent<EnemyMotor>();
 
             // Calculate damage
-            damage = FormulaHelper.CalculateAttackDamage(entity, targetEntity, weapon, -1);
+            damage = FormulaHelper.CalculateAttackDamage(entity, targetEntity, -1, 0, weapon);
 
             // Break any "normal power" concealment effects on enemy
             if (entity.IsMagicallyConcealedNormalPower && damage > 0)
@@ -304,7 +317,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Knock back enemy based on damage and enemy weight
-                if (targetMotor && (targetMotor.KnockBackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
+                if (targetMotor && (targetMotor.KnockbackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
                         && (entityBehaviour.EntityType == EntityTypes.EnemyClass || targetEntity.MobileEnemy.Weight > 0)))
                 {
                     float enemyWeight = targetEntity.GetWeightInClassicUnits();
@@ -312,13 +325,13 @@ namespace DaggerfallWorkshop.Game
                     float twoTimesDamage = damage * 2;
 
                     float knockBackAmount = ((tenTimesDamage - enemyWeight) * 256) / (enemyWeight + tenTimesDamage) * twoTimesDamage;
-                    float knockBackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
-                    knockBackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
+                    float KnockbackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
+                    KnockbackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
 
-                    if (knockBackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                        knockBackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                    targetMotor.KnockBackSpeed = knockBackSpeed;
-                    targetMotor.KnockBackDirection = direction;
+                    if (KnockbackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                        KnockbackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                    targetMotor.KnockbackSpeed = KnockbackSpeed;
+                    targetMotor.KnockbackDirection = direction;
                 }
 
                 if (DaggerfallUnity.Settings.CombatVoices && senses.Target.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(40))
@@ -345,15 +358,15 @@ namespace DaggerfallWorkshop.Game
                     targetSounds.PlayParrySound();
             }
 
-            targetEntity.DecreaseHealth(damage);
-
-            // Assign "cast when strikes" to target entity
+            // Handle Strikes payload from enemy to non-player target - this could change damage amount
             if (weapon != null && weapon.IsEnchanted)
             {
-                EntityEffectManager enemyEffectManager = targetEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                if (enemyEffectManager)
-                    enemyEffectManager.StrikeWithItem(weapon, entityBehaviour);
+                EntityEffectManager effectManager = GetComponent<EntityEffectManager>();
+                if (effectManager)
+                    damage = effectManager.DoItemEnchantmentPayloads(EnchantmentPayloadFlags.Strikes, weapon, entity.Items, targetEntity.EntityBehaviour, damage);
             }
+
+            targetEntity.DecreaseHealth(damage);
 
             if (targetMotor)
             {

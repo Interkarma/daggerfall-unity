@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.Entity
         // Default is 0 - effects can raise/lower mod values during their lifecycle
         // This is designed so that effects are never operating on permanent stat values
         int[] mods = new int[Count];
+        int[] maxMods = new int[Count];
 
         #endregion
 
@@ -109,6 +110,7 @@ namespace DaggerfallWorkshop.Game.Entity
             Speed = defaultValue;
             Luck = defaultValue;
             Array.Clear(mods, 0, Count);
+            Array.Clear(maxMods, 0, Count);
         }
 
         /// <summary>
@@ -152,11 +154,11 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <returns>Stat value.</returns>
         public int GetLiveStatValue(DFCareer.Stats stat)
         {
-            int mod = mods[(int)stat];
-            int value = GetPermanentStatValue(stat) + mod;
+            int value = GetPermanentStatValue(stat) + mods[(int)stat];
+            int maxValue = FormulaHelper.MaxStatValue() + maxMods[(int)stat];
 
-            // Clamp live stat to 1-MaxStatValue
-            value = Mathf.Clamp(value, 1, FormulaHelper.MaxStatValue());
+            // Clamp live stat to 1-maxValue (accounting for any max value mods)
+            value = Mathf.Clamp(value, 1, maxValue);
 
             return (short)value;
         }
@@ -220,9 +222,10 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assign mods from effect manager.
         /// </summary>
-        public void AssignMods(int[] statMods)
+        public void AssignMods(int[] statMods, int[] statMaxMods)
         {
             Array.Copy(statMods, mods, Count);
+            Array.Copy(statMaxMods, maxMods, Count);
         }
 
         #endregion

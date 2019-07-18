@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,6 +15,7 @@ using UnityEngine;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -26,8 +27,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        const int faceCount = 10;
         const int maxFaces = 3;
         const string factionFaceFile = "FACES.CIF";
+        const string factionChildrenFaceFile = "KIDS00I0.CIF";
 
         List<FaceDetails> faces = new List<FaceDetails>();
         List<Panel> facePanels = new List<Panel>();
@@ -41,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
             Serialization.SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         #endregion
@@ -85,9 +89,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Public Methods
 
         /// <summary>
-        /// Adds a face to HUD.
+        /// Adds a Person face to HUD.
         /// </summary>
-        /// <param name="person">Symbol of target Person resource to add.</param>
+        /// <param name="person">Target Person resource to add.</param>
         public void AddFace(Person person)
         {
             faces.Add(CreateFaceDetails(person));
@@ -95,12 +99,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Drops a face from HUD.
+        /// Adds a Foe face to HUD.
+        /// Foe faces should always be humanoid as there are no portraits for monstrous enemies.
+        /// Always creates a Breton face for now.
         /// </summary>
-        /// <param name="person">Symbol of target Person resource to remove.</param>
+        /// <param name="foe">Target Foe resource to add.</param>
+        public void AddFace(Foe foe)
+        {
+            faces.Add(CreateFaceDetails(foe));
+            RefreshFaces();
+        }
+
+        /// <summary>
+        /// Drops a Person face from HUD.
+        /// </summary>
+        /// <param name="person">Target Person resource to remove.</param>
         public void DropFace(Person person)
         {
             faces.Remove(CreateFaceDetails(person));
+            RefreshFaces();
+        }
+
+        /// <summary>
+        /// Drops a Foe face from HUD.
+        /// </summary>
+        /// <param name="foe">Target Foe resource to remove.</param>
+        public void DropFace(Foe foe)
+        {
+            faces.Remove(CreateFaceDetails(foe));
             RefreshFaces();
         }
 
@@ -115,6 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             face.targetPerson = person.Symbol;
             face.targetRace = person.Race;
             face.gender = person.Gender;
+            face.isChild = person.FactionData.id == (int)FactionFile.FactionIDs.Children;
             face.faceIndex = person.FaceIndex;
             face.factionFaceIndex = -1;
             
@@ -127,6 +154,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     face.factionFaceIndex = fd.face;
                 }
             }
+
+            // Determine child faction portrait - there are only 2 variants of each gender indexed 0-3
+            if (face.isChild)
+            {
+                UnityEngine.Random.InitState(Time.frameCount);
+                int variantOffset = (UnityEngine.Random.Range(0, 2) == 0) ? 0 : 2;
+                face.faceIndex = variantOffset + (int)face.gender;
+            }
+
+            return face;
+        }
+
+        FaceDetails CreateFaceDetails(Foe foe)
+        {
+            UnityEngine.Random.InitState(Time.frameCount);
+
+            FaceDetails face = new FaceDetails();
+            face.questUID = foe.ParentQuest.UID;
+            face.targetFoe = foe.Symbol;
+            face.targetRace = Races.Breton;
+            face.gender = foe.Gender;
+            face.faceIndex = UnityEngine.Random.Range(0, faceCount);
+            face.factionFaceIndex = -1;
 
             return face;
         }
@@ -182,10 +232,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else
                 {
                     // Use generic NPC face
-                    if (face.gender == Genders.Male)
-                        faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
-                    else if (face.gender == Genders.Female)
-                        faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                    if (!face.isChild)
+                    {
+                        // Get a racial portrait
+                        if (face.gender == Genders.Male)
+                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
+                        else if (face.gender == Genders.Female)
+                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                    }
+                    else
+                    {
+                        // Get a child portrait
+                        faceTexture = DaggerfallUI.GetTextureFromCifRci(factionChildrenFaceFile, face.faceIndex);
+                    }
 
                     facePanel.Size = new Vector2(faceTexture.width, faceTexture.height);
                 }
@@ -241,6 +300,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         private void SaveLoadManager_OnStartLoad(Serialization.SaveData_v1 saveData)
+        {
+            faces.Clear();
+            RefreshFaces();
+        }
+
+        private void StartGameBehaviour_OnNewGame()
         {
             faces.Clear();
             RefreshFaces();

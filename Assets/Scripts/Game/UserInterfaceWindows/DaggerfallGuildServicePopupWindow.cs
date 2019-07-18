@@ -49,6 +49,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
+        protected const string textDatabase = "DaggerfallUI";
+
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
         const string memberTextureName = "GILD01I0.IMG";      // Join Guild / Talk / Service
 
@@ -185,13 +187,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        // TODO: Classic seems deterministic so when re-visiting each mages guildhall, player sees same stuff.
-        // Does it change with level? Is it always generated but uses a consistent seed? How should DFU do this?
         ItemCollection GetMerchantMagicItems()
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             ItemCollection items = new ItemCollection();
             int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
+
+            // Seed random from game time to rotate magic stock every 24 game hours
+            // This more or less resolves issue of magic item stock not being deterministic every time player opens window
+            // Doesn't match classic exactly as classic stocking method unknown, but should be "good enough" for now
+            int seed = (int)(DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay);
+            UnityEngine.Random.InitState(seed);
 
             for (int i = 0; i <= numOfItems; i++)
             {
@@ -207,17 +213,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int i = 0; i <= numOfItems; i++)
                 {
-                    DaggerfallUnityItem magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-                    magicItem.value = 5000;
-
+                    DaggerfallUnityItem magicItem;
                     if (Dice100.FailedRoll(25))
+                    {
+                        // Empty soul trap
+                        magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                        magicItem.value = 5000;
                         magicItem.TrappedSoulType = MobileTypes.None;
+                    }
                     else
                     {
-                        int id = UnityEngine.Random.Range(0, 43);
-                        magicItem.TrappedSoulType = (MobileTypes)id;
-                        MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[id];
-                        magicItem.value += mobileEnemy.SoulPts;
+                        // Filled soul trap
+                        magicItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
                     }
                     items.AddItem(magicItem);
                 }
@@ -263,7 +270,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {
-                    DaggerfallUI.MessageBox(HardStrings.serviceMembersOnly);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "serviceMembersOnly"));
                 }
                 return;
             }
@@ -315,7 +322,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 case GuildServices.MakeSpells:
                     CloseWindow();
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
+                    if (GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+                        uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
+                    else
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
@@ -581,7 +591,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
             DaggerfallInputMessageBox donationMsgBox = new DaggerfallInputMessageBox(uiManager, this);
-            donationMsgBox.SetTextBoxLabel(HardStrings.serviceDonateHowMuch);
+            donationMsgBox.SetTextBoxLabel(TextManager.Instance.GetText(textDatabase, "serviceDonateHowMuch"));
             donationMsgBox.TextPanelDistanceX = 6;
             donationMsgBox.TextPanelDistanceY = 6;
             donationMsgBox.TextBox.Numeric = true;
@@ -598,7 +608,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (playerEntity.GetGoldAmount() > amount)
                 {
-                    // Deduct gold, and apply blessing if member
+                    // Deduct gold, and apply blessing
                     playerEntity.DeductGoldAmount(amount);
                     int factionId = (int)Temple.GetDivine(buildingFactionId);
 
@@ -635,7 +645,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (playerEntity.TimeToBecomeVampireOrWerebeast != 0)
                 numberOfDiseases++;
 
-            if (numberOfDiseases > 0)
+            // Check holidays for free / cheaper curing
+            uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            int holidayId = FormulaHelper.GetHolidayId(minutes, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
+
+            if (numberOfDiseases > 0 &&
+                (holidayId == (int)DFLocation.Holidays.South_Winds_Prayer ||
+                 holidayId == (int)DFLocation.Holidays.First_Harvest ||
+                 holidayId == (int)DFLocation.Holidays.Second_Harvest))
+            {
+                GameManager.Instance.PlayerEffectManager.CureAllDiseases();
+                playerEntity.TimeToBecomeVampireOrWerebeast = 0;
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "freeHolidayCuring"));
+            }
+            else if (numberOfDiseases > 0)
             {
                 // Get base cost
                 int baseCost = 250 * numberOfDiseases;
@@ -645,6 +668,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Apply temple quality and regional price modifiers
                 int costBeforeBargaining = FormulaHelper.CalculateCost(baseCost, buildingDiscoveryData.quality);
+
+                // Halve the price on North Winds Prayer holiday
+                if (holidayId == (int)DFLocation.Holidays.North_Winds_Festival)
+                    costBeforeBargaining /= 2;
 
                 // Apply bargaining to get final price
                 curingCost = FormulaHelper.CalculateTradePrice(costBeforeBargaining, buildingDiscoveryData.quality, false);
@@ -684,7 +711,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(curingCost);
                     GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                     playerEntity.TimeToBecomeVampireOrWerebeast = 0;
-                    DaggerfallUI.MessageBox(HardStrings.serviceCured);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "curedDisease"));
                 }
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);

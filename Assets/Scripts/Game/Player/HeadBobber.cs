@@ -212,10 +212,11 @@ namespace DaggerfallWorkshop.Game
             bool isGrounded = playerMotor.IsGrounded;
             bool isSwimming = playerEnterExit.IsPlayerSwimming;
             bool isClimbing = climbingMotor.IsClimbing;
+            bool isLevitating = playerMotor.IsLevitating;
             float upSpeed = 1f,
                   downSpeed = 1f;
 
-            if (isClimbing)
+            if (isClimbing || isLevitating)
                 return;
 
             if (isSwimming)
