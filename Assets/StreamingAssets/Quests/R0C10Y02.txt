@@ -182,7 +182,9 @@ yes task:
 
 variable _no_
 _S.09_ task:
-	give item _item1_ to _thief_ saying 1021 
+	give item _item1_ to _thief_
+	say 1021
+--moved "saying 1021" to new line. bad argument 
 	restrain foe _thief_ 
 
 _S.10_ task:

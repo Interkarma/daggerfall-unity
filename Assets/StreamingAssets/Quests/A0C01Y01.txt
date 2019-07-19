@@ -102,7 +102,8 @@ Person _qgiver_ face 1 group Questor
 
 Place _qgiverhome_ local house2
 
-Clock _S.00_ 1.03:00 0 flag 1 range 0 1
+Clock _S.00_ 1.03:00
+--removed flags to make time limit exact
 
 Foe _villains_ is 2 Assassin
 
@@ -142,8 +143,9 @@ _clearclick_ task:
 	clear _S.04_ _clearclick_ 
 
 _S.08_ task:
-	when _S.05_ and _S.01_ 
+	when _S.05_ and _S.01_ and not _S.06_
 	create foe _villains_ every 10 minutes 1 times with 25% success 
+--added "not S06" to prevent multiple spawns
 
 _mmap_ task:
 	when _questdone_ and not _S.05_ 

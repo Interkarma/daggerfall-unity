@@ -109,7 +109,8 @@ Person _contact_ group Local_3.0 female
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 4
-Clock _delay_ 00:30 0 flag 1 range 0 1
+Clock _delay_ 00:30
+--removed flags from _delay_
 
 Foe _thief_ is Nightblade
 
@@ -140,7 +141,9 @@ _S.06_ task:
 	prompt 1020 yes yes no _no_ 
 
 _S.07_ task:
-	give item _item_ to _thief_ saying 1021 
+	give item _item_ to _thief_
+	say 1021
+--moved "saying 1021" to new line. bad argument 
 	restrain foe _thief_ 
 
 _delay_ task:
