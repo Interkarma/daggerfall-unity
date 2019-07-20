@@ -702,7 +702,7 @@ namespace DaggerfallWorkshop.Utility
                 {
                     // Get model transform
                     Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-                    Vector3 modelRotation = new Vector3(0 -obj.YRotation / BlocksFile.RotationDivisor, 0);
+                    Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
                     Matrix4x4 modelMatrix = subRecordMatrix * Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
                     // Get model data
