@@ -172,6 +172,18 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public bool StartRestGroundedCheck()
+        {
+            // Standard grounded will pass check immediately
+            if (grounded)
+                return true;
+
+            // Collision fix for when player is levitating but feet are "close enough" to ground to rest
+            // This is required as controller physics requires movement to process grounded collision normally
+            Ray ray = new Ray(transform.position, Vector3.down);
+            return (Physics.Raycast(ray, controller.height / 2 + 0.2f));
+        }
+
         /// <summary>
         /// Cancels all movement impulses next frame.
         /// Used to scrub movement impulse when player dies, opens inventory, or loads game.

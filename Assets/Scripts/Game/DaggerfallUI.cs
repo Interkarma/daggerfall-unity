@@ -529,7 +529,7 @@ namespace DaggerfallWorkshop.Game
                         MessageBox(enemiesNearby);
                     }
                     else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming ||
-                             !GameManager.Instance.PlayerController.isGrounded)
+                             !GameManager.Instance.PlayerMotor.StartRestGroundedCheck())
                     {
                         const int cannotRestNow = 355;
                         MessageBox(cannotRestNow);
