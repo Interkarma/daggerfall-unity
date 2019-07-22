@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
-        public static string GetBuildingInstanceReplacementFilename(string blockName, int blockIndex, int recordIndex)
+        public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
         {
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
         }
@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 else
                 {
                     //Get specific location replacement
-                    string fileName = GetBuildingInstanceReplacementFilename(blockName, blockIndex, recordIndex);
+                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
 
                     // Seek from loose files for replacment for the specific instance of the location
                     if (File.Exists(Path.Combine(worldDataPath, fileName)))
@@ -113,27 +113,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 #endif
                         return true;
                     }
-                    //Get shared block location
-                    fileName = GetBuildingBlockReplacementFilename(blockName, recordIndex);
-
-                    // Seek from loose files for replacment for the block shared location
-                    if (File.Exists(Path.Combine(worldDataPath, fileName))) {
-                        string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
-                        buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
-#if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
-                        Buildings.Add(blockRecordId, buildingData);
-#endif
-                        return true;
-                    }
-                    // Seek from mods for replacment for the block shared location
-                    if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out buildingReplacementJsonAsset)) {
-                        buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJsonAsset.text);
-#if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
-                        Buildings.Add(blockRecordId, buildingData);
-#endif
-                        return true;
-                    }
-
 
 #if !UNITY_EDITOR   // Only look for replacement data once, unless running in editor
                     Buildings.Add(blockRecordId, noReplacementData);
