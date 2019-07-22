@@ -433,7 +433,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Make ladder collider convex
-                if (obj.ModelIdNum == ladderModelId)
+                if (obj.ModelIdNum == ladderModelId && obj.ObjectType == propModelType)
                 {
                     var meshCollider = go.GetComponent<MeshCollider>();
                     if (meshCollider) meshCollider.convex = true;
