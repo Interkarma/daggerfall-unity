@@ -289,7 +289,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">The requested texture archive.</param>
         /// <param name="depth">The expected number of layer.</param>
         /// <param name="textureMap">The texture type.</param>
-        /// <param name="fallbackColor">If provided is used silenty for missing layers.</param>
+        /// <param name="fallbackColor">If provided is used silenty for missing layers; texture format must be RGBA32 or ARGB32.</param>
         /// <param name="textureArray">Imported or created texture array or null.</param>
         /// <returns>True if the texture array has been imported or created.</returns>
         internal static bool TryImportTextureArray(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
@@ -988,7 +988,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">The requested texture archive.</param>
         /// <param name="depth">The expected number of layer.</param>
         /// <param name="textureMap">The texture type.</param>
-        /// <param name="fallbackColor">If provided is used silenty for missing layers.</param>
+        /// <param name="fallbackColor">If provided is used silenty for missing layers; texture format must be RGBA32 or ARGB32.</param>
         /// <param name="textureArray">The created texture array or null.</param>
         /// <returns>True if the texture array has been created.</returns>
         private static bool TryMakeTextureArrayCopyTexture(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
@@ -1029,7 +1029,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
 
                 if (!textureArray)
+                {
+                    if (fallbackColor.HasValue && tex.format != TextureFormat.RGBA32 && tex.format != TextureFormat.ARGB32)
+                        return false;
+
                     textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1);
+                }
 
                 if (tex.width == textureArray.width && tex.height == textureArray.height && tex.format == textureArray.format)
                     Graphics.CopyTexture(tex, 0, textureArray, record);
