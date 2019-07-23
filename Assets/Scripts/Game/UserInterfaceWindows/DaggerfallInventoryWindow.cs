@@ -1036,12 +1036,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void DungeonWagonAccessProximityCheck()
         {
-            // Set allow wagon access if close enough (10m) to exit.
-            GameObject playerAdvancedGO = GameObject.Find("PlayerAdvanced");
-            DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
-            Vector3 exitVector = dungeon.StartMarker.transform.position - playerAdvancedGO.transform.position;
-            if (exitVector.magnitude < 10)
-                allowDungeonWagonAccess = true;
+            const float proximityWagonAccessDistance = 5f;
+
+            // Get all static doors
+            DaggerfallStaticDoors[] allDoors = GameObject.FindObjectsOfType<DaggerfallStaticDoors>();
+            if (allDoors != null && allDoors.Length > 0)
+            {
+                // Find closest door to player
+                float closestDoorDistance = float.MaxValue;
+                foreach (DaggerfallStaticDoors doors in allDoors)
+                {
+                    int doorIndex;
+                    Vector3 doorPos;
+                    Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
+                    if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex))
+                    {
+                        float distance = Vector3.Distance(playerPos, doorPos);
+                        if (distance < closestDoorDistance)
+                            closestDoorDistance = distance;
+                    }
+                }
+
+                // Allow wagon access if close enough to any exit door
+                if (closestDoorDistance < proximityWagonAccessDistance)
+                    allowDungeonWagonAccess = true;
+            }  
         }
 
         void UpdateItemInfoPanel(DaggerfallUnityItem item)
