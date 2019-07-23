@@ -1052,22 +1052,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool DungeonWagonAccessProximityCheck()
         {
-            // Set allow wagon access if close enough (10m) to exit.
-            GameObject playerAdvancedGO = GameObject.Find("PlayerAdvanced");
-            DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
-            Vector3 exitVector = playerAdvancedGO.transform.position - dungeon.StartMarker.transform.position;
-            if (exitVector.magnitude < 2)
-                // fix bad case when you've just been spawned on StartMarker
-                return true;
-            else if (exitVector.magnitude < 10f)
+            const float proximityWagonAccessDistance = 5f;
+
+            // Get all static doors
+            DaggerfallStaticDoors[] allDoors = GameObject.FindObjectsOfType<DaggerfallStaticDoors>();
+            if (allDoors != null && allDoors.Length > 0)
             {
-                RaycastHit hit;
-                Ray ray = new Ray(dungeon.StartMarker.transform.position, exitVector);
-                if (Physics.Raycast(ray, out hit))
+                // Find closest door to player
+                float closestDoorDistance = float.MaxValue;
+                foreach (DaggerfallStaticDoors doors in allDoors)
                 {
-                    if (hit.transform.gameObject == playerAdvancedGO)
-                        return true;
+                    int doorIndex;
+                    Vector3 doorPos;
+                    Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
+                    if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex, DoorTypes.DungeonExit))
+                    {
+                        float distance = Vector3.Distance(playerPos, doorPos);
+                        if (distance < closestDoorDistance)
+                            closestDoorDistance = distance;
+                    }
                 }
+
+                // Allow wagon access if close enough to any exit door
+                if (closestDoorDistance < proximityWagonAccessDistance)
+                    return true;
             }
             return false;
         }

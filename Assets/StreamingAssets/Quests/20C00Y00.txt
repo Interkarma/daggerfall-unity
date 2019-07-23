@@ -168,9 +168,8 @@ _qgclicked_ task:
 _1stparton_ task:
 	end quest 
 
-variable _2ndparton_
 _clearclick_ task:
-	when _qgclicked_ and not _2ndparton_ 
+	when _qgclicked_ and not _mondead_ 
 	clear _qgclicked_ _clearclick_ 
 
 _delay_ task:

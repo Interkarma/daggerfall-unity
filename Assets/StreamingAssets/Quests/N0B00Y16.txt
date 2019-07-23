@@ -161,7 +161,7 @@ Message:  1051
 --      _questgiver_ occurs 4 times.
 
 QBN:
-Item %crn item class 1 subclass 8
+Item _crn_ item class 1 subclass 8
 Item _I.01_ wand
 
 Person _questgiver_ face 86 group Questor
@@ -194,7 +194,7 @@ _clickqgiver_ task:
 _S.02_ task:
 	clicked npc _merchant_ 
 	cast Open spell do _S.07_ 
-	get item %crn 
+	get item _crn_ 
 	say 1030 
 
 _a3_ task:
@@ -215,7 +215,7 @@ _a6_ task:
 	say 1043 
 
 _S.07_ task:
-	have %crn set _S.08_ 
+	have _crn_ set _S.08_ 
 
 _S.08_ task:
 	pick one of _a3_ _a4_ _a5_ _a6_ 
@@ -225,7 +225,7 @@ _S.09_ task:
 	make _I.01_ permanent 
 
 _S.10_ task:
-	toting %crn and _merchant_ clicked 
+	toting _crn_ and _merchant_ clicked 
 
 _S.11_ task:
 	when _S.08_ and _S.10_ 
@@ -239,6 +239,6 @@ _success_ task:
 
 _S.13_ task:
 	when _S.10_ and not _S.08_ 
-	get item %crn 
+	get item _crn_ 
 	say 1051 
 	unset _S.10_ _S.13_ 

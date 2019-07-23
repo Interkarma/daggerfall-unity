@@ -1012,7 +1012,7 @@ namespace DaggerfallWorkshop.Utility
             NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
             if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
                 nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
-            Genders gender = (UnityEngine.Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
+            Genders gender = (DFRandom.random_range_inclusive(0, 1) == 1) ? Genders.Female : Genders.Male;
 
             return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
         }

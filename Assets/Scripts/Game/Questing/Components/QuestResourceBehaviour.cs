@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Questing
         ulong questUID;
         Symbol targetSymbol;
         bool isFoeDead = false;
+        bool restraintApplied = false;
         int foeSpellQueuePosition = 0;
 
         [NonSerialized] Quest targetQuest;
@@ -157,15 +158,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Handle restrained check
                 // This might need some tuning in relation to injured and death checks
-                if (foe.IsRestrained)
+                if (foe.IsRestrained && !restraintApplied)
                 {
                     // Make enemy non-hostile
                     EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
                     if (enemyMotor)
                         enemyMotor.IsHostile = false;
 
-                    // Lower flag now this has been handled
-                    foe.ClearRestrained();
+                    restraintApplied = true;
                 }
 
                 // Handle injured check

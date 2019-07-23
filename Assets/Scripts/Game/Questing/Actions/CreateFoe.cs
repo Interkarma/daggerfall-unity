@@ -23,10 +23,13 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class CreateFoe : ActionTemplate
     {
+        const string optionsMatchStr = @"msg (?<msgId>\d+)";
+
         Symbol foeSymbol;
         uint spawnInterval;
         int spawnMaxTimes = -1;
         int spawnChance;
+        int msgMessageID = -1;
 
         ulong lastSpawnTime = 0;
         int spawnCounter = 0;
@@ -87,6 +90,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 // "send" without "count" implies infinite
                 if (action.spawnMaxTimes == 0)
                     action.spawnMaxTimes = -1;
+            }
+
+            // Split options from declaration
+            string optionsSource = source.Substring(match.Length);
+            MatchCollection options = Regex.Matches(optionsSource, optionsMatchStr);
+            foreach (Match option in options)
+            {
+                // Message ID
+                Group msgIDGroup = option.Groups["msgId"];
+                if (msgIDGroup.Success)
+                    action.msgMessageID = Parser.ParseInt(msgIDGroup.Value);
             }
 
             return action;
@@ -308,6 +322,13 @@ namespace DaggerfallWorkshop.Game.Questing
             FinalizeFoe(pendingFoeGameObjects[pendingFoesSpawned]);
             gameObjects[pendingFoesSpawned].transform.LookAt(GameManager.Instance.PlayerObject.transform.position);
 
+            // Send msg message on first spawn only
+            if (msgMessageID != -1)
+            {
+                ParentQuest.ShowMessagePopup(msgMessageID);
+                msgMessageID = -1;
+            }
+
             // Increment count
             pendingFoesSpawned++;
         }
@@ -365,6 +386,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public int spawnChance;
             public int spawnCounter;
             public bool isSendAction;
+            public int msgMessageID;
         }
 
         public override object GetSaveData()
@@ -377,6 +399,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.spawnChance = spawnChance;
             data.spawnCounter = spawnCounter;
             data.isSendAction = isSendAction;
+            data.msgMessageID = msgMessageID;
 
             return data;
         }
@@ -394,6 +417,7 @@ namespace DaggerfallWorkshop.Game.Questing
             spawnChance = data.spawnChance;
             spawnCounter = data.spawnCounter;
             isSendAction = data.isSendAction;
+            msgMessageID = data.msgMessageID;
 
             // Set timer to current game time if not loaded from save
             if (lastSpawnTime == 0)

@@ -41,10 +41,37 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public string GUID = "invalid";
         public List<string> Files;      //list of assets to add to mod (only used during creation)
 
+        /// <summary>
+        /// Automatic asset injections defined by manifest .json file.
+        /// These values are not available for edits from mods at runtime.
+        /// </summary>
+        [SerializeField]
+        internal ModContributes Contributes;
+
         public ModInfo()
         {
             Files = new List<string>();
         }
+    }
+
+    /// <summary>
+    /// Contributes provided by a mod to be injected in game.
+    /// </summary>
+    /// <remarks>
+    /// The purpose of this section of the manifest file is to signal the presence of additional
+    /// assets for the core game, which are imported automatically without the need of one-time
+    /// scripts for every mod, or even scripting knowledge on the modder side.
+    /// This class can be expanded over time as necessary but breaking changes should be avoided.
+    /// <remarks/>
+    [Serializable]
+    internal sealed class ModContributes
+    {
+        /// <summary>
+        /// Names of spell icon packs; each name corresponds to a <see cref="Texture2D"/>
+        /// asset and a <see cref="TextAsset"/> with `.json` extension.
+        /// </summary>
+        [SerializeField]
+        internal string[] SpellIcons;
     }
 
     public struct SetupOptions : IComparable<SetupOptions>
