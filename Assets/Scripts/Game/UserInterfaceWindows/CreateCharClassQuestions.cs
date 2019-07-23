@@ -51,8 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int labelOffset = 0;
         Dictionary<int, string> questionLibrary;
         List<int> questionIndices;
-        Dictionary<uint, int> resultToClassMappings;
-        int classIndex = -1;
+        byte classIndex = 0;
         byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
         int questionsAnswered = 0;
 
@@ -74,13 +73,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set background
             NativePanel.BackgroundTexture = nativeTexture;
-
-            // Map results to class indices
-            FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
-            if (classFile == null)
-                throw new Exception("CreateCharClassQuestions: Could not load CLASSES.DAT.");
-            byte[] classData = classFile.GetBytes();
-            resultToClassMappings = GetClassMappings(classData);
 
             questionIndices = GetQuestions();
             DisplayQuestion(questionIndices[questionsAnswered]);
@@ -108,13 +100,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion Unity
 
         #region Helper Methods
-        private Dictionary<uint, int> GetClassMappings(byte[] data)
-        {
-            Dictionary<uint, int> result = new Dictionary<uint, int>();
-            // TODO: Determine how classic matches results to a class
-            return result;
-        }
-
         private List<int> GetQuestions()
         {
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(classQuestionsToken);
@@ -197,8 +182,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 questionLabel.Clear();
                 NativePanel.BackgroundTexture = null;
-                //classIndex = resultToClassMappings[WeightsToUint(weights[0], weights[1], weights[2])];
-                classIndex = 0;
+                FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
+                if (classFile == null)
+                    throw new Exception("CreateCharClassQuestions: Could not load CLASSES.DAT.");
+                byte[] classData = classFile.GetBytes();
+                int headerIndex = GetHeaderIndex(classData);
+                classIndex = GetClassIndex(headerIndex, classData);
                 DaggerfallMessageBox confirmDialog = new DaggerfallMessageBox(uiManager,
                                                                               DaggerfallMessageBox.CommonMessageBoxButtons.YesNo,
                                                                               classDescriptionsTokenBase + classIndex,
@@ -211,9 +200,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DisplayQuestion(questionIndices[++questionsAnswered]);
             }
         }
+
+        private int GetHeaderIndex(byte[] classData)
+        {
+            byte resultsOffset = 17; // starting offset of results table in CLASSES.DAT
+            for (byte headerOffset = 0; headerOffset < 48; headerOffset++)
+            {
+                // Check for results match
+                if (WeightsToUint(classData[resultsOffset], classData[resultsOffset + 1], classData[resultsOffset + 2])
+                    == WeightsToUint(weights[0], weights[1], weights[2]))
+                {
+                    return headerOffset / 4;
+                }
+                resultsOffset += 3;
+            }
+
+            for (byte headerOffset = 0; headerOffset < 17; headerOffset++)
+            {
+                // Check for results match
+                if (WeightsToUint(classData[resultsOffset], classData[resultsOffset + 1], classData[resultsOffset + 2])
+                    == WeightsToUint(weights[0], weights[1], weights[2]))
+                {
+                    return headerOffset / 4 + 12;
+                }
+                resultsOffset += 3;
+            }
+
+            return -1; // Should never reach this point
+        }
+
+        private byte GetClassIndex(int index, byte[] data)
+        {
+            // Array used by FALL.EXE is the same as in CLASSES.DAT except bytes 0x02 through 0x11 have their left nibbles zeroed out
+            byte r = data[index];
+            if (index > 1)
+            {
+                r &= 0x0F;
+            }
+            return r;
+        }
         #endregion Helper Methods
 
-        public int ClassIndex
+        public byte ClassIndex
         {
             get { return classIndex; }
         }
@@ -223,7 +251,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
             {
-                classIndex = -1;
+                classIndex = 255;
             }
             sender.CloseWindow();
             CloseWindow();

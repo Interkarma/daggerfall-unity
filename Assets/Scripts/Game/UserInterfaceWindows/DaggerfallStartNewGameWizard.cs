@@ -334,8 +334,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateCharClassQuestions_OnClose()
         {
-            int classIndex = createCharClassQuestionsWindow.ClassIndex;
-            if (classIndex != -1)
+            byte classIndex = createCharClassQuestionsWindow.ClassIndex;
+            if (classIndex != 255)
             {
                 string fileName = "CLASS" + classIndex.ToString("00") + ".CFG";
                 string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, fileName);
