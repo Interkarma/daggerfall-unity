@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop
         /// <param name="doorPosOut">Position of closest door in world space.</param>
         /// <param name="doorIndexOut">Door index in Doors array of closest door.</param>
         /// <returns></returns>
-        public bool FindClosestDoorToPlayer(Vector3 playerPos, int record, out Vector3 doorPosOut, out int doorIndexOut)
+        public bool FindClosestDoorToPlayer(Vector3 playerPos, int record, out Vector3 doorPosOut, out int doorIndexOut, DoorTypes requiredDoorType = DoorTypes.None)
         {
             // Init output
             doorPosOut = playerPos;
@@ -120,6 +120,10 @@ namespace DaggerfallWorkshop
             float minDistance = float.MaxValue;
             for (int i = 0; i < Doors.Length; i++)
             {
+                // Must be of door type if set
+                if (requiredDoorType != DoorTypes.None && Doors[i].doorType != requiredDoorType)
+                    continue;
+
                 // Get this door centre in world space
                 Vector3 centre = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre) + transform.position;
 

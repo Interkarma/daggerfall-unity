@@ -1049,7 +1049,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     int doorIndex;
                     Vector3 doorPos;
                     Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
-                    if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex))
+                    if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex, DoorTypes.DungeonExit))
                     {
                         float distance = Vector3.Distance(playerPos, doorPos);
                         if (distance < closestDoorDistance)
