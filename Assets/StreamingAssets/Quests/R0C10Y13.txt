@@ -74,7 +74,8 @@ QuestorPostfailure:  [1009]
 <ce>                            Out of my sight.
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_ has
+%qdt:
+_questgiver_ has
  given me _reward_ gold to go
  to __palace_ palace
  to bring a peace offering, a _item_

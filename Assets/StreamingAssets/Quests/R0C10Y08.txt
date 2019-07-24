@@ -96,7 +96,8 @@ Message:  1012
 <ce>                    Now to get it to _transporter_.
 
 Message:  1015
-%qdt: _questgiver_ of
+%qdt:
+_questgiver_ of
  has sent me to _itemplace_
  in __itemplace_ to steal
  a certain _item_, then deliver it to

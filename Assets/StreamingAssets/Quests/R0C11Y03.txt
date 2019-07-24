@@ -29,10 +29,12 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>             You will? Then good luck to you. Here is the
 <ce>               daedra's heart. If it is not in my friend
-<ce>                 _chemist_'s hands in =2alch_ days,
+<ce>                 _chemist_'s hands in =1stparton_ days,
 <ce>                it will be too old to be used. After you
 <ce>               have delivered it, return for your reward.
-<ce>                        Good luck and godspeed to ___alch_.
+<ce>                        Good luck and godspeed to ___chemist_.
+
+--in 1002, added the name of the city you need to go to at the end.
 
 QuestFail:  [1003]
 <ce>             You don't think I know you haven't delivered
@@ -47,6 +49,8 @@ QuestComplete:  [1004]
 <ce>           daedralings wouldn't slow you down. Your superior
 <ce>            skill has been duly noted. Thank you and here is
 <ce>                    the =reward_ gold we agreed on.
+
+--in 1004, changed _reward_ to =reward_ to ensure specific gold amount.
 
 RumorsDuringQuest:  [1005]
 Dire portents have been read in the sky. The daedric stars glow bright.
@@ -80,7 +84,7 @@ QuestLogEntry:  [1010]
 <ce>               with minimal decomposition. Hurry back to
 <ce>                        _questgiver_ now, %pcf.
 <ce>                There's a lot on %g3 mind, and if you're
-<ce>                  not back in =2questgiver_ days, %g may
+<ce>                  not back in =2ndparton_ days, %g may
 <ce>                         forget you even left.
 
 Message:  1011
@@ -106,13 +110,13 @@ Message:  1015
 %qdt: _questgiver_
  of ___questgiver_ asked me
  to bring the heart of a daedra to
- %g3 alchemist in _alch_ of
- ___alch_. This alchemist
+ %g3 alchemist in __chemist_ of
+ ___chemist_. This alchemist
  is a =chemist_ named
  _chemist_, and if I can get
  to %g2 with all the daedra trying
  to stop me, and get there within
- =2alch_ days, _questgiver_
+ =1stparton_ days, _questgiver_
  will give me my reward upon my
  return to __questgiver_.
 
@@ -149,31 +153,23 @@ Message:  1020
 QBN:
 Item _reward_ gold
 Item _item_ daedra_heart anyInfo 1013
---in 1002, added the name of the city you need to go to at the end.
---in 1004, changed _reward_ to =reward_ to ensure specific gold amount.
---capitalized first letter in 1011
 
 Person _questgiver_ face 112 group Questor anyInfo 1012
 Person _chemist_ group Chemist female anyInfo 1011
 Person _dummydaedra_ face 102 factiontype Daedra
 
-Place _alch_ remote apothecary
---added this place to allow chaining quest timers
-
-Clock _2alch_ 00:00 0 flag 1 range 0 2
---changed the timer name from 1stparton to try to make the quest timer shorter, but it's no use yet. still very lenient time limit.
-Clock _2questgiver_ 00:00 0 flag 1 range 0 2
---changed this timer name from 2ndparton to try to make the quest timer shorter, but it's no use yet. still very lenient time limit.
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+Clock _2ndparton_ 00:00 0 flag 1 range 2 5
 
 Foe _daedra_ is Daedroth
 
 --	Quest start-up:
-	start timer _2alch_ 
+	start timer _1stparton_ 
 	log 1015 step 0 
 	get item _item_
 
-variable _2alch_
-_2questgiver_ task:
+variable _1stparton_
+_2ndparton_ task:
 	change repute with _questgiver_ by -30 
 	end quest 
 
@@ -184,7 +180,7 @@ _pcgetsgold_ task:
 
 _npcclicked_ task:
 	toting _item_ and _chemist_ clicked 
-	start timer _2questgiver_ 
+	start timer _2ndparton_ 
 	say 1010 
 	change repute with _dummydaedra_ by -20 
 
@@ -193,7 +189,7 @@ until _npcclicked_ performed:
 
 variable _qgclicked_
 _queston_ task:
-	when _2alch_ and not _npcclicked_ 
+	when _1stparton_ and not _npcclicked_ 
 	make _item_ permanent 
 	change repute with _questgiver_ by -30 
 	end quest 

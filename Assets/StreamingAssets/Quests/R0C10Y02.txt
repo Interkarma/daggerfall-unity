@@ -82,7 +82,8 @@ QuestorPostfailure:  [1009]
 
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_
+%qdt:
+_questgiver_
  of ___questgiver_ sent me to a
  contact _contact_ of ___contact_
  to deliver a bar of gold to this
@@ -92,7 +93,8 @@ QuestLogEntry:  [1010]
  reward.
 
 Message:  1011
-%qdt: I delivered the gold to
+%qdt:
+I delivered the gold to
  _contact_, who gave me a _item2_
  to take back to _questgiver_.
 

@@ -78,7 +78,8 @@ QuestorPostfailure:  [1009]
 <ce>                         that mission of mine.
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_ of
+%qdt:
+_questgiver_ of
  __questgiver_ in ___questgiver_
  has sent me to ___itemdung_ to
  find an old family heirloom, a _item_
