@@ -182,10 +182,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetBiographyWindow()
         {
-            if (!characterDocument.isCustom)
-            {
-                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
-            }
             createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
             createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
                 
@@ -335,7 +331,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CreateCharClassQuestions_OnClose()
         {
             byte classIndex = createCharClassQuestionsWindow.ClassIndex;
-            if (classIndex != 255)
+            if (classIndex != CreateCharClassQuestions.noClassIndex)
             {
                 string fileName = "CLASS" + classIndex.ToString("00") + ".CFG";
                 string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, fileName);
@@ -419,10 +415,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Choose answers at random
                     System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
-                    if (!characterDocument.isCustom)
-                    {
-                        characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
-                    }
                     BiogFile autoBiog = new BiogFile(characterDocument);
                     for (int i = 0; i < autoBiog.Questions.Length; i++)
                     {

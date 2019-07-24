@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int classQuestionsToken = 9000;
         const int classDescriptionsTokenBase = 2100;
         const int questionCount = 10;
+        public const byte noClassIndex = 255;
 
         Texture2D nativeTexture;
         List<TextLabel> questionLabels;
@@ -178,6 +179,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void AnswerAndContinue(int choice)
         {
             weights[GetWeightIndex(questionsAnswered, choice)]++;
+            Debug.Log("CreateCharClassQuestions: Warrior: " + weights[0] + " Rogue: " + weights[1] + " Mage: " + weights[2]);
             if (questionsAnswered == questionCount - 1)
             {
                 questionLabel.Clear();
@@ -187,6 +189,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     throw new Exception("CreateCharClassQuestions: Could not load CLASSES.DAT.");
                 byte[] classData = classFile.GetBytes();
                 int headerIndex = GetHeaderIndex(classData);
+                if (headerIndex == -1)
+                {
+                    throw new Exception("CreateCharClassQuestions: Error reading CLASSES.DAT - could not find a results match. Warrior: " + weights[0] + " Rogue: " + weights[1] + " Mage: " + weights[2]);
+                }
                 classIndex = GetClassIndex(headerIndex, classData);
                 DaggerfallMessageBox confirmDialog = new DaggerfallMessageBox(uiManager,
                                                                               DaggerfallMessageBox.CommonMessageBoxButtons.YesNo,
@@ -203,7 +209,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private int GetHeaderIndex(byte[] classData)
         {
-            byte resultsOffset = 17; // starting offset of results table in CLASSES.DAT
+            byte resultsOffset = 18; // starting offset of results table in CLASSES.DAT
             for (byte headerOffset = 0; headerOffset < 48; headerOffset++)
             {
                 // Check for results match
@@ -215,7 +221,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 resultsOffset += 3;
             }
 
-            for (byte headerOffset = 0; headerOffset < 17; headerOffset++)
+            for (byte headerOffset = 0; headerOffset < 18; headerOffset++)
             {
                 // Check for results match
                 if (WeightsToUint(classData[resultsOffset], classData[resultsOffset + 1], classData[resultsOffset + 2])
@@ -231,9 +237,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private byte GetClassIndex(int index, byte[] data)
         {
-            // Array used by FALL.EXE is the same as in CLASSES.DAT except bytes 0x02 through 0x11 have their left nibbles zeroed out
+            // Array used by FALL.EXE is the same as in CLASSES.DAT except bytes 0x04 through 0x11 have their left nibbles zeroed out
             byte r = data[index];
-            if (index > 1)
+            if (index > 3)
             {
                 r &= 0x0F;
             }
@@ -251,7 +257,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
             {
-                classIndex = 255;
+                classIndex = noClassIndex;
             }
             sender.CloseWindow();
             CloseWindow();
@@ -263,7 +269,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
          * This table determines the path that each answer corresponds to.
          * Each row has three columns - one for each answer (a, b, c).
          * Possible values are 00 (Warrior), 01 (Rogue), and 02 (Mage).
-         * Ripped from FALL.EXE v1.07.213 at offset 0x59820C.
+         * Ripped from FALL.EXE v1.07.213 at offset 0x0059820C.
          */
         readonly byte[] answerTable = {     00, 02, 01,
                                             00, 02, 01,
