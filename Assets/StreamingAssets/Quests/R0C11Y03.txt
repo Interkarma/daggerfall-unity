@@ -160,6 +160,7 @@ Person _dummydaedra_ face 102 factiontype Daedra
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 Clock _2ndparton_ 00:00 0 flag 1 range 2 5
+--reverted timer names and removed chaining. works this way, and better.
 
 Foe _daedra_ is Daedroth
 
