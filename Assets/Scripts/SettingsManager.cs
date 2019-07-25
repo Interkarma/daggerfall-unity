@@ -382,7 +382,7 @@ namespace DaggerfallWorkshop
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
-            SetBool(sectionEnhancements, "MeshAndTextureReplacement", AssetInjection);
+            SetBool(sectionEnhancements, "AssetInjection", AssetInjection);
             SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);
