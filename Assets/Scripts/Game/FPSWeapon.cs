@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game
                     // Mirror weapon rect
                     if (isImported)
                     {
-                        curAnimRect = new Rect(0, 1, -1, 1);
+                        curAnimRect = new Rect(1, 0, -1, 1);
                     }
                     else
                     {
@@ -508,6 +508,7 @@ namespace DaggerfallWorkshop.Game
                     if (TextureReplacement.TryImportCifRci(filename, record, frame, metalType, true, out tex))
                     {
                         tex.filterMode = dfUnity.MaterialReader.MainFilterMode;
+                        tex.wrapMode = TextureWrapMode.Mirror;
                         customTextures.Add(MaterialReader.MakeTextureKey(0, (byte)record, (byte)frame), tex);
                     }
                 }
