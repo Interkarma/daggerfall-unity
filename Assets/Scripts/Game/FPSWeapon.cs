@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game
 
             try
             {
-                bool isImported = customTextures.TryGetValue(MaterialReader.MakeTextureKey(0, (byte)weaponState, (byte)currentFrame), out curCustomTexture);
+                bool isImported = customTextures.TryGetValue(MaterialReader.MakeTextureKey(0, (byte)weaponAnimRecordIndex, (byte)currentFrame), out curCustomTexture);
                 if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
                 {
                     // Mirror weapon rect
