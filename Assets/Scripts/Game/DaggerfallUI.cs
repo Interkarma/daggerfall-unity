@@ -274,7 +274,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public SpellIconCollection SpellIconCollection
         {
-            get { return spellIconCollection; }
+            get { return spellIconCollection ?? (spellIconCollection = new SpellIconCollection()); }
         }
 
         void Awake()
@@ -318,9 +318,6 @@ namespace DaggerfallWorkshop.Game
         {
             // Post start message
             PostMessage(startupMessage);
-
-            // Load spell icon collection
-            spellIconCollection = new SpellIconCollection();
 
             // Create standard pixel font material
             if (pixelFontMaterial == null)
