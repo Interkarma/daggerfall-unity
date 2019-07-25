@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Classic Support
 
-        enum Params
+        public enum Params
         {
             AllTheTime = 0,
             InSunlight = 1,
