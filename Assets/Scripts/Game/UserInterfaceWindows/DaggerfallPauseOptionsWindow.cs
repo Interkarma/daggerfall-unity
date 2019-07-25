@@ -234,6 +234,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int value = Mathf.RoundToInt(Mathf.Lerp(0, QualitySettings.names.Length - 1, position.x / sender.Size.x));
             detailBar.Size = new Vector2(GetDetailBarWidth(value), detailBar.Size.y);
             QualitySettings.SetQualityLevel(DaggerfallUnity.Settings.QualityLevel = value);
+            GameManager.UpdateShadowDistance();
+            GameManager.UpdateShadowResolution();
             if (!saveSettings)
                 saveSettings = true;
         }
