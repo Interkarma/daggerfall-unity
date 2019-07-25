@@ -1867,7 +1867,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to local items
                 if (localItems != null)
                     TransferItem(item, remoteItems, localItems, CanCarryAmount(item), equip: true);
-                if (lootTarget.houseOwned)
+                if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
@@ -1880,7 +1880,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedActionMode == ActionModes.Remove)
             {
                 TransferItem(item, remoteItems, localItems, CanCarryAmount(item));
-                if (lootTarget.houseOwned)
+                if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Info)
