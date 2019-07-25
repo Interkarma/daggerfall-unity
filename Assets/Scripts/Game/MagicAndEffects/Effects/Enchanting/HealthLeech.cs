@@ -135,7 +135,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Classic Support
 
-        enum Params
+        public enum Params
         {
             WheneverUsed,
             UnlessUsedDaily,

@@ -23,7 +23,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 		_TileTexArr("Tile Texture Array", 2DArray) = "" {}
 		_TileNormalMapTexArr("Tileset NormalMap Texture Array (RGBA)", 2DArray) = "" {}
 		_TileMetallicGlossMapTexArr ("Tileset MetallicGlossMap Texture Array (RGBA)", 2DArray) = "" {}
-		_TilemapTex("Tilemap (R)", 2D) = "red" {}		
+		_TilemapTex("Tilemap (R)", 2D) = "red" {}
 		_TilemapDim("Tilemap Dimension (in tiles)", Int) = 128
 		_MaxIndex("Max Tileset Index", Int) = 255
 	}
@@ -51,68 +51,60 @@ Shader "Daggerfall/TilemapTextureArray" {
 		int _MaxIndex;
 		int _TilemapDim;
 
-		//#if defined(SHADER_API_D3D11) || defined(SHADER_API_XBOXONE) || defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)
-		//#define UNITY_SAMPLE_TEX2DARRAY_GRAD(tex,coord,dx,dy) tex.SampleGrad (sampler##tex,coord,dx,dy)
-		//#else
-		//#if defined(UNITY_COMPILER_HLSL2GLSL) || defined(SHADER_TARGET_SURFACE_ANALYSIS)
-		//#define UNITY_SAMPLE_TEX2DARRAY_GRAD(tex,coord,dx,dy) texCUBEgrad(tex,coord,dx,dy)
-		//#endif
-		//#endif
-
 		struct Input
 		{
-			float2 uv_MainTex;
-			//float2 uv_BumpMap;
+			float2 uv_MainTex : TEXCOORD0;
+			//float2 uv_BumpMap : TEXCOORD1;
 		};
 
-	float GetMipLevel(float2 iUV, float4 iTextureSize)
-	{
-		float2 dx = ddx(iUV * iTextureSize.z);
-		float2 dy = ddy(iUV * iTextureSize.w);
-		float d = max(dot(dx, dx), dot(dy,dy));
-		return 0.5 * log2(d);
-	}
+		// compute all 4 posible configurations of terrain tiles (normal, rotated, flipped, rotated and flipped)
+		// rotations and translations not conflated together, because OpenGL ES 2.0 only supports square matrices
+		static float2x2 rotations[4] = {
+			float2x2(1.0, 0.0, 0.0, 1.0),
+			float2x2(0.0, 1.0, -1.0, 0.0),
+			float2x2(-1.0, 0.0, 0.0, -1.0),
+			float2x2(0.0, -1.0, 1.0, 0.0)
+		};
+		static float2 translations[4] = {
+			float2(0.0, 0.0),
+			float2(0.0, 1.0),
+			float2(1.0, 1.0),
+			float2(1.0, 0.0)
+		};
+
+		#define MIPMAP_BIAS (-0.5)
+
+		inline float GetMipLevel(float2 iUV, float4 iTextureSize)
+		{
+			float2 dx = ddx(iUV * iTextureSize.z);
+			float2 dy = ddy(iUV * iTextureSize.w);
+			float d = max(dot(dx, dx), dot(dy,dy));
+			return 0.5 * log2(d) + MIPMAP_BIAS;
+		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
 			// Get offset to tile in atlas
-			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex;
+			uint index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex;
 
 			// Offset to fragment position inside tile
 			float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
-			float2 uv = fmod(unwrappedUV, 1.0f);
-	
-			// compute all 4 posible configurations of terrain tiles (normal, rotated, flipped, rotated and flipped)
-			// so correct uv coordinates according to index
-			uint indexMod4 = ((uint)index) % 4;
-			// normal texture tiles (no operation required) are those with index % 4 == 0
-			if (indexMod4 == 3)
-				// rotated texture tile
-				uv = float2(1.0f - uv.y, uv.x);
-			else if (indexMod4 == 2)
-				// flipped texture tile
-				uv = 1.0f - uv;
-			else if (indexMod4 == 1)
-				// rotated and flipped texture tile
-				uv = float2(uv.y, 1.0f - uv.x);
+			float2 uv = mul(rotations[index % 4], frac(unwrappedUV)) + translations[index % 4];
 
 			// Sample based on gradient and set output
-			float3 uv3 = float3(uv, ((uint)index)/4); // compute correct texture array index from index
-			
-			//half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
-			// since there is currently a bug with seams when using the UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
+			float3 uv3 = float3(uv, index / 4); // compute correct texture array index from index
 
 			float mipMapLevel = GetMipLevel(unwrappedUV, _TileTexArr_TexelSize);
-			half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, mipMapLevel);
+			half4 c = UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileTexArr, _TileTexArr, uv3, mipMapLevel);
 
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
 			
 			#ifdef _NORMALMAP
-				o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_LOD(_TileNormalMapTexArr, uv3, mipMapLevel));
+				o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileNormalMapTexArr, _TileTexArr, uv3, mipMapLevel));
 			#endif
 		}
 		ENDCG
-	} 
+	}
 	FallBack "Standard"
 }

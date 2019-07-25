@@ -52,15 +52,18 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public void QuestMachine_OnQuestEnded(Quest quest)
         {
-            if (quest.QuestName == ThievesGuild.InitiationQuestName)
+            if (quest.QuestSuccess)
             {
-                Guild tg = CreateGuildObj(FactionFile.GuildGroups.GeneralPopulace);
-                AddMembership(FactionFile.GuildGroups.GeneralPopulace, tg);
-            }
-            if (quest.QuestName == DarkBrotherhood.InitiationQuestName)
-            {
-                Guild db = CreateGuildObj(FactionFile.GuildGroups.DarkBrotherHood);
-                AddMembership(FactionFile.GuildGroups.DarkBrotherHood, db);
+                if (quest.QuestName == ThievesGuild.InitiationQuestName)
+                {
+                    Guild tg = CreateGuildObj(FactionFile.GuildGroups.GeneralPopulace);
+                    AddMembership(FactionFile.GuildGroups.GeneralPopulace, tg);
+                }
+                if (quest.QuestName == DarkBrotherhood.InitiationQuestName)
+                {
+                    Guild db = CreateGuildObj(FactionFile.GuildGroups.DarkBrotherHood);
+                    AddMembership(FactionFile.GuildGroups.DarkBrotherHood, db);
+                }
             }
         }
 
