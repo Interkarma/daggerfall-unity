@@ -1012,7 +1012,7 @@ namespace DaggerfallWorkshop
             // Get discovery data for building
             bool discovered = GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut);
 
-            return true;
+            return discovered;
         }
 
         /// <summary>
