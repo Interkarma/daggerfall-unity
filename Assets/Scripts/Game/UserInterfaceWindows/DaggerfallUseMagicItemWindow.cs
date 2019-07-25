@@ -113,8 +113,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void MagicItemPicker_OnItemPicked(int index, string itemName)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            // Use item
             DaggerfallUnityItem itemToUse = magicUseItems[index];
+            CloseWindow();
+            // Use item
             if (itemToUse.IsPotion)
             {
                 GameManager.Instance.PlayerEffectManager.DrinkPotion(itemToUse);
@@ -122,8 +123,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (itemToUse.IsEnchanted)
                 GameManager.Instance.PlayerEffectManager.DoItemEnchantmentPayloads(MagicAndEffects.EnchantmentPayloadFlags.Used, itemToUse, GameManager.Instance.PlayerEntity.Items);
-
-            CloseWindow();
         }
 
         #endregion
