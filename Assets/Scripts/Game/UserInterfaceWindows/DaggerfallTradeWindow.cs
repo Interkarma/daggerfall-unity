@@ -794,7 +794,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (item.RepairData.IsBeingRepaired() && !item.RepairData.IsRepairFinished())
                     {
                         itemBeingRepaired = item;
-                        String strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
+                        string strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
                         DaggerfallMessageBox confirmInterruptRepairBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strInterruptRepair, this);
                         confirmInterruptRepairBox.OnButtonClick += ConfirmInterruptRepairBox_OnButtonClick;
                         confirmInterruptRepairBox.Show();
