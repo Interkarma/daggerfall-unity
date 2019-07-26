@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallConnect.Arena2
 {
@@ -136,6 +137,14 @@ namespace DaggerfallConnect.Arena2
                     default:
                         return null;
                 }
+            }
+
+            public override string Name()
+            {   // %bn
+                System.Random random = new System.Random();
+                DFRandom.Seed = (uint)random.Next();
+                NameHelper.BankTypes race = MacroHelper.GetNameBank((Races)parent.characterDocument.raceTemplate.ID);
+                return DaggerfallUnity.Instance.NameHelper.FullName(race, Genders.Male);
             }
 
             public override string Q1()
