@@ -215,7 +215,10 @@ namespace Wenzil.Console
                     string fileName = WorldDataReplacement.GetBuildingReplacementFilename(blockData.Name, blockIndex, recordIndex);
                     BuildingReplacementData buildingData = new BuildingReplacementData()
                     {
-                        RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
+                        RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex],
+                        BuildingType = (int)blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].BuildingType,
+                        FactionId = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].FactionId,
+                        Quality = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].Quality,
                     };
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
                     File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), buildingJson);
