@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         AudioSource loopAudioSource;
         AudioSource ambientAudioSource;
-        private Coroutine relativePositionCoroutine = null;
+        //private Coroutine relativePositionCoroutine = null;
 
         SoundClips[] ambientSounds;
         AudioClip rainLoop;
