@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
@@ -188,6 +189,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Not used by EnchantmentPayloadFlags.Held - rather, an effect instance bundle is assigned to entity's effect manager to execute as normal.
         /// </summary>
         PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0);
+
+        /// <summary>
+        /// Gets related enchantments that will be forced onto item along with this enchantment.
+        /// Only used by Soul Bound in classic gameplay.
+        /// </summary>
+        /// <returns></returns>
+        ForcedEnchantmentSet? GetForcedEnchantments(EnchantmentParam? param = null);
 
         /// <summary>
         /// Enchantment can flag that it is exclusive to one or more enchantments in array provided.
@@ -432,6 +440,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public virtual bool IsEnchantmentExclusiveTo(EnchantmentSettings[] settingsToTest, EnchantmentParam? comparerParam = null)
         {
             return false;
+        }
+
+        /// <summary>
+        /// Gets related enchantments that will be forced onto item along with this enchantment.
+        /// Only used by Soul Bound in classic gameplay.
+        /// </summary>
+        public virtual ForcedEnchantmentSet? GetForcedEnchantments(EnchantmentParam? param = null)
+        {
+            return null;
         }
 
         /// <summary>

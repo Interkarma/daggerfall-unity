@@ -37,6 +37,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override EnchantmentSettings[] GetEnchantmentSettings()
         {
+            // TODO: Enumerate available soul traps in player inventory without duplicates
+
             EnchantmentSettings[] enchantments = new EnchantmentSettings[1];
             enchantments[0] = new EnchantmentSettings()
             {
@@ -45,10 +47,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 ClassicType = EnchantmentTypes.SoulBound,
                 ClassicParam = -1,
                 PrimaryDisplayName = properties.GroupName,
-                EnchantCost = -1,
+                EnchantCost = -1,//classicParamCosts[i],
             };
 
             return enchantments;
+        }
+
+        public override ForcedEnchantmentSet? GetForcedEnchantments(EnchantmentParam? param = null)
+        {
+            return base.GetForcedEnchantments();
         }
 
         public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
@@ -58,25 +65,53 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Classic Support
 
-        // Defines a single forced enchantment effect with param
-        struct ForcedEnchantment
+        // Matches monster IDs 0-42
+        static short[] classicParamCosts =
         {
-            public EnchantmentTypes type;
-            public EnchantmentParam param;
-
-            public ForcedEnchantment(EnchantmentTypes enchantment, short classicParam = -1)
-            {
-                type = enchantment;
-                param = new EnchantmentParam() { ClassicParam = classicParam, CustomParam = string.Empty };
-            }
-        }
-
-        // Contains a set of forced effects keyed to a valid mobile type
-        struct ForcedEnchantmentSet
-        {
-            public MobileTypes soulType;
-            public ForcedEnchantment[] forcedEffects;
-        }
+            0,      //Rat
+            10,     //Imp
+            20,     //Spriggan
+            0,      //GiantBat
+            0,      //GrizzlyBear
+            0,      //SabertoothTiger
+            0,      //Spider
+            10,     //Orc
+            30,     //Centaur
+            90,     //Werewolf
+            100,    //Nymph
+            0,      //Slaughterfish
+            10,     //OrcSergeant
+            30,     //Harpy
+            140,    //Wereboar
+            0,      //SkeletalWarrior
+            30,     //Giant
+            0,      //Zombie
+            300,    //Ghost
+            100,    //Mummy
+            0,      //GiantScorpion
+            30,     //OrcShaman
+            30,     //Gargoyle
+            300,    //Wraith
+            10,     //OrcWarlord
+            500,    //FrostDaedra
+            500,    //FireDaedra
+            100,    //Daedroth
+            700,    //Vampire
+            1500,   //DaedraSeducer
+            1000,   //VampireAncient
+            8000,   //DaedraLord
+            1000,   //Lich
+            2500,   //AncientLich
+            0,      //Dragonling (no soul, general spawn)
+            300,    //FireAtronach
+            300,    //IronAtronach
+            300,    //FleshAtronach
+            300,    //IceAtronach
+            0,      //Horse_Invalid
+            5000,   //Dragonling_Alternate (has soul, quest spawn only)
+            100,    //Dreugh
+            100,    //Lamia
+        };
 
         // Forced effects for each mobile type
         // Notes:
