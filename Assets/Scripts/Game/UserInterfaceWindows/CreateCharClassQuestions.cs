@@ -14,12 +14,7 @@ using System;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Player;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -35,10 +30,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const string nativeImgName = "CHGN00I0.IMG";
         const string classesFileName = "CLASSES.DAT";
+        const string scroll0ImgName = "SCRL00I0.GFX";
+        const string scroll1ImgName = "SCRL01I0.GFX";
         const int questionLines = 2;
         const int questionLineSpace = 9;
-        const int questionLeft = 25;
-        const int questionTop = 135;
+        const float questionLeft = 20f;
+        const float questionTop = 135f;
         const int questionWidth = 156;
         const int questionHeight = 45;
         const int classQuestionsToken = 9000;
@@ -47,14 +44,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const byte noClassIndex = 255;
 
         Texture2D nativeTexture;
-        List<TextLabel> questionLabels;
         MultiFormatTextLabel questionLabel = new MultiFormatTextLabel();
-        int labelOffset = 0;
         Dictionary<int, string> questionLibrary;
         List<int> questionIndices;
         byte classIndex = 0;
         byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
         int questionsAnswered = 0;
+        Panel questionScroll = new Panel();
 
         public CreateCharClassQuestions(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -74,9 +70,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set background
             NativePanel.BackgroundTexture = nativeTexture;
-
             questionIndices = GetQuestions();
             DisplayQuestion(questionIndices[questionsAnswered]);
+
+            // Set up panel that holds question text
+            // TODO: Set background texture for scroll and mask out text that goes beyond it
+            questionScroll.Position = new Vector2(questionLeft, questionTop);
+            questionScroll.Size = new Vector2(320f - questionLeft * 2f, 100f);
+            questionScroll.Parent = NativePanel;
+            NativePanel.Components.Add(questionScroll);
+
+            // Handle scrolling
+            NativePanel.OnMouseScrollDown += NativePanel_OnMouseScrollDown;
+            NativePanel.OnMouseScrollUp += NativePanel_OnMouseScrollUp;
 
             IsSetup = true;
         }
@@ -152,7 +158,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questionLabel.Clear();
             questionLabel = new MultiFormatTextLabel
             {
-                Position = new Vector2(questionLeft, questionTop),
+                Position = new Vector2(0, 0),
                 Size = new Vector2(320, 240) // make sure it has enough space - allow it to run off the screen
             };
             string[] lines = questionLibrary[questionIndex].Split("\r\n".ToCharArray()).Where(x => x != string.Empty).ToArray();
@@ -163,7 +169,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 tokens.Add(TextFile.CreateFormatToken(TextFile.Formatting.NewLine));
             }
             questionLabel.SetText(tokens.ToArray());
-            NativePanel.Components.Add(questionLabel);
+            questionScroll.Components.Add(questionLabel);
         }
 
         private uint WeightsToUint(byte w1, byte w2, byte w3)
@@ -186,7 +192,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 NativePanel.BackgroundTexture = null;
                 FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
                 if (classFile == null)
+                {
                     throw new Exception("CreateCharClassQuestions: Could not load CLASSES.DAT.");
+                }
                 byte[] classData = classFile.GetBytes();
                 int headerIndex = GetHeaderIndex(classData);
                 if (headerIndex == -1)
@@ -247,10 +255,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
         #endregion Helper Methods
 
+        #region Properties
         public byte ClassIndex
         {
             get { return classIndex; }
         }
+        #endregion Properties
 
         #region Event Handlers
         private void ConfirmDialog_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
@@ -261,6 +271,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             sender.CloseWindow();
             CloseWindow();
+        }
+        private void NativePanel_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            if (questionLabel.Position.y > -50f)
+            {
+                questionLabel.Position = new Vector2(0, questionLabel.Position.y - 10);
+            }
+        }
+        private void NativePanel_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            if (questionLabel.Position.y < 0f)
+            {
+                questionLabel.Position = new Vector2(0, questionLabel.Position.y + 10);
+            }
         }
         #endregion Event Handlers
 
