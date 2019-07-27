@@ -562,9 +562,13 @@ namespace DaggerfallWorkshop
                     marker.gameObject = go;
                     markers.Add(marker);
 
-                    // Add loot containers for treasure markers (always use pile of clothes icon)
-                    if (marker.type == InteriorMarkerTypes.Treasure)
+                    // Add loot containers for treasure markers for TG, DB & taverns (uses pile of clothes icon)
+                    if (marker.type == InteriorMarkerTypes.Treasure &&
+                        (buildingData.buildingType == DFLocation.BuildingTypes.Tavern ||
+                         buildingData.factionID == ThievesGuild.FactionId ||
+                         buildingData.factionID == DarkBrotherhood.FactionId))
                     {
+                        Debug.Log("Treasure pile!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                         // Create unique LoadID for save system, using 9 lsb and the sign bit from each coord pos int
                         ulong loadID = ((ulong) buildingData.buildingKey) << 30 |
                                         (uint)(obj.XPos << 1 & posMask) << 20 |
