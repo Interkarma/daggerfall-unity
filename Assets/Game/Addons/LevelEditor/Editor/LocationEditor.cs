@@ -23,10 +23,11 @@ namespace DaggerfallWorkshop.Loc {
         private string searchField = "", selectedObjectID = "";
         private List<string> searchListNames = new List<string>(), searchListID = new List<string>();
         private EditMode editMode;
-        private int objectPicker, chooseFileMode, listMode, billboardSubList, interiorSubPartSetList;
+        private int objectPicker, chooseFileMode, listMode, billboardSubList, modelSubList, interiorSubPartSetList;
         private Vector2 scrollPosition2 = Vector2.zero;
         private string[] chooseFileModeString = { "Choose from List", "Add manually" };
         private string[] listModeString = { "3D Model", "Billboard", "NPC", "Door" ,"Int. Parts"};
+        private string[] modelSubListString = { "Civil", "Nature", "Dungeon" };
         private string[] billboardSubListString = { "Interior", "Nature", "Lights", "Treasure", "Markers" };
         private string[] interiorPartsSetsString= { "BlueGrey", "brownGreyPillars"};
         private bool isExteriorMode = false;
@@ -254,6 +255,14 @@ namespace DaggerfallWorkshop.Loc {
 
             if (chooseFileMode == 0) {
 
+
+                if(listMode == 0) {
+                    GUI.BeginGroup(new Rect(8, 124, Screen.width - 16, 32), lightGrayBG);
+                    modelSubList = GUI.SelectionGrid(new Rect(8, 4, (modelSubListString.Length * 80) + 8, 24), modelSubList, modelSubListString, modelSubListString.Length);
+                    GUI.EndGroup();
+                }
+
+
                 if (listMode == 1) {
 
                     GUI.BeginGroup(new Rect(8, 124, Screen.width - 16, 32), lightGrayBG);
@@ -276,8 +285,8 @@ namespace DaggerfallWorkshop.Loc {
                     if (GUI.changed)
                         UpdateSearchList();
 
-                    scrollPosition2 = GUI.BeginScrollView(new Rect(4, 184, 256, 368), scrollPosition2, new Rect(0, 0, 236, 20 + (searchListNames.Count * 24)));
-                    objectPicker = GUI.SelectionGrid(new Rect(10, 10, 216, searchListNames.Count * 24), objectPicker, searchListNames.ToArray(), 1);
+                    scrollPosition2 = GUI.BeginScrollView(new Rect(4, 184, 312, 368), scrollPosition2, new Rect(0, 0, 256, 20 + (searchListNames.Count * 24)));
+                    objectPicker = GUI.SelectionGrid(new Rect(10, 10, 256, searchListNames.Count * 24), objectPicker, searchListNames.ToArray(), 1);
                     GUI.EndScrollView();
                 }
             }
@@ -357,8 +366,12 @@ namespace DaggerfallWorkshop.Loc {
             searchListID.Clear();
             Dictionary<string, string> currentList;
 
-            if (listMode == 0)
-                currentList = LocationEditorHelper.models;
+            if (listMode == 0 && modelSubList == 0)
+                currentList = LocationEditorHelper.models_civil;
+            else if (listMode == 0 && modelSubList == 1)
+                currentList = LocationEditorHelper.models_nature;
+            else if (listMode == 0 && modelSubList == 2)
+                currentList = LocationEditorHelper.models_dungeon;
             else if (listMode == 1 && billboardSubList == 0)
                 currentList = LocationEditorHelper.billboards_interior;
             else if (listMode == 1 && billboardSubList == 1)
