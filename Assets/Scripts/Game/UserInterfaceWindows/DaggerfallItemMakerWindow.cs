@@ -249,7 +249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Sort enchantments into powers and side-effects
                 foreach(EnchantmentSettings enchantment in enchantments)
                 {
-                    if (enchantment.EnchantCost >= 0)
+                    if (enchantment.EnchantCost > 0)
                     {
                         // Add grouped key if not present
                         if (!groupedPowerTemplates.ContainsKey(effect.Key))
@@ -799,17 +799,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void EnchantmentSecondaryPicker_OnUseSelectedItem()
         {
-            // TODO: Add any automatic enchantments related to this one (e.g. a soul bound Daedra add a few auto enchantments)
-
-            // TODO: Check for overflow from automatic enchantments and display "no room in item..."
-
             // Get enchantment tagged to selected item
             ListBox.ListItem listItem = enchantmentSecondaryPicker.ListBox.SelectedValue;
             if (listItem.tag == null)
                 throw new Exception(string.Format("ListItem '{0}' has no EnchantmentSettings tag", listItem.textLabel.Text));
 
+            // Get enchantment settings
+            EnchantmentSettings enchantmentSettings = (EnchantmentSettings)listItem.tag;
+            IEntityEffect enchantmentEffect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(enchantmentSettings.EffectKey);
+            EnchantmentParam enchantmentParam = new EnchantmentParam() { ClassicParam = enchantmentSettings.ClassicParam, CustomParam = enchantmentSettings.CustomParam };
+
+            // Get forced enchantments for this effect            
+            ForcedEnchantmentSet? forcedEnchantments = enchantmentEffect.GetForcedEnchantments(enchantmentParam);
+            if (forcedEnchantments != null)
+            {
+                // TODO: Check for overflow from automatic enchantments and display "no room in item..."
+
+                // TODO: Sort forced enchantments into powers and side effects
+                // TODO: Ensure forced enchantment do not contribute to EP cost
+
+                Debug.LogFormat("Enchantment {0} has {1} forced enchantments", enchantmentEffect.DisplayName, forcedEnchantments.Value.forcedEffects.Length);
+            }
+
             // Add selected enchantment settings to powers/side-effects
-            AddEnchantmentSettings((EnchantmentSettings)listItem.tag);
+            AddEnchantmentSettings(enchantmentSettings);
 
             // Close effect pickers
             enchantmentPrimaryPicker.CloseWindow();

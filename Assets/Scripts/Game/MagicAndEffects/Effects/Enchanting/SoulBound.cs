@@ -9,8 +9,10 @@
 // Notes:
 //
 
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 
@@ -31,31 +33,50 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
-            properties.ItemMakerFlags = ItemMakerFlags.None;
+            properties.ItemMakerFlags = ItemMakerFlags.AlphaSortSecondaryList;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Enchanted;
         }
 
         public override EnchantmentSettings[] GetEnchantmentSettings()
         {
+            List<EnchantmentSettings> enchantments = new List<EnchantmentSettings>();
+
+            // TEMP: Showing all souls for testing purposes
             // TODO: Enumerate available soul traps in player inventory without duplicates
 
-            EnchantmentSettings[] enchantments = new EnchantmentSettings[1];
-            enchantments[0] = new EnchantmentSettings()
+            for (int i = 0; i < classicParamCosts.Length; i++)
             {
-                Version = 1,
-                EffectKey = EffectKey,
-                ClassicType = EnchantmentTypes.SoulBound,
-                ClassicParam = -1,
-                PrimaryDisplayName = properties.GroupName,
-                EnchantCost = -1,//classicParamCosts[i],
-            };
+                EnchantmentSettings enchantment = new EnchantmentSettings()
+                {
+                    Version = 1,
+                    EffectKey = EffectKey,
+                    ClassicType = EnchantmentTypes.SoulBound,
+                    ClassicParam = (short)i,
+                    PrimaryDisplayName = properties.GroupName,
+                    SecondaryDisplayName = EnemyBasics.Enemies[i].Name,
+                    EnchantCost = classicParamCosts[i],
+                };
 
-            return enchantments;
+                enchantments.Add(enchantment);
+            }
+
+            return enchantments.ToArray();
         }
 
         public override ForcedEnchantmentSet? GetForcedEnchantments(EnchantmentParam? param = null)
         {
-            return base.GetForcedEnchantments();
+            // Must have a param set
+            if (param == null)
+                return null;
+
+            // Find forced enchantments for monster ID
+            foreach (ForcedEnchantmentSet set in MobileForcedEnchantmentSets)
+            {
+                if (param.Value.ClassicParam == (short)set.soulType)
+                    return set;
+            }
+
+            return null;
         }
 
         public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
@@ -68,49 +89,49 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         // Matches monster IDs 0-42
         static short[] classicParamCosts =
         {
-            0,      //Rat
-            10,     //Imp
-            20,     //Spriggan
-            0,      //GiantBat
-            0,      //GrizzlyBear
-            0,      //SabertoothTiger
-            0,      //Spider
-            10,     //Orc
-            30,     //Centaur
-            90,     //Werewolf
-            100,    //Nymph
-            0,      //Slaughterfish
-            10,     //OrcSergeant
-            30,     //Harpy
-            140,    //Wereboar
-            0,      //SkeletalWarrior
-            30,     //Giant
-            0,      //Zombie
-            300,    //Ghost
-            100,    //Mummy
-            0,      //GiantScorpion
-            30,     //OrcShaman
-            30,     //Gargoyle
-            300,    //Wraith
-            10,     //OrcWarlord
-            500,    //FrostDaedra
-            500,    //FireDaedra
-            100,    //Daedroth
-            700,    //Vampire
-            1500,   //DaedraSeducer
-            1000,   //VampireAncient
-            8000,   //DaedraLord
-            1000,   //Lich
-            2500,   //AncientLich
-            0,      //Dragonling (no soul, general spawn)
-            300,    //FireAtronach
-            300,    //IronAtronach
-            300,    //FleshAtronach
-            300,    //IceAtronach
-            0,      //Horse_Invalid
-            5000,   //Dragonling_Alternate (has soul, quest spawn only)
-            100,    //Dreugh
-            100,    //Lamia
+            -0,      //Rat
+            -10,     //Imp
+            -20,     //Spriggan
+            -0,      //GiantBat
+            -0,      //GrizzlyBear
+            -0,      //SabertoothTiger
+            -0,      //Spider
+            -10,     //Orc
+            -30,     //Centaur
+            -90,     //Werewolf
+            -100,    //Nymph
+            -0,      //Slaughterfish
+            -10,     //OrcSergeant
+            -30,     //Harpy
+            -140,    //Wereboar
+            -0,      //SkeletalWarrior
+            -30,     //Giant
+            -0,      //Zombie
+            -300,    //Ghost
+            -100,    //Mummy
+            -0,      //GiantScorpion
+            -30,     //OrcShaman
+            -30,     //Gargoyle
+            -300,    //Wraith
+            -10,     //OrcWarlord
+            -500,    //FrostDaedra
+            -500,    //FireDaedra
+            -100,    //Daedroth
+            -700,    //Vampire
+            -1500,   //DaedraSeducer
+            -1000,   //VampireAncient
+            -8000,   //DaedraLord
+            -1000,   //Lich
+            -2500,   //AncientLich
+            -0,      //Dragonling (no soul, general spawn)
+            -300,    //FireAtronach
+            -300,    //IronAtronach
+            -300,    //FleshAtronach
+            -300,    //IceAtronach
+            -0,      //Horse_Invalid
+            -5000,   //Dragonling_Alternate (has soul, quest spawn only)
+            -100,    //Dreugh
+            -100,    //Lamia
         };
 
         // Forced effects for each mobile type
