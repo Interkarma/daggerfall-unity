@@ -568,7 +568,6 @@ namespace DaggerfallWorkshop
                          buildingData.factionID == ThievesGuild.FactionId ||
                          buildingData.factionID == DarkBrotherhood.FactionId))
                     {
-                        Debug.Log("Treasure pile!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                         // Create unique LoadID for save system, using 9 lsb and the sign bit from each coord pos int
                         ulong loadID = ((ulong) buildingData.buildingKey) << 30 |
                                         (uint)(obj.XPos << 1 & posMask) << 20 |
