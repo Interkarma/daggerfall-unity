@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.FallExe;
@@ -25,7 +26,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class SoulBound : BaseEntityEffect
     {
+        const int monsterIDCount = 43;
+
         public static readonly string EffectKey = EnchantmentTypes.SoulBound.ToString();
+
+        int[] enumeratedTraps = new int[monsterIDCount];
 
         public override void SetProperties()
         {
@@ -41,11 +46,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             List<EnchantmentSettings> enchantments = new List<EnchantmentSettings>();
 
-            // TEMP: Showing all souls for testing purposes
-            // TODO: Enumerate available soul traps in player inventory without duplicates
-
-            for (int i = 0; i < classicParamCosts.Length; i++)
+            // Enumerate available soul traps in player inventory without showing duplicates
+            EnumerateFilledTraps();
+            for (int i = 0; i < enumeratedTraps.Length; i++)
             {
+                if (enumeratedTraps[i] == 0)
+                    continue;
+
                 EnchantmentSettings enchantment = new EnchantmentSettings()
                 {
                     Version = 1,
@@ -81,7 +88,53 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
         {
-            return base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
+            base.EnchantmentPayloadCallback(context, param, sourceEntity, targetEntity, sourceItem);
+
+            // Remove soul trap item filled with enemy type
+            if (param != null && context == EnchantmentPayloadFlags.Enchanted)
+                RemoveFilledTrap(param.Value.ClassicParam);
+
+            // TODO: Spawn enemy for trapped soul when item breaks
+            if (param != null && context == EnchantmentPayloadFlags.Breaks)
+            {
+            }
+
+            return null;
+        }
+
+        void EnumerateFilledTraps()
+        {
+            Array.Clear(enumeratedTraps, 0, enumeratedTraps.Length);
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            for (int i = 0; i < playerItems.Count; i++)
+            {
+                DaggerfallUnityItem item = playerItems.GetItem(i);
+                if (item != null && item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Soul_trap))
+                {
+                    if (item.TrappedSoulType != MobileTypes.None && (int)item.TrappedSoulType < monsterIDCount)
+                        enumeratedTraps[(int)item.TrappedSoulType]++;
+                }
+            }
+        }
+
+        void RemoveFilledTrap(int monsterID)
+        {
+            if (monsterID < 0 || monsterID >= monsterIDCount)
+                return;
+
+            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+            for (int i = 0; i < playerItems.Count; i++)
+            {
+                DaggerfallUnityItem item = playerItems.GetItem(i);
+                if (item != null && item.IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Soul_trap))
+                {
+                    if ((int)item.TrappedSoulType == monsterID)
+                    {
+                        playerItems.RemoveItem(item);
+                        break;
+                    }
+                }
+            }
         }
 
         #region Classic Support
