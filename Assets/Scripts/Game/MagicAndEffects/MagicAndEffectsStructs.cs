@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string PrimaryDisplayName;
         public string SecondaryDisplayName;
         public int EnchantCost;
-        public bool ForcedEffect;
+        public bool IsForcedEffect;
 
         public bool Equals(EnchantmentSettings other)
         {

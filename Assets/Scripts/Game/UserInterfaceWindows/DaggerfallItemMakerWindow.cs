@@ -221,6 +221,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int GetTotalEnchantmentCost()
         {
+            // TODO: Ensure forced enchantment do not contribute to EP cost
+
             return powersList.GetTotalEnchantmentCost() + sideEffectsList.GetTotalEnchantmentCost();
         }
 
@@ -534,7 +536,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     continue;
 
                 EnchantmentSettings forcedSettings = enchantmentSettings.Value;
-                forcedSettings.ForcedEffect = true;
+                forcedSettings.IsForcedEffect = true;
                 if (forcedSettings.EnchantCost > 0)
                     forcedPowers.Add(forcedSettings);
                 else
@@ -845,9 +847,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 EnchantmentSettings[] forcedSideEffects;
                 SortForcedEnchantments(forcedEnchantmentSet.Value, out forcedPowers, out forcedSideEffects);
 
-                // TODO: Check for overflow from automatic enchantments and display "no room in item..."
-
-                // TODO: Ensure forced enchantment do not contribute to EP cost
+                // Check for overflow from automatic enchantments and display "no room in item..."
+                // Also adding +1 to account for incoming enchantment
+                if (powersList.EnchantmentCount + sideEffectsList.EnchantmentCount + forcedPowers.Length + forcedSideEffects.Length + 1 > 10)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noRoomInItem"));
+                    return;
+                }
 
                 Debug.LogFormat("Enchantment {0} has {1} forced powers and {2} forced side effects", enchantmentEffect.DisplayName, forcedPowers.Length, forcedSideEffects.Length);
             }
