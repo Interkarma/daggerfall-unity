@@ -170,7 +170,8 @@ Person _teacher_ face 1 faction The_Academics
 Place _dungeon_ remote dungeon
 Place _school_ remote library
 
-Clock _S.01_ 90.00:00 0 flag 1 range 0 1
+Clock _S.01_ 90.00:00
+--removed flags to make timer exactly 90 days
 
 
 --	Quest start-up:

@@ -111,11 +111,12 @@ Message:  1020
  you. You have slain without sanction several
  times. You must now join us, or be counted
  as our foe. Travel to ___apo_
- in %reg and see _apothecary_,
+ in ____apo_ and see _apothecary_,
  who will give you further instructions.
  
 <ce>                               A Brother
 
+--changed %reg to ____apo_ here to ensure region consistency
 
 -- Symbols used in the QRC file:
 --
@@ -146,6 +147,7 @@ Person _npc_ face 1 group Resident1
 
 Place _mansion_ remote house1
 Place _apo_ remote apothecary
+--added _apo_ place due to spawning problem for chemist
 
 Clock _traveltime_ 14.00:00 0 flag 1 range 2 5
 Clock _S.01_ 30.00:00 0 flag 1 range 1 4
@@ -161,6 +163,7 @@ Foe _F.02_ is 2 Nightblade
 	get item _letter_ 
 	say 1011
 	place npc _apothecary_ at _apo_
+--added place npc command
 
 _traveltime_ task:
 	change repute with _darkbmember_ by -35 

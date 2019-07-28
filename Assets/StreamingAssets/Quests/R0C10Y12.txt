@@ -88,7 +88,8 @@ Supposedly _contact_ is a fence for stolen merchandise.
 _contact_, eh? A mysterious =contact_ who operates out of __contact_, %di of here.
 
 Message:  1015
-%qdt: I have accepted a
+%qdt:
+I have accepted a
  mission from _questgiver_ of
  ___questgiver_ to bring a stolen
  _item_ to _contact_,

@@ -204,7 +204,8 @@ Person _friend4_ group Local_4.1 male
 
 Place _hidingplace_ local random
 
-Clock _S.16_ 2.00:00 0 flag 1 range 0 1
+Clock _S.16_ 2.00:00
+--removed flags to make exact two days
 
 Foe _F.00_ is 3 Barbarian
 

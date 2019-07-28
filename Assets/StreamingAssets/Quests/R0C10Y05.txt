@@ -93,7 +93,8 @@ Message:  1012
 You have slain =giant_.
 
 Message:  1015
-%qdt: _questgiver_ of
+%qdt:
+_questgiver_ of
  ___questgiver_ hired me on behalf
  of an ally, _qgfriend_ of
  ___qgfriend_, to slay a

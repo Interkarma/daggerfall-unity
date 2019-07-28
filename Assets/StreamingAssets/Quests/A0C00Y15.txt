@@ -178,8 +178,7 @@ Item _jewelry_ trinket
 Item _gold_ gold
 
 Person _questgiver_ face 137 group Questor
-Person _pickupregion_ face 232 group Group_5.1
---changed Local_3.0 here to Group_5.1. Local kept using local city, this quest intends a remote city.
+Person _pickupregion_ face 232 group Local_3.0
 
 Clock _traveltime_ 00:00 0 flag 1 range 1 4
 Clock _delay_ 01:00

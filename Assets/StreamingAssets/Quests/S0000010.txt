@@ -147,7 +147,8 @@ Place _agentplace_ remote house2
 Place _lysandustomb_ permanent LysandusTomb2
 
 Clock _S.04_ 6.23:20 0 flag 1 range 0 1
-Clock _S.10_ 30.00:00 0 flag 1 range 0 1
+Clock _S.10_ 30.00:00
+--removed flags from S.10 to make it 30 exact days
 Clock _itemindung_ 00:00 0 flag 17 range 0 2
 
 Foe _F.00_ is Wraith

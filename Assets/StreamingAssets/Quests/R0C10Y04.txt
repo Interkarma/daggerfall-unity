@@ -82,7 +82,8 @@ Message:  1012
 _fakename_ the wizard is dead.
 
 Message:  1015
-%qdt: _questgiver_
+%qdt:
+_questgiver_
  of __questgiver_ in ___questgiver_
  has sent me to ___mondung_,
  where I am to slay a mad wizard.
