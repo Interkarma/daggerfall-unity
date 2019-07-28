@@ -221,12 +221,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int GetTotalEnchantmentCost()
         {
-            return powersList.GetTotalEnchantmentCost() + sideEffectsList.GetTotalEnchantmentCost();
+            return powersList.GetTotalEnchantmentCost(false) + sideEffectsList.GetTotalEnchantmentCost(false);
         }
 
         int GetTotalGoldCost()
         {
-            return powersList.GetTotalEnchantmentCost() * 10;
+            return powersList.GetTotalEnchantmentCost(true) * 10;
         }
 
         void EnumerateEnchantments()

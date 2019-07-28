@@ -133,13 +133,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return false;
         }
 
-        public int GetTotalEnchantmentCost()
+        public int GetTotalEnchantmentCost(bool countForcedEnchantments)
         {
             int cost = 0;
             foreach(EnchantmentPanel panel in enchantmentPanels)
             {
-                // Forced enchantments do not contribute to cost
-                if (panel.Enchantment.ParentEnchantment != 0)
+                // Forced enchantments do not contribute to cost unless specified
+                if (!countForcedEnchantments && panel.Enchantment.ParentEnchantment != 0)
                     continue;
 
                 cost += panel.Enchantment.EnchantCost;
