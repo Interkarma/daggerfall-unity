@@ -1527,7 +1527,7 @@ namespace DaggerfallWorkshop.Game
                 MacroDataSource mcp = temple.GetMacroDataSource();
                 return mcp.FactionOrderName();
             }
-            return TextManager.Instance.GetText(textDatabase, "resolvingError");
+            return npcData.pcFactionName;
         }
 
         public string GetHonoric()

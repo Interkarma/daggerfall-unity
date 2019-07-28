@@ -376,7 +376,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     CloseWindow();
                     Services.CustomGuildService customService;
                     if (Services.GetCustomGuildService((int)service, out customService))
-                        customService();
+                        customService(this);
                     else
                         DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
