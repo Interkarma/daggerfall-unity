@@ -1266,7 +1266,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectBundleSettings settings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
-                BundleType = BundleTypes.None,
+                BundleType = BundleTypes.Disease,
                 Effects = new EffectEntry[] { new EffectEntry(effectKey) },
             };
 
