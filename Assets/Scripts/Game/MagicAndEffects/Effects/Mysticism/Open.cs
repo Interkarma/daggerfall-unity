@@ -10,7 +10,9 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -23,6 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         int forcedRoundsRemaining = 1;
         bool awakeAlert = true;
+        bool castBySkeletonKey = false;
 
         public override void SetProperties()
         {
@@ -33,6 +36,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1265);
             properties.ShowSpellIcon = false;
             properties.SupportChance = true;
+            properties.ChanceFunction = ChanceFunction.Custom;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
@@ -43,12 +47,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
+            CheckCastBySkeletonKey();
             StartWaitingForDoor();
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
+            CheckCastBySkeletonKey();
             StartWaitingForDoor();
         }
 
@@ -73,9 +79,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void StartWaitingForDoor()
         {
-            // Do nothing if failed
-            if (!ChanceSuccess)
+            // Do nothing if failed - Skeleton's Key always works
+            if (!castBySkeletonKey && !RollChance())
             {
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
                 CancelEffect();
                 return;
             }
@@ -105,7 +112,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (actionDoor.IsLocked)
             {
                 // Unlocks door to level of entity - from spell description "Unlocks chest or door to lock-level of caster."
-                if (actionDoor.CurrentLockValue <= manager.EntityBehaviour.Entity.Level)
+                // Skeleton's Key can open even magical locks
+                if (castBySkeletonKey || actionDoor.CurrentLockValue <= manager.EntityBehaviour.Entity.Level)
                 {
                     actionDoor.CurrentLockValue = 0;
                 }
@@ -132,6 +140,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             forcedRoundsRemaining = 0;
             ResignAsIncumbent();
+        }
+
+        void CheckCastBySkeletonKey()
+        {
+            castBySkeletonKey = 
+                ParentBundle.castByItem != null &&
+                ParentBundle.castByItem.IsArtifact &&
+                ParentBundle.castByItem.WorldTextureArchive == 432 &&
+                ParentBundle.castByItem.WorldTextureRecord == 20;
+
+            UnityEngine.Debug.LogFormat("Open.castBySkeletonKey={0}", castBySkeletonKey);
         }
     }
 }
