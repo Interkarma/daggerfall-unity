@@ -544,19 +544,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetupDefaultActionMode()
         {
+            bool proximityWagonAccess = false;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+                proximityWagonAccess = DungeonWagonAccessProximityCheck();
+
             if (lootTarget != null)
                 SelectActionMode(ActionModes.Remove);
             // Start with wagon if accessing from dungeon
-            else if (allowDungeonWagonAccess)
-            {
-                ShowWagon(true);
-                SelectActionMode(ActionModes.Remove);
-            }
             else
-                SelectActionMode(ActionModes.Equip);
-                
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                DungeonWagonAccessProximityCheck();
+            {
+                // Fast access: autoselect wagon when nearby
+                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt)
+                    allowDungeonWagonAccess |= proximityWagonAccess;
+
+                if (allowDungeonWagonAccess)
+                {
+                    ShowWagon(true);
+                    SelectActionMode(ActionModes.Remove);
+                }
+                else
+                    SelectActionMode(ActionModes.Equip);
+            }
+            allowDungeonWagonAccess |= proximityWagonAccess;
         }
 
         public override void OnPush()
@@ -1041,7 +1050,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
         }
 
-        void DungeonWagonAccessProximityCheck()
+        bool DungeonWagonAccessProximityCheck()
         {
             const float proximityWagonAccessDistance = 5f;
 
@@ -1066,8 +1075,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Allow wagon access if close enough to any exit door
                 if (closestDoorDistance < proximityWagonAccessDistance)
-                    allowDungeonWagonAccess = true;
-            }  
+                    return true;
+            }
+            return false;
         }
 
         void UpdateItemInfoPanel(DaggerfallUnityItem item)
