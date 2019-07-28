@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AlphaSortSecondaryList;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Enchanted;
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Enchanted | EnchantmentPayloadFlags.Breaks;
         }
 
         public override EnchantmentSettings[] GetEnchantmentSettings()
@@ -94,10 +94,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (param != null && context == EnchantmentPayloadFlags.Enchanted)
                 RemoveFilledTrap(param.Value.ClassicParam);
 
-            // TODO: Spawn enemy for trapped soul when item breaks
+            // Spawn enemy for trapped soul when item breaks
             if (param != null && context == EnchantmentPayloadFlags.Breaks)
-            {
-            }
+                GameObjectHelper.CreateFoeSpawner(false, (MobileTypes)param.Value.ClassicParam, 1);
 
             return null;
         }
