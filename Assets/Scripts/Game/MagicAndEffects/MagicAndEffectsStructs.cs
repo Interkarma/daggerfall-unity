@@ -173,6 +173,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string PrimaryDisplayName;
         public string SecondaryDisplayName;
         public int EnchantCost;
+        public bool ForcedEffect;
 
         public bool Equals(EnchantmentSettings other)
         {
@@ -325,12 +326,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     /// </summary>
     public struct ForcedEnchantment
     {
-        public EnchantmentTypes type;
+        public string key;
         public EnchantmentParam param;
 
-        public ForcedEnchantment(EnchantmentTypes enchantment, short classicParam = -1)
+        public ForcedEnchantment(string key, short classicParam = -1)
         {
-            type = enchantment;
+            this.key = key;
             param = new EnchantmentParam() { ClassicParam = classicParam, CustomParam = string.Empty };
         }
     }

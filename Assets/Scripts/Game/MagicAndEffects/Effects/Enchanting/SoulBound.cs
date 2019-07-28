@@ -154,9 +154,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.DaedraLord,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.PotentVs, (short)PotentVs.Params.Daedra),
-                    new ForcedEnchantment(EnchantmentTypes.UserTakesDamage, (short)UserTakesDamage.Params.InHolyPlaces),
-                    new ForcedEnchantment(EnchantmentTypes.ExtraWeight),
+                    new ForcedEnchantment(PotentVs.EffectKey, (short)PotentVs.Params.Daedra),
+                    new ForcedEnchantment(UserTakesDamage.EffectKey, (short)UserTakesDamage.Params.InHolyPlaces),
+                    new ForcedEnchantment(ExtraWeight.EffectKey),
                 }
             },
 
@@ -166,11 +166,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.DaedraSeducer,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.GoodRepWith, (short)GoodRepWith.Params.All),
-                    new ForcedEnchantment(EnchantmentTypes.ItemDeteriorates, (short)ItemDeteriorates.Params.InSunlight),
-                    new ForcedEnchantment(EnchantmentTypes.UserTakesDamage, (short)UserTakesDamage.Params.InHolyPlaces),
-                    new ForcedEnchantment(EnchantmentTypes.HealthLeech, (short)HealthLeech.Params.UnlessUsedWeekly),
-                    new ForcedEnchantment(EnchantmentTypes.BadReactionsFrom, (short)BadReactionsFrom.Params.Animals),
+                    new ForcedEnchantment(GoodRepWith.EffectKey, (short)GoodRepWith.Params.All),
+                    new ForcedEnchantment(ItemDeteriorates.EffectKey, (short)ItemDeteriorates.Params.InSunlight),
+                    new ForcedEnchantment(UserTakesDamage.EffectKey, (short)UserTakesDamage.Params.InHolyPlaces),
+                    new ForcedEnchantment(HealthLeech.EffectKey, (short)HealthLeech.Params.UnlessUsedWeekly),
+                    new ForcedEnchantment(BadReactionsFrom.EffectKey, (short)BadReactionsFrom.Params.Animals),
                 }
             },
 
@@ -180,9 +180,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.Daedroth,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.LowDamageVs, (short)LowDamageVs.Params.Daedra),
-                    new ForcedEnchantment(EnchantmentTypes.BadReactionsFrom, (short)BadReactionsFrom.Params.Daedra),
-                    new ForcedEnchantment(EnchantmentTypes.ItemDeteriorates, (short)ItemDeteriorates.Params.InHolyPlaces),
+                    new ForcedEnchantment(LowDamageVs.EffectKey, (short)LowDamageVs.Params.Daedra),
+                    new ForcedEnchantment(BadReactionsFrom.EffectKey, (short)BadReactionsFrom.Params.Daedra),
+                    new ForcedEnchantment(ItemDeteriorates.EffectKey, (short)ItemDeteriorates.Params.InHolyPlaces),
                 }
             },
 
@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.FireAtronach,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.CastWhenUsed, 12), // 12=Resist Fire
+                    new ForcedEnchantment(CastWhenUsed.EffectKey, 12), // 12=Resist Fire
                 }
             },
 
@@ -204,9 +204,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.FireDaedra,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.EnhancesSkill, (short)DFCareer.Skills.Daedric),
-                    new ForcedEnchantment(EnchantmentTypes.CastWhenUsed, 12), // 12=Resist Fire
-                    new ForcedEnchantment(EnchantmentTypes.BadReactionsFrom, (short)BadReactionsFrom.Params.Animals),
+                    new ForcedEnchantment(EnhancesSkill.EffectKey, (short)DFCareer.Skills.Daedric),
+                    new ForcedEnchantment(CastWhenUsed.EffectKey, 12), // 12=Resist Fire
+                    new ForcedEnchantment(BadReactionsFrom.EffectKey, (short)BadReactionsFrom.Params.Animals),
                 }
             },
 
@@ -216,9 +216,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.FrostDaedra,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.EnhancesSkill, (short)DFCareer.Skills.Daedric),
-                    new ForcedEnchantment(EnchantmentTypes.CastWhenUsed, 11), // 11=Resist Cold
-                    new ForcedEnchantment(EnchantmentTypes.ItemDeteriorates, (short)ItemDeteriorates.Params.InHolyPlaces),
+                    new ForcedEnchantment(EnhancesSkill.EffectKey, (short)DFCareer.Skills.Daedric),
+                    new ForcedEnchantment(CastWhenUsed.EffectKey, 11), // 11=Resist Cold
+                    new ForcedEnchantment(ItemDeteriorates.EffectKey, (short)ItemDeteriorates.Params.InHolyPlaces),
                 }
             },
 
@@ -228,9 +228,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.Ghost,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.FeatherWeight),
-                    new ForcedEnchantment(EnchantmentTypes.ItemDeteriorates, (short)ItemDeteriorates.Params.InHolyPlaces),
-                    new ForcedEnchantment(EnchantmentTypes.LowDamageVs, (short)LowDamageVs.Params.Undead),
+                    new ForcedEnchantment(FeatherWeight.EffectKey),
+                    new ForcedEnchantment(ItemDeteriorates.EffectKey, (short)ItemDeteriorates.Params.InHolyPlaces),
+                    new ForcedEnchantment(LowDamageVs.EffectKey, (short)LowDamageVs.Params.Undead),
                 }
             },
 
@@ -240,9 +240,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.Lich,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.EnhancesSkill, (short)DFCareer.Skills.Destruction),
-                    new ForcedEnchantment(EnchantmentTypes.ItemDeteriorates, (short)ItemDeteriorates.Params.InSunlight),
-                    new ForcedEnchantment(EnchantmentTypes.LowDamageVs, (short)LowDamageVs.Params.Undead),
+                    new ForcedEnchantment(EnhancesSkill.EffectKey, (short)DFCareer.Skills.Destruction),
+                    new ForcedEnchantment(ItemDeteriorates.EffectKey, (short)ItemDeteriorates.Params.InSunlight),
+                    new ForcedEnchantment(LowDamageVs.EffectKey, (short)LowDamageVs.Params.Undead),
                 }
             },
 
@@ -254,9 +254,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 soulType = MobileTypes.Wraith,
                 forcedEffects = new ForcedEnchantment[]
                 {
-                    new ForcedEnchantment(EnchantmentTypes.RegensHealth, (short)RegensHealth.Params.InDarkness),
-                    new ForcedEnchantment(EnchantmentTypes.ItemDeteriorates, (short)ItemDeteriorates.Params.InHolyPlaces),
-                    new ForcedEnchantment(EnchantmentTypes.LowDamageVs, (short)LowDamageVs.Params.Undead),
+                    new ForcedEnchantment(RegensHealth.EffectKey, (short)RegensHealth.Params.InDarkness),
+                    new ForcedEnchantment(ItemDeteriorates.EffectKey, (short)ItemDeteriorates.Params.InHolyPlaces),
+                    new ForcedEnchantment(LowDamageVs.EffectKey, (short)LowDamageVs.Params.Undead),
                 }
             },
         };

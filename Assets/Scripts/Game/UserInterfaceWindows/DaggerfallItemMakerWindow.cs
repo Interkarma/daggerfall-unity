@@ -518,6 +518,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return filteredEnchantments;
         }
 
+        void SortForcedEnchantments(ForcedEnchantmentSet set, out EnchantmentSettings[] forcedPowersOut, out EnchantmentSettings[] forcedSideEffectsOut)
+        {
+            List<EnchantmentSettings> forcedPowers = new List<EnchantmentSettings>();
+            List<EnchantmentSettings> forcedSideEffects = new List<EnchantmentSettings>();
+
+            foreach (ForcedEnchantment forcedEnchantment in set.forcedEffects)
+            {
+                IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(forcedEnchantment.key);
+                if (effect == null)
+                    continue;
+
+                EnchantmentSettings? enchantmentSettings = effect.GetEnchantmentSettings(forcedEnchantment.param);
+                if (enchantmentSettings == null)
+                    continue;
+
+                EnchantmentSettings forcedSettings = enchantmentSettings.Value;
+                forcedSettings.ForcedEffect = true;
+                if (forcedSettings.EnchantCost > 0)
+                    forcedPowers.Add(forcedSettings);
+                else
+                    forcedSideEffects.Add(forcedSettings);
+            }
+
+            forcedPowersOut = forcedPowers.ToArray();
+            forcedSideEffectsOut = forcedSideEffects.ToArray();
+        }
+
         #endregion
 
         #region Event Handlers
@@ -810,15 +837,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EnchantmentParam enchantmentParam = new EnchantmentParam() { ClassicParam = enchantmentSettings.ClassicParam, CustomParam = enchantmentSettings.CustomParam };
 
             // Get forced enchantments for this effect            
-            ForcedEnchantmentSet? forcedEnchantments = enchantmentEffect.GetForcedEnchantments(enchantmentParam);
-            if (forcedEnchantments != null)
+            ForcedEnchantmentSet? forcedEnchantmentSet = enchantmentEffect.GetForcedEnchantments(enchantmentParam);
+            if (forcedEnchantmentSet != null)
             {
+                // Sort forced enchantments into powers and side effects
+                EnchantmentSettings[] forcedPowers;
+                EnchantmentSettings[] forcedSideEffects;
+                SortForcedEnchantments(forcedEnchantmentSet.Value, out forcedPowers, out forcedSideEffects);
+
                 // TODO: Check for overflow from automatic enchantments and display "no room in item..."
 
-                // TODO: Sort forced enchantments into powers and side effects
                 // TODO: Ensure forced enchantment do not contribute to EP cost
 
-                Debug.LogFormat("Enchantment {0} has {1} forced enchantments", enchantmentEffect.DisplayName, forcedEnchantments.Value.forcedEffects.Length);
+                Debug.LogFormat("Enchantment {0} has {1} forced powers and {2} forced side effects", enchantmentEffect.DisplayName, forcedPowers.Length, forcedSideEffects.Length);
             }
 
             // Add selected enchantment settings to powers/side-effects

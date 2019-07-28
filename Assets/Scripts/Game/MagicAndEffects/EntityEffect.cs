@@ -174,6 +174,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EnchantmentSettings[] GetEnchantmentSettings();
 
         /// <summary>
+        /// Helper to get a specific enchantment setting based on param.
+        /// Can return null if enchantment with param not found.
+        /// </summary>
+        EnchantmentSettings? GetEnchantmentSettings(EnchantmentParam param);
+
+        /// <summary>
         /// Helper to check if properties contain the specified item maker flags.
         /// </summary>
         bool HasItemMakerFlags(ItemMakerFlags flags);
@@ -400,6 +406,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>EnchantmentSettings array. Can return null or empty array.</returns>
         public virtual EnchantmentSettings[] GetEnchantmentSettings()
         {
+            return null;
+        }
+
+        /// <summary>
+        /// Helper to get specific enchantment based on param.
+        /// </summary>
+        /// <param name="param">Param of enchantment to retrieve.</param>
+        /// <returns>EnchantmentSettings for specificed param or null if not found.</returns>
+        public virtual EnchantmentSettings? GetEnchantmentSettings(EnchantmentParam param)
+        {
+            // Get all enchantment settings for this effect
+            EnchantmentSettings[] allSettings = GetEnchantmentSettings();
+            if (allSettings == null || allSettings.Length == 0)
+                return null;
+
+            // Locate matching param
+            bool usingCustomParam = !string.IsNullOrEmpty(param.CustomParam);
+            foreach(EnchantmentSettings settings in allSettings)
+            {
+                if (usingCustomParam && param.CustomParam == settings.CustomParam)
+                    return settings;
+                else if (!usingCustomParam && param.ClassicParam == settings.ClassicParam)
+                    return settings;
+            }
+
             return null;
         }
 
