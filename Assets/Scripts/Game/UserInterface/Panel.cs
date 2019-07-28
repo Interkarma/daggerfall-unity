@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -99,12 +99,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Update();
 
             // Update child components
-            foreach(var component in components)
+            for (int i = 0; i < components.Count; i++)
             {
-                if (component.Enabled)
+                if (components[i].Enabled)
                 {
-                    component.CustomMousePosition = CustomMousePosition;
-                    component.Update();
+                    Components[i].CustomMousePosition = CustomMousePosition;
+                    Components[i].Update();
                 }
             }
         }
@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 DrawBorder();
 
             // Draw child components
-            foreach (var component in components)
+            foreach (BaseScreenComponent component in components)
             {
                 if (component.Enabled)
                     component.Draw();
