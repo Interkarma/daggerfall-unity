@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Utility
             { "%ba", BookAuthor },  // Book Author
             { "%bch", ChanceBase }, // Base chance
             { "%bdr", DurationBase }, // Base Duration
-            { "%bn", null },  // ?
+            { "%bn", Name }, // Random name in biography text
             { "%bt", ItemName },  // Book title
             { "%cbl", null }, // Cash balance in current region
             { "%clc", ChancePerLevel }, // Per level (Chance)
@@ -294,21 +294,23 @@ namespace DaggerfallWorkshop.Utility
         {
             switch (race)
             {
-                case Races.Argonian:
                 case Races.Breton:
-                case Races.Khajiit:
                 default:
                     return NameHelper.BankTypes.Breton;
+                case Races.Redguard:
+                    return NameHelper.BankTypes.Redguard;
+                case Races.Nord:
+                    return NameHelper.BankTypes.Nord;
                 case Races.DarkElf:
                     return NameHelper.BankTypes.DarkElf;
                 case Races.HighElf:
                     return NameHelper.BankTypes.HighElf;
                 case Races.WoodElf:
                     return NameHelper.BankTypes.WoodElf;
-                case Races.Nord:
-                    return NameHelper.BankTypes.Nord;
-                case Races.Redguard:
-                    return NameHelper.BankTypes.Redguard;
+                case Races.Khajiit:
+                    return NameHelper.BankTypes.Khajiit;
+                case Races.Argonian:
+                    return NameHelper.BankTypes.Imperial;
             }
         }
 
