@@ -33,6 +33,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnRefreshListEventHandler(EnchantmentListPicker sender);
         public event OnRefreshListEventHandler OnRefreshList;
 
+        public delegate void OnRemoveItemEventHandler(EnchantmentPanel panel);
+        public event OnRemoveItemEventHandler OnRemoveItem;
+
         #endregion
 
         #region Properties
@@ -61,6 +64,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void AddEnchantment(EnchantmentSettings enchantment)
         {
             EnchantmentPanel panel = new EnchantmentPanel(enchantment, new Rect(0, 0, GetRenderWidth(), InteriorHeight));
+            if (enchantment.ParentEnchantment != 0)
+            {
+                panel.TextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
+                panel.HighlightedTextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
+            }
             panel.OnMouseClick += EnchantmentPanel_OnMouseClick;
             enchantmentPanels.Add(panel);
             RefreshPanelLayout();
@@ -71,6 +79,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             foreach(EnchantmentSettings enchantment in enchantments)
             {
                 EnchantmentPanel panel = new EnchantmentPanel(enchantment, new Rect(0, 0, GetRenderWidth(), InteriorHeight));
+                if (enchantment.ParentEnchantment != 0)
+                {
+                    panel.TextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
+                    panel.HighlightedTextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
+                }
                 enchantmentPanels.Add(panel);
             }
             RefreshPanelLayout();
@@ -125,10 +138,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int cost = 0;
             foreach(EnchantmentPanel panel in enchantmentPanels)
             {
+                // Forced enchantments do not contribute to cost
+                if (panel.Enchantment.ParentEnchantment != 0)
+                    continue;
+
                 cost += panel.Enchantment.EnchantCost;
             }
 
             return cost;
+        }
+
+        public void RemoveForcedEnchantments(int parentHash)
+        {
+            // Find child panels linked with parent hash
+            List<EnchantmentPanel> panelsToRemove = new List<EnchantmentPanel>();
+            foreach (EnchantmentPanel panel in enchantmentPanels)
+            {
+                if (panel.Enchantment.ParentEnchantment == parentHash)
+                    panelsToRemove.Add(panel);
+            }
+
+            // Remove child panels
+            foreach (EnchantmentPanel panel in panelsToRemove)
+            {
+                RemoveEnchantment(panel);
+            }
         }
 
         #endregion
@@ -208,18 +242,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return enchantmentPanels.Count > visiblePanels;
         }
 
+        void RemoveEnchantment(EnchantmentPanel panelToRemove)
+        {
+            panelToRemove.OnMouseClick -= EnchantmentPanel_OnMouseClick;
+            enchantmentPanels.Remove(panelToRemove);
+            scroller.ScrollIndex = 0;
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            RefreshPanelLayout();
+        }
+
         #endregion
 
         #region Event Handlers
 
         private void EnchantmentPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Can only click to remove parent panels, child panels are removed by clicking on parent
             EnchantmentPanel panelToRemove = (EnchantmentPanel)sender;
-            panelToRemove.OnMouseClick -= EnchantmentPanel_OnMouseClick;
-            enchantmentPanels.Remove(panelToRemove);
-            scroller.ScrollIndex = 0;
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            RefreshPanelLayout();
+            if (panelToRemove.Enchantment.ParentEnchantment == 0)
+            {
+                RemoveEnchantment(panelToRemove);
+                if (OnRemoveItem != null)
+                    OnRemoveItem(panelToRemove);
+            }
         }
 
         private void Scroller_OnScroll()
@@ -250,12 +295,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
             TextLabel primaryLabel, secondaryLabel;
             bool lastFitToScroller;
 
-            public Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
-            public Color highlightedTextColor = DaggerfallUI.DaggerfallAlternateHighlightTextColor;
+            Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            Color highlightedTextColor = DaggerfallUI.DaggerfallAlternateHighlightTextColor;
 
             public bool FitToScroller { get; set; }
             public EnchantmentSettings Enchantment { get; set; }
             Rect RenderArea { get; set; }
+
+            public Color TextColor
+            {
+                get { return textColor; }
+                set { SetTextColor(value); }
+            }
+
+            public Color HighlightedTextColor
+            {
+                get { return highlightedTextColor; }
+                set { SetHighlightedTextColor(value); }
+            }
 
             public EnchantmentPanel(EnchantmentSettings enchantment, Rect renderArea)
             {
@@ -276,6 +333,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 RenderArea = renderArea;
                 Enchantment = enchantment;
+            }
+
+            void SetTextColor(Color color)
+            {
+                textColor = primaryLabel.TextColor = secondaryLabel.TextColor = color;
+            }
+
+            void SetHighlightedTextColor(Color color)
+            {
+                highlightedTextColor = color;
             }
 
             public override void Update()
