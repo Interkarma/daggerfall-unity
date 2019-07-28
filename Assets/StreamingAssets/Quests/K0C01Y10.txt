@@ -183,7 +183,8 @@ Message:  1015
 --        ___qgiver_ occurs 5 times.
 
 QBN:
-Item bothdorjii letter used 1011
+Item _bothdorjii_ letter used 1011
+--added underscores to bothdorjii
 
 Person _qgiver_ group Questor male
 
@@ -195,7 +196,7 @@ Foe _guardian_ is Daedroth
 Foe _F.01_ is Fire_atronach
 
 --	Quest start-up:
-	place item bothdorjii at _mondung_ 
+	place item _bothdorjii_ at _mondung_ 
 	start timer _queston_ 
 	reveal _mondung_ 
 	log 1010 step 0 
@@ -205,11 +206,13 @@ _queston_ task:
 	end quest 
 
 _S.01_ task:
-	clicked item bothdorjii 
-	bothdorjii used saying 1015 do _S.02_ 
+	clicked item _bothdorjii_ 
+	_bothdorjii_ used do _S.02_ 
+	--"saying 1015" was illegal argument here
 	say 1012 
 
 _S.02_ task:
+	say 1015
 	create foe _F.01_ every 1 minutes 1 times with 100% success 
 
 _S.03_ task:
@@ -217,7 +220,7 @@ _S.03_ task:
 	say 1013 
 
 _S.04_ task:
-	toting bothdorjii and _qgiver_ clicked 
+	toting _bothdorjii_ and _qgiver_ clicked 
 	give pc nothing 
 	end quest 
 

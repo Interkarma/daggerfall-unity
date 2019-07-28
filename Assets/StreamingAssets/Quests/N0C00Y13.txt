@@ -205,8 +205,10 @@ _S.01_ task:
 
 _S.02_ task:
 	clicked item _ingredient_ 
-	_ingredient_ used saying 1045 do _S.03_ 
+	_ingredient_ used do _S.03_ 
+	--moved "saying 1045" from used do, not a valid argument, to S.03.
 	say 1040 
 
 _S.03_ task:
+	say 1045
 	create foe _atronach_ every 1 minutes 1 times with 100% success 

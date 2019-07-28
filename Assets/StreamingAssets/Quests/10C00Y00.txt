@@ -24,9 +24,9 @@ AcceptQuest:  [1002]
 <ce>              a certain _monster_ I know named =monster_,
 <ce>          who made a certain arrangement with me, but decided
 <ce>           later to renege. If you would be so kind as to pay
-<ce>              =monster_ a visit and let %g2 know that such
-<ce>            ungallant behavior is fatal. Then go to my dear
-<ce>         friend, _qgfriend_, who will wait for =1stparton_ days
+<ce>              =monster_ a visit in ___mondung_ and
+<ce>            let %g2 know that such ungallant behavior is fatal. Then go to
+<ce>         my dear friend, _qgfriend_, who will wait for =1stparton_ days
 <ce>                for you at __qgfriend_ in ___qgfriend_,
 <ce>         and give you my _artifact_ when you arrive. It's just
 <ce>        the thing you need. Now, you'd best be off. Be careful.
@@ -132,6 +132,7 @@ Clock _delay_ 01:00 0 flag 1 range 0 1
 Foe _monster_ is Sorceror
 Foe _daedra1_ is Fire_daedra
 Foe _daedra2_ is Daedroth
+--added dungeon name to block 1002. Quest previously did not name dungeon except in journal.
 
 --	Quest start-up:
 	start timer _1stparton_ 
@@ -143,6 +144,7 @@ _1stparton_ task:
 	end quest 
 
 variable _2ndparton_
+--unused variable
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
@@ -158,6 +160,7 @@ _npcclicked_ task:
 
 _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
+	say 1003
 	clear _npcclicked_ _clearclick_ 
 
 _delay_ task:

@@ -51,7 +51,7 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                         I hear that _warrior_
 <ce>                   dropped into sublime torpescence
-<ce>                    right on %g2 feet. I do hope %g
+<ce>                    right on %g3 feet. I do hope %g
 <ce>                  wakes before next New Life. As for
 <ce>                         you, my fine %ra, you
 <ce>                   have certainly earned your _gold_
@@ -97,7 +97,7 @@ QuestLogEntry:  [1010]
 Message:  1011
 <ce>                            _warrior_ falls
 <ce>                     into a profound sleep, still
-<ce>                             on %g2 feet.
+<ce>                             on %g3 feet.
 
 
 -- Symbols used in the QRC file:

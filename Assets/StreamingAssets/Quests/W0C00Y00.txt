@@ -180,7 +180,8 @@ _npcclicked_ task:
 	clicked npc _contact_ 
 
 _clearclick_ task:
-	when not _mondead_ and _npcclicked_ 
+	when not _mondead_ and _npcclicked_
+	say 1003 
 	clear _npcclicked_ _clearclick_ 
 
 _S.06_ task:

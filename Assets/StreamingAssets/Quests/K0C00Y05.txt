@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0
 -- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 20
 Quest: K0C00Y05
 -- Message panels
@@ -98,8 +99,8 @@ Message:  1011
                             Yours respectfully,
  
                             _knight_
-<--->
  
+-removed erroneous blank message <--->
 
 Message:  1012
 <ce>                   A courier bearing the heraldry of
@@ -202,7 +203,8 @@ Message:  1019
 --          _qgiver_ occurs 8 times.
 
 QBN:
-Item letter11 letter used 1011
+Item _letter11_ letter used 1011
+-added underscores to letter11
 Item _gold_ gold
 
 Person _qgiver_ group Questor male
@@ -222,7 +224,7 @@ Foe _warrior_ is Knight
 	dialog link for location _childlocale_ person _child_ 
 	start timer _queston_ 
 	reveal _mondung_ 
-	injured _warrior_ saying 1018 
+	--moved injured warrior say 1018 to new task S.10
 	log 1010 step 0 
 	pick one of _metal_ _S.01_ 
 
@@ -240,9 +242,9 @@ _S.03_ task:
 	start timer _S.04_ 
 
 _S.04_ task:
-	letter11 used do _S.05_ 
-	say nothing 
-	give pc letter11 notify 1012 
+	_letter11_ used do _S.05_ 
+	--removed say nothing
+	give pc _letter11_ notify 1012 
 
 _S.05_ task:
 	log 1013 step 1 
@@ -267,6 +269,10 @@ _S.09_ task:
 	say 1015 
 	add _child_ face 
 
+_S.10_ task:
+	injured _warrior_
+	say 1018 
+
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
@@ -274,6 +280,8 @@ _reward_ task:
 	when _qgclicked_ and _S.09_ 
 	give pc _gold_ 
 	start timer _delay_ 
+	drop _child_ face
+	-added drop child face. child would remain on HUD until delay finished.
 
 _delay_ task:
 	end quest 

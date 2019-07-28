@@ -129,6 +129,14 @@ _qgclicked_ task:
 	give pc _reward_ 
 	end quest 
 
+_qgclick2_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgclick2_
+
 variable _queston_
 variable _S.05_
 _S.06_ task:

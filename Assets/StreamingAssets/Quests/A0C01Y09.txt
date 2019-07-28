@@ -151,7 +151,8 @@ Person _questg_ face 4 group Questor
 Person _sister_ face 2 group Resident2
 Person _merchant_ face 1 faction The_Merchants
 
-Place item0 local house2
+Place _item0_ local house2
+-added underscores to item0
 Place _store_ local generalstore
 
 Clock _questtime_ 31.00:00 0 flag 1 range 0 1

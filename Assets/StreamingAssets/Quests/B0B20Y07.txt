@@ -136,4 +136,5 @@ _success_ task:
 
 _clearclick_ task:
 	when _S.02_ and not _S.01_ 
-	clear _S.02_ 
+	clear _S.02_ _clearclick_
+	--ensures repeated clearclick

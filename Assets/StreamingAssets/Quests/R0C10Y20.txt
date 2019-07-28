@@ -92,7 +92,8 @@ QuestLogEntry:  [1010]
 <ce>                   man's poison ... Now hurry along.
 
 Message:  1015
-%qdt: I will be given a _reward_
+%qdt:
+I will be given a _reward_
  by _questgiver_ of __questgiver_,
  ___questgiver_, if I get a
  fresh _item2_ for %g2 from

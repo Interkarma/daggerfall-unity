@@ -158,7 +158,7 @@ _1stparton_ task:
 variable _pchasitem1_
 _pchasitem2_ task:
 	toting _item1_ and _contact_ clicked 
-	create foe _F.00_ every 5 minutes 3 times with 35% success 
+	create foe _F.00_ every 5 minutes 3 times with 35% success
 	get item _item2_ 
 	say 1010 
 
@@ -167,7 +167,9 @@ yes task:
 
 variable _no_
 _S.09_ task:
-	give item _item2_ to _F.00_ saying 1021 
+	give item _item2_ to _F.00_
+	say 1021 
+--moved "saying 1021" to its own line, wouldn't work otherwise
 
 _S.10_ task:
 	injured _F.00_ 

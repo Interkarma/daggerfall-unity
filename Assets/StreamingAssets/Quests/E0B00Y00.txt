@@ -56,7 +56,7 @@ AcceptQuest:  [1002]
 QuestFail:  [1003]
 <ce>                    You had best move along, %pcf.
 <ce>                 You do not have very much more time to
-<ce>                kill that werebeast. _1stparton_ minutes
+<ce>                kill that werebeast. =1stparton_ days
 <ce>                             to be precise.
 
 QuestComplete:  [1004]
@@ -152,7 +152,8 @@ _1stparton_ task:
 	end quest 
 
 _clearclick_ task:
-	when _qgclicked_ and not _mondead_ 
+	when _qgclicked_ and not _mondead_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 
 
 _werewolf_ task:

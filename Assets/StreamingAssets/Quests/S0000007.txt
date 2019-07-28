@@ -328,6 +328,7 @@ Message:  1036
 QBN:
 Item _letter_ letter used 1018
 -Item _I.01_ letter used 1017
+--edited prior to my revision.
 Item _relic_ magic_item used 1026
 
 Person _cyndassa_ named Cyndassa atHome anyInfo 1019
@@ -531,6 +532,7 @@ _S.35_ task:
 _S.36_ task:
 	when _S.08_ and not _mondead_ and not _S.17_ and _S.11_ 
 	location _tavern_ 100 27000 
+--not known what this intends to do
 	log 1015 step 1 
 	get item _relic_ 
 

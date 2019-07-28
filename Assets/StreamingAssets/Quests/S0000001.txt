@@ -20,7 +20,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>               You will? Thank %god. You see, I used to
-<ce>          to have an older brother, ten or eleven years older
+<ce>          have an older brother, ten or eleven years older
 <ce>        than me, named _brother_. Whenever I ask what happened
 <ce>          to him, I'm told a different story. Some say he got
 <ce>            sick and died, some say he was kidnapped by the
@@ -318,6 +318,7 @@ Place _dirennitower_ permanent DirenniTowerEntry
 Place _agentplace_ remote tavern
 
 Clock _S.13_ 3.00:00 7.00:00
+-1002 edited to remove additional 'to'
 
 
 --	Quest start-up:

@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 16
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 55
 Quest: A0C00Y16
 -- Message panels
@@ -203,7 +204,8 @@ Person _friend4_ group Local_4.1 male
 
 Place _hidingplace_ local random
 
-Clock _S.16_ 2.00:00 0 flag 1 range 0 1
+Clock _S.16_ 2.00:00
+--removed flags to make exact two days
 
 Foe _F.00_ is 3 Barbarian
 
@@ -218,7 +220,7 @@ Foe _F.00_ is 3 Barbarian
 	create npc _friend2_ 
 	create npc _friend3_ 
 	create npc _friend1_ 
-
+	
 _S.00_ task:
 	place npc _missingperson_ at _hidingplace_ 
 
@@ -283,14 +285,14 @@ _S.18_ task:
 	clicked npc _questgiver_ 
 
 _clearclick_ task:
-	when not yes and _S.18_ 
-	clear _S.18_ 
+	when not _yes_ and _S.18_ 
+	clear _S.18_ _clearclick_
 
-yes task:
+_yes_ task:
 	when _S.08_ or _S.09_ or _S.10_ or _S.11_ 
 
 _givereward_ task:
-	when yes and _S.18_ 
+	when _yes_ and _S.18_ 
 	give pc _gold_ 
 	end quest 
 

@@ -39,7 +39,7 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                    So you exorcised the place, eh?
 <ce>                    This will look good for you when
-<ce>                   I speak with the temple heirarchs.
+<ce>                   I speak with the temple hierarchs.
 
 RumorsDuringQuest:  [1005]
 _house_ is haunted by many powerful, evil spirits, they say.

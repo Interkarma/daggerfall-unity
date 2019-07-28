@@ -4,6 +4,7 @@
 -- Questor: temple
 -- Repute: 0
 -- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 62
 Quest: C0B00Y14
 -- Message panels
@@ -207,4 +208,10 @@ _success_ task:
 	when _clickqgiver_ and _S.07_ 
 	give pc nothing 
 	unset _clickqgiver_ 
+--no idea why to unset clickqgiver. the quest is ending.
 	end quest 
+
+_clearclick_ task:
+	when not _S.07_ and _clickqgiver_ 
+	say 1003
+	clear _clickqgiver_ _clearclick_ 

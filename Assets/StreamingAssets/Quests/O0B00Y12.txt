@@ -143,6 +143,10 @@ Foe _enemy_ is Assassin
 _qtime_ task:
 	end quest 
 
+_qgclicked_ task:
+	clicked npc _questgiver_
+	say 1003
+
 _S.01_ task:
 	_note_ used do _readnote_ 
 	create foe _enemy_ every 10 minutes 10 times with 10% success 
