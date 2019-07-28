@@ -158,6 +158,7 @@ namespace DaggerfallWorkshop
 
         public float TerrainHeightmapPixelError { get; set; }
         public bool SmallerDungeons { get; set; }
+        public bool CustomBooksImport { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -275,6 +276,7 @@ namespace DaggerfallWorkshop
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
+            CustomBooksImport = GetBool(sectionExperimental, "CustomBooksImport");
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -379,6 +381,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
             SetBool(sectionExperimental, "SmallerDungeons", SmallerDungeons);
+            SetBool(sectionExperimental, "CustomBooksImport", CustomBooksImport);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);

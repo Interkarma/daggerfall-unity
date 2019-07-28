@@ -67,6 +67,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     internal sealed class ModContributes
     {
         /// <summary>
+        /// Look-up maps that announce additional books to be imported.
+        /// </summary>
+        [SerializeField]
+        internal string[] BooksMapping;
+
+        /// <summary>
         /// Names of spell icon packs; each name corresponds to a <see cref="Texture2D"/>
         /// asset and a <see cref="TextAsset"/> with `.json` extension.
         /// </summary>

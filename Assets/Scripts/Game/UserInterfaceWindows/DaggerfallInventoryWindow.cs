@@ -1616,7 +1616,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                if (DaggerfallUI.Instance.BookReaderWindow.IsBookOpen)
+                {
+                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                }
+                else
+                {
+                    var messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetText(TextManager.Instance.GetText(textDatabase, "bookUnavailable"));
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
             }
             else if (item.IsPotion)
             {   // Handle drinking magic potions

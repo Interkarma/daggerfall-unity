@@ -746,26 +746,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public static void SeekModContributes(ModInfo modInfo)
         {
             List<string> spellIcons = null;
+            List<string> booksMapping = null;
 
             foreach (string file in modInfo.Files)
             {
                 string directory = Path.GetDirectoryName(file);
-                if (directory.EndsWith("SpellIcons"))
-                {
-                    if (spellIcons == null)
-                        spellIcons = new List<string>();
 
-                    string name = Path.GetFileNameWithoutExtension(file);
-                    if (!spellIcons.Contains(name))
-                        spellIcons.Add(name);
-                }
+                if (directory.EndsWith("SpellIcons"))
+                    AddNameToList(ref spellIcons, file);
+                else if (directory.EndsWith("Books/Mapping"))
+                    AddNameToList(ref booksMapping, file);
             }
 
-            if (spellIcons != null)
+            if (spellIcons != null || booksMapping != null)
             {
                 var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
-                contributes.SpellIcons = spellIcons.ToArray();
+                contributes.SpellIcons = spellIcons != null ? spellIcons.ToArray() : null;
+                contributes.BooksMapping = booksMapping != null ? booksMapping.ToArray() : null;
             }
+        }
+
+        private static void AddNameToList(ref List<string> names, string path)
+        {
+            if (names == null)
+                names = new List<string>();
+
+            string name = Path.GetFileNameWithoutExtension(path);
+            if (!names.Contains(name))
+                names.Add(name);
         }
 #endif
 

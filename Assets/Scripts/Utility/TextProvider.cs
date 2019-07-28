@@ -195,11 +195,17 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual bool OpenBook(int message)
         {
+            if (DaggerfallUnity.Settings.CustomBooksImport)
+                return OpenBook(DaggerfallUnity.Instance.ItemHelper.GetBookFileNameByMessage(message));
+
             return OpenBook(BookFile.messageToBookFilename(message));
         }
 
         public virtual bool OpenBook(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                return false;
+
             if (!BookReplacement.TryImportBook(name, bookFile) &&
                 !bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
                 return false;

@@ -41,9 +41,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set
             {
                 bookTarget = value;
-                DaggerfallUnity.Instance.TextProvider.OpenBook(bookTarget.message);
+                IsBookOpen = DaggerfallUnity.Instance.TextProvider.OpenBook(bookTarget.message);
             }
         }
+
+        public bool IsBookOpen { get; private set; }
 
         protected override void Setup()
         {
@@ -121,6 +123,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void LayoutPage()
         {
+            if (!dfUnity.TextProvider.IsBookOpen)
+                return;
+
             ClearPage();
             TextFile.Token[] tokens = dfUnity.TextProvider.PageTokens;
 
