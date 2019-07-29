@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         float intensityMod = 1f;
         float lastTickTime;
         float tickTimeInterval = 20f;
+        float guttering = 0;
 
         void Start()
         {
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            if (!dfUnity.IsReady || !playerEnterExit || !PlayerTorch || playerEntity == null)
+            if (!dfUnity.IsReady || !playerEnterExit || !PlayerTorch || playerEntity == null || GameManager.IsGamePaused)
                 return;
 
             bool enableTorch = false;
@@ -66,7 +67,7 @@ namespace DaggerfallWorkshop.Game
                     enableTorch = true;
                     torchLight.range = lightSource.ItemTemplate.capacityOrTarget;
                     // Consume durability / fuel
-                    if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval && !GameManager.IsGamePaused)
+                    if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval)
                     {
                         lastTickTime = Time.realtimeSinceStartup;
                         if (lightSource.currentCondition > 0)
@@ -81,10 +82,18 @@ namespace DaggerfallWorkshop.Game
                                 playerEntity.Items.RemoveItem(lightSource);
                         }
                     }
-                    // Give warning signs if running out of fuel
-                    intensityMod = 1f;
-                    if (lightSource.currentCondition < 2)
-                        intensityMod = Random.Range(0.45f, 0.75f);
+                    
+                    if (lightSource.currentCondition < 3)
+                    {
+                        // Give warning signs if running low of fuel
+                        intensityMod = 0.6f + (Mathf.Cos(guttering) * 0.2f);
+                        guttering += Random.Range(-0.02f, 0.06f);
+                    }
+                    else
+                    {
+                        intensityMod = 1;
+                        guttering = 0;
+                    }
                 }
             }
             else
