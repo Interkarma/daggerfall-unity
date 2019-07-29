@@ -443,13 +443,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">Archive index.</param>
         /// <param name="record">Record index.</param>
         /// <param name="summary">Summary data of the billboard object.</param>
+        /// <param name="scale">Custom local scale for the billboard.</param>
         /// <remarks>
         /// Seek the texture for the first frame of the given record. If found, it imports all other frames.
         /// Always creates an emission map for textures marked as emissive by TextureReader, import emission maps for others only if available.
         /// </remarks>
         /// <returns>A material or null.</returns>
-        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref DaggerfallBillboard.BillboardSummary summary)
+        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref DaggerfallBillboard.BillboardSummary summary, out Vector2 scale)
         {
+            scale = Vector2.one;
+
             if (!DaggerfallUnity.Settings.AssetInjection)
                 return null;
 
@@ -472,9 +475,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                     // Set billboard scale
                     Transform transform = go.GetComponent<Transform>();
-                    transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
-                    summary.Size.x *= transform.localScale.x;
-                    summary.Size.y *= transform.localScale.y;
+                    scale = transform.localScale = xml.GetVector3("scaleX", "scaleY", transform.localScale);
 
                     // Get UV
                     uv = xml.GetVector2("uvX", "uvY", uv);

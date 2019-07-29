@@ -387,6 +387,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Vector3 currentPosition;
         public Vector3 localPosition;
         public Vector3 worldCompensation;
+        public float heightScale;
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
