@@ -970,6 +970,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 Debug.LogFormat("{0}: format: {1}, mipmaps: {2}, mipmaps count: {3}", Path.GetFileName(path), tex.format, mipMaps, tex.mipmapCount);
 #endif
 
+                tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                 return true;
             }
 
