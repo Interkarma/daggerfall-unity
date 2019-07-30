@@ -94,7 +94,13 @@ namespace DaggerfallWorkshop.Game
         const int minLikeReaction = 10;
         const int minVeryLikeReaction = 30;
 
-        readonly short[] questionTypeReactionMods = { 10, -5, 0, 0, 0, -10, -5, -5 };
+        // Changed from classic (classis uses { 10, -5, 0, 0, 0, -10, -5, -5 } )
+        readonly short[] questionTypeReactionMods = { 10, -5, 0, 0, 10, -5, 0, 0 };
+
+        /// Improvement over classic, add reaction modifiers when using Etiquette
+        /// and Streetwise in relation to social groups.
+        readonly short[] etiquetteReactionMods = { -10, 5, 10, 15, -15 };
+        readonly short[] streetwiseReactionMods = { 10, 5, -10, -15, 15 };
 
         // From FALL.EXE. In classic the answers for sgroup 0 (commoners) and sgroup 1 (merchants) are reversed, and classic flips reference to these sgroups
         // during dialogue to compensate, but it's cleaner to just fix the data. It is fixed to the correct order here.
@@ -523,8 +529,12 @@ namespace DaggerfallWorkshop.Game
             return reaction;
         }
 
-        int GetReactionToPlayer_0_1_2(QuestionType qt)
+        int GetReactionToPlayer_0_1_2(QuestionType qt, FactionFile.SocialGroups npcSocialGroup)
         {
+            int socialGroup = (int) npcSocialGroup;
+            if (socialGroup >= 5)
+                socialGroup = 1; // Merchants
+
             int toneModifier = 0;
             int toneIndex = DaggerfallTalkWindow.TalkToneToIndex(currentTalkTone);
             PlayerEntity player = GameManager.Instance.PlayerEntity;
@@ -533,24 +543,20 @@ namespace DaggerfallWorkshop.Game
             if (toneIndex == 0)
             {
                 skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Etiquette);
+                toneModifier += etiquetteReactionMods[socialGroup];
                 if (toneReactionForTalkSession[0] == 0)
                     player.TallySkill(DFCareer.Skills.Etiquette, 1);
             }
             else if (toneIndex == 2)
             {
                 skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Streetwise);
+                toneModifier += streetwiseReactionMods[socialGroup];
                 if (toneReactionForTalkSession[2] == 0)
                     player.TallySkill(DFCareer.Skills.Streetwise, 1);
             }
 
-            // Make roll result be the same every time for a given NPC.
-            if (currentNPCType == NPCType.Mobile)
-                DFRandom.Seed = (uint)lastTargetMobileNPC.GetHashCode();
-            else if (currentNPCType == NPCType.Static)
-                DFRandom.Seed = (uint)lastTargetStaticNPC.GetHashCode();
-
             if (toneIndex != 1)
-                toneModifier = DFRandom.random_range_inclusive(1, 100) >= skillValue ? -5 : 10;
+                toneModifier += Dice100.FailedRoll(skillValue) ? -10 : 5;
 
             // Convert question type to index to classic data
             int classicDataIndex = 2; // Using as default, as this gives no bonus or penalty.
@@ -599,7 +605,7 @@ namespace DaggerfallWorkshop.Game
 
             if (reaction < rollToBeat)
                 return 0;
-            if (reaction < rollToBeat + 30)
+            if (reaction < rollToBeat + 20) // Lowered from classic to be less difficult (classic uses +30)
                 return 1;
             return 2;
         }
@@ -1746,7 +1752,7 @@ namespace DaggerfallWorkshop.Game
         public string GetAnswerText(ListItem listItem)
         {
             if (lastToneIndex != DaggerfallTalkWindow.TalkToneToIndex(currentTalkTone))
-                reactionToPlayer_0_1_2 = GetReactionToPlayer_0_1_2(listItem.questionType);
+                reactionToPlayer_0_1_2 = GetReactionToPlayer_0_1_2(listItem.questionType, npcData.socialGroup);
 
             string answer = "";
             currentQuestionListItem = listItem;
