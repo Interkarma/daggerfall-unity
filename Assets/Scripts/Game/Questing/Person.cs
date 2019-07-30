@@ -666,7 +666,6 @@ namespace DaggerfallWorkshop.Game.Questing
             homePlace = new Place(ParentQuest, source);
             homePlaceSymbol = homePlace.Symbol.Clone();
             ParentQuest.AddResource(homePlace);
-            lastAssignedPlaceSymbol = homePlace.Symbol;
             LogHomePlace(homePlace);
 
 
