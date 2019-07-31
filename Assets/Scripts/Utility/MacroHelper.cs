@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mod", ArmourMod }, // Modification
             { "%n", Name },   // A random name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", Name }, // A random full name
-            { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
+            { "%nrn", LordOfCurrentRegion }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", OldLordOfFaction1 }, // Old lord of _fx1
             { "%olf", OldLeaderFate }, // What happened to _ol1
@@ -284,8 +284,18 @@ namespace DaggerfallWorkshop.Utility
             FactionFile.FactionData fd;
             factions.GetFactionData(factionId, out fd);
 
+            // If the first faction child is an individual, she/he is the ruler: return her/his name
+            if (fd.children != null && fd.children.Count > 0)
+            {
+                FactionFile.FactionData firstChild;
+                factions.GetFactionData(fd.children[0], out firstChild);
+                if (firstChild.type == (int)FactionFile.FactionTypes.Individual)
+                    return firstChild.name;
+            }
+
             Genders gender = (Genders) ((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
             Races race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)fd.race);
+            DFRandom.Seed = fd.rulerNameSeed & 0xffff; // Matched to classic: used to retain the same ruler name for each region
 
             return DaggerfallUnity.Instance.NameHelper.FullName(GetNameBank(race), gender);
         }
@@ -900,6 +910,11 @@ namespace DaggerfallWorkshop.Utility
         public static string LordOfFaction2(IMacroContextProvider mcp)
         {   // %fl2
             return GetLordNameForFaction(idFaction2);
+        }
+
+        public static string LordOfCurrentRegion(IMacroContextProvider mcp)
+        {   // %nrn
+            return GetLordNameForFaction(GameManager.Instance.PlayerGPS.GetCurrentRegionFaction());
         }
 
         public static string TitleOfLordOfFaction1(IMacroContextProvider mcp)
