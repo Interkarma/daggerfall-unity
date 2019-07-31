@@ -82,7 +82,7 @@ helmAndShieldMaterialDisplayInfo,                   Show material for helms and 
 geographicBackgrounds,                              Geographic backgrounds
 geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 dungeonExitWagonPrompt,                             Dungeon wagon access prompt
-dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 10m of exit)
+dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 5m of exit)
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
