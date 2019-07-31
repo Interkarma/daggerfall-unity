@@ -192,7 +192,7 @@ variable _pchasitem1_
 variable _pchasitem2_
 _S.06_ task:
 	injured _F.01_ 
-	prompt 1020 yes _yes_ no _no_ 
+	prompt 1022 yes _yes_ no _no_ 
 
 _yes_ task:
 	take _weapons_ from pc saying 1023 
@@ -208,7 +208,7 @@ _S.09_ task:
 
 _greklith_ task:
 	injured _guards_ 
-	prompt 1022 yes _yes_ no _no_ 
+	prompt 1020 yes _yes_ no _no_ 
 
 _S.11_ task:
 	change repute with _questgiver_ by -10 

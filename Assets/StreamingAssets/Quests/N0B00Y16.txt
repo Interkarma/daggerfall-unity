@@ -217,7 +217,9 @@ _a6_ task:
 	say 1043 
 
 _S.07_ task:
-	have _crn_ set _S.08_ 
+	start task _S.08_
+--	have _crn_ set _S.08_ 
+--  quest failed to recognize "have crn," which was crucial
 
 _S.08_ task:
 	pick one of _a3_ _a4_ _a5_ _a6_ 
