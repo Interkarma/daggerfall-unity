@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        ItemCollection GetMerchantMagicItems()
+        ItemCollection GetMerchantMagicItems(bool onlySoulGems = false)
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             ItemCollection items = new ItemCollection();
@@ -199,15 +199,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int seed = (int)(DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay);
             UnityEngine.Random.InitState(seed);
 
-            for (int i = 0; i <= numOfItems; i++)
+            if (!onlySoulGems)
             {
-                // Create magic item which is already identified
-                DaggerfallUnityItem magicItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                magicItem.IdentifyItem();
-                items.AddItem(magicItem);
+                for (int i = 0; i <= numOfItems; i++)
+                {
+                    // Create magic item which is already identified
+                    DaggerfallUnityItem magicItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                    magicItem.IdentifyItem();
+                    items.AddItem(magicItem);
+                }
+                items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
             }
-
-            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
 
             if (guild.CanAccessService(GuildServices.BuySoulgems))
             {
@@ -370,6 +372,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     msgBox.ClickAnywhereToClose = true;
                     msgBox.OnClose += SpyMasterGreetingPopUp_OnClose;
                     msgBox.Show();                    
+                    break;
+
+                case GuildServices.BuySoulgems:
+                    CloseWindow();
+                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy, this, guild)
+                    {
+                        MerchantItems = GetMerchantMagicItems(true)
+                    });
                     break;
 
                 default:
