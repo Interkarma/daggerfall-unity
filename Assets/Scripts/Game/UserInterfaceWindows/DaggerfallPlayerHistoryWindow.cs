@@ -64,6 +64,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
+
+            NativePanel.OnMouseScrollDown += NativePanel_OnMouseScrollDown;
+            NativePanel.OnMouseScrollUp += NativePanel_OnMouseScrollUp;
         }
 
         private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -80,6 +83,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 LayoutPage();
             }
+        }
+
+        private void NativePanel_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            NextPageButton_OnMouseClick(sender, Vector2.zero);
+        }
+
+        private void NativePanel_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            PreviousPageButton_OnMouseClick(sender, Vector2.zero);
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
