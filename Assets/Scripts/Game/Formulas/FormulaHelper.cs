@@ -1135,6 +1135,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             else if (elementType == DFCareer.Elements.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
                 savingThrow += 30;
 
+            // Handle perfect immunity of 100% or greater
+            // Otherwise clamping to 5-95 allows a perfectly immune character to sometimes receive incoming payload
+            // This doesn't seem to match immunity intent or player expectations from classic
+            if (savingThrow >= 100)
+                return 0;
+
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
             int percentDamageOrDuration = 0;
