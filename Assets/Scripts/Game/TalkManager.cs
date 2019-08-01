@@ -510,6 +510,7 @@ namespace DaggerfallWorkshop.Game
             ResetNPCKnowledgeInTopicListRecursively(listTopicPerson);
             ResetNPCKnowledgeInTopicListRecursively(listTopicThing);
             ResetNPCKnowledgeInTopicListRecursively(listTopicTellMeAbout);
+            rebuildTopicLists = true;
         }
 
         public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
@@ -1259,21 +1260,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
                 {
-                    DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
-                    string dungeonName = "";
-                    if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
-                        dungeonName = ExpandRandomTextRecord(475);
-                    else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
-                        dungeonName = ExpandRandomTextRecord(476);
-                    else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
-                        dungeonName = ExpandRandomTextRecord(477);
-                    else
-                    {
-                        dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
-                    }
-
-                    dungeonName = dungeonName.TrimEnd('.'); // Remove character '.' from castle text record entry
-
+                    string dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.GetSpecialDungeonName();
                     return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
                 }
             }
@@ -1456,16 +1443,24 @@ namespace DaggerfallWorkshop.Game
             if (currentQuestionListItem.key != string.Empty)
                 key = currentQuestionListItem.key;
 
-            int buildingKey = GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
+            Person person;
+            GetPersonResource(currentQuestionListItem.questID, key, out person);
+            int buildingKey = GetPersonBuildingKey(ref person);
 
             string backupKeySubject = currentKeySubject; // Backup current key subject
 
-            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
+            currentKeySubject = "";
+            if (buildingKey != 0)
+            {
+                BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
+                PlayerGPS.DiscoveredBuilding discoveredBuilding;
+                GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
+                currentKeySubject = discoveredBuilding.displayName;
+            }
 
-            //this.currentKeySubject = buildingInfo.name;
-            PlayerGPS.DiscoveredBuilding discoveredBuilding;
-            GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
-            currentKeySubject = discoveredBuilding.displayName;
+            if (string.IsNullOrEmpty(currentKeySubject))
+                // Default to person home
+                currentKeySubject = person.HomeBuildingName;
 
             currentKeySubjectBuildingKey = buildingKey;
 
@@ -1561,36 +1556,21 @@ namespace DaggerfallWorkshop.Game
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
 
+            // Test if player is inside dungeon and retrieve dungeon name in this case
+            string dungeonName = "";
+            if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon)
+            {
+                dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.GetSpecialDungeonName();
+            }
+
             // Test if npc is asked about building and is in the same building (also for quest persons) -> then he/she should know about building
             if (listItem.questionType == QuestionType.LocalBuilding || listItem.questionType == QuestionType.QuestLocation && GameManager.Instance.IsPlayerInside)
             {
-                if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && listItem.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
+                if (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && listItem.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey ||
+                    dungeonName == listItem.caption)
                 {
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                     listItem.npcInSameBuildingAsTopic = true;
-                }
-                else if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
-                {
-                    DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
-                    string dungeonName = "";
-                    if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
-                        dungeonName = ExpandRandomTextRecord(475);
-                    else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
-                        dungeonName = ExpandRandomTextRecord(476);
-                    else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
-                        dungeonName = ExpandRandomTextRecord(477);
-                    else
-                    {
-                        dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationName;
-                    }
-
-                    dungeonName = dungeonName.TrimEnd('.'); // Remove character '.' from castle text record entry
-
-                    if (dungeonName == listItem.caption)
-                    {
-                        listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
-                        listItem.npcInSameBuildingAsTopic = true;
-                    }
                 }
             }
 
@@ -1608,13 +1588,23 @@ namespace DaggerfallWorkshop.Game
             if (currentQuestionListItem.questionType == QuestionType.Person)
             {
                 string key = currentQuestionListItem.key;
-                int buildingKey = GetBuildingKeyForPersonResource(currentQuestionListItem.questID, key);
+                Person person;
+                GetPersonResource(currentQuestionListItem.questID, key, out person);
+                int buildingKey = GetPersonBuildingKey(ref person);
 
-                if (GameManager.Instance.IsPlayerInside && GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey)
+                string buildingName = "";
+                if (buildingKey != 0)
+                    buildingName = GetBuildingNameForBuildingKey(buildingKey);
+
+                if (string.IsNullOrEmpty(buildingName))
+                    // Default to person home
+                    buildingName = person.HomeBuildingName;
+
+                if (GameManager.Instance.IsPlayerInside &&
+                    (GameManager.Instance.PlayerEnterExit.ExteriorDoors.Length > 0 && buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey) ||
+                    dungeonName == buildingName)
                 {
                     currentQuestionListItem.npcInSameBuildingAsTopic = true;
-
-                    string buildingName = GetBuildingNameForBuildingKey(buildingKey);
 
                     if (buildingName != string.Empty)
                         return string.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
@@ -2034,7 +2024,7 @@ namespace DaggerfallWorkshop.Game
             rebuildTopicLists = true;
         }
 
-        public int GetBuildingKeyForPersonResource(ulong questID, string resourceName)
+        public void GetPersonResource(ulong questID, string resourceName, out Person person)
         {
             if (!dictQuestInfo.ContainsKey(questID))
             {
@@ -2059,10 +2049,11 @@ namespace DaggerfallWorkshop.Game
             if (questResourceInfo.resourceType != QuestInfoResourceType.Person)
                 throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
 
-            Quest quest = GameManager.Instance.QuestMachine.GetQuest(questID);
+            person = (Person)questResourceInfo.questResource;
+        }
 
-            Person person = (Person)questResourceInfo.questResource;
-
+        public int GetPersonBuildingKey(ref Person person)
+        {
             if (person.IsQuestor)
             {
                 return person.QuestorData.buildingKey;
@@ -2072,7 +2063,7 @@ namespace DaggerfallWorkshop.Game
             if (assignedPlaceSymbol == null)
                 throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
 
-            Place assignedPlace = quest.GetPlace(assignedPlaceSymbol);
+            Place assignedPlace = person.ParentQuest.GetPlace(assignedPlaceSymbol);
 
             return assignedPlace.SiteDetails.buildingKey;
         }
@@ -2376,12 +2367,12 @@ namespace DaggerfallWorkshop.Game
                 npcGreetingText = ExpandRandomTextRecord(npcGreetingRecord);
             }
 
-            DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
-
             // Reset NPC knowledge, for now it resets every time the NPC has changed (player talked to new NPC)
             // TODO: Match classic daggerfall - in classic NPC remembers their knowledge about topics for their time of existence
             if (!sameTalkTargetAsBefore)
                 ResetNPCKnowledge();
+
+            DaggerfallUI.UIManager.PushWindow(DaggerfallUI.Instance.TalkWindow);
 
             // Reset last checked tone index for NPC reaction and tone results
             lastToneIndex = -1;
@@ -2707,6 +2698,9 @@ namespace DaggerfallWorkshop.Game
 
         private void ResetNPCKnowledgeInTopicListRecursively(List<ListItem> list)
         {
+            if (list == null)
+                return;
+
             for (int i = 0; i < list.Count; i++)
             {
                 list[i].npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet;
@@ -2769,6 +2763,7 @@ namespace DaggerfallWorkshop.Game
                     ListItem itemQuestTopic = new ListItem();
                     itemQuestTopic.type = ListItemType.Item;
                     string captionString = string.Empty;
+                    bool dialogPartnerIsSamePersonAsPersonResource = false;
                     switch (questResourceInfo.Value.resourceType)
                     {
                         case QuestInfoResourceType.NotSet:
@@ -2788,6 +2783,17 @@ namespace DaggerfallWorkshop.Game
                             itemQuestTopic.questionType = QuestionType.QuestPerson;
                             Person person = (Person)questResourceInfo.Value.questResource;
                             captionString = person.DisplayName;
+                            // test if dialog partner is same person as person resource
+                            if (targetStaticNPC != null && currentNPCType == NPCType.Static &&
+                                nameNPC == captionString &&
+                                ((GameManager.Instance.IsPlayerInside &&
+                                  !GameManager.Instance.IsPlayerInsideCastle &&
+                                  targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior
+                                      .EntryDoor.buildingKey) ||
+                                 (GameManager.Instance.IsPlayerInsideCastle &&
+                                  person.IsQuestor &&
+                                  person.QuestorData.context == StaticNPC.Context.Dungeon)))
+                                dialogPartnerIsSamePersonAsPersonResource = true;
                             break;
                         case QuestInfoResourceType.Thing:
                             itemQuestTopic.questionType = QuestionType.QuestItem;
@@ -2796,13 +2802,14 @@ namespace DaggerfallWorkshop.Game
                                 captionString = item.DaggerfallUnityItem.ItemName;
                             break;
                     }
+
                     itemQuestTopic.questID = questInfo.Key;
-
                     itemQuestTopic.caption = captionString;
-
                     itemQuestTopic.key = questResourceInfo.Key;
 
-                    if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInTellMeAbout) // Only make it available for talk if it is not "hidden" by dialog link command
+                    if (questResourceInfo.Value.availableForDialog &&
+                        questResourceInfo.Value.hasEntryInTellMeAbout && // Only make it available for talk if it is not "hidden" by dialog link command
+                        !dialogPartnerIsSamePersonAsPersonResource)
                         listTopicTellMeAbout.Add(itemQuestTopic);
                 }
             }
@@ -3097,10 +3104,13 @@ namespace DaggerfallWorkshop.Game
                                 IsPlayerInSameLocationWorldCell = true;
 
                             // test if dialog partner is same person as person resource
-                            if (GameManager.Instance.IsPlayerInside && !GameManager.Instance.IsPlayerInsideCastle
-                                && targetStaticNPC != null && currentNPCType == NPCType.Static
-                                && targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey
-                                && nameNPC == captionString)
+                            if (targetStaticNPC != null && currentNPCType == NPCType.Static && nameNPC == captionString &&
+                                ((GameManager.Instance.IsPlayerInside &&
+                                 !GameManager.Instance.IsPlayerInsideCastle &&
+                                 targetStaticNPC.Data.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey) ||
+                                 (GameManager.Instance.IsPlayerInsideCastle &&
+                                  person.IsQuestor &&
+                                  person.QuestorData.context == StaticNPC.Context.Dungeon)))
                             {
                                 dialogPartnerIsSamePersonAsPersonResource = true;
                             }

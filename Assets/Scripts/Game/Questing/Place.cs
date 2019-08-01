@@ -287,7 +287,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 case WorldContext.Dungeon:
                     siteType = SiteTypes.Dungeon;
-                    buildingName = GetSpecialDungeonName();
+                    buildingName = GameManager.Instance.PlayerEnterExit.Dungeon.GetSpecialDungeonName();
                     break;
                 case WorldContext.Interior:
                     siteType = SiteTypes.Building;
@@ -1226,26 +1226,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 this.ExpandMacro(MacroTypes.NameMacro3, out captionString); // resolve dungeon name
             string key = this.Symbol.Name;
             GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, key, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
-        }
-
-        /// <summary>
-        /// Gets special dungeon name (e.g. Castle Daggerall).
-        /// Fallback to current location name if not in a special named dungeon.
-        /// </summary>
-        string GetSpecialDungeonName()
-        {
-            string dungeonName = string.Empty;
-            DaggerfallDungeon.DungeonSummary ds = GameManager.Instance.PlayerEnterExit.Dungeon.Summary;
-            if (ds.RegionName == "Daggerfall" && ds.LocationName == "Daggerfall")
-                dungeonName = DaggerfallUnity.Instance.TextProvider.GetText(475);
-            else if (ds.RegionName == "Wayrest" && ds.LocationName == "Wayrest")
-                dungeonName = DaggerfallUnity.Instance.TextProvider.GetText(476);
-            else if (ds.RegionName == "Sentinel" && ds.LocationName == "Sentinel")
-                dungeonName = DaggerfallUnity.Instance.TextProvider.GetText(477);
-            else
-                dungeonName = GameManager.Instance.PlayerGPS.CurrentLocation.Name;
-
-            return dungeonName.TrimEnd('.');
         }
 
         #endregion
