@@ -997,22 +997,8 @@ namespace DaggerfallWorkshop
         /// <returns>True if building discovered, false if building not discovered.</returns>
         public bool GetDiscoveredBuilding(int buildingKey, out DiscoveredBuilding discoveredBuildingOut)
         {
-            discoveredBuildingOut = new DiscoveredBuilding();
-
-            // Must have discovered building
-            if (!HasDiscoveredBuilding(buildingKey))
-                return false;
-
-            // Get the location discovery for this mapID
-            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
-            DiscoveredLocation dl = discoveredLocations[mapPixelID];
-            if (dl.discoveredBuildings == null)
-                return false;
-
             // Get discovery data for building
-            bool discovered = GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut);
-
-            return discovered;
+            return GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut);
         }
 
         /// <summary>
@@ -1138,6 +1124,22 @@ namespace DaggerfallWorkshop
         bool GetBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
         {
             buildingDiscoveryData = new DiscoveredBuilding();
+
+            // Must have discovered building
+            if (!HasDiscoveredBuilding(buildingKey))
+                return false;
+
+            // Get the location discovery for this mapID
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            if (dl.discoveredBuildings == null)
+                return false;
+
+            buildingDiscoveryData = dl.discoveredBuildings[buildingKey];
+
+            // if override name - use this name and don't do any further name resolving
+            if (buildingDiscoveryData.isOverrideName)
+                return true;
 
             // Get building directory for location
             BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
