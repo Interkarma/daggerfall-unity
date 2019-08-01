@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.Questing
             for (int i = 0; i < classicEffects.Length; i++)
             {
                 // Effect slot must be populated
-                if (classicEffects[i].type == -1 || classicEffects[i].subType == -1)
+                if (classicEffects[i].type == -1)
                     continue;
 
                 // Bundle must have contain native effects matching this classic effect
