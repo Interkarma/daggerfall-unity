@@ -1125,21 +1125,21 @@ namespace DaggerfallWorkshop
         {
             buildingDiscoveryData = new DiscoveredBuilding();
 
-            // Must have discovered building
-            if (!HasDiscoveredBuilding(buildingKey))
-                return false;
+            // if discovered building data is available for building key
+            if (HasDiscoveredBuilding(buildingKey))
+            {
+                // Get the location discovery for this mapID
+                int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+                DiscoveredLocation dl = discoveredLocations[mapPixelID];
+                if (dl.discoveredBuildings == null)
+                    return false;
 
-            // Get the location discovery for this mapID
-            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
-            DiscoveredLocation dl = discoveredLocations[mapPixelID];
-            if (dl.discoveredBuildings == null)
-                return false;
+                buildingDiscoveryData = dl.discoveredBuildings[buildingKey];
 
-            buildingDiscoveryData = dl.discoveredBuildings[buildingKey];
-
-            // if override name - use this name and don't do any further name resolving
-            if (buildingDiscoveryData.isOverrideName)
-                return true;
+                // if override name - use this name and don't do any further name resolving
+                if (buildingDiscoveryData.isOverrideName)
+                    return true;
+            }
 
             // Get building directory for location
             BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
@@ -1174,7 +1174,7 @@ namespace DaggerfallWorkshop
                 string overrideBuildingName = string.Empty;
                 if (GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
                 {
-                    if (pcLearnedAboutExistence)
+                    if (locationWasMarkedOnMapByNPC)
                         buildingName = overrideBuildingName;
                 }
             }
@@ -1187,6 +1187,9 @@ namespace DaggerfallWorkshop
                     buildingSummary.FactionId,
                     buildingDirectory.LocationData.Name,
                     buildingDirectory.LocationData.RegionName);
+
+                if (!HasDiscoveredBuilding(buildingKey))
+                    return false;
             }
 
             // Add to data
