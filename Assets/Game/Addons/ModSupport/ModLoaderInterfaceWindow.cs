@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors: 
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -475,6 +475,13 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
                                                                                                                //which would cause it to be tried to load by mod manager as an asset bundle if in mod directory
             Debug.Log(string.Format("asset type for asset : {0} {1}", asset.name, asset.GetType().Name));
         }
+
+        var messageBox = new DaggerfallMessageBox(uiManager, this, true);
+        messageBox.AllowCancel = true;
+        messageBox.ClickAnywhereToClose = true;
+        messageBox.ParentPanel.BackgroundTexture = null;
+        messageBox.SetText(string.Format(ModManager.GetText("extractTextConfirmation"), path));
+        uiManager.PushWindow(messageBox);
     }
 
     void BackButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
