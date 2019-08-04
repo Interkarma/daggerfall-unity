@@ -338,6 +338,21 @@ namespace DaggerfallWorkshop.Utility
 
                     break;
 
+                case ImageTypes.BSS:
+                    BssFile bssFile = new BssFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
+                    bssFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, bssFile.PaletteName));
+
+                    dfBitmap = bssFile.GetDFBitmap(record, frame);
+                    imageData.offset = new DFPosition(0, 0);
+                    imageData.scale = new DFSize();
+                    imageData.size = bssFile.GetSize(record);
+
+                    // Texture pack support
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, false, out imageData.texture))
+                        createTexture = false;
+
+                    break;
+
                 default:
                     return new ImageData();
             }
@@ -442,6 +457,8 @@ namespace DaggerfallWorkshop.Utility
                 return ImageTypes.RCI;
             else if (filename.EndsWith(".CFA", StringComparison.InvariantCultureIgnoreCase))
                 return ImageTypes.CFA;
+            else if (filename.EndsWith(".BSS", StringComparison.InvariantCultureIgnoreCase))
+                return ImageTypes.BSS;
             else
                 throw new Exception("ParseFileType could not match filename with a supported image type.");
         }
