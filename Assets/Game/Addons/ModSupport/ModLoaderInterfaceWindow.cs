@@ -521,7 +521,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         else if (string.IsNullOrEmpty(modSettings[currentSelection].modInfo.ModDescription))
             return;
 
-        ModDescriptionMessageBox = new DaggerfallMessageBox(uiManager, this);
+        ModDescriptionMessageBox = new DaggerfallMessageBox(uiManager, this, true);
         ModDescriptionMessageBox.AllowCancel = true;
         ModDescriptionMessageBox.ClickAnywhereToClose = true;
         ModDescriptionMessageBox.ParentPanel.BackgroundTexture = null;
