@@ -1159,7 +1159,7 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets initial building information from current location (no building).
+        /// Gets initial building information from current location (no building name expansion).
         /// Does not change discovery state for building.
         /// </summary>
         /// <param name="buildingKey">Key of building to query.</param>
