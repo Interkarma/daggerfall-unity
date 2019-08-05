@@ -1084,6 +1084,10 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
                     dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+                
+                // above line could also be done with these statements:
+                // Place place = (Place)dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questResource;
+                // GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, place.SiteDetails.buildingName);
             }
         }
 
@@ -2700,7 +2704,7 @@ namespace DaggerfallWorkshop.Game
                     if (symbolName != resourceName)
                         continue;
 
-                    GameManager.Instance.PlayerGPS.UndiscoverBuilding(buildingKey, true);
+                    GameManager.Instance.PlayerGPS.UndiscoverBuilding(buildingKey, true, place.SiteDetails.buildingName);
                 }
             }
         }
