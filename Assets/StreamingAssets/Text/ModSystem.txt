@@ -31,6 +31,7 @@ saveClose,                  Save and Close
 saveCloseInfo,              Save changes and return to options menu
 extractText,                Extract Text
 extractTextInfo,            Extract Text Assets
+extractTextConfirmation,    All text assets from this mod have been extracted to {0}.
 new,                        New
 load,                       Load
 save,                       Save

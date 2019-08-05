@@ -504,6 +504,8 @@ namespace DaggerfallWorkshop
         CIF,
         RCI,
         CFA,
+        BSS,
+        GFX,
     }
 
     /// <summary>

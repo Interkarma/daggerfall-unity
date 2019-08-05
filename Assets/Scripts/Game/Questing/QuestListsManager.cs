@@ -351,9 +351,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private Quest SelectQuest(List<QuestData> pool, int factionId)
         {
-            // Seed random
-            UnityEngine.Random.InitState(Time.frameCount);
-
             Debug.Log("Quest pool has " + pool.Count);
             // Choose random quest from pool and try to parse it
             if (pool.Count > 0)
