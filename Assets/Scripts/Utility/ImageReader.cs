@@ -353,6 +353,21 @@ namespace DaggerfallWorkshop.Utility
 
                     break;
 
+                case ImageTypes.GFX:
+                    GfxFile gfxFile = new GfxFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
+                    gfxFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, gfxFile.PaletteName));
+
+                    dfBitmap = gfxFile.GetDFBitmap(record, frame);
+                    imageData.offset = new DFPosition(0, 0);
+                    imageData.scale = new DFSize();
+                    imageData.size = gfxFile.GetSize(record);
+
+                    // Texture pack support
+                    if (createTexture && AssetInjection.TextureReplacement.TryImportCifRci(filename, record, frame, false, out imageData.texture))
+                        createTexture = false;
+
+                    break;
+
                 default:
                     return new ImageData();
             }
@@ -459,6 +474,8 @@ namespace DaggerfallWorkshop.Utility
                 return ImageTypes.CFA;
             else if (filename.EndsWith(".BSS", StringComparison.InvariantCultureIgnoreCase))
                 return ImageTypes.BSS;
+            else if (filename.EndsWith(".GFX", StringComparison.InvariantCultureIgnoreCase))
+                return ImageTypes.GFX;
             else
                 throw new Exception("ParseFileType could not match filename with a supported image type.");
         }
