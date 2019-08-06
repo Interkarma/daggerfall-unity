@@ -1267,8 +1267,9 @@ namespace DaggerfallWorkshop
 
         // Repositions player in world after a teleport.
         // If position.y is less than terrain height then player will be raised to sit on terrain.
+        // If grounded is true, position.y will be unconditionally set to terrain height.
         // Terrain data must already be loaded and LocalGPS must be attached to your player game object.
-        private void RepositionPlayer(int mapPixelX, int mapPixelY, Vector3 position)
+        private void RepositionPlayer(int mapPixelX, int mapPixelY, Vector3 position, bool grounded = false)
         {
             // Get terrain key
             int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
@@ -1289,7 +1290,7 @@ namespace DaggerfallWorkshop
                 targetPosition.y = height + controller.height / 2f + 0.15f;
 
                 // If desired position is higher then minimum position then we can safely use that
-                if (position.y > targetPosition.y)
+                if (!grounded && position.y > targetPosition.y)
                     targetPosition.y = position.y;
 
                 // Move player object to new position
@@ -1520,14 +1521,14 @@ namespace DaggerfallWorkshop
                 if (closestMarker != -1)
                 {
                     //PositionPlayerToTerrain(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
-                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
+                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position, grounded: true);
                     return;
                 }
             }
 
             // Just position to outside location
             //PositionPlayerToTerrain(mapPixelX, mapPixelY, newPlayerPosition);
-            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition);
+            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition, grounded: true);
         }
 
         // Align player to ground
