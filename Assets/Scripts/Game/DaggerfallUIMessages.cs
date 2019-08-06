@@ -66,5 +66,6 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenCourtWindow = "dfuiOpenCourtWindow";
 
         // "Debug" window messages
+        public const string dfuiOpenDemoClassQuestions = "dfuiOpenDemoClassQuestions";
     }
 }

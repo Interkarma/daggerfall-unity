@@ -572,6 +572,11 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiStatusInfo:
                     DisplayStatusInfo();
                     break;
+                case DaggerfallUIMessages.dfuiOpenDemoClassQuestions:
+                    DemoClassQuestionsWindow dfDemoClassQuestions = new DemoClassQuestionsWindow(uiManager);
+                    dfDemoClassQuestions.AllowCancel = false;
+                    uiManager.PushWindow(dfDemoClassQuestions);
+                    break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;

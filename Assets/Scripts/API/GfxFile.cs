@@ -19,7 +19,6 @@ namespace DaggerfallConnect.Arena2
     /// Connects to *.GFX files to extract image data.
     /// The only GFX files in Daggerfall are SCRL00I0.GFX and SCRL01I0.GFX.
     /// Combined thse make a total of 16 frames of scrolling parchment used exclusively by class questions UI.
-    /// Does not have a working palette at this time, suspect this is set elsewhere in questions UI or from *.CEL data.
     /// </summary>
     public class GfxFile : BaseImageFile
     {
@@ -50,7 +49,6 @@ namespace DaggerfallConnect.Arena2
 
         /// <summary>
         /// Gets palette name for GFX file.
-        /// This palette is not correct, but need to supply something.
         /// </summary>
         public override string PaletteName
         {
