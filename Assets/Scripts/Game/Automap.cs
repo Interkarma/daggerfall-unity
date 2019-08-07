@@ -142,17 +142,30 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
+        const string textDatabase = "DaggerfallUI";
+
+        const string ResourceNameRotateArrow = "RotateArrow";
+
+        const string NameGamobjectBeacons = "Beacons";
+
         const string NameGameobjectPlayerMarkerArrow = "PlayerMarkerArrow";
         const string NameGameobjectBeaconPlayerPosition = "BeaconPlayerPosition";
         const string NameGameobjectBeaconRotationPivotAxis = "BeaconRotationPivotAxis";
         const string NameGameobjectRotateArrow = "CurvedArrow";
+        const string NameGameobjectBeaconEntrance = "BeaconEntrancePosition"; // gameobject will hold both entrance position marker beacon and cube entrance position marker
         const string NameGameobjectBeaconEntrancePositionMarker = "BeaconEntrancePositionMarker";
-        const string NameGameobjectCubeEntrancePositionMarker = "CubeEntrancePositionMarker";
+        const string NameGameobjectCubeEntrancePositionMarker = "CubeEntrancePositionMarker";        
 
         const string NameGameobjectTeleporterPortalMarker = "PortalMarker";
         const string NameGameobjectTeleporterSubStringStart = "Teleporter [";
         const string NameGameobjectTeleporterEntranceSubStringEnd = "] - Portal Entrance";
         const string NameGameobjectTeleporterExitSubStringEnd = "] - Portal Exit";
+        const string NameGameobjectTeleporterConnection = "Teleporter Connection";
+
+        const string NameGameobjectUserMarkerNotes = "UserMarkerNotes";
+        const string NameGameobjectUserNoteMarkerSubStringStart = "UserNoteMarker_";
+
+        const string NameGameobjectDiamond = "Diamond";
 
         const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying too high will result in geometry not being revealed by this raycast
         const float raycastDistanceViewDirection = 30.0f; // don't want to make it too easy to discover big halls - although it shouldn't be to small as well
@@ -261,6 +274,11 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+
+        public static string TextDatabase
+        {
+            get { return textDatabase; }
+        }
 
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to get automap layer
@@ -557,36 +575,36 @@ namespace DaggerfallWorkshop.Game
             if (nearestHit.HasValue)
             {
                 // if hit geometry is user note marker
-                if (nearestHit.Value.transform.name.StartsWith("UserNoteMarker_"))
+                if (nearestHit.Value.transform.name.StartsWith(NameGameobjectUserNoteMarkerSubStringStart))
                 {
-                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
+                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace(NameGameobjectUserNoteMarkerSubStringStart, ""));
                     if (listUserNoteMarkers.ContainsKey(id))
                         return listUserNoteMarkers[id].note; // get user note by id
                 }
                 // if hit geometry is player position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconPlayerPosition)
                 {
-                    return "player position beacon";
+                    return TextManager.Instance.GetText(textDatabase, "playerPositionBeacon");
                 }
                 // if hit geometry is player rotation pivot axis or rotation indicator arrows
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconRotationPivotAxis || nearestHit.Value.transform.name == NameGameobjectRotateArrow)
                 {
-                    return "rotation pivot axis";
+                    return TextManager.Instance.GetText(textDatabase, "rotationPivotAxis");
                 }
                 // if hit geometry is dungeon entrance/exit position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconEntrancePositionMarker)
                 {
-                    return "entrance/exit position beacon";
+                    return TextManager.Instance.GetText(textDatabase, "entranceExitPositionBeacon");
                 }
                 // if hit geometry is dungeon entrance/exit position marker
                 else if (nearestHit.Value.transform.name == NameGameobjectCubeEntrancePositionMarker)
                 {
-                    return "entrance/exit";
+                    return TextManager.Instance.GetText(textDatabase, "entranceExit");
                 }
                 // if hit geometry is player position marker arrow
                 else if (nearestHit.Value.transform.name == NameGameobjectPlayerMarkerArrow)
                 {
-                    return "player marker";
+                    return TextManager.Instance.GetText(textDatabase, "playerMarker");
                 }
                 // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter entrance
                 else if (
@@ -595,7 +613,7 @@ namespace DaggerfallWorkshop.Game
                         nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterEntranceSubStringEnd)
                         )
                 {
-                    return "teleporter (entrance)";
+                    return TextManager.Instance.GetText(textDatabase, "teleporterEntrance");
                 }
                 // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter exit
                 else if (
@@ -604,7 +622,7 @@ namespace DaggerfallWorkshop.Game
                         nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterExitSubStringEnd)
                         )
                 {
-                    return "teleporter (exit)";
+                    return TextManager.Instance.GetText(textDatabase, "teleporterExit");
                 }
             }
             return ""; // otherwise return empty string (= no mouse hover over text will be displayed)
@@ -627,7 +645,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     gameobjectTeleporterConnection = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                     UnityEngine.Object.Destroy(gameobjectTeleporterConnection.GetComponent<Collider>());
-                    gameobjectTeleporterConnection.name = "Teleporter Connection";
+                    gameobjectTeleporterConnection.name = NameGameobjectTeleporterConnection;
                     gameobjectTeleporterConnection.transform.SetParent(gameobjectAutomap.transform);
                     gameobjectTeleporterConnection.layer = layerAutomap;
                     Material material = new Material(Shader.Find("Standard"));
@@ -765,7 +783,7 @@ namespace DaggerfallWorkshop.Game
             if (nearestHit.HasValue)
             {
                 // if hit gamobject is not a user note marker (so for now it is possible to create markers around beacons - this is intended)
-                if (!nearestHit.Value.transform.name.StartsWith("UserNoteMarker_"))
+                if (!nearestHit.Value.transform.name.StartsWith(NameGameobjectUserNoteMarkerSubStringStart))
                 {
                     // add a new user note marker
                     Vector3 spawningPosition = (nearestHit.Value.point) + nearestHit.Value.normal * 0.7f;
@@ -789,7 +807,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     // edit user note marker
-                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
+                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace(NameGameobjectUserNoteMarkerSubStringStart, ""));
                     EditUserNote(id);
                 }
             }
@@ -807,9 +825,9 @@ namespace DaggerfallWorkshop.Game
 
             if (nearestHit.HasValue)
             {
-                if (nearestHit.Value.transform.name.StartsWith("UserNoteMarker_")) // if user note marker was hit
+                if (nearestHit.Value.transform.name.StartsWith(NameGameobjectUserNoteMarkerSubStringStart)) // if user note marker was hit
                 {                    
-                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace("UserNoteMarker_", ""));
+                    int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace(NameGameobjectUserNoteMarkerSubStringStart, ""));
                     if (listUserNoteMarkers.ContainsKey(id))
                         listUserNoteMarkers.Remove(id); // remove it from list
                     GameObject.Destroy(nearestHit.Value.transform.gameObject); // and destroy gameobject
@@ -1427,7 +1445,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (!gameobjectBeacons)
             {
-                gameobjectBeacons = new GameObject("Beacons");
+                gameobjectBeacons = new GameObject(NameGamobjectBeacons);
                 gameobjectBeacons.layer = layerAutomap;
                 gameobjectBeacons.transform.SetParent(gameobjectAutomap.transform);
             }
@@ -1470,7 +1488,7 @@ namespace DaggerfallWorkshop.Game
                 //SetMaterialTransparency(material);
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
 
-                gameobjectRotationArrow1 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
+                gameobjectRotationArrow1 = (GameObject)Instantiate(Resources.Load(ResourceNameRotateArrow));
                 gameobjectRotationArrow1.name = NameGameobjectRotateArrow;
                 gameobjectRotationArrow1.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
                 gameobjectRotationArrow1.layer = layerAutomap;
@@ -1480,7 +1498,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRotationArrow1.transform.localScale = new Vector3(0.15f, 0.0005f, 0.15f);
                 gameobjectRotationArrow1.GetComponentInChildren<MeshRenderer>().material = material;
 
-                gameobjectRotationArrow2 = (GameObject)Instantiate(Resources.Load("RotateArrow"));
+                gameobjectRotationArrow2 = (GameObject)Instantiate(Resources.Load(ResourceNameRotateArrow));
                 gameobjectRotationArrow2.name = NameGameobjectRotateArrow;
                 gameobjectRotationArrow2.transform.SetParent(gameobjectBeaconRotationPivotAxis.transform);
                 gameobjectRotationArrow2.layer = layerAutomap;
@@ -1495,7 +1513,7 @@ namespace DaggerfallWorkshop.Game
 
             if (!gameobjectBeaconEntrancePosition)
             {
-                gameobjectBeaconEntrancePosition = new GameObject("BeaconEntrancePosition");
+                gameobjectBeaconEntrancePosition = new GameObject(NameGameobjectBeaconEntrance);
                 gameobjectBeaconEntrancePosition.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconEntrancePosition.layer = layerAutomap;
 
@@ -1595,7 +1613,7 @@ namespace DaggerfallWorkshop.Game
         /// <returns>the diamond shaped primitive GameObject</returns>
         private GameObject CreateDiamondShapePrimitive()
         {
-            GameObject gameobjectDiamondShape= new GameObject("Diamond");
+            GameObject gameobjectDiamondShape = new GameObject(NameGameobjectDiamond);
             MeshFilter meshFilter = gameobjectDiamondShape.AddComponent<MeshFilter>();
 
             Vector3 p0 = new Vector3(+0.5f, 0, -0.5f);
@@ -1651,14 +1669,14 @@ namespace DaggerfallWorkshop.Game
         {
             if (gameObjectUserNoteMarkers == null)
             {
-                gameObjectUserNoteMarkers = new GameObject("UserMarkerNotes");
+                gameObjectUserNoteMarkers = new GameObject(NameGameobjectUserMarkerNotes);
                 gameObjectUserNoteMarkers.transform.SetParent(gameobjectAutomap.transform);
                 gameObjectUserNoteMarkers.layer = layerAutomap;
             }
             GameObject gameObjectUserNoteMarker = CreateDiamondShapePrimitive();
             gameObjectUserNoteMarker.transform.SetParent(gameObjectUserNoteMarkers.transform);
             gameObjectUserNoteMarker.transform.position = spawningPosition;
-            gameObjectUserNoteMarker.name = "UserNoteMarker_" + id;
+            gameObjectUserNoteMarker.name = NameGameobjectUserNoteMarkerSubStringStart + id;
             Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
             materialUserNoteMarker.color = new Color(1.0f, 0.55f, 0.0f);
             gameObjectUserNoteMarker.GetComponent<MeshRenderer>().material = materialUserNoteMarker;
