@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         System.Random random;
         DaggerfallAudioSource dfAudioSource;
         AudioSource loopAudioSource;
+        float loopVolumeScale;
         AudioSource ambientAudioSource;
         //private Coroutine relativePositionCoroutine = null;
 
@@ -147,6 +148,10 @@ namespace DaggerfallWorkshop.Game
                 }
                 waterWaitCounter = 0;
             }
+
+            // Update sound volume
+            if (loopAudioSource.isPlaying)
+                loopAudioSource.volume = loopVolumeScale * DaggerfallUnity.Settings.SoundVolume;
         }
 
         #region Private Methods
@@ -166,6 +171,7 @@ namespace DaggerfallWorkshop.Game
         private AudioClip PlayLoop(SoundClips clip, float volumeScale)
         {
             AudioClip loopClip = dfAudioSource.GetAudioClip((int)clip);
+            loopVolumeScale = volumeScale;
             loopAudioSource.loop = true;
             loopAudioSource.spatialBlend = 0;
             loopAudioSource.PlayWhenReady(loopClip, volumeScale);
