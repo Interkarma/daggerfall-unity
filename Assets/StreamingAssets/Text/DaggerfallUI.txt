@@ -118,12 +118,12 @@ automapToolTipRotateRightButton,	left click: rotate dungeon to the right (hotkey
 automapToolTipUpstairsButton,		left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r
 automapToolTipDownstairsButton,		left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r
 automapToolTipPanelCompass,			left click: toggle focus (hotkey: {0})\rbeacons: red ... player; green ... entrance; blue ... rotation axis\r\rright click: reset view (hotkey: {1})\r\rdouble-click left mouse btn in window to create+edit marker note\rdouble-click left mouse btn (+Ctrl key) in window to create marker\rdouble-click left mouse btn on a marker to add/edit a note\rdouble-click right mouse btn on a marker to delete it\rdouble-click right mouse btn in window to position rotation axis\rdouble-click middle mouse btn in window to center view\rdouble-click left mouse btn on discovered portal marker to jump\rto connected teleporter portal
-playerPositionBeacon,				player position beacon
-rotationPivotAxis,					rotation pivot axis
-entranceExitPositionBeacon,			entrance/exit position beacon
-entranceExit,						entrance/exit
-playerMarker,						player marker
-teleporterEntrance,					teleporter (entrance)
-teleporterExit,						teleporter (exit)
+automapPlayerPositionBeacon,		player position beacon
+automapRotationPivotAxis,			rotation pivot axis
+automapEntranceExitPositionBeacon,	entrance/exit position beacon
+automapEntranceExit,				entrance/exit
+automapPlayerMarker,				player marker
+automapTeleporterEntrance,			teleporter (entrance)
+automapTeleporterExit,				teleporter (exit)
 
 

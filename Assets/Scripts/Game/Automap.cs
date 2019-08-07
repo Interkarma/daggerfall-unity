@@ -584,27 +584,27 @@ namespace DaggerfallWorkshop.Game
                 // if hit geometry is player position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconPlayerPosition)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "playerPositionBeacon");
+                    return TextManager.Instance.GetText(textDatabase, "automapPlayerPositionBeacon");
                 }
                 // if hit geometry is player rotation pivot axis or rotation indicator arrows
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconRotationPivotAxis || nearestHit.Value.transform.name == NameGameobjectRotateArrow)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "rotationPivotAxis");
+                    return TextManager.Instance.GetText(textDatabase, "automapRotationPivotAxis");
                 }
                 // if hit geometry is dungeon entrance/exit position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconEntrancePositionMarker)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "entranceExitPositionBeacon");
+                    return TextManager.Instance.GetText(textDatabase, "automapEntranceExitPositionBeacon");
                 }
                 // if hit geometry is dungeon entrance/exit position marker
                 else if (nearestHit.Value.transform.name == NameGameobjectCubeEntrancePositionMarker)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "entranceExit");
+                    return TextManager.Instance.GetText(textDatabase, "automapEntranceExit");
                 }
                 // if hit geometry is player position marker arrow
                 else if (nearestHit.Value.transform.name == NameGameobjectPlayerMarkerArrow)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "playerMarker");
+                    return TextManager.Instance.GetText(textDatabase, "automapPlayerMarker");
                 }
                 // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter entrance
                 else if (
@@ -613,7 +613,7 @@ namespace DaggerfallWorkshop.Game
                         nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterEntranceSubStringEnd)
                         )
                 {
-                    return TextManager.Instance.GetText(textDatabase, "teleporterEntrance");
+                    return TextManager.Instance.GetText(textDatabase, "automapTeleporterEntrance");
                 }
                 // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter exit
                 else if (
@@ -622,7 +622,7 @@ namespace DaggerfallWorkshop.Game
                         nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterExitSubStringEnd)
                         )
                 {
-                    return TextManager.Instance.GetText(textDatabase, "teleporterExit");
+                    return TextManager.Instance.GetText(textDatabase, "automapTeleporterExit");
                 }
             }
             return ""; // otherwise return empty string (= no mouse hover over text will be displayed)
