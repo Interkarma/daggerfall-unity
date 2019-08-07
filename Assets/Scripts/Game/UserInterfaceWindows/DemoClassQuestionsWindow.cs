@@ -25,6 +25,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DemoClassQuestionsWindow : DaggerfallPopupWindow
     {
         const int scrollFrameCount = 16;
+        const int magePaletteIndex = 128;
+        const int roguePaletteIndex = 160;
+        const int warriorPaletteIndex = 192;
 
         const string backgroundFile = "CHGN00I0.IMG";
         const string scroll0File = "SCRL00I0.GFX";
@@ -38,10 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect scrollUpButtonRect = new Rect(0, 119, 320, 16);
         Rect scrollDownButtonRect = new Rect(0, 183, 320, 16);
 
-        ImgFile backgroundImage;
-        GfxFile scroll0;
-        GfxFile scroll1;
-
+        DFBitmap backgroundBitmap;
         DFPalette basePalette;
         ScrollFrame[] scrollFrames;
 
@@ -84,11 +84,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             scrollUpButton = DaggerfallUI.AddButton(scrollUpButtonRect, NativePanel);
             scrollDownButton = DaggerfallUI.AddButton(scrollDownButtonRect, NativePanel);
 
-            // Set a temp background just to get started
-            mainPanel.BackgroundTexture = TempGetBackgroundTexture();
-
-            // Build scroll colors and set initial texture
-            BuildScrollColors();
+            // Set initial textures
+            mainPanel.BackgroundTexture = GetBackgroundTexture();
             scrollPanel.BackgroundTexture = GetScrollFrameTexture();
         }
 
@@ -119,20 +116,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void LoadResources()
         {
-            // Get background image
-            backgroundImage = new ImgFile(Path.Combine(DaggerfallUnity.Arena2Path, backgroundFile), FileUsage.UseMemory, true);
-            backgroundImage.LoadPalette(Path.Combine(DaggerfallUnity.Arena2Path, backgroundImage.PaletteName));
-            basePalette = backgroundImage.Palette;
+            // Get background image and store base palette
+            ImgFile img = new ImgFile(Path.Combine(DaggerfallUnity.Arena2Path, backgroundFile), FileUsage.UseMemory, true);
+            backgroundBitmap = img.GetDFBitmap(0, 0);
+            basePalette = backgroundBitmap.Palette;
 
-            // Get scroll images
-            scroll0 = new GfxFile(Path.Combine(DaggerfallUnity.Arena2Path, scroll0File), FileUsage.UseMemory, true);
-            scroll1 = new GfxFile(Path.Combine(DaggerfallUnity.Arena2Path, scroll1File), FileUsage.UseMemory, true);
+            // Get scroll images and set palette
+            GfxFile scroll0 = new GfxFile(Path.Combine(DaggerfallUnity.Arena2Path, scroll0File), FileUsage.UseMemory, true);
+            GfxFile scroll1 = new GfxFile(Path.Combine(DaggerfallUnity.Arena2Path, scroll1File), FileUsage.UseMemory, true);
             scroll0.Palette = basePalette;
             scroll1.Palette = basePalette;
-        }
 
-        void BuildScrollColors()
-        {
             // Build color buffers for all scroll frames ahead of time
             scrollFrames = new ScrollFrame[scrollFrameCount];
             for (int frame = 0; frame < scrollFrameCount; frame++)
@@ -168,13 +162,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return scrollFrames[modFrame].texture;
         }
 
-        Texture2D TempGetBackgroundTexture()
+        Texture2D GetBackgroundTexture()
         {
-            // Temp just generate base image for now
+            DFPalette palette = new DFPalette(basePalette);
+            // TODO: Set mage, rogue, warrior values
+            backgroundBitmap.Palette = palette;
+
             Texture2D backgroundTexture = new Texture2D((int)mainPanelSize.x, (int)mainPanelSize.y);
-            backgroundTexture.SetPixels32(backgroundImage.GetColor32(0, 0));
+            backgroundTexture.SetPixels32(backgroundBitmap.GetColor32());
             backgroundTexture.Apply();
             backgroundTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
             return backgroundTexture;
         }
 
