@@ -30,6 +30,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallExteriorAutomapWindow : DaggerfallPopupWindow
     {
+        const string textDatabase = "DaggerfallUI";
+
+        public static string TextDatabase
+        {
+            get { return textDatabase; }
+        }
+
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown        
 
         const float minTextScaleNameplates = 1.4f; // minimum text scale for nameplates
@@ -461,16 +468,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void UpdateButtonToolTipsText()
         {
-            gridButton.ToolTipText = String.Format("left click: switch to next view mode (hotkey: {0})\ravailable view modes are:\r- original (hotkey {1})\r- extra: includes extra buildings (hotkey {2})\r- all: includes extra buildings, ground flats (hotkey {3})\rswitch background texture with {4}, {5}, {6}, {7}", currentKeyCode_SwitchToNextExteriorAutomapViewMode.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeOriginal.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeExtra.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeAll.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3.ToString());
-            forwardButton.ToolTipText = String.Format("left click: move up (hotkey: {0})\rright click: move to north location border (hotkey: Shift+{1})", currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveToNorthLocationBorder.ToString());
-            backwardButton.ToolTipText = String.Format("left click: move down (hotkey: {0})\rright click: move to south location border (hotkey: Shift+{1})", currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveToSouthLocationBorder.ToString());
-            leftButton.ToolTipText = String.Format("left click: move to the left (hotkey: {0})\rright click: move to west location border (hotkey: Shift+{1})", currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveToWestLocationBorder.ToString());
-            rightButton.ToolTipText = String.Format("left click: move to the right (hotkey: {0})\rright click: move to east location border (hotkey: Shift+{1})", currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveToEastLocationBorder.ToString());
-            rotateLeftButton.ToolTipText = String.Format("left click: rotate map to the left (hotkey: Control+{0})\rright click: rotate map around the player position\rto the left  (hotkey: Alt+{1})", currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateAroundPlayerPosLeft.ToString());
-            rotateRightButton.ToolTipText = String.Format("left click: rotate map to the right (hotkey: Control+{0})\rright click: rotate map around the player position\rto the right (hotkey: Alt+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateAroundPlayerPosRight.ToString());
-            upstairsButton.ToolTipText = String.Format("left click: zoom in (hotkey: {0})\rright click: apply maximum zoom", currentKeyCode_ZoomIn.ToString());
-            downstairsButton.ToolTipText = String.Format("left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)", currentKeyCode_ZoomOut.ToString());
-            dummyPanelCompass.ToolTipText = String.Format("left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})", currentKeyCode_FocusPlayerPosition.ToString(), currentKeyCode_ResetView.ToString());
+            gridButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipTextGridButton"), currentKeyCode_SwitchToNextExteriorAutomapViewMode.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeOriginal.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeExtra.ToString(), currentKeyCode_SwitchToExteriorAutomapViewModeAll.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundOriginal.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative1.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative2.ToString(), currentKeyCode_SwitchToExteriorAutomapBackgroundAlternative3.ToString());
+            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipForwardButton"), currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveToNorthLocationBorder.ToString());
+            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipBackwardButton"), currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveToSouthLocationBorder.ToString());
+            leftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipLeftButton"), currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveToWestLocationBorder.ToString());
+            rightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipRightButton"), currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveToEastLocationBorder.ToString());
+            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipRotateLeftButton"), currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateAroundPlayerPosLeft.ToString());
+            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipRotateRightButton"), currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateAroundPlayerPosRight.ToString());
+            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipUpstairsButton"), currentKeyCode_ZoomIn.ToString());
+            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipDownstairsButton"), currentKeyCode_ZoomOut.ToString());
+            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipPanelCompass"), currentKeyCode_FocusPlayerPosition.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
