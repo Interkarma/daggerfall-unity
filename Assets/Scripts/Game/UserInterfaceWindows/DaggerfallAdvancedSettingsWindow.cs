@@ -94,7 +94,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider musicVolume;
         Checkbox spellLighting;
         Checkbox spellShadows;
-        Checkbox instantRepairs;
         Checkbox bowDrawback;
 
         // Interface
@@ -128,6 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox enemyInfighting;
         Checkbox enhancedCombatAI;
         Checkbox allowMagicRepairs;
+        Checkbox instantRepairs;
         Checkbox playerTorchFromItems;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
@@ -213,7 +213,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
                 DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
-            instantRepairs = AddCheckbox(leftPanel, "instantRepairs", DaggerfallUnity.Settings.InstantRepairs);
 
             // Controls
             AddSectionTitle(leftPanel, "controls");
@@ -281,25 +280,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             assetInjection = AddCheckbox(leftPanel, "assetInjection", DaggerfallUnity.Settings.AssetInjection);
             compressModdedTextures = AddCheckbox(leftPanel, "compressModdedTextures", DaggerfallUnity.Settings.CompressModdedTextures);
 
-            // Game
-            AddSectionTitle(leftPanel, "game");
-            gameConsole = AddCheckbox(leftPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
-            nearDeathWarning = AddCheckbox(leftPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
-            alternateRandomEnemySelection = AddCheckbox(leftPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
-            advancedClimbing = AddCheckbox(leftPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
-            combatVoices = AddCheckbox(leftPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
-            enemyInfighting = AddCheckbox(leftPanel, "enemyInfighting", DaggerfallUnity.Settings.EnemyInfighting);
-            enhancedCombatAI = AddCheckbox(leftPanel, "enhancedCombatAI", DaggerfallUnity.Settings.EnhancedCombatAI);
-            allowMagicRepairs = AddCheckbox(leftPanel, "allowMagicRepairs", DaggerfallUnity.Settings.AllowMagicRepairs);
+            // Light
+            AddSectionTitle(leftPanel, "light");
+            dungeonAmbientLightScale = AddSlider(leftPanel, "dungeonAmbientLightScale", 0, 1, DaggerfallUnity.Settings.DungeonAmbientLightScale);
+            nightAmbientLightScale = AddSlider(leftPanel, "nightAmbientLightScale", 0, 1, DaggerfallUnity.Settings.NightAmbientLightScale);
+            playerTorchLightScale = AddSlider(leftPanel, "playerTorchLightScale", 0, 1, DaggerfallUnity.Settings.PlayerTorchLightScale);
+            playerTorchFromItems = AddCheckbox(leftPanel, "playerTorchFromItems", DaggerfallUnity.Settings.PlayerTorchFromItems);
 
             y = 0;
 
-            // Light
-            AddSectionTitle(rightPanel, "light");
-            dungeonAmbientLightScale = AddSlider(rightPanel, "dungeonAmbientLightScale", 0, 1, DaggerfallUnity.Settings.DungeonAmbientLightScale);
-            nightAmbientLightScale = AddSlider(rightPanel, "nightAmbientLightScale", 0, 1, DaggerfallUnity.Settings.NightAmbientLightScale);
-            playerTorchLightScale = AddSlider(rightPanel, "playerTorchLightScale", 0, 1, DaggerfallUnity.Settings.PlayerTorchLightScale);
-            playerTorchFromItems = AddCheckbox(rightPanel, "playerTorchFromItems", DaggerfallUnity.Settings.PlayerTorchFromItems);
+            // Game
+            AddSectionTitle(rightPanel, "game");
+            gameConsole = AddCheckbox(rightPanel, "gameConsole", DaggerfallUnity.Settings.LypyL_GameConsole);
+            nearDeathWarning = AddCheckbox(rightPanel, "nearDeathWarning", DaggerfallUnity.Settings.NearDeathWarning);
+            alternateRandomEnemySelection = AddCheckbox(rightPanel, "alternateRandomEnemySelection", DaggerfallUnity.Settings.AlternateRandomEnemySelection);
+            advancedClimbing = AddCheckbox(rightPanel, "advancedClimbing", DaggerfallUnity.Settings.AdvancedClimbing);
+            combatVoices = AddCheckbox(rightPanel, "combatVoices", DaggerfallUnity.Settings.CombatVoices);
+            enemyInfighting = AddCheckbox(rightPanel, "enemyInfighting", DaggerfallUnity.Settings.EnemyInfighting);
+            enhancedCombatAI = AddCheckbox(rightPanel, "enhancedCombatAI", DaggerfallUnity.Settings.EnhancedCombatAI);
+            allowMagicRepairs = AddCheckbox(rightPanel, "allowMagicRepairs", DaggerfallUnity.Settings.AllowMagicRepairs);
+            instantRepairs = AddCheckbox(rightPanel, "instantRepairs", DaggerfallUnity.Settings.InstantRepairs);
+
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -347,7 +348,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.StartInDungeon = startInDungeon.IsChecked;
             DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
-            DaggerfallUnity.Settings.InstantRepairs = instantRepairs.IsChecked;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
@@ -400,6 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.EnemyInfighting = enemyInfighting.IsChecked;
             DaggerfallUnity.Settings.EnhancedCombatAI = enhancedCombatAI.IsChecked;
             DaggerfallUnity.Settings.AllowMagicRepairs = allowMagicRepairs.IsChecked;
+            DaggerfallUnity.Settings.InstantRepairs = instantRepairs.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();

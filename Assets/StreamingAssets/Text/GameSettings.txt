@@ -16,7 +16,7 @@ spells,                                             Spells
 tooltips,                                           Tooltips
 hud,                                                HUD
 gui,                                                GUI
-light,                                              Light
+light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
 
