@@ -854,20 +854,21 @@ namespace DaggerfallWorkshop
                 // Calculate position
                 Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
-                // Import 3D character instead of billboard
-                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, node.transform) != null)
-                    continue;
+                // Make person gameobject
+                GameObject go = MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, node.transform);
+                if (!go)
+                {
+                    // Spawn billboard gameobject
+                    go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
-                // Spawn billboard gameobject
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
+                    // Set position
+                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    go.transform.position = billboardPosition;
+                    go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
-                // Set position
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                go.transform.position = billboardPosition;
-                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
-
-                // Add RMB data to billboard
-                dfBillboard.SetRMBPeopleData(obj);
+                    // Add RMB data to billboard
+                    dfBillboard.SetRMBPeopleData(obj);
+                }
 
                 // Add StaticNPC behaviour
                 StaticNPC npc = go.AddComponent<StaticNPC>();
