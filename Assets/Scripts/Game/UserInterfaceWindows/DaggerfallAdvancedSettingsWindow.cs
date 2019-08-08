@@ -114,6 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox geographicBackgrounds;
         Checkbox dungeonExitWagonPrompt;
+        HorizontalSlider loiterLimitInHours;
 
         // Enhancements
         Checkbox modSystem;
@@ -268,6 +269,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
             dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
+            loiterLimitInHours = AddSlider(rightPanel, "loiterLimitInHours", 3, 12, DaggerfallUnity.Settings.LoiterLimitInHours);
+
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -380,6 +383,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableGeographicBackgrounds = geographicBackgrounds.IsChecked;
             DaggerfallUnity.Settings.DungeonExitWagonPrompt = dungeonExitWagonPrompt.IsChecked;
+            DaggerfallUnity.Settings.LoiterLimitInHours = loiterLimitInHours.Value;
 
             /* Enhancements */
 
