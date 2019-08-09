@@ -177,10 +177,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 Directory.GetFiles(mappingPath, "*.json").Where(x => !x.EndsWith("IDs.json")).Select(x => File.ReadAllText(x)) :
                 null;
 
-            var modsMaps = ModManager.Instance.GetAllModsWithContributes(x => x.BooksMapping != null).SelectMany(mod =>
-                mod.ModInfo.Contributes.BooksMapping.Select(x => mod.GetAsset<TextAsset>(x).ToString()));
+            var modsMaps = ModManager.Instance ? ModManager.Instance.GetAllModsWithContributes(x => x.BooksMapping != null).SelectMany(mod =>
+                mod.ModInfo.Contributes.BooksMapping.Select(x => mod.GetAsset<TextAsset>(x).ToString())) :
+                null;
 
-            return looseFilesMaps != null ? looseFilesMaps.Concat(modsMaps) : modsMaps;
+            return looseFilesMaps != null && modsMaps != null ?
+                looseFilesMaps.Concat(modsMaps) :
+                looseFilesMaps ?? modsMaps ?? Enumerable.Empty<string>();
         }
 
         #endregion
