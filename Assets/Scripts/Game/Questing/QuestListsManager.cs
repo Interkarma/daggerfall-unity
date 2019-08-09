@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Zenithar = 'Z',
     }
 
-    struct QuestData
+    public struct QuestData
     {
         public string name;
         public string path;
@@ -298,6 +298,15 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
         {
+            List<QuestData> pool = GetGuildQuestPool(guildGroup, status, factionId, rep, rank);
+            return SelectQuest(pool, factionId);
+        }
+
+        /// <summary>
+        /// Gets a pool of elligible quests for a guild to offer.
+        /// </summary>
+        public List<QuestData> GetGuildQuestPool(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
+        {
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
 #endif
@@ -322,7 +331,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             pool.Add(quest);
                     }
                 }
-                return SelectQuest(pool, factionId);
+                return pool;
             }
             return null;
         }
@@ -349,7 +358,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return null;
         }
 
-        private Quest SelectQuest(List<QuestData> pool, int factionId)
+        public Quest SelectQuest(List<QuestData> pool, int factionId)
         {
             Debug.Log("Quest pool has " + pool.Count);
             // Choose random quest from pool and try to parse it
@@ -373,7 +382,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return LoadQuest(new QuestData() { name = questName, path = questPath }, factionId);
         }
 
-        private Quest LoadQuest(QuestData questData, int factionId)
+        public Quest LoadQuest(QuestData questData, int factionId)
         {
             // Append extension if not present
             string questName = questData.name;

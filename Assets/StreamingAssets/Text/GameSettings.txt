@@ -85,8 +85,8 @@ dungeonExitWagonPrompt,                             Dungeon wagon access prompt
 dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 5m of exit)
 loiterLimitInHours,                                 Maximum loiter time in hours
 loiterLimitInHoursInfo,                             Change default loiter time limit in hours
-guildQuestListBox,                                  Select guild quests from a list box
-guildQuestListBoxInfo,                              Presents all elligible guild quests in a list box allowing selection
+guildQuestListBox,                                  Guild quest player selection
+guildQuestListBoxInfo,                              Presents elligible guild quests in a list box
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
