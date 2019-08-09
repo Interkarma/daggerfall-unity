@@ -154,9 +154,9 @@ Q0C00Y06, Witches, N, 0, 0,
 Q0C00Y07, Witches, N, 0, 0,
 -Q0C00Y08, Witches, N, 0, 0, FAILED. Clock wants a travel time but quest has no Place resources.
 Q0C0XY02, Witches, N, 0, X,
-Q0C10Y00, Witches, N, 1, 0,
-Q0C20Y02, Witches, N, 2, 0,
-Q0C4XY04, Witches, N, 4, X,
+Q0C10Y00, Witches, N, 10, 0,
+Q0C20Y02, Witches, N, 20, 0,
+Q0C4XY04, Witches, N, 40, X,
 
 -- Commoners
 -A0C00Y00, Commoners, N, 0, 0, FAILED. Cannot get rid of popup 1013 after entering the _inn_.
