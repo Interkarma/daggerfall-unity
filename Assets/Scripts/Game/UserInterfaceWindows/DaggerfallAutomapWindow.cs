@@ -30,6 +30,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallAutomapWindow : DaggerfallPopupWindow
     {
+        const string textDatabase = "DaggerfallUI";
+
+        public static string TextDatabase
+        {
+            get { return textDatabase; }
+        }
+
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
         const float scrollLeftRightSpeed = 50.0f; // left mouse on button arrow left/right makes geometry move with this speed
@@ -520,16 +527,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void UpdateButtonToolTipsText()
         {
-            gridButton.ToolTipText = String.Format("left click: switch between 2D top view and 3D view (hotkey: {0})\rright click: reset rot. axis to player pos (hotkey: Ctrl+{1})\rmouse wheel up while over btn: inc. perspective (only 3D mode)\rmouse wheel down while over btn: dec. perspective (only 3D mode)", currentKeyCode_SwitchAutomapGridMode.ToString(), currentKeyCode_ResetRotationPivotAxisView.ToString());
-            forwardButton.ToolTipText = String.Format("left click: move viewpoint forward (hotkey: {0})\rright click: move rotation axis forward (hotkey: Ctrl+{1})", currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveRotationPivotAxisForward.ToString());
-            backwardButton.ToolTipText = String.Format("left click: move viewpoint backwards (hotkey: {0})\rright click: move rotation axis backwards (hotkey: Ctrl+{1})", currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveRotationPivotAxisBackward.ToString());
-            leftButton.ToolTipText = String.Format("left click: move viewpoint to the left (hotkey: {0})\rright click: move rotation axis to the left (hotkey: Ctrl+{1})", currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveRotationPivotAxisLeft.ToString());
-            rightButton.ToolTipText = String.Format("left click: move viewpoint to the right (hotkey: {0})\rright click: move rotation axis to the right (hotkey: Ctrl+{1})", currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveRotationPivotAxisRight.ToString());
-            rotateLeftButton.ToolTipText = String.Format("left click: rotate dungeon to the left (hotkey: Alt+{0})\rright click: rotate camera to the left (hotkey: Shift+{1})", currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateCameraLeft.ToString());
-            rotateRightButton.ToolTipText = String.Format("left click: rotate dungeon to the right (hotkey: Alt+{0})\rright click: rotate camera to the right (hotkey: Shift+{1})", currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
-            upstairsButton.ToolTipText = String.Format("left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r", currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            downstairsButton.ToolTipText = String.Format("left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r", currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            dummyPanelCompass.ToolTipText = String.Format("left click: toggle focus (hotkey: {0})\rbeacons: red ... player, green ... entrance, blue ... rotation axis\r\rright click: reset view (hotkey: {1})\r\rdouble-click left mouse btn in window to create+edit marker note\rdouble-click left mouse btn (+Ctrl key) in window to create marker\rdouble-click left mouse btn on a marker to add/edit a note\rdouble-click right mouse btn on a marker to delete it\rdouble-click right mouse btn in window to position rotation axis\rdouble-click middle mouse btn in window to center view\rdouble-click left mouse btn on discovered portal marker to jump\rto connected teleporter portal", currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
+            gridButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipTextGridButton"), currentKeyCode_SwitchAutomapGridMode.ToString(), currentKeyCode_ResetRotationPivotAxisView.ToString());
+            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipForwardButton"), currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveRotationPivotAxisForward.ToString());
+            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipBackwardButton"), currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveRotationPivotAxisBackward.ToString());
+            leftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipLeftButton"), currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveRotationPivotAxisLeft.ToString());
+            rightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRightButton"), currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveRotationPivotAxisRight.ToString());
+            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateLeftButton"), currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateCameraLeft.ToString());
+            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateRightButton"), currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
+            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipUpstairsButton"), currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
+            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipDownstairsButton"), currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
+            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipPanelCompass"), currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
         }
 
         /// <summary>
