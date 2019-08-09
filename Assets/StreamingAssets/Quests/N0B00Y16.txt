@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 52
 Quest: N0B00Y16
+DisplayName: Open a chest
 -- Message panels
 QRC:
 

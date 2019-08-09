@@ -6,6 +6,7 @@
 -- QuestId: 9
 Messages: 23
 Quest: N0B00Y09
+DisplayName: Research Notes
 -- Message panels
 QRC:
 

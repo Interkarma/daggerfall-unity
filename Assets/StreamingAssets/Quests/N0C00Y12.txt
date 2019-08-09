@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: N0C00Y12
+DisplayName: The Loose Pet Imp
 -- Message panels
 QRC:
 

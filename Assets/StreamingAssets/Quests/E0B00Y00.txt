@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: E0B00Y00
+DisplayName: The Desecrated Temple
 -- Message panels
 QRC:
 

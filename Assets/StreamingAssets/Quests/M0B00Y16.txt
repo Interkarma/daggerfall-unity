@@ -6,6 +6,7 @@
 -- QuestId: 16
 Messages: 81
 Quest: M0B00Y16
+DisplayName: Giant Killing
 -- Message panels
 QRC:
 

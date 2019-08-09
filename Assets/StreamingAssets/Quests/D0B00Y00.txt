@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: D0B00Y00
+DisplayName: Avenge the Dragons
 -- Message panels
 QRC:
 

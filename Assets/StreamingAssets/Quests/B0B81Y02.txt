@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 43
 Quest: B0B81Y02
+DisplayName: The Lost Artifact
 -- Message panels
 QRC:
 

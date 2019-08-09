@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 24
 Quest: Q0C10Y00
+DisplayName: A Great Errand
 -- Message panels
 QRC:
 

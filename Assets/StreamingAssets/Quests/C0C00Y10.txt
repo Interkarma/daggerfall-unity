@@ -6,6 +6,7 @@
 -- QuestId: 10
 Messages: 26
 Quest: C0C00Y10
+DisplayName: The Healing
 -- Message panels
 QRC:
 

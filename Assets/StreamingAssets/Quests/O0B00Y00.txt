@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: O0B00Y00
+DisplayName: A Hot Stone
 -- Message panels
 QRC:
 
