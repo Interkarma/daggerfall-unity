@@ -52,6 +52,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
         public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
 
+        public static float specialInfectionChance = 0.6f;
+
         #region Basic Formulas
 
         public static int DamageModifier(int strength)
@@ -832,7 +834,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Werewolf:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= 0.6f)
+                    if (random <= specialInfectionChance)
                     {
                         // Werewolf
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
@@ -845,7 +847,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Wereboar:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= 0.6f)
+                    if (random <= specialInfectionChance)
                     {
                         // Wereboar
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
@@ -866,7 +868,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= 0.6f)
+                    if (random <= specialInfectionChance)
                     {
                         // Inflict stage one vampirism disease
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
