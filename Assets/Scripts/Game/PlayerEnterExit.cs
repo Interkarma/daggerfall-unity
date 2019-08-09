@@ -685,7 +685,7 @@ namespace DaggerfallWorkshop.Game
             Vector3 foundDoorNormal = Vector3.zero;
             if (interior.FindClosestInteriorDoor(transform.position, out landingPosition, out foundDoorNormal))
             {
-                landingPosition += foundDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
+                landingPosition += foundDoorNormal * (GameManager.Instance.PlayerController.radius + 0.4f);
             }
             else
             {
