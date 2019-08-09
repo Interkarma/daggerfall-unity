@@ -16,7 +16,7 @@ spells,                                             Spells
 tooltips,                                           Tooltips
 hud,                                                HUD
 gui,                                                GUI
-light,                                              Light
+light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
 
@@ -83,6 +83,8 @@ geographicBackgrounds,                              Geographic backgrounds
 geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 dungeonExitWagonPrompt,                             Dungeon wagon access prompt
 dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 5m of exit)
+loiterLimitInHours,                                 Maximum loiter time in hours
+loiterLimitInHoursInfo,                             Change default loiter time limit in hours
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.

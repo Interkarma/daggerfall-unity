@@ -670,7 +670,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 time = 0;
             }
-            else if (time > 3)
+            else if (time > DaggerfallUnity.Settings.LoiterLimitInHours)
             {
                 DaggerfallUI.MessageBox(cannotLoiterMoreThan3HoursTextId);
                 return;

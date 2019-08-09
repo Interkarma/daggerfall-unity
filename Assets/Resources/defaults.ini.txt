@@ -57,6 +57,7 @@ SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
 IllegalRestWarning=True
+LoiterLimitInHours=3
 
 [Spells]
 EnableSpellLighting=True
