@@ -1374,12 +1374,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Get the Quest object referenced by this link
                 Quest quest = GetQuest(link.questUID);
                 if (quest == null)
-                    throw new Exception(string.Format("CullResourceSiteLink() could not find active quest for UID {0}", link.questUID));
+                {
+                    Debug.LogWarningFormat("CullResourceTarget() could not find active quest for UID {0}", link.questUID);
+                    return;
+                }
 
                 // Get the Place resource referenced by this link
                 Place place = quest.GetPlace(link.placeSymbol);
                 if (place == null)
-                    throw new Exception(string.Format("CullResourceSiteLink() could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
+                {
+                    Debug.LogWarningFormat("CullResourceTarget() could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID);
+                    return;
+                }
 
                 // Modify selected spawn QuestMarker for this Place
                 QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
@@ -1649,6 +1655,33 @@ namespace DaggerfallWorkshop.Game.Questing
                 Quest quest = new Quest();
                 quest.RestoreSaveData(questData);
                 quests.Add(quest.UID, quest);
+            }
+
+            // Remove site links with no matching quest
+            RemoveStaleSiteLinks();
+        }
+
+        void RemoveStaleSiteLinks()
+        {
+            List<SiteLink> siteLinksToRemove = new List<SiteLink>();
+            if (siteLinks != null && siteLinks.Count > 0)
+            {
+                foreach (SiteLink link in siteLinks)
+                {
+                    Quest quest = GetQuest(link.questUID);
+                    if (quest == null)
+                        siteLinksToRemove.Add(link);
+                }
+            }
+
+            // Remove any stale sitelinks pointing to quests no longer active
+            if (siteLinksToRemove.Count > 0)
+            {
+                foreach (SiteLink link in siteLinksToRemove)
+                {
+                    Debug.LogWarningFormat("Removing stale SiteLink {0}. Quest UID {1} not present.", link.placeSymbol.Original, link.questUID);
+                    siteLinks.Remove(link);
+                }
             }
         }
 
