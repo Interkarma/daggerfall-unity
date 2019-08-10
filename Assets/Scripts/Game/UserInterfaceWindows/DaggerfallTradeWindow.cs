@@ -644,7 +644,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = localItems.GetItem(i);
                     if (!item.IsEquipped && (
                             (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic) ||
-                            (windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
+                            (windowMode == WindowModes.Sell && !item.IsEnchanted && itemTypesAccepted.Contains(item.ItemGroup)) ||
                             (windowMode == WindowModes.SellMagic && item.IsEnchanted) ))
                     {
                         AddLocalItem(item);

@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < playerItems.Count; i++)
             {
                 DaggerfallUnityItem item = playerItems.GetItem(i);
-                if (item.IsEnchanted)
+                if (item.IsEnchanted && item.LegacyEnchantments != null)
                 {
                     foreach (DaggerfallEnchantment enchantment in item.LegacyEnchantments)
                         if (enchantment.type == EnchantmentTypes.CastWhenUsed)
