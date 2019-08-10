@@ -834,7 +834,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Werewolf:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= specialInfectionChance)
+                    if (random <= specialInfectionChance && target.EntityBehaviour.EntityType == EntityTypes.Player)
                     {
                         // Werewolf
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
@@ -847,7 +847,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Wereboar:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= specialInfectionChance)
+                    if (random <= specialInfectionChance && target.EntityBehaviour.EntityType == EntityTypes.Player)
                     {
                         // Wereboar
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
@@ -868,7 +868,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= specialInfectionChance)
+                    if (random <= specialInfectionChance && target.EntityBehaviour.EntityType == EntityTypes.Player)
                     {
                         // Inflict stage one vampirism disease
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
@@ -1057,7 +1057,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 if (target.Level != 1)
                 {
                     // Infect target
-                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreatePoison(poisonType);
+                    EntityEffectBundle bundle = effectManager.CreatePoison(poisonType);
                     effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                 }
             }
@@ -1285,7 +1285,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static void InflictDisease(DaggerfallEntity target, byte[] diseaseList)
         {
             // Must have a valid disease list
-            if (diseaseList == null || diseaseList.Length == 0)
+            if (diseaseList == null || diseaseList.Length == 0 || target.EntityBehaviour.EntityType != EntityTypes.Player)
                 return;
 
             // Only allow player to catch a disease this way
