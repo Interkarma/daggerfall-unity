@@ -1058,13 +1058,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallStaticDoors[] allDoors = GameObject.FindObjectsOfType<DaggerfallStaticDoors>();
             if (allDoors != null && allDoors.Length > 0)
             {
+                Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
                 // Find closest door to player
                 float closestDoorDistance = float.MaxValue;
                 foreach (DaggerfallStaticDoors doors in allDoors)
                 {
                     int doorIndex;
                     Vector3 doorPos;
-                    Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
                     if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex, DoorTypes.DungeonExit))
                     {
                         float distance = Vector3.Distance(playerPos, doorPos);
