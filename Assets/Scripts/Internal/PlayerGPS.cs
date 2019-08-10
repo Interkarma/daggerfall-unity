@@ -889,7 +889,7 @@ namespace DaggerfallWorkshop
 
             // Get building information
             DiscoveredBuilding db;
-            if (!GetBuildingDiscoveryData(buildingKey, out db))
+            if (!GetBaseBuildingDiscoveryData(buildingKey, out db))
                 return;
 
             // Get location discovery
@@ -1106,8 +1106,8 @@ namespace DaggerfallWorkshop
             if (GetDiscoveredBuilding(buildingKey, out discoveredBuildingOut))
                 return true;
 
-            // if not try to get it from GetBuildingDiscoveryData() function
-            if (GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut))
+            // if not try to get it from GetBaseBuildingDiscoveryData() function
+            if (GetBaseBuildingDiscoveryData(buildingKey, out discoveredBuildingOut))
                 return true;
 
             return false;
@@ -1159,13 +1159,13 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets initial building information from current location (no building name expansion).
+        /// Gets base building information from current location (no building name expansion). This is used as intermediate result by other functions like DiscoverBuilding and GetAnyBuilding
         /// Does not change discovery state for building.
         /// </summary>
         /// <param name="buildingKey">Key of building to query.</param>
         /// <param name="buildingDiscoveryData">[out] building discovery data of queried building</param>
         /// <returns>True if building information was found.</returns>
-        bool GetBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
+        bool GetBaseBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
         {
             buildingDiscoveryData = new DiscoveredBuilding();
 
