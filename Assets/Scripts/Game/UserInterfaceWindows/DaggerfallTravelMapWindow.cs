@@ -428,7 +428,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // If a goto location specified, find it and ask if player wants to travel.
             if (!string.IsNullOrEmpty(gotoLocation))
             {
-                OpenRegionPanel(gotoRegion);
+                mouseOverRegion = gotoRegion;
+                OpenRegionPanel(mouseOverRegion);
+                UpdateRegionLabel();
                 HandleLocationFindEvent(null, gotoLocation);
                 gotoLocation = null;
             }
