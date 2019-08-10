@@ -736,12 +736,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Open potion mixer window if player has some ingredients
             CloseWindow();
-            for (int i = 0; i < playerEntity.Items.Count; i++)
+            foreach (ItemCollection playerItems in new ItemCollection[] { GameManager.Instance.PlayerEntity.Items, GameManager.Instance.PlayerEntity.WagonItems })
             {
-                if (playerEntity.Items.GetItem(i).IsIngredient)
+                for (int i = 0; i < playerItems.Count; i++)
                 {
-                    uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
-                    return;
+                    if (playerItems.GetItem(i).IsIngredient)
+                    {
+                        uiManager.PushWindow(DaggerfallUI.Instance.DfPotionMakerWindow);
+                        return;
+                    }
                 }
             }
             DaggerfallUI.MessageBox(34);

@@ -286,18 +286,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void AddRecipeToCauldron(int index, string recipeName)
         {
-            ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
             PotionRecipe recipe = recipes[index];
             Dictionary<int, DaggerfallUnityItem> recipeIngreds = new Dictionary<int, DaggerfallUnityItem>();
             foreach (PotionRecipe.Ingredient ingred in recipe.Ingredients)
                 recipeIngreds.Add(ingred.id, null);
 
             // Find matching items for the recipe ingredients
-            for (int i = 0; i < playerItems.Count; i++)
+            foreach (ItemCollection playerItems in new ItemCollection[] { GameManager.Instance.PlayerEntity.Items, GameManager.Instance.PlayerEntity.WagonItems })
             {
-                DaggerfallUnityItem item = playerItems.GetItem(i);
-                if (item.IsIngredient && recipeIngreds.ContainsKey(item.TemplateIndex) && recipeIngreds[item.TemplateIndex] == null)
-                    recipeIngreds[item.TemplateIndex] = item;
+                for (int i = 0; i < playerItems.Count; i++)
+                {
+                    DaggerfallUnityItem item = playerItems.GetItem(i);
+                    if (item.IsIngredient && recipeIngreds.ContainsKey(item.TemplateIndex) && recipeIngreds[item.TemplateIndex] == null)
+                        recipeIngreds[item.TemplateIndex] = item;
+                }
             }
             // If player doesn't have all the required ingredients, display message else move ingredients into cauldron.
             if (recipeIngreds.ContainsValue(null))
