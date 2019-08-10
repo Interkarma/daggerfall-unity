@@ -402,12 +402,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void UpdateAutomapStateOnWindowPush()
         {
-            gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-
-            gameobjectBeacons.SetActive(true);
-
-            if (gameObjectUserNoteMarkers != null)
-                gameObjectUserNoteMarkers.SetActive(true);
+            SetActivationStateOfMapObjects(true);
 
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
@@ -422,7 +417,7 @@ namespace DaggerfallWorkshop.Game
 
             UpdateMicroMapTexture();
 
-            // create teleport markers
+            // create teleport markers (that are not already present on map)
             CreateTeleporterMarkers();
 
             if (gameobjectTeleporterMarkers != null)
@@ -436,19 +431,11 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void UpdateAutomapStateOnWindowPop()
         {
-            // about gameobjectGeometry.SetActive(false):
+            // about SetActivationStateOfMapObjects(false):
             // this will not be enough if we will eventually allow gui windows to be opened while exploring the world
             // then it will be necessary to either only disable the colliders on the automap level geometry or
             // make player collision ignore colliders of objects in automap layer - I would clearly prefer this option
-            gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
-            
-            gameobjectBeacons.SetActive(false);
-
-            if (gameObjectUserNoteMarkers != null)
-                gameObjectUserNoteMarkers.SetActive(false);
-
-            if (gameobjectTeleporterMarkers != null)
-                gameobjectTeleporterMarkers.SetActive(false);
+            SetActivationStateOfMapObjects(false);
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)))
             {
@@ -1432,6 +1419,25 @@ namespace DaggerfallWorkshop.Game
         //    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
         //    material.renderQueue = 3000;
         //}
+
+        /// <summary>
+        /// sets active state of map GameObjects like geometry, beacons, user note markers and teleporter markers
+        /// used on automap open to enable (show) objects and hide them on automap close
+        /// it is important to set them inactive when closing the map - so that ingame raycasts won't hit colliders of map objects
+        /// </summary>
+        /// <param name="active">the desired activation state for the map objects to be set</param>
+        private void SetActivationStateOfMapObjects(bool active)
+        {          
+            gameobjectGeometry.SetActive(active);
+
+            gameobjectBeacons.SetActive(active);
+
+            if (gameObjectUserNoteMarkers != null)
+                gameObjectUserNoteMarkers.SetActive(active);
+
+            if (gameobjectTeleporterMarkers != null)
+                gameobjectTeleporterMarkers.SetActive(active);
+        }
 
         /// <summary>
         /// setup beacons: lazy creation of player marker arrow and beacons including
@@ -2528,16 +2534,16 @@ namespace DaggerfallWorkshop.Game
                 CreateIndoorGeometryForAutomap(door.Value);
                 RestoreStateAutomapDungeon(true);
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-                gameobjectGeometry.SetActive(false);
-                gameobjectBeacons.SetActive(false);
+
+                SetActivationStateOfMapObjects(false);
             }
             else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
                 CreateDungeonGeometryForAutomap();
                 RestoreStateAutomapDungeon(!initFromLoadingSave); // if a save game was loaded, do not reset the revisited state (don't set parameter forceNotVisitedInThisRun to true)
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-                gameobjectGeometry.SetActive(false);
-                gameobjectBeacons.SetActive(false);
+
+                SetActivationStateOfMapObjects(false);
             }
             else
             {
