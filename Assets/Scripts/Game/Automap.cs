@@ -409,6 +409,9 @@ namespace DaggerfallWorkshop.Game
             if (gameObjectUserNoteMarkers != null)
                 gameObjectUserNoteMarkers.SetActive(true);
 
+            if (gameobjectTeleporterMarkers != null)
+                gameobjectTeleporterMarkers.SetActive(true);
+
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
@@ -422,7 +425,7 @@ namespace DaggerfallWorkshop.Game
 
             UpdateMicroMapTexture();
 
-            // create teleport markers
+            // create teleport markers (that are not already present on map)
             CreateTeleporterMarkers();
 
             if (gameobjectTeleporterMarkers != null)
@@ -2530,6 +2533,12 @@ namespace DaggerfallWorkshop.Game
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
                 gameobjectGeometry.SetActive(false);
                 gameobjectBeacons.SetActive(false);
+
+                if (gameObjectUserNoteMarkers != null)
+                    gameObjectUserNoteMarkers.SetActive(false);
+
+                if (gameobjectTeleporterMarkers != null)
+                    gameobjectTeleporterMarkers.SetActive(false);
             }
             else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
@@ -2538,6 +2547,12 @@ namespace DaggerfallWorkshop.Game
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
                 gameobjectGeometry.SetActive(false);
                 gameobjectBeacons.SetActive(false);
+
+                if (gameObjectUserNoteMarkers != null)
+                    gameObjectUserNoteMarkers.SetActive(false);
+
+                if (gameobjectTeleporterMarkers != null)
+                    gameobjectTeleporterMarkers.SetActive(false);
             }
             else
             {
