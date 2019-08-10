@@ -149,18 +149,18 @@ namespace DaggerfallWorkshop.Game.Formulas
         #region Player
 
         // Generates player health based on level and career hit points per level
-        public static int RollMaxHealth(int level, int hitPointsPerLevel)
+        public static int RollMaxHealth(PlayerEntity player)
         {
             Formula_2i del;
             if (formula_2i.TryGetValue("RollMaxHealth", out del))
-                return del(level, hitPointsPerLevel);
+                return del(player.Level, player.Career.HitPointsPerLevel);
 
             const int baseHealth = 25;
-            int maxHealth = baseHealth + hitPointsPerLevel;
+            int maxHealth = baseHealth + player.Career.HitPointsPerLevel;
 
-            for (int i = 1; i < level; i++)
+            for (int i = 1; i < player.Level; i++)
             {
-                maxHealth += UnityEngine.Random.Range(1, hitPointsPerLevel + 1);
+                maxHealth += CalculateHitPointsPerLevelUp(player);
             }
 
             return maxHealth;

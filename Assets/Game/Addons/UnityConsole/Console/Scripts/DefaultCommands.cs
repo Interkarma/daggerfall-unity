@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
@@ -55,6 +56,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(KillAllEnemies.name, KillAllEnemies.description, KillAllEnemies.usage, KillAllEnemies.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TransitionToExterior.name, TransitionToExterior.description, TransitionToExterior.usage, TransitionToExterior.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(RerollMaxHealth.name, RerollMaxHealth.description, RerollMaxHealth.usage, RerollMaxHealth.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(ResetAssets.name, ResetAssets.description, ResetAssets.usage, ResetAssets.Execute);
             ConsoleCommandsDatabase.RegisterCommand(RetryAssetImports.name, RetryAssetImports.description, RetryAssetImports.usage, RetryAssetImports.Execute);
@@ -416,6 +418,26 @@ namespace Wenzil.Console
                 }
                 else
                     return error;
+            }
+        }
+
+        private static class RerollMaxHealth
+        {
+            public static readonly string name = "reroll_maxhealth";
+            public static readonly string error = "";
+            public static readonly string description = @"Repair permanently reduced maximum health caused by a level-up bug in 0.10.3 and earlier. " +
+                                                        @"This bug is resolved in 0.10.4 and later but some older save games might still need repair. " +
+                                                        @"Note that new maximum health is set by forumla and may be slightly higher or lower than before bug.";
+            public static readonly string usage = "reroll_maxhealth";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
+
+                int rerolledHealth = FormulaHelper.RollMaxHealth(GameManager.Instance.PlayerEntity);
+                GameManager.Instance.PlayerEntity.MaxHealth = rerolledHealth;
+
+                return string.Format("Your new maximum health is {0}", rerolledHealth);
             }
         }
 
