@@ -700,7 +700,7 @@ namespace DaggerfallWorkshop.Game
                                             string overrideBuildingName = string.Empty;
                                             if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
                                             {
-                                                if (pcLearnedAboutExistence)
+                                                if (locationWasMarkedOnMapByNPC)
                                                     buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest (same as overrideBuildingName)
                                             }
                                         }
