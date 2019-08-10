@@ -13,9 +13,9 @@ Settings and settings presets, created with Daggerfall Tools > Mod Settings.
 ~/ReadMe.txt
 A readme file that should be shipped with the mod.
 
-~/Resources
-A folder containing resources such as text files or asset files (textures, materials, models and prefabs etc.).
-It should follow the same structure of loose files inside StreamingAssets (i.e. Resources/IconPacks/), although this is often not mandatory.
+~/Assets
+A folder containing text or binary assets like textures, materials, models and prefabs.
+It should follow the same structure of loose files inside StreamingAssets (i.e. Assets/IconPacks/), although this is often not mandatory.
 
 ~/Scripts
 A folder containing C# scripts.
