@@ -108,6 +108,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.reflexPicker.PlayerReflexes = characterDocument.reflexes;
         }
 
+        public CharacterDocument GetUpdatedCharacterDocument()
+        {
+            characterDocument.name = textBox.Text;
+            characterDocument.startingStats = statsRollout.StartingStats;
+            characterDocument.workingStats = statsRollout.WorkingStats;
+            characterDocument.startingSkills = skillsRollout.StartingSkills;
+            characterDocument.workingSkills = skillsRollout.WorkingSkills;
+            characterDocument.faceIndex = facePicker.FaceIndex;
+            characterDocument.reflexes = reflexPicker.PlayerReflexes;
+            return characterDocument;
+        }
+
         #endregion
 
         #region Events
