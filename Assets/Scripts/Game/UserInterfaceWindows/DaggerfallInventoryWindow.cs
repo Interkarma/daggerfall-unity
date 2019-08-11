@@ -544,28 +544,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetupDefaultActionMode()
         {
-            bool proximityWagonAccess = false;
             if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                proximityWagonAccess = DungeonWagonAccessProximityCheck();
+                allowDungeonWagonAccess |= DungeonWagonAccessProximityCheck();
 
             if (lootTarget != null)
                 SelectActionMode(ActionModes.Remove);
-            // Start with wagon if accessing from dungeon
             else
             {
-                // Fast access: autoselect wagon when nearby
-                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt)
-                    allowDungeonWagonAccess |= proximityWagonAccess;
-
-                if (allowDungeonWagonAccess)
+                SelectActionMode(ActionModes.Equip);
+                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt && allowDungeonWagonAccess)
                 {
                     ShowWagon(true);
-                    SelectActionMode(ActionModes.Remove);
+                    // do not change default ActionMode, this can be confusing
                 }
-                else
-                    SelectActionMode(ActionModes.Equip);
             }
-            allowDungeonWagonAccess |= proximityWagonAccess;
         }
 
         public override void OnPush()
