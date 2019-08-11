@@ -777,6 +777,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (spellsListBox.SelectedIndex == -1)
                 return;
 
+            // Cannot delete special vampire/lycanthropy spells, as there's no way to get them back
+            // These will be cleaned up when character is cured of their curse
+            EffectBundleSettings spell;
+            if (GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+            {
+                if (spell.Tag == PlayerEntity.vampireSpellTag)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotDeleteVamp"));
+                    return;
+                }
+                else if (spell.Tag == PlayerEntity.lycanthropySpellTag)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotDeleteWere"));
+                    return;
+                }
+            }
+
             // Prompt and delete spell
             deleteSpellIndex = spellsListBox.SelectedIndex;
             DaggerfallMessageBox mb = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, TextManager.Instance.GetText(textDatabase, "deleteSpell"), this);
