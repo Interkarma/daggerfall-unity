@@ -350,13 +350,20 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modAuthorContactLabel.Text  += ms.modInfo.ContactInfo;
         modDFTFUVersionLabel.Text   += ms.modInfo.DFUnity_Version;
 
+        Mod mod = ModManager.Instance.GetMod(ms.modInfo.ModTitle);
+
+#if UNITY_EDITOR
+        if (mod.IsVirtual)
+            modTitleLabel.Text += " (debug)";
+#endif
+
         if (ms.enabled)
             modList.SelectedTextColor = selectedTextColor;
         else
             modList.SelectedTextColor = Color.red;
 
         // Update buttons
-        if (ModManager.Instance.GetMod(ms.modInfo.ModTitle).HasSettings)
+        if (mod.HasSettings)
         {
             modSettingsButton.Enabled = true;
             showModDescriptionButton.Position = new Vector2(5, 83);

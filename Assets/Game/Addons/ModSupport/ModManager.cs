@@ -10,6 +10,9 @@
 //
 
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -45,6 +48,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             ".yaml",
             ".fnt",
         };
+
+#if UNITY_EDITOR
+        [Tooltip("Loads mods from Assets/Game/Mods in debug mode, without creating an AssetBundle.")]
+        public bool LoadVirtualMods = true;
+#endif
 
         #endregion
 
@@ -462,6 +470,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                 }
             }
+
+#if UNITY_EDITOR
+            if (LoadVirtualMods)
+            {
+                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*.dfmod.json", SearchOption.AllDirectories))
+                {
+                    var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
+                    if (Mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
+                    {
+                        Debug.LogWarningFormat("Ignoring virtual mod {0} because release mod is already loaded.", modInfo.ModTitle);
+                        continue;
+                    }
+
+                    Mods.Add(new Mod(modInfo));
+                }
+            }
+#endif
         }
 
         // Loads Asset bundle and adds to ModLookUp dictionary

@@ -43,6 +43,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         private Table textdatabase;
         private bool textdatabaseLoaded;
 
+#if UNITY_EDITOR
+        private readonly Type[] types;
+#endif
+
         #endregion
 
         #region Properties
@@ -212,18 +216,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Makes a mod from a manifest file without an assetbundle.
-        /// This is only useful for mod development and testing, specifically to benefit of debuggers.
+        /// Makes a mod from a manifest file without an assetbundle for debug.
         /// </summary>
-        /// <param name="manifestPath">Full or relative path to .dfmod.json file, rooted at Mods/.</param>
-        public Mod(string manifestPath)
+        /// <param name="modInfo">Content of manifest file.</param>
+        internal Mod(ModInfo modInfo)
         {
-            if (!Path.IsPathRooted(manifestPath))
-                manifestPath = Application.dataPath + "/Game/Mods/" + manifestPath;
-
             IsVirtual = true;
-            modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
+            this.modInfo = modInfo;
             loadedAssets = new Dictionary<string, LoadedAsset>();
+            types = modInfo.Files.Where(x => x.EndsWith(".cs"))
+                .Select(x => AssetDatabase.LoadAssetAtPath<MonoScript>(x))
+                .Where(x => x != null).Select(x => x.GetClass()).Where(x => x != null).ToArray();
         }
 #endif
 
@@ -571,8 +574,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (IsVirtual)
             {
                 string path = modInfo.Files.FirstOrDefault(CompareNameWithPath(name));
-                if (path != null)
-                    return File.ReadAllText(path);
+                return path != null ? File.ReadAllText(path) : null;
             }
 #endif
 
@@ -702,6 +704,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns></returns>
         public List<Assembly> CompileSourceToAssemblies()
         {
+#if UNITY_EDITOR
+            if (IsVirtual)
+                return null;
+#endif
+
             List<string> stringSource = new List<string>(sources.Count);
             Assembly assembly = null;
 
@@ -746,10 +753,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns></returns>
         public List<SetupOptions> FindModLoaders(StateManager.StateTypes state)
         {
+            List<SetupOptions> modLoaders;
+
+#if UNITY_EDITOR
+            if (IsVirtual)
+            {
+                modLoaders = new List<SetupOptions>();
+                foreach (Type type in types)
+                    FindModLoaders(state, type, modLoaders);
+                modLoaders.Sort();
+                return modLoaders;           
+            }
+#endif
             if (assemblies == null || assemblies.Count < 1)
                 return null;
 
-            List<SetupOptions> modLoaders = new List<SetupOptions>(1);
+            modLoaders = new List<SetupOptions>(1);
 
             for (int i = 0; i < assemblies.Count; i++)
             {
@@ -759,33 +778,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     foreach (Type t in types)
                     {
-                        if (!t.IsClass)
-                            continue;
-
-                        foreach (MethodInfo mi in t.GetMethods())
-                        {
-                            if (!mi.IsPublic || !mi.IsStatic)
-                                continue;
-                            else if (mi.ContainsGenericParameters)
-                                continue;
-
-                            Invoke initAttribute = (Invoke)Attribute.GetCustomAttribute(mi, typeof(Invoke));
-                            if (initAttribute == null)
-                                continue;
-                            else if (initAttribute.StartState != state)
-                                continue;
-                            ParameterInfo[] pi = mi.GetParameters();
-                            if (pi.Length != 1)
-                                continue;
-                            else if (pi[0].ParameterType != typeof(InitParams))
-                                continue;
-                            SetupOptions options = new SetupOptions(initAttribute.Priority, this, mi);
-#if DEBUG
-                            Debug.Log(string.Format("found new loader: {0} for mod: {1}", options.mi.Name, this.Title));
-#endif
-                            modLoaders.Add(options);
-
-                        }
+                        if (t.IsClass)
+                            FindModLoaders(state, t, modLoaders);
                     }
                 }
                 catch (Exception ex)
@@ -797,6 +791,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             modLoaders.Sort();
             return modLoaders;
+        }
+
+        private void FindModLoaders(StateManager.StateTypes state, Type type, List<SetupOptions> modLoaders)
+        {
+            foreach (MethodInfo mi in type.GetMethods())
+            {
+                if (!mi.IsPublic || !mi.IsStatic)
+                    continue;
+                else if (mi.ContainsGenericParameters)
+                    continue;
+
+                Invoke initAttribute = (Invoke)Attribute.GetCustomAttribute(mi, typeof(Invoke));
+                if (initAttribute == null)
+                    continue;
+                else if (initAttribute.StartState != state)
+                    continue;
+                ParameterInfo[] pi = mi.GetParameters();
+                if (pi.Length != 1)
+                    continue;
+                else if (pi[0].ParameterType != typeof(InitParams))
+                    continue;
+                SetupOptions options = new SetupOptions(initAttribute.Priority, this, mi);
+#if DEBUG
+                Debug.Log(string.Format("found new loader: {0} for mod: {1}", options.mi.Name, this.Title));
+#endif
+                modLoaders.Add(options);
+
+            }
         }
 
         private bool AddAsset(string assetName, UnityEngine.Object asset)
