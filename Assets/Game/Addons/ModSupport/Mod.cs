@@ -853,8 +853,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>The loaded asset bundle or null.</returns>
         public AssetBundle LoadAssetBundle()
         {
-            string abPath = System.IO.Path.Combine(dirPath, FileName + ModManager.MODEXTENSION);
-            if (!System.IO.File.Exists(abPath))
+#if UNITY_EDITOR
+            if (IsVirtual)
+                return null;
+#endif
+
+            string abPath = Path.Combine(dirPath, FileName + ModManager.MODEXTENSION);
+            if (!File.Exists(abPath))
                 return null;
 
             AssetBundle ab = AssetBundle.LoadFromFile(abPath);
@@ -871,8 +876,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         public IEnumerator LoadAssetBundleAsync()
         {
-            string abPath = System.IO.Path.Combine(dirPath, FileName + ModManager.MODEXTENSION);
-            if (!System.IO.File.Exists(abPath))
+#if UNITY_EDITOR
+            if (IsVirtual)
+                yield break;
+#endif
+
+            string abPath = Path.Combine(dirPath, FileName + ModManager.MODEXTENSION);
+            if (!File.Exists(abPath))
                 yield break;
 
             AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(abPath);
