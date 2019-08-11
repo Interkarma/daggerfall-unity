@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
 // Contributors:    Numidium, Allofich, Interkarma
-// 
+//
 // Notes:
 //
 
@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game
 
         // Greeting records extracted from FALL.EXE.
         readonly ushort[] greetings =               { 8550, 8551, 8552, 8553, 8554, 8555, 8556, 8557, 8558, 8559, 8560, 8561, 8562, 8562,
-                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 }; 
+                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 };
 
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.6f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.8f; // Chances unknown
@@ -516,12 +516,12 @@ namespace DaggerfallWorkshop.Game
         public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-        
+
             // Get NPC faction
             // TODO: Factor in adjustments for children of regional factions
             FactionFile.FactionData NPCfaction;
             player.FactionData.GetRegionFaction(GameManager.Instance.PlayerGPS.CurrentRegionIndex, out NPCfaction, false);
-            
+
             int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
             if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length)
@@ -1023,6 +1023,8 @@ namespace DaggerfallWorkshop.Game
 
         public string DirectionVector2DirectionHintString(Vector2 vecDirectionToTarget)
         {
+            if (vecDirectionToTarget == Vector2.zero)
+                return TextManager.Instance.GetText(textDatabase, "rightHere");
             float angle = Mathf.Acos(Vector2.Dot(vecDirectionToTarget, Vector2.right) / vecDirectionToTarget.magnitude) / Mathf.PI * 180.0f;
             if (vecDirectionToTarget.y < 0)
                 angle = 180.0f + (180.0f - angle);
@@ -1049,6 +1051,14 @@ namespace DaggerfallWorkshop.Game
 
         public string GetKeySubjectLocationCompassDirection()
         {
+            Vector2 playerPosition = GetPlayerPosition();
+            Vector2 buildingPosition = GetBuildingPosition(currentKeySubjectBuildingKey);
+            Vector2 vecDirectionToTarget = buildingPosition - playerPosition;
+            return DirectionVector2DirectionHintString(vecDirectionToTarget);
+        }
+
+        public static Vector2 GetPlayerPosition()
+        {
             // Note Nystul:
             // I reused coordinate mapping from buildings from exterior automap layout implementation here
             // So both building position as well as player position are calculated in map coordinates and compared
@@ -1056,25 +1066,29 @@ namespace DaggerfallWorkshop.Game
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
             playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
             playerPos.y = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
-            int refWidth = (int)(ExteriorAutomap.blockSizeWidth * ExteriorAutomap.numMaxBlocksX * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
-            int refHeight = (int)(ExteriorAutomap.blockSizeHeight * ExteriorAutomap.numMaxBlocksY * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            int refWidth = (int) (ExteriorAutomap.blockSizeWidth * ExteriorAutomap.numMaxBlocksX * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
+            int refHeight = (int) (ExteriorAutomap.blockSizeHeight * ExteriorAutomap.numMaxBlocksY * GameManager.Instance.ExteriorAutomap.LayoutMultiplier);
             playerPos.x *= refWidth;
             playerPos.y *= refHeight;
             playerPos.x -= refWidth * 0.5f;
             playerPos.y -= refHeight * 0.5f;
+            return playerPos;
+        }
 
-            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
+        public Vector2 GetBuildingPosition(int buildingKey)
+        {
+            BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
 
             if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID)
                 && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key)
                 && dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived
                 != QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap)
             {
-                dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints;
+                dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived =
+                    QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints;
             }
 
-            Vector2 vecDirectionToTarget = buildingInfo.position - playerPos;
-            return DirectionVector2DirectionHintString(vecDirectionToTarget);
+            return buildingInfo.position;
         }
 
         public void MarkKeySubjectLocationOnMap()
@@ -1085,7 +1099,7 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
                     dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
-                
+
                 // above line could also be done with these statements:
                 // Place place = (Place)dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questResource;
                 // GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, place.SiteDetails.buildingName);
@@ -1885,7 +1899,7 @@ namespace DaggerfallWorkshop.Game
             if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
             {
                 // Undiscover residences when they are a quest resource (named residence) when creating quest resource
-                // Otherwise previously discovered residences will automatically show up on the automap when used in a quest            
+                // Otherwise previously discovered residences will automatically show up on the automap when used in a quest
                 UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
             }
 
@@ -2207,7 +2221,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
 
-                    questResources = quest.GetAllResources(typeof(Place)); // Get list of place quest resources                   
+                    questResources = quest.GetAllResources(typeof(Place)); // Get list of place quest resources
                     for (int i = 0; i < questResources.Length; i++)
                     {
                         Place place = (Place)questResources[i];
@@ -2535,7 +2549,7 @@ namespace DaggerfallWorkshop.Game
                         }
                         catch (Exception e)
                         {
-                            string exceptionMessage = string.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
+                            string exceptionMessage = string.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params:
                                                                         seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
                                                                         buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             DaggerfallUnity.LogMessage(exceptionMessage, true);

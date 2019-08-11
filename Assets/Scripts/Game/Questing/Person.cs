@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -293,6 +293,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
+            Place homePlace = GetHomePlace();
+            if (homePlace != null)
+                ParentQuest.LastPlaceReferenced = homePlace;
 
             textOut = string.Empty;
             bool result = true;
@@ -405,7 +408,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Create SiteLink if not already present
             if (!QuestMachine.HasSiteLink(ParentQuest, homePlaceSymbol))
                 QuestMachine.CreateSiteLink(ParentQuest, homePlaceSymbol);
-            
+
             // Assign to home place
             homePlace.AssignQuestResource(Symbol);
             SetAssignedPlaceSymbol(homePlace.Symbol);
@@ -782,7 +785,7 @@ namespace DaggerfallWorkshop.Game.Questing
             List<TextFile.Token[]> anyRumorsAnswers = null;
             if (this.InfoMessageID != -1)
             {
-                anyInfoAnswers = new List<TextFile.Token[]>();                
+                anyInfoAnswers = new List<TextFile.Token[]>();
                 Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
                 if (message != null)
                 {
@@ -802,7 +805,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
                         anyRumorsAnswers.Add(tokens);
                     }
-                }                
+                }
             }
 
             string key = this.Symbol.Name;
@@ -1234,7 +1237,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            
+
             FactionFile.FactionData dsfactionData;
             if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(data.factionID, out dsfactionData) && data.factionID != 0)
                 throw new Exception("Could not deserialize Person resource FactionID to FactionData");
