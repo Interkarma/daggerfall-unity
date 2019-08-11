@@ -218,15 +218,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Makes a mod from a manifest file without an assetbundle for debug.
         /// </summary>
+        /// <param name="manifestPath">Path to manifest file.</param>
         /// <param name="modInfo">Content of manifest file.</param>
-        internal Mod(ModInfo modInfo)
+        internal Mod(string manifestPath, ModInfo modInfo)
         {
+            if (!manifestPath.EndsWith(".dfmod.json"))
+                throw new ArgumentException(string.Format("Path is rejected because it doesn't end with {0}", ModManager.MODINFOEXTENSION), "manifestPath");
+
+            if (modInfo == null)
+                throw new ArgumentNullException("modInfo");
+
             IsVirtual = true;
             this.modInfo = modInfo;
             loadedAssets = new Dictionary<string, LoadedAsset>();
             types = modInfo.Files.Where(x => x.EndsWith(".cs"))
                 .Select(x => AssetDatabase.LoadAssetAtPath<MonoScript>(x))
                 .Where(x => x != null).Select(x => x.GetClass()).Where(x => x != null).ToArray();
+            fileName = Path.GetFileName(manifestPath.Remove(manifestPath.IndexOf(ModManager.MODINFOEXTENSION)));
+            Directory.CreateDirectory(dirPath = Path.Combine(ModManager.Instance.ModDirectory, "Virtual"));
+            HasSettings = ModSettings.ModSettingsData.HasSettings(this);
         }
 #endif
 
@@ -425,14 +435,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         public ModSettings.ModSettings GetSettings()
         {
-#if UNITY_EDITOR
-            if (IsVirtual)
-            {
-                string path = modInfo.Files.First(CompareNameWithPath("modsettings.json"));
-                return new ModSettings.ModSettings(path.Replace("Assets", Application.dataPath));
-            }
-#endif
-
             return new ModSettings.ModSettings(this);
         }
 

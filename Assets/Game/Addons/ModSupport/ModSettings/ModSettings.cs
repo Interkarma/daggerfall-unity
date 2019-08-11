@@ -45,18 +45,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             data.LoadLocalValues();
         }
 
-#if UNITY_EDITOR
-        /// <summary>
-        /// Import settings from settings file.
-        /// This constructor is only available in editor for debugging mod scripts without building an assetbundle.
-        /// </summary>
-        /// <param name="path">Path to mod settings file.</param>
-        internal ModSettings(string path)
-        {
-            data = ModSettingsData.Make(path);
-        }
-#endif
-
         #endregion
 
         #region Public Methods

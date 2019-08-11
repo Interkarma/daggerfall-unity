@@ -474,7 +474,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #if UNITY_EDITOR
             if (LoadVirtualMods)
             {
-                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*.dfmod.json", SearchOption.AllDirectories))
+                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
                 {
                     var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
                     if (Mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
@@ -483,7 +483,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         continue;
                     }
 
-                    Mods.Add(new Mod(modInfo));
+                    Mods.Add(new Mod(manifestPath, modInfo));
                 }
             }
 #endif
