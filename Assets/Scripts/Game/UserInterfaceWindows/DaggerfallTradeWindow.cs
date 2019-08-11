@@ -756,7 +756,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     case WindowModes.Repair:
                         // Check that item can be repaired, is damaged & transfer if so.
-                        if (item.IsEnchanted)
+                        if (item.IsEnchanted && !DaggerfallUnity.Settings.AllowMagicRepairs)
                             DaggerfallUI.MessageBox(magicItemsCannotBeRepairedTextId);
                         else if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
                         {
