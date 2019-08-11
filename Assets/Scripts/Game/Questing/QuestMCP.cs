@@ -209,50 +209,58 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string LocationDirection()
             {
-                Vector2 positionPlayer;
-                Vector2 positionLocation = Vector2.zero;
-
-                DFPosition position = new DFPosition();
-                PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
-                if (playerGPS)
-                    position = playerGPS.CurrentMapPixel;
-                
-                positionPlayer = new Vector2(position.X, position.Y);
-
-                int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
-                if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
-                    region = -1;
-                
-                DFRegion.RegionMapTable locationInfo = new DFRegion.RegionMapTable();
-
-                DFRegion currentDFRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(region);
-
-                string name = this.parent.LastPlaceReferenced.SiteDetails.locationName.ToLower();
-                string[] locations = currentDFRegion.MapNames;                              
-                for (int i = 0; i < locations.Length; i++)
+                Place questLastPlaceReferenced = parent.LastPlaceReferenced;
+                if (questLastPlaceReferenced == null)
                 {
-                    if (locations[i].ToLower() == name) // Valid location found with exact name
-                    {
-                        if (currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
-                        {
-                            int index = currentDFRegion.MapNameLookup[locations[i]];
-                            locationInfo = currentDFRegion.MapTable[index];
-                            position = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
-                            positionLocation = new Vector2(position.X, position.Y);
-                        }
-                    }
-                }
-                
-                if (positionLocation != Vector2.zero)
-                {
-                    Vector2 vecDirectionToTarget = positionLocation - positionPlayer;
-                    vecDirectionToTarget.y = -vecDirectionToTarget.y; // invert y axis
-                    return GameManager.Instance.TalkManager.DirectionVector2DirectionHintString(vecDirectionToTarget);
+                    QuestMachine.Log(parent, "Trying to get direction to quest location when no location has been referenced in the quest.");
                 }
                 else
                 {
-                    return "... never mind ...";
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    DFPosition position = playerGPS ? playerGPS.CurrentMapPixel : new DFPosition();
+                    Vector2 positionPlayer = new Vector2(position.X, position.Y);
+                    DFRegion currentDFRegion = GetRegionFromPosition(position);
+                    string name = questLastPlaceReferenced.SiteDetails.locationName;
+                    int index;
+                    if (currentDFRegion.MapNameLookup.TryGetValue(name, out index))
+                    {
+                        Vector2 positionLocation = GetPositionLocation(currentDFRegion, index);
+                        Vector2 vecDirectionToTarget;
+                        if (positionLocation == positionPlayer)
+                        {
+                            // Same location, see if we can narrow it to a building.
+                            int buildingKey = questLastPlaceReferenced.SiteDetails.buildingKey;
+                            positionPlayer = TalkManager.GetPlayerPosition();
+                            positionLocation = GameManager.Instance.TalkManager.GetBuildingPosition(buildingKey);
+                            vecDirectionToTarget = positionLocation - positionPlayer;
+                        }
+                        else
+                        {
+                            vecDirectionToTarget = positionLocation - positionPlayer;
+                            vecDirectionToTarget.y = -vecDirectionToTarget.y; // invert y axis
+                        }
+
+                        return GameManager.Instance.TalkManager.DirectionVector2DirectionHintString(vecDirectionToTarget);
+                    }
                 }
+
+                return "... never mind ...";
+            }
+
+            private static Vector2 GetPositionLocation(DFRegion currentDFRegion, int index)
+            {
+                DFRegion.RegionMapTable locationInfo = currentDFRegion.MapTable[index];
+                DFPosition location = MapsFile.LongitudeLatitudeToMapPixel(locationInfo.Longitude, locationInfo.Latitude);
+                Vector2 positionLocation = new Vector2(location.X, location.Y);
+                return positionLocation;
+            }
+
+            private static DFRegion GetRegionFromPosition(DFPosition position)
+            {
+                MapsFile mapsFile = DaggerfallUnity.Instance.ContentReader.MapFileReader;
+                int index = mapsFile.GetPoliticIndex(position.X,position.Y) - 128;
+                DFRegion region = mapsFile.GetRegion(index);
+                return region;
             }
         }
     }
