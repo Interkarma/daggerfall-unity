@@ -298,7 +298,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
     void GetLoadedMods()
     {
-        var mods = ModManager.Instance.GetAllMods(true);
+        var mods = ModManager.Instance.GetAllMods();
 
         modList.ClearItems();
 
@@ -444,6 +444,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         //save current mod settings to file
         ModManager.WriteModSettings();
+        ModManager.Instance.SortMods();
         DaggerfallUI.UIManager.PopWindow();
     }
 
