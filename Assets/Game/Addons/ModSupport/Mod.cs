@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="modInfo">Content of manifest file.</param>
         internal Mod(string manifestPath, ModInfo modInfo)
         {
-            if (!manifestPath.EndsWith(".dfmod.json"))
+            if (!manifestPath.EndsWith(ModManager.MODINFOEXTENSION))
                 throw new ArgumentException(string.Format("Path is rejected because it doesn't end with {0}", ModManager.MODINFOEXTENSION), "manifestPath");
 
             if (modInfo == null)

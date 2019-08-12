@@ -522,7 +522,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     Debug.Log("Failed to unload mod as mod title wasn't found: " + modTitle);
                     return false;
                 }
-                Mods[index].AssetBundle.Unload(unloadAllAssets);
+
+                Mod mod = Mods[index];
+                if (mod.AssetBundle)
+                    mod.AssetBundle.Unload(unloadAllAssets);
+
                 Mods.RemoveAt(index);
                 OnUnloadMod(modTitle);
                 return true;
