@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using TMPro;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -55,6 +56,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected int sdfHorzAdjust = 3;
 
         protected int asciiStart = defaultAsciiStart;
+
+        TMP_FontAsset tmpFont;
 
         #endregion
 
@@ -117,6 +120,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return sdfGlyphDimension; }
         }
 
+        public bool TMPFont
+        {
+            get { return tmpFont; }
+        }
+
         #endregion
 
         #region Constructors
@@ -177,6 +185,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DrawSDFGlyph(rawAscii, targetRect, color);
         }
 
+        float DrawTMPGlyph(int code, Vector2 position, Color color)
+        {
+            return 0;
+        }
+
         #endregion
 
         #region Public Methods
@@ -221,6 +234,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!fntFile.IsLoaded)
                 throw new Exception("DaggerfallFont: DrawText() font not loaded.");
 
+            // Redirect to TextMeshPro font if one is available and testing TMP rendering
+            if (tmpFont && DaggerfallUnity.Settings.TestTMPFontRendering)
+            {
+                DrawTMPText(text, position, scale, color);
+                return;
+            }
+
             atlasTexture.filterMode = FilterMode;
 
             byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
@@ -259,6 +279,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     // TODO: Just add space character
                     Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
                     x += rect.width;
+                }
+            }
+        }
+
+        void DrawTMPText(
+            string text,
+            Vector2 position,
+            Vector2 scale,
+            Color color)
+        {
+            byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
+            for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
+            {
+                int code = BitConverter.ToInt32(utf32Bytes, i);
+                if (tmpFont.characterDictionary.ContainsKey(code))
+                {
+                    DrawTMPGlyph(code, position, color);
                 }
             }
         }
@@ -373,6 +410,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return (IsSDFCapable) ? DaggerfallUI.Instance.SDFFontMaterial : DaggerfallUI.Instance.PixelFontMaterial;
         }
 
+        public void TryLoadTextMeshProFont(string path)
+        {
+            tmpFont = Resources.Load<TMP_FontAsset>(path);
+        }
+
         #endregion
 
         #region Private Methods
@@ -404,6 +446,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Load an SDF font variant if one is available
             TryLoadSDFFont();
+
+            // Load default TextMeshPro variant if one is available
+            TryLoadTextMeshProFont(string.Format("Fonts/{0}-TMP", font.ToString()));
 
             return true;
         }
