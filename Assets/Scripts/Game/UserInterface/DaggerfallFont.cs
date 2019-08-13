@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         public const int SpaceASCII = 32;
+        public const int ErrorCode = 63;
         const int defaultAsciiStart = 33;
         const int sdfGlyphsPerRow = 16;
         const int sdfGlyphCount = sdfGlyphsPerRow * sdfGlyphsPerRow;
@@ -185,9 +186,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DrawSDFGlyph(rawAscii, targetRect, color);
         }
 
-        float DrawTMPGlyph(int code, Vector2 position, Color color)
+        float DrawTMPGlyph(int code, Vector2 position, Vector2 scale, Color color, int lastCode = -1)
         {
-            return 0;
+            // Get glyph data for this code
+            TMP_Glyph glyph = tmpFont.characterDictionary[code];
+
+            // Use ratio of classic glyph height to TMP font point height for overall scaling ratio
+            float scalingRatio = (GlyphHeight / tmpFont.fontInfo.PointSize) * scale.y;
+
+            // Handle space glyph by just advancing position
+            if (code == SpaceASCII)
+                return glyph.xAdvance * scalingRatio;
+
+            // Compose glyph rect inside of atlas
+            float atlasWidth = tmpFont.atlas.width;
+            float atlasHeight = tmpFont.atlas.height;
+            float atlasGlyphX = glyph.x / atlasWidth;
+            float atlasGlyphY = (atlasHeight - glyph.y - glyph.height) / atlasHeight;
+            float atlasGlyphWidth = glyph.width / atlasWidth;
+            float atlasGlyphHeight = glyph.height / atlasHeight;
+            Rect atlasGlyphRect = new Rect(atlasGlyphX, atlasGlyphY, atlasGlyphWidth, atlasGlyphHeight);
+
+            // Compose target rect
+            // Can use classic glyph height to approximate baseline vertical position
+            // Cannot match dimensions of classic glyphs as TMP font can have glyphs not present in classic
+            float baseline = position.y - 2 * scale.y + GlyphHeight * scale.y + tmpFont.fontInfo.Baseline;
+            float xpos = position.x + glyph.xOffset * scalingRatio;
+            float ypos = baseline - glyph.yOffset * scalingRatio;
+            Rect targetRect = new Rect(xpos, ypos, glyph.width * scalingRatio, glyph.height * scalingRatio);
+
+            // Draw the glyph to target using SDF material
+            Graphics.DrawTexture(targetRect, tmpFont.atlas, atlasGlyphRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+
+            // Advance to next glyph position
+            return glyph.xAdvance * scalingRatio;
         }
 
         #endregion
@@ -234,8 +266,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!fntFile.IsLoaded)
                 throw new Exception("DaggerfallFont: DrawText() font not loaded.");
 
-            // Redirect to TextMeshPro font if one is available and testing TMP rendering
-            if (tmpFont && DaggerfallUnity.Settings.TestTMPFontRendering)
+            // Redirect to TextMeshPro font if one is available and using both SDF and testing TMP rendering
+            if (tmpFont && DaggerfallUnity.Settings.TestTMPFontRendering && DaggerfallUnity.Settings.SDFFontRendering)
             {
                 DrawTMPText(text, position, scale, color);
                 return;
@@ -276,7 +308,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
                 else
                 {
-                    // TODO: Just add space character
+                    // Just add space character
                     Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
                     x += rect.width;
                 }
@@ -289,14 +321,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Vector2 scale,
             Color color)
         {
+            int lastCode = -1;
+            GlyphInfo spaceGlyph = GetGlyph(SpaceASCII);
             byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
             for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
             {
+                // Get code and use ? for any character code not in dictionary
                 int code = BitConverter.ToInt32(utf32Bytes, i);
-                if (tmpFont.characterDictionary.ContainsKey(code))
-                {
-                    DrawTMPGlyph(code, position, color);
-                }
+                if (!tmpFont.characterDictionary.ContainsKey(code))
+                    code = ErrorCode;
+
+                // Draw glyph and advance position
+                position.x += DrawTMPGlyph(code, position, scale, color, lastCode);
+                lastCode = code;
             }
         }
 
