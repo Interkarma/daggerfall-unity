@@ -388,9 +388,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     glyphWidth = glyph.width,
                 };
             }
-
-            // Clear total width value - this will be recreated on next dynamic text layout
-            totalWidth = 0;
         }
 
         #endregion
