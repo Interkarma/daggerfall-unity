@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     currentLine += label.NumTextLines;                
                     label.StartCharacterIndex = horizontalScrollIndex;
-                    label.RefreshLayout();
+                    label.RefreshClassicLayout();
 
                     DecideTextColor(label, i);
 
@@ -346,7 +346,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         label.StartCharacterIndex = horizontalScrollIndex;
                     else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
                         x = -horizontalScrollIndex;
-                    label.RefreshLayout();
+                    label.RefreshClassicLayout();
 
                     DecideTextColor(label, i);
 

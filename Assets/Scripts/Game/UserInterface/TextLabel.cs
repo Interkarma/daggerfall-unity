@@ -13,7 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
+using TMPro;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -32,10 +32,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallFont font;
         string text = string.Empty;
         byte[] asciiBytes;
-        int totalWidth;
-        int totalHeight;
-        int textureWidth;
-        int textureHeight;
+        GlyphLayoutData[] glyphLayout;
+        float totalWidth;
+        float totalHeight;
         int numTextLines = 1; // 1 in unwrapped, n in wrapped
         Texture2D singleLineLabelTexture;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
@@ -70,16 +69,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         struct GlyphLayoutData
         {
-            public int x;                                       // X position of classic glyph in virtual layout area
-            public int y;                                       // Y position of classic glyph in virtual layout area
+            public float x;                                     // X position of glyph in virtual layout area
+            public float y;                                     // Y position of glyph in virtual layout area
             public byte glyphRawAscii;                          // Raw ASCII value of classic glyph
-            public int glyphWidth;                              // Width of classic glyph
+            public int glyphCode;                               // Glyph code for dictionary lookup
+            public float glyphWidth;                            // Width of glyph character
         }
 
         struct LabelLayoutData
         {
-            public int width;                                   // Width of virtual layout area
-            public int height;                                  // Height of virtual layout area
+            public float width;                                 // Width of virtual layout area
+            public float height;                                // Height of virtual layout area
             public GlyphLayoutData[] glyphLayout;               // Positions of classic glyphs inside virtual layout area
         }
 
@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int MinTextureDim
         {
             get { return minTextureDim; }
-            set { minTextureDim = Math.Max(limitMinTextureDim, value); RefreshLayout(); }
+            set { minTextureDim = Math.Max(limitMinTextureDim, value); RefreshClassicLayout(); }
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public DaggerfallFont Font
         {
             get { return font; }
-            set { font = value; RefreshLayout(); }
+            set { font = value; RefreshClassicLayout(); }
         }
 
         public string Text
@@ -148,17 +148,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HorizontalTextAlignmentSetting HorizontalTextAlignment
         {
             get { return horizontalTextAlignment; }
-            set { horizontalTextAlignment = value; RefreshLayout(); }
+            set { horizontalTextAlignment = value; RefreshClassicLayout(); }
         }
-
-        ///// <summary>
-        ///// Maintaining this only for backwards compatibility with exterior automatap.
-        ///// Deprecated and will be removed once exterior automap supports SDF fonts.
-        ///// </summary>
-        //public Texture2D Texture
-        //{
-        //    get { return GetSingleLineLabelTexture(); }
-        //}
 
         public int TextWidth
         {
@@ -181,7 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int MaxWidth
         {
             get { return maxWidth; }
-            set { maxWidth = value; RefreshLayout(); }
+            set { maxWidth = value; RefreshClassicLayout(); }
         }
 
         /// <summary>
@@ -190,7 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public bool WrapText
         {
             get { return wrapText; }
-            set { wrapText = value; RefreshLayout(); }
+            set { wrapText = value; RefreshClassicLayout(); }
         }
 
         /// <summary>
@@ -199,7 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public bool WrapWords
         {
             get { return wrapWords; }
-            set { wrapWords = value; RefreshLayout(); }
+            set { wrapWords = value; RefreshClassicLayout(); }
         }
 
         // Small hack to help horizontal scrolling work with SDF font rendering and pixel-wise list box
@@ -227,7 +218,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set
             {
                 textScale = Math.Max(0.1f, value); // Math.Min(2.0f, value));
-                RefreshLayout();
+                RefreshClassicLayout();
             }
         }
 
@@ -270,6 +261,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void DrawLabel()
         {
+            // Draw glyphs with dynamic layout
+            if (DaggerfallUnity.Settings.TestTMPFontRendering && font != null && font.IsSDFCapable && font.TMPFont)
+            {
+                DrawDynamicLabel();
+                return;
+            }
+
             // Exit if label layout not defined
             if (labelLayout.glyphLayout == null || labelLayout.glyphLayout.Length == 0)
                 return;
@@ -279,7 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Vector4 scissorRect = (useRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
             material.SetVector("_ScissorRect", scissorRect);
 
-            // Layout glyphs
+            // Draw glyphs with classic layout
             Rect totalRect = Rectangle;
             for (int i = 0; i < labelLayout.glyphLayout.Length; i++)
             {
@@ -305,8 +303,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Public Methods
 
-        public virtual void RefreshLayout()
+        public virtual void RefreshClassicLayout()
         {
+            // Ignore classic layout when using TMP fonts with dynamic layout
+            if (DaggerfallUnity.Settings.TestTMPFontRendering && font != null && font.IsSDFCapable && font.TMPFont)
+                return;
+
             if (!wrapText)
                 CreateNewLabelLayoutSingleLine();
             else
@@ -324,7 +326,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 value = value.Substring(0, Math.Min(value.Length, maxCharacters));
 
             this.text = value;
-            RefreshLayout();
+            RefreshClassicLayout();
+            RebuildGlyphLayout();
         }
 
         protected Vector4 GetRestrictedRenderScissorRect()
@@ -362,9 +365,73 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return scissorRect;
         }
 
+        protected void RebuildGlyphLayout()
+        {
+            if (font == null || !font.TMPFont)
+                return;
+
+            // Encode text to glyph layout array - this only needs to be done when text changes
+            byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
+            glyphLayout = new GlyphLayoutData[utf32Bytes.Length / sizeof(int)];
+            for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
+            {
+                // Get code and use ? for any character code not in dictionary
+                int code = BitConverter.ToInt32(utf32Bytes, i);
+                if (!font.TMPFont.characterDictionary.ContainsKey(code))
+                    code = DaggerfallFont.ErrorCode;
+
+                // Cache glyph information
+                TMP_Glyph glyph = font.TMPFont.characterDictionary[code];
+                glyphLayout[i / sizeof(int)] = new GlyphLayoutData()
+                {
+                    glyphCode = code,
+                    glyphWidth = glyph.width,
+                };
+            }
+
+            // Clear total width value - this will be recreated on next dynamic text layout
+            totalWidth = 0;
+        }
+
         #endregion
 
-        #region Label Layout Methods
+        #region Dynamic Label Drawing Methods
+
+        void DrawDynamicLabel()
+        {
+            if (glyphLayout == null || glyphLayout.Length == 0)
+                return;
+
+            // Set render area
+            Material material = font.GetMaterial();
+            Vector4 scissorRect = (useRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
+            material.SetVector("_ScissorRect", scissorRect);
+
+            // Calculate initial position
+            Rect totalRect = Rectangle;
+            Vector2 position = new Vector2(
+                totalRect.x + HorzPixelScrollOffset * LocalScale.x * textScale,
+                totalRect.y);
+            Vector2 startPosition = position;
+
+            // Draw all glyphs in sequence
+            // TODO: Support wrapped layouts and look into more advanced formatting capabilities
+            float greatestXPos = float.MinValue;
+            for(int i = 0; i < glyphLayout.Length; i++)
+            {
+                position.x += font.DrawTMPGlyph(glyphLayout[i].glyphCode, position, LocalScale, textColor);
+                if (position.x > greatestXPos)
+                    greatestXPos = position.x;
+            }
+
+            // Set total width and size
+            totalWidth = greatestXPos - startPosition.x + 1 * LocalScale.x * textScale;
+            Size = new Vector2(totalWidth / LocalScale.x, totalHeight * textScale);
+        }
+
+        #endregion
+
+        #region Classic Label Layout Methods
 
         void CreateNewLabelLayoutSingleLine()
         {
@@ -409,7 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             labelLayout.height = totalHeight;
 
             //
-            // Stage 2 - Add glyph to layout
+            // Stage 2 - Add glyphs to layout
             //
 
             // Determine horizontal alignment offset
@@ -582,12 +649,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             numTextLines = rows.Count;
 
             //
-            // Stage 2 - Add glyph to layout
+            // Stage 2 - Add glyphs to layout
             //
 
             // Second pass adds glyphs to label texture
-            int xpos = 0;
-            int ypos = totalHeight - font.GlyphHeight;
+            float xpos = 0;
+            float ypos = totalHeight - font.GlyphHeight;
 
             //foreach (byte[] row in rows)
             for (int r = 0; r < rows.Count; r++)

@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return sdfGlyphDimension; }
         }
 
-        public bool TMPFont
+        public TMP_FontAsset TMPFont
         {
             get { return tmpFont; }
         }
@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DrawSDFGlyph(rawAscii, targetRect, color);
         }
 
-        float DrawTMPGlyph(int code, Vector2 position, Vector2 scale, Color color, int lastCode = -1)
+        public float DrawTMPGlyph(int code, Vector2 position, Vector2 scale, Color color, bool drawBlank = false)
         {
             // Get glyph data for this code
             TMP_Glyph glyph = tmpFont.characterDictionary[code];
@@ -195,7 +195,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             float scalingRatio = (GlyphHeight / tmpFont.fontInfo.PointSize) * scale.y;
 
             // Handle space glyph by just advancing position
-            if (code == SpaceASCII)
+            if (code == SpaceASCII || drawBlank)
                 return glyph.xAdvance * scalingRatio;
 
             // Compose glyph rect inside of atlas
@@ -321,8 +321,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Vector2 scale,
             Color color)
         {
-            int lastCode = -1;
-            GlyphInfo spaceGlyph = GetGlyph(SpaceASCII);
             byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
             for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
             {
@@ -332,8 +330,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     code = ErrorCode;
 
                 // Draw glyph and advance position
-                position.x += DrawTMPGlyph(code, position, scale, color, lastCode);
-                lastCode = code;
+                position.x += DrawTMPGlyph(code, position, scale, color);
             }
         }
 
