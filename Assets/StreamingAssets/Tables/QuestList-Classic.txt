@@ -169,12 +169,12 @@ A0C00Y11, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not a
 A0C00Y12, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
 A0C00Y14, Commoners, N, 0, 0,
 A0C00Y15, Commoners, N, 0, 0,
-A0C00Y16, Commoners, N, 0, 0,
+-A0C00Y16, Commoners, N, 0, 0, NPCs not spawning where expected
 A0C00Y17, Commoners, N, 0, 0,
 A0C01Y01, Commoners, N, 0, 1,
 A0C01Y03, Commoners, N, 0, 1,
 A0C01Y06, Commoners, N, 0, 1,
-A0C01Y09, Commoners, N, 0, 1,
+-A0C01Y09, Commoners, N, 0, 1, NPCs not spawning where expected
 A0C01Y13, Commoners, N, 0, 1,
 A0C0XY04, Commoners, N, 0, X,
 A0C10Y02, Commoners, N, 1, 0,
@@ -185,7 +185,7 @@ A0C41Y18, Commoners, N, 4, 1,
 K0C00Y00, Merchants, N, 0, 0,
 K0C00Y02, Merchants, N, 0, 0,
 K0C00Y03, Merchants, N, 0, 0,
-K0C00Y04, Merchants, N, 0, 0,
+-K0C00Y04, Merchants, N, 0, 0, problems with NPCs spawning in other towns
 K0C00Y05, Merchants, N, 0, 0,
 K0C00Y06, Merchants, N, 0, 0,
 K0C00Y07, Merchants, N, 0, 0,
