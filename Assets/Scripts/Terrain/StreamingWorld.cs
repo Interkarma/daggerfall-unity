@@ -1400,7 +1400,8 @@ namespace DaggerfallWorkshop
                 width,
                 height,
                 (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity ||
-                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips));
+                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips),
+                currentLocation.Summary.LocationType != DFRegion.LocationTypes.HomeYourShips);
         }
 
         // Sets player to ground level near a location
@@ -1413,7 +1414,8 @@ namespace DaggerfallWorkshop
             Vector3 origin,
             int mapWidth,
             int mapHeight,
-            bool useNearestStartMarker = false)
+            bool useNearestStartMarker = false,
+            bool grounded = true)
         {
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
 
@@ -1521,14 +1523,14 @@ namespace DaggerfallWorkshop
                 if (closestMarker != -1)
                 {
                     //PositionPlayerToTerrain(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
-                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position, grounded: true);
+                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position, grounded);
                     return;
                 }
             }
 
             // Just position to outside location
             //PositionPlayerToTerrain(mapPixelX, mapPixelY, newPlayerPosition);
-            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition, grounded: true);
+            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition, grounded);
         }
 
         // Align player to ground
