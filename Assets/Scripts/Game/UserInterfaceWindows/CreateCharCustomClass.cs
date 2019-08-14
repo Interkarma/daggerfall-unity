@@ -446,6 +446,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             const int defaultDaggerX = 220;
             const int defaultDaggerY = 115;
+            const int minDaggerY = 46;     // Visually clamp to gauge size
+            const int maxDaggerY = 186;    // Visually clamp to gauge size
 
             // hp adjustment
             if (createdClass.HitPointsPerLevel >= defaultHpPerLevel)
@@ -467,11 +469,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int daggerY = 0;
             if (difficultyPoints >= 0)
             {
-                daggerY = (int)(defaultDaggerY - (37 * (difficultyPoints / 40f)));
+                daggerY = Math.Max(minDaggerY, (int)(defaultDaggerY - (37 * (difficultyPoints / 40f))));
             } 
             else
             {
-                daggerY = (int)(defaultDaggerY + (41 * (-difficultyPoints / 12f)));
+                daggerY = Math.Min(maxDaggerY, (int)(defaultDaggerY + (41 * (-difficultyPoints / 12f))));
             }
             daggerPanel.Position = new Vector2(defaultDaggerX, daggerY);
         }
