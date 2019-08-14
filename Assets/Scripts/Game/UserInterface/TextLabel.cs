@@ -377,15 +377,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Get code and use ? for any character code not in dictionary
                 int code = BitConverter.ToInt32(utf32Bytes, i);
-                if (!font.TMPFont.characterDictionary.ContainsKey(code))
+                if (!font.TMPFont.characterLookupTable.ContainsKey((uint)code))
                     code = DaggerfallFont.ErrorCode;
 
                 // Cache glyph information
-                TMP_Glyph glyph = font.TMPFont.characterDictionary[code];
+                TMP_Character character = font.TMPFont.characterTable[code];
                 glyphLayout[i / sizeof(int)] = new GlyphLayoutData()
                 {
                     glyphCode = code,
-                    glyphWidth = glyph.width,
+                    glyphWidth = character.glyph.metrics.width,
                 };
             }
         }

@@ -524,12 +524,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.First, Value.Second));
+            return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.Item1, Value.Item2));
         }
 
         public override void OnRefreshWindow(BaseScreenComponent control)
         {
-            ((MultiTextBox)control).DoLayout(Value.First, Value.Second);
+            ((MultiTextBox)control).DoLayout(Value.Item1, Value.Item2);
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)
@@ -540,17 +540,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 #if UNITY_EDITOR
         public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
         {
-            if (Value == null) Value = Tuple<int, int>.Make(0, 100);
+            if (Value == null) Value = new Tuple<int, int>(0, 100);
             horizontal(rect, "Value",
-                (r) => Value.First = EditorGUI.IntField(r, "First", Value.First),
-                (r) => Value.Second = EditorGUI.IntField(r, "Second", Value.Second));
+                (r) => Value = new Tuple<int,int>( EditorGUI.IntField(r, "First", Value.Item1),EditorGUI.IntField(r, "Second", Value.Item2)));
             return 1;
         }
 #endif
 
         protected override string Serialize()
         {
-            return Join(Value.First, Value.Second);
+            return Join(Value.Item1, Value.Item2);
         }
 
         protected override void Deserialize(string textValue)
@@ -570,12 +569,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
         {
-            return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.First, Value.Second));
+            return MultiTextBox.Make(new Rect(x + 95, y, 40, 6), mt => mt.DoLayout(Value.Item1, Value.Item2));
         }
 
         public override void OnRefreshWindow(BaseScreenComponent control)
         {
-            ((MultiTextBox)control).DoLayout(Value.First, Value.Second);
+            ((MultiTextBox)control).DoLayout(Value.Item1, Value.Item2);
         }
 
         public override void OnSaveWindow(BaseScreenComponent control)
@@ -586,17 +585,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 #if UNITY_EDITOR
         public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
         {
-            if (Value == null) Value = Tuple<float, float>.Make(0, 100);
+            if (Value == null) Value = new Tuple<float, float>(0, 100);
             horizontal(rect, "Value",
-                (r) => Value.First = EditorGUI.FloatField(r, "First", Value.First),
-                (r) => Value.Second = EditorGUI.FloatField(r, "Second", Value.Second));
+                (r) => Value = new Tuple<float,float>( EditorGUI.FloatField(r, "First", Value.Item1),EditorGUI.FloatField(r, "Second", Value.Item2)));
             return 1;
         }
 #endif
 
         protected override string Serialize()
         {
-            return Join(Value.First, Value.Second);
+            return Join(Value.Item1, Value.Item2);
         }
 
         protected override void Deserialize(string textValue)

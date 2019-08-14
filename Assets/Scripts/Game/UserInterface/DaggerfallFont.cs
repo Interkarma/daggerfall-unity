@@ -189,37 +189,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float DrawTMPGlyph(int code, Vector2 position, Vector2 scale, Color color, bool drawBlank = false)
         {
             // Get glyph data for this code
-            TMP_Glyph glyph = tmpFont.characterDictionary[code];
+            TMP_Character character = tmpFont.characterTable[code];
 
             // Use ratio of classic glyph height to TMP font point height for overall scaling ratio
             float scalingRatio = (GlyphHeight / tmpFont.fontInfo.PointSize) * scale.y;
 
             // Handle space glyph by just advancing position
             if (code == SpaceASCII || drawBlank)
-                return glyph.xAdvance * scalingRatio;
+                return character.glyph.metrics.horizontalAdvance * scalingRatio;
 
             // Compose glyph rect inside of atlas
             float atlasWidth = tmpFont.atlas.width;
             float atlasHeight = tmpFont.atlas.height;
-            float atlasGlyphX = glyph.x / atlasWidth;
-            float atlasGlyphY = (atlasHeight - glyph.y - glyph.height) / atlasHeight;
-            float atlasGlyphWidth = glyph.width / atlasWidth;
-            float atlasGlyphHeight = glyph.height / atlasHeight;
+            float atlasGlyphX = character.glyph.glyphRect.x / atlasWidth;
+            float atlasGlyphY = (atlasHeight - character.glyph.glyphRect.y - character.glyph.glyphRect.height) / atlasHeight;
+            float atlasGlyphWidth = character.glyph.glyphRect.width / atlasWidth;
+            float atlasGlyphHeight = character.glyph.glyphRect.height / atlasHeight;
             Rect atlasGlyphRect = new Rect(atlasGlyphX, atlasGlyphY, atlasGlyphWidth, atlasGlyphHeight);
 
             // Compose target rect
             // Can use classic glyph height to approximate baseline vertical position
             // Cannot match dimensions of classic glyphs as TMP font can have glyphs not present in classic
             float baseline = position.y - 2 * scale.y + GlyphHeight * scale.y + tmpFont.fontInfo.Baseline;
-            float xpos = position.x + glyph.xOffset * scalingRatio;
-            float ypos = baseline - glyph.yOffset * scalingRatio;
-            Rect targetRect = new Rect(xpos, ypos, glyph.width * scalingRatio, glyph.height * scalingRatio);
+            float xpos = position.x + character.glyph.metrics.horizontalBearingX * scalingRatio; //originally used glyph.xOffset
+            float ypos = baseline - character.glyph.metrics.horizontalBearingY * scalingRatio;
+            Rect targetRect = new Rect(xpos, ypos, character.glyph.glyphRect.width * scalingRatio, character.glyph.glyphRect.height * scalingRatio);
 
             // Draw the glyph to target using SDF material
             Graphics.DrawTexture(targetRect, tmpFont.atlas, atlasGlyphRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
 
             // Advance to next glyph position
-            return glyph.xAdvance * scalingRatio;
+            return character.glyph.metrics.horizontalAdvance * scalingRatio;
         }
 
         #endregion
@@ -326,7 +326,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Get code and use ? for any character code not in dictionary
                 int code = BitConverter.ToInt32(utf32Bytes, i);
-                if (!tmpFont.characterDictionary.ContainsKey(code))
+                if (!tmpFont.characterLookupTable.ContainsKey((uint)code))
                     code = ErrorCode;
 
                 // Draw glyph and advance position

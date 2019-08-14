@@ -49,10 +49,10 @@ namespace DaggerfallWorkshop.Game.Weather
         /// <summary>
         /// Simple extension of Tuple to make weather chances code readable
         /// </summary>
-        private class WeatherChance : DaggerfallWorkshop.Utility.Tuple<WeatherType, float>
+        private class WeatherChance : Tuple<WeatherType, float>
         {
-            public WeatherType Type { get { return First; }}
-            public float Chance { get { return Second; }}
+            public WeatherType Type { get { return Item1; }}
+            public float Chance { get { return Item2; }}
 
             public WeatherChance(WeatherType a, float b) : base(a, b) {}
         }
