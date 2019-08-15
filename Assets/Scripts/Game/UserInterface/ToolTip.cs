@@ -215,9 +215,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             widestRow = 0;
             for (int i = 0; i < textRows.Length; i++)
             {
-                float width = font.GetCharacterWidth(textRows[i]);
+                float width = font.CalculateTextWidth(textRows[i], LocalScale);
                 if (width > widestRow)
                     widestRow = width;
+                if (font.IsSDFCapable)
+                    widestRow /= LocalScale.x;
             }
         }
 
