@@ -796,18 +796,6 @@ PrefabInstance:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
-    - target: {fileID: 334547545, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
-      propertyPath: antialiasingMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 334547545, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
-      propertyPath: fastApproximateAntialiasing.fastMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 334547545, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
-      propertyPath: fastApproximateAntialiasing.keepAlpha
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
 --- !u!1 &348738038
@@ -1152,6 +1140,18 @@ PrefabInstance:
       propertyPath: Option_DungeonWaterPlaneOffset.z
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 3}
+      propertyPath: WorldDateTime.Year
+      value: 405
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 3}
+      propertyPath: WorldDateTime.Month
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 3}
+      propertyPath: WorldDateTime.Hour
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 3}
       propertyPath: GenerateNormals
       value: 0
@@ -1183,18 +1183,6 @@ PrefabInstance:
     - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 3}
       propertyPath: AlphaTextureFormat
       value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 3}
-      propertyPath: WorldDateTime.Year
-      value: 405
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 3}
-      propertyPath: WorldDateTime.Month
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 3}
-      propertyPath: WorldDateTime.Hour
-      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0811f78212229814d8c469c916304789, type: 3}
@@ -1701,10 +1689,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1374841684}
     m_Modifications:
-    - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
-      propertyPath: LocalPlayer
-      value: 
-      objectReference: {fileID: 1891957991}
     - target: {fileID: 400006, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1737,6 +1721,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
+      propertyPath: LocalPlayer
+      value: 
+      objectReference: {fileID: 1891957991}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
 --- !u!4 &1385149308 stripped
