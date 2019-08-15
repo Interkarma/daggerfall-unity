@@ -75,6 +75,10 @@ QuestLogEntry:  [1010]
 Message:  1011
 <ce>                You have cleaned out _qgiver_'s house.
 
+Message:  1012
+<ce>  You hear scratching noises coming from the walls.
+<ce>  The creatures will most certainly react poorly
+<ce>  to your intrusion on their territory.
 
 -- Symbols used in the QRC file:
 --
@@ -108,6 +112,7 @@ _oneday_ task:
 	end quest 
 
 _S.01_ task:
+	say 1012
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
 
 _questdone_ task:

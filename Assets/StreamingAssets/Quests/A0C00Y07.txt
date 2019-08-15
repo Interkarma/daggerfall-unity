@@ -83,6 +83,11 @@ QuestLogEntry:  [1010]
 Message:  1011
 <ce>  That should be enough.
 
+Message:  1012
+<ce>  You hear scratching noises coming from the walls.
+<ce>  The creatures will most certainly react poorly
+<ce>  to your intrusion on their territory.
+
 -- Symbols used in the QRC file:
 --
 --                %g occurs 3 times.
@@ -126,6 +131,7 @@ _questdone_ task:
 	clicked npc _qgiver_
 
 _S.01_ task:
+	say 1012
 	start task _pickspawn_
 --preventing multiple spawns by using static pick
 

@@ -73,6 +73,14 @@ QuestLogEntry:  [1010]
  of the giant rats or bats that have
  infested it. I have one day to get it done.
 
+Message:  1011
+<ce>  You faintly hear the sound of several rats' claws
+<ce>  scratching the ground. They seem to be drawing closer.
+
+Message:  1012
+<ce>  You faintly hear the sound of several bats chittering.
+<ce>  They seem to be drawing closer.
+
 Message:  1020
 <ce>                That's most of them. The Fighters Guild
 <ce>                     won't quibble over the rest.
@@ -127,6 +135,7 @@ _qgclicked_ task:
 	clicked npc _qgiver_ 
 
 _S.04_ task:
+	say 1011
 	create foe _rats_ every 1 minutes 7 times with 100% success 
 
 _monster1_ task:
@@ -136,4 +145,5 @@ _monster2_ task:
 	pc at _house_ set _S.07_ 
 
 _S.07_ task:
+	say 1012
 	create foe _monster_ every 1 minutes 7 times with 100% success 
