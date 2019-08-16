@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NoFog : MonoBehaviour
+public class NoFogCamera : MonoBehaviour
 {
 
     bool doWeHaveFogInScene;
