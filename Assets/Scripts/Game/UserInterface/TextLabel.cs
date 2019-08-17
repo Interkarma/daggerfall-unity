@@ -296,7 +296,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         totalRect.x + glyph.x * LocalScale.x * textScale + HorzPixelScrollOffset,
                         totalRect.y + glyph.y * LocalScale.y * textScale);
 
-                    font.DrawSDFGlyph(glyph.code, position, LocalScale * textScale, textColor);
+                    font.DrawSDFGlyph(glyph.code, position, LocalScale * textScale, textColor, shadowPosition * LocalScale, shadowColor);
                 }
             }
         }
