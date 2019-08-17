@@ -38,19 +38,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #region Properties
 
-        string SettingsPath
+        string LegacySettingsPath
         {
             get { return Path.Combine(mod.DirPath, string.Format("{0}.json", mod.FileName)); }
         }
 
-        string LocalPresetsPath
+        string SettingsPath
+        {
+            get { return Path.Combine(mod.ConfigurationDirectory, settingsFileName); }
+        }
+
+        string LegacyLocalPresetsPath
         {
             get { return Path.Combine(mod.DirPath, string.Format("{0}_presets.json", mod.FileName)); }
         }
 
-        string[] ImportedPresetsPaths
+        string LocalPresetsPath
         {
-            get { return Directory.GetFiles(mod.DirPath, string.Format("{0}_presets_*.json", mod.FileName)); }
+            get { return Path.Combine(mod.ConfigurationDirectory, presetsFileName); }
         }
 
         /// <summary>
@@ -125,8 +130,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public void LoadLocalValues()
         {
             var settings = new SettingsValues();
-            string path = SettingsPath;
-            if (TryDeserialize(path, ref settings) && IsCompatible(settings))
+
+            Directory.CreateDirectory(mod.ConfigurationDirectory);
+            if (File.Exists(LegacySettingsPath))
+                File.Move(LegacySettingsPath, SettingsPath);
+
+            if (TryDeserialize(SettingsPath, ref settings) && IsCompatible(settings))
             {
                 // Apply local values
                 ApplyPreset(settings);
@@ -157,7 +166,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
 
             // Local presets (managed from gui)
+            Directory.CreateDirectory(mod.ConfigurationDirectory);
             string localPresetsPath = LocalPresetsPath;
+            if (File.Exists(LegacyLocalPresetsPath))
+                File.Move(LegacyLocalPresetsPath, localPresetsPath);
             if (File.Exists(localPresetsPath))
             {
                 List<Preset> localPresets = new List<Preset>();
@@ -170,11 +182,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
 
             // Other imported presets (readonly)
-            foreach (string path in ImportedPresetsPaths)
+            foreach (string path in Directory.GetFiles(mod.DirPath, string.Format("{0}_presets_*.json", mod.FileName)))
             {
                 List<Preset> importedPresets = new List<Preset>();
                 if (TryDeserialize(path, ref importedPresets))
                     Presets.AddRange(importedPresets);
+            }
+            string presetsDirectory = Path.Combine(mod.ConfigurationDirectory, "Presets");
+            if (Directory.Exists(presetsDirectory))
+            {
+                foreach (string path in Directory.GetFiles(presetsDirectory, "*.json"))
+                {
+                    List<Preset> importedPresets = new List<Preset>();
+                    if (TryDeserialize(path, ref importedPresets))
+                        Presets.AddRange(importedPresets);
+                }
             }
 
             HasLoadedPresets = true;

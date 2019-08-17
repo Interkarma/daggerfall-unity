@@ -140,6 +140,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// A directory for persistent mod configuration.
+        /// </summary>
+        internal string ConfigurationDirectory
+        {
+            get { return Path.Combine(ModManager.Instance.ModDataDirectory, GUID); }
+        }
+
+        /// <summary>
+        /// A directory for peristent mod data. It is ensured that the directory is writable but not that exists.
+        /// Use <see cref="Directory.CreateDirectory(string)"/> before accessing it.
+        /// </summary>
+        public string PersistentDataDirectory
+        {
+            get { return Path.Combine(ConfigurationDirectory, "Data"); }
+        }
+
+        /// <summary>
         /// An optional callback that allows to efficiently send messages to this mod without using reflections.
         /// </summary>
         public DFModMessageReceiver MessageReceiver
