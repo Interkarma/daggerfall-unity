@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 width = GetCharacterWidthToCursor();
-                textCursor.Position = new Vector2(width / LocalScale.x, textOffset);
+                textCursor.Position = new Vector2(width, textOffset);
             }
             textCursor.BlinkOn();
         }
@@ -363,14 +363,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
-            int totalWidth = (width + font.GlyphSpacing) * MaxCharacters;
+            float totalWidth = (width + font.GlyphSpacing) * MaxCharacters;
             return new Vector2(totalWidth, font.GlyphHeight);
         }
 
         // Calculate the current size
         private Vector2 CalculateCurrentSize()
         {
-            int width = 0;
+            float width = 0;
             byte[] asciiBytes;
             asciiBytes = Encoding.ASCII.GetBytes(text);
 

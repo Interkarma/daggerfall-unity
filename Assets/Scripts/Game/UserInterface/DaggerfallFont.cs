@@ -35,10 +35,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public const int SpaceCode = 32;
         public const int ErrorCode = 63;
         const int defaultAsciiStart = 33;
-        public const string invalidAsciiCode = "PixelFont does not contain glyph for ASCII code ";
+        public const string invalidCode = "Font does not contain glyph for code: ";
+        float classicGlyphSpacing = 1;
+        float sdfGlyphSpacing = 0.2f;
 
         int glyphHeight;
-        int glyphSpacing = 1;
         FilterMode filterMode = FilterMode.Point;
         Dictionary<int, GlyphInfo> glyphs = new Dictionary<int, GlyphInfo>();
 
@@ -81,6 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public struct SDFGlyphInfo
         {
+            public int code;
             public Rect rect;
             public Vector2 offset;
             public Vector2 size;
@@ -102,10 +104,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { glyphHeight = value; }
         }
 
-        public int GlyphSpacing
+        public float GlyphSpacing
         {
-            get { return glyphSpacing; }
-            set { glyphSpacing = value; }
+            get { return GetGlyphSpacing(); }
         }
 
         public FilterMode FilterMode
@@ -122,6 +123,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public bool IsSDFCapable
         {
             get { return (DaggerfallUnity.Settings.SDFFontRendering && sdfFontInfo != null); }
+        }
+
+        public SDFFontInfo SDFInfo
+        {
+            get { return sdfFontInfo.Value; }
         }
 
         #endregion
@@ -169,6 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Vector2 scale,
             Color color)
         {
+            float glyphSpacing = GlyphSpacing;
             float scalingRatio = GlyphHeight / sdfFontInfo.Value.pointSize * scale.y;
             byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
             for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
@@ -178,27 +185,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (!sdfFontInfo.Value.glyphs.ContainsKey(code))
                     code = ErrorCode;
 
-                // Get glyph data for this code
-                SDFGlyphInfo glyph = sdfFontInfo.Value.glyphs[code];
-
-                // Handle space glyph by just advancing position
-                if (code == SpaceCode)
-                {
-                    position.x += glyph.advance * scalingRatio;
-                    continue;
-                }
-
-                // Compose target rect - this will change based on current display scale
-                // Can use classic glyph height to approximate baseline vertical position
-                float baseline = position.y - 2 * scale.y + GlyphHeight * scale.y + sdfFontInfo.Value.baseline;
-                float xpos = position.x + glyph.offset.x * scalingRatio;
-                float ypos = baseline - glyph.offset.y * scalingRatio;
-                Rect targetRect = new Rect(xpos, ypos, glyph.size.x * scalingRatio, glyph.size.y * scalingRatio);
-
                 // Draw glyph and advance position
-                Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlas, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
-                position.x += glyph.advance * scalingRatio;
+                SDFGlyphInfo glyph = sdfFontInfo.Value.glyphs[code];
+                DrawSDFGlyph(glyph, position, scale, color);
+                position.x += GetGlyphWidth(glyph, scale, glyphSpacing) * scale.x;
             }
+        }
+
+        public float DrawSDFGlyph(int code, Vector2 position, Vector2 scale, Color color)
+        {
+            return DrawSDFGlyph(sdfFontInfo.Value.glyphs[code], position, scale, color);   
+        }
+
+        public float DrawSDFGlyph(SDFGlyphInfo glyph, Vector2 position, Vector2 scale, Color color)
+        {
+            float scalingRatio = GlyphHeight / sdfFontInfo.Value.pointSize * scale.y;
+
+            // Handle space
+            if (glyph.code == SpaceCode)
+                return glyph.advance * scalingRatio;
+
+            // Compose target rect - this will change based on current display scale
+            // Can use classic glyph height to approximate baseline vertical position
+            float baseline = position.y - 2 * scale.y + GlyphHeight * scale.y + sdfFontInfo.Value.baseline;
+            float xpos = position.x + glyph.offset.x * scalingRatio;
+            float ypos = baseline - glyph.offset.y * scalingRatio;
+            Rect targetRect = new Rect(xpos, ypos, glyph.size.x * scalingRatio, glyph.size.y * scalingRatio);
+
+            // Draw glyph
+            Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlas, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+            return GetGlyphWidth(glyph, scale, GlyphSpacing);
         }
 
         #endregion
@@ -217,7 +233,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Draws string of classic glyphs for simple text rendering.
+        /// Draws string of classic or SDF glyphs.
         /// </summary>
         public void DrawText(
             string text,
@@ -314,9 +330,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (!HasGlyph(code))
                         code = ErrorCode;
 
-                    // Get glyph data for this code and increment width
-                    GlyphInfo glyph = GetGlyph(code);
-                    width += glyph.width + GlyphSpacing;
+                    width += GetGlyphWidth(code, scale, GlyphSpacing);
                 }
             }
             else
@@ -331,9 +345,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (!sdfFontInfo.Value.glyphs.ContainsKey(code))
                         code = ErrorCode;
 
-                    // Get glyph data for this code and increment width
-                    SDFGlyphInfo glyph = sdfFontInfo.Value.glyphs[code];
-                    width += glyph.advance * scalingRatio;
+                    width += GetGlyphWidth(code, scale, GlyphSpacing);
                 }
             }
 
@@ -362,6 +374,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return glyphs.ContainsKey(ascii);
         }
 
+        public bool HasSDFGlyph(int code)
+        {
+            if (!IsSDFCapable || sdfFontInfo == null)
+                return false;
+
+            return sdfFontInfo.Value.glyphs.ContainsKey(code);
+        }
+
         public void AddGlyph(int ascii, GlyphInfo info)
         {
             glyphs.Add(ascii, info);
@@ -370,23 +390,44 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public GlyphInfo GetGlyph(int ascii)
         {
             if (!glyphs.ContainsKey(ascii))
-                throw new Exception(invalidAsciiCode + ascii);
+                throw new Exception(invalidCode + ascii);
 
             return glyphs[ascii];
         }
 
-        public int GetGlyphWidth(int ascii)
+        public SDFGlyphInfo GetSDFGlyph(int code)
         {
-            if (!glyphs.ContainsKey(ascii))
-                throw new Exception(invalidAsciiCode + ascii);
+            if (!IsSDFCapable || !sdfFontInfo.Value.glyphs.ContainsKey(code))
+                throw new Exception(invalidCode + code);
 
-            return glyphs[ascii].width;
+            return sdfFontInfo.Value.glyphs[code];
+        }
+
+        public float GetGlyphWidth(int code, Vector2 scale, float spacing = 0)
+        {
+            if (!IsSDFCapable)
+            {
+                GlyphInfo glyph = GetGlyph(code);
+                return glyph.width + spacing;
+            }
+            else
+            {
+                SDFGlyphInfo glyph = SDFInfo.glyphs[code];
+                float scalingRatio = GlyphHeight / SDFInfo.pointSize * scale.y;
+                return glyph.advance * scalingRatio / scale.x + spacing;
+            }
+        }
+
+        public float GetGlyphWidth(SDFGlyphInfo glyph, Vector2 scale, float spacing = 0)
+        {
+            float scalingRatio = GlyphHeight / SDFInfo.pointSize * scale.y;
+            return glyph.advance * scalingRatio / scale.x + spacing;
         }
 
         public void RemoveGlyph(int ascii)
         {
             if (!glyphs.ContainsKey(ascii))
-                throw new Exception(invalidAsciiCode + ascii);
+                throw new Exception(invalidCode + ascii);
 
             glyphs.Remove(ascii);
         }
@@ -426,6 +467,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Store information about this glyph
                 SDFGlyphInfo glyphInfo = new SDFGlyphInfo()
                 {
+                    code = kvp.Key,
                     rect = atlasGlyphRect,
                     offset = new Vector2(glyph.xOffset, glyph.yOffset),
                     size = new Vector2(glyph.width, glyph.height),
@@ -497,6 +539,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             glyph.width = fntFile.GetGlyphWidth(index);
 
             return glyph;
+        }
+
+        float GetGlyphSpacing()
+        {
+            return (!IsSDFCapable) ? classicGlyphSpacing : sdfGlyphSpacing;
         }
 
         #endregion
