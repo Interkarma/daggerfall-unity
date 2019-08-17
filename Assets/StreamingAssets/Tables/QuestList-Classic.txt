@@ -96,7 +96,7 @@ J0B00Y00, HolyOrder, Z, 0, 0, Passed.
 O0A0AL00, GeneralPopulace, P, 0, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
 O0B00Y00, GeneralPopulace, M, 0, 0, Apparently an exact copy of O0B10Y00.
 O0B00Y01, GeneralPopulace, M, 0, 0, Passed
--O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Could not find local site with P2=17 in Daggerfall/Penbrugh.
+-O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Can't find any city containing its local house3.
 O0B00Y12, GeneralPopulace, M, 0, 0, Passed
 O0B10Y00, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y03, GeneralPopulace, M, 1, 0, Passed.
@@ -123,7 +123,7 @@ L0B10Y03, DarkBrotherHood, M, 1, 0, Passed. Quest timer is tight due to multiple
 L0B20Y02, DarkBrotherHood, M, 2, 0, Passed
 L0B30Y03, DarkBrotherHood, M, 3, 0, Passed
 L0B30Y09, DarkBrotherHood, M, 3, 0, Passed
-L0B40Y04, DarkBrotherHood, M, 4, 0, Passed. Flat NPC and enemy mismatching problem.
+L0B40Y04, DarkBrotherHood, M, 4, 0, Passed
 L0B50Y11, DarkBrotherHood, M, 5, 0, Passed
 L0B60Y10, DarkBrotherHood, M, 6, 0, Passed
 
@@ -169,12 +169,12 @@ A0C00Y11, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not a
 A0C00Y12, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
 A0C00Y14, Commoners, N, 0, 0,
 A0C00Y15, Commoners, N, 0, 0,
--A0C00Y16, Commoners, N, 0, 0, NPCs not spawning where expected
+A0C00Y16, Commoners, N, 0, 0,
 A0C00Y17, Commoners, N, 0, 0,
 A0C01Y01, Commoners, N, 0, 1,
 A0C01Y03, Commoners, N, 0, 1,
 A0C01Y06, Commoners, N, 0, 1,
--A0C01Y09, Commoners, N, 0, 1, NPCs not spawning where expected
+A0C01Y09, Commoners, N, 0, 1,
 A0C01Y13, Commoners, N, 0, 1,
 A0C0XY04, Commoners, N, 0, X,
 A0C10Y02, Commoners, N, 1, 0,
