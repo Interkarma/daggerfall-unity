@@ -177,7 +177,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Color color)
         {
             float glyphSpacing = GlyphSpacing;
-            float scalingRatio = GlyphHeight / sdfFontInfo.Value.pointSize * scale.y;
             byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
             for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
             {
@@ -354,7 +353,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 // SDF glyphs
-                float scalingRatio = GlyphHeight / sdfFontInfo.Value.pointSize * scale.y;
                 byte[] utf32Bytes = Encoding.UTF32.GetBytes(text);
                 for (int i = 0; i < utf32Bytes.Length; i += sizeof(int))
                 {
