@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 15
 Quest: L0B10Y03
+DisplayName: Unauthorized Absence
 -- Message panels
 QRC:
 

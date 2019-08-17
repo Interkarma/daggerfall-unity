@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 61
 Quest: N0B40Y07
+DisplayName: Banish Daedra
 -- Message panels
 QRC:
 

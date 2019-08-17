@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 81
 Quest: M0B30Y03
+DisplayName: Hunt for a Daedroth
 -- Message panels
 QRC:
 

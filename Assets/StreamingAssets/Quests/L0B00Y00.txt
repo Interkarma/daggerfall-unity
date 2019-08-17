@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 22
 Quest: L0B00Y00
+DisplayName: A Renegade Member
 -- Message panels
 QRC:
 

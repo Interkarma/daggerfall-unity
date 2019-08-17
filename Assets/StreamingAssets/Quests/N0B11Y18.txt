@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 64
 Quest: N0B11Y18
+DisplayName: Former Student Part I
 -- Message panels
 QRC:
 

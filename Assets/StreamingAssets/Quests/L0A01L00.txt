@@ -8,6 +8,7 @@
 -- Temp changes to allow joining DB made by Hazelnut
 Messages: 21
 Quest: L0A01L00
+DisplayName: The Acceptance Test
 -- Message panels
 QRC:
 

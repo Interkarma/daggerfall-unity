@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 12
 Quest: B0B00Y01
+DisplayName: Retribution
 -- Message panels
 QRC:
 

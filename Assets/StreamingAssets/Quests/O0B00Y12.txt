@@ -6,6 +6,7 @@
 -- QuestId: 12
 Messages: 36
 Quest: O0B00Y12
+DisplayName: Drugs Delivery
 -- Message panels
 QRC:
 

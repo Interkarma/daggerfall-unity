@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 16
 Quest: B0B00Y00
+DisplayName: The Princess
 -- Message panels
 QRC:
 

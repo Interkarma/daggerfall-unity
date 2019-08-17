@@ -6,6 +6,7 @@
 -- QuestId: 17
 Messages: 61
 Quest: N0B00Y17
+DisplayName: Azimuthal Vectors
 -- Message panels
 QRC:
 

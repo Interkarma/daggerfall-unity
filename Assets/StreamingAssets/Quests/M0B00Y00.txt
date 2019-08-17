@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 81
 Quest: M0B00Y00
+DisplayName: Hunt for a Lycanthrope
 -- Message panels
 QRC:
 

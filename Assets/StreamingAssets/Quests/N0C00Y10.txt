@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 41
 Quest: N0C00Y10
+DisplayName: Missing Book
 -- Message panels
 QRC:
 

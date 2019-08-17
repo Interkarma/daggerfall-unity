@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: M0C00Y11
+DisplayName: Hunt for a Giant Scorpion
 -- Message panels
 QRC:
 

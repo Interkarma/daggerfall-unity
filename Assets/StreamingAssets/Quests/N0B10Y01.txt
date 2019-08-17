@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 21
 Quest: N0B10Y01
+DisplayName: Atronach Hunting
 -- Message panels
 QRC:
 

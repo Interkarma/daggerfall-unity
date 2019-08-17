@@ -106,6 +106,8 @@ serviceMembersOnly, "My services are reserved for members only."
 serviceDonateHowMuch, "Donate how much money : "
 curedDisease,       "You are cured."
 freeHolidayCuring,  "You are cured free from cost due to todays' holiday."
+gettingQuests1,     "Hmm, let me see what tasks we have availiable."
+gettingQuests2,     "Please have patience and wait here a moment, %pcf."
 
 - Rest window
 

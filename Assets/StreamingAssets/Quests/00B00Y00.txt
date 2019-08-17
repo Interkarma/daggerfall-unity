@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 32
 Quest: 00B00Y00
+DisplayName: The Price of Knowledge
 -- Message panels
 QRC:
 

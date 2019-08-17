@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 38
 Quest: C0B00Y01
+DisplayName: The Heretic
 -- Message panels
 QRC:
 

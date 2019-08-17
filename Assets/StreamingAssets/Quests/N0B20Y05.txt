@@ -6,6 +6,7 @@
 -- QuestId: 5
 Messages: 41
 Quest: N0B20Y05
+DisplayName: A Dangerous Wizard
 -- Message panels
 QRC:
 

@@ -114,3 +114,4 @@ PlayerTorchFromItems=False
 CombatVoices=True
 EnemyInfighting=True
 EnhancedCombatAI=True
+GuildQuestListBox=False

@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 26
 Quest: Q0C20Y02
+DisplayName: An Expensive Purchase
 -- Message panels
 QRC:
 

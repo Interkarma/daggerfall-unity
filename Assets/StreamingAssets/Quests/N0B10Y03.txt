@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: N0B10Y03
+DisplayName: Guard the Guild
 -- Message panels
 QRC:
 

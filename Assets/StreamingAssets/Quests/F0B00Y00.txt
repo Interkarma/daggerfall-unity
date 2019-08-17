@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: F0B00Y00
+DisplayName: Desired Artwork
 -- Message panels
 QRC:
 
