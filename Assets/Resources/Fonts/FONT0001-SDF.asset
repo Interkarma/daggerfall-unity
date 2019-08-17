@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: FONT0000-SDF
+  m_Name: FONT0001-SDF
   m_EditorClassIdentifier: 
-  hashCode: 1187068109
+  hashCode: 1190758734
   material: {fileID: 21934885379483992}
   materialHashCode: -1719473626
   fontAssetType: 1
