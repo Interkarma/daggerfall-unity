@@ -486,8 +486,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button restartButton = new Button();
             restartButton.Size = new Vector2(45, 12);
             restartButton.Label.Text = string.Format("< {0}", GetText("restart"));
-            restartButton.Label.ShadowPosition = Vector2.zero;
-            restartButton.Label.TextColor = secondaryTextColor;
+            restartButton.Label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
+            restartButton.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            restartButton.Label.HorizontalAlignment = HorizontalAlignment.Left;
             restartButton.ToolTip = defaultToolTip;
             restartButton.ToolTipText = GetText("restartInfo");
             restartButton.VerticalAlignment = VerticalAlignment.Top;
