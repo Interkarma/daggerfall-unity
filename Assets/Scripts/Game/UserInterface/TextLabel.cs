@@ -294,7 +294,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     Vector2 position = new Vector2(
                         totalRect.x + glyph.x * LocalScale.x,
-                        totalRect.y + glyph.y);
+                        totalRect.y + glyph.y * LocalScale.y);
 
                     font.DrawSDFGlyph(glyph.code, position, LocalScale, textColor);
                 }
@@ -487,23 +487,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             float width = 0;
             float greatestWidthFound = 0;
             int lastEndOfRowByte = 0;
-            byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
-            List<byte[]> rows = new List<byte[]>();
+            float spacing = font.GlyphSpacing;
+            int[] codes = GetCodes(startCharacterIndex);
+            List<int[]> rows = new List<int[]>();
             List<float> rowWidth = new List<float>();
 
-            for (int i = 0; i < asciiBytes.Length; i++)
+            for (int i = 0; i < codes.Length; i++)
             {
-                // Invalid ASCII bytes are cast to a space character
-                if (!font.HasGlyph(asciiBytes[i]))
-                    asciiBytes[i] = DaggerfallFont.SpaceCode;
-
                 // Calculate total width
-                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                float glyphWidth = font.GetGlyphWidth(codes[i], LocalScale, spacing);
 
                 // If maxWidth is set, don't allow the label texture to exceed it
-                if ((maxWidth <= 0) || ((width + glyph.width + font.GlyphSpacing) <= maxWidth))
+                if ((maxWidth <= 0) || ((width + glyphWidth + font.GlyphSpacing) <= maxWidth))
                 {
-                    width += glyph.width + font.GlyphSpacing;
+                    width += glyphWidth;
                 }
                 else
                 {
@@ -513,14 +510,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         int j;
                         for (j = i; j >= lastEndOfRowByte; j--)
                         {
-                            glyph = font.GetGlyph(asciiBytes[j]);
+                            glyphWidth = font.GetGlyphWidth(codes[j], LocalScale, spacing);
                             if (j < i) // glyph i has not been added to width
                             {
-                                width -= glyph.width + font.GlyphSpacing;
-                                if (width <= maxWidth && asciiBytes[j] == DaggerfallFont.SpaceCode)
-                                {
+                                width -= glyphWidth;
+                                if (width <= maxWidth && codes[j] == DaggerfallFont.SpaceCode)
                                     break;
-                                }
                             }
                         }
 
@@ -538,10 +533,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         width = 0;
                         for (int k = lastEndOfRowByte; k < j; k++)
                         {
-                            if (k < j - 1 || (k == j - 1 && asciiBytes[k] != DaggerfallFont.SpaceCode)) // all expect last character if it is a space
+                            if (k < j - 1 || (k == j - 1 && codes[k] != DaggerfallFont.SpaceCode)) // all expect last character if it is a space
                             {
-                                glyph = font.GetGlyph(asciiBytes[k]);
-                                width += glyph.width + font.GlyphSpacing;
+                                glyphWidth = font.GetGlyphWidth(codes[k], LocalScale, spacing);
+                                width += glyphWidth;
                             }
                         }
                     }
@@ -551,10 +546,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     }
                     // The row of glyphs exceeded maxWidth. Add it to the list of rows and start
                     // counting width again with the remainder of the ASCII bytes.
-                    List<byte> content = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, rowLength);
+                    List<int> content = new List<int>(codes).GetRange(lastEndOfRowByte, rowLength);
                     if (content[content.Count - 1] == DaggerfallFont.SpaceCode)
                         content.RemoveAt(content.Count - 1);
-                    byte[] trimmed = content.ToArray();
+                    int[] trimmed = content.ToArray();
 
                     rows.Add(trimmed);
                     rowWidth.Add(width);
@@ -571,21 +566,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             if (lastEndOfRowByte > 0)
-                asciiBytes = new List<byte>(asciiBytes).GetRange(lastEndOfRowByte, asciiBytes.Length - lastEndOfRowByte).ToArray();
+                codes = new List<int>(codes).GetRange(lastEndOfRowByte, codes.Length - lastEndOfRowByte).ToArray();
 
             // also get width of last line
             width = 0;
-            for (int i = 0; i < asciiBytes.Length; i++)
+            for (int i = 0; i < codes.Length; i++)
             {
-                DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                width += glyph.width + font.GlyphSpacing;
+                float glyphWidth = font.GetGlyphWidth(codes[i], LocalScale, spacing);
+                width += glyphWidth;
             }
 
             // update greatest width found so far
             if (width <= maxWidth && greatestWidthFound < width) // width should always be <= maxWidth here
                 greatestWidthFound = width;
 
-            rows.Add(asciiBytes);
+            rows.Add(codes);
             rowWidth.Add(width);
 
             // Create virtual layout area
@@ -604,7 +599,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //foreach (byte[] row in rows)
             for (int r = 0; r < rows.Count; r++)
             {
-                byte[] row = rows[r];
+                int[] row = rows[r];
                 float alignmentOffset;
                 switch (horizontalTextAlignment)
                 {
@@ -638,8 +633,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 xpos = (int)alignmentOffset;
                 for (int i = 0; i < row.Length; i++)
                 {
-                    DaggerfallFont.GlyphInfo glyph = font.GetGlyph(row[i]);
-                    if (xpos + glyph.width > totalWidth)
+                    float glyphWidth = font.GetGlyphWidth(row[i], LocalScale);
+                    if (xpos + glyphWidth > totalWidth)
                         break;
 
                     if (row[i] == DaggerfallFont.SpaceCode)
@@ -662,11 +657,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         x = xpos,
                         y = totalHeight - font.GlyphHeight - ypos,
                         code = row[i],
-                        width = glyph.width,
+                        width = glyphWidth,
                     };
 
                     glyphLayout.Add(glyphPos);
-                    xpos += glyph.width + font.GlyphSpacing;
+                    xpos += glyphWidth + font.GlyphSpacing;
                 }
                 ypos -= font.GlyphHeight;
             }
