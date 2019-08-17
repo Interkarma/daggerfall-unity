@@ -352,7 +352,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax));
 
                 xMinScreen = myRect.xMin + (this.Position.x + leftCut) * this.LocalScale.x;
-                xMaxScreen = myRect.xMax + (this.Position.x - rightCut) * this.LocalScale.x;
+                xMaxScreen = myRect.xMax + (this.Position.x - rightCut + font.GlyphSpacing) * this.LocalScale.x;
                 yMinScreen = myRect.yMin + (topCut) * this.LocalScale.y;
                 yMaxScreen = myRect.yMax - (bottomCut) * this.LocalScale.y;
             } 
