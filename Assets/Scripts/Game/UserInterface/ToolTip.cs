@@ -220,8 +220,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 float width = font.CalculateTextWidth(textRows[i], LocalScale);
                 if (width > widestRow)
                     widestRow = width;
-                if (font.IsSDFCapable)
-                    widestRow /= LocalScale.x;
             }
             previousSDFState = sdfState;
         }
