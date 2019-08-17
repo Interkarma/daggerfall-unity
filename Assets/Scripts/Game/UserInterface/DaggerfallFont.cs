@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public const string invalidCode = "Font does not contain glyph for code: ";
         float classicGlyphSpacing = 1;
         float sdfGlyphSpacing = 0.2f;
+        float sdfShadowPositionScale = 0.4f;
 
         int glyphHeight;
         FilterMode filterMode = FilterMode.Point;
@@ -192,9 +193,41 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        float DrawSDFGlyphWithShadow(int code, Vector2 position, Vector2 scale, Color color, Vector2 shadowPosition, Color shadowColor)
+        {
+            SDFGlyphInfo glyph = sdfFontInfo.Value.glyphs[code];
+            if (shadowPosition != Vector2.zero && shadowColor != Color.clear)
+                DrawSDFGlyph(glyph, position + shadowPosition * sdfShadowPositionScale, scale, shadowColor);
+
+            return DrawSDFGlyph(glyph, position, scale, color);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Draws a classic glyph with a drop-shadow.
+        /// </summary>
+        public void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
+        {
+            if (rawAscii < asciiStart)
+                return;
+
+            DrawClassicGlyphWithShadow(rawAscii, targetRect, color, shadowPosition, shadowColor);
+        }
+
+        /// <summary>
+        /// Draws an SDF glyph with a drop-shadow.
+        /// </summary>
+        public float DrawSDFGlyph(int code, Vector2 position, Vector2 scale, Color color, Vector2 shadowPosition, Color shadowColor)
+        {
+            return DrawSDFGlyphWithShadow(code, position, scale, color, shadowPosition, shadowColor);
+        }
+
         public float DrawSDFGlyph(int code, Vector2 position, Vector2 scale, Color color)
         {
-            return DrawSDFGlyph(sdfFontInfo.Value.glyphs[code], position, scale, color);   
+            return DrawSDFGlyph(sdfFontInfo.Value.glyphs[code], position, scale, color);
         }
 
         public float DrawSDFGlyph(SDFGlyphInfo glyph, Vector2 position, Vector2 scale, Color color)
@@ -215,21 +248,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw glyph
             Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlas, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
             return GetGlyphWidth(glyph, scale, GlyphSpacing);
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Draws a classic glyph with a drop-shadow.
-        /// </summary>
-        public void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
-        {
-            if (rawAscii < asciiStart)
-                return;
-
-            DrawClassicGlyphWithShadow(rawAscii, targetRect, color, shadowPosition, shadowColor);
         }
 
         /// <summary>

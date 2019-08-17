@@ -293,10 +293,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     GlyphLayoutData glyph = glyphLayout[i];
 
                     Vector2 position = new Vector2(
-                        totalRect.x + glyph.x * LocalScale.x,
-                        totalRect.y + glyph.y * LocalScale.y);
+                        totalRect.x + glyph.x * LocalScale.x * textScale + HorzPixelScrollOffset,
+                        totalRect.y + glyph.y * LocalScale.y * textScale);
 
-                    font.DrawSDFGlyph(glyph.code, position, LocalScale, textColor);
+                    font.DrawSDFGlyph(glyph.code, position, LocalScale * textScale, textColor, shadowPosition * LocalScale, shadowColor);
                 }
             }
         }
