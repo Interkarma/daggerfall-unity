@@ -473,15 +473,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (DaggerfallUnity.Settings.GuildQuestListBox)
             {
-                string[] message = {
-                        TextManager.Instance.GetText(textDatabase, "gettingQuests1"),
-                        TextManager.Instance.GetText(textDatabase, "gettingQuests2"),
-                        "", ""
-                    };
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.CreateTokens(
+                    TextFile.Formatting.JustifyCenter,
+                    TextManager.Instance.GetText(textDatabase, "gettingQuests1"),
+                    TextManager.Instance.GetText(textDatabase, "gettingQuests2"));
+
                 DaggerfallMessageBox gettingQuestsBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, this);
-                gettingQuestsBox.SetText(message);
-                gettingQuestsBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.OK);
-                gettingQuestsBox.OnButtonClick += GettingQuestsBox_OnButtonClick;
+                gettingQuestsBox.ClickAnywhereToClose = true;
+                gettingQuestsBox.SetTextTokens(tokens);
+                gettingQuestsBox.OnClose += GettingQuestsBox_OnClose;
                 gettingQuestsBox.Show();
             }
             else
@@ -519,29 +519,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void GettingQuestsBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void GettingQuestsBox_OnClose()
         {
-            sender.CloseWindow();
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.OK)
+            DaggerfallListPickerWindow questPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
+            questPicker.OnItemPicked += QuestPicker_OnItemPicked;
+            for (int i = 0; i < questPool.Count; i++)
             {
-                DaggerfallListPickerWindow questPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
-                questPicker.OnItemPicked += QuestPicker_OnItemPicked;
-                for (int i=0; i<questPool.Count; i++)
+                try
                 {
-                    try {
-                        Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
-                        if (quest != null)
-                            questPicker.ListBox.AddItem(quest.DisplayName == null ? quest.QuestName : quest.DisplayName);
-                        else
-                            questPool.RemoveAt(i);  // Remove any that fail compilation
-                    }
-                    catch (Exception)
-                    {
-                        questPool.RemoveAt(i);  // Remove any that throw exceptions
-                    }
+                    Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
+                    if (quest != null)
+                        questPicker.ListBox.AddItem(quest.DisplayName == null ? quest.QuestName : quest.DisplayName);
+                    else
+                        questPool.RemoveAt(i);  // Remove any that fail compilation
                 }
-                uiManager.PushWindow(questPicker);
+                catch (Exception)
+                {
+                    questPool.RemoveAt(i);  // Remove any that throw exceptions
+                }
             }
+            uiManager.PushWindow(questPicker);
         }
 
         public void QuestPicker_OnItemPicked(int index, string name)
