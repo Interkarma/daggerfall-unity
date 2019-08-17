@@ -467,7 +467,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Store information about this glyph
                 SDFGlyphInfo glyphInfo = new SDFGlyphInfo()
                 {
-                    code = kvp.Key,
+                    code = (int)kvp.Key,
                     rect = atlasGlyphRect,
                     offset = new Vector2(character.glyph.metrics.horizontalBearingX, character.glyph.metrics.horizontalBearingY),
                     size = new Vector2(character.glyph.metrics.width, character.glyph.metrics.height),
