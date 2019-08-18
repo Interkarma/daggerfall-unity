@@ -500,7 +500,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (useRestrictedRenderArea)
             {
                 textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
-                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             }
             if (horizontalScrollMode == HorizontalScrollModes.CharWise)
                 textLabel.MaxWidth = (int)Size.x;
@@ -539,7 +539,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (useRestrictedRenderArea)
             {
                 textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
-                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             }
             if (horizontalScrollMode == HorizontalScrollModes.CharWise)
                 textLabel.MaxWidth = (int)Size.x;

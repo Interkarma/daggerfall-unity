@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public enum RestrictedRenderArea_CoordinateType
         {
             ScreenCoordinates = 0,
-            DaggerfallNativeCoordinates = 1
+            ParentCoordinates = 1
         };
         protected RestrictedRenderArea_CoordinateType restrictedRenderAreaCoordinateType = RestrictedRenderArea_CoordinateType.ScreenCoordinates;
 
@@ -225,10 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
         {
             get { return restrictedRenderAreaCoordinateType; }
-            set
-            {
-                restrictedRenderAreaCoordinateType = value;
-            }
+            set { restrictedRenderAreaCoordinateType = value; }
         }
 
         #endregion
@@ -343,18 +340,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 yMinScreen = rectRestrictedRenderArea.yMin;
                 yMaxScreen = rectRestrictedRenderArea.yMax;
             }
-            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates)
+            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.ParentCoordinates && Parent != null)
             {
-                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
-                float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin));
-                float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax));
-                float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin));
-                float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax));
-
-                xMinScreen = myRect.xMin + (this.Position.x + leftCut) * this.LocalScale.x;
-                xMaxScreen = myRect.xMax + (this.Position.x - rightCut + font.GlyphSpacing) * this.LocalScale.x;
-                yMinScreen = myRect.yMin + (topCut) * this.LocalScale.y;
-                yMaxScreen = myRect.yMax - (bottomCut) * this.LocalScale.y;
+                Rect parentRect = Parent.Rectangle;
+                xMinScreen = parentRect.xMin;
+                xMaxScreen = parentRect.xMax;
+                yMinScreen = parentRect.yMin;
+                yMaxScreen = parentRect.yMax;
             } 
 
             Vector4 scissorRect;

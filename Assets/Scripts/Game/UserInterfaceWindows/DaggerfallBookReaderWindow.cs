@@ -144,7 +144,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 label.Position = new Vector2(x, y);
                 label.MaxWidth = (int)pagePanel.Size.x;
                 label.RectRestrictedRenderArea = pagePanel.RectRestrictedRenderArea;
-                label.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                label.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
                 pagePanel.Components.Add(label);
                 y += label.Size.y;
                 maxHeight += label.Size.y;

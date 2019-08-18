@@ -321,7 +321,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 primaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, Vector2.zero, enchantment.PrimaryDisplayName, this);
                 secondaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, secondaryLabelPos, secondarySpacing + enchantment.SecondaryDisplayName, this);
-                primaryLabel.RestrictedRenderAreaCoordinateType = secondaryLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                primaryLabel.RestrictedRenderAreaCoordinateType = secondaryLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
                 primaryLabel.RectRestrictedRenderArea = secondaryLabel.RectRestrictedRenderArea = renderArea;
                 primaryLabel.TextColor = secondaryLabel.TextColor = textColor;
 
