@@ -750,6 +750,26 @@ namespace DaggerfallWorkshop.Game
                 QualitySettings.shadowDistance = Instance.initialQualitySettingsShadowDistance;
         }
 
+        public static void UpdateShadowResolution()
+        {
+            switch (DaggerfallUnity.Settings.ShadowResolutionMode)
+            {
+                case 0:
+                    QualitySettings.shadowResolution = ShadowResolution.Low;
+                    break;
+                case 1:
+                default:
+                    QualitySettings.shadowResolution = ShadowResolution.Medium;
+                    break;
+                case 2:
+                    QualitySettings.shadowResolution = ShadowResolution.High;
+                    break;
+                case 3:
+                    QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
+                    break;
+            }
+        }
+
         #endregion
 
         #region Private Methods

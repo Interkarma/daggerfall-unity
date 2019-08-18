@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 01
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: A0C01Y01
 -- Message panels
@@ -101,21 +102,24 @@ Person _qgiver_ face 1 group Questor
 
 Place _qgiverhome_ local house2
 
-Clock _S.00_ 1.03:00 0 flag 1 range 0 1
+Clock _S.00_ 1.03:00
+--removed flags to make time limit exact
 
 Foe _villains_ is 2 Assassin
 
 --	Quest start-up:
 	start timer _S.00_ 
 	log 1010 step 0 
-	pc at _qgiverhome_ set _S.05_ saying 1013 
+	pc at _qgiverhome_ set _S.05_
+	---removed "saying" as unacceptable argument. moved to S.05
 	create npc at _qgiverhome_ 
 
 _S.00_ task:
 	end quest 
 
 _S.01_ task:
-	daily from 21:00 to 24:00 
+	daily from 21:00 to 23:59 
+	--changed 24:00 to 23:59. 24:00 shouldn't exist.
 	place npc _qgiver_ at _qgiverhome_ 
 
 _S.02_ task:
@@ -128,7 +132,9 @@ _questdone_ task:
 _S.04_ task:
 	clicked npc _qgiver_ 
 
-variable _S.05_
+_S.05_ task:
+	say 1013
+
 _S.06_ task:
 	injured _villains_ saying 1011 
 
@@ -137,8 +143,9 @@ _clearclick_ task:
 	clear _S.04_ _clearclick_ 
 
 _S.08_ task:
-	when _S.05_ and _S.01_ 
+	when _S.05_ and _S.01_ and not _S.06_
 	create foe _villains_ every 10 minutes 1 times with 25% success 
+--added "not S06" to prevent multiple spawns
 
 _mmap_ task:
 	when _questdone_ and not _S.05_ 

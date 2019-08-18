@@ -4,8 +4,10 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: O0B00Y01
+DisplayName: Arms Supply
 -- Message panels
 QRC:
 
@@ -171,6 +173,15 @@ until _npcclicked_ performed:
 	create foe _F.02_ every 179 minutes 4 times with 5% success 
 	create foe _F.01_ every 163 minutes 4 times with 5% success 
 
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
 _1stparton_ task:
 	make _weapons_ permanent 
 	make _gems_ permanent 
@@ -182,9 +193,9 @@ variable _pchasitem1_
 variable _pchasitem2_
 _S.06_ task:
 	injured _F.01_ 
-	prompt 1020 yes yes no _no_ 
+	prompt 1022 yes _yes_ no _no_ 
 
-yes task:
+_yes_ task:
 	take _weapons_ from pc saying 1023 
 	change repute with _questgiver_ by -20 
 	restrain foe _guards_ 
@@ -194,11 +205,11 @@ yes task:
 variable _no_
 _S.09_ task:
 	injured _F.02_ 
-	prompt 1021 yes yes no _no_ 
+	prompt 1021 yes _yes_ no _no_ 
 
 _greklith_ task:
 	injured _guards_ 
-	prompt 1022 yes yes no _no_ 
+	prompt 1020 yes _yes_ no _no_ 
 
 _S.11_ task:
 	change repute with _questgiver_ by -10 

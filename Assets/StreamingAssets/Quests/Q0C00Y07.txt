@@ -6,6 +6,7 @@
 -- QuestId: 7
 Messages: 14
 Quest: Q0C00Y07
+DisplayName: The Imprisoned Witch
 -- Message panels
 QRC:
 

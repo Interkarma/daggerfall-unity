@@ -32,7 +32,9 @@ AcceptQuest:  [1002]
 <ce>                 _chemist_'s hands in =1stparton_ days,
 <ce>                it will be too old to be used. After you
 <ce>               have delivered it, return for your reward.
-<ce>                        Good luck and godspeed.
+<ce>                        Good luck and godspeed to ___chemist_.
+
+--in 1002, added the name of the city you need to go to at the end.
 
 QuestFail:  [1003]
 <ce>             You don't think I know you haven't delivered
@@ -46,7 +48,9 @@ QuestComplete:  [1004]
 <ce>                  Outstanding job, %pcf. I knew those
 <ce>           daedralings wouldn't slow you down. Your superior
 <ce>            skill has been duly noted. Thank you and here is
-<ce>                    the _reward_ gold we agreed on.
+<ce>                    the =reward_ gold we agreed on.
+
+--in 1004, changed _reward_ to =reward_ to ensure specific gold amount.
 
 RumorsDuringQuest:  [1005]
 Dire portents have been read in the sky. The daedric stars glow bright.
@@ -86,7 +90,7 @@ QuestLogEntry:  [1010]
 Message:  1011
 _chemist_? Resembles a sort of =chemist_? I think %g's %di of here.
 <--->
-there's an alchemist named _chemist_ who works for _questgiver_ %di of here.
+There's an alchemist named _chemist_ who works for _questgiver_ %di of here.
 
 Message:  1012
 _questgiver_? Why, %g's a noble. Involved in some daedric activity lately.
@@ -136,8 +140,8 @@ Message:  1020
 --              %pcf occurs 2 times.
 --              %qdt occurs 1 time.
 --               %ra occurs 4 times.
---       =1stparton_ occurs 2 times.
---       =2ndparton_ occurs 1 time.
+--       =2alch_ occurs 2 times.
+--       =2questgiver_ occurs 1 time.
 --         =chemist_ occurs 3 times.
 --    ___questgiver_ occurs 1 time.
 --        __chemist_ occurs 1 time.
@@ -154,16 +158,16 @@ Person _questgiver_ face 112 group Questor anyInfo 1012
 Person _chemist_ group Chemist female anyInfo 1011
 Person _dummydaedra_ face 102 factiontype Daedra
 
-
-Clock _1stparton_ 00:00 0 flag 2 range 1 4
-Clock _2ndparton_ 00:00 0 flag 2 range 1 4
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+Clock _2ndparton_ 00:00 0 flag 1 range 2 5
+--reverted timer names and removed chaining. works this way, and better.
 
 Foe _daedra_ is Daedroth
 
 --	Quest start-up:
 	start timer _1stparton_ 
 	log 1015 step 0 
-	get item _item_ 
+	get item _item_
 
 variable _1stparton_
 _2ndparton_ task:

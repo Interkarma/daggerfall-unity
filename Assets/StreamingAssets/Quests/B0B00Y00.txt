@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 16
 Quest: B0B00Y00
+DisplayName: The Princess
 -- Message panels
 QRC:
 
@@ -152,7 +153,7 @@ QBN:
 Item letter31 letter used 1014
 
 Person _qgiver_ group Questor
-Person _lady_ face 2 group Noble
+Person _lady_ face 2 group Noble female
 Person _vamp_ face 40 factiontype Vampire_Clan
 
 Place _mondung_ remote dungeon
@@ -210,5 +211,6 @@ _S.09_ task:
 	say 1013 
 
 _clearclick_ task:
-	when _qgclicked_ and not _S.04_ 
+	when _qgclicked_ and not _S.04_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 

@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 12
 Quest: C0B10Y06
+DisplayName: The Expiatory Sacrifice
 -- Message panels
 QRC:
 
@@ -120,4 +121,6 @@ _questdone_ task:
 	end quest 
 
 _S.02_ task:
-	clicked item _ingredient_ say 1011 
+	clicked item _ingredient_
+	say 1011 
+	--illegal argument

@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const string buttonsFilename = "BUTTONS.RCI";
         const float minTimePresented = 0.0833f;
+        const int minBoxWidth = 132;
 
         Panel imagePanel = new Panel();
         Panel messagePanel = new Panel();
@@ -398,6 +399,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int minimum = 44;
             float width = label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin;
             float height = label.Size.y + messagePanel.TopMargin + messagePanel.BottomMargin;
+
+            // Enforce a minimum size
+            if (width < minBoxWidth)
+                width = minBoxWidth;
 
             if (width > minimum)
                 width = (float)Math.Ceiling(width / 22) * 22;

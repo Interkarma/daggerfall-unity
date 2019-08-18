@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: M0C00Y12
+DisplayName: Hunt for a Giant Spider
 -- Message panels
 QRC:
 
@@ -110,12 +111,9 @@ _S.02_ task:
 	end quest 
 
 _qgclicked_ task:
-               clicked npc _qgiver_
+    clicked npc _qgiver_
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.01_ 
 	clear _qgclicked_ _clearclick_ 
-
-_clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
+	--removed duplicate clearclick

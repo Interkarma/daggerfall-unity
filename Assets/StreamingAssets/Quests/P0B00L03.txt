@@ -182,7 +182,8 @@ Foe _vamprival_ is Ancient_vampire
 	give pc _letter_ notify 1021 
 	create npc _vampire_ 
 
-falseAide0 task:
+_falseAide0_ task:
+-added underscores to falseaide0
 	toting _vampproof_ and _vampire_ clicked 
 	give pc _reward_ 
 	end quest 

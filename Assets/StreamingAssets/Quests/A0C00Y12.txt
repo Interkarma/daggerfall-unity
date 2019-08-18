@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C00Y12
 -- Message panels
@@ -172,7 +173,7 @@ Place _informant1_ local tavern
 
 Clock _S.01_ 10.00:00 0 flag 9 range 0 1
 
-Foe thiefFoe is Thief
+Foe _thiefFoe_ is Thief
 
 --	Quest start-up:
 	dialog link for location _house_ person _informant_ 
@@ -196,7 +197,8 @@ _S.03_ task:
 
 _S.04_ task:
 	daily from 08:01 to 16:01 
-	pc at _store_ set _S.11_ _
+	pc at _store_ set _S.11_
+--unneeded underscore removed
 
 _S.05_ task:
 	clicked npc _informant_ say 1025 
@@ -210,15 +212,15 @@ _S.06_ task:
 
 variable _S.07_
 _S.08_ task:
-	injured thiefFoe 
-	give item _book_ to thiefFoe 
+	injured _thiefFoe_ 
+	give item _book_ to _thiefFoe_ 
 	say 1030 
 
 _S.09_ task:
-	place foe thiefFoe at _house_
+	place foe _thiefFoe_ at _house_
 
 _S.10_ task:
-	place foe thiefFoe at _inn_ 
+	place foe _thiefFoe_ at _inn_ 
 
 _S.11_ task: 
-	place foe thiefFoe at _store_ 
+	place foe _thiefFoe_ at _store_ 

@@ -6,6 +6,7 @@
 -- QuestId: 4
 Messages: 18
 Quest: B0B10Y04
+DisplayName: The Crazed Mercenary
 -- Message panels
 QRC:
 
@@ -185,5 +186,6 @@ _S.09_ task:
 
 variable _S.10_
 _clearclick_ task:
-	when _qgclicked_ and not _questdone_ 
+	when _qgclicked_ and not _questdone_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 

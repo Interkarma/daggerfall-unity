@@ -318,7 +318,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     currentLine += label.NumTextLines;                
                     label.StartCharacterIndex = horizontalScrollIndex;
-                    label.RefreshLayout();
 
                     DecideTextColor(label, i);
 
@@ -346,7 +345,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         label.StartCharacterIndex = horizontalScrollIndex;
                     else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
                         x = -horizontalScrollIndex;
-                    label.RefreshLayout();
 
                     DecideTextColor(label, i);
 
@@ -530,6 +528,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listItems.Insert(position, itemOut);
         }
 
+        public void AddItem(TextLabel textLabel, out ListItem itemOut, int position = -1, string tag = null)
+        {
+            if (textLabel == null)
+            {
+                itemOut = new ListItem(null);
+                return;
+            }
+
+            if (useRestrictedRenderArea)
+            {
+                textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+            }
+            if (horizontalScrollMode == HorizontalScrollModes.CharWise)
+                textLabel.MaxWidth = (int)Size.x;
+            else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
+                textLabel.MaxWidth = -1;
+            textLabel.Parent = this;
+            textLabel.WrapText = wrapTextItems;
+            textLabel.WrapWords = wrapWords;
+
+            itemOut = new ListItem(textLabel);
+            itemOut.textColor = textColor;
+            itemOut.selectedTextColor = selectedTextColor;
+            itemOut.shadowColor = shadowColor;
+            itemOut.selectedShadowColor = selectedShadowColor;
+            itemOut.tag = tag;
+            if (position < 0)
+                listItems.Add(itemOut);
+            else
+                listItems.Insert(position, itemOut);
+        }
+
         public void AddItem(string text, int position = -1, object tag = null)
         {
             ListItem itemOut;
@@ -540,6 +571,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             foreach (string item in items)
                 AddItem(item);
+        }
+
+        public void AddItems(TextLabel[] labels)
+        {
+            if (labels == null || labels.Length == 0)
+                return;
+
+            ListItem itemOut;
+            foreach (TextLabel label in labels)
+            {
+                AddItem(label, out itemOut);
+            }
         }
 
         public void RemoveItem(int index)

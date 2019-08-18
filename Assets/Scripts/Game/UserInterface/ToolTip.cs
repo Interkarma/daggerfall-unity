@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         string[] textRows;
         float widestRow = 0;
         string lastText = string.Empty;
+        bool previousSDFState;
 
         #endregion
 
@@ -200,7 +201,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void UpdateTextRows(string text)
         {
             // Do nothing if text has not changed since last time
-            if (text == lastText)
+            bool sdfState = font.IsSDFCapable;
+            if (text == lastText && sdfState == previousSDFState)
                 return;
 
             // Split into rows based on \r escape character
@@ -215,10 +217,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             widestRow = 0;
             for (int i = 0; i < textRows.Length; i++)
             {
-                float width = font.GetCharacterWidth(textRows[i]);
+                float width = font.CalculateTextWidth(textRows[i], LocalScale);
                 if (width > widestRow)
                     widestRow = width;
             }
+            previousSDFState = sdfState;
         }
 
         #endregion

@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 12
 Quest: L0B00Y03
+DisplayName: A Renegade Mage
 -- Message panels
 QRC:
 

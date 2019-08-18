@@ -82,9 +82,11 @@ They caught Lord Woodborne and tried him for treason.
 Message:  1022
 I heard a flock of Daedra descended upon Lord Woodborne and carried him off.
 <--->
-Things from beyond the grave rose assaulted Woodborne Hall!
+Things from beyond the grave rose and assaulted Woodborne Hall!
+--added "and" to fix poor grammar
 <--->
-I hear Lord Woodborne cheated the Mages Guild. They sent demons kill him.
+I hear Lord Woodborne cheated the Mages Guild. They sent demons to kill him.
+--added "to" to fix poor grammar
 
 Message:  1024
 I heard that Lord Woodborne will be marrying Princess Elysana.

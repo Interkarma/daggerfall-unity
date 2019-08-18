@@ -4,8 +4,10 @@
 -- Questor: knight
 -- Repute: 81
 -- QuestId: 2
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 43
 Quest: B0B81Y02
+DisplayName: The Lost Artifact
 -- Message panels
 QRC:
 
@@ -317,7 +319,8 @@ _S.19_ task:
 variable _S.20_
 yes task:
 	pc at _mageguild_ set _S.25_ 
-	reveal _dungeon3_ saying 1035 
+	reveal _dungeon3_
+	say 1035 
 	log 1041 step 1 
 	get item _I.06_ 
 	place foe _ghost_ at _dungeon3_ 

@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Perform action changes
             int region = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             GameManager.Instance.PlayerEntity.RegionData[region].LegalRep += (short)amount;
+            GameManager.Instance.PlayerEntity.ClampLegalReputations();
 
             SetComplete();
         }

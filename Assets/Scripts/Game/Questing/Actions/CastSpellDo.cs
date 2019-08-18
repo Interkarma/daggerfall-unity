@@ -92,18 +92,27 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Compare readied effect properties to spell record
+            int foundEffects = 0;
             for (int i = 0; i < classicEffects.Length; i++)
             {
                 // Effect slot must be populated
-                if (classicEffects[i].type == -1 || classicEffects[i].subType == -1)
+                if (classicEffects[i].type == -1)
                     continue;
 
                 // Bundle must have contain native effects matching this classic effect
+                foundEffects++;
                 if (!lastReadySpell.HasMatchForClassicEffect(classicEffects[i]))
                 {
                     lastReadySpell = null;
                     return;
                 }
+            }
+
+            // Do nothing if no effects found in spell
+            if (foundEffects == 0)
+            {
+                SetComplete();
+                return;
             }
 
             // Only reached here if action is running and matching spell is cast

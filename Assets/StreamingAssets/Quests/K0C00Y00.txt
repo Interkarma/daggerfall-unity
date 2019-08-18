@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 0
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 17
 Quest: K0C00Y00
 -- Message panels
@@ -151,7 +152,7 @@ QBN:
 Item _letter_ letter used 1011
 Item _mitem_ magic_item
 Item _reward_ gold
-Item letter10 letter used 1012
+Item _letter10_ letter used 1012
 Item _gem_ gem
 
 Person _qgiver_ group Questor male
@@ -172,6 +173,8 @@ Foe _F.03_ is 2 Rogue
 	log 1010 step 0 
 	get item _letter_ 
 	pc at _storehouse_ set _S.04_ 
+	start timer _2storehouse_
+	--added timer start 2storehouse
 
 _pcgetsgold_ task:
 	toting _mitem_ and _qgiver_ clicked 
@@ -184,6 +187,8 @@ variable _qgclicked_
 _S.02_ task:
 	dropped _letter_ at _storehouse_ 
 	start timer _S.05_ 
+	stop timer _2storehouse_
+	--added timer stop 2storehouse
 
 _2storehouse_ task:
 	make _mitem_ permanent 
@@ -196,8 +201,8 @@ _S.04_ task:
 	create foe _F.03_ every 9 minutes 1 times with 10% success 
 
 _S.05_ task:
-	say nothing 
-	give pc letter10 notify 1013 
+	--removed unnecessary "say nothing"
+	give pc _letter10_ notify 1013 
 
 variable _S.06_
 _S.07_ task:
@@ -215,3 +220,11 @@ _S.09_ task:
 	change repute with _competitor_ by +5 
 	change repute with _qgiver_ by -5 
 	end quest 
+
+_qgclick2_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _pcgetsgold_
+	say 1003
+	clear _clearclick_ _qgclick2_

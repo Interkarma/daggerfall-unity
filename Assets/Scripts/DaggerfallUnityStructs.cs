@@ -507,6 +507,7 @@ namespace DaggerfallWorkshop
         public Symbol targetFoe;
         public Races targetRace;
         public Genders gender;
+        public bool isChild;
         public int faceIndex;
         public int factionFaceIndex;
     }

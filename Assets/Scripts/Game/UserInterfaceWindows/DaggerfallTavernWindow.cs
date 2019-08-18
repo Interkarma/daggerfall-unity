@@ -150,6 +150,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (rentedRoom != null)
             {
                 daysAlreadyRented = (int)((rentedRoom.expiryTime - DaggerfallUnity.Instance.WorldTime.Now.ToSeconds()) / DaggerfallDateTime.SecondsPerDay);
+                if (daysAlreadyRented < 0)
+                    daysAlreadyRented = 0;
             }
 
             if (daysToRent + daysAlreadyRented > 350)

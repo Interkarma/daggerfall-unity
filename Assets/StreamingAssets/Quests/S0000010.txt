@@ -139,14 +139,16 @@ Item _reward_ magic_item
 Item letter14 letter used 1021
 
 Person _agentuk_ face 1 faction Agents_of_The_Underking
-Person shopkeeper1? face 1 faction The_Necromancers
+Person shopkeeper1 face 1 faction The_Necromancers
+--removed ? from shopkeeper1. variable names should not contain punctuation.
 
 Place _llugwych_ permanent LlugwychCastle
 Place _agentplace_ remote house2
 Place _lysandustomb_ permanent LysandusTomb2
 
 Clock _S.04_ 6.23:20 0 flag 1 range 0 1
-Clock _S.10_ 30.00:00 0 flag 1 range 0 1
+Clock _S.10_ 30.00:00
+--removed flags from S.10 to make it 30 exact days
 Clock _itemindung_ 00:00 0 flag 17 range 0 2
 
 Foe _F.00_ is Wraith
@@ -158,7 +160,7 @@ _pcgetsgold_ task:
 	toting _reward_ and _agentuk_ clicked 
 	give pc _reward_ 
 	reveal _lysandustomb_ in province 33 at 210794 
-	change repute with shopkeeper1? by -20 
+	change repute with shopkeeper1 by -20 
 	change repute with _agentuk_ by +15 
 	end quest 
 

@@ -543,6 +543,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharSummaryWindow.Cancelled)
             {
+                characterDocument = createCharSummaryWindow.GetUpdatedCharacterDocument();
                 StartNewGame();
             }
             else

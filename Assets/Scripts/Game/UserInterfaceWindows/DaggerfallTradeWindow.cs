@@ -644,7 +644,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = localItems.GetItem(i);
                     if (!item.IsEquipped && (
                             (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic) ||
-                            (windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
+                            (windowMode == WindowModes.Sell && !item.IsEnchanted && itemTypesAccepted.Contains(item.ItemGroup)) ||
                             (windowMode == WindowModes.SellMagic && item.IsEnchanted) ))
                     {
                         AddLocalItem(item);
@@ -756,7 +756,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     case WindowModes.Repair:
                         // Check that item can be repaired, is damaged & transfer if so.
-                        if (item.IsEnchanted)
+                        if (item.IsEnchanted && !DaggerfallUnity.Settings.AllowMagicRepairs)
                             DaggerfallUI.MessageBox(magicItemsCannotBeRepairedTextId);
                         else if ((item.currentCondition < item.maxCondition) && item.TemplateIndex != (int)Weapons.Arrow)
                         {
@@ -794,7 +794,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (item.RepairData.IsBeingRepaired() && !item.RepairData.IsRepairFinished())
                     {
                         itemBeingRepaired = item;
-                        String strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
+                        string strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
                         DaggerfallMessageBox confirmInterruptRepairBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strInterruptRepair, this);
                         confirmInterruptRepairBox.OnButtonClick += ConfirmInterruptRepairBox_OnButtonClick;
                         confirmInterruptRepairBox.Show();

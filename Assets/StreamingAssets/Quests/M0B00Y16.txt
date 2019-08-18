@@ -6,6 +6,7 @@
 -- QuestId: 16
 Messages: 81
 Quest: M0B00Y16
+DisplayName: Giant Killing
 -- Message panels
 QRC:
 
@@ -167,7 +168,7 @@ variable _map_
 variable _nomap_
 _S.02_ task:
 	injured _giant_ 
-	start task giantWaveWhileInDungeon
+	start task _giantWaveWhileInDungeon_
 	say 1030 
 
 _S.03_ task:
@@ -179,6 +180,7 @@ _clickqgiver_ task:
 
 _clearclick_ task:
 	when _clickqgiver_ and not _S.03_
+	say 1003
 	clear _clickqgiver_ _clearclick_
 
 _success_ task:
@@ -199,9 +201,9 @@ _S.09_ task:
 
 _S.10_ task:
 	clicked npc _villager_ 
-	prompt 1040 yes yes no _no_ 
+	prompt 1040 yes _yes_ no _no_ 
 
-yes task:
+_yes_ task:
 	pc at _store_ set _S.13_ 
 	log 1021 step 1 
 	hide npc _villager_ 
@@ -219,7 +221,7 @@ _S.13_ task:
 	place npc _villager_ at _store_ 
 
 _S.14_ task:
-	when yes and not _S.13_ and _qtime_ 
+	when _yes_ and not _S.13_ and _qtime_ 
 	say 1042 
 
 _S.15_ task:
@@ -239,10 +241,8 @@ _S.19_ task:
 	when not _victim_ and _success_
 	end quest
 
-giantWaveWhileInDungeon task:
-	pc at _mondung_ set spawnGiants
+_giantWaveWhileInDungeon_ task:
+	pc at _mondung_ set _spawnGiants_
 
-spawnGiants task:
+_spawnGiants_ task:
 	create foe _F.01_ every 4 minutes 6 times with 50% success 
-
-

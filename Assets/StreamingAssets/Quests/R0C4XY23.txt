@@ -71,7 +71,8 @@ QuestorPostfailure:  [1009]
 <ce>                    expected much better from you.
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_ has
+%qdt:
+_questgiver_ has
  sent me to ___contact_ to deliver a certain
  book, _item_, to _contact_ in
  ___contact_. I have =queston_ days

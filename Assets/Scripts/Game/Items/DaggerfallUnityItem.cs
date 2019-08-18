@@ -1348,6 +1348,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Unequip item - entity must equip again
             // This ensures "on equip" effect payloads execute correctly
             UnequipItem(owner);
+            owner.UpdateEquippedArmorValues(this, false);
 
             // Set new enchantments and identified flag
             legacyMagic = legacyEnchantments.ToArray();

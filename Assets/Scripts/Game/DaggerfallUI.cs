@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Color DaggerfallBrighterSelectedTextColor = new Color32(254, 56, 18, 255);
+        public static Color DaggerfallForcedEnchantmentTextColor = new Color32(186, 207, 125, 255);
         public static Color DaggerfallUnityStatDrainedTextColor = new Color32(190, 85, 24, 255);
         public static Color DaggerfallUnityStatIncreasedTextColor = new Color32(178, 207, 255, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
@@ -274,7 +275,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public SpellIconCollection SpellIconCollection
         {
-            get { return spellIconCollection; }
+            get { return spellIconCollection ?? (spellIconCollection = new SpellIconCollection()); }
         }
 
         void Awake()
@@ -319,9 +320,6 @@ namespace DaggerfallWorkshop.Game
             // Post start message
             PostMessage(startupMessage);
 
-            // Load spell icon collection
-            spellIconCollection = new SpellIconCollection();
-
             // Create standard pixel font material
             if (pixelFontMaterial == null)
                 pixelFontMaterial = new Material(Shader.Find(MaterialReader._DaggerfallPixelFontShaderName));
@@ -333,14 +331,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Toggle font rendering between classic and SDF using LeftShift+F
-            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.F11))
-            {
-                DaggerfallUnity.Settings.SDFFontRendering = !DaggerfallUnity.Settings.SDFFontRendering;
-                DaggerfallUnity.Settings.SaveSettings();
-                //Debug.LogFormat("SDFFontRendering={0}", DaggerfallUnity.Settings.SDFFontRendering.ToString());
-            }
-
             // HUD is always first window on stack when ready
             if (dfUnity.IsPathValidated && !hudSetup)
             {
@@ -479,6 +469,9 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenItemMakerWindow:
                     uiManager.PushWindow(dfItemMakerWindow);
                     break;
+                case DaggerfallUIMessages.dfuiOpenPotionMakerWindow:
+                    uiManager.PushWindow(dfPotionMakerWindow);
+                    break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (GameManager.Instance.IsPlayerInside)
                     {
@@ -529,7 +522,7 @@ namespace DaggerfallWorkshop.Game
                         MessageBox(enemiesNearby);
                     }
                     else if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming ||
-                             !GameManager.Instance.PlayerController.isGrounded)
+                             !GameManager.Instance.PlayerMotor.StartRestGroundedCheck())
                     {
                         const int cannotRestNow = 355;
                         MessageBox(cannotRestNow);
@@ -573,6 +566,11 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiStatusInfo:
                     DisplayStatusInfo();
+                    break;
+                case DaggerfallUIMessages.dfuiOpenDemoClassQuestions:
+                    DemoClassQuestionsWindow dfDemoClassQuestions = new DemoClassQuestionsWindow(uiManager);
+                    dfDemoClassQuestions.AllowCancel = false;
+                    uiManager.PushWindow(dfDemoClassQuestions);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR

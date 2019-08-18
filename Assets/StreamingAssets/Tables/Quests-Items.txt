@@ -11,7 +11,7 @@ schema: *name,p1,p2
 
 --
 Masque_of_Clavicus_Vile,5,0
-Mehrune's_Razor        ,5,1
+Mehrunes_Razor         ,5,1
 Mace_of_Molag_Bal      ,5,2
 Hircine_Ring           ,5,3
 Sanguine_Rose          ,5,4

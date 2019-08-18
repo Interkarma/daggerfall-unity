@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B50Y09
+DisplayName: Hunt for a Gargoyle
 -- Message panels
 QRC:
 

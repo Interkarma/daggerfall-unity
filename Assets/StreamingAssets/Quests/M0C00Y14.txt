@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: M0C00Y14
+DisplayName: A Rat Infestation
 -- Message panels
 QRC:
 
@@ -113,15 +114,11 @@ _S.02_ task:
 	end quest 
 
 _qgclicked_ task:
-               clicked npc _qgiver_
+    clicked npc _qgiver_
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.01_ 
 	clear _qgclicked_ _clearclick_ 
-
-_clearclick_ task:
-	when _S.02_ and not _S.01_ 
-	clear _S.02_ _clearclick_ 
 
 _S.04_ task:
 	create foe _monster_ every 5 minutes 7 times with 75% success 

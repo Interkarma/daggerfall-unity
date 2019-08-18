@@ -117,6 +117,8 @@ namespace DaggerfallWorkshop
         public bool EnableGeographicBackgrounds { get; set; }
         public bool EnableArrowCounter { get; set; }
         public bool DungeonExitWagonPrompt { get; set; }
+        public bool IllegalRestWarning { get; set; }
+        public int LoiterLimitInHours { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -157,6 +159,7 @@ namespace DaggerfallWorkshop
 
         public float TerrainHeightmapPixelError { get; set; }
         public bool SmallerDungeons { get; set; }
+        public bool CustomBooksImport { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -173,6 +176,7 @@ namespace DaggerfallWorkshop
         public bool CombatVoices { get; set; }
         public bool EnemyInfighting { get; set; }
         public bool EnhancedCombatAI { get; set; }
+        public bool GuildQuestListBox { get; set; }
 
         #endregion
 
@@ -239,6 +243,8 @@ namespace DaggerfallWorkshop
             EnableGeographicBackgrounds = GetBool(sectionGUI, "EnableGeographicBackgrounds");
             EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
             DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
+            IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
+            LoiterLimitInHours = GetInt(sectionGUI, "LoiterLimitInHours");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -273,6 +279,7 @@ namespace DaggerfallWorkshop
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
+            CustomBooksImport = GetBool(sectionExperimental, "CustomBooksImport");
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -288,6 +295,7 @@ namespace DaggerfallWorkshop
             CombatVoices = GetBool(sectionEnhancements, "CombatVoices");
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
+            GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
         }
 
         /// <summary>
@@ -349,6 +357,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableGeographicBackgrounds", EnableGeographicBackgrounds);
             SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
             SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
+            SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
+            SetInt(sectionGUI, "LoiterLimitInHours", LoiterLimitInHours);
+
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
@@ -376,10 +387,11 @@ namespace DaggerfallWorkshop
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
             SetBool(sectionExperimental, "SmallerDungeons", SmallerDungeons);
+            SetBool(sectionExperimental, "CustomBooksImport", CustomBooksImport);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
-            SetBool(sectionEnhancements, "MeshAndTextureReplacement", AssetInjection);
+            SetBool(sectionEnhancements, "AssetInjection", AssetInjection);
             SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);
@@ -391,6 +403,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "CombatVoices", CombatVoices);
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
+            SetBool(sectionEnhancements, "GuildQuestListBox", GuildQuestListBox);
 
             // Write settings to persistent file
             WriteSettingsFile();

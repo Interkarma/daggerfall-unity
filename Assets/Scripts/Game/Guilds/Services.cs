@@ -9,6 +9,7 @@
 using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -140,7 +141,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
     public static class Services
     {
-        public delegate void CustomGuildService();
+        public delegate void CustomGuildService(IUserInterfaceWindow window);
 
         // Store for extra guild NPC services (i.e. from mods)
         private static Dictionary<int, GuildServices> guildNpcServices = new Dictionary<int, GuildServices>();

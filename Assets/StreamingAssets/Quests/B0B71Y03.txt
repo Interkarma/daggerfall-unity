@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 53
 Quest: B0B71Y03
+DisplayName: The Artifact
 -- Message panels
 QRC:
 
@@ -443,15 +444,15 @@ _S.23_ task:
 	end quest 
 
 _S.24_ task:
-	when _S.00_ and _artifact1_ saying 1020 
+	when _S.00_ and _artifact1_
 	say 1020 
 
 _S.25_ task:
-	when _S.00_ and _artifact2_ saying 1021 
+	when _S.00_ and _artifact2_
 	say 1021 
 
 _S.26_ task:
-	when _S.00_ and _artifact3_ saying 1022 
+	when _S.00_ and _artifact3_
 	say 1022 
 
 variable _love_

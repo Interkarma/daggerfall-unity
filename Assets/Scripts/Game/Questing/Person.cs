@@ -314,8 +314,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = GetHomePlaceRegionName();
                     break;
 
-                case MacroTypes.DetailsMacro:           // Race
-                    textOut = RaceTemplate.GetRaceDictionary()[(int)race].Name;
+                case MacroTypes.DetailsMacro:           // Details macro
+                    textOut = GetFlatDetailsString();
                     break;
 
                 case MacroTypes.FactionMacro:           // Faction macro
@@ -333,6 +333,37 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        string GetFlatDetailsString()
+        {
+            // Get billboard texture data
+            FactionFile.FlatData flatData;
+            if (IsIndividualNPC)
+            {
+                // Individuals are always flat1 no matter gender
+                flatData = FactionFile.GetFlatData(FactionData.flat1);
+            }
+            if (Gender == Genders.Male)
+            {
+                // Male has flat1
+                flatData = FactionFile.GetFlatData(FactionData.flat1);
+            }
+            else
+            {
+                // Female has flat2
+                flatData = FactionFile.GetFlatData(FactionData.flat2);
+            }
+
+            // Get flat ID for this person
+            int flatID = FlatsFile.GetFlatID(flatData.archive, flatData.record);
+
+            // Get flat caption for this ID, e.g. "young lady in green", or fallback to race
+            FlatsFile.FlatData flatCFG;
+            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(flatID, out flatCFG))
+                return flatCFG.caption;
+            else
+                return RaceTemplate.GetRaceDictionary()[(int)race].Name;
         }
 
         public override void Tick(Quest caller)
@@ -1080,6 +1111,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int GetCareerFactionID(string careerAllianceName)
         {
             const int magesGuild = 40;
+            const int nobles = 242;
             const int genericTemple = 450;
             const int merchants = 510;
 
@@ -1118,7 +1150,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 case 14:
                     return genericTemple;                   // Generic Temple seems to link all the temples together
                 case 16:
-                    return GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();       // Not sure if "Noble" career maps to regional "court of" in classic
+                    return nobles;                          // Random Noble
                 case 17:
                 case 18:
                 case 19:

@@ -6,6 +6,7 @@
 -- QuestId: 4
 Messages: 11
 Quest: O0B2XY04
+DisplayName: Valuable Pages
 -- Message panels
 QRC:
 

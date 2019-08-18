@@ -4,6 +4,7 @@
 -- Questor: merchant
 -- Repute: 30
 -- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 56
 Quest: K0C30Y03
 -- Message panels
@@ -96,8 +97,8 @@ Do you give _hooker_ the gold?
 Message:  1012
 <ce>            Thank you, sweets. I've heard you're the decent
 <ce>            sort, and I thought I'd give you a break. I was
-<ce>                   hired by _patsy_ a few weeks ago
-<ce>          -- not for the reason you're thinkin. All I had to
+<ce>                   hired by _patsy_ a few weeks ago --
+<ce>          not for the reason you're thinkin. All I had to
 <ce>           do was flirt with some old gaffer and get him to
 <ce>          ask me out to dinner on a specific day. I guess to
 <ce>          get him out of his house, because I found out later
@@ -132,11 +133,12 @@ Message:  1014
 <ce>                      %pcn is your target, a %ra
 <ce>             adventurer and mercenary. Use extreme caution
 <ce>                     and be prepared for a fight.
- 
+<ce>
 <ce>                        No jellyfish this one.
- 
- 
- -- _patsy_
+<ce> 
+<ce>
+ 			 _patsy_
+--eliminating unmarked white spaces. this problem was patched out in previous versions but i still prefer to have lines with blank spaces filled just in case.			
 
 Message:  1015
 _banker_ works over at _bank_ in __bank_. Perfectly respectable sort.
@@ -209,10 +211,10 @@ Message:  1021
 <ce>           Change of agenda, folks. I need you in ___qgiver_
 <ce>         right away. Get over there and wait for my response.
 <ce>                Shouldn't take longer than a few days.
- 
- 
- 
-<ce>                              -- _patsy_
+<ce>
+<ce>
+<ce>
+<ce>                               _patsy_
 
 Message:  1023
 <ce>                       You know immediately that
@@ -230,7 +232,7 @@ I'm going to need some reinforcements if the
  when you arrive.
  
  
- -- _patsy_
+ 		 _patsy_
 
 Message:  1026
 <ce>                There is a stamp on the piece of _rock_
@@ -274,7 +276,7 @@ Message:  1031
  
  
  
- -- The Brotherhood
+ 		 The Brotherhood
 
 Message:  1032
 <ce>         You do not even realize that the young boy is next to
@@ -296,7 +298,7 @@ Message:  1033
       Good luck, %pcf, and walk with Baan Dar.
  
  
-<ce>                             -- The Guild
+<ce>                              The Guild
                                      <--->
                            
 
@@ -430,18 +432,18 @@ This document bears witness to the ownership
 QBN:
 Item _deed_ letter used 1050
 Item _reward_ diamond
-Item letter27 letter used 1036
-Item bribe4 gold range 10 to 10
-Item letter28 letter used 1013
-Item bribe2 letter used 1014
-Item deed3 gold_bar
-Item letter29 letter used 1021
-Item letter30 letter used 1025
+Item _letter27_ letter used 1036
+Item _bribe4_ gold range 10 to 10
+Item _letter28_ letter used 1013
+Item _bribe2_ letter used 1014
+Item _deed3_ gold_bar
+Item _letter29_ letter used 1021
+Item _letter30_ letter used 1025
 Item _rock_ element anyInfo 1027
-Item letter32 letter used 1031
-Item letter15 letter used 1033
-Item bothdorjii gold range 15 to 50
-Item letter33 gold range 20 to 40
+Item _letter32_ letter used 1031
+Item _letter15_ letter used 1033
+Item _bothdorjii_ gold range 15 to 50
+Item _letter33_ gold range 20 to 40
 
 Person _qgiver_ group Questor male
 Person _patsy_ face 1 factiontype Province
@@ -449,7 +451,7 @@ Person _hooker_ face 187 faction The_Prostitutes
 Person _gaffer_ face 73 named Chulmore_Quill
 Person _banker_ face 1 group Banker anyInfo 1015
 Person _guard_ face 80 factiontype Knightly_Guard
-Person darkb face 81 faction The_Dark_Brotherhood
+Person _darkb_ face 81 faction The_Dark_Brotherhood
 Person _victin_ face 81 faction The_Thieves_Guild
 
 Place _bank_ remote bank
@@ -476,7 +478,7 @@ Foe _F.04_ is Rogue
 --	Quest start-up:
 	place item _deed_ at _mondung_ 
 	place item _rock_ at _house2_ 
-	place item letter30 at _mondung_ 
+	place item _letter30_ at _mondung_ 
 	dialog link for location _house3_ person _gaffer_ item _rock_ 
 	dialog link for person _guard_ 
 	dialog link for location _house1_ person _hooker_ 
@@ -484,10 +486,10 @@ Foe _F.04_ is Rogue
 	start timer _2letter_ 
 	log 1010 step 0 
 	repute with _hooker_ exceeds 10 do _S.02_ 
-	repute with darkb exceeds 15 do _S.25_ 
+	repute with _darkb_ exceeds 15 do _S.25_ 
 	repute with _victin_ exceeds 15 do _S.28_ 
 	pc at _mondung2_ set _S.16_ 
-	letter30 used do _S.35_ 
+	_letter30_ used do _S.35_ 
 	_rock_ used do _S.19_ 
 	create npc at _house1_ 
 	place npc _hooker_ at _house1_ 
@@ -495,7 +497,7 @@ Foe _F.04_ is Rogue
 	place npc _banker_ at _bank_ 
 
 _pcgetsgold_ task:
-	toting deed3 and _qgiver_ clicked 
+	toting _deed3_ and _qgiver_ clicked 
 	toting _deed_ and _qgiver_ clicked 
 	when _qgclicked_ and _S.18_ 
 	give pc _reward_ 
@@ -510,7 +512,7 @@ _S.02_ task:
 _S.03_ task:
 	add dialog for person _hooker_ 
 	add dialog for location _house1_ 
-	get item letter27 
+	get item _letter27_ 
 	say 1037 
 
 _S.04_ task:
@@ -520,14 +522,15 @@ _S.04_ task:
 _thankyou_ task:
 	add dialog for person _gaffer_ 
 	log 1041 step 4 
-	give item bribe2 to _F.01_ 
+	give item _bribe2_ to _F.01_ 
 	say 1012 
 	change repute with _hooker_ by +5 
-	send _F.01_ every minutes times with success 
+	send _F.01_ every 80 minutes 30 times with 15% success 
+	--data taken from UESP
 
 _gimme_ task:
-	get item bribe4 
-	make bribe4 permanent 
+	get item _bribe4_ 
+	make _bribe4_ permanent 
 
 _S.07_ task:
 	clicked npc _banker_ 
@@ -550,7 +553,7 @@ _S.11_ task:
 	reveal _mondung_ 
 	reveal _mondung2_ 
 	log 1039 step 2 
-	get item letter29 
+	get item _letter29_ 
 	say 1019 
 
 _S.12_ task:
@@ -565,14 +568,14 @@ _S.13_ task:
 	hide npc _guard_ 
 
 _S.14_ task:
-	dropped letter29 at _mondung2_ 
+	dropped _letter29_ at _mondung2_ 
 
 _S.15_ task:
 	when _S.16_ and not _S.14_ 
 	create foe _F.02_ every 221 minutes 200 times with 10% success 
 
 _S.16_ task:
-	place item deed3 at _mondung2_ 
+	place item _deed3_ at _mondung2_ 
 	create foe _F.04_ every 111 minutes 200 times with 5% success 
 	create foe _F.03_ every 100 minutes 200 times with 5% success 
 	place foe _warrior_ at _mondung2_ 
@@ -598,7 +601,7 @@ _S.23_ task:
 	say 1029 
 
 _S.24_ task:
-	clicked item deed3 
+	clicked item _deed3_ 
 	say 1030 
 
 _S.25_ task:
@@ -606,15 +609,15 @@ _S.25_ task:
 
 _S.26_ task:
 	reveal _mondung_ readmap
-	get item letter32 
+	get item _letter32_ 
 	say 1032 
 
 _S.27_ task:
 	reveal _mondung_ readmap
-	get item letter15 
-	get item bothdorjii 
+	get item _letter15_ 
+	get item _bothdorjii_ 
 	say 1032 
-	make bothdorjii permanent 
+	make _bothdorjii_ permanent 
 
 _S.28_ task:
 	start timer _S.27_ 
@@ -627,9 +630,9 @@ _S.30_ task:
 	reveal _mondung_ readmap
 	reveal _mondung2_ readmap
 	log 1042 step 4 
-	get item letter33 
+	get item _letter33_ 
 	say 1034 
-	make letter33 permanent 
+	make _letter33_ permanent 
 
 _S.31_ task:
 	when _S.29_ and not _S.30_ 
@@ -637,11 +640,13 @@ _S.31_ task:
 	say 1035 
 
 _clearclick_ task:
-	when _qgclicked_ and not _S.18_ 
+	when _qgclicked_ and not _S.18_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 
 
 _S.33_ task:
-	clicked item _rock_ say 1026 
+	clicked item _rock_
+	say 1026 
 	add dialog for item _rock_ 
 	reveal _mondung_ 
 
@@ -652,5 +657,5 @@ _S.35_ task:
 	reveal _mondung2_ readmap
 
 _2letter_ task:
-	get item letter28 
+	get item _letter28_ 
 	say 1032 

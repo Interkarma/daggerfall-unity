@@ -173,6 +173,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string PrimaryDisplayName;
         public string SecondaryDisplayName;
         public int EnchantCost;
+        public int ParentEnchantment;
 
         public bool Equals(EnchantmentSettings other)
         {
@@ -318,5 +319,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public int strikesModulateDamage;                           // Amount to plus/minus from damage after Strikes effect payload
         public int durabilityLoss;                                  // Amount of durability lost after callback
+    }
+
+    /// <summary>
+    /// Defines a single forced enchantment effect with param.
+    /// </summary>
+    public struct ForcedEnchantment
+    {
+        public string key;
+        public EnchantmentParam param;
+
+        public ForcedEnchantment(string key, short classicParam = -1)
+        {
+            this.key = key;
+            param = new EnchantmentParam() { ClassicParam = classicParam, CustomParam = string.Empty };
+        }
+    }
+
+    /// <summary>
+    /// Contains a set of forced effects keyed to a valid mobile type.
+    /// </summary>
+    public struct ForcedEnchantmentSet
+    {
+        public MobileTypes soulType;
+        public ForcedEnchantment[] forcedEffects;
     }
 }

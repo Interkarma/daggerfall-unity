@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 81
 Quest: M0B00Y00
+DisplayName: Hunt for a Lycanthrope
 -- Message panels
 QRC:
 
@@ -137,6 +138,7 @@ _1stparton_ task:
 variable _2ndparton_
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 
 
 _S.06_ task:

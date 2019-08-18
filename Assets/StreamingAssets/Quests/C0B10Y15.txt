@@ -6,6 +6,7 @@
 -- QuestId: 15
 Messages: 41
 Quest: C0B10Y15
+DisplayName: The Relic
 -- Message panels
 QRC:
 
@@ -162,6 +163,14 @@ _S.01_ task:
 	give pc _reward_ 
 	end quest 
 
+_qgclicked_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_
+	say 1003
+	clear _qgclicked_ _clearclick_
+
 _S.02_ task:
 	killed 1 _lich_ 
 
@@ -180,7 +189,7 @@ _S.06_ task:
 	when _shortdelay_ and not _S.02_ 
 	say 1040 
 
-variable _S.07_
-_S.08_ task:
-	when _qtime_ and _S.07_ 
+_S.07_ task:
 	say 1015 
+
+variable _S.08_

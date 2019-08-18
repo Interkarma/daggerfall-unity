@@ -149,7 +149,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 Presets.Clear();
 
             // Get presets from mod
-            if (mod.AssetBundle.Contains(presetsFileName))
+            if (mod.HasAsset(presetsFileName))
             {
                 List<Preset> modPresets = new List<Preset>();
                 if (TryDeserialize(mod, presetsFileName, ref modPresets))
@@ -393,7 +393,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>       
         public static bool HasSettings(Mod mod)
         {
-            return mod.AssetBundle.Contains(settingsFileName);
+            return mod.HasAsset(settingsFileName);
         }
 
         /// <summary>

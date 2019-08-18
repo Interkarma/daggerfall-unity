@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 38
 Quest: C0B00Y01
+DisplayName: The Heretic
 -- Message panels
 QRC:
 
@@ -74,6 +75,12 @@ RumorsPostfailure:  [1006]
 _prophet_'s gone on to preach %g3 evangelium to the heathen folk of Tamriel.
 <--->
 _prophet_'s left the Bay, but %g3 work is not yet complete.
+<--->
+_prophet_ may be the greatest leader to come out of __tavern_.
+<--->
+_prophet_ spends %g3 time in %g3 room in _prophouse_, writing.
+<--->
+_prophet_ hasn't ever gotten on well with __qgiver_.
 
 RumorsPostsuccess:  [1007]
 That _prophet_ was a charletan who found some fools in __tavern_.
@@ -83,13 +90,6 @@ For what thou hast done for the faith, I'd be happy to help thee.
 
 QuestorPostfailure:  [1009]
 I have nothing to say to thee, heretic of _prophet_.
-
-QuestorPostfailure:  [1009]
-_prophet_ may be the greatest leader to come out of __tavern_.
-<--->
-_prophet_ spends %g3 time in %g3 room in _prophouse_, writing.
-<--->
-_prophet_ hasn't ever gotten on well with __qgiver_.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -454,18 +454,21 @@ Message:  1037
 --          _tavern_ occurs 5 times.
 
 QBN:
-Item letter7 letter used 1011
+--moved erroneous 1009 entries to 1006
+Item _letter7_ letter used 1011
 Item _letter_ letter used 1012
-Item letter8 letter used 1014
+Item _letter8_ letter used 1014
 Item _relartifact_ religious anyInfo 1022
-Item letter9 letter used 1021
+Item _letter9_ letter used 1021
 Item _finger_ finger anyInfo 1027
 Item _reward_ gem
+--added underscores to letter7,8,9
 
 Person _qgiver_ group Questor
 Person _contact_ face 105 group Local_3.0
 Person _priest_ face 49 group Group_5.0
-Person _prophet_ face 1 group Local_4.0 anyInfo QuestorPostfailure
+Person _prophet_ face 1 group Local_4.0 anyInfo 1009
+--changed anyInfo QuestorPostFailure to 1009
 Person _replace_ face 3 factiontype Temple anyInfo 1023
 Person _lover_ face 104 group Group_7.0 anyInfo 1017
 
@@ -492,7 +495,7 @@ Foe _fighter_ is Warrior
 	start timer _queston_ 
 	reveal _mondung_ 
 	log 1010 step 0 
-	letter9 used do _readletter_ 
+	_letter9_ used do _readletter_ 
 	create npc _lover_ 
 	place npc _contact_ at _tavern_ 
 	place npc _prophet_ at _prophouse_ 
@@ -502,7 +505,7 @@ _queston_ task:
 	end quest 
 
 _pcgetsgold_ task:
-	toting letter9 and _qgiver_ clicked 
+	toting _letter9_ and _qgiver_ clicked 
 	toting _finger_ and _qgiver_ clicked 
 	give pc _reward_ 
 	end quest 
@@ -512,7 +515,7 @@ _S.03_ task:
 	clicked npc _contact_ 
 	add dialog for location _prophouse_ person _lover_ 
 	log 1032 step 1 
-	get item letter7 
+	get item _letter7_ 
 	say 1013 
 	clear _S.06_ 
 
@@ -523,7 +526,7 @@ _S.04_ task:
 
 variable _S.05_
 _S.06_ task:
-	give pc letter8 notify 1015 
+	give pc _letter8_ notify 1015 
 
 _S.07_ task:
 	clicked npc _replace_ 
@@ -537,7 +540,7 @@ _S.08_ task:
 	repute with _lover_ exceeds 5 do _S.09_ 
 
 _S.09_ task:
-	get item letter9 
+	get item _letter9_ 
 	say 1019 
 
 _S.10_ task:
@@ -545,7 +548,7 @@ _S.10_ task:
 
 _S.11_ task:
 	when _S.10_ and not _S.09_ 
-	get item letter9 
+	get item _letter9_ 
 	say 1020 
 	clear _S.08_ 
 
@@ -587,7 +590,7 @@ _S.19_ task:
 	say 1028 
 
 _S.20_ task:
-	toting letter9 and _prophet_ clicked 
+	toting _letter9_ and _prophet_ clicked 
 	hide npc _prophet_ 
 	say 1030 
 	place foe _fighter_ at _prophouse_ 

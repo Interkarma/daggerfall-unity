@@ -819,10 +819,14 @@ namespace DaggerfallWorkshop.Game.Entity
             //this.vampireClan = character.vampireClan;
             //this.lastTimeVampireNeedToKillSatiated = character.lastTimeVampireNeedToKillSatiated;
 
+            // Trim name strings as these might contain trailing whitespace characters from classic save
+            name = name.Trim();
+            career.Name = career.Name.Trim();
+
             BackStory = character.backStory;
 
             if (maxHealth <= 0)
-                this.maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevel);
+                this.maxHealth = FormulaHelper.RollMaxHealth(this);
             else
                 this.maxHealth = maxHealth;
 
@@ -1116,7 +1120,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 gender = Genders.Male;
                 stats.SetPermanentFromCareer(career);
                 level = testPlayerLevel;
-                maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevel);
+                maxHealth = FormulaHelper.RollMaxHealth(this);
                 name = testPlayerName;
                 stats.SetDefaults();
                 skills.SetDefaults();
@@ -2120,6 +2124,8 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void NormalizeReputations()
         {
+            ClampLegalReputations();
+
             for (int i = 0; i < 62; ++i)
             {
                 if (regionData[i].LegalRep < 0)
@@ -2135,6 +2141,20 @@ namespace DaggerfallWorkshop.Game.Entity
                     factionData.ChangeReputation(factionData.FactionDict[key].id, 1);
                 else if (factionData.FactionDict[key].rep > 0)
                     factionData.ChangeReputation(factionData.FactionDict[key].id, -1);
+            }
+        }
+
+        public void ClampLegalReputations()
+        {
+            const short legalRepMin = -100;
+            const short legalRepMax = 100;
+
+            for (int i = 0; i < 62; ++i)
+            {
+                if (regionData[i].LegalRep < legalRepMin)
+                    regionData[i].LegalRep = legalRepMin;
+                else if (regionData[i].LegalRep > legalRepMax)
+                    regionData[i].LegalRep = legalRepMax;
             }
         }
 

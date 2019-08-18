@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.Arena2;
@@ -246,10 +247,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             foreach (EffectBundleSettings spell in spells)
             {
-                // Show spell name and cost
+                // Get spell costs
                 // Costs can change based on player skills and stats so must be calculated each time
                 int goldCost, spellPointCost;
                 FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, out goldCost, out spellPointCost, null, spell.MinimumCastingCost);
+
+                // Lycanthropy is a free spell, even though it shows a cost in classic
+                // Setting cost to 0 so it displays correctly in spellbook
+                if (spell.Tag == PlayerEntity.lycanthropySpellTag)
+                    spellPointCost = 0;
+
+                // Display spell name and cost
                 ListBox.ListItem listItem;
                 spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spell.Name), out listItem);
                 if (availableSpellPoints != null && availableSpellPoints < spellPointCost)
@@ -732,11 +740,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
                 return;
 
+            // Lycanthropes cast for free
+            bool noSpellPointCost = spellSettings.Tag == PlayerEntity.lycanthropySpellTag;
+
             // Assign to player effect manager as ready spell
             EntityEffectManager playerEffectManager = GameManager.Instance.PlayerEffectManager;
             if (playerEffectManager)
             {
-                playerEffectManager.SetReadySpell(new EntityEffectBundle(spellSettings, GameManager.Instance.PlayerEntityBehaviour));
+                playerEffectManager.SetReadySpell(new EntityEffectBundle(spellSettings, GameManager.Instance.PlayerEntityBehaviour), noSpellPointCost);
                 DaggerfallUI.Instance.PopToHUD();
             }
         }
@@ -765,6 +776,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (spellsListBox.SelectedIndex == -1)
                 return;
+
+            // Cannot delete special vampire/lycanthropy spells, as there's no way to get them back
+            // These will be cleaned up when character is cured of their curse
+            EffectBundleSettings spell;
+            if (GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+            {
+                if (spell.Tag == PlayerEntity.vampireSpellTag)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotDeleteVamp"));
+                    return;
+                }
+                else if (spell.Tag == PlayerEntity.lycanthropySpellTag)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotDeleteWere"));
+                    return;
+                }
+            }
 
             // Prompt and delete spell
             deleteSpellIndex = spellsListBox.SelectedIndex;

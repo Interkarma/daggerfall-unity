@@ -26,8 +26,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         #region Fields
 
-        const int permanentDiseaseValue = 0xff;
-        const int completedDiseaseValue = 0xfe;
+        protected const int permanentDiseaseValue = 0xff;
+        protected const int completedDiseaseValue = 0xfe;
 
         protected int forcedRoundsRemaining = 1;
         protected Diseases classicDiseaseType = Diseases.None;
@@ -88,11 +88,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
-            // Player must be greater than level 1 to acquire a disease
+            // Target must be player entity greater than level 1 to acquire a disease
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
-            if (host.EntityType == EntityTypes.Player && host.Entity.Level < 2)
+            if (host.EntityType != EntityTypes.Player || host.Entity.Level < 2)
             {
-                forcedRoundsRemaining = 0;
+                EndDisease();
                 return;
             }
 

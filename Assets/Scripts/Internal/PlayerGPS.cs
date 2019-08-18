@@ -889,7 +889,7 @@ namespace DaggerfallWorkshop
 
             // Get building information
             DiscoveredBuilding db;
-            if (!GetBuildingDiscoveryData(buildingKey, out db))
+            if (!GetBaseBuildingDiscoveryData(buildingKey, out db))
                 return;
 
             // Get location discovery
@@ -903,6 +903,21 @@ namespace DaggerfallWorkshop
             // Ensure the building dict is created
             if (dl.discoveredBuildings == null)
                 dl.discoveredBuildings = new Dictionary<int, DiscoveredBuilding>();
+
+            // check if building is used in quest (but only if no override name was provided (which will have priority))
+            if (overrideName == null)
+            {
+                bool pcLearnedAboutExistence = false;
+                bool receivedDirectionalHints = false;
+                bool locationWasMarkedOnMapByNPC = false;
+                string overrideBuildingName = string.Empty;
+                if (GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
+                {
+                    // if pc learned about building existance (was told the name) and quest building has (override) building name different than current building display name
+                    if (pcLearnedAboutExistence && overrideBuildingName != db.displayName)
+                        overrideName = overrideBuildingName; // set override name for use
+                }
+            }
 
             // Add the building and store back to discovered location, overriding name if requested
             if (overrideName != null)
@@ -919,23 +934,19 @@ namespace DaggerfallWorkshop
             dl.discoveredBuildings[db.buildingKey] = db;
             discoveredLocations[mapPixelID] = dl;
         }
-
+       
         /// <summary>
         /// Undiscover the specified building in current location.
-        /// used to undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource or on quest startup
+        /// used to undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource or on quest startup or on quest tombstone
         /// otherwise previously discovered residences will automatically show up on the automap when used in a quest
         /// </summary>
         /// <param name="buildingKey">Building key of building to be undiscovered</param>
         /// <param name="onlyIfResidence">gets undiscovered only if buildingType is residence</param>
-        public void UndiscoverBuilding(int buildingKey, bool onlyIfResidence = false)
+        /// <param name="matchName">use a name for matching (only undiscover if building name matches matchName) - this is used if two quests "occupy" the same residence with different names, and one tries to hide residence on map but other quest's residence name was used and is still running</param>
+        public void UndiscoverBuilding(int buildingKey, bool onlyIfResidence = false, string matchName = null)
         {
             // Must have a location loaded
             if (!CurrentLocation.Loaded)
-                return;
-
-            // Get building information
-            DiscoveredBuilding db;
-            if (!GetBuildingDiscoveryData(buildingKey, out db))
                 return;
 
             // Get location discovery
@@ -946,11 +957,20 @@ namespace DaggerfallWorkshop
                 dl = discoveredLocations[mapPixelID];
             }
 
+            if (dl.discoveredBuildings == null || !dl.discoveredBuildings.ContainsKey(buildingKey))
+                return;
+
+            DiscoveredBuilding db = dl.discoveredBuildings[buildingKey];
+
+            // do nothing if only residences should be undiscovered but building is no residence
             if (onlyIfResidence && !RMBLayout.IsResidence(db.buildingType))
                 return;
 
-            if (dl.discoveredBuildings != null && dl.discoveredBuildings.ContainsKey(db.buildingKey))
-                dl.discoveredBuildings.Remove(db.buildingKey);
+            // do nothing if matchName was provided but matchName does not match displayName of building
+            if (matchName != null && matchName != db.displayName)
+                return;
+
+            dl.discoveredBuildings.Remove(db.buildingKey);
         }
 
         /// <summary>
@@ -985,12 +1005,13 @@ namespace DaggerfallWorkshop
             DiscoveredLocation dl = discoveredLocations[mapPixelID];
             if (dl.discoveredBuildings == null)
                 return false;
-
+            
             return dl.discoveredBuildings.ContainsKey(buildingKey);
         }
 
         /// <summary>
         /// Gets discovered building data for current location.
+        /// Does not change discovery state (NOTE: it kind of does for now with player house override but this will eventually be fixed)
         /// </summary>
         /// <param name="buildingKey">Building key in current location.</param>
         /// <param name="discoveredBuildingOut">Building discovery data out.</param>
@@ -1081,12 +1102,12 @@ namespace DaggerfallWorkshop
         {
             discoveredBuildingOut = new DiscoveredBuilding();
 
-            // Must have a location loaded
-            if (!CurrentLocation.Loaded)
-                return false;
+            // if found in discovered building data, return discovery information
+            if (GetDiscoveredBuilding(buildingKey, out discoveredBuildingOut))
+                return true;
 
-            // Get building discovery data only
-            if (GetBuildingDiscoveryData(buildingKey, out discoveredBuildingOut))
+            // if not try to get it from GetBaseBuildingDiscoveryData() function
+            if (GetBaseBuildingDiscoveryData(buildingKey, out discoveredBuildingOut))
                 return true;
 
             return false;
@@ -1097,6 +1118,8 @@ namespace DaggerfallWorkshop
         /// </summary>
         public Dictionary<int, DiscoveredLocation> GetDiscoverySaveData()
         {
+            RemoveUnnamedResidencesFromDiscoveryData();
+
             return discoveredLocations;
         }
 
@@ -1117,10 +1140,12 @@ namespace DaggerfallWorkshop
             }
 
             // Remove legacy entries
-            foreach(int key in keysToRemove)
+            foreach (int key in keysToRemove)
             {
                 discoveredLocations.Remove(key);
             }
+
+            RemoveUnnamedResidencesFromDiscoveryData();
         }
 
         /// <summary>
@@ -1134,11 +1159,13 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets building information from current location.
+        /// Gets base building information from current location (no building name expansion). This is used as intermediate result by other functions like DiscoverBuilding and GetAnyBuilding
         /// Does not change discovery state for building.
         /// </summary>
         /// <param name="buildingKey">Key of building to query.</param>
-        bool GetBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
+        /// <param name="buildingDiscoveryData">[out] building discovery data of queried building</param>
+        /// <returns>True if building information was found.</returns>
+        bool GetBaseBuildingDiscoveryData(int buildingKey, out DiscoveredBuilding buildingDiscoveryData)
         {
             buildingDiscoveryData = new DiscoveredBuilding();
 
@@ -1158,46 +1185,53 @@ namespace DaggerfallWorkshop
                 return false;
             }
 
-            // Resolve name by building type
-            string buildingName;
+            // Add to data
+            buildingDiscoveryData.buildingKey = buildingKey;
             if (RMBLayout.IsResidence(buildingSummary.BuildingType))
             {
                 // Residence                
-                buildingName = HardStrings.residence;
-
-                // Link to quest system active sites
-                // note Nystul: do this via TalkManager, this might seem odd at first glance but there is a reason to do so:
-                //              get info from TalkManager if pc learned about existence of the building (i.e. its name)
-                //              either through dialog ("add dialog" or by dialog-link) or quest (quest did not hide location via "dialog link" command)
-                bool pcLearnedAboutExistence = false;
-                bool receivedDirectionalHints = false;
-                bool locationWasMarkedOnMapByNPC = false;
-                string overrideBuildingName = string.Empty;
-                if (GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
-                {
-                    if (pcLearnedAboutExistence)
-                        buildingName = overrideBuildingName;
-                }
+                buildingDiscoveryData.displayName = HardStrings.residence;
             }
             else
             {
                 // Fixed building name
-                buildingName = BuildingNames.GetName(
+                buildingDiscoveryData.displayName = BuildingNames.GetName(
                     buildingSummary.NameSeed,
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
                     buildingDirectory.LocationData.Name,
                     buildingDirectory.LocationData.RegionName);
             }
-
-            // Add to data
-            buildingDiscoveryData.buildingKey = buildingKey;
-            buildingDiscoveryData.displayName = buildingName;
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;
             buildingDiscoveryData.buildingType = buildingSummary.BuildingType;
 
             return true;
+        }
+
+        /// <summary>
+        /// this function uses two purposes:
+        /// keep save data small and 
+        /// get rid of discovered and stored residences in the past (old save games will have them) preventing named residences to show up correctly after code rework
+        /// </summary>
+        void RemoveUnnamedResidencesFromDiscoveryData()
+        {
+            foreach (var discoveredLocation in discoveredLocations)
+            {
+                List<int> keysToRemove = new List<int>();
+
+                if (discoveredLocation.Value.discoveredBuildings != null)
+                {
+                    foreach (var discoveredBuilding in discoveredLocation.Value.discoveredBuildings)
+                        if (discoveredBuilding.Value.displayName == HardStrings.residence)
+                            keysToRemove.Add(discoveredBuilding.Key);
+
+                    foreach (int key in keysToRemove)
+                    {
+                        discoveredLocation.Value.discoveredBuildings.Remove(key);
+                    }
+                }
+            }
         }
 
         #endregion

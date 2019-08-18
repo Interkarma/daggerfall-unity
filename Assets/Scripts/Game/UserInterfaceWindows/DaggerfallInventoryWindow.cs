@@ -313,10 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
-            if (lootTarget != null)
-                SelectActionMode(ActionModes.Remove);
-            else
-                SelectActionMode(ActionModes.Equip);
+            SetupDefaultActionMode();
 
             // Setup initial display
             FilterLocalItems();
@@ -545,6 +542,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void SetupDefaultActionMode()
+        {
+            bool proximityWagonAccess = false;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+                proximityWagonAccess = DungeonWagonAccessProximityCheck();
+
+            if (lootTarget != null)
+                SelectActionMode(ActionModes.Remove);
+            // Start with wagon if accessing from dungeon
+            else
+            {
+                // Fast access: autoselect wagon when nearby
+                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt)
+                    allowDungeonWagonAccess |= proximityWagonAccess;
+
+                if (allowDungeonWagonAccess)
+                {
+                    ShowWagon(true);
+                    SelectActionMode(ActionModes.Remove);
+                }
+                else
+                    SelectActionMode(ActionModes.Equip);
+            }
+            allowDungeonWagonAccess |= proximityWagonAccess;
+        }
+
         public override void OnPush()
         {
             // Racial override can suppress inventory
@@ -620,11 +643,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (IsSetup)
             {
-                // Start with wagon if accessing from dungeon
-                if (allowDungeonWagonAccess) {
-                    ShowWagon(true);
-                    SelectActionMode(ActionModes.Remove);
-                }
+                SetupDefaultActionMode();
                 // Reset item list scroll
                 localItemListScroller.ResetScroll();
                 remoteItemListScroller.ResetScroll();
@@ -635,9 +654,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Update tracked weapons for setting equip delay
             SetEquipDelayTime(false);
-
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                DungeonWagonAccessProximityCheck();
 
             // Refresh window
             Refresh();
@@ -1034,14 +1050,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
         }
 
-        void DungeonWagonAccessProximityCheck()
+        bool DungeonWagonAccessProximityCheck()
         {
-            // Set allow wagon access if close enough (10m) to exit.
-            GameObject playerAdvancedGO = GameObject.Find("PlayerAdvanced");
-            DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
-            Vector3 exitVector = dungeon.StartMarker.transform.position - playerAdvancedGO.transform.position;
-            if (exitVector.magnitude < 10)
-                allowDungeonWagonAccess = true;
+            const float proximityWagonAccessDistance = 5f;
+
+            // Get all static doors
+            DaggerfallStaticDoors[] allDoors = GameObject.FindObjectsOfType<DaggerfallStaticDoors>();
+            if (allDoors != null && allDoors.Length > 0)
+            {
+                Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
+                // Find closest door to player
+                float closestDoorDistance = float.MaxValue;
+                foreach (DaggerfallStaticDoors doors in allDoors)
+                {
+                    int doorIndex;
+                    Vector3 doorPos;
+                    if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex, DoorTypes.DungeonExit))
+                    {
+                        float distance = Vector3.Distance(playerPos, doorPos);
+                        if (distance < closestDoorDistance)
+                            closestDoorDistance = distance;
+                    }
+                }
+
+                // Allow wagon access if close enough to any exit door
+                if (closestDoorDistance < proximityWagonAccessDistance)
+                    return true;
+            }
+            return false;
         }
 
         void UpdateItemInfoPanel(DaggerfallUnityItem item)
@@ -1580,7 +1616,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
                 DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                if (DaggerfallUI.Instance.BookReaderWindow.IsBookOpen)
+                {
+                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                }
+                else
+                {
+                    var messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetText(TextManager.Instance.GetText(textDatabase, "bookUnavailable"));
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
             }
             else if (item.IsPotion)
             {   // Handle drinking magic potions
@@ -1667,11 +1713,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Will see what feedback is like and revert to classic behaviour if widely preferred
             if (item.IsEnchanted)
             {
+                // Close the inventory window first. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to close those.
+                CloseWindow();
                 GameManager.Instance.PlayerEffectManager.DoItemEnchantmentPayloads(MagicAndEffects.EnchantmentPayloadFlags.Used, item, collection);
-
-                // Only pop the inventory window. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to pop those.
-                if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() == typeof(DaggerfallInventoryWindow))
-                  DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
                 return;
             }
         }
@@ -1841,7 +1885,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to local items
                 if (localItems != null)
                     TransferItem(item, remoteItems, localItems, CanCarryAmount(item), equip: true);
-                if (lootTarget.houseOwned)
+                if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
@@ -1854,7 +1898,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedActionMode == ActionModes.Remove)
             {
                 TransferItem(item, remoteItems, localItems, CanCarryAmount(item));
-                if (lootTarget.houseOwned)
+                if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Info)

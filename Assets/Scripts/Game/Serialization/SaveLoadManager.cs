@@ -346,18 +346,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (LoadInProgress)
                 return;
 
-            // Look for existing save with this character and name
-            int key = FindSaveFolderByNames(characterName, saveName);
-
-            // Get or create folder
-            string path;
-            if (key == -1)
-                path = CreateNewSavePath(enumeratedSaveFolders);
-            else
-                path = GetSaveFolder(key);
-
             // Save game
-            StartCoroutine(SaveGame(saveName, path, instantReload));
+            StartCoroutine(SaveGame(characterName, saveName, instantReload));
         }
 
         public void QuickSave(bool instantReload = false)
@@ -916,8 +906,18 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Utility
 
-        IEnumerator SaveGame(string saveName, string path, bool instantReload = false)
+        IEnumerator SaveGame(string characterName, string saveName, bool instantReload = false)
         {
+            // Look for existing save with this character and name
+            int key = FindSaveFolderByNames(characterName, saveName);
+
+            // Get or create folder
+            string path;
+            if (key == -1)
+                path = CreateNewSavePath(enumeratedSaveFolders);
+            else
+                path = GetSaveFolder(key);
+
             // Build save data
             SaveData_v1 saveData = BuildSaveData();
 
@@ -1032,6 +1032,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Raise OnSaveEvent
             RaiseOnSaveEvent(saveData);
+
+            // Update saves if needed
+            if (key == -1)
+                EnumerateSaves();
 
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
@@ -1208,6 +1212,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                     mod.SaveDataInterface.RestoreSaveData(modData);
                 }
             }
+
+            // Clamp legal reputation
+            playerEntity.ClampLegalReputations();
 
             // Lower load in progress flag
             loadInProgress = false;

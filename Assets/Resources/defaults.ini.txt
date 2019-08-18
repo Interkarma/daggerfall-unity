@@ -56,6 +56,8 @@ AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
+IllegalRestWarning=True
+LoiterLimitInHours=3
 
 [Spells]
 EnableSpellLighting=True
@@ -95,6 +97,7 @@ StartInDungeon=True
 TerrainDistance=3
 TerrainHeightmapPixelError=5
 SmallerDungeons=False
+CustomBooksImport=False
 
 [Enhancements]
 LypyL_GameConsole=True
@@ -111,3 +114,4 @@ PlayerTorchFromItems=False
 CombatVoices=True
 EnemyInfighting=True
 EnhancedCombatAI=True
+GuildQuestListBox=False

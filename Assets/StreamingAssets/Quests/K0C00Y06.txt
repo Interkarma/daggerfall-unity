@@ -305,12 +305,12 @@ Message:  1025
 <ce>                          __qgiver_! Guards!
 <ce>                                Guards!
 <ce>                                    
-<ce>                _witness_ slips you a note as %g flees
+<ce>                _witness_ slips you a note as %g flees.
                                      <--->
 <ce>                        It's the %ra who robbed
 <ce>                     __qgiver_! Somebody help me!
 <ce>                                    
-<ce>                _witness_ slips you a note as %g flees
+<ce>                _witness_ slips you a note as %g flees.
 
 Message:  1026
 %qdt:

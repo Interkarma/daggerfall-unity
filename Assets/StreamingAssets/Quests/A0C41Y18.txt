@@ -122,7 +122,7 @@ Message:  1026
 
 Message:  1030
 <ce>               With =realmummy_ dead, you know you have
-<ce>                   rid yourself of %g2 curse forever.
+<ce>                   rid yourself of %g3 curse forever.
 
 Message:  1040
 Dear Stranger,
@@ -175,6 +175,7 @@ Item _finger_ finger anyInfo 1015
 Item _letter_ letter used 1040
 Item _gold1_ gold
 Item _gold2_ gold
+--changed msg 1030 %g2 to %g3
 
 Person _sage_ group Cleric female anyInfo 1050 rumors 1050
 Person _giver_ group Questor male

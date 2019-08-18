@@ -6,6 +6,7 @@
 -- QuestId: 7
 Messages: 12
 Quest: C0B10Y07
+DisplayName: A Delivery
 -- Message panels
 QRC:
 

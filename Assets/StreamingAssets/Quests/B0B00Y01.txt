@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 12
 Quest: B0B00Y01
+DisplayName: Retribution
 -- Message panels
 QRC:
 
@@ -121,5 +122,6 @@ _qgclicked_ task:
 	clicked npc _qgiver_ 
 
 _clearclick_ task:
-	when not _mondead_ and _qgclicked_ 
+	when not _mondead_ and _qgclicked_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 

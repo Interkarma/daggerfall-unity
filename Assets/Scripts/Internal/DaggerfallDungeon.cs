@@ -246,6 +246,25 @@ namespace DaggerfallWorkshop
             return true;
         }
 
+        /// <summary>
+        /// Gets special dungeon name (e.g. Castle Daggerfall).
+        /// Fallback to current location name if not in a special named dungeon.
+        /// </summary>
+        public string GetSpecialDungeonName()
+        {
+            string dungeonName = string.Empty;
+            if (summary.RegionName == "Daggerfall" && summary.LocationName == "Daggerfall")
+                dungeonName = DaggerfallUnity.Instance.TextProvider.GetText(475);
+            else if (summary.RegionName == "Wayrest" && summary.LocationName == "Wayrest")
+                dungeonName = DaggerfallUnity.Instance.TextProvider.GetText(476);
+            else if (summary.RegionName == "Sentinel" && summary.LocationName == "Sentinel")
+                dungeonName = DaggerfallUnity.Instance.TextProvider.GetText(477);
+            else
+                dungeonName = summary.LocationName;
+
+            return dungeonName.TrimEnd('.');
+        }
+
         #region Private Methods
 
         private void LayoutDungeon(ref DFLocation location, bool importEnemies = true)

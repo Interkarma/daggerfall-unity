@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 81
 Quest: M0B30Y03
+DisplayName: Hunt for a Daedroth
 -- Message panels
 QRC:
 
@@ -32,8 +33,8 @@ AcceptQuest:  [1002]
 <ce>                  your reward. I don't know how long
 <ce>                that thing's gonna be around, so you're
 <ce>                   gonna want to move your ass. And
-<ce>                      listen to me on this, %pcf
-<ce>                 -- go prepared for a hell of a fight.
+<ce>                      listen to me on this, %pcf --
+<ce>                 go prepared for a hell of a fight.
 
 QuestFail:  [1003]
 <ce>                   Are you waiting for that Daedroth
@@ -75,10 +76,13 @@ Message:  1020
 <ce>                         The Daedroth is dead.
 
 Message:  1030
-%qdt: The Fighters Guild in
+%qdt:
+ The Fighters Guild in
  ___questgiver_ will pay me _reward_ gold pieces
  if I slay the Daedroth in ___mondung_ in
  =1stparton_ days or less.
+
+-lowered first line of 1030 from %qdt line
 
 Message:  1080
 <ce>                 Since you didn't even blink at offing
@@ -133,6 +137,7 @@ _1stparton_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 
 
 variable _map_

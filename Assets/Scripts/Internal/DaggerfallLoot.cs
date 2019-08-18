@@ -238,7 +238,7 @@ namespace DaggerfallWorkshop
 
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
             uint modelIndex = (uint) TextureRecord;
-            int buildingQuality = buildingData.quality;
+            //int buildingQuality = buildingData.quality;
             byte[] privatePropertyList = null;
             DaggerfallUnityItem item = null;
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;

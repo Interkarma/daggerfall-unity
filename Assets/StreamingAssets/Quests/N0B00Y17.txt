@@ -6,6 +6,7 @@
 -- QuestId: 17
 Messages: 61
 Quest: N0B00Y17
+DisplayName: Azimuthal Vectors
 -- Message panels
 QRC:
 
@@ -318,7 +319,7 @@ Message:  1060
 QBN:
 Item _item_ magic_item
 Item _ingredient_ organs
-Item map2 letter used 1030
+Item _map2_ letter used 1030
 Item _I.03_ letter used 1031
 Item _I.04_ letter used 1032
 Item _scholarreward_ magic_item
@@ -344,15 +345,17 @@ Clock _time2_ 00:00 0 flag 17 range 1 2
 	reveal _scholardung_ 
 	log 1020 step 0 
 	pick one of _S.02_ _cousin_ _cousin_ _S.03_ 
-	map2 used do _S.15_ 
+	_map2_ used do _S.15_ 
+	--added underscores to map2
 	_I.03_ used do _S.16_ 
-	place npc _scholar_ at _scholardung_ 
+	place npc _scholar_ at _scholardung_
+	
 
 _time1_ task:
 	end quest 
 
 _cousin_ task:
-	place item map2 at _hintdung_ 
+	place item _map2_ at _hintdung_ 
 
 _S.02_ task:
 	place item _I.03_ at _hintdung_ 
@@ -430,6 +433,11 @@ _S.19_ task:
 	change repute with _questgiver_ by +5 
 	unset _clickqgiver_ 
 	end quest 
+
+_clearclick_ task:
+	when _clickqgiver_ and not _S.19_ and not _S.07_
+	say 1003
+	clear _clearclick_ _clickqgiver_
 
 _time2_ task:
 	hide npc _scholar_ 

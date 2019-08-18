@@ -4,8 +4,10 @@
 -- Questor: witch
 -- Repute: 10
 -- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 24
 Quest: Q0C10Y00
+DisplayName: A Great Errand
 -- Message panels
 QRC:
 
@@ -100,6 +102,14 @@ Message:  1023
 <ce>                      This looks like the _item3_
 <ce>                         that _qgiver_ needed.
 
+Message:  1024
+<ce>  You offer up the _item1_.
+
+Message:  1025
+<ce>  You offer up the _item2_.
+
+Message:  1026
+<ce>  You offer up the _item3_.
 
 -- Symbols used in the QRC file:
 --
@@ -126,6 +136,7 @@ Item _item3_ organs
 Item _reward1_ malachite
 Item _reward2_ turquoise
 Item _reward3_ jade
+--added messages 1024, 1025 and 1026 and their handling in the quest. previously you had to click the witch 3 times and turn in the items with no confirmation.
 
 Person _qgiver_ group Questor male anyInfo 1011
 
@@ -155,13 +166,16 @@ Foe _skeleton_ is Skeletal_warrior
 	pc at _dungeon2_ set _S.14_ 
 
 _pchasitem1_ task:
-	toting _item1_ and _qgiver_ clicked 
+	toting _item1_ and _qgiver_ clicked
+	say 1024
 
 _pchasitem2_ task:
 	toting _item2_ and _qgiver_ clicked 
+	say 1025
 
 _pchasitem3_ task:
 	toting _item3_ and _qgiver_ clicked 
+	say 1026
 
 _queston_ task:
 	end quest 
@@ -197,7 +211,7 @@ _batty_ task:
 	clicked item _item1_ say 1021 
 
 _S.12_ task:
-	clicked item _item2_ say 1022 
+	clicked item _item2_ say 1022
 
 _S.13_ task:
 	clicked item _item3_ say 1023 

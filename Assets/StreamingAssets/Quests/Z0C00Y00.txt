@@ -46,7 +46,6 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                    Good day, %pcf, I'm _qgfriend_.
-                                     <--->
 <ce>            Mephala told me that you might show up, but she
 <ce>             did cast some doubts about the chances of you
 <ce>                 surviving the encounter with _enemy_.
@@ -55,6 +54,8 @@ QuestComplete:  [1004]
 <ce>                       from Mephala. With _enemy_
 <ce>               dead, she should be in a lot better mood.
 <ce>                    And for that alone, I thank you.
+
+--removed odd <---> in 1004.
 
 RumorsDuringQuest:  [1005]
 _enemy_ says %g can find %g3 way to the headquarters of the Dark Brotherhood.
@@ -175,6 +176,7 @@ _npcclicked_ task:
 
 _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
+	say 1003
 	clear _npcclicked_ _clearclick_ 
 
 _S.06_ task:

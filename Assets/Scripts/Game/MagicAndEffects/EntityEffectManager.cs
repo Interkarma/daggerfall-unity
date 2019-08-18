@@ -426,6 +426,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
             instancedBundle.icon = sourceBundle.Settings.Icon;
             instancedBundle.fromEquippedItem = sourceBundle.FromEquippedItem;
+            instancedBundle.castByItem = sourceBundle.CastByItem;
             instancedBundle.liveEffects = new List<IEntityEffect>();
             if (sourceBundle.CasterEntityBehaviour)
             {
@@ -1265,7 +1266,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectBundleSettings settings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
-                BundleType = BundleTypes.None,
+                BundleType = BundleTypes.Disease,
                 Effects = new EffectEntry[] { new EffectEntry(effectKey) },
             };
 
@@ -1894,6 +1895,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
             public ulong fromEquippedItemID;
+            public ulong castByItemID;
             public bool fromPoison;
             public EffectSaveData_v1[] liveEffects;
         }
@@ -1935,6 +1937,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.casterEntityType = bundle.casterEntityType;
                 bundleData.casterLoadID = bundle.casterLoadID;
                 if (bundle.fromEquippedItem != null) bundleData.fromEquippedItemID = bundle.fromEquippedItem.UID;
+                if (bundle.castByItem != null) bundleData.castByItemID = bundle.castByItem.UID;
 
                 List<EffectSaveData_v1> liveEffectsSaveData = new List<EffectSaveData_v1>();
                 foreach (IEntityEffect effect in bundle.liveEffects)
@@ -1998,7 +2001,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.liveEffects = new List<IEntityEffect>();
                 instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
                 if (instancedBundle.caster)
+                {
                     instancedBundle.fromEquippedItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.fromEquippedItemID);
+                    instancedBundle.castByItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.castByItemID);
+                }
 
                 // If bundle is supposed to be an equipped item, and we did not find that item, then do not restore bundle
                 if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.fromEquippedItem == null)

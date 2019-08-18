@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 64
 Quest: N0B11Y18
+DisplayName: Former Student Part I
 -- Message panels
 QRC:
 
@@ -177,8 +178,8 @@ QBN:
 Item _letter_ letter used 1040
 Item _reward_ magic_item
 
-Person _rebel_ face 1 named Baltham_Greyman male
-Person _qgiver_ group Questor male
+Person _rebel_ named Baltham_Greyman
+Person _questgiver_ group Questor male
 
 Place aide remote dungeon
 Place _rebelhouse_ remote house1
@@ -206,13 +207,15 @@ _qtime_ task:
 _S.01_ task:
 	clicked npc _rebel_ 
 	prompt 1030 yes _S.02_ no _S.03_ 
-	place npc _rebel_ at aide 
+	hide npc _rebel_
+	--changed "place npc _rebel_ at aide" to "hide" action. Classic would transfer the NPC away, hiding is far easier
 
 _qgclicked_ task:
-               clicked npc _qgiver_
+  clicked npc _questgiver_
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.01_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 
 
 _S.02_ task:
@@ -220,36 +223,50 @@ _S.02_ task:
 	log 1021 step 1 
 	get item _letter_ 
 	say 1031 
-	place foe _mage2_ at aide 
-	place foe _F.04_ at aide 
-	place foe _mage1_ at aide 
-	place foe _mage4_ at aide 
-	place foe _mage3_ at aide 
+	remove foe _mage2_
+	remove foe _F.04_
+	remove foe _mage1_
+	remove foe _mage4_
+	remove foe _mage3_
+	--changed "place foe _mage2_ at aide" etc to "remove foe," same as with hide npc reason
 
 _S.03_ task:
-	start timer _S.14_ 
+	start timer _S.04_ 
+	--S.14 timer was nonexistent. changed to S.04
 	say 1032 
-                hide npc _rebel_
+    hide npc _rebel_
 	place foe _mage1_ at _rebelhouse_ 
 	cast Spell_Reflection spell on _mage1_ 
 
 _S.04_ task:
 	pc at _rebelhouse_ set _S.19_ 
-	place foe _mage1_ at aide saying 1060 
+	remove foe _mage1_
+	say 1060 
+--"place foe" not known to support "say ###." moved to its own line.
+--changed "place foe at false dungeon" to "remove foe"
 
 _S.05_ task:
-	create foe _mage3_ every 1 minutes 1 times with 100% success msg 1061 
+	create foe _mage3_ every 1 minutes 1 times with 100% success
+	say 1061 
 	start timer _S.06_ 
-	place foe _mage2_ at aide 
+	remove foe _mage2_
+--"create foe" not known to support "say ###." moved to its own line.
+--changed "place foe at false dungeon" to "remove foe"
 
 _S.06_ task:
-	create foe _mage4_ every 1 minutes 1 times with 100% success msg 1062 
+	create foe _mage4_ every 1 minutes 1 times with 100% success
+	say 1062 
 	start timer _healer_ 
-	place foe _mage3_ at aide 
+	remove foe _mage3_
+	--"create foe" not known to support "say ###." moved to its own line.
+	--changed "place foe at false dungeon" to "remove foe"
 
 _healer_ task:
-	create foe _F.04_ every 1 minutes 1 times with 100% success msg 1063 
-	place foe _mage4_ at aide 
+	create foe _F.04_ every 1 minutes 1 times with 100% success
+	say 1063 
+	remove foe _mage4_
+	--"create foe" not known to support "say ###." moved to its own line.
+	--changed "place foe at false dungeon" to "remove foe"
 
 _S.08_ task:
 	killed 1 _mage2_ 
@@ -263,7 +280,7 @@ _S.09_ task:
 	stop timer _healer_ 
 	stop timer _S.06_ 
 	stop timer _S.05_ 
-	stop timer _S.14_ 
+	stop timer _S.04_ 
 
 _S.10_ task:
 	injured _mage1_ 
@@ -279,9 +296,11 @@ _S.12_ task:
 	prompt 1051 yes _S.02_ no _S.03_ 
 	cast Heal spell on _mage3_ 
 
-boar task:
+_S.13_ task:
+--boar task renamed to _S.13_. Variables should have underscores
 	injured _mage4_ 
 	prompt 1052 yes _S.02_ no _S.03_ 
+
 
 _S.14_ task:
 	injured _F.04_ 

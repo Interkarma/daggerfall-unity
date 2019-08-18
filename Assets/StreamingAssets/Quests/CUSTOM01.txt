@@ -92,7 +92,7 @@ _summonNecromancer_ task:
 	killed 4 _zombie_
 	killed 4 _skeleton_
 	say 1020
-	create foe _necromancer every 1 minutes 1 times with 100% success
+	create foe _necromancer_ every 1 minutes 1 times with 100% success
 
 _necromancerDead_ task:
 	killed _necromancer_
@@ -103,6 +103,7 @@ _questorClicked_ task:
 
 _clearclick_ task:
 	when _questorClicked_ and not _necromancerDead_
+	say 1003
 	clear _questorClicked_ _clearclick_
 
 _rewardPlayer_ task:

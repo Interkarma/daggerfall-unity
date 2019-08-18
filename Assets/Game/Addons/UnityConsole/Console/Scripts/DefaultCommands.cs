@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
@@ -55,6 +56,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(KillAllEnemies.name, KillAllEnemies.description, KillAllEnemies.usage, KillAllEnemies.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TransitionToExterior.name, TransitionToExterior.description, TransitionToExterior.usage, TransitionToExterior.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(RerollMaxHealth.name, RerollMaxHealth.description, RerollMaxHealth.usage, RerollMaxHealth.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(ResetAssets.name, ResetAssets.description, ResetAssets.usage, ResetAssets.Execute);
             ConsoleCommandsDatabase.RegisterCommand(RetryAssetImports.name, RetryAssetImports.description, RetryAssetImports.usage, RetryAssetImports.Execute);
@@ -79,9 +81,13 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddArtifact.name, AddArtifact.description, AddArtifact.usage, AddArtifact.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddWeapon.name, AddWeapon.description, AddWeapon.usage, AddWeapon.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddArmor.name, AddArmor.description, AddArmor.usage, AddArmor.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddClothing.name, AddClothing.description, AddClothing.usage, AddClothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowItemMakerWindow.name, ShowItemMakerWindow.description, ShowItemMakerWindow.usage, ShowItemMakerWindow.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ShowPotionMakerWindow.name, ShowPotionMakerWindow.description, ShowPotionMakerWindow.usage, ShowPotionMakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddSpellBook.name, AddSpellBook.description, AddSpellBook.usage, AddSpellBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
@@ -215,7 +221,10 @@ namespace Wenzil.Console
                     string fileName = WorldDataReplacement.GetBuildingReplacementFilename(blockData.Name, blockIndex, recordIndex);
                     BuildingReplacementData buildingData = new BuildingReplacementData()
                     {
-                        RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
+                        RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex],
+                        BuildingType = (int)blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].BuildingType,
+                        FactionId = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].FactionId,
+                        Quality = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].Quality,
                     };
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
                     File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), buildingJson);
@@ -413,6 +422,26 @@ namespace Wenzil.Console
                 }
                 else
                     return error;
+            }
+        }
+
+        private static class RerollMaxHealth
+        {
+            public static readonly string name = "reroll_maxhealth";
+            public static readonly string error = "";
+            public static readonly string description = @"Repair permanently reduced maximum health caused by a level-up bug in 0.10.3 and earlier. " +
+                                                        @"This bug is resolved in 0.10.4 and later but some older save games might still need repair. " +
+                                                        @"Note that new maximum health is set by forumla and may be slightly higher or lower than before bug.";
+            public static readonly string usage = "reroll_maxhealth";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
+
+                int rerolledHealth = FormulaHelper.RollMaxHealth(GameManager.Instance.PlayerEntity);
+                GameManager.Instance.PlayerEntity.MaxHealth = rerolledHealth;
+
+                return string.Format("Your new maximum health is {0}", rerolledHealth);
             }
         }
 
@@ -1690,6 +1719,81 @@ namespace Wenzil.Console
             }
         }
 
+        private class AddItemHelper
+        {
+            readonly Queue<string> args;
+
+            private AddItemHelper(string[] args)
+            {
+                this.args = new Queue<string>(args);
+            }
+
+            public T Parse<T>()
+            {
+                return (T)Enum.Parse(typeof(T), args.Dequeue());
+            }
+
+            public static string Execute(string[] args, Func<AddItemHelper, DaggerfallUnityItem> getItem)
+            {
+                try
+                {
+                    DaggerfallUnityItem item = getItem(new AddItemHelper(args));
+                    GameManager.Instance.PlayerEntity.Items.AddItem(item);
+                    return string.Format("Added {0} to inventory.", item.ItemName);
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
+                }
+            }
+        }
+
+        private static class AddWeapon
+        {
+            public static readonly string name = "add_weapon";
+            public static readonly string description = "Adds a weapon to inventory.";
+            public static readonly string usage = "add_weapon {Weapons} {WeaponMaterialTypes}";
+
+            public static string Execute(params string[] args)
+            {
+                return args.Length == 2 ?
+                    AddItemHelper.Execute(args, x => ItemBuilder.CreateWeapon(x.Parse<Weapons>(), x.Parse<WeaponMaterialTypes>())) :
+                    usage;
+            }
+        }
+
+        private static class AddArmor
+        {
+            public static readonly string name = "add_armor";
+            public static readonly string description = "Adds an armor to inventory.";
+            public static readonly string usage = "add_armor {Genders} {Races} {Armor} {ArmorMaterialTypes}";
+
+            public static string Execute(params string[] args)
+            {
+                return args.Length == 4 ?
+                    AddItemHelper.Execute(args, x => ItemBuilder.CreateArmor(x.Parse<Genders>(), x.Parse<Races>(), x.Parse<Armor>(), x.Parse<ArmorMaterialTypes>())) :
+                    usage;
+            }
+        }
+
+        private static class AddClothing
+        {
+            public static readonly string name = "add_clothing";
+            public static readonly string description = "Adds clothing to inventory.";
+            public static readonly string usage = "add_clothing {Genders} {MensClothing|WomensClothing} {Races} {DyeColors}";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 4)
+                    return usage;
+
+                return AddItemHelper.Execute(args, x => x.Parse<Genders>() == Genders.Male ?
+                    ItemBuilder.CreateMensClothing(x.Parse<MensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>()) :
+                    ItemBuilder.CreateWomensClothing(x.Parse<WomensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>())
+                );
+            }
+        }
+
         private static class Groundme
         {
             public static readonly string name = "groundme";
@@ -1760,6 +1864,19 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenItemMakerWindow);
+                return "Finished";
+            }
+        }
+
+        private static class ShowPotionMakerWindow
+        {
+            public static readonly string name = "showpotionmaker";
+            public static readonly string description = "Opens a potion maker window to brew potions";
+            public static readonly string usage = "showpotionmaker";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenPotionMakerWindow);
                 return "Finished";
             }
         }

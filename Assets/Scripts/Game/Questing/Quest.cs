@@ -603,6 +603,14 @@ namespace DaggerfallWorkshop.Game.Questing
             // remove all quest topics for this quest from talk manager
             GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(this.UID);
 
+            // undiscover all quest residences used by this quest
+            QuestResource[] allQuestResources = this.GetAllResources(typeof(Place)); // Get list of place quest resources
+            for (int i = 0; i < allQuestResources.Length; i++)
+            {
+                Place place = (Place)allQuestResources[i];
+                GameManager.Instance.PlayerGPS.UndiscoverBuilding(place.SiteDetails.buildingKey, true, place.SiteDetails.buildingName);
+            }
+
             // Remove all questors for this quest
             DropAllQuestors();
         }
