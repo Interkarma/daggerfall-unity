@@ -22,8 +22,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float scrollAmount = 24;
         const string nativeImgName = "BOOK00I0.IMG";
 
-        Vector2 pagePanelPosition = new Vector2(15, 21);
-        Vector2 pagePanelSize = new Vector2(290, 159);
+        Vector2 pagePanelPosition = new Vector2(55, 21);
+        Vector2 pagePanelSize = new Vector2(210, 159);
 
         Texture2D nativeTexture;
         DaggerfallUnityItem bookTarget;
