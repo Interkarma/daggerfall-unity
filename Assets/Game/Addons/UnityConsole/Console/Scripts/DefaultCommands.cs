@@ -87,6 +87,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowItemMakerWindow.name, ShowItemMakerWindow.description, ShowItemMakerWindow.usage, ShowItemMakerWindow.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ShowPotionMakerWindow.name, ShowPotionMakerWindow.description, ShowPotionMakerWindow.usage, ShowPotionMakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddSpellBook.name, AddSpellBook.description, AddSpellBook.usage, AddSpellBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
 
@@ -1863,6 +1864,19 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenItemMakerWindow);
+                return "Finished";
+            }
+        }
+
+        private static class ShowPotionMakerWindow
+        {
+            public static readonly string name = "showpotionmaker";
+            public static readonly string description = "Opens a potion maker window to brew potions";
+            public static readonly string usage = "showpotionmaker";
+
+            public static string Execute(params string[] args)
+            {
+                DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenPotionMakerWindow);
                 return "Finished";
             }
         }

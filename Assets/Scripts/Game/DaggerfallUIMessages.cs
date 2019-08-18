@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenSpellBookWindow = "dfuiOpenSpellBookWindow";
         public const string dfuiOpenSpellMakerWindow = "dfuiOpenSpellMakerWindow";
         public const string dfuiOpenItemMakerWindow = "dfuiOpenItemMakerWindow";
+        public const string dfuiOpenPotionMakerWindow = "dfuiOpenPotionMakerWindow";
         public const string dfuiOpenUseMagicItemWindow = "dfuiOpenUseMagicItemWindow";
 
         // Status info messages
