@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public float DrawSDFGlyph(SDFGlyphInfo glyph, Vector2 position, Vector2 scale, Color color)
         {
-            float scalingRatio = GlyphHeight / sdfFontInfo.Value.pointSize * scale.y;
+            float scalingRatio = GetSDFGlyphScalingRatio(scale.y);
 
             // Handle space
             if (glyph.code == SpaceCode)
@@ -429,14 +429,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 SDFGlyphInfo glyph = SDFInfo.glyphs[code];
-                float scalingRatio = GlyphHeight / SDFInfo.pointSize * scale.y;
+                float scalingRatio = GetSDFGlyphScalingRatio(scale.y);
                 return glyph.advance * scalingRatio / scale.x + spacing;
             }
         }
 
         public float GetGlyphWidth(SDFGlyphInfo glyph, Vector2 scale, float spacing = 0)
         {
-            float scalingRatio = GlyphHeight / SDFInfo.pointSize * scale.y;
+            float scalingRatio = GetSDFGlyphScalingRatio(scale.y);
             return glyph.advance * scalingRatio / scale.x + spacing;
         }
 
@@ -499,6 +499,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Private Methods
+
+        float GetSDFGlyphScalingRatio(float localYScale)
+        {
+            return GlyphHeight / SDFInfo.pointSize * localYScale;
+        }
 
         bool LoadFont()
         {
