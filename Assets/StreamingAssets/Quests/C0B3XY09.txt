@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 13
 Quest: C0B3XY09
+DisplayName: The Great Evil
 -- Message panels
 QRC:
 

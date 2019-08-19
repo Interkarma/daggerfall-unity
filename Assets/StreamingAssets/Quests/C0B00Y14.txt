@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 62
 Quest: C0B00Y14
+DisplayName: Hunt for Undead
 -- Message panels
 QRC:
 

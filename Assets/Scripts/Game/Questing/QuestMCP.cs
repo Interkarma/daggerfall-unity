@@ -212,6 +212,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 Vector2 positionPlayer;
                 Vector2 positionLocation = Vector2.zero;
 
+                Place questLastPlaceReferenced = parent.LastPlaceReferenced;
+                if (questLastPlaceReferenced == null)
+                {
+                    QuestMachine.Log(parent, "Trying to get direction to quest location when no location has been referenced in the quest.");
+                    return TextManager.Instance.GetText("ConversationText", "resolvingError");
+                }
+
                 DFPosition position = new DFPosition();
                 PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
                 if (playerGPS)
@@ -227,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 DFRegion currentDFRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(region);
 
-                string name = this.parent.LastPlaceReferenced.SiteDetails.locationName.ToLower();
+                string name = questLastPlaceReferenced.SiteDetails.locationName.ToLower();
                 string[] locations = currentDFRegion.MapNames;                              
                 for (int i = 0; i < locations.Length; i++)
                 {

@@ -351,6 +351,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                 }
             }
 
+            // Trim name strings as these might contain trailing whitespace characters previously imported from classic saves
+            entity.Name = entity.Name.Trim();
+            entity.Career.Name = entity.Career.Name.Trim();
+
             // Flag determines if player position is restored
             bool restorePlayerPosition = true;
 

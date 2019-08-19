@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 53
 Quest: B0B71Y03
+DisplayName: The Artifact
 -- Message panels
 QRC:
 

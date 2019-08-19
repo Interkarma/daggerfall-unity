@@ -6,6 +6,7 @@
 -- QuestId: 2
 Messages: 22
 Quest: L0B20Y02
+DisplayName: A Knight Without Honor
 -- Message panels
 QRC:
 

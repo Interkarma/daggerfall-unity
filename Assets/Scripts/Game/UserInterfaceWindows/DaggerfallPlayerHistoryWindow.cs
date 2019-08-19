@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ClearPage();
             pageLines = 0;
 
-            int x = 10, y = 25;
+            int x = 20, y = 25;
             for (int i = pageStartLine; i < GameManager.Instance.PlayerEntity.BackStory.Count; i++)
             {
                 TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), GameManager.Instance.PlayerEntity.BackStory[i], NativePanel);

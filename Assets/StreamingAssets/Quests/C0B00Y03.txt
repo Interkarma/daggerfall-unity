@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 13
 Quest: C0B00Y03
+DisplayName: The Missing Scholar
 -- Message panels
 QRC:
 

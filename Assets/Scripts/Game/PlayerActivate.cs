@@ -1282,8 +1282,9 @@ namespace DaggerfallWorkshop.Game
             }
             else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
             {
-                // with one exception: guards
-                if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
+                // with one exception: guards - detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
+                if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3 ||
+                    npc.Data.billboardArchiveIndex == 346 && npc.Data.billboardRecordIndex == 20)
                     return; // if guard was clicked don't open talk window
 
                 // otherwise open talk window

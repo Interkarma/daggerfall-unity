@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game.Items
                                                                     improvesTalentsEnchantPts, goodRepWithEnchantPts};
         static readonly ushort[] enchantmentPointCostsForNonParamTypes = { 0, 0x0F448, 0x0F63C, 0x0FF9C, 0x0FD44, 0, 0, 0, 0x384, 0x5DC, 0x384, 0x64, 0x2BC };
 
-        private enum BodyMorphology
+        public enum BodyMorphology
         {
             Argonian = 0,
             Elf = 1,
@@ -917,7 +917,7 @@ namespace DaggerfallWorkshop.Game.Items
             item.CurrentVariant = variant;
         }
 
-        static BodyMorphology GetBodyMorphology(Races race)
+        public static BodyMorphology GetBodyMorphology(Races race)
         {
             switch (race)
             {

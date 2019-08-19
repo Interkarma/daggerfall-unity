@@ -6,6 +6,7 @@
 -- QuestId: 13
 Messages: 46
 Quest: N0C00Y13
+DisplayName: An Ancient Scroll
 -- Message panels
 QRC:
 

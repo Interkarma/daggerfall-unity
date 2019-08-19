@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: O0B10Y00
+DisplayName: A Stolen Gem
 -- Message panels
 QRC:
 

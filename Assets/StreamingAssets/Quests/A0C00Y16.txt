@@ -91,7 +91,7 @@ Message:  1022
 Message:  1023
 <ce>                    Did _questgiver_ put you up to
 <ce>                    this? I thought so. %oth, %g had
-<ce>                        a nasty fight fight with
+<ce>                        a nasty fight with
 <ce>                         _missingperson_ a few
 <ce>                       days ago. _missingperson_
 <ce>               left town and hasn't been seen since. No,
@@ -103,7 +103,7 @@ Message:  1024
 <ce>                      %g got killed, that's what.
 <ce>                       My friend Smiley asked %g2
 <ce>                      real nice for %g3 gold, and
-<ce>                        %g wouldn't hand it over
+<ce>                        %g wouldn't hand it over.
 <ce>                     You really should meet Smiley
 <ce>                     and my other friends. Get the
 <ce>                              %ra, Smiley!
@@ -206,6 +206,7 @@ Place _hidingplace_ local random
 
 Clock _S.16_ 2.00:00
 --removed flags to make exact two days
+Clock _delay_ 00:00
 
 Foe _F.00_ is 3 Barbarian
 
@@ -293,6 +294,9 @@ _yes_ task:
 
 _givereward_ task:
 	when _yes_ and _S.18_ 
+	start timer _delay_
+
+_delay_ task:
 	give pc _gold_ 
 	end quest 
 
@@ -300,6 +304,8 @@ _S.22_ task:
 	clicked npc _missingperson_ 
 	hide npc _missingperson_ 
 	add _missingperson_ face saying 1040 
+	start task _yes_
+--added _yes_ to finding NPC by surprise
 
 _S.23_ task:
 	when _S.22_ and _S.18_ 
@@ -322,5 +328,6 @@ _S.27_ task:
 	say 1054 
 
 _S.28_ task:
-	when _S.18_ and _S.08_ and _S.22_ 
+	when _S.18_ and _S.22_ 
 	say 1050 
+--removed unnecessary check. quest can remained "unsolved" after unexpectedly finding the quarry and returning to QG.

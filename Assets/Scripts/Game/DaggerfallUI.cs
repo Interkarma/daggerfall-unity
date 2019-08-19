@@ -331,14 +331,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Toggle font rendering between classic and SDF using LeftShift+F
-            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.F11))
-            {
-                DaggerfallUnity.Settings.SDFFontRendering = !DaggerfallUnity.Settings.SDFFontRendering;
-                DaggerfallUnity.Settings.SaveSettings();
-                //Debug.LogFormat("SDFFontRendering={0}", DaggerfallUnity.Settings.SDFFontRendering.ToString());
-            }
-
             // HUD is always first window on stack when ready
             if (dfUnity.IsPathValidated && !hudSetup)
             {
@@ -476,6 +468,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiOpenItemMakerWindow:
                     uiManager.PushWindow(dfItemMakerWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenPotionMakerWindow:
+                    uiManager.PushWindow(dfPotionMakerWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (GameManager.Instance.IsPlayerInside)

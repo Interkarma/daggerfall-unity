@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0C00Y13
+DisplayName: The Infested House
 -- Message panels
 QRC:
 
@@ -75,6 +76,10 @@ QuestLogEntry:  [1010]
 Message:  1011
 <ce>                You have cleaned out _qgiver_'s house.
 
+Message:  1012
+<ce>  You hear scratching noises coming from the walls.
+<ce>  The creatures will most certainly react poorly
+<ce>  to your intrusion on their territory.
 
 -- Symbols used in the QRC file:
 --
@@ -108,6 +113,7 @@ _oneday_ task:
 	end quest 
 
 _S.01_ task:
+	say 1012
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
 
 _questdone_ task:
@@ -126,16 +132,16 @@ _S.03_ task:
 	say 1011 
 
 _S.04_ task:
-	create foe _bats_ every 3 minutes 8 times with 25% success 
+	create foe _bats_ every 1 minutes 8 times with 100% success 
 
 _S.05_ task:
-	create foe _rats_ every 3 minutes 10 times with 25% success 
+	create foe _rats_ every 1 minutes 10 times with 100% success 
 
 _S.06_ task:
-	create foe _scorpions_ every 3 minutes 4 times with 25% success 
+	create foe _scorpions_ every 2 minutes 4 times with 100% success 
 
 _S.07_ task:
-	create foe _spiders_ every 3 minutes 4 times with 25% success 
+	create foe _spiders_ every 2 minutes 4 times with 100% success 
 
 _clearclick_ task:
 	when not _S.03_ and _questdone_ 

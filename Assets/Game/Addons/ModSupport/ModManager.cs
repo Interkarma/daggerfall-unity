@@ -74,7 +74,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             get { return mods; }
         }
 
+        /// <summary>
+        /// The directory where mods are stored. It's not writable on all platforms.
+        /// </summary>
         public string ModDirectory { get; set; }
+
+        /// <summary>
+        /// The writable directory that holds mods data, separated for build and editor to allow mods
+        /// to be developed and tested without affecting main game installation.
+        /// </summary>
+        internal string ModDataDirectory
+        {
+#if UNITY_EDITOR
+            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", "EditorData")); }
+#else
+            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", "GameData")); }
+#endif
+        }
 
         public static ModManager Instance { get; private set; }
 
@@ -687,7 +703,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     return false;
                 }
 
-                File.WriteAllText(Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME), fsJsonPrinter.PrettyJson(sdata));
+                File.WriteAllText(Path.Combine(ModManager.Instance.ModDataDirectory, "Mods.json"), fsJsonPrinter.PrettyJson(sdata));
                 return true;
             }
             catch (Exception ex)
@@ -707,11 +723,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             try
             {
-                string filepath = Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME);
-                if (!File.Exists(filepath))
+                string oldFilepath = Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME);
+                string filePath = Path.Combine(ModManager.Instance.ModDataDirectory, "Mods.json");
+
+                Directory.CreateDirectory(ModManager.Instance.ModDataDirectory);
+
+                if (File.Exists(oldFilepath))
+                    File.Move(oldFilepath, filePath);
+
+                if (!File.Exists(filePath))
                     return false;
 
-                var serializedData = File.ReadAllText(filepath);
+                var serializedData = File.ReadAllText(filePath);
                 if (string.IsNullOrEmpty(serializedData))
                     return false;
 

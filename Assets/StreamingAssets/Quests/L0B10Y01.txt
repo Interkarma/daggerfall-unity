@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 21
 Quest: L0B10Y01
+DisplayName: A Fateful Song
 -- Message panels
 QRC:
 

@@ -17,7 +17,7 @@ namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
     /// Starts a task when player has a particular item resource in their inventory.
-    /// This task continues to run and will start/clear task when item present/not present
+    /// This task continues to run and will start task when item present
     /// </summary>
     public class HaveItem : ActionTemplate
     {
@@ -59,11 +59,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Could not find Item resource symbol {0}", targetItem));
             }
 
-            // Start/Clear target task based on player carrying item
+            // Start target task based on player carrying item
             if (GameManager.Instance.PlayerEntity.Items.Contains(item.DaggerfallUnityItem))
                 ParentQuest.StartTask(targetTask);
-            else
-                ParentQuest.ClearTask(targetTask);
         }
 
         #region Serialization

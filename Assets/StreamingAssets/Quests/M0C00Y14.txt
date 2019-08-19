@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: M0C00Y14
+DisplayName: A Rat Infestation
 -- Message panels
 QRC:
 
@@ -69,8 +70,12 @@ QuestLogEntry:  [1010]
  of a giant rat infestation.
  I have one day to get it done.
 
+Message:  1011
+<ce>  This building smells terribly of rats.
+<ce>  Your entry has likely disturbed them into activity.
+
 Message:  1020
-<ce>                   Thats most of them. The Fighters
+<ce>                   That's most of them. The Fighters
 <ce>                  Guild won't quibble over the rest.
 
 
@@ -120,4 +125,5 @@ _clearclick_ task:
 	clear _qgclicked_ _clearclick_ 
 
 _S.04_ task:
-	create foe _monster_ every 5 minutes 7 times with 75% success 
+	say 1011
+	create foe _monster_ every 1 minutes 7 times with 100% success 

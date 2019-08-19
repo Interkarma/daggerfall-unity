@@ -6,6 +6,7 @@
 -- QuestId: 4
 Messages: 18
 Quest: B0B10Y04
+DisplayName: The Crazed Mercenary
 -- Message panels
 QRC:
 

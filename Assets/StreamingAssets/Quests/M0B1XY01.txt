@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 81
 Quest: M0B1XY01
+DisplayName: Hunt for Harpies
 -- Message panels
 QRC:
 

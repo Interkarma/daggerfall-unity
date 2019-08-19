@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 43
 Quest: B0B81Y02
+DisplayName: The Lost Artifact
 -- Message panels
 QRC:
 
@@ -250,14 +251,17 @@ _S.01_ task:
 	killed 1 _F.00_ saying 1011 
 	_map_ used do _readmap_ 
 
-_clickqgiver_ task:
+_S.02_ task:
 	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
 	give pc nothing 
 	remove log step 0 
 
-_S.03_ task:
-	when _clickqgiver_ and not _S.01_ 
-	clear _clickqgiver_ _S.03_ 
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 
 
 variable _S.04_
 variable _S.05_
@@ -362,7 +366,7 @@ _questdone_ task:
 	end quest 
 
 _S.32_ task:
-	when _S.03_ and _2dung_ 
+	when _clearclick_ and _2dung_ 
 	say 1028 
 
 _S.33_ task:

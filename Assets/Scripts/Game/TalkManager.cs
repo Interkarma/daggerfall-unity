@@ -1891,10 +1891,6 @@ namespace DaggerfallWorkshop.Game
 
             // update topic lists
             rebuildTopicLists = true;
-
-            // Update rumor mill
-            if (questResourceInfo.rumorsAnswers != null)
-                AddQuestRumorToRumorMill(questID, questResourceInfo.rumorsAnswers);
         }
 
         public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)

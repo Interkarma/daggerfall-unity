@@ -6,6 +6,7 @@
 -- QuestId: 17
 Messages: 62
 Quest: M0B00Y17
+DisplayName: Runaway Pet
 -- Message panels
 QRC:
 

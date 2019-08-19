@@ -52,32 +52,32 @@ N0C00Y13, MagesGuild, N, 0, 0, Passed
 N0B00Y04, MagesGuild, M, 0, 0, Passed
 N0B00Y06, MagesGuild, M, 0, 0, Passed
 N0B00Y08, MagesGuild, M, 0, 0, Passed
--N0B00Y09, MagesGuild, M, 0, 0, FAILED. Repute exceeds task not yet functional so invitation always arrives.
-N0B00Y16, MagesGuild, M, 0, 0, IN-TESTING
--N0B00Y17, MagesGuild, M, 0, 0, more testing needed
+N0B00Y09, MagesGuild, M, 0, 0, Passed
+N0B00Y16, MagesGuild, M, 0, 0, Passed. https://github.com/Interkarma/daggerfall-unity/issues/1369
+N0B00Y17, MagesGuild, M, 0, 0, Passed
 N0B10Y01, MagesGuild, M, 1, 0, Passed
 N0B10Y03, MagesGuild, M, 1, 0, Passed. Repute tasks not yet existent. Corpses do not disappear at quest end.
--N0B11Y18, MagesGuild, M, 1, 1, changed house4 to house1. More testing needed.
+N0B11Y18, MagesGuild, M, 1, 1, Passed. Sequel quests not yet tested.
 N0B20Y02, MagesGuild, M, 2, 0, Passed. Corpses don't disappear at the end of the quest. Sleeping mage is sometimes female (not classic?). Enemies don't show up as a bunch. Enemies may not appear while loitering.
 N0B20Y05, MagesGuild, M, 2, 0, Passed. Lacks text variables in intro
--N0B21Y14, MagesGuild, M, 2, 1, FAILED. GetCurrentRegionFaction() needed
+N0B21Y14, MagesGuild, M, 2, 1, Passed
 N0B30Y15, MagesGuild, M, 3, 0, Passed. Lacks spells on imp
-N0B40Y07, MagesGuild, M, 4, 0, IN-TESTING
+N0B40Y07, MagesGuild, M, 4, 0, Passed
 
 -- Classic: Temples (general)
--C0C00Y10, HolyOrder, N, 0, 0, FAILED. Player log says "Exception during quest compile: An element with the same key already exists in the dictionary."
-C0C00Y11, HolyOrder, N, 0, 0, Passed. __qgiver_ resolves to BLANK
+C0C00Y10, HolyOrder, N, 0, 0, Passed
+C0C00Y11, HolyOrder, N, 0, 0, Passed
 C0C00Y12, HolyOrder, N, 0, 0, Passed. Needs rumor dialogue links.
--C0C00Y13, HolyOrder, N, 0, 0, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0
-C0B00Y00, HolyOrder, M, 0, 0, Passed.
+C0C00Y13, HolyOrder, N, 0, 0, Passed
+C0B00Y00, HolyOrder, M, 0, 0, Passed
 -C0B00Y01, HolyOrder, M, 0, 0, FAILED. PLayer log says "Exception during quest compile: An element with the same key already exists in the dictionary."
 -C0B00Y02, HolyOrder, M, 0, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
-C0B00Y03, HolyOrder, M, 0, 0, Passed.
--C0B00Y04, HolyOrder, M, 0, 0, FAILED. Needs "remove foe" quest action.
+C0B00Y03, HolyOrder, M, 0, 0, Passed
+C0B00Y04, HolyOrder, M, 0, 0, Passed
 -C0B00Y14, HolyOrder, M, 0, 0, FAILED. Exception during quest compile: "Could not find Item name item in items table"
--C0B10Y05, HolyOrder, M, 1, 0, FAILED. Action not found. Ignoring 'make pc ill with Witches'_Pox saying 1012 '
-C0B10Y06, HolyOrder, M, 1, 0, Passed.
--C0B10Y07, HolyOrder, M, 1, 0, FAILED. Action not found. Ignoring 'create npc _priest_ '. Need to handle Group5.0
+C0B10Y05, HolyOrder, M, 1, 0, Passed
+C0B10Y06, HolyOrder, M, 1, 0, Passed
+C0B10Y07, HolyOrder, M, 1, 0, Passed
 C0B10Y15, HolyOrder, M, 1, 0, Passed. Lich and object spawn far apart.
 C0B20Y08, HolyOrder, M, 2, 0, Identical to C0B10Y06.
 C0B3XY09, HolyOrder, M, 3, X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches.
@@ -95,9 +95,9 @@ J0B00Y00, HolyOrder, Z, 0, 0, Passed.
 -- Classic: Thieves Guild
 O0A0AL00, GeneralPopulace, P, 0, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
 O0B00Y00, GeneralPopulace, M, 0, 0, Apparently an exact copy of O0B10Y00.
--O0B00Y01, GeneralPopulace, M, 0, 0, FAILED. Need to handle Group5.0
--O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Could not find local site with P2=17 in Daggerfall/Penbrugh.
--O0B00Y12, GeneralPopulace, M, 0, 0, FAILED. Action not found. Ignoring 'create npc _contact1_ '
+O0B00Y01, GeneralPopulace, M, 0, 0, Passed
+-O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Can't find any city containing its local house3.
+O0B00Y12, GeneralPopulace, M, 0, 0, Passed
 O0B10Y00, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y03, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y05, GeneralPopulace, M, 1, 0, Passed. Changed house4 to house1.
@@ -115,7 +115,7 @@ O0B2XY10, GeneralPopulace, M, 2, X, Passed.
 - AddDialogLinkForQuestInfoResource() could not find a quest info resource with name Mastersly Manor
 - Unable to find DB member to finish quest, so changed to finish after poisoning decanter
 L0B00Y00, DarkBrotherHood, M, 0, 0, Passed
--L0B00Y01, DarkBrotherHood, M, 0, 0, FAILED. Need to handle Temple npc's (sgroup 5)
+L0B00Y01, DarkBrotherHood, M, 0, 0, Passed
 L0B00Y02, DarkBrotherHood, M, 0, 0, Passed. Various undefined names. Quest timer is tight due to multiple remote locations.
 L0B00Y03, DarkBrotherHood, M, 0, 0, Passed. Enemy mage has no defined name.
 L0B10Y01, DarkBrotherHood, M, 1, 0, Passed. Enemy bard has no defined name.
@@ -123,7 +123,7 @@ L0B10Y03, DarkBrotherHood, M, 1, 0, Passed. Quest timer is tight due to multiple
 L0B20Y02, DarkBrotherHood, M, 2, 0, Passed
 L0B30Y03, DarkBrotherHood, M, 3, 0, Passed
 L0B30Y09, DarkBrotherHood, M, 3, 0, Passed
-L0B40Y04, DarkBrotherHood, M, 4, 0, Passed. Flat NPC and enemy mismatching problem.
+L0B40Y04, DarkBrotherHood, M, 4, 0, Passed
 L0B50Y11, DarkBrotherHood, M, 5, 0, Passed
 L0B60Y10, DarkBrotherHood, M, 6, 0, Passed
 
@@ -144,7 +144,7 @@ B0B70Y14, KnightlyOrder, M, 7, 0, Passed.
 B0B70Y16, KnightlyOrder, M, 7, X, Passed.
 -B0B71Y03, KnightlyOrder, M, 7, 1, FAILED.	Discovered a new op-code: _0x3c_ 19
 B0B80Y17, KnightlyOrder, M, 8, 0, Passed.
--B0B81Y02, KnightlyOrder, M, 8, 1, FAILED. Player log says "Exception during quest compile: Could not find Item name item in items table." "Item _I.06_ item class 17 subclass 13"
+B0B81Y02, KnightlyOrder, M, 8, 1, Passed
 
 -- Witches Covens
 Q0C00Y01, Witches, N, 0, 0, Passed.
@@ -152,17 +152,17 @@ Q0C00Y03, Witches, N, 0, 0,
 Q0C00Y04, Witches, N, 0, 0,
 Q0C00Y06, Witches, N, 0, 0,
 Q0C00Y07, Witches, N, 0, 0,
--Q0C00Y08, Witches, N, 0, 0, FAILED. Clock wants a travel time but quest has no Place resources.
+Q0C00Y08, Witches, N, 0, 0, Passed
 Q0C0XY02, Witches, N, 0, X,
 Q0C10Y00, Witches, N, 10, 0,
 Q0C20Y02, Witches, N, 20, 0,
 Q0C4XY04, Witches, N, 40, X,
 
 -- Commoners
--A0C00Y00, Commoners, N, 0, 0, FAILED. Cannot get rid of popup 1013 after entering the _inn_.
+A0C00Y00, Commoners, N, 0, 0, Passed
 -A0C00Y04, Commoners, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX
--A0C00Y06, Commoners, N, 0, 0, FAILED. No master npc in the shop indicated
-A0C00Y07, Commoners, N, 0, 0, Passed with issues. Does not check victory condition correctly. Does not confine enemy spawns to target building.
+A0C00Y06, Commoners, N, 0, 0, Passed
+A0C00Y07, Commoners, N, 0, 0, Passed
 A0C00Y08, Commoners, N, 0, 0, Passed. questgiver name is incorrect (almost like a codename)
 A0C00Y10, Commoners, N, 0, 0,
 A0C00Y11, Commoners, N, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
@@ -185,12 +185,12 @@ A0C41Y18, Commoners, N, 4, 1,
 K0C00Y00, Merchants, N, 0, 0,
 K0C00Y02, Merchants, N, 0, 0,
 K0C00Y03, Merchants, N, 0, 0,
-K0C00Y04, Merchants, N, 0, 0,
+-K0C00Y04, Merchants, N, 0, 0, problems with NPCs spawning in other towns
 K0C00Y05, Merchants, N, 0, 0,
 K0C00Y06, Merchants, N, 0, 0,
 K0C00Y07, Merchants, N, 0, 0,
 K0C00Y08, Merchants, N, 0, 0,
--K0C00Y09, Merchants, N, 0, 0, FAILED. Requires action "add foe aFoe face" and drop foe aFoe face"
+K0C00Y09, Merchants, N, 0, 0, Passed
 K0C01Y00, Merchants, N, 0, 1,
 K0C01Y10, Merchants, N, 0, 1,
 K0C0XY01, Merchants, N, 0, X,

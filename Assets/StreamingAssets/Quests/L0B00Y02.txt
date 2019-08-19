@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 16
 Quest: L0B00Y02
+DisplayName: Disagreeable Competition
 -- Message panels
 QRC:
 

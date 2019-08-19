@@ -77,6 +77,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         int curingCost = 0;
 
+        List<QuestData> questPool;
+
         #endregion
 
         #region Constructors
@@ -460,13 +462,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get member status, including temple specific statuses
             MembershipStatus status = guild.IsMember() ? MembershipStatus.Member : MembershipStatus.Nonmember;
             if (guild.IsMember() && guildGroup == FactionFile.GuildGroups.HolyOrder)
-                status = (MembershipStatus) Enum.Parse(typeof(MembershipStatus), ((Temple)guild).Deity.ToString());
+                status = (MembershipStatus)Enum.Parse(typeof(MembershipStatus), ((Temple)guild).Deity.ToString());
 
             // Get the faction id for affecting reputation on success/failure
-            int factionId = (guildGroup == FactionFile.GuildGroups.HolyOrder || guildGroup == FactionFile.GuildGroups.KnightlyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
+            int factionId = GetFactionIdForGuild();
 
             // Select a quest at random from appropriate pool
-            offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
+            QuestListsManager questListsManager = GameManager.Instance.QuestListsManager;
+            questPool = GameManager.Instance.QuestListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
+
+            if (DaggerfallUnity.Settings.GuildQuestListBox)
+            {
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.CreateTokens(
+                    TextFile.Formatting.JustifyCenter,
+                    TextManager.Instance.GetText(textDatabase, "gettingQuests1"),
+                    TextManager.Instance.GetText(textDatabase, "gettingQuests2"));
+
+                DaggerfallMessageBox gettingQuestsBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, this);
+                gettingQuestsBox.ClickAnywhereToClose = true;
+                gettingQuestsBox.SetTextTokens(tokens);
+                gettingQuestsBox.OnClose += GettingQuestsBox_OnClose;
+                gettingQuestsBox.Show();
+            }
+            else
+            {
+                offeredQuest = questListsManager.SelectQuest(questPool, factionId);
+                OfferQuest();
+            }
+        }
+
+        private int GetFactionIdForGuild()
+        {
+            return (guildGroup == FactionFile.GuildGroups.HolyOrder || guildGroup == FactionFile.GuildGroups.KnightlyOrder) ? buildingFactionId : guildManager.GetGuildFactionId(guildGroup);
+        }
+
+        protected void OfferQuest()
+        {
             if (offeredQuest != null)
             {
                 // Log offered quest
@@ -485,6 +516,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 ShowFailGetQuestMessage();
+            }
+        }
+
+        private void GettingQuestsBox_OnClose()
+        {
+            DaggerfallListPickerWindow questPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
+            questPicker.OnItemPicked += QuestPicker_OnItemPicked;
+            for (int i = 0; i < questPool.Count; i++)
+            {
+                try
+                {
+                    Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
+                    if (quest != null)
+                        questPicker.ListBox.AddItem(quest.DisplayName == null ? quest.QuestName : quest.DisplayName);
+                    else
+                        questPool.RemoveAt(i);  // Remove any that fail compilation
+                }
+                catch (Exception)
+                {
+                    questPool.RemoveAt(i);  // Remove any that throw exceptions
+                }
+            }
+            uiManager.PushWindow(questPicker);
+        }
+
+        public void QuestPicker_OnItemPicked(int index, string name)
+        {
+            DaggerfallUI.UIManager.PopWindow();
+            if (index < questPool.Count)
+            {
+                QuestData questData = questPool[index];
+                offeredQuest = GameManager.Instance.QuestListsManager.LoadQuest(questData, GetFactionIdForGuild());
+                OfferQuest();
             }
         }
 

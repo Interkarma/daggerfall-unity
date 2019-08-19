@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B40Y05
+DisplayName: Hunt for a Spriggan
 -- Message panels
 QRC:
 

@@ -293,6 +293,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
+            Place homePlace = GetHomePlace();
+            if (homePlace != null)
+                ParentQuest.LastPlaceReferenced = homePlace;
 
             textOut = string.Empty;
             bool result = true;

@@ -39,6 +39,7 @@ delete,                     Delete
 cancel,                     Cancel
 reset,                      Reset
 resetConfirmation,          Revert all settings to default values?
+cleanConfigurationDir,      Found configuration files for unknown or uninstalled mods. Do you want to remove them?
 
 backToOptions,              Options
 backToOptionsInfo,          Back to options without saving changes

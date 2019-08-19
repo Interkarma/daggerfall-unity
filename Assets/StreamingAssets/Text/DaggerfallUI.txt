@@ -28,6 +28,7 @@ endedQuest,         "ended"
 finishQuestHeader,  "{0} {1} at {2}:"
 quest,              "Quest"
 noteHeader,         "{0} in {1}:"
+houseDeed,          "You obtained the deeds and now own a house in %town of %region."
 
 - Character window:
 
@@ -106,6 +107,8 @@ serviceMembersOnly, "My services are reserved for members only."
 serviceDonateHowMuch, "Donate how much money : "
 curedDisease,       "You are cured."
 freeHolidayCuring,  "You are cured free from cost due to todays' holiday."
+gettingQuests1,     "Hmm, let me see what tasks we have availiable."
+gettingQuests2,     "Please have patience and wait here a moment, %pcf."
 
 - Rest window
 

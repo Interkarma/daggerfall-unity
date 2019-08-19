@@ -402,6 +402,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void UpdateAutomapStateOnWindowPush()
         {
+            // create teleport markers (that are not already present on map)
+            // since new teleporters could have been discovered by pc since last time map was open this must be checked here       
+            CreateTeleporterMarkers();
+
             SetActivationStateOfMapObjects(true);
 
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
@@ -416,12 +420,6 @@ namespace DaggerfallWorkshop.Game
             CreateLightsForAutomapGeometry();
 
             UpdateMicroMapTexture();
-
-            // create teleport markers (that are not already present on map)
-            CreateTeleporterMarkers();
-
-            if (gameobjectTeleporterMarkers != null)
-                gameobjectTeleporterMarkers.SetActive(true);
 
             UpdateSlicingPositionY();
         }
@@ -2251,11 +2249,6 @@ namespace DaggerfallWorkshop.Game
             // store list of teleporter connections
             automapDungeonState.dictTeleporterConnections = new Dictionary<string, TeleporterConnection>(dictTeleporterConnections);
 
-            // delete all user marker notes (in automap gameobject and internal list)
-            DestroyUserMarkerNotes();
-            // delete all teleporter markers (in automap gameobject and internal dict)
-            DestroyTeleporterMarkers();
-
             // replace or add discovery state for current dungeon
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
@@ -2460,16 +2453,15 @@ namespace DaggerfallWorkshop.Game
             if (loadedListUserNoteMarkers != null)
                 listUserNoteMarkers = loadedListUserNoteMarkers; //new SortedList<int, NoteMarker>(loadedListUserNoteMarkers);
 
-            foreach (var userMarkerNote in listUserNoteMarkers)
+            foreach (var userNoteMarker in listUserNoteMarkers)
             {
-                CreateUserMarker(userMarkerNote.Key, userMarkerNote.Value.position);
+                CreateUserMarker(userNoteMarker.Key, userNoteMarker.Value.position);
             }
 
-            // (try to) load teleporter connections
+            // (try to) load teleporter connections (creation of teleporter gameobjects for map is done on map open (UpdateAutomapStateOnWindowPush))
             var loadedDictTeleporterConnections = automapDungeonState.dictTeleporterConnections; // new Dictionary<string, TeleporterConnection>(automapDungeonState.dictTeleporterConnections);
             if (loadedDictTeleporterConnections != null)
                 dictTeleporterConnections = loadedDictTeleporterConnections;
-
         }
 
         /// <summary>

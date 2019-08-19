@@ -6,6 +6,7 @@
 -- QuestId: 4
 Messages: 81
 Quest: M0B30Y04
+DisplayName: Fighters Lich
 -- Message panels
 QRC:
 

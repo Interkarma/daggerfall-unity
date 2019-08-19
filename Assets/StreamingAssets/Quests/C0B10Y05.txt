@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 13
 Quest: C0B10Y05
+DisplayName: The Cursed Weapon
 -- Message panels
 QRC:
 

@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0C00Y10
+DisplayName: Trouble with Orcs
 -- Message panels
 QRC:
 

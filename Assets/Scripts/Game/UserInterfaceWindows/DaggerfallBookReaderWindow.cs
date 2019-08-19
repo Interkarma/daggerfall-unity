@@ -1,19 +1,17 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: InconsolableCellist
+// Contributors:    InconsolableCellist
 //
 // Notes:
 //
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
 
@@ -21,14 +19,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     public class DaggerfallBookReaderWindow : DaggerfallBaseWindow
     {
+        const float scrollAmount = 24;
         const string nativeImgName = "BOOK00I0.IMG";
-        const int extraLeading = 0;
 
-        DaggerfallUnity dfUnity;
+        Vector2 pagePanelPosition = new Vector2(55, 21);
+        Vector2 pagePanelSize = new Vector2(210, 159);
+
         Texture2D nativeTexture;
-        DaggerfallFont currentFont;
-        List<TextLabel> pageLabels = new List<TextLabel>();
         DaggerfallUnityItem bookTarget;
+        LabelFormatter labelFormatter = new LabelFormatter();
+        List<TextLabel> bookLabels = new List<TextLabel>();
+        Panel pagePanel = new Panel();
+        float maxHeight = 0;
+        float scrollPosition = 0;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -38,19 +41,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallUnityItem BookTarget
         {
             get { return bookTarget; }
-            set
-            {
-                bookTarget = value;
-                IsBookOpen = DaggerfallUnity.Instance.TextProvider.OpenBook(bookTarget.message);
-            }
+            set { OpenBook(value); }
         }
 
         public bool IsBookOpen { get; private set; }
 
         protected override void Setup()
         {
-            dfUnity = DaggerfallUnity.Instance;
-
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
@@ -59,8 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            // Load default pixel font
-            ChangeFont(4);
+            // Setup panel to contain text labels
+            pagePanel.Position = pagePanelPosition;
+            pagePanel.Size = pagePanelSize;
+            pagePanel.RectRestrictedRenderArea = new Rect(pagePanel.Position, pagePanel.Size);
+            NativePanel.Components.Add(pagePanel);
 
             // Add buttons
             Button nextPageButton = DaggerfallUI.AddButton(new Rect(208, 188, 14, 8), NativePanel);
@@ -75,26 +75,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.OnMouseScrollDown += Panel_OnMouseScrollDown;
             NativePanel.OnMouseScrollUp += Panel_OnMouseScrollUp;
 
-            LayoutPage();
+            LayoutBook();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
         }
 
         private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (dfUnity.TextProvider.MoveNextPage())
-            {
-                LayoutPage();
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
-            }
+            ScrollBook(-scrollAmount);
         }
 
         private void PreviousPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (dfUnity.TextProvider.MovePreviousPage())
-            {
-                LayoutPage();
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
-            }
+            ScrollBook(scrollAmount);
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -116,66 +108,68 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (IsSetup)
             {
-                LayoutPage();
+                LayoutBook();
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
             }
         }
 
-        void LayoutPage()
+        public override void Draw()
         {
-            if (!dfUnity.TextProvider.IsBookOpen)
+            base.Draw();
+        }
+
+        void OpenBook(DaggerfallUnityItem target)
+        {
+            bookLabels.Clear();
+            bookTarget = target;
+            if (target == null || target.ItemGroup != ItemGroups.Books || target.IsArtifact)
+                throw new Exception("Item is not a valid book for book reader UI.");
+
+            IsBookOpen = labelFormatter.ReformatBook(target.message);
+            if (IsBookOpen)
+                bookLabels = labelFormatter.CreateLabels();
+        }
+
+        void LayoutBook()
+        {
+            if (!IsBookOpen)
                 return;
 
-            ClearPage();
-            TextFile.Token[] tokens = dfUnity.TextProvider.PageTokens;
-
-            int x = 10, y = 20;
-            HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
-            foreach (var token in tokens)
+            maxHeight = 0;
+            scrollPosition = 0;
+            pagePanel.Components.Clear();
+            float x = 0, y = 0;
+            foreach (TextLabel label in bookLabels)
             {
-                switch (token.formatting)
-                {
-                    case TextFile.Formatting.NewLine:
-                        // Daggerfall books appear to reset horizontal alignment after newline
-                        y += currentFont.GlyphHeight + extraLeading;
-                        horizontalAlignment = HorizontalAlignment.None;
-                        break;
-                    case TextFile.Formatting.FontPrefix:
-                        ChangeFont(token.x);
-                        break;
-                    case TextFile.Formatting.JustifyLeft:
-                        horizontalAlignment = HorizontalAlignment.None;
-                        break;
-                    case TextFile.Formatting.JustifyCenter:
-                        horizontalAlignment = HorizontalAlignment.Center;
-                        break;
-                    case TextFile.Formatting.Text:
-                        TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), token.text, NativePanel);
-                        label.HorizontalAlignment = horizontalAlignment;
-                        label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
-                        label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
-                        label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
-                        pageLabels.Add(label);
-                        break;
-                    default:
-                        Debug.Log("DaggerfallBookReaderWindow: Unknown formatting token: " + (int)token.formatting);
-                        break;
-                }
+                label.Position = new Vector2(x, y);
+                label.MaxWidth = (int)pagePanel.Size.x;
+                label.RectRestrictedRenderArea = pagePanel.RectRestrictedRenderArea;
+                label.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
+                pagePanel.Components.Add(label);
+                y += label.Size.y;
+                maxHeight += label.Size.y;
             }
         }
 
-        void ClearPage()
+        void ScrollBook(float amount)
         {
-            foreach (TextLabel label in pageLabels)
-            {
-                NativePanel.Components.Remove(label);
-            }
-            pageLabels.Clear();
-        }
+            if (!IsBookOpen)
+                return;
 
-        void ChangeFont(int index)
-        {
-            currentFont = DaggerfallUI.Instance.GetFont(index);
+            // Stop scrolling at top or bottom of book layout
+            if (amount < 0 && scrollPosition - pagePanel.Size.y - amount < -maxHeight)
+                return;
+            else if (amount > 0 && scrollPosition == 0)
+                return;
+
+            // Scroll label and only draw what can be seen
+            scrollPosition += amount;
+            foreach (TextLabel label in bookLabels)
+            {
+                label.Position = new Vector2(label.Position.x, label.Position.y + amount);
+                label.Enabled = label.Position.y < pagePanel.Size.y && label.Position.y + label.Size.y > 0;
+                    
+            }
         }
     }
 }

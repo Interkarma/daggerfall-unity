@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 12
 Quest: B0B60Y12
+DisplayName: Eternal Rest
 -- Message panels
 QRC:
 
