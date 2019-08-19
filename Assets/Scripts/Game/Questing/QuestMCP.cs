@@ -216,7 +216,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (questLastPlaceReferenced == null)
                 {
                     QuestMachine.Log(parent, "Trying to get direction to quest location when no location has been referenced in the quest.");
-                    return "... never mind ...";
+                    return TextManager.Instance.GetText("ConversationText", "resolvingError");
                 }
 
                 DFPosition position = new DFPosition();
