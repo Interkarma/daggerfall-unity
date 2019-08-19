@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 panel.HighlightedTextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
             }
             panel.OnMouseClick += EnchantmentPanel_OnMouseClick;
+            panel.SetRestrictedRenderingPanel(this);
             enchantmentPanels.Add(panel);
             RefreshPanelLayout();
         }
@@ -84,6 +85,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     panel.TextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
                     panel.HighlightedTextColor = DaggerfallUI.DaggerfallForcedEnchantmentTextColor;
                 }
+                panel.SetRestrictedRenderingPanel(this);
                 enchantmentPanels.Add(panel);
             }
             RefreshPanelLayout();
@@ -288,10 +290,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             const float panelWidthWithoutScroller = 75;
             const float panelWidthWithScroller = 71;
-            const float panelHeightWithoutSecondary = 5;
-            const float panelHeightWithSecondary = 10;
+            const float panelHeightWithoutSecondary = 7;
+            const float panelHeightWithSecondary = 12;
 
-            Vector2 secondaryLabelPos = new Vector2(0, 5);
+            Vector2 primaryLabelPos = new Vector2(0, 2);
+            Vector2 secondaryLabelPos = new Vector2(0, 8);
             TextLabel primaryLabel, secondaryLabel;
             bool lastFitToScroller;
 
@@ -319,10 +322,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 bool hasSecondaryLabel = !string.IsNullOrEmpty(enchantment.SecondaryDisplayName);
                 Size = new Vector2(panelWidthWithoutScroller, hasSecondaryLabel ? panelHeightWithSecondary : panelHeightWithoutSecondary);
 
-                primaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, Vector2.zero, enchantment.PrimaryDisplayName, this);
+                primaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, primaryLabelPos, enchantment.PrimaryDisplayName, this);
                 secondaryLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.SmallFont, secondaryLabelPos, secondarySpacing + enchantment.SecondaryDisplayName, this);
-                primaryLabel.RestrictedRenderAreaCoordinateType = secondaryLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
-                primaryLabel.RectRestrictedRenderArea = secondaryLabel.RectRestrictedRenderArea = renderArea;
                 primaryLabel.TextColor = secondaryLabel.TextColor = textColor;
 
                 if (!hasSecondaryLabel)
@@ -333,6 +334,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 RenderArea = renderArea;
                 Enchantment = enchantment;
+            }
+
+            public void SetRestrictedRenderingPanel(Panel panel)
+            {
+                primaryLabel.RestrictedRenderAreaCoordinateType = secondaryLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderArea_CoordinateType.CustomParent;
+                primaryLabel.RestrictedRenderAreaCustomParent = secondaryLabel.RestrictedRenderAreaCustomParent = panel;
             }
 
             void SetTextColor(Color color)
