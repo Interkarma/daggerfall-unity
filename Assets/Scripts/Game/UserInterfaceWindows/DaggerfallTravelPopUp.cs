@@ -304,9 +304,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies at the end of a long trip
             GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
 
-            // Vampires always arrive just after 6pm regardless of travel type
+            // Vampires and characters with Damage from Sunlight disadvantage always arrive just after 6pm regardless of travel type
             // Otherwise raise arrival time to just after 7am if cautious travel would arrive at night
-            if (GameManager.Instance.PlayerEffectManager.HasVampirism())
+            if (GameManager.Instance.PlayerEffectManager.HasVampirism() || GameManager.Instance.PlayerEntity.Career.DamageFromSunlight)
             {
                 DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime((DaggerfallDateTime.DuskHour - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600);
             }
