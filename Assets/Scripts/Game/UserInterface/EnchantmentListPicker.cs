@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         const int panelSpacing = 5;
-        const int visiblePanels = 8;
+        const int visiblePanels = 7;
         const int scrollerWidth = 4;
         const int scrollerStep = 8;
         const int panelPosVerticalStartingOffset = 2;
@@ -218,6 +218,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             int scrollerUnits = 0;
+            Rect myRect = Rectangle;
             Vector2 panelPos = new Vector2(0, panelPosVerticalStartingOffset);
             foreach(EnchantmentPanel enchantmentPanel in enchantmentPanels)
             {
@@ -226,6 +227,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 enchantmentPanel.FitToScroller = scroller.Enabled;
                 panelPos.y += enchantmentPanel.Size.y + panelSpacing;
                 scrollerUnits += (int)(enchantmentPanel.Size.y + panelSpacing);
+                enchantmentPanel.Enabled = myRect.Overlaps(enchantmentPanel.Rectangle);
             }
             scroller.TotalUnits = scrollerUnits;
 
@@ -259,6 +261,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void EnchantmentPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            // Mouse must be within control area
+            if (!MouseOverComponent)
+                return;
+
             // Can only click to remove parent panels, child panels are removed by clicking on parent
             EnchantmentPanel panelToRemove = (EnchantmentPanel)sender;
             if (panelToRemove.Enchantment.ParentEnchantment == 0)
@@ -274,11 +280,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!ShowScroller())
                 return;
 
+            Rect myRect = Rectangle;
             Vector2 panelPos = new Vector2(0, panelPosVerticalStartingOffset - scroller.ScrollIndex);
             foreach (EnchantmentPanel panel in enchantmentPanels)
             {
                 panel.Position = panelPos;
                 panelPos.y += panel.Size.y + panelSpacing;
+                panel.Enabled = myRect.Overlaps(panel.Rectangle);
             }
         }
 
