@@ -28,6 +28,7 @@ endedQuest,         "ended"
 finishQuestHeader,  "{0} {1} at {2}:"
 quest,              "Quest"
 noteHeader,         "{0} in {1}:"
+houseDeed,          "You obtained the deeds and now own a house in %town of %region."
 
 - Character window:
 

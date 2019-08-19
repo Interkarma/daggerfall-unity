@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Banking
 {
@@ -423,6 +424,10 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Add interior scene to permanent list
             SaveLoadManager.StateManager.AddPermanentScene(DaggerfallInterior.GetSceneName(mapID, house.buildingKey));
+
+            // Add note to journal
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(
+                TextManager.Instance.GetText("DaggerfallUI", "houseDeed").Replace("%town", location.Name).Replace("%region", MapsFile.RegionNames[regionIndex]));
         }
 
         public static TransactionResult SellHouse(int regionIndex)
