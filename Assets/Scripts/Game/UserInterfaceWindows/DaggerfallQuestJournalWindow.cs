@@ -359,10 +359,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (DisplayMode == JournalDisplay.ActiveQuests)
             {
-                // Handle current quest clicks - ask if want to travel to last location for quest.
+                // Get last actual Place resource mentioned in quest message
+                // If no Place resouce is mentioned specifically then Place will be null
+                // An example of where this happens is the DB initiation quest where entry is kept secret from journal
+                // When using ParentQuest.LastPlaceReferenced this can result in player being sent to an unrelated home location for last NPC processed
                 Message questMessage = questMessages[selectedEntry];
+                Place place = GetLastPlaceMentionedInMessage(questMessage);
+
+                // Handle current quest clicks - ask if want to travel to last location for quest.
                 Debug.Log(questMessage.ParentQuest.QuestName);
-                Place place = questMessage.ParentQuest.LastPlaceReferenced;
                 if (place != null &&
                     !string.IsNullOrEmpty(place.SiteDetails.locationName) &&
                     place.SiteDetails.locationName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
@@ -410,6 +415,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     selectedEntry = NULLINT;
                 }
             }
+        }
+
+        Place GetLastPlaceMentionedInMessage(Message message)
+        {
+            QuestMacroHelper helper = new QuestMacroHelper();
+            QuestResource[] resources = helper.GetMessageResources(message);
+            if (resources == null || resources.Length == 0)
+                return null;
+
+            Place lastPlace = null;
+            foreach(QuestResource resource in resources)
+            {
+                if (resource is Place)
+                    lastPlace = (Place)resource;
+            }
+
+            return lastPlace;
         }
 
         private DaggerfallMessageBox CreateDialogBox(string entryStr, string baseKey)
