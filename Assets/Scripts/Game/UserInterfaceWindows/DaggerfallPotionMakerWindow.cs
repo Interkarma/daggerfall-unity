@@ -352,9 +352,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
                 if (!stacked)
+                {
                     GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
+                    GameManager.Instance.PlayerEntity.WagonItems.RemoveItem(item);
+                }
             }
-
             // Empty cauldron and update list displays
             cauldron.Clear();
             ingredientsListScroller.Items = ingredients;
