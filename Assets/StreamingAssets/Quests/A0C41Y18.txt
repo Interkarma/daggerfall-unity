@@ -27,6 +27,10 @@ AcceptQuest:  [1002]
 <ce>                 %g'll pay you the rest.  I really must
 <ce>                   be going now.  Thank you so much!
 
+QuestComplete:   [1004]
+<ce>                  _giver_ hands you a letter wrapped
+<ce>                around a small object and hurries away.
+
 RumorsDuringQuest:  [1005]
 <ce>                  The pirates have been particularly
 <ce>                           active this year.
@@ -140,10 +144,6 @@ Dear Stranger,
  Please understand, I meant you no harm, but I
  would have been killed or driven mad otherwise!
 
-QuestTimeLapse:  [1045]
-<ce>                  _giver_ hands you a letter wrapped
-<ce>                around a small object and hurries away.
-
 Message:  1050
 <ce>                 _sage_ is a noted sage from ___sage_.
                                      <--->
@@ -196,7 +196,8 @@ Foe _realmummy_ is Mummy
 	get item _finger_ 
 	get item _gold1_ 
 	start task _S.03_ 
-	say 1045 
+	give pc nothing
+--changed "say 1045" to "give pc nothing." This ensures faction increase for completing this quest.
 	_letter_ used do _readletter_ 
 	place foe _realmummy_ at _dungeon_ 
 	destroy _giver_ 
