@@ -544,22 +544,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetupDefaultActionMode()
         {
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon &&
-                PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart) && 
-                !allowDungeonWagonAccess)
-                allowDungeonWagonAccess |= DungeonWagonAccessProximityCheck();
+            bool proximityAccess = false;
+            if (!allowDungeonWagonAccess &&
+                GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon &&
+                PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
+                proximityAccess = DungeonWagonAccessProximityCheck();
 
             if (lootTarget != null)
                 SelectActionMode(ActionModes.Remove);
-            else
+            else if (DaggerfallUnity.Settings.DungeonExitWagonPrompt)
             {
+                if (allowDungeonWagonAccess)
+                {
+                    // Dungeon exit wagon prompt
+                    SelectActionMode(ActionModes.Remove);
+                    ShowWagon(true);
+                }
+            }
+            else
+            { // !DaggerfallUnity.Settings.DungeonExitWagonPrompt
+                allowDungeonWagonAccess |= proximityAccess;
                 SelectActionMode(ActionModes.Equip);
-                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt && allowDungeonWagonAccess)
+                if (allowDungeonWagonAccess)
                 {
                     ShowWagon(true);
                     // do not change default ActionMode, this can be confusing
                 }
             }
+            allowDungeonWagonAccess |= proximityAccess;
         }
 
         public override void OnPush()
