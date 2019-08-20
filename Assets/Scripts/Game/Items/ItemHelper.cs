@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
@@ -52,23 +53,6 @@ namespace DaggerfallWorkshop.Game.Items
         readonly Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
         readonly Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         readonly Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// The total number of books available.
-        /// These are 1-111, plus custom books (112+), plus 10000.
-        /// </summary>
-        public int BooksCount
-        {
-            get
-            {
-                BookReplacement.AssertCustomBooksImportEnabled();
-                return bookIDNameMapping.Count;
-            }
-        }
 
         #endregion
 
@@ -473,9 +457,9 @@ namespace DaggerfallWorkshop.Game.Items
             if (message <= 111 || message == 10000)
                 return BookFile.messageToBookFilename(message);
 
-            string name;
-            if (BookReplacement.FileNames.TryGetValue(message, out name))
-                return name;
+            BookMappingEntry entry;
+            if (BookReplacement.BookMappingEntries.TryGetValue(message, out entry))
+                return entry.Name;
 
             Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", message);
             return null;
@@ -483,13 +467,32 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Obtaining a random book ID is useful for generating books in loot drops, store inventories, etc.
+        /// If custom books are available, they are chosen only if specified conditions are met.
         /// </summary>
         /// <returns>A random book ID</returns>
-        public int getRandomBookID()
+        public int GetRandomBookID()
         {
-            List<int> keys = new List<int>(bookIDNameMapping.Keys);
-            int size = bookIDNameMapping.Count;
-            return keys[UnityEngine.Random.Range(0, size)];
+            if (DaggerfallUnity.Settings.CustomBooksImport)
+            {
+                const int attempts = 6;
+
+                int[] keys = bookIDNameMapping.Keys.ToArray();
+
+                for (int i = 0; i < attempts; i++)
+                {
+                    int id = keys[UnityEngine.Random.Range(0, keys.Length)];
+                    if (BookReplacement.BookMeetsConditions(id))
+                        return id;
+                }
+
+                return UnityEngine.Random.Range(0, 112);
+            }
+            else
+            {
+                List<int> keys = new List<int>(bookIDNameMapping.Keys);
+                int size = bookIDNameMapping.Count;
+                return keys[UnityEngine.Random.Range(0, size)];
+            }
         }
 
         /// <summary>

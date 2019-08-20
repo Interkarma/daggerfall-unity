@@ -264,8 +264,8 @@ namespace DaggerfallWorkshop.Game.Items
             if (!Path.HasExtension(fileName))
                 fileName += ".TXT";
 
-            var entry = BookReplacement.FileNames.FirstOrDefault(x => x.Value == fileName);
-            return !entry.Equals(default(KeyValuePair<int, string>)) ? CreateBook(entry.Key) : null;
+            var entry = BookReplacement.BookMappingEntries.Values.FirstOrDefault(x => x.Name.Equals(fileName, StringComparison.Ordinal));
+            return entry.ID != 0 ? CreateBook(entry.ID) : null;
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
             DaggerfallUnityItem book = new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book0));
-            book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
+            book.message = DaggerfallUnity.Instance.ItemHelper.GetRandomBookID();
             book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
             // Update item value for this book.
             BookFile bookFile = new BookFile();

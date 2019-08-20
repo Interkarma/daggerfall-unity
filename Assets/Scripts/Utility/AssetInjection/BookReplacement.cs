@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using FullSerializer;
 
@@ -24,7 +25,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     internal struct BookMappingEntry
     {
         /// <summary>
-        /// The file name without extension; for example `example-book` for `StreamingAssets\Books\example-book.TXT`.
+        /// The file name with the extension; for example `example-book.TXT` for `StreamingAssets\Books\example-book.TXT`.
         /// </summary>
         [SerializeField]
         internal string Name;
@@ -34,6 +35,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         [SerializeField]
         internal string Title;
+
+        /// <summary>
+        /// An unique ID used for serialization; must be between 112 and <see cref="int.MaxValue"/>.
+        /// </summary>
+        [SerializeField]
+        internal int ID;
+
+        /// <summary>
+        /// If true this book is not found inside random loots or bookshelves and must be made available directly by mods.
+        /// </summary>
+        [SerializeField]
+        internal bool IsUnique;
+
+        /// <summary>
+        /// Book is available only when this global variable is set.
+        /// </summary>
+        [SerializeField]
+        internal int? WhenVarSet;
     }
 
     /// <summary>
@@ -47,7 +66,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string booksPath = Path.Combine(Application.streamingAssetsPath, "Books");
         static readonly string mappingPath = Path.Combine(booksPath, "Mapping");
 
-        internal static readonly Dictionary<int, string> FileNames = new Dictionary<int, string>();
+        internal static readonly Dictionary<int, BookMappingEntry> BookMappingEntries = new Dictionary<int, BookMappingEntry>();
+        static bool customBooksSeeked;
 
         /// <summary>
         /// Path to custom books on disk.
@@ -80,52 +100,61 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             AssertCustomBooksImportEnabled();
 
-            // Book IDs are stored inside Mapping folder.
-            // They are associated to game installation (with mods) and not specific saves. 
-            var ids = new Dictionary<string, int>();
-            string idsPath = Path.Combine(mappingPath, "IDs.json");
-            if (File.Exists(idsPath))
-                ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(idsPath)), ref ids);
-            int idsCount = ids.Count;
-
-            int currentId = 111;
-            foreach (string mapContent in GetBooksMaps())
+            if (!customBooksSeeked)
             {
-                var map = new List<BookMappingEntry>();
-                fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(mapContent), ref map);
-                if (fsResult.HasWarnings)
-                    Debug.LogWarning(fsResult.FormattedMessages);
-
-                if (fsResult.Succeeded)
+                foreach (string mapContent in GetBooksMaps())
                 {
-                    foreach (var book in map)
+                    var map = new List<BookMappingEntry>();
+                    fsResult fsResult = ModManager._serializer.TryDeserialize(fsJsonParser.Parse(mapContent), ref map);
+                    if (fsResult.HasWarnings)
+                        Debug.LogWarning(fsResult.FormattedMessages);
+
+                    if (fsResult.Succeeded)
                     {
-                        string name = book.Name + ".TXT";
+                        foreach (BookMappingEntry entry in map)
+                        {
+                            if (string.IsNullOrEmpty(entry.Name) || string.IsNullOrEmpty(entry.Title) || entry.ID == 0)
+                            {
+                                Debug.LogError("Failed to register book because required informations are missing.");
+                                continue;
+                            }
 
-                        // Assign book id
-                        int id;
-                        if (!ids.TryGetValue(name, out id))
-                            ids.Add(name, id = ++currentId != 10000 ? currentId : ++currentId);
+                            if (bookIDNameMapping.ContainsKey(entry.ID))
+                            {
+                                Debug.LogErrorFormat("Failed to register book {0} because id {1} is already in use by {2}.", entry.Title, entry.ID, bookIDNameMapping[entry.ID]);
+                                continue;
+                            }
 
-                        // Store results
-                        bookIDNameMapping.Add(id, book.Title);
-                        FileNames.Add(id, name);
+                            BookMappingEntries.Add(entry.ID, entry);
+                        }
                     }
                 }
+
+                if (BookMappingEntries.Count > 0)
+                    Debug.LogWarningFormat("Imported {0} custom books. Addition of custom books is EXPERIMENTAL and may introduce bugs! " +
+                        "Breaking changes to this feature can also be expected until is considered stable.", BookMappingEntries.Count);
+
+                customBooksSeeked = true;
             }
 
-            // Sync IDs with persistent json file
-            if (ids.Count > idsCount)
-            {
-                fsData fsData;
-                ModManager._serializer.TrySerialize(ids, out fsData).AssertSuccessWithoutWarnings();
-                Directory.CreateDirectory(mappingPath);
-                File.WriteAllText(idsPath, fsJsonPrinter.PrettyJson(fsData));
-            }
+            foreach (var entry in BookMappingEntries)
+                bookIDNameMapping.Add(entry.Key, entry.Value.Title); 
+        }
 
-            if (FileNames.Count > 0)
-                Debug.LogWarningFormat("Imported {0} custom books. Addition of custom books is EXPERIMENTAL and may introduce bugs! " +
-                    "Breaking changes to this feature can also be expected until is considered stable.", FileNames.Count);
+        /// <summary>
+        /// Checks if all conditions for book availability are met.
+        /// Unknown books are considered as an absence of conditions and true is returned.
+        /// </summary>
+        /// <param name="id">Book id.</param>
+        /// <returns>True if all conditions are met.</returns>
+        internal static bool BookMeetsConditions(int id)
+        {
+            BookMappingEntry entry;
+            if (!BookMappingEntries.TryGetValue(id, out entry))
+                return true;
+
+            return !entry.IsUnique
+                && (!entry.WhenVarSet.HasValue || GameManager.Instance.PlayerEntity.GlobalVars.GetGlobalVar(entry.WhenVarSet.Value));
         }
 
         #endregion
