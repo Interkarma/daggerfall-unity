@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop
 
         public void BookShelf_OnItemPicked(int index, string bookName)
         {
-            DaggerfallUnity.Instance.TextProvider.OpenBook(books[index]);
+            DaggerfallUI.Instance.BookReaderWindow.OpenBook(books[index]);
             DaggerfallUI.UIManager.PopWindow();
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
         }

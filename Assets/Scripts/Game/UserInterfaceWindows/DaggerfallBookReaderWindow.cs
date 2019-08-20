@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector2 pagePanelSize = new Vector2(210, 159);
 
         Texture2D nativeTexture;
-        DaggerfallUnityItem bookTarget;
         LabelFormatter labelFormatter = new LabelFormatter();
         List<TextLabel> bookLabels = new List<TextLabel>();
         Panel pagePanel = new Panel();
@@ -36,12 +35,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
-        }
-
-        public DaggerfallUnityItem BookTarget
-        {
-            get { return bookTarget; }
-            set { OpenBook(value); }
         }
 
         public bool IsBookOpen { get; private set; }
@@ -118,10 +111,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
-        void OpenBook(DaggerfallUnityItem target)
+        public void OpenBook(int id)
         {
             bookLabels.Clear();
-            bookTarget = target;
+            IsBookOpen = labelFormatter.ReformatBook(id);
+            if (IsBookOpen)
+                bookLabels = labelFormatter.CreateLabels();
+        }
+
+        public void OpenBook(DaggerfallUnityItem target)
+        {
+            bookLabels.Clear();
             if (target == null || target.ItemGroup != ItemGroups.Books || target.IsArtifact)
                 throw new Exception("Item is not a valid book for book reader UI.");
 
