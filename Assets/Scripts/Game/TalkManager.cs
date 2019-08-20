@@ -2092,7 +2092,7 @@ namespace DaggerfallWorkshop.Game
             return matchingBuildings[0].name;
         }
 
-        public bool IsBuildingQuestResource(int buildingKey, ref string overrideBuildingName, ref bool pcLearnedAboutExistence, ref bool receivedDirectionalHints, ref bool locationWasMarkedOnMapByNPC)
+        public bool IsBuildingQuestResource(int mapID, int buildingKey, ref string overrideBuildingName, ref bool pcLearnedAboutExistence, ref bool receivedDirectionalHints, ref bool locationWasMarkedOnMapByNPC)
         {
             pcLearnedAboutExistence = false;
             receivedDirectionalHints = false;
@@ -2113,7 +2113,8 @@ namespace DaggerfallWorkshop.Game
                         Place place = (Place)questResources[i];
                         string key = place.Symbol.Name;
 
-                        if (place.SiteDetails.buildingKey != buildingKey)
+                        // Always ensure we are locating building key in current location, not just same building key in another location within same quest
+                        if (place.SiteDetails.mapId != mapID || place.SiteDetails.buildingKey != buildingKey)
                             continue;
 
                         if (questInfo.resourceInfo.ContainsKey(key))
