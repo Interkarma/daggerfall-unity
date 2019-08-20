@@ -544,7 +544,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetupDefaultActionMode()
         {
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon &&
+                PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart) && 
+                !allowDungeonWagonAccess)
                 allowDungeonWagonAccess |= DungeonWagonAccessProximityCheck();
 
             if (lootTarget != null)
