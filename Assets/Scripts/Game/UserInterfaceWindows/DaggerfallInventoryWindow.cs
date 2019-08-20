@@ -1172,15 +1172,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
-            {
-                if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon || allowDungeonWagonAccess)
-                    ShowWagon(!usingWagon);
-                else
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
-            }
-            else
+            if (!PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
+            else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
+            else
+                ShowWagon(!usingWagon);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
