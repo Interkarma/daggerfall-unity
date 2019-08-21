@@ -413,9 +413,11 @@ namespace DaggerfallWorkshop.Game.Player
                         while (factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
                             factionData = factionDict[factionData.parent];
 
-                        // Propagate reputation changes for all children of the root
+                        // Propagate reputation changes for all children of the root, or just the sindle faction
                         if (factionData.children != null)
                             PropagateReputationChange(factionData, factionID, amount);
+                        else
+                            ChangeReputation(factionID, amount);
 
                         // If a temple deity faction, also propagate rep for generic temple faction hierarchy
                         if (factionData.type == (int)FactionFile.FactionTypes.God)
