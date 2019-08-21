@@ -424,6 +424,51 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Seeks assets inside a directory provided by this mod. An asset is accepted if its directory ends with the given subdirectory.
+        /// For example "Assets/Textures" matches "Water.png" from "Assets/Game/Mods/Example/Assets/Textures/Water.png".
+        /// </summary>
+        /// <param name="names">Null or a buffer of names. Will be filled with matches with the extension but without the directory.</param>
+        /// <param name="relativeDirectory">A relative directory with forward slashes (i.e. "Assets/Textures").</param>
+        /// <param name="extension">An extension including the dots (i.e ".json") or null.</param>
+        /// <returns>The number of assets found.</returns>
+        public int FindAssetNames(ref List<string> names, string relativeDirectory, string extension = null)
+        {
+            if (relativeDirectory == null)
+                throw new ArgumentNullException("relativeDirectory");
+
+            int initialCount = names != null ? names.Count : 0;
+
+            for (int i = 0; i < ModInfo.Files.Count; i++)
+            {
+                string path = ModInfo.Files[i];
+
+                // Must have at least one folder
+                int nameStart = path.LastIndexOf('/');
+                if (nameStart == -1)
+                    continue;
+
+                // Must be rooted at Assets or a child directory
+                int dirStart = nameStart - relativeDirectory.Length;
+                if (dirStart > 0 && path[dirStart - 1] != '/')
+                    continue;
+
+                // Validate name
+                if (extension != null && string.CompareOrdinal(path, path.Length - extension.Length, extension, 0, extension.Length) != 0)
+                    continue;
+
+                // Validate directory
+                if (string.CompareOrdinal(path, dirStart, relativeDirectory, 0, relativeDirectory.Length) != 0)
+                    continue;
+
+                if (names == null)
+                    names = new List<string>();
+                names.Add(path.Substring(nameStart + 1));
+            }
+
+            return names != null ? names.Count - initialCount : 0;
+        }
+
+        /// <summary>
         /// Return Type from Assemblies using name of type
         /// </summary>
         /// <param name="type">name of Type</param>

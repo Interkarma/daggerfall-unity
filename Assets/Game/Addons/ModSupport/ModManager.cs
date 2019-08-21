@@ -409,6 +409,44 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Seeks assets inside a directory from all mods with load order. An asset is accepted if its directory ends with the given subdirectory.
+        /// For example "Assets/Textures" matches "Water.png" from "Assets/Game/Mods/Example/Assets/Textures/Water.png".
+        /// </summary>
+        /// <param name="relativeDirectory">A relative directory with forward slashes (i.e. "Assets/Textures").</param>
+        /// <param name="extension">An extension including the dots (i.e ".json") or null.</param>
+        /// <returns>A list of assets or null if there are no matches.</returns>
+        public List<T> FindAssets<T>(string relativeDirectory, string extension = null) where T : UnityEngine.Object
+        {
+            if (relativeDirectory == null)
+                throw new ArgumentNullException("relativeDirectory");
+
+            List<string> names = null;
+            List<T> assets = null;
+
+            foreach (Mod mod in EnumerateModsReverse())
+            {
+                if (names != null)
+                    names.Clear();
+
+                if (mod.FindAssetNames(ref names, relativeDirectory, extension) != 0)
+                {
+                    for (int i = 0; i < names.Count; i++)
+                    {
+                        var asset = mod.GetAsset<T>(names[i]);
+                        if (asset)
+                        {
+                            if (assets == null)
+                                assets = new List<T>();
+                            assets.Add(asset);
+                        }
+                    }
+                }  
+            }
+
+            return assets;
+        }
+
+        /// <summary>
         /// convert full relative path to just the asset name for example:
         /// /Assets/examples/myscript.cs to myscript.cs
         /// </summary>
