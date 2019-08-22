@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.Items
                 string name = BookFile.messageToBookFilename(parent.message);
                 if (!BookReplacement.TryImportBook(name, bookFile))
                     bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
-                return bookFile.Author;
+                return bookFile.Author ?? TextManager.Instance.GetText("DaggerfallUI", "unknownAuthor");
             }
 
             public override string PaintingSubject()
