@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
-        public virtual string LocationDirection()
+        public virtual string Direction()
         {   // %di
             throw new NotImplementedException();
         }
