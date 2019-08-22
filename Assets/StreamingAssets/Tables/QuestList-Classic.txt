@@ -96,7 +96,7 @@ J0B00Y00, HolyOrder, Z, 0, 0, Passed.
 O0A0AL00, GeneralPopulace, P, 0, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
 O0B00Y00, GeneralPopulace, M, 0, 0, Apparently an exact copy of O0B10Y00.
 O0B00Y01, GeneralPopulace, M, 0, 0, Passed
--O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Can't find any city containing its local house3.
+-O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Can't find any city containing its local house.
 O0B00Y12, GeneralPopulace, M, 0, 0, Passed
 O0B10Y00, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y03, GeneralPopulace, M, 1, 0, Passed.
@@ -142,7 +142,7 @@ B0B50Y11, KnightlyOrder, M, 5, 0, Passed
 B0B60Y12, KnightlyOrder, M, 6, 0, Passed.
 B0B70Y14, KnightlyOrder, M, 7, 0, Passed.
 B0B70Y16, KnightlyOrder, M, 7, X, Passed.
--B0B71Y03, KnightlyOrder, M, 7, 1, FAILED.	Discovered a new op-code: _0x3c_ 19
+B0B71Y03, KnightlyOrder, M, 7, 1, Passed.	Discovered a new op-code: _0x3c_ 19
 B0B80Y17, KnightlyOrder, M, 8, 0, Passed.
 B0B81Y02, KnightlyOrder, M, 8, 1, Passed
 
