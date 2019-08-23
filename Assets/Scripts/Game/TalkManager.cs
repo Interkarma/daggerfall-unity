@@ -471,6 +471,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             SaveLoadManager.OnLoad += OnLoadEvent;
+            StartGameBehaviour.OnNewGame += OnStartGame;
 
             // Initialize work variables
             exteriorUsedForQuestors = 0;
@@ -485,6 +486,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             SaveLoadManager.OnLoad -= OnLoadEvent;
+            StartGameBehaviour.OnNewGame -= OnStartGame;
         }
 
         void Start()
@@ -3412,6 +3414,15 @@ namespace DaggerfallWorkshop.Game
         {
             rebuildTopicLists = true;
             GetBuildingList();
+        }
+
+        /// <summary>
+        /// deletes any quest resources and rumors in rumor mill - important when starting from classic save import
+        /// </summary>
+        void OnStartGame()
+        {
+            dictQuestInfo.Clear();
+            listRumorMill.Clear();
         }
 
         #endregion
