@@ -1529,9 +1529,12 @@ namespace DaggerfallWorkshop.Game
             if (buildingKey != 0)
             {
                 BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
+                currentKeySubject = buildingInfo.name;
+
                 PlayerGPS.DiscoveredBuilding discoveredBuilding;
                 GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
-                currentKeySubject = discoveredBuilding.displayName;
+                if (discoveredBuilding.displayName != null)
+                    currentKeySubject = discoveredBuilding.displayName;
             }
 
             if (string.IsNullOrEmpty(currentKeySubject) || currentKeySubject == HardStrings.residence)
