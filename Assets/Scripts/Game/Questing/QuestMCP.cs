@@ -209,9 +209,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string Direction()
             {
-                Vector2 positionPlayer;
-                Vector2 positionLocation = Vector2.zero;
-
                 Place questLastPlaceReferenced = parent.LastPlaceReferenced;
 
                 if (questLastPlaceReferenced.Scope == Place.Scopes.Remote)
@@ -222,47 +219,21 @@ namespace DaggerfallWorkshop.Game.Questing
                         return TextManager.Instance.GetText("ConversationText", "resolvingError");
                     }
 
-                    DFPosition position = new DFPosition();
-                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
-                    if (playerGPS)
-                        position = playerGPS.CurrentMapPixel;
-
-                    positionPlayer = new Vector2(position.X, position.Y);
-
-                    int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
-                    if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
-                        region = -1;
-
-                    DFRegion.RegionMapTable locationInfo = new DFRegion.RegionMapTable();
-
-                    DFRegion currentDFRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(region);
-
-                    string name = questLastPlaceReferenced.SiteDetails.locationName.ToLower();
-                    string[] locations = currentDFRegion.MapNames;
-                    for (int i = 0; i < locations.Length; i++)
-                    {
-                        if (locations[i].ToLower() == name) // Valid location found with exact name
-                        {
-                            if (currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
-                            {
-                                int index = currentDFRegion.MapNameLookup[locations[i]];
-                                locationInfo = currentDFRegion.MapTable[index];
-                                position = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
-                                positionLocation = new Vector2(position.X, position.Y);
-                            }
-                        }
-                    }
-
-                    if (positionLocation != Vector2.zero)
-                    {
-                        Vector2 vecDirectionToTarget = positionLocation - positionPlayer;
-                        vecDirectionToTarget.y = -vecDirectionToTarget.y; // invert y axis
-                        return GameManager.Instance.TalkManager.DirectionVector2DirectionHintString(vecDirectionToTarget);
-                    }
+                    return GameManager.Instance.TalkManager.GetLocationCompassDirection(questLastPlaceReferenced);
                 }
                 else if (questLastPlaceReferenced.Scope == Place.Scopes.Local)
                 {
-                    return GameManager.Instance.TalkManager.GetBuildingCompassDirection(questLastPlaceReferenced.SiteDetails.buildingKey);
+                    if (questLastPlaceReferenced.SiteDetails.locationName == GameManager.Instance.PlayerGPS.CurrentLocation.Name)
+                    {
+                        return GameManager.Instance.TalkManager.GetBuildingCompassDirection(questLastPlaceReferenced.SiteDetails.buildingKey);
+                    }
+                    else
+                    {
+                        string result = questLastPlaceReferenced.SiteDetails.locationName;
+                        result += TextManager.Instance.GetText(TalkManager.TextDatabase, "comma");                        
+                        result += GameManager.Instance.TalkManager.GetLocationCompassDirection(questLastPlaceReferenced);
+                        return result;
+                    }
                 }
 
                 return TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");

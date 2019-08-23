@@ -1104,6 +1104,51 @@ namespace DaggerfallWorkshop.Game
             return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
 
+        public string GetLocationCompassDirection(Place questPlace)
+        {
+            Vector2 positionPlayer;
+            Vector2 positionLocation = Vector2.zero;
+
+            DFPosition position = new DFPosition();
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+            if (playerGPS)
+                position = playerGPS.CurrentMapPixel;
+
+            positionPlayer = new Vector2(position.X, position.Y);
+
+            int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
+            if (region < 0 || region >= DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
+                region = -1;
+
+            DFRegion.RegionMapTable locationInfo = new DFRegion.RegionMapTable();
+
+            DFRegion currentDFRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(region);
+            string name = questPlace.SiteDetails.locationName.ToLower();
+            string[] locations = currentDFRegion.MapNames;
+            for (int i = 0; i < locations.Length; i++)
+            {
+                if (locations[i].ToLower() == name) // Valid location found with exact name
+                {
+                    if (currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
+                    {
+                        int index = currentDFRegion.MapNameLookup[locations[i]];
+                        locationInfo = currentDFRegion.MapTable[index];
+                        position = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
+                        positionLocation = new Vector2(position.X, position.Y);
+                    }
+                }
+            }
+
+            if (positionLocation != Vector2.zero)
+            {
+                Vector2 vecDirectionToTarget = positionLocation - positionPlayer;
+                vecDirectionToTarget.y = -vecDirectionToTarget.y; // invert y axis
+                return GameManager.Instance.TalkManager.DirectionVector2DirectionHintString(vecDirectionToTarget);
+            }
+
+            return TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+        }
+
         public void MarkKeySubjectLocationOnMap()
         {
             BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
@@ -1829,13 +1874,13 @@ namespace DaggerfallWorkshop.Game
             return answer;
         }
 
-        public string GetAnswerTellMeAboutTopic(ListItem listItem, float chanceNPCknowsSomthing)
+        public string GetAnswerTellMeAboutTopic(ListItem listItem, float chanceNPCknowsSomething)
         {
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
             {
                 // Decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (randomFloat < chanceNPCknowsSomthing || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
+                if ((randomFloat < chanceNPCknowsSomething || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything) && CheckNPCcanNowAboutItem(listItem))
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
@@ -2747,6 +2792,29 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private bool CheckNPCcanNowAboutItem(ListItem item)
+        {
+            Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
+            
+            if (item.questionType == QuestionType.QuestLocation)
+            {
+                QuestResource questResource = quest.GetResource(item.key);
+                Place place = (Place)questResource;
+                if (place.SiteDetails.regionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
+                    return false;
+            }
+            else if (item.questionType == QuestionType.QuestPerson)
+            {
+                QuestResource questResource = quest.GetResource(item.key);
+                Person person = (Person)questResource;
+                if (person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
+                    return false;
+            }
+
+            return true;
+        }
+
+
         private void AssembleTopicLists(bool isInstantRebuild = false)
         {
             if (!isInstantRebuild)
@@ -2820,11 +2888,6 @@ namespace DaggerfallWorkshop.Game
                             itemQuestTopic.questionType = QuestionType.QuestPerson;
 
                             Person person = (Person)questResourceInfo.Value.questResource;
-
-                            // if pc is in different location (location with different regionname/locationname combination) don't add topic to list
-                            if (person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegion.Name ||
-                                person.HomeTownName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
-                                continue;
 
                             captionString = person.DisplayName;
                             // test if dialog partner is same person as person resource
