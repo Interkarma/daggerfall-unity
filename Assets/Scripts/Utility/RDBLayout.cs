@@ -739,8 +739,9 @@ namespace DaggerfallWorkshop.Utility
 
             // Otherwise Check if this is a door (DOR) or double-door (DDR) or has a NEW tag
             //models 55007 550245 5018 have the NEW tag and always seem to be doors
+            // CAV appears to be cave-wall doors, like 55033 in S0000204.RDB.
             string description = blockData.RdbBlock.ModelReferenceList[modelReference].Description;
-            if (description == "DOR" || description == "DDR" || description == "NEW")
+            if (description == "DOR" || description == "DDR" || description == "NEW" || description == "CAV")
                 return true;
 
             return false;

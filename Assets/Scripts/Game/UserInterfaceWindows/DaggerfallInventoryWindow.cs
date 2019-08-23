@@ -544,15 +544,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetupDefaultActionMode()
         {
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                allowDungeonWagonAccess |= DungeonWagonAccessProximityCheck();
+            bool dungeonExitPromptY = allowDungeonWagonAccess;
+            if (!allowDungeonWagonAccess &&
+                GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon &&
+                PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
+                allowDungeonWagonAccess = DungeonWagonAccessProximityCheck();
 
             if (lootTarget != null)
                 SelectActionMode(ActionModes.Remove);
-            else
+            else if (DaggerfallUnity.Settings.DungeonExitWagonPrompt)
             {
+                if (dungeonExitPromptY)
+                {
+                    SelectActionMode(ActionModes.Remove);
+                    ShowWagon(true);
+                }
+            }
+            else
+            { // !DaggerfallUnity.Settings.DungeonExitWagonPrompt
                 SelectActionMode(ActionModes.Equip);
-                if (!DaggerfallUnity.Settings.DungeonExitWagonPrompt && allowDungeonWagonAccess)
+                if (allowDungeonWagonAccess)
                 {
                     ShowWagon(true);
                     // do not change default ActionMode, this can be confusing
@@ -1172,15 +1183,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon || allowDungeonWagonAccess)
-            {
-                if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
-                    ShowWagon(!usingWagon);
-                else
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
-            }
-            else
+            if (!PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
+            else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
+            else
+                ShowWagon(!usingWagon);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -2066,6 +2066,7 @@ namespace DaggerfallWorkshop.Game
                 cameraAutomap.renderingPath = RenderingPath.Forward;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 5000.0f;
+                gameObjectCameraAutomap.AddComponent<NoFogCamera>();
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
             }
         }
