@@ -103,6 +103,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(PlayVID.name, PlayVID.description, PlayVID.usage, PlayVID.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
+
         }
 
         private static class DumpBlock
@@ -2189,6 +2191,45 @@ namespace Wenzil.Console
                 }
 
                 return output;
+            }
+        }
+
+        private static class SummonDaedra
+        {
+            public static readonly string name = "summondaedra";
+            public static readonly string description = "Summons a daedra prince to test quest delivery.";
+            public static readonly string usage = "summondaedra [filename] (note: matches the .VID filename for daedea in /arena2 folder.)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+
+                bool found = false;
+                string validNames = string.Empty;
+                DaggerfallQuestPopupWindow.DaedraData daedraToSummon = new DaggerfallQuestPopupWindow.DaedraData();
+                DaggerfallQuestPopupWindow.DaedraData[] daedraData = DaggerfallQuestPopupWindow.daedraData;
+                foreach (var daedra in daedraData)
+                {
+                    string name = daedra.vidFile.Split('.')[0];
+                    if (string.Compare(args[0], name, true) == 0)
+                    {
+                        daedraToSummon = daedra;
+                        found = true;
+                    }
+                    validNames += name + ", ";
+                }
+
+                if (!found)
+                    return string.Format("Could not find daedra named {0}. Valid names are {1}", args[0], validNames);
+
+                Quest quest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest);
+                if (quest != null)
+                    DaggerfallUI.UIManager.PushWindow(new DaggerfallDaedraSummonedWindow(DaggerfallUI.UIManager, daedraToSummon, quest));
+                else
+                    return string.Format("Could not find quest {0} for deadra {1}", daedraToSummon.quest, args[0]);
+
+                return "Finished";
             }
         }
 
