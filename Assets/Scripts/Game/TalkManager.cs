@@ -1883,7 +1883,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if ((randomFloat < chanceNPCknowsSomething || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything) && CheckNPCcanNowAboutItem(listItem))
+                if ((randomFloat < chanceNPCknowsSomething || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything) && CheckNPCcanKnowAboutItem(listItem))
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
@@ -2795,7 +2795,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private bool CheckNPCcanNowAboutItem(ListItem item)
+        private bool CheckNPCcanKnowAboutItem(ListItem item)
         {
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
             
