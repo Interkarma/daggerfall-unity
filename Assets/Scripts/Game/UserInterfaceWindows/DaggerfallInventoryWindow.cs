@@ -172,6 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool usingWagon = false;
         bool allowDungeonWagonAccess = false;
         bool chooseOne = false;
+        Action<DaggerfallUnityItem> chooseOneCallback;
         bool shopShelfStealing = false;
         bool isPrivateProperty = false;
         int lootTargetStartCount = 0;
@@ -254,10 +255,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowDungeonWagonAccess = true;
         }
 
-        public void SetChooseOne(ItemCollection items)
+        public void SetChooseOne(ItemCollection items, Action<DaggerfallUnityItem> callback)
         {
             chooseOne = true;
             remoteItems = items;
+            chooseOneCallback = callback;
         }
 
         public void SetShopShelfStealing()
@@ -1505,7 +1507,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
             if (chooseOne)
+            {
                 CloseWindow();
+                chooseOneCallback(item);
+            }
         }
 
         protected void ShowInfoPopup(DaggerfallUnityItem item)

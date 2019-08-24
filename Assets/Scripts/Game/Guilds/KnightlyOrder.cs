@@ -213,9 +213,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                     Armor armor = (Armor)UnityEngine.Random.Range(102, 108 + 1);
                     rewardArmor.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
                 }
-                flags = flags | ArmorFlagMask;
                 DaggerfallUI.MessageBox(ArmorId);
-                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor);
+                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor, item => flags = flags | ArmorFlagMask);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
         }
