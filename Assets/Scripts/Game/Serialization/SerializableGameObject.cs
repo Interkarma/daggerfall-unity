@@ -440,6 +440,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string saveName;
         public string characterName;
         public DateAndTime_v1 dateAndTime;
+        public string dfuVersion;
     }
 
     #endregion
