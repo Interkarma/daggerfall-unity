@@ -283,12 +283,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 SetTalkModeWhereIs();
                 talkCategoryLastUsed = TalkCategory.None; // enforce that function SetTalkCategoryLocation does not skip itself and updated its topic list
                 SetTalkCategoryLocation();
-                panelTone.Position = panelToneNormalPos;
             }
 
             selectedTalkOption = TalkOption.WhereIs;
             selectedTalkCategory = TalkCategory.Location;
-            selectedTalkTone = TalkTone.Normal;
             talkCategoryLastUsed = TalkCategory.None;
             talkOptionLastUsed = TalkOption.None;
             toneLastUsed = -1;

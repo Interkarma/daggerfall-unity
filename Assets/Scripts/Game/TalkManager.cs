@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
         const int minVeryLikeReaction = 30;
 
         // Changed from classic (classis uses { 10, -5, 0, 0, 0, -10, -5, -5 } )
-        readonly short[] questionTypeReactionMods = { 10, -5, 0, 0, 10, -5, 0, 0 };
+        readonly short[] questionTypeReactionMods = { 5, 0, 0, 0, 5, 0, 0, 0 };
 
         /// Improvement over classic, add reaction modifiers when using Etiquette
         /// and Streetwise in relation to social groups.
@@ -594,6 +594,12 @@ namespace DaggerfallWorkshop.Game
             int reaction = player.Stats.LivePersonality / 5
                + questionTypeReactionMods[classicDataIndex]
                + toneModifier;
+
+            // Make roll result be the same every time for a given NPC
+            if (currentNPCType == NPCType.Mobile)
+                DFRandom.Seed = (uint)lastTargetMobileNPC.GetHashCode();
+            else if (currentNPCType == NPCType.Static)
+                DFRandom.Seed = (uint)lastTargetStaticNPC.GetHashCode();
 
             int rollToBeat = DFRandom.random_range_inclusive(0, 20);
             if (toneReactionForTalkSession[toneIndex] != 0)
