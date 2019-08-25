@@ -71,6 +71,7 @@ namespace DaggerfallWorkshop
         public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
+        public bool ExclusiveFullscreen { get; set; }
         public int FieldOfView { get; set; }
         public int ShadowResolutionMode { get; set; }
         public int MainFilterMode { get; set; }
@@ -200,6 +201,7 @@ namespace DaggerfallWorkshop
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
+            ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
@@ -313,6 +315,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
+            SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
             SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);

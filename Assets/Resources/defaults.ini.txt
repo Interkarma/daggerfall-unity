@@ -9,6 +9,7 @@ RetroRenderingMode=0
 UseMipMapsInRetroMode=False
 VSync=True
 Fullscreen=False
+ExclusiveFullscreen=False
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
