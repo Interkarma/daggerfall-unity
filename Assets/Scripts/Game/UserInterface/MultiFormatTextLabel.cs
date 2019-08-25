@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -49,6 +49,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int maxTextWidth = 0;
 
         int minTextureDimTextLabel = TextLabel.limitMinTextureDim; // set this with property MinTextureDim to higher values if you experience scaling issues with small texts (e.g. inventory infopanel)
+
+        int maxShownLines = -1;
+        int topLineIndex = 0;
 
         public DaggerfallFont Font
         {
@@ -131,9 +134,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { textAlignment = value; }
         }
 
+        public int MaxShownLines
+        {
+            set { maxShownLines = value; }
+            get { return maxShownLines; }
+        }
+
+        public int TopLineIndex
+        {
+            get { return topLineIndex; }
+            set { topLineIndex = value; }
+        }
+
         public void ResizeY(float newSize)
         {
             Size = new Vector2(totalWidth, newSize);
+        }
+
+        public int LineCount
+        {
+            get { return labels.Count; }
         }
 
         public override void Draw()
@@ -143,8 +163,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (labels.Count == 0)
                 return;
 
-            for (int i = 0; i < labels.Count; i++)
+            for (int i = topLineIndex; i < labels.Count; i++)
             {
+                if (maxShownLines != -1 && i == topLineIndex + maxShownLines)
+                {
+                    break;
+                }
                 labels[i].Draw();
             }
         }
