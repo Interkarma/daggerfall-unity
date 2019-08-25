@@ -652,6 +652,8 @@ namespace Wenzil.Console
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
+                else if (speed < 0)
+                    return "Invalid time scale";
                 else
                 {
                     try
