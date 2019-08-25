@@ -74,7 +74,7 @@ C0B00Y00, HolyOrder, M, 0, 0, Passed
 -C0B00Y02, HolyOrder, M, 0, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
 C0B00Y03, HolyOrder, M, 0, 0, Passed
 C0B00Y04, HolyOrder, M, 0, 0, Passed
--C0B00Y14, HolyOrder, M, 0, 0, FAILED. Exception during quest compile: "Could not find Item name item in items table"
+C0B00Y14, HolyOrder, M, 0, 0, Passed
 C0B10Y05, HolyOrder, M, 1, 0, Passed
 C0B10Y06, HolyOrder, M, 1, 0, Passed
 C0B10Y07, HolyOrder, M, 1, 0, Passed
