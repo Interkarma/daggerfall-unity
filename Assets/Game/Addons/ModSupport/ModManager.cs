@@ -102,14 +102,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
-            if (!Directory.Exists(ModDirectory))
-            {
-                var di = Directory.CreateDirectory(ModDirectory);
-                if (!di.Exists)
-                {
-                    Debug.LogError(string.Format("Mod Directory doesn't exist {0}", ModDirectory));
-                }
-            }
 
             SetupSingleton();
 
@@ -117,7 +109,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 StateManager.OnStateChange += StateManager_OnStateChange;
         }
 
-        // Use this for initialization
         void Start()
         {
             if (!DaggerfallUnity.Settings.LypyL_ModSystem)
@@ -126,10 +117,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 StateManager.OnStateChange -= StateManager_OnStateChange;
                 Destroy(this);
             }
+
             mods = new List<Mod>();
-            FindModsFromDirectory();
-            LoadModSettings();
-            SortMods();
+
+            if (Directory.Exists(ModDirectory))
+            {
+                FindModsFromDirectory();
+                LoadModSettings();
+                SortMods();
+            }
+            else
+            {
+                Debug.LogWarningFormat("Mod system is enabled but directory {0} doesn't exist.", ModDirectory);
+            }
         }
 
         #endregion
@@ -767,7 +767,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 Directory.CreateDirectory(ModManager.Instance.ModDataDirectory);
 
                 if (File.Exists(oldFilepath))
-                    File.Move(oldFilepath, filePath);
+                    MoveOldConfigFile(oldFilepath, filePath);
 
                 if (!File.Exists(filePath))
                     return false;
@@ -907,6 +907,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         internal static string GetText(string key)
         {
             return TextManager.Instance.GetText("ModSystem", key);
+        }
+
+        /// <summary>
+        /// An helper for moving mod config data from StreamingAssets to PersistentDataPath.
+        /// </summary>
+        internal static void MoveOldConfigFile(string sourceFileName, string destFileName)
+        {
+            try
+            {
+                if (File.Exists(destFileName))
+                    File.Delete(destFileName);
+
+                File.Move(sourceFileName, destFileName);
+                Debug.LogFormat("Moved {0} to {1}.", sourceFileName, destFileName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         #endregion

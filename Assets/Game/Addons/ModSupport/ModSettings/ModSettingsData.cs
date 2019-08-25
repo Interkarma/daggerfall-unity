@@ -133,7 +133,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             Directory.CreateDirectory(mod.ConfigurationDirectory);
             if (File.Exists(LegacySettingsPath))
-                File.Move(LegacySettingsPath, SettingsPath);
+                ModManager.MoveOldConfigFile(LegacySettingsPath, SettingsPath);
 
             if (TryDeserialize(SettingsPath, ref settings) && IsCompatible(settings))
             {
@@ -169,7 +169,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Directory.CreateDirectory(mod.ConfigurationDirectory);
             string localPresetsPath = LocalPresetsPath;
             if (File.Exists(LegacyLocalPresetsPath))
-                File.Move(LegacyLocalPresetsPath, localPresetsPath);
+                ModManager.MoveOldConfigFile(LegacyLocalPresetsPath, localPresetsPath);
             if (File.Exists(localPresetsPath))
             {
                 List<Preset> localPresets = new List<Preset>();
