@@ -365,12 +365,14 @@ namespace DaggerfallWorkshop
                 (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType)))
             {
                 Transform npcTransforms = transform.Find(peopleFlats);
-                bool open = PlayerActivate.IsBuildingOpen(buildingType);
-                foreach (Transform npcTransform in npcTransforms)
+                if (PlayerActivate.IsBuildingOpen(buildingType))
                 {
-                    npcTransform.gameObject.SetActive(open);
+                    foreach (Transform npcTransform in npcTransforms)
+                    {
+                        npcTransform.gameObject.SetActive(true);
+                    }
+                    Debug.Log("Updated npcs to be present.");
                 }
-                Debug.LogFormat("Updated guild npc presence to {0}", open);
             }
         }
 
