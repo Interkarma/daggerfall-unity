@@ -1087,23 +1087,11 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                if (GameManager.Instance.IsPlayerInsideBuilding)
-                {
-                    buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey);
-                    playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
+                buildingInfoCurrentBuilding = GetBuildingInfoCurrentBuildingOrPalace();
+                playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
 
-                    if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
-                        return TextManager.Instance.GetText(textDatabase, "thisPlace");
-                }
-                else
-                {
-                    // note Nystul :
-                    // resolving is not optimal here but it works - when not inside building but instead castle it will resolve via building type
-                    // since there is only one castle per location this finds the castle (a better way would be to have the building key of the palace entered,
-                    // but I could not find an easy way to determine building key of castle (PlayerGPS and PlayerEnterExit do not provide this, nor do other classes))                    
-                    buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingType == DFLocation.BuildingTypes.Palace);
-                    playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
-                }         
+                if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
+                    return TextManager.Instance.GetText(textDatabase, "thisPlace");       
             }
            
             Vector2 vecDirectionToTarget = buildingInfoTargetBuilding.position - playerPos;
@@ -1635,7 +1623,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (randomFloat < npcData.chanceKnowsSomethingAboutWhereIs || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
+                if (CheckNPCisInSameBuildingAsTopic(listItem, QuestionType.Person) || randomFloat < npcData.chanceKnowsSomethingAboutWhereIs || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
@@ -1889,13 +1877,13 @@ namespace DaggerfallWorkshop.Game
             {
                 // Decide here if npcs knows question's answer (spymaster always knows)
                 float randomFloat = UnityEngine.Random.Range(0.0f, 1.0f);
-                if ((randomFloat < chanceNPCknowsSomething || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything) && CheckNPCcanKnowAboutItem(listItem))
+                if ((CheckNPCisInSameBuildingAsTopic(listItem, QuestionType.QuestPerson) || randomFloat < chanceNPCknowsSomething || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything) && CheckNPCcanKnowAboutTellMeAboutTopic(listItem))
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.KnowsAboutItem;
                 else
                     listItem.npcKnowledgeAboutItem = NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
             }
 
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem || (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors && !CheckNPCisInSameBuildingAsTopic(listItem, QuestionType.QuestPerson) && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
             {
                 // Messages if NPC doesn't know answer to non-directions question
                 return ExpandRandomTextRecord(answersToNonDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
@@ -2801,7 +2789,25 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private bool CheckNPCcanKnowAboutItem(ListItem item)
+        private BuildingInfo GetBuildingInfoCurrentBuildingOrPalace()
+        {
+            BuildingInfo buildingInfoCurrentBuilding;
+            if (GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey);
+            }
+            else
+            {
+                // note Nystul :
+                // resolving is not optimal here but it works - when not inside building but instead castle it will resolve via building type
+                // since there is only one castle per location this finds the castle (a better way would be to have the building key of the palace entered,
+                // but I could not find an easy way to determine building key of castle (PlayerGPS and PlayerEnterExit do not provide this, nor do other classes))                    
+                buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingType == DFLocation.BuildingTypes.Palace);
+            }
+            return buildingInfoCurrentBuilding;
+        }
+
+        private bool CheckNPCcanKnowAboutTellMeAboutTopic(ListItem item)
         {
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
             
@@ -2817,6 +2823,51 @@ namespace DaggerfallWorkshop.Game
                 QuestResource questResource = quest.GetResource(item.key);
                 Person person = (Person)questResource;
                 if (person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckNPCisInSameBuildingAsTopic(ListItem item, QuestionType questionType)
+        {
+            if (item.questionType != questionType)
+                return false;
+
+            if (!GameManager.Instance.IsPlayerInside) // only if player is inside it can be a building/palace person of interest is in
+                return false;
+
+            Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
+            QuestResource questResource = quest.GetResource(item.key);
+            Person person = (Person)questResource;
+            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            Place place;
+
+            if (assignedPlaceSymbol != null)
+            {
+                place = quest.GetPlace(assignedPlaceSymbol);  // Gets actual place resource
+            }
+            else
+            {
+                place = person.GetHomePlace(); // get home place if no assigned place was found
+            }
+
+            BuildingInfo buildingInfoCurrentBuilding = GetBuildingInfoCurrentBuildingOrPalace();
+
+            if (place.SiteDetails.regionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
+                return false;
+
+            if (place.SiteDetails.locationName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
+                return false;
+
+            if (place.SiteDetails.buildingKey != 0) // building key can be 0 for palaces (so only use building key if != 0)
+            {
+                if (place.SiteDetails.buildingKey != buildingInfoCurrentBuilding.buildingKey)
+                    return false;
+            }
+            else // otherwise use building name
+            {
+                if (place.SiteDetails.buildingName != buildingInfoCurrentBuilding.name)
                     return false;
             }
 
