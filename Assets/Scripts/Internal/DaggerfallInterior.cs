@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop
         const int propModelType = 3;
 
         private const int posMask = 0x3FF;  // 10 bits
+        private const string peopleFlats = "People Flats";
 
         const uint houseContainerObjectGroup = 418;
         const uint containerObjectGroupOffset = 41000;
@@ -351,6 +352,26 @@ namespace DaggerfallWorkshop
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Update NPC presence for shops and guilds after resting/idling.
+        /// </summary>
+        public void UpdateNpcPresence()
+        {
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
+            if ((RMBLayout.IsShop(buildingType) && !playerEnterExit.IsPlayerInsideOpenShop) ||
+                (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType)))
+            {
+                Transform npcTransforms = transform.Find(peopleFlats);
+                bool open = PlayerActivate.IsBuildingOpen(buildingType);
+                foreach (Transform npcTransform in npcTransforms)
+                {
+                    npcTransform.gameObject.SetActive(open);
+                }
+                Debug.LogFormat("Updated guild npc presence to {0}", open);
+            }
         }
 
         #region Private Methods
@@ -844,7 +865,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void AddPeople(PlayerGPS.DiscoveredBuilding buildingData)
         {
-            GameObject node = new GameObject("People Flats");
+            GameObject node = new GameObject(peopleFlats);
             node.transform.parent = this.transform;
             bool isMemberOfBuildingGuild = GameManager.Instance.GuildManager.GetGuild(buildingData.factionID).IsMember();
 
