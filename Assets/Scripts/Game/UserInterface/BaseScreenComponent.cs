@@ -361,6 +361,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Gets or sets subrect when using BackgroundLayout.Cropped
+        /// Subrect should be in pixel coordinates relative to texture size.
+        /// Selected subrect will be scaled to fit inside panel area.
+        /// </summary>
+        public Rect BackgroundCroppedRect { get; set; }
+
+        /// <summary>
         /// Gets or sets array of background textures for animated background.
         /// Set null to disable animated background.
         /// Any existing background texture is removed when setting an animated background.
@@ -779,6 +786,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
                         GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
+                        break;
+                    case BackgroundLayout.Cropped:
+                        backgroundTexture.wrapMode = TextureWrapMode.Clamp;
+                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(
+                            BackgroundCroppedRect.x / backgroundTexture.width,
+                            BackgroundCroppedRect.y / backgroundTexture.height,
+                            BackgroundCroppedRect.width / backgroundTexture.width,
+                            BackgroundCroppedRect.height / backgroundTexture.height));
                         break;
                 }
             }
