@@ -1065,6 +1065,9 @@ namespace DaggerfallWorkshop.Game
 
         public string GetBuildingCompassDirection(int buildingKey)
         {
+            BuildingInfo buildingInfoCurrentBuilding;
+            BuildingInfo buildingInfoTargetBuilding = listBuildings.Find(x => x.buildingKey == buildingKey);
+
             // Note Nystul:
             // I reused coordinate mapping from buildings from exterior automap layout implementation here
             // So both building position as well as player position are calculated in map coordinates and compared
@@ -1086,8 +1089,11 @@ namespace DaggerfallWorkshop.Game
             {
                 if (GameManager.Instance.IsPlayerInsideBuilding)
                 {
-                    BuildingInfo buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey);
+                    buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.Interior.EntryDoor.buildingKey);
                     playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
+
+                    if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
+                        return TextManager.Instance.GetText(textDatabase, "thisPlace");
                 }
                 else
                 {
@@ -1095,13 +1101,11 @@ namespace DaggerfallWorkshop.Game
                     // resolving is not optimal here but it works - when not inside building but instead castle it will resolve via building type
                     // since there is only one castle per location this finds the castle (a better way would be to have the building key of the palace entered,
                     // but I could not find an easy way to determine building key of castle (PlayerGPS and PlayerEnterExit do not provide this, nor do other classes))                    
-                    BuildingInfo buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingType == DFLocation.BuildingTypes.Palace);
+                    buildingInfoCurrentBuilding = listBuildings.Find(x => x.buildingType == DFLocation.BuildingTypes.Palace);
                     playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
-                }
+                }         
             }
-
-            BuildingInfo buildingInfoTargetBuilding = listBuildings.Find(x => x.buildingKey == buildingKey);
-
+           
             Vector2 vecDirectionToTarget = buildingInfoTargetBuilding.position - playerPos;
             return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
