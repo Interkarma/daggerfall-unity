@@ -596,7 +596,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             XMLManager xml;
             if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
             {
-                Vector2 scale = xml.GetVector2("scaleX", "scaleY", Vector2.zero);
+                Vector2 scale = xml.GetVector2("scaleX", "scaleY", Vector2.one);
                 size.x *= scale.x;
                 size.y *= scale.y;
             }
