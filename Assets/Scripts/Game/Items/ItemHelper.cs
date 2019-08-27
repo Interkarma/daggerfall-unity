@@ -540,8 +540,17 @@ namespace DaggerfallWorkshop.Game.Items
             if (data.type == ImageTypes.None)
                 throw new Exception("GetCloakBackImage() could not load image data.");
 
-            // Change dye
-            data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
+            Texture2D tex;
+            if (TextureReplacement.TryImportTexture(archive, record, 0, item.dyeColor, TextureMap.Albedo, out tex))
+            {
+                // Assign imported texture
+                data.texture = tex;
+            }
+            else
+            {
+                // Change dye
+                data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
+            }    
 
             return data;
         }
