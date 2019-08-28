@@ -318,8 +318,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //draw = true;
 
             // Identify current region
-            UpdateIdentifyTextureForPlayerRegion();
             StartIdentify();
+            UpdateIdentifyTextureForPlayerRegion();
         }
 
         public override void OnPush()
@@ -328,9 +328,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if(base.IsSetup)
             {
-                //SetPlayerRegionOverlay();
-                UpdateIdentifyTextureForPlayerRegion();
                 StartIdentify();
+                UpdateIdentifyTextureForPlayerRegion();
                 CloseRegionPanel();
             }
 
@@ -1285,8 +1284,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Identify region or map location
             findingLocation = false;
-            UpdateCrosshair();
             StartIdentify();
+            UpdateCrosshair();
         }
 
         void FindlocationButtonClickHandler(BaseScreenComponent sender, Vector2 position)
@@ -1432,8 +1431,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupArrowButtons();
             UpdateMapTextures();
             UpdateBorder();
-            UpdateCrosshair();
             StartIdentify();
+            UpdateCrosshair();
         }
 
         // Close region panel and reset values
@@ -1458,8 +1457,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //pixelBuffer = null;
             //overlayPixelBuffer = null;
             //UpdateBorder();
-            UpdateIdentifyTextureForPlayerRegion();
             StartIdentify();
+            UpdateIdentifyTextureForPlayerRegion();
         }
 
         // checks if location with MapSummary summary is already discovered
@@ -1835,8 +1834,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 { //place flashing crosshair over location
                     locationSelected = true;
                     findingLocation = true;
-                    UpdateCrosshair();
                     StartIdentify();
+                    UpdateCrosshair();
                 }
                 else
                 {
