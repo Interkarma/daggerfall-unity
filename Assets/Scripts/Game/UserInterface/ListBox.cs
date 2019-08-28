@@ -43,10 +43,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
         Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
-        // restricted render area can be used to force list box content rendering inside this rect (used for content rendering in window frames where content is larger than frame)
-        new bool useRestrictedRenderArea = false;
-        new Rect rectRestrictedRenderArea;
-
         public enum VerticalScrollModes
         {
             EntryWise,
@@ -235,19 +231,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return textScale; }
             set { textScale = value; }
-        }
-
-        /// <summary>
-        /// define a restricted render area so that listbox content (textlabels) are only rendered within these Rect's bounds
-        /// </summary>
-        public new Rect RectRestrictedRenderArea
-        {
-            get { return rectRestrictedRenderArea; }
-            set
-            {
-                rectRestrictedRenderArea = value;
-                useRestrictedRenderArea = true;
-            }
         }
 
         /// <summary>
@@ -497,10 +480,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
-            if (useRestrictedRenderArea)
+            if (UseRestrictedRenderArea)
             {
-                textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
-                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
             }
             if (horizontalScrollMode == HorizontalScrollModes.CharWise)
                 textLabel.MaxWidth = (int)Size.x;
@@ -536,10 +520,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            if (useRestrictedRenderArea)
+            if (UseRestrictedRenderArea)
             {
-                textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
-                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
             }
             if (horizontalScrollMode == HorizontalScrollModes.CharWise)
                 textLabel.MaxWidth = (int)Size.x;

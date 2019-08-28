@@ -257,7 +257,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// get/set a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
+        /// Gets or sets the type of coordinate specification (e.g. absolute) of the restricted render area
+        /// </summary>
+        public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
+        {
+            get { return restrictedRenderAreaCoordinateType; }
+            set { restrictedRenderAreaCoordinateType = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
         /// </summary>
         public Rect RectRestrictedRenderArea
         {

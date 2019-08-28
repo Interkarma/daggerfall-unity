@@ -200,15 +200,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Font = font;
         }
 
-        /// <summary>
-        /// get/set the type of coordinate specification (e.g. absolute) of the restricted render area
-        /// </summary>
-        public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
-        {
-            get { return restrictedRenderAreaCoordinateType; }
-            set { restrictedRenderAreaCoordinateType = value; }
-        }
-
         #endregion
 
         #region Overrides
