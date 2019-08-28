@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop
 {
@@ -330,8 +331,13 @@ namespace DaggerfallWorkshop
             cameraClearColor = colors.clearColor;
             myCamera.backgroundColor = ((cameraClearColor * SkyTintColor) * 2f) * SkyColorScale;
 
-            // Assign colour to fog
-            UnityEngine.RenderSettings.fogColor = cameraClearColor;
+            // Set gray fog color for anything denser than heavy rain, otherwise use sky color for atmospheric fogging
+            WeatherManager.FogSettings currentFogSettings = GameManager.Instance.WeatherManager.currentOutdoorFogSettings;
+            WeatherManager.FogSettings rainyFogSettings = GameManager.Instance.WeatherManager.RainyFogSettings;
+            if (currentFogSettings.fogMode == FogMode.Exponential && currentFogSettings.density > rainyFogSettings.density)
+                RenderSettings.fogColor = Color.gray;
+            else
+                RenderSettings.fogColor = cameraClearColor;
         }
 
         private void ApplyTimeAndSpace()
