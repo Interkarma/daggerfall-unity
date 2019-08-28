@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game
         public FogSettings DungeonFogSettings = new FogSettings { fogMode = FogMode.Exponential, density = 0.005f, startDistance = 0, endDistance = 0, excludeSkybox = false };
 
         public FogSettings currentOutdoorFogSettings;
+        Color previousOutdoorFogColor;
 
         // this is needed so weather from savegame load is not overwritten by code in StreamingWorld_OnInitWorld()
         // e.g. weather fog, going to interior, saving, restarting, loading save, going outdoors -> fog should still be present (without this workaround it is not)
@@ -517,17 +518,20 @@ namespace DaggerfallWorkshop.Game
 
         void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
+            previousOutdoorFogColor = RenderSettings.fogColor;
             SetFog(InteriorFogSettings, true);
         }
 
         void OnTransitionToDungeon(PlayerEnterExit.TransitionEventArgs args)
         {
+            previousOutdoorFogColor = RenderSettings.fogColor;
             SetFog(DungeonFogSettings, true);
         }
 
         void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             SetFog(currentOutdoorFogSettings, false);
+            RenderSettings.fogColor = previousOutdoorFogColor;
         }
 
         #endregion
