@@ -356,11 +356,13 @@ _S.01_ task:
 	create foe _battlemage_ every 4 minutes 5 times with 25% success 
 	hide npc _child_ 
 	add _child_ face 
+	clear _S.00_
+--added this clear task. otherwise witch would talk in palace re success
 
-_clearclick_ task:
-	when _S.00_ and not _S.01_ 
-	clear _S.00_ _clearclick_ 
-
+-_clearclick_ task:
+-	when _S.00_ and not _S.01_ 
+-	clear _S.00_ _clearclick_ 
+--removed this clearclick. prevented quest from working
 variable _finddaughter_
 variable _artifact1_
 variable _artifact2_

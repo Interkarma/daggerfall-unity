@@ -75,6 +75,12 @@ Message:  1012
  spirit will continue to haunt me for
  1001 nights.
 
+Message:  1013
+<ce> Package? From _giver_? No, %g1
+<ce> would've told me beforehand. You must
+<ce> be mistaken. Why don't you read the
+<ce> contents to see who it's for?
+
 Message:  1015
 <ce>     I wouldn't know anything about that. Try asking at a temple.
                                      <--->
@@ -210,6 +216,10 @@ _S.01_ task:
 _S.02_ task:
 	injured _F.00_ saying 1016 
 	unset _S.02_ 
+
+_dummytalk_ task:
+	clicked npc _dummy_
+	say 1013
 
 variable _S.03_
 _S.04_ task:

@@ -244,15 +244,22 @@ _S.04_ task:
 _S.05_ task:
 	place item _I.02_ at _victimhouse_ 
 	place item _note_ at _victimhouse_ 
-	create foe _enemy_ every 2 minutes 4 times with 100% success 
+	create foe _enemy_ every 0 minutes 4 times with 100% success 
+	--sped up spawn rate. very slow for an ambush 
 	log 1021 step 1 
 	rumor mill 1040 
 	hide npc _victim_ 
 
+_deadbody_ task:
+	clicked item _I.02_
+	take _I.02_ from pc
+--added deadbody task. otherwise body would clog inventory
+
 _S.06_ task:
 	clicked npc _darkb_ 
 	create foe _enemy_ every 3 minutes 5 times with 100% success 
-	create foe _F.01_ every 1 minutes 1 times with 100% success 
+	create foe _F.01_ every 0 minutes 1 times with 100% success 
+	--reduced spawn time to instant
 	hide npc _darkb_ 
 	say 1050 
 
@@ -266,11 +273,12 @@ _S.07_ task:
 _S.08_ task:
 	clicked npc _daughter_ 
 	pc at _daughterhouse_ set _S.12_ 
-	create foe _F.02_ every 1 minutes 1 times with 100% success 
+	create foe _F.02_ every 0 minutes 1 times with 100% success 
+	--reduced spawn time to instant
 	say 1051 
 	add _daughter_ face 
 	hide npc _daughter_
-	--i've had some problems trying to transfer an existing NPC to a new location. hide is safer and easier.
+	--using hide NPC rather than transfer
 
 _readletter_ task:
 	log 1022 step 2 

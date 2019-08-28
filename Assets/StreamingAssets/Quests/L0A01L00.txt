@@ -150,9 +150,11 @@ Place _mansion_ remote house1
 Place _apo_ remote apothecary
 --added _apo_ place due to spawning problem for chemist
 
-Clock _traveltime_ 14.00:00 0 flag 1 range 2 5
+Clock _traveltime_ 0:00 0 flag 1 range 2 5
+--changed 14.00:00 to 0:00. specified time limit was too short for some cases.
 Clock _S.01_ 30.00:00 0 flag 1 range 1 4
-Clock _delay_ 01:00 0 flag 1 range 0 1
+Clock _delay_ 0:00
+--removed flags from delay and changed it to 0:00. Initiation should be immediate
 
 Foe _F.00_ is 2 Assassin
 Foe _guards_ is Spellsword
@@ -186,6 +188,8 @@ _S.03_ task:
     when _hasDecanter_ and _hasPoison_
 	give item _poison_ to _F.00_ 
 	say 1019 
+	take _poison_ from pc
+    --added take item action. poison would linger in inventory.
 
 variable _hasDecanter_
 variable _hasPoison_
@@ -201,7 +205,8 @@ _S.05_ task:
 	clicked npc _darkbmember_ 
 
 _S.06_ task:
-	when _S.11_ and _S.03_ and _S.05_ 
+	when _S.11_ and _S.05_ 
+--removed " and _S.03_." superfluous when decanter has been dropped
 	give pc _gold_ 
 	start timer _delay_ 
 
@@ -225,9 +230,6 @@ variable _S.10_
 _S.11_ task:
 	dropped _decanter_ at _mansion_ 
 	clear _S.04_
-    -- End the quest here until quest system supports finding _darkbmember_
-    give pc nothing
-    end quest
 
 _delay_ task:
 	end quest 

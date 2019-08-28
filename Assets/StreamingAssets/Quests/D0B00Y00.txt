@@ -89,7 +89,8 @@ Message:  1030
  back at the Chantry in ___questgiver_
  in =1stparton_ days.
 
- -corrected %qdat to %qdt
+
+-corrected %qdat to %qdt
 
 
 -- Symbols used in the QRC file:
