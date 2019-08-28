@@ -1544,11 +1544,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Vector2 GetCoordinates()
         {
-            // Hack this in for now
-            int height = 0;
-
             string mapName = selectedRegionMapNames[mapIndex];
             Vector2 origin = offsetLookup[mapName];
+            int height = (int)regionTextureOverlayPanelRect.height;
 
             Vector2 results = Vector2.zero;
             Vector2 pos = regionTextureOverlayPanel.ScaledMousePosition;
@@ -1564,7 +1562,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 results.x = (int)Math.Floor(origin.x + pos.x);
                 results.y = (int)Math.Floor(origin.y + pos.y);
             }
-            //coordsLabel.Text = string.Format("{0}, {1}", results.x, results.y);
 
             return results;
         }
