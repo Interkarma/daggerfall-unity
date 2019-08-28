@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dae", Daedra }, // A daedra
             { "%dam", DmgMod }, // Damage modifier
             { "%dat", Date }, // Date
-            { "%di", LocationDirection },  // Direction
+            { "%di", Direction },  // Direction (depending on scope of last referenced place resource)
             { "%dip", DaysInPrison }, // Days in prison
             { "%dng", Dungeon }, // Dungeon
             { "%dts", null }, // Daedra
@@ -1264,10 +1264,11 @@ namespace DaggerfallWorkshop.Utility
             return mcp.GetMacroDataSource().Daedra();
         }
 
-        public static string LocationDirection(IMacroContextProvider mcp)
+        public static string Direction(IMacroContextProvider mcp)
         {   // %di
             if (mcp == null) return null;
-            return mcp.GetMacroDataSource().LocationDirection();
+
+            return mcp.GetMacroDataSource().Direction();
         }
 
         public static string DialogHint(IMacroContextProvider mcp)

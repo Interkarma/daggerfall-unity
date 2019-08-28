@@ -1,45 +1,47 @@
 - Text database for conversations used in talk window.
 
-schema: *key,text
+schema: *key,$text
 
-copyLogbookInfo,                Left-click: toggle copy of selected text. Right-click: copy whole current conversation.
-east,                           east
-northeast,                      northeast
-north,                          north
-northwest,                      northwest
-west,                           west
-southwest,                      southwest
-south,                          south
-southeast,                      southeast
-AnyNews,                        Any news?
-WhereAmI,                       Where am I?
-AnswerTextWhereAmI,             You are in {0} in {1}.
-YouAreInSameBuilding,           You have found {0}. You are in it.
-NpcInSameBuilding,              {0} is around here in {1}.
-PreviousList,                   Previous List
-General,                        General
-Regional,                       Regional
-Alchemists,                     Alchemists
-Armorers,                       Armorers
-Banks,                          Banks
-Bookstores,                     Bookstores
-Clothingstores,                 Clothing stores
-Gemstores,                      Gem stores
-Generalstores,                  General stores
-Guilds,                         Guilds
-Libraries,                      Libraries
-Pawnshops,                      Pawn shops
-Taverns,                        Taverns
-Weaponsmiths,                   Weapon smiths
-Localtemples,                   Local temples
-Sir,                            Sir
-Ma'am,                          Ma'am
-oldLeaderFate0,                 died of heart failure
-oldLeaderFate1,                 fell and struck his head
-oldLeaderFate2,                 died of the plague
-oldLeaderFate3,                 stepped down under pressure
-oldLeaderFate4,                 was overthrown
-oldLeaderFate5,                 was found murdered in his bed
-toBeReplacedStringRegional,     Any
-replacementStringRegional,      any
-resolvingError,                 ...never mind...
+copyLogbookInfo,                "Left-click: toggle copy of selected text. Right-click: copy whole current conversation."
+east,                           "east"
+northeast,                      "northeast"
+north,                          "north"
+northwest,                      "northwest"
+west,                           "west"
+southwest,                      "southwest"
+south,                          "south"
+southeast,                      "southeast"
+thisPlace,                      "this place"
+AnyNews,                        "Any news?"
+WhereAmI,                       "Where am I?"
+AnswerTextWhereAmI,             "You are in {0} in {1}."
+YouAreInSameBuilding,           "You have found {0}. You are in it."
+NpcInSameBuilding,              "{0} is around here in {1}."
+PreviousList,                   "Previous List"
+General,                        "General"
+Regional,                       "Regional"
+Alchemists,                     "Alchemists"
+Armorers,                       "Armorers"
+Banks,                          "Banks"
+Bookstores,                     "Bookstores"
+Clothingstores,                 "Clothing stores"
+Gemstores,                      "Gem stores"
+Generalstores,                  "General stores"
+Guilds,                         "Guilds"
+Libraries,                      "Libraries"
+Pawnshops,                      "Pawn shops"
+Taverns,                        "Taverns"
+Weaponsmiths,                   "Weapon smiths"
+Localtemples,                   "Local temples"
+Sir,                            "Sir"
+Ma'am,                          "Ma'am"
+oldLeaderFate0,                 "died of heart failure"
+oldLeaderFate1,                 "fell and struck his head"
+oldLeaderFate2,                 "died of the plague"
+oldLeaderFate3,                 "stepped down under pressure"
+oldLeaderFate4,                 "was overthrown"
+oldLeaderFate5,                 "was found murdered in his bed"
+toBeReplacedStringRegional,     "Any"
+replacementStringRegional,      "any"
+comma,                          ",  "
+resolvingError,                 "...never mind..."

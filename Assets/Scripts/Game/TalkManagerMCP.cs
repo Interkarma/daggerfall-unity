@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Game
                     return null;
             }
 
-            public override string LocationDirection()
+            public override string Direction()
             {
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding || parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
-                    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                    return GameManager.Instance.TalkManager.GetKeySubjectBuildingHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
-                    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                    return GameManager.Instance.TalkManager.GetKeySubjectBuildingHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
