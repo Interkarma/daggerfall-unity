@@ -947,6 +947,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 regionTextureOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
                 regionLocationDotsOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+                identifyOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
                 UpdateBorder();
                 return;
             }
@@ -985,6 +986,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Set cropped area in location dots panel - always at classic dimensions            
             regionLocationDotsOverlayPanel.BackgroundTextureLayout = BackgroundLayout.Cropped;
             regionLocationDotsOverlayPanel.BackgroundCroppedRect = new Rect(startX, startY, width / zoomfactor, height / zoomfactor);
+
+            // Set cropped area in identify panel - always at classic dimensions
+            // This ensures zoomed crosshair pans with location dots panel
+            identifyOverlayPanel.BackgroundTextureLayout = BackgroundLayout.Cropped;
+            identifyOverlayPanel.BackgroundCroppedRect = regionLocationDotsOverlayPanel.BackgroundCroppedRect;
 
             UpdateBorder();
         }
@@ -1393,7 +1399,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 townsFilterButton.BackgroundTexture = townsFilterButtonEnabled;
 
-            //UpdateMapLocationDotsTexture();
+            UpdateMapLocationDotsTexture();
             //draw = true;
         }
 
