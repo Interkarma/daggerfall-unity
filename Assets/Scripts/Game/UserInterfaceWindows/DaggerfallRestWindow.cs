@@ -225,6 +225,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ignoreAllocatedBed = false;
             GameManager.OnEncounter -= GameManager_OnEncounter;
 
+            DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding && interior != null)
+            {
+                interior.UpdateNpcPresence();
+            }
+
             Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
 
