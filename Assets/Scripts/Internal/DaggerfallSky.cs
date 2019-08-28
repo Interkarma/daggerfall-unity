@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop
         const float skyScale = 1.3f;            // Scale of sky image relative to display area
 
         DaggerfallUnity dfUnity;
+        WeatherManager weatherManager;
         public SkyFile skyFile;
         public ImgFile imgFile;
         Camera mainCamera;
@@ -95,6 +96,7 @@ namespace DaggerfallWorkshop
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
+            weatherManager = FindObjectOfType<WeatherManager>();
 
             // Try to find local player GPS if not set
             if (LocalPlayerGPS == null)
@@ -332,12 +334,20 @@ namespace DaggerfallWorkshop
             myCamera.backgroundColor = ((cameraClearColor * SkyTintColor) * 2f) * SkyColorScale;
 
             // Set gray fog color for anything denser than heavy rain, otherwise use sky color for atmospheric fogging
-            WeatherManager.FogSettings currentFogSettings = GameManager.Instance.WeatherManager.currentOutdoorFogSettings;
-            WeatherManager.FogSettings rainyFogSettings = GameManager.Instance.WeatherManager.RainyFogSettings;
-            if (currentFogSettings.fogMode == FogMode.Exponential && currentFogSettings.density > rainyFogSettings.density)
-                RenderSettings.fogColor = Color.gray;
+            // Only operates when weatherManager can be found (i.e. in game scene) while DaggerfallSky is running
+            if (weatherManager)
+            {
+                WeatherManager.FogSettings currentFogSettings = GameManager.Instance.WeatherManager.currentOutdoorFogSettings;
+                WeatherManager.FogSettings rainyFogSettings = GameManager.Instance.WeatherManager.RainyFogSettings;
+                if (currentFogSettings.fogMode == FogMode.Exponential && currentFogSettings.density > rainyFogSettings.density)
+                    RenderSettings.fogColor = Color.gray;
+                else
+                    RenderSettings.fogColor = cameraClearColor;
+            }
             else
+            {
                 RenderSettings.fogColor = cameraClearColor;
+            }
         }
 
         private void ApplyTimeAndSpace()
