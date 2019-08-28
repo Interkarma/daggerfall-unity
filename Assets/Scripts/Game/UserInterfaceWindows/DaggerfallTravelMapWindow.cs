@@ -284,7 +284,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             identifyOverlayPanel = DaggerfallUI.AddPanel(regionTextureOverlayPanelRect, NativePanel);
             identifyOverlayPanel.Enabled = false;
 
-            //borders around the region maps
+            // Borders around the region maps
             borderTexture = DaggerfallUI.GetTextureFromImg(regionBorderImgName);
             borderPanel = DaggerfallUI.AddPanel(new Rect(new Vector2(0, regionTextureOverlayPanelRect.position.y), regionTextureOverlayPanelRect.size), NativePanel);
             borderPanel.BackgroundTexture = borderTexture;
@@ -316,7 +316,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
-            if(base.IsSetup)
+            if(IsSetup)
             {
                 StartIdentify();
                 UpdateIdentifyTextureForPlayerRegion();
@@ -563,7 +563,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             offsetLookup.Add("FMAPDI16.IMG", new Vector2(680, 52));
             offsetLookup.Add("FMAP0I17.IMG", new Vector2(39, 106));
             offsetLookup.Add("FMAP0I18.IMG", new Vector2(20, 29));
-            offsetLookup.Add("FMAP0I19.IMG", new Vector2(80, 123));        // Betony scale different
+            offsetLookup.Add("FMAP0I19.IMG", new Vector2(80, 123));     // Betony scale different
             offsetLookup.Add("FMAP0I20.IMG", new Vector2(217, 293));
             offsetLookup.Add("FMAP0I21.IMG", new Vector2(263, 79));
             offsetLookup.Add("FMAP0I22.IMG", new Vector2(548, 219));
@@ -825,8 +825,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             int scaledX = (int)((mapPixelX - origin.x) * scale);
             int scaledY = (int)((mapPixelY - origin.y) * scale) + regionPanelOffset + yAdjust;
-            //int scaledX = 20;
-            //int scaledY = 20;
 
             int width = (int)regionTextureOverlayPanelRect.width;
             int height = (int)regionTextureOverlayPanelRect.height;
