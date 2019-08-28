@@ -456,6 +456,40 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Adds items to this collection from an array of items.
+        /// Items in this collection will remain.
+        /// UIDs will be retained.
+        /// </summary>
+        /// <param name="items">Items array.</param>
+        public void AddItems(DaggerfallUnityItem[] items)
+        {
+            if (items == null || items.Length == 0)
+                return;
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                AddItem(items[i]);
+            }
+        }
+
+        /// <summary>
+        /// Creates a clone of all items in this collection.
+        /// Items in this collection will remain.
+        /// Cloned items will have new UIDs.
+        /// </summary>
+        /// <returns>Array of cloned items.</returns>
+        public DaggerfallUnityItem[] CloneAll()
+        {
+            List<DaggerfallUnityItem> clonedItems = new List<DaggerfallUnityItem>();
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                clonedItems.Add(item.Clone());
+            }
+
+            return clonedItems.ToArray();
+        }
+
+        /// <summary>
         /// Exports items from this collection to an array of items.
         /// Items in this collection will be destroyed.
         /// UIDs will be retained.

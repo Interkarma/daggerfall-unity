@@ -370,6 +370,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
         public bool alliedToPlayer;
         public int questFoeSpellQueueIndex;
+        public int questFoeItemQueueIndex;
         public bool wabbajackActive;
     }
 
