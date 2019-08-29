@@ -516,10 +516,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Saving throw handling for effects without magnitude
-                // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
+                // Entity has a chance to save against entire effect using a saving throw
                 // Self-cast spells (e.g. self heals and buffs) should never be saved against
-                if (!bypassSavingThrows && !effect.BypassSavingThrows && !effect.Properties.SupportMagnitude && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
+                if (!bypassSavingThrows && !effect.BypassSavingThrows && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
