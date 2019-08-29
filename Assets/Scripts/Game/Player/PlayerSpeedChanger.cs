@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
         public const float dfWalkBase = 150f;
         private const float dfCrouchBase = 50f;
         private const float dfRideBase = dfWalkBase + 225f;
-        //private const float dfCartBase = dfWalkBase + 100f;
+        private const float dfCartBase = dfWalkBase + 100f;
 
         public float walkSpeedOverride = 6.0f;
         public bool useWalkSpeedOverride = false;
@@ -90,7 +90,10 @@ namespace DaggerfallWorkshop.Game
             if (playerMotor.IsCrouching && !levitateMotor.IsSwimming)
                 baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
             else if (playerMotor.IsRiding)
-                baseSpeed = (playerSpeed + dfRideBase) / classicToUnitySpeedUnitRatio;
+            {
+                float rideSpeed = (GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart) ? dfCartBase : dfRideBase;
+                baseSpeed = (playerSpeed + rideSpeed) / classicToUnitySpeedUnitRatio;
+            }
             else
                 baseSpeed = GetWalkSpeed(player);
             return baseSpeed;
