@@ -125,6 +125,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// A directory for temporary mod cache. It is ensured that the directory is writable but not that exists.
+        /// Use <see cref="Directory.CreateDirectory(string)"/> before accessing it.
+        /// </summary>
+        public string TemporaryCacheDirectory
+        {
+            get { return Path.Combine(ModManager.Instance.ModCacheDirectory, GUID); }
+        }
+
+        /// <summary>
         /// An optional callback that allows to efficiently send messages to this mod without using reflections.
         /// </summary>
         public DFModMessageReceiver MessageReceiver { get; set; }

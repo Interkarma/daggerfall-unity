@@ -10,9 +10,6 @@
 //
 
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -29,6 +26,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public const string MODEXTENSION        = ".dfmod";
         public const string MODINFOEXTENSION    = ".dfmod.json";
         public const string MODCONFIGFILENAME   = "Mod_Settings.json";
+
+#if UNITY_EDITOR
+        const string dataFolder = "EditorData";
+#else
+        const string dataFolder = "GameData";
+#endif
+
         bool alreadyAtStartMenuState            = false;
         static bool alreadyStartedInit          = false;
         [SerializeField]
@@ -85,11 +89,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         internal string ModDataDirectory
         {
-#if UNITY_EDITOR
-            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", "EditorData")); }
-#else
-            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", "GameData")); }
-#endif
+            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", dataFolder)); }
+        }
+
+        /// <summary>
+        /// The writable directory that holds mods cache, separated for build and editor to allow mods
+        /// to be developed and tested without affecting main game installation.
+        /// </summary>
+        internal string ModCacheDirectory
+        {
+            get { return Path.Combine(Application.temporaryCachePath, Path.Combine("Mods", dataFolder)); }
         }
 
         public static ModManager Instance { get; private set; }
