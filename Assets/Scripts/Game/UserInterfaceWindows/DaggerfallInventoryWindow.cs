@@ -373,11 +373,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
-            if (shopShelfStealing)
-            {
-                remoteItemListScroller.BackgroundAnimationHandler = StealItemBackgroundAnimationHandler;
-                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
-            }
+            SetRemoteItemStealAnimation();
+
             if (itemInfoPanelLabel != null)
                 remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
         }
@@ -652,6 +649,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Reset item list scroll
                 localItemListScroller.ResetScroll();
                 remoteItemListScroller.ResetScroll();
+                SetRemoteItemStealAnimation();
             }
             // Clear info panel
             if (itemInfoPanelLabel != null)
@@ -779,6 +777,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Helper Methods
+
+        protected void SetRemoteItemStealAnimation()
+        {
+            // Add animation handler for shop shelf stealing
+            if (shopShelfStealing)
+            {
+                remoteItemListScroller.BackgroundAnimationHandler = StealItemBackgroundAnimationHandler;
+                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
+            }
+            else
+                remoteItemListScroller.BackgroundAnimationHandler = null;
+        }
 
         protected void SelectTabPage(TabPages tabPage)
         {
