@@ -373,7 +373,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
-            SetRemoteItemStealAnimation();
+            SetRemoteItemsAnimation();
 
             if (itemInfoPanelLabel != null)
                 remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
@@ -649,7 +649,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Reset item list scroll
                 localItemListScroller.ResetScroll();
                 remoteItemListScroller.ResetScroll();
-                SetRemoteItemStealAnimation();
+                SetRemoteItemsAnimation();
             }
             // Clear info panel
             if (itemInfoPanelLabel != null)
@@ -778,7 +778,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        protected void SetRemoteItemStealAnimation()
+        protected void SetRemoteItemsAnimation()
         {
             // Add animation handler for shop shelf stealing
             if (shopShelfStealing)
