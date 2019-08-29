@@ -236,6 +236,19 @@ namespace DaggerfallConnect
         }
 
         /// <summary>
+        /// Tolerance level expressed as flags for saving throws.
+        /// </summary>
+        [Flags]
+        public enum ToleranceFlags
+        {
+            Normal = 0,
+            Immune = 1,
+            Resistant = 2,
+            LowTolerance = 4,
+            CriticalWeakness = 8,
+        }
+
+        /// <summary>
         /// Proficiency levels for various weapon groups.
         /// </summary>
         public enum Proficiency
