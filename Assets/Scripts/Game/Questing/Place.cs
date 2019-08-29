@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Remove this resource if already injected at another Place
             // Sometimes a quest will move a resource part way through quest
             // This ensures resource does not become duplicated in both sites
-            QuestMachine.Instance.CullResourceTarget(resource);
+            QuestMachine.Instance.CullResourceTarget(resource, Symbol);
 
             // Must be a supported resource type
             MarkerTypes requiredMarkerType = MarkerTypes.None;

@@ -1373,7 +1373,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This needs to be done in a way that does not break resources allocated from other quests.
         /// </summary>
         /// <param name="resource">The resource to cull. No action taken if resource null or not found.</param>
-        public void CullResourceTarget(QuestResource resource)
+        public void CullResourceTarget(QuestResource resource, Symbol newPlace)
         {
             // Do nothing if resource null
             if (resource == null)
@@ -1384,6 +1384,10 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Get link
                 SiteLink link = siteLinks[i];
+
+                // Do nothing if this link not for same quest as resource
+                if (link.questUID != resource.ParentQuest.UID)
+                    continue;
 
                 // Get the Quest object referenced by this link
                 Quest quest = GetQuest(link.questUID);
@@ -1400,6 +1404,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     Debug.LogWarningFormat("CullResourceTarget() could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID);
                     return;
                 }
+
+                // Do nothing if old Place same as new Place
+                if (place.Symbol.Equals(newPlace))
+                    continue;
 
                 // Modify selected spawn QuestMarker for this Place
                 QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
