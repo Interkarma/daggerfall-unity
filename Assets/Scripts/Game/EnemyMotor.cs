@@ -501,7 +501,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         bool DoRangedAttack(Vector3 direction, float moveSpeed, float distance, bool isPlayingOneShot)
         {
-            if ((CanShootBow() || CanCastRangedSpell()) && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            if ((CanShootBow() || CanCastRangedSpell()) && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale > senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
