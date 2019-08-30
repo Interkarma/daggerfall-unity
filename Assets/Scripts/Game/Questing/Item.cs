@@ -278,10 +278,10 @@ namespace DaggerfallWorkshop.Game.Questing
             DaggerfallUnityItem result;
 
             // Handle random magic items
-            if (itemClass == (int)ItemGroups.MagicItems && itemSubClass == -1)
+            if (itemClass == (int)ItemGroups.MagicItems)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                result = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, playerEntity.Level, playerEntity.Gender, playerEntity.Race);
             }
             // Handle books
             else if (itemClass == (int)ItemGroups.Books)
