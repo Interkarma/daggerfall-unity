@@ -539,6 +539,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.EnabledHorizontalScroll = true;
             listboxTopic.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
             listboxTopic.HorizontalScrollMode = ListBox.HorizontalScrollModes.PixelWise;
+            listboxTopic.RectRestrictedRenderArea = new Rect(listboxTopic.Position, listboxTopic.Size);
             listboxTopic.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             //SetListItems(ref listboxTopic, ref listTopicLocation);
             listboxTopic.OnUseSelectedItem += ListboxTopic_OnUseSelectedItem;
@@ -602,6 +603,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.Name = "list_answers";
             listboxConversation.WrapTextItems = true;
             listboxConversation.WrapWords = true;
+            listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
             listboxConversation.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
             listboxConversation.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
