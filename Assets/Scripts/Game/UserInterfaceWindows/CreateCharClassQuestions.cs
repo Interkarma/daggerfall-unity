@@ -79,10 +79,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Load both scroll images as one contiguous list of textures
+            ImgFile img = new ImgFile(Path.Combine(DaggerfallUnity.Arena2Path, nativeImgName), FileUsage.UseMemory, true);
+            DFBitmap backgroundBitmap = img.GetDFBitmap(0, 0);
+            DFPalette basePalette = backgroundBitmap.Palette;
             scrollFile0 = new GfxFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, scroll0FileName), FileUsage.UseMemory, true);
-            scrollFile0.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, scrollFile0.PaletteName));
             scrollFile1 = new GfxFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, scroll1FileName), FileUsage.UseMemory, true);
-            scrollFile1.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, scrollFile1.PaletteName));
+            scrollFile0.Palette = basePalette;
+            scrollFile1.Palette = basePalette;
             scrollTextures = new List<Texture2D>();
             for (int i = 0; i < scrollFile0.frames.Length; i++)
             {
@@ -192,7 +195,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Position = new Vector2(leftTextOffset, topTextOffset),
                 Size = new Vector2(320f, 48f), // make sure it has enough space - allow it to run off the screen
                 TextColor = Color.black,
-                MaxShownLines = 7
+                MaxShownLines = 7,
+                ShadowPosition = new Vector2(0f, 0f)
             };
             string[] lines = questionLibrary[questionIndex].Split("\r\n".ToCharArray()).Where(x => x != string.Empty).ToArray();
             List<TextFile.Token> tokens = new List<TextFile.Token>();
