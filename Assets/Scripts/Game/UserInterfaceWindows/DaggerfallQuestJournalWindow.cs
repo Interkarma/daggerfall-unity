@@ -285,8 +285,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lastPageTurn = Time.realtimeSinceStartup;
                 DaggerfallUI.Instance.PlayOneShot(pageTurnJournal);
             }
-            else
-                Debug.Log(string.Format("lastPageTurn {0} time {1}", lastPageTurn, Time.realtimeSinceStartup));
         }
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)

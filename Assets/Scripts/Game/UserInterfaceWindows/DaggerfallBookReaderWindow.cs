@@ -32,6 +32,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float maxHeight = 0;
         float scrollPosition = 0;
 
+        const SoundClips openBook = SoundClips.OpenBook;
+        const SoundClips pageTurn = SoundClips.PageTurn;
+
+        const float pageTurnDelay = 0.35f;
+        float lastPageTurn = 0f;
+
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
@@ -69,7 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.OnMouseScrollUp += Panel_OnMouseScrollUp;
 
             LayoutBook();
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
+            DaggerfallUI.Instance.PlayOneShot(openBook);
         }
 
         private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -102,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (IsSetup)
             {
                 LayoutBook();
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
+                DaggerfallUI.Instance.PlayOneShot(openBook);
             }
         }
 
@@ -169,6 +175,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 label.Position = new Vector2(label.Position.x, label.Position.y + amount);
                 label.Enabled = label.Position.y < pagePanel.Size.y && label.Position.y + label.Size.y > 0;
                     
+            }
+            ThrottledPageTurnSound();
+        }
+
+        // Prevent annoying effect when quickly flipping pages (say, mouse wheel)
+        private void ThrottledPageTurnSound()
+        {
+            if (Time.realtimeSinceStartup >= lastPageTurn + pageTurnDelay)
+            {
+                lastPageTurn = Time.realtimeSinceStartup;
+                DaggerfallUI.Instance.PlayOneShot(pageTurn);
             }
         }
     }
