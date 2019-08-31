@@ -35,6 +35,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const SoundClips pageTurnJournal = SoundClips.PageTurn;
         const SoundClips editNotebook = SoundClips.PageTurn; // same as spellbook edit sounds
 
+        const float pageTurnDelay = 0.35f;
+        float lastPageTurn = 0f;
+
         const int NULLINT = -1;
         public const int maxLinesQuests = 20;
         public const int maxLinesSmall = 28;
@@ -261,7 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (currentMessageIndex - 1 >= 0)
             {
                 currentMessageIndex -= 1;
-                DaggerfallUI.Instance.PlayOneShot(pageTurnJournal);
+                ThrottledPageTurnSound();
             }
         }
 
@@ -270,8 +273,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (currentMessageIndex + 1 < messageCount)
             {
                 currentMessageIndex += 1;
+                ThrottledPageTurnSound();
+            }
+        }
+
+        // Prevent annoying effect when quickly flipping pages (say, mouse wheel)
+        private void ThrottledPageTurnSound()
+        {
+            if (Time.realtimeSinceStartup >= lastPageTurn + pageTurnDelay)
+            {
+                lastPageTurn = Time.realtimeSinceStartup;
                 DaggerfallUI.Instance.PlayOneShot(pageTurnJournal);
             }
+            else
+                Debug.Log(string.Format("lastPageTurn {0} time {1}", lastPageTurn, Time.realtimeSinceStartup));
         }
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
