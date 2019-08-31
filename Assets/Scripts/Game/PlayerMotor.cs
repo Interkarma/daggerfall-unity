@@ -21,9 +21,6 @@ namespace DaggerfallWorkshop.Game
 
         bool isCrouching = false;
 
-        // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
-        // and avoid adding any references to TransportManager.
-
         bool isRiding = false;
 
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
