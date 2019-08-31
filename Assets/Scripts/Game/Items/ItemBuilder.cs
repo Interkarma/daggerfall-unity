@@ -565,6 +565,8 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Reduce the list to only the regular magic items.
             MagicItemTemplate[] regularMagicItems = magicItems.Where(template => template.type == MagicItemTypes.RegularMagicItem).ToArray();
+            if (chosenItem > regularMagicItems.Length)
+                throw new Exception(string.Format("Magic item subclass {0} does not exist", chosenItem));
 
             // Pick a random one if needed.
             if (chosenItem == chooseAtRandom)
