@@ -120,6 +120,7 @@ namespace DaggerfallWorkshop
         public bool DungeonExitWagonPrompt { get; set; }
         public bool IllegalRestWarning { get; set; }
         public int LoiterLimitInHours { get; set; }
+        public bool LargeHUD { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -247,6 +248,7 @@ namespace DaggerfallWorkshop
             DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LoiterLimitInHours = GetInt(sectionGUI, "LoiterLimitInHours");
+            LargeHUD = GetBool(sectionGUI, "LargeHUD");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -362,7 +364,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetInt(sectionGUI, "LoiterLimitInHours", LoiterLimitInHours);
-
+            SetBool(sectionGUI, "LargeHUD", LargeHUD);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

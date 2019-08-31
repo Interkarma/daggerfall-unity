@@ -59,6 +59,7 @@ EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
 IllegalRestWarning=True
 LoiterLimitInHours=3
+LargeHUD=false
 
 [Spells]
 EnableSpellLighting=True
