@@ -304,7 +304,17 @@ namespace DaggerfallWorkshop.Game.Questing
             // Link item to quest
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
-            return result;
+            string name = result.shortName.Replace("%it", result.ItemTemplate.name);
+            QuestMachine.LogFormat(
+                ParentQuest,
+                "Generated \"{0}\" from Class {1} and Subclass {2} for item {3}",
+                name,
+                itemClass,
+                itemSubClass,
+                Symbol.Original
+            );
+
+             return result;
         }
 
         // Create stack of gold pieces
