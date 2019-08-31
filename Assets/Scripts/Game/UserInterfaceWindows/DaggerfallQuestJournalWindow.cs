@@ -31,6 +31,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string textDatabase = "DaggerfallUI";
         const string nativeImgName = "LGBK00I0.IMG";
 
+        const SoundClips openJournal = SoundClips.OpenBook;
+        const SoundClips pageTurnJournal = SoundClips.PageTurn;
+
         const int NULLINT = -1;
         public const int maxLinesQuests = 20;
         public const int maxLinesSmall = 28;
@@ -184,6 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex    = NULLINT;
             currentMessageIndex = 0;
             selectedEntry       = NULLINT;
+            DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
         public override void OnPop()
@@ -248,18 +252,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex = NULLINT;
             currentMessageIndex = 0;
             selectedEntry = NULLINT;
+            DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
         void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex - 1 >= 0)
+            {
                 currentMessageIndex -= 1;
+                DaggerfallUI.Instance.PlayOneShot(pageTurnJournal);
+            }
         }
 
         void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex + 1 < messageCount)
+            {
                 currentMessageIndex += 1;
+                DaggerfallUI.Instance.PlayOneShot(pageTurnJournal);
+            }
         }
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
