@@ -293,6 +293,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void FullScreenButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             fullScreenTick.Enabled = DaggerfallUnity.Settings.Fullscreen = Screen.fullScreen = !Screen.fullScreen;
+
+            if (DaggerfallUnity.Settings.Fullscreen && DaggerfallUnity.Settings.ExclusiveFullscreen)
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    FullScreenMode.ExclusiveFullScreen);
+            }
+
             if (!saveSettings)
                 saveSettings = true;
         }

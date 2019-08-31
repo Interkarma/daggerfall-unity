@@ -123,6 +123,8 @@ resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution
 fullscreen,                                         Fullscreen
 fullscreenInfo,                                     Enable fullscreen
+exclusiveFullscreen,                                Exclusive Fullscreen
+exclusiveFullscreenInfo,                            Enable exclusive fullscreen
 qualityLevel,                                       Quality Level
 qualityLevelInfo,                                   General graphic quality
 mainFilterMode,                                     Main Filter
