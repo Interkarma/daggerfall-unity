@@ -151,6 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update pause-persistent HUD elements
             if (hud != null)
             {
+                hud.LargeHUD.Update();
                 hud.ActiveSpells.Update();
                 hud.EscortingFaces.Update();
                 hud.HUDVitals.Update();
@@ -167,6 +168,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Draw pause-persistent HUD elements
             if (hud != null)
             {
+                hud.LargeHUD.Draw();
                 hud.ActiveSpells.Draw();
                 hud.EscortingFaces.Draw();
                 hud.HUDVitals.Draw();
