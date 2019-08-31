@@ -21,6 +21,8 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 namespace Wenzil.Console
 {
@@ -110,7 +112,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
-
+            ConsoleCommandsDatabase.RegisterCommand(ChangeModSettings.name, ChangeModSettings.description, ChangeModSettings.usage, ChangeModSettings.Execute);
         }
 
         private static class DumpLocation
@@ -2523,6 +2525,60 @@ namespace Wenzil.Console
                 return "Finished";
             }
         }
-    }
 
+        private static class ChangeModSettings
+        {
+            static ConsoleController controller;
+
+            public static readonly string name = "change_modsettings";
+            public static readonly string description = "Change mod settings (experimental).";
+            public static readonly string usage = "change_modsettings";
+
+            public static string Execute(params string[] args)
+            {
+                if (!ModManager.Instance)
+                    return "ModManager instance not found.";
+
+                string[] modTitles = ModManager.Instance.Mods.Where(x => x.HasSettings && x.LoadSettingsCallback != null).Select(x => x.Title).ToArray();
+                if (modTitles.Length == 0)
+                    return "There are no mods that support live changes to settings.";
+
+                ModManager.Instance.StartCoroutine(OpenSettingsWindow(modTitles));
+                return string.Format("Found {0} mod(s) that support live changes to settings. Close the console to open settings window.", modTitles.Length);
+            }
+
+            private static IEnumerator OpenSettingsWindow(string[] modTitles)
+            {
+                if (!FindController())
+                    yield break;
+
+                while (controller.ui.isConsoleOpen)
+                    yield return null;
+
+                var userInterfaceManager = DaggerfallUI.Instance.UserInterfaceManager;
+
+                var listPicker = new DaggerfallListPickerWindow(userInterfaceManager);
+                listPicker.ListBox.AddItems(modTitles);
+                listPicker.OnItemPicked += (index, modTitle) =>
+                {
+                    listPicker.PopWindow();
+                    userInterfaceManager.PushWindow(new ModSettingsWindow(userInterfaceManager, ModManager.Instance.GetMod(modTitle), true));
+                };
+                userInterfaceManager.PushWindow(listPicker);
+            }
+
+            private static bool FindController()
+            {
+                if (controller)
+                    return true;
+
+                GameObject console = GameObject.Find("Console");
+                if (console && (controller = console.GetComponent<ConsoleController>()))
+                    return true;
+
+                Debug.LogError("Failed to find console controller.");
+                return false;
+            }
+        }
+    }
 }
