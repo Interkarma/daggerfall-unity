@@ -121,6 +121,7 @@ namespace DaggerfallWorkshop
         public bool IllegalRestWarning { get; set; }
         public int LoiterLimitInHours { get; set; }
         public bool LargeHUD { get; set; }
+        public float LargeHUDScale { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -249,6 +250,7 @@ namespace DaggerfallWorkshop
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LoiterLimitInHours = GetInt(sectionGUI, "LoiterLimitInHours");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
+            LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -365,6 +367,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetInt(sectionGUI, "LoiterLimitInHours", LoiterLimitInHours);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
+            SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

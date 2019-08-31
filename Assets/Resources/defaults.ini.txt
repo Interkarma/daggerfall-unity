@@ -60,6 +60,7 @@ DungeonExitWagonPrompt=True
 IllegalRestWarning=True
 LoiterLimitInHours=3
 LargeHUD=false
+LargeHUDScale=1.0
 
 [Spells]
 EnableSpellLighting=True

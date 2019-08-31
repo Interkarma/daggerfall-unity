@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public enum AutoSizeModes
     {
         None,                           // Panel will not resize or scale
+        Scale,                          // Panel will use own scale
         ResizeToFill,                   // Panel will resize to fill parent vertically and horizontally
         ScaleToFit,                     // Panel will scale to fit parent while maintaining aspect ratio
         ScaleFreely,                    // Panel will scale to fit parent with no regard to aspect ratio

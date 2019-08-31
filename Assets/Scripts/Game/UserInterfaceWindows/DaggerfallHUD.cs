@@ -18,6 +18,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -43,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDActiveSpells activeSpells = new HUDActiveSpells();
         HUDLarge largeHUD = new HUDLarge();
         bool renderHUD = true;
+        bool startupComplete = false;
         //GameObject player;
         //DaggerfallEntityBehaviour playerEntity;
 
@@ -125,6 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //player = GameObject.FindGameObjectWithTag("Player");
             //playerEntity = player.GetComponent<DaggerfallEntityBehaviour>();
 
+            ParentPanel.Components.Add(largeHUD);
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
             ParentPanel.Components.Add(compass);
@@ -137,7 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             largeHUD.Size = new Vector2(320, 46);
             largeHUD.HorizontalAlignment = HorizontalAlignment.Center;
             largeHUD.VerticalAlignment = VerticalAlignment.Bottom;
-            NativePanel.Components.Add(largeHUD);
+            largeHUD.AutoSize = AutoSizeModes.Scale;
 
             activeSpells.Size = NativePanel.Size;
             activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
@@ -196,7 +199,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Scale HUD elements
-            largeHUD.Scale = NativePanel.LocalScale;
+            largeHUD.Scale = NativePanel.LocalScale * DaggerfallUnity.Settings.LargeHUDScale;
             compass.Scale = NativePanel.LocalScale;
             vitals.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
@@ -255,6 +258,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             flickerController.NextCycle();
+
+            // Don't display persistent HUD elements during initial startup
+            // Prevents HUD elements being shown briefly at wrong size/scale at game start
+            if (!startupComplete && !GameManager.Instance.IsPlayingGame())
+            {
+                largeHUD.Enabled = false;
+                vitals.Enabled = false;
+                crosshair.Enabled = false;
+            }
+            else
+            {
+                startupComplete = true;
+            }
 
             base.Update();
         }

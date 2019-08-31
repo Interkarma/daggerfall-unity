@@ -1150,6 +1150,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 case AutoSizeModes.None:
                     localScale = (parent != null) ? parent.LocalScale : scale;
                     break;
+                case AutoSizeModes.Scale:
+                    rectangle = ScaleToSelf(rectangle);
+                    break;
                 case AutoSizeModes.ResizeToFill:
                     rectangle = ResizeToFill(rectangle);
                     break;
@@ -1277,6 +1280,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 localScale.x = localScale.y = scale;
             }
+
+            return finalRect;
+        }
+
+        private Rect ScaleToSelf(Rect srcRect)
+        {
+            Rect finalRect = srcRect;
+
+            finalRect.width *= scale.x;
+            finalRect.height *= scale.y;
 
             return finalRect;
         }
