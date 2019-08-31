@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game
         Vector2 _smoothMouse;
         float cameraPitch = 0.0f;
         float cameraYaw = 0.0f;
+        bool cursorActive;
 
         public bool invertMouseY = false;
         public bool lockCursor;
@@ -73,6 +74,32 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             bool applyLook = true;
+
+            // Cursor activation toggle while game is running
+            // This is distinct from cursor being left active when UI open or game is unpaused by esc
+            // When cursor activated during gameplay, player can click on world objects to activate them
+            // When cursor simply active from closing a popup, etc. a click will recapture cursor
+            // We handle activated cursor first as it takes precendence over mouse look and normal cursor recapture
+            if (!GameManager.IsGamePaused && InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCursor))
+            {
+                cursorActive = !cursorActive;
+            }
+
+            // Show cursor and unlock while active
+            // While cursor is active, player can click on objects in scene using mouse similar to activating centre object
+            // Clicking on UI element of large HUD will instead operate on that UI
+            if (cursorActive)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    // TODO: Activate object clicked by mouse - this should take precedence over activate centre object if that is also mouse0
+                }
+
+                return;
+            }
 
             // Ensure the cursor always locked when set
             if (lockCursor && enableMouseLook)
