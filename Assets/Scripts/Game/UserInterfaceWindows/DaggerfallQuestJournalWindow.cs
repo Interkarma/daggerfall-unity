@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const SoundClips openJournal = SoundClips.OpenBook;
         const SoundClips pageTurnJournal = SoundClips.PageTurn;
+        const SoundClips editNotebook = SoundClips.PageTurn; // same as spellbook edit sounds
 
         const int NULLINT = -1;
         public const int maxLinesQuests = 20;
@@ -311,6 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (currentMessageIndex == selectedEntry)
                     currentMessageIndex = 0;
                 lastMessageIndex = NULLINT;
+                DaggerfallUI.Instance.PlayOneShot(editNotebook);
             }
             selectedEntry = NULLINT;
             sender.CloseWindow();
@@ -341,6 +343,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(enteredNoteLine, selectedEntry);
                 lastMessageIndex = NULLINT;
+                DaggerfallUI.Instance.PlayOneShot(editNotebook);
             }
             selectedEntry = NULLINT;
         }
@@ -424,6 +427,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     MoveEntry(moveSrcIdx, selectedEntry);
                     lastMessageIndex = NULLINT;
                     selectedEntry = NULLINT;
+                    DaggerfallUI.Instance.PlayOneShot(editNotebook);
                 }
             }
         }
