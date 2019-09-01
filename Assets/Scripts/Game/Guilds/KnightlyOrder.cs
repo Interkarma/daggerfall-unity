@@ -213,10 +213,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                     Armor armor = (Armor)UnityEngine.Random.Range(102, 108 + 1);
                     rewardArmor.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
                 }
-                DaggerfallUI.MessageBox(ArmorId);
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(ArmorId);
                 DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor, item => flags = flags | ArmorFlagMask);
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+                mb.OnClose += ReceiveArmorPopup_OnClose;
             }
+        }
+
+        private void ReceiveArmorPopup_OnClose()
+        {
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
         }
 
         public void ReceiveHouse()
