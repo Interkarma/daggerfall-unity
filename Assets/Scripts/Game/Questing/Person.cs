@@ -608,6 +608,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignHomeTown()
         {
+            const string houseString = "house";
+
             Place homePlace;
             string symbolName = string.Format("_{0}_home_", Symbol.Name);
 
@@ -629,7 +631,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // For other NPCs use default scope and building type
             Place.Scopes scope = Place.Scopes.Remote;
-            string buildingTypeString = "house";
+            string buildingTypeString = houseString;
 
             // Adjust scope and building type based on faction hints
             int p1 = 0, p2 = 0, p3 = 0;
@@ -664,102 +666,25 @@ namespace DaggerfallWorkshop.Game.Questing
             else
                 throw new Exception("AssignHomeTown() scope must be either 'local' or 'remote'.");
 
-            // Create the home location
-            string source = string.Format("Place {0} {1} {2}", symbolName, scopeString, buildingTypeString);
-            homePlace = new Place(ParentQuest, source);
+            // Create the home location - this will try to match NPC group (e.g. a Noble will select a Palace)
+            try
+            {
+                // Try preferred location type
+                string source = string.Format("Place {0} {1} {2}", symbolName, scopeString, buildingTypeString);
+                homePlace = new Place(ParentQuest, source);
+            }
+            catch
+            {
+                // Otherwise try to use a generic house
+                // If this doesn't work for some reason then next exception will prevent quest from starting
+                string source = string.Format("Place {0} {1} {2}", symbolName, scopeString, houseString);
+                homePlace = new Place(ParentQuest, source);
+            }
+
+            // Complete assigning home place
             homePlaceSymbol = homePlace.Symbol.Clone();
             ParentQuest.AddResource(homePlace);
             LogHomePlace(homePlace);
-
-
-            //
-            // NOTE: Keeping the below for reference only at this time
-            //
-
-            //const string blank = "BLANK";
-
-            //// If this is a Questor or individual NPC then use current location name
-            //// Person is being instantiated where player currently is
-            //if (isQuestor || (IsIndividualNPC && isIndividualAtHome))
-            //{
-            //    if (GameManager.Instance.PlayerGPS.HasCurrentLocation)
-            //    {
-            //        homeTownName = GameManager.Instance.PlayerGPS.CurrentLocation.Name;
-            //        homeRegionName = GameManager.Instance.PlayerGPS.CurrentLocation.RegionName;
-            //        homeBuildingName = blank;
-            //        return;
-            //    }
-            //}
-
-            //// Handle specific home Place assigned at create time
-            //if (homePlaceSymbol != null)
-            //{
-            //    Place home = ParentQuest.GetPlace(homePlaceSymbol);
-            //    if (home != null)
-            //    {
-            //        homeTownName = home.SiteDetails.locationName;
-            //        homeRegionName = home.SiteDetails.regionName;
-            //        homeBuildingName = home.SiteDetails.buildingName;
-            //    }
-            //}
-            //else
-            //{
-            //    // Find a random location name from town types for flavour text
-            //    // This might take a few attempts but will very quickly find a random town name
-            //    int index;
-            //    bool found = false;
-            //    int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            //    DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-            //    while (!found)
-            //    {
-            //        index = UnityEngine.Random.Range(0, regionData.MapTable.Length);
-            //        DFRegion.LocationTypes locationType = regionData.MapTable[index].LocationType;
-            //        if (locationType == DFRegion.LocationTypes.TownCity ||
-            //            locationType == DFRegion.LocationTypes.TownHamlet ||
-            //            locationType == DFRegion.LocationTypes.TownVillage)
-            //        {
-            //            homeTownName = regionData.MapNames[index];
-            //            homeRegionName = regionData.Name;
-            //            homeBuildingName = blank;
-            //            found = true;
-            //        }
-            //    }
-            //}
-
-            //// Handle Local_3.x group NPCs (limited)
-            //// These appear to be a special case of assigning a residential person who is automatically instantiated to home Place
-            //// Creating a full target Place for this person automatically and storing in Quest
-            //// NOTE: Understanding is still being developed here, likely will need to rework this later
-            //if (QuestMachine.Instance.FactionsTable.HasValue(careerAllianceName))
-            //{
-            //    // Get params for this case
-            //    int p1 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p1", careerAllianceName));
-            //    int p2 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p2", careerAllianceName));
-            //    //int p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", careerAllianceName));
-
-            //    // Only supporting specific cases for now - can expand later based on testing and iteration of support
-            //    // This will support Local_3.0 - Local_3.3
-            //    // Referencing quest Sx009 here where player must locate and click an NPC with only a home location to go by
-            //    if (p1 == 0 && p2 == -3)
-            //    {
-            //        // Just using "house2" here as actual meaning of p3 unknown
-            //        string homeSymbol = string.Format("_{0}_home_", Symbol.Name);
-            //        string source = string.Format("Place {0} remote house2", homeSymbol);
-            //        Place home = new Place(ParentQuest, source);
-            //        homePlaceSymbol = home.Symbol.Clone();
-            //        ParentQuest.AddResource(home);
-            //    }
-            //    else if (p1 == 0 && p2 >= 0)
-            //    {
-            //        // Handle standard building types
-            //        string buildingSymbol = string.Format("_{0}_building_", Symbol.Name);
-            //        string buildingType = QuestMachine.Instance.PlacesTable.GetKeyForValue("p2", p2.ToString());
-            //        string source = string.Format("Place {0} remote {1}", buildingSymbol, buildingType);
-            //        Place building = new Place(ParentQuest, source);
-            //        homePlaceSymbol = building.Symbol.Clone();
-            //        ParentQuest.AddResource(building);
-            //    }
-            //}
         }
 
         void LogHomePlace(Place homePlace)
