@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel pagePanel = new Panel();
         float maxHeight = 0;
         float scrollPosition = 0;
+        int currentPage = 0; // Used for page turn sounds only
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -168,7 +169,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 label.Position = new Vector2(label.Position.x, label.Position.y + amount);
                 label.Enabled = label.Position.y < pagePanel.Size.y && label.Position.y + label.Size.y > 0;
-                    
+            }
+
+            // page displayed at the center of the panel
+            int centerPage = (int)(scrollPosition / pagePanelSize.y + 0.5f);
+            if (currentPage != centerPage)
+            {
+                currentPage = centerPage;
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             }
         }
     }
