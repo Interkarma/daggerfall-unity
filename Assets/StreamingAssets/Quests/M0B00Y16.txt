@@ -232,7 +232,7 @@ _S.15_ task:
 	when _success_ and _no_ 
 
 _S.16_ task:
-	when _success_ and _yes_ 
+	when _success_ and _S.09_
 
 _S.17_ task:
 	when _success_ and _S.13_ 
@@ -240,10 +240,6 @@ _S.17_ task:
 _S.18_ task:
 	when _qtime_ or _S.15_ or _S.16_ or _S.17_ 
 	end quest 
-
-_S.19_ task:
-	when not _victim_ and _success_
-	end quest
 
 _giantWaveWhileInDungeon_ task:
 	pc at _mondung_ set _spawnGiants_
