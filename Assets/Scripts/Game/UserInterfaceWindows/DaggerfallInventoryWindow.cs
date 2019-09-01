@@ -1518,6 +1518,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (chooseOne && remoteItems == from && !usingWagon)
             {
+                while (uiManager.TopWindow != this)
+                    uiManager.PopWindow();
                 CloseWindow();
                 chooseOneCallback(item);
             }
