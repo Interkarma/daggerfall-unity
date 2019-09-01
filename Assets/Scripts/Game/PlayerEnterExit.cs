@@ -372,7 +372,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Player in sunlight or darkness
-            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside;
+            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside && !GameManager.Instance.PlayerEntity.InPrison;
         }
 
         #region Public Methods
