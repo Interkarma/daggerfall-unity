@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -33,10 +34,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float scrollPosition = 0;
 
         const SoundClips openBook = SoundClips.OpenBook;
-        const SoundClips pageTurn = SoundClips.PageTurn;
 
-        const float pageTurnDelay = 0.35f;
-        float lastPageTurn = 0f;
+        PageTurns pageTurns;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -76,6 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             LayoutBook();
             DaggerfallUI.Instance.PlayOneShot(openBook);
+            pageTurns = new PageTurns();
         }
 
         private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -109,6 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 LayoutBook();
                 DaggerfallUI.Instance.PlayOneShot(openBook);
+                pageTurns.Reset();
             }
         }
 
@@ -174,19 +175,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 label.Position = new Vector2(label.Position.x, label.Position.y + amount);
                 label.Enabled = label.Position.y < pagePanel.Size.y && label.Position.y + label.Size.y > 0;
-                    
             }
-            ThrottledPageTurnSound();
-        }
 
-        // Prevent annoying effect when quickly flipping pages (say, mouse wheel)
-        private void ThrottledPageTurnSound()
-        {
-            if (Time.realtimeSinceStartup >= lastPageTurn + pageTurnDelay)
-            {
-                lastPageTurn = Time.realtimeSinceStartup;
-                DaggerfallUI.Instance.PlayOneShot(pageTurn);
-            }
+            int firstLabel = 0;
+            while (firstLabel < bookLabels.Count && !bookLabels[firstLabel].Enabled)
+                firstLabel++;
+            int lastLabel = bookLabels.Count - 1;
+            while (lastLabel >= 0 && !bookLabels[lastLabel].Enabled)
+                lastLabel--;
+            pageTurns.SetPage(firstLabel, lastLabel);
+            pageTurns.Play();
         }
     }
 }

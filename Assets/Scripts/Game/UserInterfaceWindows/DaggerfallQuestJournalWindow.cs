@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect;
 using System.Linq;
 using DaggerfallConnect.Utility;
@@ -32,11 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "LGBK00I0.IMG";
 
         const SoundClips openJournal = SoundClips.OpenBook;
-        const SoundClips pageTurnJournal = SoundClips.PageTurn;
         const SoundClips editNotebook = SoundClips.PageTurn; // same as spellbook edit sounds
-
-        const float pageTurnDelay = 0.35f;
-        float lastPageTurn = 0f;
 
         const int NULLINT = -1;
         public const int maxLinesQuests = 20;
@@ -47,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int currentMessageIndex = 0;
         List<int> entryLineMap;
         int selectedEntry = NULLINT;
+        PageTurns pageTurns;
 
         List<Message> questMessages;
         int messageCount = 0;
@@ -191,6 +189,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex    = NULLINT;
             currentMessageIndex = 0;
             selectedEntry       = NULLINT;
+            pageTurns           = new PageTurns();
             DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
@@ -229,6 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         SetTextMessages();
                         break;
                 }
+                pageTurns.Play();
             }
         }
 
@@ -256,35 +256,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex = NULLINT;
             currentMessageIndex = 0;
             selectedEntry = NULLINT;
+            pageTurns.Reset();
             DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
         void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex - 1 >= 0)
-            {
                 currentMessageIndex -= 1;
-                ThrottledPageTurnSound();
-            }
         }
 
         void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (currentMessageIndex + 1 < messageCount)
-            {
                 currentMessageIndex += 1;
-                ThrottledPageTurnSound();
-            }
-        }
-
-        // Prevent annoying effect when quickly flipping pages (say, mouse wheel)
-        private void ThrottledPageTurnSound()
-        {
-            if (Time.realtimeSinceStartup >= lastPageTurn + pageTurnDelay)
-            {
-                lastPageTurn = Time.realtimeSinceStartup;
-                DaggerfallUI.Instance.PlayOneShot(pageTurnJournal);
-            }
         }
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
@@ -549,14 +534,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "activeQuestsInfo");
 
             int totalLineCount = 0;
-            entryLineMap = new List<int>(maxLinesQuests);;
+            entryLineMap = new List<int>(maxLinesQuests);
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
+            int bottomMessageIndex = currentMessageIndex;
             for (int i = currentMessageIndex; i < questMessages.Count; i++)
             {
                 if (totalLineCount >= maxLinesQuests)
                     break;
 
+                bottomMessageIndex = i;
                 var tokens = questMessages[i].GetTextTokens();
 
                 for (int j = 0; j < tokens.Length; j++)
@@ -580,6 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 totalLineCount++;
                 entryLineMap.Add(i);
             }
+            pageTurns.SetPage(currentMessageIndex, bottomMessageIndex);
 
             questLogLabel.SetText(textTokens.ToArray());
         }
@@ -621,11 +609,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             entryLineMap = new List<int>(maxLines);
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
+            int bottomMessageIndex = currentMessageIndex;
             for (int i = currentMessageIndex; i < entries.Count; i++)
             {
                 if (totalLineCount >= maxLines)
                     break;
 
+                bottomMessageIndex = i;
                 TextFile.Token[] tokens = entries[i];
                 for (int j = 0; j < tokens.Length; j++)
                 {
@@ -652,6 +642,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 entryLineMap.Add(--boundary);
             }
 
+            pageTurns.SetPage(currentMessageIndex, bottomMessageIndex);
             questLogLabel.SetText(textTokens.ToArray());
             questLogLabel.Size = new Vector2(questLogLabel.Size.x, 138);
         }
