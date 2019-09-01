@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         const int firstFemaleArchive = 245;
         const int firstMaleArchive = 249;
+        private const int chooseAtRandom = -1;
 
         // This array is used to pick random material values.
         // The array is traversed, subtracting each value from a sum until the sum is less than the next value.
@@ -539,6 +540,20 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomMagicItem(int playerLevel, Genders gender, Races race)
         {
+            return CreateRegularMagicItem(chooseAtRandom, playerLevel, gender, race);
+        }
+
+        /// <summary>
+        /// Create a regular non-artifact magic item.
+        /// </summary>
+        /// <param name="chosenItem">An integer index of the item to create, or -1 for a random one.</param>
+        /// <param name="playerLevel">The player level to create an item for.</param>
+        /// <param name="gender">The gender to create an item for.</param>
+        /// <param name="race">The race to create an item for.</param>
+        /// <returns>DaggerfallUnityItem</returns>
+        /// <exception cref="Exception">When a base item cannot be created.</exception>
+        public static DaggerfallUnityItem CreateRegularMagicItem(int chosenItem, int playerLevel, Genders gender, Races race)
+        {
             byte[] itemGroups0 = { 2, 3, 6, 10, 12, 14, 25 };
             byte[] itemGroups1 = { 2, 3, 6, 12, 25 };
 
@@ -548,114 +563,102 @@ namespace DaggerfallWorkshop.Game.Items
             MagicItemsFile magicItemsFile = new MagicItemsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, "MAGIC.DEF"));
             List<MagicItemTemplate> magicItems = magicItemsFile.MagicItemsList;
 
-            // Get the number of non-artifact magic item templates in MAGIC.DEF
-            int numberOfRegularMagicItems = 0;
-            foreach (MagicItemTemplate magicItem in magicItems)
+            // Reduce the list to only the regular magic items.
+            MagicItemTemplate[] regularMagicItems = magicItems.Where(template => template.type == MagicItemTypes.RegularMagicItem).ToArray();
+            if (chosenItem > regularMagicItems.Length)
+                throw new Exception(string.Format("Magic item subclass {0} does not exist", chosenItem));
+
+            // Pick a random one if needed.
+            if (chosenItem == chooseAtRandom)
             {
-                if (magicItem.type == MagicItemTypes.RegularMagicItem)
-                    numberOfRegularMagicItems++;
+                chosenItem = UnityEngine.Random.Range(0, regularMagicItems.Length);
             }
 
-            // Choose a random one of the non-artifact magic item templates
-            int chosenItem = UnityEngine.Random.Range(0, numberOfRegularMagicItems);
-
             // Get the chosen template
-            foreach (MagicItemTemplate magicItem in magicItems)
+            MagicItemTemplate magicItem = regularMagicItems[chosenItem];
+
+            // Get the item group. The possible groups are determined by the 33rd byte (magicItem.group) of the MAGIC.DEF template being used.
+            ItemGroups group = 0;
+            if (magicItem.group == 0)
+                group = (ItemGroups)itemGroups0[UnityEngine.Random.Range(0, 7)];
+            else if (magicItem.group == 1)
+                group = (ItemGroups)itemGroups1[UnityEngine.Random.Range(0, 5)];
+            else if (magicItem.group == 2)
+                group = ItemGroups.Weapons;
+
+            // Create the base item
+            if (group == ItemGroups.Weapons)
             {
-                if (magicItem.type == MagicItemTypes.RegularMagicItem)
+                newItem = CreateRandomWeapon(playerLevel);
+
+                // No arrows as enchanted items
+                while (newItem.GroupIndex == 18)
+                    newItem = CreateRandomWeapon(playerLevel);
+            }
+            else if (group == ItemGroups.Armor)
+                newItem = CreateRandomArmor(playerLevel, gender, race);
+            else if (group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)
+                newItem = CreateRandomClothing(gender, race);
+            else if (group == ItemGroups.ReligiousItems)
+                newItem = CreateRandomReligiousItem();
+            else if (group == ItemGroups.Gems)
+                newItem = CreateRandomGem();
+            else // Only other possibility is jewellery
+                newItem = CreateRandomJewellery();
+
+            if (newItem == null)
+                throw new Exception("CreateRegularMagicItem() failed to create an item.");
+
+            // Replace the regular item name with the magic item name
+            newItem.shortName = magicItem.name;
+
+            // Add the enchantments
+            newItem.legacyMagic = new DaggerfallEnchantment[magicItem.enchantments.Length];
+            for (int i = 0; i < magicItem.enchantments.Length; ++i)
+                newItem.legacyMagic[i] = magicItem.enchantments[i];
+
+            // Set the condition/magic uses
+            newItem.maxCondition = magicItem.uses;
+            newItem.currentCondition = magicItem.uses;
+
+            // Set the value of the item. This is determined by the enchantment point cost/spell-casting cost
+            // of the enchantments on the item.
+            int value = 0;
+            for (int i = 0; i < magicItem.enchantments.Length; ++i)
+            {
+                if (magicItem.enchantments[i].type != EnchantmentTypes.None
+                    && magicItem.enchantments[i].type < EnchantmentTypes.ItemDeteriorates)
                 {
-                    // Proceed when the template is found
-                    if (chosenItem == 0)
+                    switch (magicItem.enchantments[i].type)
                     {
-                        // Get the item group. The possible groups are determined by the 33rd byte (magicItem.group) of the MAGIC.DEF template being used.
-                        ItemGroups group = 0;
-                        if (magicItem.group == 0)
-                            group = (ItemGroups)itemGroups0[UnityEngine.Random.Range(0, 7)];
-                        else if (magicItem.group == 1)
-                            group = (ItemGroups)itemGroups1[UnityEngine.Random.Range(0, 5)];
-                        else if (magicItem.group == 2)
-                            group = ItemGroups.Weapons;
-
-                        // Create the base item
-                        if (group == ItemGroups.Weapons)
-                        {
-                            newItem = CreateRandomWeapon(playerLevel);
-
-                            // No arrows as enchanted items
-                            while (newItem.GroupIndex == 18)
-                                newItem = CreateRandomWeapon(playerLevel);
-                        }
-                        else if (group == ItemGroups.Armor)
-                            newItem = CreateRandomArmor(playerLevel, gender, race);
-                        else if (group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)
-                            newItem = CreateRandomClothing(gender, race);
-                        else if (group == ItemGroups.ReligiousItems)
-                            newItem = CreateRandomReligiousItem();
-                        else if (group == ItemGroups.Gems)
-                            newItem = CreateRandomGem();
-                        else // Only other possibility is jewellery
-                            newItem = CreateRandomJewellery();
-
-                        // Replace the regular item name with the magic item name
-                        newItem.shortName = magicItem.name;
-
-                        // Add the enchantments
-                        newItem.legacyMagic = new DaggerfallEnchantment[magicItem.enchantments.Length];
-                        for (int i = 0; i < magicItem.enchantments.Length; ++i)
-                            newItem.legacyMagic[i] = magicItem.enchantments[i];
-
-                        // Set the condition/magic uses
-                        newItem.maxCondition = magicItem.uses;
-                        newItem.currentCondition = magicItem.uses;
-
-                        // Set the value of the item. This is determined by the enchantment point cost/spell-casting cost
-                        // of the enchantments on the item.
-                        int value = 0;
-                        for (int i = 0; i < magicItem.enchantments.Length; ++i)
-                        {
-                            if (magicItem.enchantments[i].type != EnchantmentTypes.None
-                                && magicItem.enchantments[i].type < EnchantmentTypes.ItemDeteriorates)
-                            {
-                                switch (magicItem.enchantments[i].type)
-                                {
-                                    case EnchantmentTypes.CastWhenUsed:
-                                    case EnchantmentTypes.CastWhenHeld:
-                                    case EnchantmentTypes.CastWhenStrikes:
-                                        // Enchantments that cast a spell. The parameter is the spell index in SPELLS.STD.
-                                        value += Formulas.FormulaHelper.GetSpellEnchantPtCost(magicItem.enchantments[i].param);
-                                        break;
-                                    case EnchantmentTypes.RepairsObjects:
-                                    case EnchantmentTypes.AbsorbsSpells:
-                                    case EnchantmentTypes.EnhancesSkill:
-                                    case EnchantmentTypes.FeatherWeight:
-                                    case EnchantmentTypes.StrengthensArmor:
-                                        // Enchantments that provide an effect that has no parameters
-                                        value += enchantmentPointCostsForNonParamTypes[(int)magicItem.enchantments[i].type];
-                                        break;
-                                    case EnchantmentTypes.SoulBound:
-                                        // Bound soul
-                                        MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[magicItem.enchantments[i].param];
-                                        value += mobileEnemy.SoulPts; // TODO: Not sure about this. Should be negative? Needs to be tested.
-                                        break;
-                                    default:
-                                        // Enchantments that provide a non-spell effect with a parameter (parameter = when effect applies, what enemies are affected, etc.)
-                                        value += enchantmentPtsForItemPowerArrays[(int)magicItem.enchantments[i].type][magicItem.enchantments[i].param];
-                                        break;
-                                }
-                            }
-                        }
-
-                        newItem.value = value;
-
-                        break;
+                        case EnchantmentTypes.CastWhenUsed:
+                        case EnchantmentTypes.CastWhenHeld:
+                        case EnchantmentTypes.CastWhenStrikes:
+                            // Enchantments that cast a spell. The parameter is the spell index in SPELLS.STD.
+                            value += Formulas.FormulaHelper.GetSpellEnchantPtCost(magicItem.enchantments[i].param);
+                            break;
+                        case EnchantmentTypes.RepairsObjects:
+                        case EnchantmentTypes.AbsorbsSpells:
+                        case EnchantmentTypes.EnhancesSkill:
+                        case EnchantmentTypes.FeatherWeight:
+                        case EnchantmentTypes.StrengthensArmor:
+                            // Enchantments that provide an effect that has no parameters
+                            value += enchantmentPointCostsForNonParamTypes[(int)magicItem.enchantments[i].type];
+                            break;
+                        case EnchantmentTypes.SoulBound:
+                            // Bound soul
+                            MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[magicItem.enchantments[i].param];
+                            value += mobileEnemy.SoulPts; // TODO: Not sure about this. Should be negative? Needs to be tested.
+                            break;
+                        default:
+                            // Enchantments that provide a non-spell effect with a parameter (parameter = when effect applies, what enemies are affected, etc.)
+                            value += enchantmentPtsForItemPowerArrays[(int)magicItem.enchantments[i].type][magicItem.enchantments[i].param];
+                            break;
                     }
-
-                    chosenItem--;
                 }
             }
 
-            if (newItem == null)
-                throw new Exception("CreateRandomMagicItem() failed to create an item.");
+            newItem.value = value;
 
             return newItem;
         }
