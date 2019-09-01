@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int classDescriptionsTokenBase = 2100;
         const int questionCount = 10;
         public const byte noClassIndex = 255;
-        const float leftTextOffset = 10f;
+        const float leftTextOffset = 20f;
         const float topTextOffset = 16f;
 
         Texture2D nativeTexture;
@@ -98,16 +98,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 scrollTextures.Last().filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             }
 
-            // Setup question label
-            questionIndices = GetQuestions();
-            DisplayQuestion(questionIndices[questionsAnswered]);
-
             // Position scroll image on screen
             questionScroll.Position = new Vector2(0, 119f);
             questionScroll.Size = new Vector2(scrollTextures[0].width, scrollTextures[0].height);
             questionScroll.BackgroundTexture = scrollTextures[0];
             questionScroll.Parent = NativePanel;
             NativePanel.Components.Add(questionScroll);
+
+            // Setup question label
+            questionIndices = GetQuestions();
+            DisplayQuestion(questionIndices[questionsAnswered]);
 
             // Handle scrolling
             NativePanel.OnMouseScrollDown += NativePanel_OnMouseScrollDown;
@@ -193,9 +193,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questionLabel = new MultiFormatTextLabel
             {
                 Position = new Vector2(leftTextOffset, topTextOffset),
-                Size = new Vector2(320f, 48f), // make sure it has enough space - allow it to run off the screen
+                Size = new Vector2(320f, 0f), // make sure it has enough space - allow it to run off the screen
                 TextColor = Color.black,
-                MaxShownLines = 7,
                 ShadowPosition = new Vector2(0f, 0f)
             };
             string[] lines = questionLibrary[questionIndex].Split("\r\n".ToCharArray()).Where(x => x != string.Empty).ToArray();
@@ -205,6 +204,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 tokens.Add(TextFile.CreateTextToken(line));
                 tokens.Add(TextFile.CreateFormatToken(TextFile.Formatting.NewLine));
             }
+            questionLabel.RectRestrictedRenderArea = new Rect(
+                new Vector2(leftTextOffset, topTextOffset),
+                new Vector2(questionScroll.Size.x, questionScroll.Size.y - topTextOffset * 2f)
+                );
             questionLabel.SetText(tokens.ToArray());
             questionScroll.Components.Add(questionLabel);
             scrollFrame = 0;
@@ -313,20 +316,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
         private void NativePanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
-            if (questionLabel.TopLineIndex < questionLabel.LineCount - questionLabel.MaxShownLines)
+            if (questionLabel.Position.y + questionLabel.Size.y > questionScroll.Size.y - topTextOffset)
             {
-                questionScroll.BackgroundTexture = scrollTextures[++scrollFrame];
-                questionLabel.TopLineIndex++;
-                questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y - questionLabel.LineHeight);
+                scrollFrame = (scrollFrame + 1) % scrollTextures.Count;
+                questionScroll.BackgroundTexture = scrollTextures[scrollFrame];
+                questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y - 1f);
             }
         }
         private void NativePanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
-            if (questionLabel.TopLineIndex > 0)
+            if (questionLabel.Position.y < topTextOffset)
             {
-                questionScroll.BackgroundTexture = scrollTextures[--scrollFrame];
-                questionLabel.TopLineIndex--;
-                questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y + questionLabel.LineHeight);
+                scrollFrame = scrollFrame - 1 < 0 ? scrollTextures.Count - 1 : scrollFrame - 1;
+                questionScroll.BackgroundTexture = scrollTextures[scrollFrame];
+                questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y + 1f);
             }
         }
         #endregion Event Handlers
