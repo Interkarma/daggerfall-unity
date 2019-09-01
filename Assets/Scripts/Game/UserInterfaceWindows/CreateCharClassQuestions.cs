@@ -58,6 +58,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int questionsAnswered = 0;
         Panel questionScroll = new Panel();
         int scrollFrame = 0;
+        bool isScrolling = false;
+        bool scrollingDown = false;
+        int aIndex = 0;
+        int bIndex = 0;
+        int cIndex = 0;
 
         public CreateCharClassQuestions(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -112,6 +117,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle scrolling
             NativePanel.OnMouseScrollDown += NativePanel_OnMouseScrollDown;
             NativePanel.OnMouseScrollUp += NativePanel_OnMouseScrollUp;
+            questionScroll.OnMouseDown += QuestionScroll_OnMouseDown;
+            questionScroll.OnMouseUp += QuestionScroll_OnMouseUp;
 
             IsSetup = true;
         }
@@ -120,6 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            // User picked an answer with a key
             if (Input.GetKeyDown(KeyCode.A))
             {
                 AnswerAndContinue(0);
@@ -131,6 +139,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (Input.GetKeyDown(KeyCode.C))
             {
                 AnswerAndContinue(2);
+            }
+
+            // User is scrolling with a mouseclick
+            if (isScrolling)
+            {
+                if (scrollingDown && questionLabel.Position.y + questionLabel.Size.y > questionScroll.Size.y - topTextOffset)
+                {
+                    scrollFrame = (scrollFrame + 1) % scrollTextures.Count;
+                    questionScroll.BackgroundTexture = scrollTextures[scrollFrame];
+                    questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y - 1f);
+                }
+                else if (!scrollingDown && questionLabel.Position.y < topTextOffset)
+                {
+                    scrollFrame = scrollFrame - 1 < 0 ? scrollTextures.Count - 1 : scrollFrame - 1;
+                    questionScroll.BackgroundTexture = scrollTextures[scrollFrame];
+                    questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y + 1f);
+                }
             }
         }
 
@@ -212,13 +237,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questionScroll.Components.Add(questionLabel);
             scrollFrame = 0;
             questionScroll.BackgroundTexture = scrollTextures[0];
+            for (int i = 0; i < questionLabel.TextLabels.Count; i++)
+            {
+                TextLabel label = questionLabel.TextLabels[i];
+
+                if (label.Text.Contains("a)"))
+                    aIndex = i;
+                else if (label.Text.Contains("b)"))
+                    bIndex = i;
+                else if (label.Text.Contains("c)"))
+                    cIndex = i;
+            }
         }
 
+        /// <summary>
+        /// Packs weight values into a single uint
+        /// </summary>
         private uint WeightsToUint(byte w1, byte w2, byte w3)
         {
             return (uint)(w1 | (w2 << 8) | (w3 << 16));
         }
 
+        /// <summary>
+        /// Gets the index of the weights array that a given answer should increment
+        /// </summary>
+        /// <param name="chosenIndex">The index of the question table</param>
+        /// <param name="column">The answer given to the chosen question index</param>
         private int GetWeightIndex(int chosenIndex, int column)
         {
             return answerTable[questionIndices[chosenIndex] * 3 + column];
@@ -228,10 +272,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             weights[GetWeightIndex(questionsAnswered, choice)]++;
             Debug.Log("CreateCharClassQuestions: Warrior: " + weights[0] + " Rogue: " + weights[1] + " Mage: " + weights[2]);
-            if (questionsAnswered == questionCount - 1)
+            if (questionsAnswered == questionCount - 1) // Final question was answered
             {
+                // Blank out the background
                 questionLabel.Clear();
                 NativePanel.BackgroundTexture = null;
+                questionScroll.BackgroundTexture = null;
+
+                // Compute class index
                 FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
                 if (classFile == null)
                 {
@@ -244,6 +292,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     throw new Exception("CreateCharClassQuestions: Error reading CLASSES.DAT - could not find a results match. Warrior: " + weights[0] + " Rogue: " + weights[1] + " Mage: " + weights[2]);
                 }
                 classIndex = GetClassIndex(headerIndex, classData);
+
+                // Prompt user to confirm class
                 DaggerfallMessageBox confirmDialog = new DaggerfallMessageBox(uiManager,
                                                                               DaggerfallMessageBox.CommonMessageBoxButtons.YesNo,
                                                                               classDescriptionsTokenBase + classIndex,
@@ -314,6 +364,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sender.CloseWindow();
             CloseWindow();
         }
+
         private void NativePanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             if (questionLabel.Position.y + questionLabel.Size.y > questionScroll.Size.y - topTextOffset)
@@ -323,6 +374,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y - 1f);
             }
         }
+
         private void NativePanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             if (questionLabel.Position.y < topTextOffset)
@@ -331,6 +383,50 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 questionScroll.BackgroundTexture = scrollTextures[scrollFrame];
                 questionLabel.Position = new Vector2(questionLabel.Position.x, questionLabel.Position.y + 1f);
             }
+        }
+
+        private void QuestionScroll_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            // Handle scrolling by clicking
+            if (position.y < topTextOffset)
+            {
+                isScrolling = true;
+                scrollingDown = false;
+                return;
+            }
+            else if (position.y > questionScroll.Size.y - topTextOffset)
+            {
+                isScrolling = true;
+                scrollingDown = true;
+                return;
+            }
+
+            // Handle clicking on answers
+            int labelIndex = 0;
+            for (int i = 0; i < questionLabel.TextLabels.Count; i++)
+            {
+                TextLabel label = questionLabel.TextLabels[i];
+
+                // Determine if label was clicked
+                if (position.y > questionLabel.Position.y + label.Position.y &&
+                    position.y < questionLabel.Position.y + label.Position.y + label.Size.y)
+                {
+                    labelIndex = i;
+                }
+            }
+
+            // Determine which answer was picked
+            if (labelIndex >= aIndex && labelIndex < bIndex)
+                AnswerAndContinue(0);
+            else if (labelIndex >= bIndex && labelIndex < cIndex)
+                AnswerAndContinue(1);
+            else if (labelIndex >= cIndex)
+                AnswerAndContinue(2);
+        }
+
+        private void QuestionScroll_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            isScrolling = false;
         }
         #endregion Event Handlers
 

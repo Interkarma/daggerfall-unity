@@ -143,6 +143,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return labels.Count; }
         }
 
+        public List<TextLabel> TextLabels
+        {
+            get { return labels; }
+        }
+
         /// <summary>
         /// define a restricted render area so that listbox content (textlabels) are only rendered within these Rect's bounds
         /// </summary>
