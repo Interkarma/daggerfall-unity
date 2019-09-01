@@ -14,7 +14,7 @@ namespace DaggerfallWorkshop.Game
         private Entity.PlayerEntity player;
         //private PlayerGroundMotor groundMotor;
         private RappelMotor rappelMotor;
-        private HangingMotor hangingMotor;
+        //private HangingMotor hangingMotor;
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
         private CharacterController controller;
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game
             acrobatMotor = GetComponent<AcrobatMotor>();
             speedChanger = GetComponent<PlayerSpeedChanger>();
             rappelMotor = GetComponent<RappelMotor>();
-            hangingMotor = GetComponent<HangingMotor>();
+            //hangingMotor = GetComponent<HangingMotor>();
             moveScanner = GetComponent<PlayerMoveScanner>();
         }
 
@@ -158,11 +158,11 @@ namespace DaggerfallWorkshop.Game
             //bool touchingAbove = (playerMotor.CollisionFlags & CollisionFlags.Above) != 0;
             bool slippedToGround = isSlipping && touchingGround;
             bool nonOrthogonalStart = !isClimbing && inputForward && !horizontallyStationary;
-            bool forwardStationaryNearCeiling = inputForward && hangingMotor.IsWithinHangingDistance && horizontallyStationary;
-            bool pushingFaceAgainstWallNearCeiling = hangingMotor.IsHanging && !isClimbing && touchingSides && forwardStationaryNearCeiling;
+            //bool forwardStationaryNearCeiling = inputForward && hangingMotor.IsWithinHangingDistance && horizontallyStationary;
+            bool pushingFaceAgainstWallNearCeiling = false;//hangingMotor.IsHanging && !isClimbing && touchingSides && forwardStationaryNearCeiling;
             bool climbingOrForwardOrGrasping = (isClimbing || inputForward || airborneGraspWall);
             RaycastHit hit;
-            bool hangTouchNonVertical = hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
+            bool hangTouchNonVertical = false;//hangingMotor.IsHanging && touchingSides && Physics.Raycast(controller.transform.position, controller.transform.forward, out hit, 0.40f) && Mathf.Abs(hit.normal.y) > 0.06f;
 
             ClimbQuitMoveUnderToHang = (inputBack && !moveScanner.HitSomethingInFront && moveScanner.FrontUnderCeiling != null);
 
@@ -199,14 +199,14 @@ namespace DaggerfallWorkshop.Game
                 // Begin Climbing
                 else if (!isClimbing)
                 {   
-                    if (hangingMotor.IsHanging)
-                    {   // grab wall from ceiling
-                        overrideSkillCheck = true;
-                        releasedFromCeiling = true;
-                    }
+                    //if (hangingMotor.IsHanging)
+                    //{   // grab wall from ceiling
+                    //    overrideSkillCheck = true;
+                    //    releasedFromCeiling = true;
+                    //}
 
                     // automatic success if not falling
-                    if ((!airborneGraspWall && !hangingMotor.IsHanging) || releasedFromCeiling)
+                    if ((!airborneGraspWall /*&& !hangingMotor.IsHanging*/) || releasedFromCeiling)
                         StartClimbing();
                     // skill check to see if we catch the wall 
                     else if (ClimbingSkillCheck(graspWallMinChance))
@@ -311,7 +311,7 @@ namespace DaggerfallWorkshop.Game
             if (!isClimbing)
             {
                 isClimbing = true;
-                hangingMotor.CancelHanging();
+                //hangingMotor.CancelHanging();
                 // reset jumping in case we jumped onto the wall
                 acrobatMotor.Jumping = false;
             }

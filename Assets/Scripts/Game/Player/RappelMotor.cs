@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerGroundMotor groundMotor;
         private ClimbingMotor climbingMotor;
         private PlayerMoveScanner playerScanner;
-        private HangingMotor hangingMotor;
+        //private HangingMotor hangingMotor;
         private Entity.PlayerEntity player;
         private VectorMeasurement measure;
 
@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game
             groundMotor = GetComponent<PlayerGroundMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
             playerScanner = GetComponent<PlayerMoveScanner>();
-            hangingMotor = GetComponent<HangingMotor>();
+            //hangingMotor = GetComponent<HangingMotor>();
         }
 
         public void InitialSetRappelType()
@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game
                 if (measure == null)
                     measure = new VectorMeasurement(controller.transform.position);
                 
-                if ( !(hangingMotor.IsHanging || climbingMotor.IsClimbing)
+                if ( !(/*hangingMotor.IsHanging ||*/ climbingMotor.IsClimbing)
                     && measure.Distance(controller.transform.position) < 1f)
                 {
                     // Auto move toward surface to grab

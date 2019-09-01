@@ -485,6 +485,15 @@ namespace DaggerfallWorkshop.Game
 
         void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)
         {
+            // Do not activate static NPCs carrying specific non-dialog actions as these usually have some bespoke task to perform
+            // Note: currently only ShowText and ShowTextWithInput NPCs are excluded
+            // Examples are guard at entrance of Daggerfall Castle and Benefactor and Sheogorath in Mantellan Crux
+            DaggerfallAction action = npc.GetComponent<DaggerfallAction>();
+            if (action &&
+                (action.ActionFlag == DFBlock.RdbActionFlags.ShowTextWithInput ||
+                 action.ActionFlag == DFBlock.RdbActionFlags.ShowText))
+                return;
+
             switch (currentMode)
             {
                 case PlayerActivateModes.Info:
@@ -1282,12 +1291,6 @@ namespace DaggerfallWorkshop.Game
             }
             else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
             {
-                // with one exception: guards - detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
-                if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3 ||
-                    npc.Data.billboardArchiveIndex == 346 && npc.Data.billboardRecordIndex == 20)
-                    return; // if guard was clicked don't open talk window
-
-                // otherwise open talk window
                 talkManager.TalkToStaticNPC(npc, false);
             }
         }

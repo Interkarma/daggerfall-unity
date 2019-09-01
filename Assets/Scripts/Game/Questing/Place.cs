@@ -517,6 +517,17 @@ namespace DaggerfallWorkshop.Game.Questing
             else
                 foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
 
+            // Do some fallback for house types if nothing found locally
+            // There should almost always be a suitable local house available
+            DFLocation.BuildingTypes requiredBuildingType = (DFLocation.BuildingTypes)p2;
+            if ((foundSites == null || foundSites.Length == 0) &&
+                requiredBuildingType >= DFLocation.BuildingTypes.House1 &&
+                requiredBuildingType <= DFLocation.BuildingTypes.House6)
+            {
+                p2 = -1;
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+            }
+
             // Must have found at least one site
             if (foundSites == null || foundSites.Length == 0)
                 throw new Exception(string.Format("Could not find local site for {0} with P2={1} in {2}/{3}.", Symbol.Original,  p2, location.RegionName, location.Name));
@@ -897,7 +908,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
-            int[] validHouseTypes = { 18, 19, 20 };
+            int[] validHouseTypes = { 17, 18, 19, 20 };
 
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
@@ -905,14 +916,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // Need to check our parent quest resources separately as not loaded to quest machine during compile
             SiteDetails[] activeQuestSites = QuestMachine.Instance.GetAllActiveQuestSites();
             QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
-
-            // Convert House4-House5 back to House2 - not sure where these house types even exist?
-            if (buildingType == DFLocation.BuildingTypes.House4 ||
-                buildingType == DFLocation.BuildingTypes.House5)
-            {
-                buildingType = DFLocation.BuildingTypes.House2;
-                p2 = (int)DFLocation.BuildingTypes.House2;
-            }
 
             // Iterate through all blocks
             DFBlock[] blocks;

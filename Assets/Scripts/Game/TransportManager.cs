@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game
     {
         #region Public Fields
 
-        public float RidingVolumeScale = 1.0f;  // TODO: Should this be the same setting as PlayerFootsteps.FootstepVolumeScale?
+        public float RidingVolumeScale = 0.6f;
 
         #endregion
 
@@ -272,7 +272,7 @@ namespace DaggerfallWorkshop.Game
 
             if (mode == TransportModes.Horse || mode == TransportModes.Cart)
             {
-                // Tell player motor we're riding. TODO: Change to event system so other classes can listen for transport changes.
+                // Tell player motor we're riding.
                 playerMotor.IsRiding = true;
 
                 // Setup appropriate riding sounds.

@@ -641,11 +641,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", factionTableKey));
 
                 // Set based on parameters
-                if (p1 == 0 && p2 == -3 || p1 == 0 && p2 == -4)
+                if (p1 == 0 && p2 < -2)
                 {
-                    // For local types set to local place
-                    // This will support Local_3.0 - Local_4.10k
+                    // From usage in the quests it appears -3 and lower are local.
                     // Referencing quest Sx009 where player must locate and click an NPC with only a home location to go by
+                    // and K0C00Y04 where two Group_7 npcs are local.
                     scope = Place.Scopes.Local;
                 }
                 else if (p1 == 0 && p2 >= 0 && p2 <= 20 && p3 == 0)

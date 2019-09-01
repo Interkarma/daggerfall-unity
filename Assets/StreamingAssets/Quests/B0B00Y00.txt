@@ -15,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                 has been captured from our protection,
 <ce>                   and it is the responsibility of us
 <ce>                 knights to rescue her. Unfortunately,
-<ce>                  many of our members of off fighting
+<ce>                  many of our members are off fighting
 <ce>                  in the war. In the truest spirit of
 <ce>                  chivalry, will you go to rescue the
 <ce>                  princess from the _monster_ who has
