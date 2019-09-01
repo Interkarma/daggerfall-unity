@@ -955,6 +955,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 task.RestoreSaveData(taskData);
                 tasks.Add(task.Symbol.Name, task);
             }
+
+            // May need to remap old marker system at end of load for each Place resource
+            QuestResource[] foundPlaces = GetAllResources(typeof(Place));
+            if (foundPlaces != null && foundPlaces.Length > 0)
+            {
+                foreach(QuestResource place in foundPlaces)
+                {
+                    (place as Place).ReassignSiteDetailsLegacyMarkers();
+                }
+            }
         }
 
         #endregion

@@ -852,11 +852,11 @@ namespace DaggerfallWorkshop.Utility
                 // Helps ensure a resource is not injected twice
                 QuestResourceBehaviour[] resourceBehaviours = Resources.FindObjectsOfTypeAll<QuestResourceBehaviour>();
 
-                // Get selected spawn QuestMarker for this Place
-                QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
-                if (spawnMarker.targetResources != null)
+                // Get selected marker for this place
+                QuestMarker selectedMarker = place.SiteDetails.selectedMarker;
+                if (selectedMarker.targetResources != null)
                 {
-                    foreach (Symbol target in spawnMarker.targetResources)
+                    foreach (Symbol target in selectedMarker.targetResources)
                     {
                         // Get target resource
                         QuestResource resource = quest.GetResource(target);
@@ -870,37 +870,17 @@ namespace DaggerfallWorkshop.Utility
                         // Inject to scene based on resource type
                         if (resource is Person && enableNPCs)
                         {
-                            AddQuestNPC(siteType, quest, spawnMarker, (Person)resource, parent);
+                            AddQuestNPC(siteType, quest, selectedMarker, (Person)resource, parent);
                         }
                         else if (resource is Foe && enableFoes)
                         {
                             Foe foe = (Foe)resource;
                             if (foe.KillCount < foe.SpawnCount)
-                                AddQuestFoe(siteType, quest, spawnMarker, foe, parent);
+                                AddQuestFoe(siteType, quest, selectedMarker, foe, parent);
                         }
-                    }
-                }
-
-                // Get selected item QuestMarker for this Place
-                if (enableItems && place.SiteDetails.questItemMarkers != null)
-                {
-                    QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
-                    if (itemMarker.targetResources != null)
-                    {
-                        foreach (Symbol target in itemMarker.targetResources)
+                        else if (resource is Item)
                         {
-                            // Get target resource
-                            QuestResource resource = quest.GetResource(target);
-                            if (resource == null)
-                                continue;
-
-                            // Skip resources already injected into scene
-                            if (IsAlreadyInjected(resourceBehaviours, resource))
-                                continue;
-
-                            // Inject into scene
-                            if (resource is Item)
-                                AddQuestItem(siteType, quest, itemMarker, (Item)resource, parent);
+                            AddQuestItem(siteType, quest, selectedMarker, (Item)resource, parent);
                         }
                     }
                 }
