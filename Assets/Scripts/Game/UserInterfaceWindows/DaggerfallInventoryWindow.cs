@@ -1516,7 +1516,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            if (chooseOne)
+            if (chooseOne && remoteItems == from && !usingWagon)
             {
                 CloseWindow();
                 chooseOneCallback(item);
