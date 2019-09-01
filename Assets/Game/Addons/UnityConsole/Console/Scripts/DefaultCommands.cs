@@ -43,6 +43,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToDungeonDoor.name, TeleportToDungeonDoor.description, TeleportToDungeonDoor.usage, TeleportToDungeonDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestSpawnMarker.name, TeleportToQuestSpawnMarker.description, TeleportToQuestSpawnMarker.usage, TeleportToQuestSpawnMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestItemMarker.name, TeleportToQuestItemMarker.description, TeleportToQuestItemMarker.usage, TeleportToQuestItemMarker.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestMarker.name, TeleportToQuestMarker.description, TeleportToQuestMarker.usage, TeleportToQuestMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetAllQuestItems.name, GetAllQuestItems.description, GetAllQuestItems.usage, GetAllQuestItems.Execute);
             ConsoleCommandsDatabase.RegisterCommand(EndDebugQuest.name, EndDebugQuest.description, EndDebugQuest.usage, EndDebugQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
@@ -1074,6 +1075,47 @@ namespace Wenzil.Console
             }
         }
 
+        private static class TeleportToQuestMarker
+        {
+            public static readonly string name = "tele2qmarker";
+            public static readonly string error = "Could not find quest marker at current location";
+            public static readonly string description = "Teleport player to active quest marker (monster, NPC placement, item, etc.)";
+            public static readonly string usage = "tele2qmarker";
+
+            public static string Execute(params string[] args)
+            {
+                QuestMarker spawnMarker;
+                Vector3 buildingOrigin;
+                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(out spawnMarker, out buildingOrigin);
+                if (!result)
+                    return error;
+
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                {
+                    Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
+                    GameManager.Instance.PlayerObject.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition;
+                }
+                else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                {
+                    // Find active marker type - saves on applying building matrix, etc. to derive position again
+                    Vector3 markerPos;
+                    if (GameManager.Instance.PlayerEnterExit.Interior.FindClosestMarker(
+                        out markerPos,
+                        (DaggerfallInterior.InteriorMarkerTypes)spawnMarker.markerType,
+                        GameManager.Instance.PlayerObject.transform.position))
+                    {
+                        GameManager.Instance.PlayerObject.transform.position = markerPos;
+                    }
+                }
+                else
+                {
+                    return error;
+                }
+                GameManager.Instance.PlayerMotor.FixStanding();
+
+                return "Finished";
+            }
+        }
 
         private static class TeleportToQuestSpawnMarker
         {
@@ -1084,17 +1126,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                QuestMarker spawnMarker;
-                Vector3 buildingOrigin;
-                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestSpawn, out spawnMarker, out buildingOrigin);
-                if (!result)
-                    return error;
-
-                Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
-                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition + buildingOrigin;
-                GameManager.Instance.PlayerMotor.FixStanding();
-
-                return "Finished";
+                return TeleportToQuestMarker.Execute() + "...tele2qspawn is deprecated - please use tele2qmarker";
             }
         }
 
@@ -1107,17 +1139,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                QuestMarker itemMarker;
-                Vector3 buildingOrigin;
-                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestItem, out itemMarker, out buildingOrigin);
-                if (!result)
-                    return error;
-
-                Vector3 dungeonBlockPosition = new Vector3(itemMarker.dungeonX * RDBLayout.RDBSide, 0, itemMarker.dungeonZ * RDBLayout.RDBSide);
-                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + itemMarker.flatPosition + buildingOrigin;
-                GameManager.Instance.PlayerMotor.FixStanding();
-
-                return "Finished";
+                return TeleportToQuestMarker.Execute() + "...tele2qitem is deprecated - please use tele2qmarker";
             }
         }
 

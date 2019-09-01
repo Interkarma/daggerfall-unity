@@ -1293,7 +1293,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="markerOut">Active QuestMarker out.</param>
         /// <param name="buildingOriginOut">Building origin in scene, or Vector3.zero if not inside a building.</param>
         /// <returns>True if successful.</returns>
-        public bool GetCurrentLocationQuestMarker(MarkerTypes markerType, out QuestMarker markerOut, out Vector3 buildingOriginOut)
+        public bool GetCurrentLocationQuestMarker(out QuestMarker markerOut, out Vector3 buildingOriginOut)
         {
             markerOut = new QuestMarker();
             buildingOriginOut = Vector3.zero;
