@@ -266,6 +266,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 largeHUD.Enabled = false;
                 vitals.Enabled = false;
                 crosshair.Enabled = false;
+                compass.Enabled = false;
             }
             else
             {
