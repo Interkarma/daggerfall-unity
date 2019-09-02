@@ -495,16 +495,23 @@ namespace DaggerfallWorkshop.Game.Questing
             if (siteDetails.selectedMarker.targetResources == null)
             {
                 // Get all prior resource symbols placed by this quest
+                // Clear legacy resource symbols from old markers after collecting them
                 List<Symbol> resources = new List<Symbol>();
                 if (siteDetails.questSpawnMarkers != null && siteDetails.questSpawnMarkers.Length > 0)
                 {
                     if (siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker].targetResources != null)
+                    {
                         resources.AddRange(siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker].targetResources.ToArray());
+                        siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker].targetResources.Clear();
+                    }
                 }
                 if (siteDetails.questItemMarkers != null && siteDetails.questItemMarkers.Length > 0)
                 {
                     if (siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker].targetResources != null)
+                    {
                         resources.AddRange(siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker].targetResources.ToArray());
+                        siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker].targetResources.Clear();
+                    }
                 }
 
                 // Assign these to new marker setup

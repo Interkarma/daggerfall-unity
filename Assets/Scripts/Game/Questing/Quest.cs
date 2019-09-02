@@ -957,7 +957,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        public void ReassignQuestMarkers()
+        public void ReassignLegacyQuestMarkers()
         {
             // May need to remap old marker system at end of load for each Place resource
             QuestResource[] foundPlaces = GetAllResources(typeof(Place));
