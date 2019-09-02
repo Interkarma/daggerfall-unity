@@ -1683,6 +1683,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 Quest quest = new Quest();
                 quest.RestoreSaveData(questData);
                 quests.Add(quest.UID, quest);
+                quest.ReassignQuestMarkers();
             }
 
             // Remove site links with no matching quest

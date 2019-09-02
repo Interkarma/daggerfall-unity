@@ -1090,6 +1090,9 @@ namespace Wenzil.Console
                 if (!result)
                     return error;
 
+                if (spawnMarker.targetResources == null || spawnMarker.targetResources.Count == 0)
+                    return error;
+
                 if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
                 {
                     Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
