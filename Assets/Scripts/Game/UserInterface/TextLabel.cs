@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float textScale = 1.0f; // scale text
         List<GlyphLayoutData> glyphLayout = new List<GlyphLayoutData>();
         bool previousSDFState;
+        Vector2 previousLocalScale;
 
         #endregion
 
@@ -207,13 +208,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
-
-            // Need to recalculate layout if SDF state changes
-            if (font != null && font.IsSDFCapable != previousSDFState)
-            {
-                RefreshLayout();
-                previousSDFState = font.IsSDFCapable;
-            }
         }
 
         public override void Draw()
@@ -222,6 +216,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (font == null || string.IsNullOrEmpty(text))
                 return;
+
+            // Need to recalculate layout if SDF state or scale changes (e.g. window resized)
+            // Do this before drawing so that even unparented label get a chance to recalibrate if needed
+            if (font.IsSDFCapable != previousSDFState || previousLocalScale != LocalScale)
+            {
+                RefreshLayout();
+                previousSDFState = font.IsSDFCapable;
+                previousLocalScale = LocalScale;
+            }
 
             DrawLabel();
         }
