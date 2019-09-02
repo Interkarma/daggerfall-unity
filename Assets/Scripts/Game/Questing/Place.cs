@@ -401,11 +401,6 @@ namespace DaggerfallWorkshop.Game.Questing
             if (cullExisting)
                 QuestMachine.Instance.CullResourceTarget(resource, Symbol);
 
-            // Use magic number index if one is available and no marker assigned
-            // Magic number is one-based, marker array is zero-based, need to -1 on magic number
-            if (markerIndex == -1 && siteDetails.magicNumberIndex > 0)
-                markerIndex = siteDetails.magicNumberIndex - 1;
-
             // Get marker for new resource and assign resource to marker
             QuestMarker selectedMarker = GetSiteMarker(resource, markerIndex);
             AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.selectedMarker);
@@ -424,7 +419,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     Debug.LogFormat("Assigned Foe _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
-                    if (SiteDetails.magicNumberIndex == 0)
+                    if (markerIndex == -1)
                         Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
                     else
                         Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, markerIndex);
@@ -438,10 +433,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
-                    if (SiteDetails.magicNumberIndex == 0)
+                    if (markerIndex == -1)
                         Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
                     else
-                        Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, SiteDetails.magicNumberIndex);
+                        Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, markerIndex);
                 }
             }
 
@@ -518,8 +513,15 @@ namespace DaggerfallWorkshop.Game.Questing
                     QuestResource resource = ParentQuest.GetResource(symbol);
                     if (resource != null)
                     {
-                        QuestMarker selectedMarker = GetSiteMarker(resource);
-                        AssignQuestResource(symbol, -1, false);
+                        // Get previous marker index
+                        int previousMarkerIndex = -1;
+                        if (resource is Person || resource is Foe)
+                            previousMarkerIndex = siteDetails.selectedQuestSpawnMarker;
+                        else if (resource is Item)
+                            previousMarkerIndex = siteDetails.selectedQuestItemMarker;
+
+                        // Reassign to same marker
+                        AssignQuestResource(symbol, previousMarkerIndex, false);
                         Debug.LogFormat("Reassigned resource {0} to new marker system.", symbol.Original);
                     }
                 }
