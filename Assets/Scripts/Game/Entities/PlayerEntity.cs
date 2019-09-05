@@ -177,6 +177,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Crimes CrimeCommitted { get { return crimeCommitted; } set { SetCrimeCommitted(value); } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
+        public bool InPrison { get ; set ; }
         public bool IsInBeastForm { get; set; }
         public List<string> BackStory { get; set; }
         public VampireClans PreviousVampireClan { get; set; }
