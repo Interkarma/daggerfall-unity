@@ -1425,16 +1425,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Item questItem = GetQuestItem(item);
 
                 // Player cannot drop most quest items
-                if (questItem == null | (!questItem.AllowDrop && from == localItems))
+                if (questItem == null || (!questItem.AllowDrop && from == localItems))
                 {
                     DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
                     return;
                 }
 
                 // Dropping or picking up quest item
-                if (questItem.AllowDrop && from == localItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                if (questItem.AllowDrop && from == localItems && remoteTargetType != RemoteTargetTypes.Wagon)
                     questItem.PlayerDropped = true;
-                else if (questItem.AllowDrop && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                else if (from == remoteItems)
                     questItem.PlayerDropped = false;
             }
             // Extinguish light sources when transferring out of player inventory
