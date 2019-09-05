@@ -156,9 +156,11 @@ _S.05_ task:
 
 _S.06_ task:
 	clicked item _treasure_ 
+	clear _dropped_
 
-until _S.06_ performed:
+_dropped_ task:
 	dropped _treasure_ at _magesguild_ 
+	clear _S.06_
 
 _S.07_ task:
 	when _S.06_ and not _S.02_ 
