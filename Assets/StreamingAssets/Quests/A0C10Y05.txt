@@ -201,7 +201,10 @@ _dummy_ task:
 	injured _F.00_ saying 1013 
 
 _S.05_ task:
-	clicked npc _priest_ 
+	clicked npc _priest_
+
+_success_ task:
+    when _S.01_ and _S.05_
 	give pc _gold_ 
 	drop _qgiver_ face 
 	drop _betrothed_ face 
@@ -214,6 +217,6 @@ _clearclick_ task:
 	clear _S.05_ _clearclick_ 
 
 _questdone_ task:
-	when _S.05_ and not _S.03_ 
+	when _success_ and not _S.03_
 	restore _qgiver_ 
 	end quest 
