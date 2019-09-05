@@ -67,6 +67,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string storeClosed = "Store is closed. Open from %d1:00 to %d2:00.";
 
+        public const string guildClosed = "Guild is closed. Open from %d1:00 to %d2:00.";
+
         public const string any = "Any %s";
         public static readonly string[] buildingNames = { "Temple of Akatosh", "Temple of Arkay", "Temple of Dibella",
                                                 "Temple of Julianos", "Temple of Kynareth", "Temple of Mara",
