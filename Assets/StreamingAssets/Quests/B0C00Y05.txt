@@ -129,7 +129,6 @@ _queston_ task:
 _pcgetsgold_ task:
 	when _mondead_ and _qgclicked_ 
 	give pc nothing 
-	end quest 
 
 _mondead_ task:
 	killed 1 _monster_ saying 1011 
@@ -148,4 +147,8 @@ _S.07_ task:
 	when _map_ and _pcgetsgold_
     say 1080
 	reveal _newdung_
---this readmap argument appears often but serves no purpose. the reveal action happens independently, and no phyusical map is givedn
+	end quest
+
+_S.08_ task:
+    when not _map_ and _pcgetsgold_
+    end quest
