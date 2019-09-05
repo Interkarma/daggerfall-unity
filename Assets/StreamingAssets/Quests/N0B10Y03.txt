@@ -160,7 +160,7 @@ _S.06_ task:
 
 _dropped_ task:
 	dropped _treasure_ at _magesguild_ 
-	clear _s.06_
+	clear _S.06_
 
 _S.07_ task:
 	when _S.06_ and not _S.02_ 
