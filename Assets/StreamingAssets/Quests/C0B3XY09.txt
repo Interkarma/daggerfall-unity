@@ -150,9 +150,6 @@ _yes_ task:
 	change repute with _qgiver_ by -10 
 	end quest 
 
-until _yes_ performed:
-	injured _guardian_ 
-
 _no_ task:
 	injured _guardian_
 	create foe _guardian_ every 1 minutes 1 times with 100% success
