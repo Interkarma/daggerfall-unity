@@ -557,6 +557,14 @@ namespace DaggerfallWorkshop.Utility
                                     building.Quality = item.buildingData.Quality;
                                 }
                             }
+
+                            // Matched to classic: special handling for some Order of the Raven buildings
+                            if (block.RmbBlock.FldHeader.OtherNames[i] == "KRAVE01.HS2")
+                            {
+                                building.BuildingType = DFLocation.BuildingTypes.GuildHall;
+                                building.FactionId = 414;
+                            }
+
                             // Set whatever building data we could find
                             block.RmbBlock.FldHeader.BuildingDataList[i] = building;
                         }
