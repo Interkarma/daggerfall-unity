@@ -37,10 +37,14 @@ namespace DaggerfallWorkshop.Game
         public float runSpeedOverride = 11.0f;
         public bool useRunSpeedOverride = false;
 
+        public delegate bool CanPlayerRun();
+        public CanPlayerRun CanRun { get; set; }
+
         private void Start()
         {
             playerMotor = GameManager.Instance.PlayerMotor;
             levitateMotor = GetComponent<LevitateMotor>();
+            CanRun = CanRunUnlessRiding;
         }
 
         /// <summary>
@@ -51,7 +55,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerMotor.IsGrounded)
             {
-                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && !playerMotor.IsRiding)
+                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && CanRun())
                 {
                     try
                     {
@@ -74,6 +78,12 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+
+        public bool CanRunUnlessRiding()
+        {
+            return !playerMotor.IsRiding;
+        }
+
 
         /// <summary>
         /// Get LiveSpeed adjusted for swimming, walking, crouching or riding

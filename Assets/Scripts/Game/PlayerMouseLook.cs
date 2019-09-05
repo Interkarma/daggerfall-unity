@@ -20,6 +20,9 @@ namespace DaggerfallWorkshop.Game
     //
     public class PlayerMouseLook : MonoBehaviour
     {
+        public const float PitchMax = 90;
+        public const float PitchMin = -90;
+
         const float piover2 = 1.570796f;
 
         Vector2 _mouseAbsolute;
@@ -27,6 +30,8 @@ namespace DaggerfallWorkshop.Game
         float cameraPitch = 0.0f;
         float cameraYaw = 0.0f;
         bool cursorActive;
+        float pitchMax = PitchMax;
+        float pitchMin = PitchMin;
 
         public bool invertMouseY = false;
         public bool lockCursor;
@@ -49,6 +54,7 @@ namespace DaggerfallWorkshop.Game
             get { return cameraPitch * Mathf.Rad2Deg; }
             set
             {
+                value = Mathf.Clamp(value, PitchMin, pitchMax);
                 cameraPitch = value * Mathf.Deg2Rad;
                 if (cameraPitch > piover2 * .99f)
                     cameraPitch = piover2 * .99f;
@@ -64,6 +70,18 @@ namespace DaggerfallWorkshop.Game
         {
             get { return cameraYaw * Mathf.Rad2Deg; }
             set { cameraYaw = value * Mathf.Deg2Rad; }
+        }
+
+        public float PitchMaxLimit
+        {
+            get { return pitchMax; }
+            set { pitchMax = Mathf.Clamp(value, 0, PitchMax); }
+        }
+
+        public float PitchMinLimit
+        {
+            get { return pitchMin; }
+            set { pitchMin = Mathf.Clamp(value, 0, PitchMin); }
         }
 
         void Start()
