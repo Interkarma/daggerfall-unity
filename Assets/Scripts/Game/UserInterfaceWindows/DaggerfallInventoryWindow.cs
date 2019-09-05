@@ -1516,8 +1516,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            if (chooseOne)
+            if (chooseOne && remoteItems == from && !usingWagon)
             {
+                while (uiManager.TopWindow != this)
+                    uiManager.PopWindow();
                 CloseWindow();
                 chooseOneCallback(item);
             }
