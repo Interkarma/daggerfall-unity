@@ -31,6 +31,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string textDatabase = "DaggerfallUI";
         const string nativeImgName = "LGBK00I0.IMG";
 
+        const SoundClips openJournal = SoundClips.OpenBook;
+        const SoundClips editNotebook = SoundClips.PageTurn; // same as spellbook edit sounds
+
         const int NULLINT = -1;
         public const int maxLinesQuests = 20;
         public const int maxLinesSmall = 28;
@@ -184,6 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex    = NULLINT;
             currentMessageIndex = 0;
             selectedEntry       = NULLINT;
+            DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
         public override void OnPop()
@@ -248,6 +252,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex = NULLINT;
             currentMessageIndex = 0;
             selectedEntry = NULLINT;
+            DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
         void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -300,6 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (currentMessageIndex == selectedEntry)
                     currentMessageIndex = 0;
                 lastMessageIndex = NULLINT;
+                DaggerfallUI.Instance.PlayOneShot(editNotebook);
             }
             selectedEntry = NULLINT;
             sender.CloseWindow();
@@ -330,6 +336,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(enteredNoteLine, selectedEntry);
                 lastMessageIndex = NULLINT;
+                DaggerfallUI.Instance.PlayOneShot(editNotebook);
             }
             selectedEntry = NULLINT;
         }
@@ -413,6 +420,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     MoveEntry(moveSrcIdx, selectedEntry);
                     lastMessageIndex = NULLINT;
                     selectedEntry = NULLINT;
+                    DaggerfallUI.Instance.PlayOneShot(editNotebook);
                 }
             }
         }
@@ -521,7 +529,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "activeQuestsInfo");
 
             int totalLineCount = 0;
-            entryLineMap = new List<int>(maxLinesQuests);;
+            entryLineMap = new List<int>(maxLinesQuests);
             List<TextFile.Token> textTokens = new List<TextFile.Token>();
 
             for (int i = currentMessageIndex; i < questMessages.Count; i++)
