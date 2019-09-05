@@ -1099,7 +1099,7 @@ MonoBehaviour:
   jumpSpeed: 8
   gravity: 20
   crouchingJumpDelta: 0.8
-  fallingDamageThreshold: 10
+  fallingDamageThreshold: 5
   airControl: 0
 --- !u!114 &114121517922970790
 MonoBehaviour:
