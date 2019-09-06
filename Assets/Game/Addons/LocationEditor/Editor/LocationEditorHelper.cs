@@ -1307,51 +1307,7 @@ namespace DaggerfallWorkshop.Loc {
             writer.Write(saveData);
             writer.Close();
         }
-        public static bool ValidateValue(int type, string name) {
-            if (type == 0) {
-                try {
-                    int.Parse(name);
-                }
-                catch (FormatException) {
-                    Debug.LogWarning("Object type is set incorrectly: 0 = Model, 1 = Flat");
-                    return false;
-                }
-                catch (OverflowException) {
-                    Debug.LogWarning("Object type is set incorrectly: 0 = Model, 1 = Flat");
-                    return false;
-                }
-
-                return true;
-            }
-
-            else if (type == 1) {
-                string[] arg = name.Split('.');
-
-                if (arg.Length == 2) {
-                    try {
-                        int.Parse(arg[0]);
-                        int.Parse(arg[1]);
-                    }
-                    catch (FormatException) {
-                        Debug.LogWarning("Billboard string format is invalid, use ARCHIVEID.RECORDID");
-                        return false;
-                    }
-                    catch (OverflowException) {
-                        Debug.LogWarning("Billboard string format is invalid, use ARCHIVEID.RECORDID");
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                Debug.LogWarning("Billboard string format is invalid, use ARCHIVEID.RECORDID");
-                return false;
-
-            }
-            else
-                return false;
-
-        }
+        
         public static GameObject Add3dObject(DaggerfallConnect.DFBlock.RmbBlock3dObjectRecord rmbBlock) {
 
      
@@ -1405,7 +1361,7 @@ namespace DaggerfallWorkshop.Loc {
             Vector3 modelRotation = new Vector3(0, -rmbBlock.YRotation / DaggerfallConnect.Arena2.BlocksFile.RotationDivisor, 0);
             Vector3 modelPosition = new Vector3(rmbBlock.XPos, -rmbBlock.YPos, rmbBlock.ZPos) * MeshReader.GlobalScale;
 
-            Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
+            //Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
             GameObject go = Utility.GameObjectHelper.CreateDaggerfallMeshGameObject(9000, null);
             go.transform.rotation = Quaternion.Euler(modelRotation);

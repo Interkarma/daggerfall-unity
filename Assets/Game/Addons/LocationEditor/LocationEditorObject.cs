@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LevelEditorObject : MonoBehaviour {
+public class LocationEditorObject : MonoBehaviour {
 
     public int type = -1;
     public bool isExterior = false;
@@ -39,7 +39,6 @@ public class LevelEditorObject : MonoBehaviour {
         this.isExterior = isExterior;
         openRotation = data.OpenRotation;
     }
-
     private void HideComponents() {
         foreach (Material mat in gameObject.GetComponent<Renderer>().sharedMaterials) {
             mat.hideFlags = HideFlags.HideInInspector;
@@ -49,9 +48,7 @@ public class LevelEditorObject : MonoBehaviour {
             comp.hideFlags = HideFlags.HideInInspector;
         }
     }
-
     public void UpdateVisibility(bool isExterior) {
-
         if (this.isExterior != isExterior) {
             gameObject.hideFlags = HideFlags.HideInHierarchy;
             gameObject.GetComponent<Renderer>().enabled = false;

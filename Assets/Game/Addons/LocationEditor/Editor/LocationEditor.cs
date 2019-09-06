@@ -46,9 +46,7 @@ namespace DaggerfallWorkshop.Loc {
         }
 
         void OnGUI() {
-
             GUIFileMenu();
-
             if (parent != null) {
                 if (editMode == EditMode.EditMode) {
                     EditInteriorWindow();
@@ -86,71 +84,58 @@ namespace DaggerfallWorkshop.Loc {
         }
 
         private void LoadObjects() {
-
             foreach (var blockRecord in levelData.RmbSubRecord.Interior.Block3dObjectRecords) {
                 GameObject go = LocationEditorHelper.Add3dObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, false);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, false);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Interior.BlockFlatObjectRecords) {
                 GameObject go = LocationEditorHelper.AddFlatObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, false);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, false);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Interior.BlockPeopleRecords) {
                 GameObject go = LocationEditorHelper.AddPersonObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, false);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, false);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Interior.BlockDoorRecords) {
                 GameObject go = LocationEditorHelper.AddDoorObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, false);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, false);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Exterior.Block3dObjectRecords) {
                 GameObject go = LocationEditorHelper.Add3dObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, true);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, true);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Exterior.BlockFlatObjectRecords) {
                 GameObject go = LocationEditorHelper.AddFlatObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, true);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, true);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Exterior.BlockPeopleRecords) {
                 GameObject go = LocationEditorHelper.AddPersonObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, true);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, true);
             }
-
             foreach (var blockRecord in levelData.RmbSubRecord.Exterior.BlockDoorRecords) {
                 GameObject go = LocationEditorHelper.AddDoorObject(blockRecord);
                 go.transform.parent = parent.transform;
-                go.AddComponent<LevelEditorObject>().CreateData(blockRecord, true);
+                go.AddComponent<LocationEditorObject>().CreateData(blockRecord, true);
             }
-
             UpdateObjectsVisibility();
         }
 
         private void UpdateObjectsVisibility() {
-
             foreach (Transform child in parent.GetComponentInChildren<Transform>()) {
-
-                if (child.GetComponent<LevelEditorObject>() == null)
+                if (child.GetComponent<LocationEditorObject>() == null)
                     return;
-
-                child.GetComponent<LevelEditorObject>().UpdateVisibility(isExteriorMode);
+                child.GetComponent<LocationEditorObject>().UpdateVisibility(isExteriorMode);
             }
         }
 
         private void EditInteriorWindow() {
-
             Repaint(); //Keep this repainted
 
             GUI.BeginGroup(new Rect(8, 48, Screen.width - 16, 32), lightGrayBG);
@@ -191,10 +176,8 @@ namespace DaggerfallWorkshop.Loc {
             }
 
             else {
-
-                if (Selection.activeGameObject.GetComponent<LevelEditorObject>()) {
-
-                    LevelEditorObject data = Selection.activeGameObject.GetComponent<LevelEditorObject>();
+                if (Selection.activeGameObject.GetComponent<LocationEditorObject>()) {    
+                    LocationEditorObject data = Selection.activeGameObject.GetComponent<LocationEditorObject>();
 
                     GUI.Label(new Rect(16, 96, 96, 16), "Transform ");
                     GUI.BeginGroup(new Rect(8, 112, Screen.width - 16, 136), lightGrayBG);
@@ -244,7 +227,6 @@ namespace DaggerfallWorkshop.Loc {
         }
 
         private void AddItemWindow() {
-
             GUI.BeginGroup(new Rect(8, 48, Screen.width - 16, 32), lightGrayBG);
             chooseFileMode = GUI.SelectionGrid(new Rect(8, 4, 312, 24), chooseFileMode, chooseFileModeString, 2);
             GUI.EndGroup();
@@ -254,8 +236,6 @@ namespace DaggerfallWorkshop.Loc {
             GUI.EndGroup();
 
             if (chooseFileMode == 0) {
-
-
                 if(listMode == 0) {
                     GUI.BeginGroup(new Rect(8, 124, Screen.width - 16, 32), lightGrayBG);
                     modelSubList = GUI.SelectionGrid(new Rect(8, 4, (modelSubListString.Length * 80) + 8, 24), modelSubList, modelSubListString, modelSubListString.Length);
@@ -298,7 +278,6 @@ namespace DaggerfallWorkshop.Loc {
             }
 
             if (GUI.Button(new Rect(16, 582, 96, 20), "OK")) {
-
                 if (chooseFileMode == 0)
                     selectedObjectID = searchListID[objectPicker];
 
@@ -313,7 +292,7 @@ namespace DaggerfallWorkshop.Loc {
                         blockRecord.ObjectType = (byte)LocationEditorHelper.ObjectType.InteriorHousePart;
 
                     go = LocationEditorHelper.Add3dObject(blockRecord);
-                    go.AddComponent<LevelEditorObject>().CreateData(blockRecord, isExteriorMode);
+                    go.AddComponent<LocationEditorObject>().CreateData(blockRecord, isExteriorMode);
                 }
 
                 else if (listMode == 1) {
@@ -321,7 +300,7 @@ namespace DaggerfallWorkshop.Loc {
                     blockRecord.TextureArchive = int.Parse(selectedObjectID.Split('.')[0]);
                     blockRecord.TextureRecord = int.Parse(selectedObjectID.Split('.')[1]);
                     go = LocationEditorHelper.AddFlatObject(blockRecord);
-                    go.AddComponent<LevelEditorObject>().CreateData(blockRecord, isExteriorMode);
+                    go.AddComponent<LocationEditorObject>().CreateData(blockRecord, isExteriorMode);
                 }
 
                 else if (listMode == 2) {
@@ -329,14 +308,14 @@ namespace DaggerfallWorkshop.Loc {
                     blockRecord.TextureArchive = int.Parse(selectedObjectID.Split('.')[0]);
                     blockRecord.TextureRecord = int.Parse(selectedObjectID.Split('.')[1]);
                     go = LocationEditorHelper.AddPersonObject(blockRecord);
-                    go.AddComponent<LevelEditorObject>().CreateData(blockRecord, isExteriorMode);
+                    go.AddComponent<LocationEditorObject>().CreateData(blockRecord, isExteriorMode);
                 }
 
                 else if (listMode == 3) {
                     DaggerfallConnect.DFBlock.RmbBlockDoorRecord blockRecord = new DaggerfallConnect.DFBlock.RmbBlockDoorRecord();
                     blockRecord.OpenRotation = 95; //Seems to be the default rotation used in the game
                     go = LocationEditorHelper.AddDoorObject(blockRecord);
-                    go.AddComponent<LevelEditorObject>().CreateData(blockRecord, isExteriorMode);
+                    go.AddComponent<LocationEditorObject>().CreateData(blockRecord, isExteriorMode);
                 }
 
                 if (go != null) {
@@ -361,7 +340,6 @@ namespace DaggerfallWorkshop.Loc {
         }
 
         private void UpdateSearchList() {
-
             searchListNames.Clear();
             searchListID.Clear();
             Dictionary<string, string> currentList;
@@ -411,7 +389,6 @@ namespace DaggerfallWorkshop.Loc {
         }
 
         private void OpenFile() {
-
             string path = EditorUtility.OpenFilePanel("Open", LocationEditorHelper.locationFolder, "json");
 
             if (LocationEditorHelper.LoadInterior(path, out levelData)) {
@@ -435,7 +412,6 @@ namespace DaggerfallWorkshop.Loc {
         }
 
         private void UpdateLevelData() {
-
             ArrayUtility.Clear(ref levelData.RmbSubRecord.Exterior.Block3dObjectRecords);
             ArrayUtility.Clear(ref levelData.RmbSubRecord.Interior.Block3dObjectRecords);
             ArrayUtility.Clear(ref levelData.RmbSubRecord.Exterior.BlockFlatObjectRecords);
@@ -446,14 +422,14 @@ namespace DaggerfallWorkshop.Loc {
             ArrayUtility.Clear(ref levelData.RmbSubRecord.Interior.BlockDoorRecords);
 
             Vector3 modelPosition;
-            LevelEditorObject data;
+            LocationEditorObject data;
 
             foreach (Transform child in parent.GetComponentInChildren<Transform>()) {
 
-                if (child.GetComponent<LevelEditorObject>() == null)
+                if (child.GetComponent<LocationEditorObject>() == null)
                     return;
 
-                data = child.GetComponent<LevelEditorObject>();
+                data = child.GetComponent<LocationEditorObject>();
 
                 //3D models
                 if (data.type == 0) {
@@ -492,7 +468,6 @@ namespace DaggerfallWorkshop.Loc {
                 }
 
                 else if (data.type == 1) {
-
                     DaggerfallConnect.DFBlock.RmbBlockFlatObjectRecord record = new DaggerfallConnect.DFBlock.RmbBlockFlatObjectRecord();
                     record.TextureArchive = int.Parse(data.id.Split('.')[0]);
                     record.TextureRecord = int.Parse(data.id.Split('.')[1]);
@@ -511,7 +486,6 @@ namespace DaggerfallWorkshop.Loc {
                 }
 
                 else if (data.type == 2) {
-
                     DaggerfallConnect.DFBlock.RmbBlockPeopleRecord record = new DaggerfallConnect.DFBlock.RmbBlockPeopleRecord();
                     record.TextureArchive = int.Parse(data.id.Split('.')[0]);
                     record.TextureRecord = int.Parse(data.id.Split('.')[1]);
@@ -530,7 +504,6 @@ namespace DaggerfallWorkshop.Loc {
                 }
 
                 else if (data.type == 3) {
-
                     DaggerfallConnect.DFBlock.RmbBlockDoorRecord record = new DaggerfallConnect.DFBlock.RmbBlockDoorRecord();
                     record.OpenRotation = data.openRotation;
                     modelPosition = child.transform.localPosition / MeshReader.GlobalScale;
