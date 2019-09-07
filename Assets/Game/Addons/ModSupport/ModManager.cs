@@ -388,8 +388,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool TryGetAsset<T>(string name, bool clone, out T asset) where T : UnityEngine.Object
         {
             var query = from mod in EnumerateModsReverse()
-                        where mod.AssetBundle != null
-                        where mod.AssetBundle.Contains(name)
+#if UNITY_EDITOR
+                        where (mod.AssetBundle != null && mod.AssetBundle.Contains(name)) || (mod.IsVirtual && mod.HasAsset(name))
+#else
+                        where mod.AssetBundle != null && mod.AssetBundle.Contains(name)
+#endif
                         select mod.GetAsset<T>(name, clone);
 
             return (asset = query.FirstOrDefault()) != null;
@@ -410,8 +413,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool TryGetAsset<T>(string[] names, bool clone, out T asset) where T : UnityEngine.Object
         {
             var query = from mod in EnumerateModsReverse()
+#if UNITY_EDITOR
+                        where mod.AssetBundle != null || mod.IsVirtual
+                        from name in names where mod.IsVirtual ? mod.HasAsset(name) : mod.AssetBundle.Contains(name)
+#else
                         where mod.AssetBundle != null
                         from name in names where mod.AssetBundle.Contains(name)
+#endif
                         select mod.GetAsset<T>(name, clone);
 
             return (asset = query.FirstOrDefault()) != null;
