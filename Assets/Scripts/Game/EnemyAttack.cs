@@ -25,6 +25,8 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(EnemySenses))]
     public class EnemyAttack : MonoBehaviour
     {
+        public const float minRangedDistance = 240 * MeshReader.GlobalScale; // 6m
+        public const float maxRangedDistance = 2048 * MeshReader.GlobalScale; // 51.2m
         public float MeleeDistance = 2.25f;                // Maximum distance for melee attack
         public float ClassicMeleeDistanceVsAI = 1.5f;      // Maximum distance for melee attack vs other AI in classic AI mode
         public float MeleeTimer = 0;                       // Must be 0 for a melee attack or touch spell to be done
