@@ -433,7 +433,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 MorphSelf();
 
             // Heal player back to full
-            GameManager.Instance.PlayerEntity.SetMaxHealthLimiter(0);
             GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.RawMaxHealth;
 
             // End effect and cleanup
