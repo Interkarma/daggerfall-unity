@@ -164,8 +164,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     forSale.Add(building);
                 }
-                else if (building.BuildingType > DFLocation.BuildingTypes.House1 &&
-                         building.BuildingType < DFLocation.BuildingTypes.House4 &&
+                else if (building.BuildingType >= DFLocation.BuildingTypes.House1 &&
+                         building.BuildingType <= DFLocation.BuildingTypes.House4 &&
                          !GameManager.Instance.PlayerActivate.IsActiveQuestBuilding(building, true))
                 {
                     candidates.Add(building);
