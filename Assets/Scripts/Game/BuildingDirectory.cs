@@ -9,8 +9,6 @@
 // Notes:
 //
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect;
@@ -157,11 +155,31 @@ namespace DaggerfallWorkshop.Game
 
         public List<BuildingSummary> GetHousesForSale()
         {
-            // TODO: add other random houses.
+            int maxForSale = Mathf.Min(buildingDict.Count / 10, 20);
             List<BuildingSummary> forSale = new List<BuildingSummary>();
+            List<BuildingSummary> candidates = new List<BuildingSummary>();
             foreach (BuildingSummary building in buildingDict.Values)
+            {
                 if (building.BuildingType == DFLocation.BuildingTypes.HouseForSale)
+                {
                     forSale.Add(building);
+                }
+                else if (building.BuildingType > DFLocation.BuildingTypes.House1 &&
+                         building.BuildingType < DFLocation.BuildingTypes.House4 &&
+                         !GameManager.Instance.PlayerActivate.IsActiveQuestBuilding(building, true))
+                {
+                    candidates.Add(building);
+                }
+            }
+
+            // Add other random houses.
+            Random.InitState(buildingDict.GetHashCode() + DaggerfallUnity.Instance.WorldTime.Now.Month);
+            for (int c = (maxForSale - forSale.Count); c > 0 && candidates.Count > 0; c--)
+            {
+                int idx = Random.Range(0, candidates.Count);
+                forSale.Add(candidates[idx]);
+                candidates.RemoveAt(idx);
+            }
             return forSale;
         }
 
