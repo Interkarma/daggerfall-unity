@@ -462,7 +462,7 @@ namespace DaggerfallWorkshop
         }
 
         // Drops nature flats based on random chance scaled by simple rules
-        public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale)
+        public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int tDist)
         {
             const float maxSteepness = 50f;         // 50
             const float baseChanceOnDirt = 0.2f;        // 0.2
@@ -576,7 +576,7 @@ namespace DaggerfallWorkshop
 
                     // Add to batch
                     int record = UnityEngine.Random.Range(1, 32);
-                    if (!MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                    if (tDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
                         dfBillboardBatch.AddItem(record, pos);
                 }
             }

@@ -10,7 +10,7 @@
 //
 
 #define SHOW_LAYOUT_TIMES
-//#define SHOW_LAYOUT_TIMES_NATURE
+#define SHOW_LAYOUT_TIMES_NATURE
 
 using UnityEngine;
 using System;
@@ -839,6 +839,7 @@ namespace DaggerfallWorkshop
             {
                 // Terrain exists, check if active
                 int index = terrainIndexDict[key];
+                terrainArray[index].updateNature = true;
                 if (terrainArray[index].active)
                 {
                     // Terrain already active in scene, nothing to do
@@ -1223,10 +1224,16 @@ namespace DaggerfallWorkshop
             DaggerfallBillboardBatch dfBillboardBatch = terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
             if (dfTerrain && dfBillboardBatch)
             {
+                // Calculate the terrain distance from player
+                DFPosition curMapPixel = LocalPlayerGPS.CurrentMapPixel;
+                int dx = Mathf.Abs(dfTerrain.MapPixelX - curMapPixel.X);
+                int dy = Mathf.Abs(dfTerrain.MapPixelY - curMapPixel.Y);
+                int tDist = Mathf.Max(dx, dy);
+
                 // Get current climate and nature archive
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
-                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
+                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale, tDist);
             }
 
             // Only set active again once complete
