@@ -73,6 +73,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Teleport = 20,
         }
 
+        public Dictionary<MessageBoxButtons, KeyCode> Shortcut = new Dictionary<MessageBoxButtons, KeyCode>()
+        {
+            { MessageBoxButtons.Accept, KeyCode.A },
+            { MessageBoxButtons.Reject, KeyCode.R },
+            { MessageBoxButtons.Cancel, KeyCode.C },
+            { MessageBoxButtons.Yes, KeyCode.Y },
+            { MessageBoxButtons.No, KeyCode.N },
+            { MessageBoxButtons.OK, KeyCode.O }, // Probably the default button too
+            { MessageBoxButtons.Male, KeyCode.M },
+            { MessageBoxButtons.Female, KeyCode.F },
+            { MessageBoxButtons.Add, KeyCode.A },
+            { MessageBoxButtons.Delete, KeyCode.D },
+            { MessageBoxButtons.Edit, KeyCode.E },
+            { MessageBoxButtons.Copy, KeyCode.C },
+            { MessageBoxButtons.Guilty, KeyCode.G },
+            { MessageBoxButtons.NotGuilty, KeyCode.N },
+            { MessageBoxButtons.Debate, KeyCode.D },
+            { MessageBoxButtons.Lie, KeyCode.L },
+            { MessageBoxButtons.Anchor, KeyCode.A },
+            { MessageBoxButtons.Teleport, KeyCode.T }
+        };
+
         public enum CommonMessageBoxButtons
         {
             Nothing,
@@ -240,7 +262,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (nextMessageBox == null)
                         return;
                 }
-
                 // if there is a nested next message box show it
                 if (this.nextMessageBox != null)
                 {
@@ -248,7 +269,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else // or close window if there is no next message box to show
                 {
-                    CloseWindow();                    
+                    CloseWindow();
+                }
+            }
+            else
+            {
+                foreach (Button button in buttons)
+                {
+                    if (button.KeyCode != null && Input.GetKeyUp((KeyCode)button.KeyCode))
+                    {
+                        button.TriggerMouseClick();
+
+                        // if there is a nested next message box show it
+                        if (nextMessageBox != null)
+                            nextMessageBox.Show();
+
+                        break;
+                    }
                 }
             }
         }
@@ -274,6 +311,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Tag = messageBoxButton;
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
+            if (Shortcut.ContainsKey(messageBoxButton))
+                button.KeyCode = Shortcut[messageBoxButton];
             buttons.Add(button);
 
             // Once a button has been added the owner is expecting some kind of input from player
