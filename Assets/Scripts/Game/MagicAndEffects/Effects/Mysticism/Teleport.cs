@@ -114,6 +114,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Prompt for outcome
             DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMessageBox.CommonMessageBoxButtons.AnchorTeleport, teleportOrSetAnchor, DaggerfallUI.Instance.UserInterfaceManager.TopWindow);
+            // QoL, does not match classic. No magicka refund, though
+            mb.AllowCancel = true;
             mb.OnButtonClick += EffectActionPrompt_OnButtonClick;
             mb.Show();
         }
