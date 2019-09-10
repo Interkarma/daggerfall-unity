@@ -9,14 +9,13 @@
 // Notes:
 //
 
-using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -44,6 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float presentationTime = 0;
 
         KeyCode extraProceedBinding = KeyCode.None;
+
+        const string textDatabase = "DialogShortcuts";
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -73,27 +74,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Teleport = 20,
         }
 
-        public Dictionary<MessageBoxButtons, KeyCode> Shortcut = new Dictionary<MessageBoxButtons, KeyCode>()
+        private static T ParseEnum<T>(string value)
         {
-            { MessageBoxButtons.Accept, KeyCode.A },
-            { MessageBoxButtons.Reject, KeyCode.R },
-            { MessageBoxButtons.Cancel, KeyCode.C },
-            { MessageBoxButtons.Yes, KeyCode.Y },
-            { MessageBoxButtons.No, KeyCode.N },
-            { MessageBoxButtons.OK, KeyCode.O }, // Probably the default button too
-            { MessageBoxButtons.Male, KeyCode.M },
-            { MessageBoxButtons.Female, KeyCode.F },
-            { MessageBoxButtons.Add, KeyCode.A },
-            { MessageBoxButtons.Delete, KeyCode.D },
-            { MessageBoxButtons.Edit, KeyCode.E },
-            { MessageBoxButtons.Copy, KeyCode.C },
-            { MessageBoxButtons.Guilty, KeyCode.G },
-            { MessageBoxButtons.NotGuilty, KeyCode.N },
-            { MessageBoxButtons.Debate, KeyCode.D },
-            { MessageBoxButtons.Lie, KeyCode.L },
-            { MessageBoxButtons.Anchor, KeyCode.A },
-            { MessageBoxButtons.Teleport, KeyCode.T }
-        };
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
+
+        public static Dictionary<MessageBoxButtons, KeyCode> shortcut = null;
 
         public enum CommonMessageBoxButtons
         {
@@ -134,6 +120,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public Panel ImagePanel
         {
             get { return imagePanel; }
+        }
+
+        public Dictionary<MessageBoxButtons, KeyCode> Shortcut
+        {
+            get
+            {
+                if (shortcut == null)
+                {
+                    shortcut = new Dictionary<MessageBoxButtons, KeyCode>();
+                    foreach (MessageBoxButtons button in Enum.GetValues(typeof(MessageBoxButtons)))
+                    {
+                        string buttonName = Enum.GetName(typeof(MessageBoxButtons), button);
+                        if (TextManager.Instance.HasText(textDatabase, buttonName))
+                            shortcut[button] = ParseEnum<KeyCode>(TextManager.Instance.GetText(textDatabase, buttonName));
+                    }
+                }
+                return shortcut;
+            }
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false, int posY = -1)

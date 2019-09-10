@@ -1,0 +1,23 @@
+- Text database for dialog box keyboard shortcuts
+
+schema: *key,text
+
+Accept,         A
+Reject,         R
+Cancel,         C
+Yes,            Y
+No,             N
+- Will most likely be the default button too
+OK,             O
+Male,           M
+Female,         F
+Add,            A
+Delete,         D
+Edit,           E
+Copy,           C
+Guilty,         G
+NotGuilty,      N
+Debate,         D
+Lie,            L
+Anchor,         A
+Teleport,       T
