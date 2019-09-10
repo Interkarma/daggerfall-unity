@@ -106,6 +106,7 @@ namespace DaggerfallWorkshop
 
         DaggerfallLocation currentPlayerLocationObject;
         int playerTilemapIndex = -1;
+        DFPosition prevMapPixel;
 
         private int? travelStartX = null;
         private int? travelStartZ = null;
@@ -248,6 +249,7 @@ namespace DaggerfallWorkshop
                 init)
             {
                 Debug.Log(string.Format("Entering new map pixel X={0}, Y={1}", curMapPixel.X, curMapPixel.Y));
+                prevMapPixel = new DFPosition(MapPixelX, MapPixelY);
                 MapPixelX = curMapPixel.X;
                 MapPixelY = curMapPixel.Y;
                 UpdateWorld();
@@ -839,11 +841,9 @@ namespace DaggerfallWorkshop
             {
                 // Terrain exists, check if active
                 int index = terrainIndexDict[key];
-                terrainArray[index].updateNature = true;
                 if (terrainArray[index].active)
                 {
                     // Terrain already active in scene, nothing to do
-                    return;
                 }
                 else
                 {
@@ -851,6 +851,14 @@ namespace DaggerfallWorkshop
                     terrainArray[index].active = true;
                     terrainArray[index].terrainObject.SetActive(true);
                     terrainArray[index].billboardBatchObject.SetActive(true);
+                }
+                // If any nature model replacements are used then do extra nature updates for any terrains moving into or out of distance 1 or less.
+                if (TerrainHelper.NatureMeshUsed)
+                {
+                    int prevDist = GetTerrainDist(prevMapPixel, terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
+                    int currDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
+                    if ((prevDist == 1 && currDist > 1) || (currDist == 1 && prevDist > 1))
+                        terrainArray[index].updateNature = true;
                 }
                 return;
             }
@@ -1224,15 +1232,10 @@ namespace DaggerfallWorkshop
             DaggerfallBillboardBatch dfBillboardBatch = terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
             if (dfTerrain && dfBillboardBatch)
             {
-                // Calculate the terrain distance from player
-                DFPosition curMapPixel = LocalPlayerGPS.CurrentMapPixel;
-                int dx = Mathf.Abs(dfTerrain.MapPixelX - curMapPixel.X);
-                int dy = Mathf.Abs(dfTerrain.MapPixelY - curMapPixel.Y);
-                int tDist = Mathf.Max(dx, dy);
-
-                // Get current climate and nature archive
+                // Get current climate and nature archive and terrain distance
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
+                int tDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, dfTerrain.MapPixelX, dfTerrain.MapPixelY);
                 TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale, tDist);
             }
 
@@ -1259,6 +1262,15 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Player Utility Methods
+
+        // Calculate the distance of terrain from given map position
+        private int GetTerrainDist(DFPosition mapPosition, int terrainMapPixelX, int terrainMapPixelY)
+        {
+            DFPosition curMapPixel = LocalPlayerGPS.CurrentMapPixel;
+            int dx = Mathf.Abs(terrainMapPixelX - mapPosition.X);
+            int dy = Mathf.Abs(terrainMapPixelY - mapPosition.Y);
+            return Mathf.Max(dx, dy);
+        }
 
         private DaggerfallTerrain GetPlayerTerrain()
         {

@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop
         public const float maxTerrainScale = 10.0f;
         public const float defaultTerrainScale = 1.5f;
 
+        public static bool NatureMeshUsed { get; private set; }
+
         /// <summary>
         /// Gets the Terrain name for a given map pixel
         /// </summary>
@@ -543,17 +545,17 @@ namespace DaggerfallWorkshop
                     int tile = dfTerrain.MapData.tilemapSamples[x, y] & 0x3F;
                     if (tile == 1)
                     {   // Dirt
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt)
+                        if (Random.Range(0f, 1f) > chanceOnDirt)
                             continue;
                     }
                     else if (tile == 2)
                     {   // Grass
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnGrass)
+                        if (Random.Range(0f, 1f) > chanceOnGrass)
                             continue;
                     }
                     else if (tile == 3)
                     {   // Stone
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnStone)
+                        if (Random.Range(0f, 1f) > chanceOnStone)
                             continue;
                     }
                     else
@@ -574,10 +576,12 @@ namespace DaggerfallWorkshop
                     float height2 = terrain.SampleHeight(pos + terrain.transform.position);
                     pos.y = height2;
 
-                    // Add to batch
-                    int record = UnityEngine.Random.Range(1, 32);
+                    // Add to batch unless a mesh replacement is found
+                    int record = Random.Range(1, 32);
                     if (tDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
                         dfBillboardBatch.AddItem(record, pos);
+                    else if (!NatureMeshUsed)
+                        NatureMeshUsed = true;  // Signal that nature mesh has been used to initiate extra terrain updates
                 }
             }
 
