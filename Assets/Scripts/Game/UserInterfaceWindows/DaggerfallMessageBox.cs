@@ -307,19 +307,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     CloseWindow();
                 }
             }
-            else
+            else if (buttonPanel.KeyboardActivation())
             {
-                foreach (Button button in buttons)
-                {
-                    if (button.KeyboardActivation())
-                    {
-                        // if there is a nested next message box show it
-                        if (nextMessageBox != null)
-                            nextMessageBox.Show();
-
-                        break;
-                    }
-                }
+                // if there is a nested next message box show it
+                if (nextMessageBox != null)
+                    nextMessageBox.Show();
             }
         }
 
