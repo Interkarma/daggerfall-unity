@@ -93,6 +93,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RestLoiter,
             RestStop,
 
+            // Transport menu
+            TransportFoot,
+            TransportHorse,
+            TransportCart,
+            TransportShip,
+            TransportExit,
+
             // TravelMap
             TravelMapFind,
             TravelMapList,

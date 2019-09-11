@@ -95,32 +95,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Foot button
             footButton = DaggerfallUI.AddButton(footButtonRect, mainPanel);
             footButton.OnMouseClick += FootButton_OnMouseClick;
+            footButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TransportFoot];
 
             // Horse button
             horseButton = DaggerfallUI.AddButton(horseButtonRect, mainPanel);
             if (hasHorse) {
                 horseButton.OnMouseClick += HorseButton_OnMouseClick;
-            } else {
+                horseButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TransportHorse];
+            }
+            else {
                 horseButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, horseDisabledRect, disabledTextureSize);
             }
             // Cart button
             cartButton = DaggerfallUI.AddButton(cartButtonRect, mainPanel);
             if (hasCart) {
                 cartButton.OnMouseClick += CartButton_OnMouseClick;
-            } else {
+                cartButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TransportCart];
+            }
+            else {
                 cartButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, cartDisabledRect, disabledTextureSize);
             }
             // Ship button
             shipButton = DaggerfallUI.AddButton(shipButtonRect, mainPanel);
             if (hasShip) {
                 shipButton.OnMouseClick += ShipButton_OnMouseClick;
-            } else {
+                shipButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TransportShip];
+            }
+            else {
                 shipButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, shipDisabledRect, disabledTextureSize);
             }
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TransportExit];
 
             NativePanel.Components.Add(mainPanel);
 
@@ -139,6 +147,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
+
+            mainPanel.KeyboardActivation();
         }
 
         #endregion

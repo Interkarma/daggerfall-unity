@@ -42,6 +42,13 @@ RestUntilHealed,    U
 RestLoiter,         L
 RestStop,           S
 
+- Transport menu
+TransportFoot,      F
+TransportHorse,     H
+TransportCart,      C
+TransportShip,      S
+TransportExit,      E
+
 - Travel map
 TravelMapFind,      F
 TravelMapList,      L
