@@ -128,13 +128,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Create buttons
             whileButton = DaggerfallUI.AddButton(whileButtonRect, mainPanel);
             whileButton.OnMouseClick += WhileButton_OnMouseClick;
-            whileButton.KeyCode = DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestForAWhile];
+            whileButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.RestForAWhile];
             healedButton = DaggerfallUI.AddButton(healedButtonRect, mainPanel);
             healedButton.OnMouseClick += HealedButton_OnMouseClick;
-            healedButton.KeyCode = DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestUntilHealed];
+            healedButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.RestUntilHealed];
             loiterButton = DaggerfallUI.AddButton(loiterButtonRect, mainPanel);
             loiterButton.OnMouseClick += LoiterButton_OnMouseClick;
-            loiterButton.KeyCode = DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestLoiter];
+            loiterButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.RestLoiter];
 
             // Setup counter panel
             counterPanel.Position = new Vector2(counterPanelRect.x, counterPanelRect.y);
@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Stop button
             stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
             stopButton.OnMouseClick += StopButton_OnMouseClick;
-            stopButton.KeyCode = DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestStop];
+            stopButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.RestStop];
 
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);

@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return imagePanel; }
         }
 
-        public static Dictionary<MessageBoxButtons, KeyCode> Shortcut
+        public static Dictionary<MessageBoxButtons, KeyCode> ShortcutKey
         {
             get
             {
@@ -338,8 +338,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
             KeyCode buttonShortcut;
-            if (Shortcut.TryGetValue(messageBoxButton, out buttonShortcut))
-                button.KeyCode = buttonShortcut;
+            if (ShortcutKey.TryGetValue(messageBoxButton, out buttonShortcut))
+                button.ShortcutKey = buttonShortcut;
             buttons.Add(button);
 
             // Once a button has been added the owner is expecting some kind of input from player

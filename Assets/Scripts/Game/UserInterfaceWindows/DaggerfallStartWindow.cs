@@ -51,11 +51,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Cursor.visible = true;
 
             // Shortcuts for options
-            if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.MainMenuLoad]))
+            if (Input.GetKeyDown(DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.MainMenuLoad]))
                 LoadGame();
-            else if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.MainMenuStart]))
+            else if (Input.GetKeyDown(DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.MainMenuStart]))
                 StartNewGame();
-            else if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.MainMenuExit]))
+            else if (Input.GetKeyDown(DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.MainMenuExit]))
                 ExitGame();
         }
 

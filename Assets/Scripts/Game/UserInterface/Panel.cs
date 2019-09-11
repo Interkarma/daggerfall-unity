@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (component.Enabled && component is Button)
                 {
                     Button buttonComponent = (Button)component;
-                    if (buttonComponent.KeyCode != KeyCode.None && Input.GetKeyDown(buttonComponent.KeyCode))
+                    if (buttonComponent.ShortcutKey != KeyCode.None && Input.GetKeyDown(buttonComponent.ShortcutKey))
                     {
                         buttonComponent.TriggerMouseClick();
                         return true;

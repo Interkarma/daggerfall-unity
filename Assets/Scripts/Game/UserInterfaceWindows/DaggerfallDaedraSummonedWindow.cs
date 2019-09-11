@@ -108,12 +108,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (lastChunk && !answerGiven)
             {
-                if (Input.GetKey(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.Yes]))
+                if (Input.GetKey(DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.Yes]))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.AcceptQuest);
                     QuestMachine.Instance.InstantiateQuest(daedraQuest);
                 }
-                else if (Input.GetKey(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.No]))
+                else if (Input.GetKey(DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.No]))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.RefuseQuest);
                     GameObjectHelper.CreateFoeSpawner(true, DaggerfallQuestPopupWindow.daedricFoes[UnityEngine.Random.Range(0, 5)], UnityEngine.Random.Range(3, 6), 8, 64);
