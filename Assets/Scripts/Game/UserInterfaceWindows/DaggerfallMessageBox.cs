@@ -295,10 +295,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 foreach (Button button in buttons)
                 {
-                    if (button.KeyCode != KeyCode.None && Input.GetKeyDown(button.KeyCode))
+                    if (button.CheckKeyboardActivation())
                     {
-                        button.TriggerMouseClick();
-
                         // if there is a nested next message box show it
                         if (nextMessageBox != null)
                             nextMessageBox.Show();

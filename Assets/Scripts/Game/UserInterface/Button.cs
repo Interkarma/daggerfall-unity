@@ -80,6 +80,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.Draw();
         }
 
+        public bool CheckKeyboardActivation()
+        {
+            bool isActivated = keyCode != KeyCode.None && Input.GetKeyDown(keyCode);
+            if (isActivated)
+                TriggerMouseClick();
+            return isActivated;
+        }
+
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             if (clickSound != null)
