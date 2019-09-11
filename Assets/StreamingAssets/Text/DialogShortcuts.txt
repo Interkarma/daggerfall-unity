@@ -2,22 +2,31 @@
 
 schema: *key,text
 
-Accept,         A
-Reject,         R
-Cancel,         C
-Yes,            Y
-No,             N
+Accept,             A
+Reject,             R
+Cancel,             C
+Yes,                Y
+No,                 N
 - Will most likely be the default button too
-OK,             O
-Male,           M
-Female,         F
-Add,            A
-Delete,         D
-Edit,           E
-Copy,           C
-Guilty,         G
-NotGuilty,      N
-Debate,         D
-Lie,            L
-Anchor,         A
-Teleport,       T
+OK,                 O
+Male,               M
+Female,             F
+Add,                A
+Delete,             D
+Edit,               E
+Copy,               C
+Guilty,             G
+NotGuilty,          N
+Debate,             D
+Lie,                L
+Anchor,             A
+Teleport,           T
+
+- Main menu
+MainMenuLoad,       L
+MainMenuStart,      S
+MainMenuExit,       E
+
+- Travel map
+TravelMapFind,      F
+TravelMapList,      L

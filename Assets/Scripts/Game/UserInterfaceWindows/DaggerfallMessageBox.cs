@@ -72,6 +72,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Lie = 18,
             Anchor = 19,
             Teleport = 20,
+
+            // Main menu
+            MainMenuLoad,
+            MainMenuStart,
+            MainMenuExit,
+
+            // TravelMap
+            TravelMapFind,
+            TravelMapList,
         }
 
         private static T ParseEnum<T>(string value)
@@ -122,7 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return imagePanel; }
         }
 
-        public Dictionary<MessageBoxButtons, KeyCode> Shortcut
+        public static Dictionary<MessageBoxButtons, KeyCode> Shortcut
         {
             get
             {
