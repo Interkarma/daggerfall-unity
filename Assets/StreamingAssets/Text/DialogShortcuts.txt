@@ -27,6 +27,12 @@ MainMenuLoad,       L
 MainMenuStart,      S
 MainMenuExit,       E
 
+- Rest
+RestForAWhile,      F
+RestUntilHealed,    U
+RestLoiter,         L
+RestStop,           S
+
 - Travel map
 TravelMapFind,      F
 TravelMapList,      L

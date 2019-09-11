@@ -78,6 +78,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             MainMenuStart,
             MainMenuExit,
 
+            // Rest menu
+            RestForAWhile,
+            RestUntilHealed,
+            RestLoiter,
+            RestStop,
+
             // TravelMap
             TravelMapFind,
             TravelMapList,

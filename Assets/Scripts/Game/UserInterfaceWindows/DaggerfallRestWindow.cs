@@ -177,7 +177,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RaiseOnSleepTickEvent();
 
             ShowStatus();
-            if (currentRestMode != RestModes.Selection)
+            if (currentRestMode == RestModes.Selection)
+            {
+                if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestForAWhile]))
+                    whileButton.TriggerMouseClick();
+                else if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestUntilHealed]))
+                    healedButton.TriggerMouseClick();
+                else if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestLoiter]))
+                    loiterButton.TriggerMouseClick();
+            }
+            else
             {
                 if ((currentRestMode == RestModes.FullRest) && IsPlayerFullyHealed())
                     EndRest();
@@ -185,6 +194,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     EndRest();
                 else if (TickRest())
                     EndRest();
+                else if (Input.GetKeyDown(DaggerfallMessageBox.Shortcut[DaggerfallMessageBox.MessageBoxButtons.RestStop]))
+                    stopButton.TriggerMouseClick();
             }
         }
 
