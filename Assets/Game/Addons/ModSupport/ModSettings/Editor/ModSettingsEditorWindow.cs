@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             minSize = new Vector2(1000, 500);
 
             saveOnExit = EditorPrefs.GetBool(Prefs.SaveOnExit, true);
-            rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
+            rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Mods");
             targetPath = EditorPrefs.GetString(Prefs.CurrentTarget, rootPath);
             textPath = Path.Combine(Path.Combine(Application.dataPath, "StreamingAssets"), "Text");
 
