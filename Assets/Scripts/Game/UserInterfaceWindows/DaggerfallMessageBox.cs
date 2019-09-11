@@ -280,7 +280,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 foreach (Button button in buttons)
                 {
-                    if (button.KeyCode != null && Input.GetKeyUp((KeyCode)button.KeyCode))
+                    if (button.KeyCode != KeyCode.None && Input.GetKeyDown(button.KeyCode))
                     {
                         button.TriggerMouseClick();
 

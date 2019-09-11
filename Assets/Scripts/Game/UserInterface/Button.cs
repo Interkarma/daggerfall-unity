@@ -27,11 +27,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         TextLabel label = new TextLabel();
         AudioClip clickSound;
+        KeyCode keyCode = KeyCode.None;
 
         public string ClickMessage { get; set; }
         public string DoubleClickMessage { get; set; }
         public bool DefaultButton { get; set; }
-        public KeyCode? KeyCode { get; set; }
 
         public TextLabel Label
         {
@@ -42,6 +42,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return clickSound; }
             set { clickSound = value; }
+        }
+
+        public KeyCode KeyCode
+        {
+            get { return keyCode; }
+            set { keyCode = value; }
         }
 
         public Button()
