@@ -78,6 +78,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             MainMenuStart,
             MainMenuExit,
 
+            // Options menu
+            OptionsExit,
+            OptionsContinue,
+            OptionsSave,
+            OptionsLoad,
+            OptionsControls,
+            OptionsFullScreen,
+            OptionsHeadBobbing,
+
             // Rest menu
             RestForAWhile,
             RestUntilHealed,
@@ -295,7 +304,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 foreach (Button button in buttons)
                 {
-                    if (button.CheckKeyboardActivation())
+                    if (button.KeyboardActivation())
                     {
                         // if there is a nested next message box show it
                         if (nextMessageBox != null)

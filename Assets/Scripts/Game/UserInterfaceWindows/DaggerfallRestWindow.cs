@@ -183,9 +183,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowStatus();
             if (currentRestMode == RestModes.Selection)
             {
-                whileButton.CheckKeyboardActivation();
-                healedButton.CheckKeyboardActivation();
-                loiterButton.CheckKeyboardActivation();
+                mainPanel.KeyboardActivation();
             }
             else
             {
@@ -196,7 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (TickRest())
                     EndRest();
                 else 
-                    stopButton.CheckKeyboardActivation();
+                    counterPanel.KeyboardActivation();
             }
         }
 

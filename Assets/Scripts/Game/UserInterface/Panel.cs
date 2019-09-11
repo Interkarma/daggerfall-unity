@@ -210,6 +210,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public bool KeyboardActivation()
+        {
+            foreach (BaseScreenComponent component in components)
+            {
+                if (component.Enabled && component is Button)
+                {
+                    Button buttonComponent = (Button)component;
+                    if (buttonComponent.KeyCode != KeyCode.None && Input.GetKeyDown(buttonComponent.KeyCode))
+                    {
+                        buttonComponent.TriggerMouseClick();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         #region Private Methods
 
         /// <summary>

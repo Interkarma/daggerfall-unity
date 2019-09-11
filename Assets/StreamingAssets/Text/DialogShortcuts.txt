@@ -27,7 +27,16 @@ MainMenuLoad,       L
 MainMenuStart,      S
 MainMenuExit,       E
 
-- Rest
+- Options menu
+OptionsExit,        E
+OptionsContinue,    C
+OptionsSave,        S
+OptionsLoad,        L
+OptionsControls,    N
+OptionsFullScreen,  F
+OptionsHeadBobbing, H
+
+- Rest menu
 RestForAWhile,      F
 RestUntilHealed,    U
 RestLoiter,         L
