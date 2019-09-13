@@ -182,8 +182,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 hud.EscortingFaces.Draw();
                 hud.HUDVitals.Draw();
             }
-
-            optionsPanel.KeyboardActivation();
         }
 
         public override void OnPop()
