@@ -103,6 +103,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TravelMap
             TravelMapFind,
             TravelMapList,
+
+            // Inventory screen
+            InventoryWeapons,
+            InventoryMagic,
+            InventoryClothing,
+            InventoryIngredients,
+            InventoryWagon,
+            InventoryInfo,
+            InventoryEquip,
+            InventoryRemove,
+            InventoryUse,
+            InventoryGold,
+            InventoryExit,
         }
 
         private static T ParseEnum<T>(string value)

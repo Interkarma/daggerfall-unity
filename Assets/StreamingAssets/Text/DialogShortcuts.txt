@@ -2,53 +2,66 @@
 
 schema: *key,text
 
-Accept,             A
-Reject,             R
-Cancel,             C
-Yes,                Y
-No,                 N
+Accept,               A
+Reject,               R
+Cancel,               C
+Yes,                  Y
+No,                   N
 - Will most likely be the default button too
-OK,                 O
-Male,               M
-Female,             F
-Add,                A
-Delete,             D
-Edit,               E
-Copy,               C
-Guilty,             G
-NotGuilty,          N
-Debate,             D
-Lie,                L
-Anchor,             A
-Teleport,           T
+OK,                   O
+Male,                 M
+Female,               F
+Add,                  A
+Delete,               D
+Edit,                 E
+Copy,                 C
+Guilty,               G
+NotGuilty,            N
+Debate,               D
+Lie,                  L
+Anchor,               A
+Teleport,             T
 
 - Main menu
-MainMenuLoad,       L
-MainMenuStart,      S
-MainMenuExit,       E
+MainMenuLoad,         L
+MainMenuStart,        S
+MainMenuExit,         E
 
 - Options menu
-OptionsExit,        E
-OptionsContinue,    C
-OptionsSave,        S
-OptionsLoad,        L
-OptionsControls,    N
-OptionsFullScreen,  F
-OptionsHeadBobbing, H
+OptionsExit,          E
+OptionsContinue,      C
+OptionsSave,          S
+OptionsLoad,          L
+OptionsControls,      N
+OptionsFullScreen,    F
+OptionsHeadBobbing,   H
 
 - Rest menu
-RestForAWhile,      F
-RestUntilHealed,    U
-RestLoiter,         L
-RestStop,           S
+RestForAWhile,        F
+RestUntilHealed,      U
+RestLoiter,           L
+RestStop,             S
 
 - Transport menu
-TransportFoot,      F
-TransportHorse,     H
-TransportCart,      C
-TransportShip,      S
-TransportExit,      E
+TransportFoot,        F
+TransportHorse,       H
+TransportCart,        C
+TransportShip,        S
+TransportExit,        E
 
 - Travel map
-TravelMapFind,      F
-TravelMapList,      L
+TravelMapFind,        F
+TravelMapList,        L
+
+- Inventory screen
+InventoryWeapons,     F1
+InventoryMagic,       F2
+InventoryClothing,    F3
+InventoryIngredients, F4
+InventoryWagon,       W
+InventoryInfo,        I
+InventoryEquip,       E
+InventoryRemove,      R
+InventoryUse,         U
+InventoryGold,        G
+InventoryExit,        X
