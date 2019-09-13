@@ -44,8 +44,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         KeyCode extraProceedBinding = KeyCode.None;
 
-        const string textDatabase = "DialogShortcuts";
-
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
         /// </summary>
@@ -130,13 +128,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TradeExit,
         }
 
-        private static T ParseEnum<T>(string value)
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-
-        public static Dictionary<MessageBoxButtons, KeyCode> shortcut = null;
-
         public enum CommonMessageBoxButtons
         {
             Nothing,
@@ -176,24 +167,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public Panel ImagePanel
         {
             get { return imagePanel; }
-        }
-
-        public static Dictionary<MessageBoxButtons, KeyCode> ShortcutKey
-        {
-            get
-            {
-                if (shortcut == null)
-                {
-                    shortcut = new Dictionary<MessageBoxButtons, KeyCode>();
-                    foreach (MessageBoxButtons button in Enum.GetValues(typeof(MessageBoxButtons)))
-                    {
-                        string buttonName = Enum.GetName(typeof(MessageBoxButtons), button);
-                        if (TextManager.Instance.HasText(textDatabase, buttonName))
-                            shortcut[button] = ParseEnum<KeyCode>(TextManager.Instance.GetText(textDatabase, buttonName));
-                    }
-                }
-                return shortcut;
-            }
         }
 
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null, bool wrapText = false, int posY = -1)
@@ -362,7 +335,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
             KeyCode buttonShortcut;
-            if (ShortcutKey.TryGetValue(messageBoxButton, out buttonShortcut))
+            if (DaggerfallShortcut.Keys.TryGetValue(messageBoxButton, out buttonShortcut))
                 button.ShortcutKey = buttonShortcut;
             buttons.Add(button);
 

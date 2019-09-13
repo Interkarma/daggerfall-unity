@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            exitButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryExit];
+            exitButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryExit];
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -457,46 +457,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             weaponsAndArmorButton = DaggerfallUI.AddButton(weaponsAndArmorRect, NativePanel);
             weaponsAndArmorButton.OnMouseClick += WeaponsAndArmor_OnMouseClick;
-            weaponsAndArmorButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryWeapons];
+            weaponsAndArmorButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryWeapons];
 
             magicItemsButton = DaggerfallUI.AddButton(magicItemsRect, NativePanel);
             magicItemsButton.OnMouseClick += MagicItems_OnMouseClick;
-            magicItemsButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryMagic];
+            magicItemsButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryMagic];
 
             clothingAndMiscButton = DaggerfallUI.AddButton(clothingAndMiscRect, NativePanel);
             clothingAndMiscButton.OnMouseClick += ClothingAndMisc_OnMouseClick;
-            clothingAndMiscButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryClothing];
+            clothingAndMiscButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryClothing];
 
             ingredientsButton = DaggerfallUI.AddButton(ingredientsRect, NativePanel);
             ingredientsButton.OnMouseClick += Ingredients_OnMouseClick;
-            ingredientsButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryIngredients];
+            ingredientsButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryIngredients];
         }
 
         protected virtual void SetupActionButtons()
         {
             wagonButton = DaggerfallUI.AddButton(wagonButtonRect, NativePanel);
             wagonButton.OnMouseClick += WagonButton_OnMouseClick;
-            wagonButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryWagon];
+            wagonButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryWagon];
 
             infoButton = DaggerfallUI.AddButton(infoButtonRect, NativePanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
-            infoButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryInfo];
+            infoButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryInfo];
 
             equipButton = DaggerfallUI.AddButton(equipButtonRect, NativePanel);
             equipButton.OnMouseClick += EquipButton_OnMouseClick;
-            equipButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryEquip];
+            equipButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryEquip];
 
             removeButton = DaggerfallUI.AddButton(removeButtonRect, NativePanel);
             removeButton.OnMouseClick += RemoveButton_OnMouseClick;
-            removeButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryRemove];
+            removeButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryRemove];
 
             useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
             useButton.OnMouseClick += UseButton_OnMouseClick;
-            useButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryUse];
+            useButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryUse];
 
             goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
-            goldButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.InventoryGold];
+            goldButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.InventoryGold];
         }
 
         protected void SetupAccessoryElements()

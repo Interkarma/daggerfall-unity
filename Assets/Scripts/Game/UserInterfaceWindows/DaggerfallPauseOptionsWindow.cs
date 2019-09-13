@@ -76,24 +76,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit game
             Button exitButton = DaggerfallUI.AddButton(new Rect(101, 4, 45, 16), optionsPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            exitButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsExit];
+            exitButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsExit];
 
             // Continue
             Button continueButton = DaggerfallUI.AddButton(new Rect(76, 60, 70, 17), optionsPanel);
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
-            continueButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsContinue];
+            continueButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsContinue];
 
             // Save game
             Button saveButton = DaggerfallUI.AddButton(new Rect(4, 4, 45, 16), optionsPanel);
             //saveButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             saveButton.OnMouseClick += SaveButton_OnMouseClick;
-            saveButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsSave];
+            saveButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsSave];
 
             // Load game
             Button loadButton = DaggerfallUI.AddButton(new Rect(52, 4, 46, 16), optionsPanel);
             //loadButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             loadButton.OnMouseClick += LoadButton_OnMouseClick;
-            loadButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsLoad];
+            loadButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsLoad];
 
             // Sound Bar
             Button soundPanel = DaggerfallUI.AddButton(new Rect(6.15f, 23.20f, barMaxLength, 5.5f), optionsPanel);
@@ -116,12 +116,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Controls
             Button controlsButton = DaggerfallUI.AddButton(new Rect(5, 60, 70, 17), optionsPanel);
             controlsButton.OnMouseClick += ControlsButton_OnMouseClick;
-            controlsButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsControls];
+            controlsButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsControls];
 
             // Full screen
             Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
             fullScreenButton.OnMouseClick += FullScreenButton_OnMouseClick;
-            fullScreenButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsFullScreen];
+            fullScreenButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsFullScreen];
             fullScreenTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), fullScreenButton);
             fullScreenTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
             fullScreenTick.Enabled = DaggerfallUnity.Settings.LargeHUD;
@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Head bobbing
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
             headBobbingButton.OnMouseClick += HeadBobbingButton_OnMouseClick;
-            headBobbingButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.OptionsHeadBobbing];
+            headBobbingButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.OptionsHeadBobbing];
             headBobbingTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), headBobbingButton);
             headBobbingTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;
