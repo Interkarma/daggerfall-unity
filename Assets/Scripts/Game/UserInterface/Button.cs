@@ -80,7 +80,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.Draw();
         }
 
-        public bool KeyboardActivation()
+        new public bool KeyboardActivation()
         {
             bool isActivated = shortcutKey != KeyCode.None && Input.GetKeyDown(shortcutKey);
             if (isActivated)

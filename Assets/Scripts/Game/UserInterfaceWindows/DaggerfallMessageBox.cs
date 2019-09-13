@@ -116,6 +116,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             InventoryUse,
             InventoryGold,
             InventoryExit,
+
+            // Trade screen
+            TradeWagon,
+            TradeInfo,
+            TradeSelect,
+            TradeSteal,
+            TradeBuy,
+            TradeIdentify,
+            TradeRepair,
+            TradeSell,
+            TradeClear,
+            TradeExit,
         }
 
         private static T ParseEnum<T>(string value)

@@ -8,20 +8,20 @@
 //
 // Notes:
 //
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -225,6 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeExit];
 
             // Setup initial state
             SelectTabPage((windowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
@@ -279,24 +280,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 wagonButton = DaggerfallUI.AddButton(wagonButtonRect, actionButtonsPanel);
                 wagonButton.OnMouseClick += WagonButton_OnMouseClick;
+                wagonButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeWagon];
             }
 
             infoButton = DaggerfallUI.AddButton(infoButtonRect, actionButtonsPanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
+            infoButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeInfo];
 
             selectButton = DaggerfallUI.AddButton(selectButtonRect, actionButtonsPanel);
             selectButton.OnMouseClick += SelectButton_OnMouseClick;
+            selectButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeSelect];
 
             if (windowMode == WindowModes.Buy)
             {
                 stealButton = DaggerfallUI.AddButton(stealButtonRect, actionButtonsPanel);
                 stealButton.OnMouseClick += StealButton_OnMouseClick;
+                stealButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeSteal];
             }
             modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
             modeActionButton.OnMouseClick += ModeActionButton_OnMouseClick;
+            switch (windowMode)
+            {
+                case WindowModes.Buy:
+                    modeActionButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeBuy];
+                    break;
+                case WindowModes.Identify:
+                    modeActionButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeIdentify];
+                    break;
+                case WindowModes.Inventory:
+                    // Shouldn't happen
+                    break;
+                case WindowModes.Repair:
+                    modeActionButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeRepair];
+                    break;
+                case WindowModes.Sell:
+                case WindowModes.SellMagic:
+                    modeActionButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeSell];
+                    break;
+            }
 
             clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
             clearButton.OnMouseClick += ClearButton_OnMouseClick;
+            clearButton.ShortcutKey = DaggerfallMessageBox.ShortcutKey[DaggerfallMessageBox.MessageBoxButtons.TradeClear];
         }
 
         #endregion
@@ -315,6 +340,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUI.MessageBox(suppressInventoryMessage);
                 return;
             }
+
+            bool keyboardActivated = actionButtonsPanel.KeyboardActivation() || NativePanel.KeyboardActivation();
         }
 
         public override void OnPush()

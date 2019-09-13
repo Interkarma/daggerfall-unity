@@ -65,3 +65,15 @@ InventoryRemove,      R
 InventoryUse,         U
 InventoryGold,        G
 InventoryExit,        X
+
+- Trade screen - keep in sync with inventory?
+TradeWagon,           W
+TradeInfo,            I
+TradeSelect,          S
+TradeSteal,           T
+TradeBuy,             B
+TradeIdentify,        D
+TradeRepair,          R
+TradeSell,            L
+TradeClear,           C
+TradeExit,            X
