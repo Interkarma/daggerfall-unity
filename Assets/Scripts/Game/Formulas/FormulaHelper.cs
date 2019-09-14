@@ -6,6 +6,7 @@
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Hazelnut
 //                  ifkopifko
+//                  Numidium
 // 
 // Notes:
 //
@@ -640,9 +641,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 DaggerfallUnityItem item = null;
                 if (equippedItems.Length != 0)
                 {
-                    item = IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) ? equippedItems[(int)EquipSlots.Ring0] : equippedItems[(int)EquipSlots.Ring1];
-                    item = IsRingOfNamira(item) ? item : null;
-                    if (item != null)
+                    if (IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) || IsRingOfNamira(equippedItems[(int)EquipSlots.Ring1]))
                     {
                         IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
                         effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
