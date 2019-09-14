@@ -4,7 +4,6 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
-    // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
     class HotkeySequence
     {
         [Flags]
@@ -17,7 +16,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RightShift = 8,
             LeftAlt = 16,
             RightAlt = 32,
+            // Virtuals
+            Control = 64,
+            Shift = 128,
+            Alt = 256,
         };
+
+        public const KeyModifiers virtualKeys = KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt;
 
         public KeyCode keyCode;
         public KeyModifiers modifiers;
@@ -26,37 +31,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             this.keyCode = keyCode;
             this.modifiers = modifiers;
+            // Add inferred virtuals
+            if ((modifiers & (KeyModifiers.LeftControl | KeyModifiers.RightControl)) != 0)
+                this.modifiers |= KeyModifiers.Control;
+            if ((modifiers & (KeyModifiers.LeftShift | KeyModifiers.RightShift)) != 0)
+                this.modifiers |= KeyModifiers.Shift;
+            if ((modifiers & (KeyModifiers.LeftAlt | KeyModifiers.RightAlt)) != 0)
+                this.modifiers |= KeyModifiers.Alt;
         }
 
-        public static KeyModifiers getKeyModifiers(bool leftControl, bool rightControl, bool leftShift, bool rightShift, bool leftAlt, bool rightAlt)
+        public static KeyModifiers GetKeyModifiers(bool leftControl, bool rightControl, bool leftShift, bool rightShift, bool leftAlt, bool rightAlt)
         {
             KeyModifiers keyModifiers = KeyModifiers.None;
             if (leftControl)
-                keyModifiers = keyModifiers | KeyModifiers.LeftControl;
+                keyModifiers = keyModifiers | KeyModifiers.LeftControl | KeyModifiers.Control;
             if (rightControl)
-                keyModifiers = keyModifiers | KeyModifiers.RightControl;
+                keyModifiers = keyModifiers | KeyModifiers.RightControl | KeyModifiers.Control;
             if (leftShift)
-                keyModifiers = keyModifiers | KeyModifiers.LeftShift;
+                keyModifiers = keyModifiers | KeyModifiers.LeftShift | KeyModifiers.Shift;
             if (rightShift)
-                keyModifiers = keyModifiers | KeyModifiers.RightShift;
+                keyModifiers = keyModifiers | KeyModifiers.RightShift | KeyModifiers.Shift;
             if (leftAlt)
-                keyModifiers = keyModifiers | KeyModifiers.LeftAlt;
+                keyModifiers = keyModifiers | KeyModifiers.LeftAlt | KeyModifiers.Alt;
             if (rightAlt)
-                keyModifiers = keyModifiers | KeyModifiers.RightAlt;
+                keyModifiers = keyModifiers | KeyModifiers.RightAlt | KeyModifiers.Alt;
             return keyModifiers;
         }
 
-        public static bool checkSetModifiers(HotkeySequence.KeyModifiers pressedModifiers, HotkeySequence.KeyModifiers triggeringModifiers)
+        public static bool CheckSetModifiers(HotkeySequence.KeyModifiers pressedModifiers, HotkeySequence.KeyModifiers triggeringModifiers)
         {
-            if (triggeringModifiers == KeyModifiers.None)
-            {
-                if (pressedModifiers == KeyModifiers.None)
-                    return true;
-                else
-                    return false;
-            }
-
-            return ((pressedModifiers & triggeringModifiers) != 0); // if any of the modifiers in triggeringModifiers is pressed return true                
+            return ((pressedModifiers & triggeringModifiers) == triggeringModifiers) && // all of the modifiers in triggeringModifiers are pressed
+                ((pressedModifiers & (virtualKeys & ~triggeringModifiers)) == 0);       // only the virtual modifiers specified in triggeringModifiers are pressed
         }
     }
 }
