@@ -427,7 +427,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 // Must be rooted at Assets or a child directory
                 int dirStart = nameStart - relativeDirectory.Length;
-                if (dirStart > 0 && path[dirStart - 1] != '/')
+                if (dirStart < 0 || (dirStart > 0 && path[dirStart - 1] != '/'))
                     continue;
 
                 // Validate name
