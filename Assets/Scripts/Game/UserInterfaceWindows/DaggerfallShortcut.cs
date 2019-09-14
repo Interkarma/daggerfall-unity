@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -10,27 +9,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public enum Buttons
         {
-            Accept = 0,
-            Reject = 1,
-            Cancel = 2,
-            Yes = 3,
-            No = 4,
-            OK = 5,
-            Male = 6,
-            Female = 7,
-            Add = 8,
-            Delete = 9,
-            Edit = 10,
-            Counter = 11,
-            _12MON = 12,
-            _36MON = 13,
-            Copy = 14,
-            Guilty = 15,
-            NotGuilty = 16,
-            Debate = 17,
-            Lie = 18,
-            Anchor = 19,
-            Teleport = 20,
+            Accept,
+            Reject,
+            Cancel,
+            Yes,
+            No,
+            OK,
+            Male,
+            Female,
+            Add,
+            Delete,
+            Edit,
+            Copy,
+            Guilty,
+            NotGuilty,
+            Debate,
+            Lie,
+            Anchor,
+            Teleport,
 
             // Main menu
             MainMenuLoad,
@@ -87,9 +83,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TradeSell,
             TradeClear,
             TradeExit,
-
-            // Automap
-            AutomapSwitchAutomapGridMode,
         }
 
         public static Dictionary<Buttons, HotkeySequence> keys = null;
