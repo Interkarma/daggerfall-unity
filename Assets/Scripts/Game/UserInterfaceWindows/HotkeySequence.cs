@@ -4,7 +4,7 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
-    class HotkeySequence
+    public class HotkeySequence
     {
         [Flags]
         public enum KeyModifiers
@@ -24,8 +24,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const KeyModifiers virtualKeys = KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt;
 
-        public KeyCode keyCode;
-        public KeyModifiers modifiers;
+        private KeyCode keyCode;
+        private KeyModifiers modifiers;
+
+        public static HotkeySequence None = new HotkeySequence(KeyCode.None, KeyModifiers.None);
 
         public HotkeySequence(KeyCode keyCode, KeyModifiers modifiers)
         {
@@ -58,10 +60,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return keyModifiers;
         }
 
+        public static KeyModifiers GetKeyboardKeyModifiers()
+        {
+            return GetKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
+        }
+
         public static bool CheckSetModifiers(HotkeySequence.KeyModifiers pressedModifiers, HotkeySequence.KeyModifiers triggeringModifiers)
         {
             return ((pressedModifiers & triggeringModifiers) == triggeringModifiers) && // all of the modifiers in triggeringModifiers are pressed
                 ((pressedModifiers & (virtualKeys & ~triggeringModifiers)) == 0);       // only the virtual modifiers specified in triggeringModifiers are pressed
+        }
+
+        public bool IsDownWith(KeyModifiers pressedModifiers)
+        {
+            return Input.GetKeyDown(keyCode) && CheckSetModifiers(pressedModifiers, modifiers);
+        }
+
+        public bool IsPressedWith(KeyModifiers pressedModifiers)
+        {
+            return Input.GetKey(keyCode) && CheckSetModifiers(pressedModifiers, modifiers);
+        }
+
+        // Simple method variants if you don't mind building a temporary KeyModifiers
+        public bool IsDown()
+        {
+            return IsDownWith(GetKeyboardKeyModifiers());
+        }
+
+        public bool IsPressed()
+        {
+            return IsPressedWith(GetKeyboardKeyModifiers());
         }
     }
 }

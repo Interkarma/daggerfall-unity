@@ -147,7 +147,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
 
-            mainPanel.KeyboardActivation();
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            mainPanel.KeyboardActivation(keyModifiers);
         }
 
         #endregion

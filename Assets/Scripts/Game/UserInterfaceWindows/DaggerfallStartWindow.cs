@@ -50,12 +50,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
             Cursor.visible = true;
 
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             // Shortcuts for options
-            if (Input.GetKeyDown(DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.MainMenuLoad]))
+            if (DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.MainMenuLoad].IsDownWith(keyModifiers))
                 LoadGame();
-            else if (Input.GetKeyDown(DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.MainMenuStart]))
+            else if (DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.MainMenuStart].IsDownWith(keyModifiers))
                 StartNewGame();
-            else if (Input.GetKeyDown(DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.MainMenuExit]))
+            else if (DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.MainMenuExit].IsDownWith(keyModifiers))
                 ExitGame();
         }
 

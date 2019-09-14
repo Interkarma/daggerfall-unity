@@ -305,7 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     CloseWindow();
                 }
             }
-            else if (buttonPanel.KeyboardActivation())
+            else if (buttonPanel.KeyboardActivation(HotkeySequence.GetKeyboardKeyModifiers()))
             {
                 // if there is a nested next message box show it
                 if (nextMessageBox != null)
@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Tag = messageBoxButton;
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
-            KeyCode buttonShortcut;
+            HotkeySequence buttonShortcut;
             if (DaggerfallShortcut.Keys.TryGetValue(messageBoxButton, out buttonShortcut))
                 button.ShortcutKey = buttonShortcut;
             buttons.Add(button);

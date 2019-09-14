@@ -349,6 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Input handling
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             Vector2 currentMousePos = new Vector2((NativePanel.ScaledMousePosition.x), (NativePanel.ScaledMousePosition.y));
 
             if (currentMousePos != lastMousePos)
@@ -377,7 +378,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     zoomPosition = currentMousePos;
                     ZoomMapTextures();
                 }
-                if (Input.GetKeyDown(DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TravelMapList]))
+                if (DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TravelMapList].IsDownWith(keyModifiers))
                 {
 
                     if (!RegionSelected || currentDFRegion.LocationCount < 1)
@@ -386,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
                     ShowLocationPicker(locations, true);
                 }
-                else if (Input.GetKeyDown(DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TravelMapFind]))
+                else if (DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TravelMapFind].IsDownWith(keyModifiers))
                     FindlocationButtonClickHandler(null, Vector2.zero);
             }
             else

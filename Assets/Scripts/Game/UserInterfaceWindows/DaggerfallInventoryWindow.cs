@@ -348,7 +348,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            NativePanel.KeyboardActivation();
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            NativePanel.KeyboardActivation(keyModifiers);
         }
 
         protected void SetupItemListScrollers()

@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -210,14 +211,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        public bool KeyboardActivation()
+        public bool KeyboardActivation(HotkeySequence.KeyModifiers keyModifiers)
         {
             foreach (BaseScreenComponent component in components)
             {
                 if (component.Enabled && component is Button)
                 {
                     Button buttonComponent = (Button)component;
-                    if (buttonComponent.ShortcutKey != KeyCode.None && Input.GetKeyDown(buttonComponent.ShortcutKey))
+                    if (buttonComponent.ShortcutKey.IsDownWith(keyModifiers))
                     {
                         buttonComponent.TriggerMouseClick();
                         return true;

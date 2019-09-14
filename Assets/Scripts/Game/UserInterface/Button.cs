@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         TextLabel label = new TextLabel();
         AudioClip clickSound;
-        KeyCode shortcutKey = KeyCode.None;
+        HotkeySequence shortcutKey = HotkeySequence.None;
 
         public string ClickMessage { get; set; }
         public string DoubleClickMessage { get; set; }
@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { clickSound = value; }
         }
 
-        public KeyCode ShortcutKey
+        public HotkeySequence ShortcutKey
         {
             get { return shortcutKey; }
             set { shortcutKey = value; }
@@ -80,9 +80,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.Draw();
         }
 
-        new public bool KeyboardActivation()
+        new public bool KeyboardActivation(HotkeySequence.KeyModifiers keyModifiers)
         {
-            bool isActivated = shortcutKey != KeyCode.None && Input.GetKeyDown(shortcutKey);
+            bool isActivated = shortcutKey.IsDownWith(keyModifiers);
             if (isActivated)
                 TriggerMouseClick();
             return isActivated;

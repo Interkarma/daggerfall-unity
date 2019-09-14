@@ -341,8 +341,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            if(!actionButtonsPanel.KeyboardActivation())
-                NativePanel.KeyboardActivation();
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            if (!actionButtonsPanel.KeyboardActivation(keyModifiers))
+                NativePanel.KeyboardActivation(keyModifiers);
         }
 
         public override void OnPush()

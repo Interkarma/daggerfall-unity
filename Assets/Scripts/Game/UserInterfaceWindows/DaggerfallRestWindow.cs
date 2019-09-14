@@ -180,9 +180,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RaiseOnSleepTickEvent();
 
             ShowStatus();
+
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             if (currentRestMode == RestModes.Selection)
             {
-                mainPanel.KeyboardActivation();
+                mainPanel.KeyboardActivation(keyModifiers);
             }
             else
             {
@@ -193,7 +195,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (TickRest())
                     EndRest();
                 else 
-                    counterPanel.KeyboardActivation();
+                    counterPanel.KeyboardActivation(keyModifiers);
             }
         }
 
