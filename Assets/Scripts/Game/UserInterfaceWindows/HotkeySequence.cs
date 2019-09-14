@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -24,8 +25,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const KeyModifiers virtualKeys = KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt;
 
-        private KeyCode keyCode;
-        private KeyModifiers modifiers;
+        private readonly KeyCode keyCode;
+        private readonly KeyModifiers modifiers;
 
         public static HotkeySequence None = new HotkeySequence(KeyCode.None, KeyModifiers.None);
 
@@ -40,6 +41,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 this.modifiers |= KeyModifiers.Shift;
             if ((modifiers & (KeyModifiers.LeftAlt | KeyModifiers.RightAlt)) != 0)
                 this.modifiers |= KeyModifiers.Alt;
+        }
+
+        // Build a HotkeySequence from string of syntax   [[Left|Right]Control-][[Left|Right]Shift-][[Left|Right]Alt-]KeyCode
+        // the order of modifiers doesn't matter
+        public static HotkeySequence FromString(string hotkeyName)
+        {
+            int startKeyName = 0;
+            HotkeySequence.KeyModifiers modifiers = KeyModifiers.None;
+            bool foundModifier;
+            do 
+            {
+                foundModifier = false;
+                foreach (KeyModifiers keyModifier in Enum.GetValues(typeof(KeyModifiers)))
+                {
+                    if (hotkeyName.Substring(startKeyName).StartsWith(keyModifier.ToString() + "-", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        modifiers |= keyModifier;
+                        startKeyName += keyModifier.ToString().Length + 1;
+                        foundModifier = true;
+                    }
+                }
+            } while (foundModifier);
+            return new HotkeySequence(ParseEnum<KeyCode>(hotkeyName.Substring(startKeyName)), modifiers);
+        }
+
+        private static T ParseEnum<T>(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, true);
         }
 
         public static KeyModifiers GetKeyModifiers(bool leftControl, bool rightControl, bool leftShift, bool rightShift, bool leftAlt, bool rightAlt)
