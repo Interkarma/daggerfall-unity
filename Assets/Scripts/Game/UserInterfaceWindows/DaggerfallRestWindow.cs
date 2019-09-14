@@ -127,13 +127,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Create buttons
             whileButton = DaggerfallUI.AddButton(whileButtonRect, mainPanel);
             whileButton.OnMouseClick += WhileButton_OnMouseClick;
-            whileButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.RestForAWhile];
+            whileButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.RestForAWhile];
             healedButton = DaggerfallUI.AddButton(healedButtonRect, mainPanel);
             healedButton.OnMouseClick += HealedButton_OnMouseClick;
-            healedButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.RestUntilHealed];
+            healedButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.RestUntilHealed];
             loiterButton = DaggerfallUI.AddButton(loiterButtonRect, mainPanel);
             loiterButton.OnMouseClick += LoiterButton_OnMouseClick;
-            loiterButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.RestLoiter];
+            loiterButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.RestLoiter];
 
             // Setup counter panel
             counterPanel.Position = new Vector2(counterPanelRect.x, counterPanelRect.y);
@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Stop button
             stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
             stopButton.OnMouseClick += StopButton_OnMouseClick;
-            stopButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.RestStop];
+            stopButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.RestStop];
 
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);

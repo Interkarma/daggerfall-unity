@@ -225,7 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            exitButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeExit];
+            exitButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeExit];
 
             // Setup initial state
             SelectTabPage((windowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
@@ -280,48 +280,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 wagonButton = DaggerfallUI.AddButton(wagonButtonRect, actionButtonsPanel);
                 wagonButton.OnMouseClick += WagonButton_OnMouseClick;
-                wagonButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeWagon];
+                wagonButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeWagon];
             }
 
             infoButton = DaggerfallUI.AddButton(infoButtonRect, actionButtonsPanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
-            infoButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeInfo];
+            infoButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeInfo];
 
             selectButton = DaggerfallUI.AddButton(selectButtonRect, actionButtonsPanel);
             selectButton.OnMouseClick += SelectButton_OnMouseClick;
-            selectButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeSelect];
+            selectButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeSelect];
 
             if (windowMode == WindowModes.Buy)
             {
                 stealButton = DaggerfallUI.AddButton(stealButtonRect, actionButtonsPanel);
                 stealButton.OnMouseClick += StealButton_OnMouseClick;
-                stealButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeSteal];
+                stealButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeSteal];
             }
             modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
             modeActionButton.OnMouseClick += ModeActionButton_OnMouseClick;
             switch (windowMode)
             {
                 case WindowModes.Buy:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeBuy];
+                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeBuy];
                     break;
                 case WindowModes.Identify:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeIdentify];
+                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeIdentify];
                     break;
                 case WindowModes.Inventory:
                     // Shouldn't happen
                     break;
                 case WindowModes.Repair:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeRepair];
+                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeRepair];
                     break;
                 case WindowModes.Sell:
                 case WindowModes.SellMagic:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeSell];
+                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeSell];
                     break;
             }
 
             clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
             clearButton.OnMouseClick += ClearButton_OnMouseClick;
-            clearButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallMessageBox.MessageBoxButtons.TradeClear];
+            clearButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeClear];
         }
 
         #endregion

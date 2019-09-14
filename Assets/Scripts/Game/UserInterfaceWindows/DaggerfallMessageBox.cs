@@ -70,62 +70,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Lie = 18,
             Anchor = 19,
             Teleport = 20,
-
-            // Main menu
-            MainMenuLoad,
-            MainMenuStart,
-            MainMenuExit,
-
-            // Options menu
-            OptionsExit,
-            OptionsContinue,
-            OptionsSave,
-            OptionsLoad,
-            OptionsControls,
-            OptionsFullScreen,
-            OptionsHeadBobbing,
-
-            // Rest menu
-            RestForAWhile,
-            RestUntilHealed,
-            RestLoiter,
-            RestStop,
-
-            // Transport menu
-            TransportFoot,
-            TransportHorse,
-            TransportCart,
-            TransportShip,
-            TransportExit,
-
-            // TravelMap
-            TravelMapFind,
-            TravelMapList,
-
-            // Inventory screen
-            InventoryWeapons,
-            InventoryMagic,
-            InventoryClothing,
-            InventoryIngredients,
-            InventoryWagon,
-            InventoryInfo,
-            InventoryEquip,
-            InventoryRemove,
-            InventoryUse,
-            InventoryGold,
-            InventoryExit,
-
-            // Trade screen
-            TradeWagon,
-            TradeInfo,
-            TradeSelect,
-            TradeSteal,
-            TradeBuy,
-            TradeIdentify,
-            TradeRepair,
-            TradeSell,
-            TradeClear,
-            TradeExit,
         }
 
         public enum CommonMessageBoxButtons
@@ -134,6 +78,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             YesNo,
             AnchorTeleport,
         }
+
+        private readonly Dictionary<MessageBoxButtons, DaggerfallShortcut.Buttons> toShortcutButton = new Dictionary<MessageBoxButtons, DaggerfallShortcut.Buttons>()
+        {
+            { MessageBoxButtons.Accept, DaggerfallShortcut.Buttons.Accept },
+            { MessageBoxButtons.Reject, DaggerfallShortcut.Buttons.Reject },
+            { MessageBoxButtons.Cancel, DaggerfallShortcut.Buttons.Cancel },
+            { MessageBoxButtons.Yes, DaggerfallShortcut.Buttons.Yes },
+            { MessageBoxButtons.No, DaggerfallShortcut.Buttons.No },
+            { MessageBoxButtons.OK, DaggerfallShortcut.Buttons.OK },
+            { MessageBoxButtons.Male, DaggerfallShortcut.Buttons.Male },
+            { MessageBoxButtons.Female, DaggerfallShortcut.Buttons.Female },
+            { MessageBoxButtons.Add, DaggerfallShortcut.Buttons.Add },
+            { MessageBoxButtons.Delete, DaggerfallShortcut.Buttons.Delete },
+            { MessageBoxButtons.Edit, DaggerfallShortcut.Buttons.Edit },
+            { MessageBoxButtons.Copy, DaggerfallShortcut.Buttons.Copy },
+            { MessageBoxButtons.Guilty, DaggerfallShortcut.Buttons.Guilty },
+            { MessageBoxButtons.NotGuilty, DaggerfallShortcut.Buttons.NotGuilty },
+            { MessageBoxButtons.Debate, DaggerfallShortcut.Buttons.Debate },
+            { MessageBoxButtons.Lie, DaggerfallShortcut.Buttons.Lie },
+            { MessageBoxButtons.Anchor, DaggerfallShortcut.Buttons.Anchor },
+            { MessageBoxButtons.Teleport, DaggerfallShortcut.Buttons.Teleport },
+        };
 
         public int ButtonSpacing
         {
@@ -335,7 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
             HotkeySequence buttonShortcut;
-            if (DaggerfallShortcut.Keys.TryGetValue(messageBoxButton, out buttonShortcut))
+            if (DaggerfallShortcut.Keys.TryGetValue(toShortcutButton[messageBoxButton], out buttonShortcut))
                 button.ShortcutKey = buttonShortcut;
             buttons.Add(button);
 
