@@ -83,82 +83,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // hover text label in status bar
         TextLabel labelHoverText;
 
+        // Handle toggle closing
+        KeyCode automapBinding = KeyCode.None;
+        HotkeySequence HotkeySequence_toggleClose;
+        readonly KeyCode fallbackKey = KeyCode.Home;
+
         // definitions of hotkey sequences
-        UnityEngine.KeyCode fallbackKey = KeyCode.Home;
-
-        // the default hotkey keycodes
-        static UnityEngine.KeyCode keyCode_SwitchAutomapGridMode = KeyCode.Space;
-        static UnityEngine.KeyCode keyCode_ResetView = KeyCode.Backspace;
-        static UnityEngine.KeyCode keyCode_ResetRotationPivotAxisView = KeyCode.Backspace;
-        static UnityEngine.KeyCode keyCode_SwitchFocusToNextBeaconObject = KeyCode.Tab;
-        static UnityEngine.KeyCode keyCode_SwitchToNextAutomapRenderMode = KeyCode.Return;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeCutout = KeyCode.F2;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeWireframe = KeyCode.F3;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapRenderModeTransparent = KeyCode.F4;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundOriginal = KeyCode.F5;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative1 = KeyCode.F6;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative2 = KeyCode.F7;
-        static UnityEngine.KeyCode keyCode_SwitchToAutomapBackgroundAlternative3 = KeyCode.F8;
-        static UnityEngine.KeyCode keyCode_MoveLeft = KeyCode.LeftArrow;
-        static UnityEngine.KeyCode keyCode_MoveRight = KeyCode.RightArrow;
-        static UnityEngine.KeyCode keyCode_MoveForward = KeyCode.UpArrow;
-        static UnityEngine.KeyCode keyCode_MoveBackward = KeyCode.DownArrow;
-        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisLeft = KeyCode.LeftArrow;
-        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisRight = KeyCode.RightArrow;
-        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisForward = KeyCode.UpArrow;
-        static UnityEngine.KeyCode keyCode_MoveRotationPivotAxisBackward = KeyCode.DownArrow;
-        static UnityEngine.KeyCode keyCode_RotateLeft = KeyCode.LeftArrow;
-        static UnityEngine.KeyCode keyCode_RotateRight = KeyCode.RightArrow;
-        static UnityEngine.KeyCode keyCode_RotateCameraLeft = KeyCode.LeftArrow;
-        static UnityEngine.KeyCode keyCode_RotateCameraRight = KeyCode.RightArrow;
-        static UnityEngine.KeyCode keyCode_RotateCameraOnCameraYZplaneAroundObjectUp = KeyCode.UpArrow;
-        static UnityEngine.KeyCode keyCode_RotateCameraOnCameraYZplaneAroundObjectDown = KeyCode.DownArrow;
-        static UnityEngine.KeyCode keyCode_Upstairs = KeyCode.PageUp;
-        static UnityEngine.KeyCode keyCode_Downstairs = KeyCode.PageDown;
-        static UnityEngine.KeyCode keyCode_IncreaseSliceLevel = KeyCode.PageUp;
-        static UnityEngine.KeyCode keyCode_DecreaseSliceLevel = KeyCode.PageDown;
-        static UnityEngine.KeyCode keyCode_ZoomIn = KeyCode.KeypadPlus;
-        static UnityEngine.KeyCode keyCode_ZoomOut = KeyCode.KeypadMinus;
-        static UnityEngine.KeyCode keyCode_IncreaseCameraFieldOfFiew = KeyCode.KeypadMultiply;
-        static UnityEngine.KeyCode keyCode_DecreaseCameraFieldOfFiew = KeyCode.KeypadDivide;
-
-        // the currently used keycodes (fallback keycode mechanism)
-        UnityEngine.KeyCode currentKeyCode_SwitchAutomapGridMode = keyCode_SwitchAutomapGridMode;
-        UnityEngine.KeyCode currentKeyCode_ResetView = keyCode_ResetView;
-        UnityEngine.KeyCode currentKeyCode_ResetRotationPivotAxisView = keyCode_ResetRotationPivotAxisView;
-        UnityEngine.KeyCode currentKeyCode_SwitchFocusToNextBeaconObject = keyCode_SwitchFocusToNextBeaconObject;
-        UnityEngine.KeyCode currentKeyCode_SwitchToNextAutomapRenderMode = keyCode_SwitchToNextAutomapRenderMode;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeCutout = keyCode_SwitchToAutomapRenderModeCutout;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeWireframe = keyCode_SwitchToAutomapRenderModeWireframe;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapRenderModeTransparent = keyCode_SwitchToAutomapRenderModeTransparent;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundOriginal = keyCode_SwitchToAutomapBackgroundOriginal;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative1 = keyCode_SwitchToAutomapBackgroundAlternative1;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative2 = keyCode_SwitchToAutomapBackgroundAlternative2;
-        UnityEngine.KeyCode currentKeyCode_SwitchToAutomapBackgroundAlternative3 = keyCode_SwitchToAutomapBackgroundAlternative3;
-        UnityEngine.KeyCode currentKeyCode_MoveLeft = keyCode_MoveLeft;
-        UnityEngine.KeyCode currentKeyCode_MoveRight = keyCode_MoveRight;
-        UnityEngine.KeyCode currentKeyCode_MoveForward = keyCode_MoveForward;
-        UnityEngine.KeyCode currentKeyCode_MoveBackward = keyCode_MoveBackward;
-        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisLeft = keyCode_MoveRotationPivotAxisLeft;
-        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisRight = keyCode_MoveRotationPivotAxisRight;
-        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisForward = keyCode_MoveRotationPivotAxisForward;
-        UnityEngine.KeyCode currentKeyCode_MoveRotationPivotAxisBackward = keyCode_MoveRotationPivotAxisBackward;
-        UnityEngine.KeyCode currentKeyCode_RotateLeft = keyCode_RotateLeft;
-        UnityEngine.KeyCode currentKeyCode_RotateRight = keyCode_RotateRight;
-        UnityEngine.KeyCode currentKeyCode_RotateCameraLeft = keyCode_RotateCameraLeft;
-        UnityEngine.KeyCode currentKeyCode_RotateCameraRight = keyCode_RotateCameraRight;
-        UnityEngine.KeyCode currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = keyCode_RotateCameraOnCameraYZplaneAroundObjectUp;
-        UnityEngine.KeyCode currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = keyCode_RotateCameraOnCameraYZplaneAroundObjectDown;
-        UnityEngine.KeyCode currentKeyCode_Upstairs = keyCode_Upstairs;
-        UnityEngine.KeyCode currentKeyCode_Downstairs = keyCode_Downstairs;
-        UnityEngine.KeyCode currentKeyCode_IncreaseSliceLevel = keyCode_IncreaseSliceLevel;
-        UnityEngine.KeyCode currentKeyCode_DecreaseSliceLevel = keyCode_DecreaseSliceLevel;
-        UnityEngine.KeyCode currentKeyCode_ZoomIn = keyCode_ZoomIn;
-        UnityEngine.KeyCode currentKeyCode_ZoomOut = keyCode_ZoomOut;
-        UnityEngine.KeyCode currentKeyCode_IncreaseCameraFieldOfFiew = keyCode_IncreaseCameraFieldOfFiew;
-        UnityEngine.KeyCode currentKeyCode_DecreaseCameraFieldOfFiew = keyCode_DecreaseCameraFieldOfFiew;
-
-        // sequence of modifier keys for each hotkey sequence
         HotkeySequence HotkeySequence_SwitchAutomapGridMode;
         HotkeySequence HotkeySequence_ResetView;
         HotkeySequence HotkeySequence_ResetRotationPivotAxisView;
@@ -193,8 +123,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HotkeySequence HotkeySequence_ZoomOut;
         HotkeySequence HotkeySequence_IncreaseCameraFieldOfFiew;
         HotkeySequence HotkeySequence_DecreaseCameraFieldOfFiew;
-
-        KeyCode toggleClosedBinding;
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
@@ -293,178 +221,49 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void SetupHotkeySequences()
         {
-            currentKeyCode_SwitchAutomapGridMode = keyCode_SwitchAutomapGridMode;
-            currentKeyCode_ResetView = keyCode_ResetView;
-            currentKeyCode_ResetRotationPivotAxisView = keyCode_ResetRotationPivotAxisView;
-            currentKeyCode_SwitchFocusToNextBeaconObject = keyCode_SwitchFocusToNextBeaconObject;
-            currentKeyCode_SwitchToNextAutomapRenderMode = keyCode_SwitchToNextAutomapRenderMode;
-            currentKeyCode_SwitchToAutomapRenderModeCutout = keyCode_SwitchToAutomapRenderModeCutout;
-            currentKeyCode_SwitchToAutomapRenderModeWireframe = keyCode_SwitchToAutomapRenderModeWireframe;
-            currentKeyCode_SwitchToAutomapRenderModeTransparent = keyCode_SwitchToAutomapRenderModeTransparent;
-            currentKeyCode_SwitchToAutomapBackgroundOriginal = keyCode_SwitchToAutomapBackgroundOriginal;
-            currentKeyCode_SwitchToAutomapBackgroundAlternative1 = keyCode_SwitchToAutomapBackgroundAlternative1;
-            currentKeyCode_SwitchToAutomapBackgroundAlternative2 = keyCode_SwitchToAutomapBackgroundAlternative2;
-            currentKeyCode_SwitchToAutomapBackgroundAlternative3 = keyCode_SwitchToAutomapBackgroundAlternative3;
-            currentKeyCode_MoveLeft = keyCode_MoveLeft;
-            currentKeyCode_MoveRight = keyCode_MoveRight;
-            currentKeyCode_MoveForward = keyCode_MoveForward;
-            currentKeyCode_MoveBackward = keyCode_MoveBackward;
-            currentKeyCode_MoveRotationPivotAxisLeft = keyCode_MoveRotationPivotAxisLeft;
-            currentKeyCode_MoveRotationPivotAxisRight = keyCode_MoveRotationPivotAxisRight;
-            currentKeyCode_MoveRotationPivotAxisForward = keyCode_MoveRotationPivotAxisForward;
-            currentKeyCode_MoveRotationPivotAxisBackward = keyCode_MoveRotationPivotAxisBackward;
-            currentKeyCode_RotateLeft = keyCode_RotateLeft;
-            currentKeyCode_RotateRight = keyCode_RotateRight;
-            currentKeyCode_RotateCameraLeft = keyCode_RotateCameraLeft;
-            currentKeyCode_RotateCameraRight = keyCode_RotateCameraRight;
-            currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = keyCode_RotateCameraOnCameraYZplaneAroundObjectUp;
-            currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = keyCode_RotateCameraOnCameraYZplaneAroundObjectDown;
-            currentKeyCode_Upstairs = keyCode_Upstairs;
-            currentKeyCode_Downstairs = keyCode_Downstairs;
-            currentKeyCode_IncreaseSliceLevel = keyCode_IncreaseSliceLevel;
-            currentKeyCode_DecreaseSliceLevel = keyCode_DecreaseSliceLevel;
-            currentKeyCode_ZoomIn = keyCode_ZoomIn;
-            currentKeyCode_ZoomOut = keyCode_ZoomOut;
-            currentKeyCode_IncreaseCameraFieldOfFiew = keyCode_IncreaseCameraFieldOfFiew;
-            currentKeyCode_DecreaseCameraFieldOfFiew = keyCode_DecreaseCameraFieldOfFiew;
+            HotkeySequence_SwitchAutomapGridMode = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchAutomapGridMode);
+            HotkeySequence_ResetView = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapResetView);
+            HotkeySequence_ResetRotationPivotAxisView = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapResetRotationPivotAxisView);
+            HotkeySequence_SwitchFocusToNextBeaconObject = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchFocusToNextBeaconObject);
+            HotkeySequence_SwitchToNextAutomapRenderMode = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToNextAutomapRenderMode);
+            HotkeySequence_SwitchToAutomapRenderModeCutout = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapRenderModeCutout);
+            HotkeySequence_SwitchToAutomapRenderModeWireframe = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapRenderModeWireframe);
+            HotkeySequence_SwitchToAutomapRenderModeTransparent = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapRenderModeTransparent);
+            HotkeySequence_SwitchToAutomapBackgroundOriginal = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapBackgroundOriginal);
+            HotkeySequence_SwitchToAutomapBackgroundAlternative1 = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapBackgroundAlternative1);
+            HotkeySequence_SwitchToAutomapBackgroundAlternative2 = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapBackgroundAlternative2);
+            HotkeySequence_SwitchToAutomapBackgroundAlternative3 = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapSwitchToAutomapBackgroundAlternative3);
+            HotkeySequence_MoveLeft = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveLeft);
+            HotkeySequence_MoveRight = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveRight);
+            HotkeySequence_MoveForward = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveForward);
+            HotkeySequence_MoveBackward = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveBackward);
+            HotkeySequence_MoveRotationPivotAxisLeft = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveRotationPivotAxisLeft);
+            HotkeySequence_MoveRotationPivotAxisRight = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveRotationPivotAxisRight);
+            HotkeySequence_MoveRotationPivotAxisForward = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveRotationPivotAxisForward);
+            HotkeySequence_MoveRotationPivotAxisBackward = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapMoveRotationPivotAxisBackward);
+            HotkeySequence_RotateLeft = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapRotateLeft);
+            HotkeySequence_RotateRight = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapRotateRight);
+            HotkeySequence_RotateCameraLeft = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapRotateCameraLeft);
+            HotkeySequence_RotateCameraRight = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapRotateCameraRight);
+            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapRotateCameraOnCameraYZplaneAroundObjectUp);
+            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapRotateCameraOnCameraYZplaneAroundObjectDown);
+            HotkeySequence_Upstairs = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapUpstairs);
+            HotkeySequence_Downstairs = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapDownstairs);
+            HotkeySequence_IncreaseSliceLevel = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapIncreaseSliceLevel);
+            HotkeySequence_DecreaseSliceLevel = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapDecreaseSliceLevel);
+            HotkeySequence_ZoomIn = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapZoomIn);
+            HotkeySequence_ZoomOut = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapZoomOut);
+            HotkeySequence_IncreaseCameraFieldOfFiew = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapIncreaseCameraFieldOfFiew);
+            HotkeySequence_DecreaseCameraFieldOfFiew = ShortcutOrFallback(DaggerfallShortcut.Buttons.AutomapDecreaseCameraFieldOfFiew);
+        }
 
-            if (toggleClosedBinding == keyCode_SwitchAutomapGridMode)
-                currentKeyCode_SwitchAutomapGridMode = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ResetView)
-                currentKeyCode_ResetView = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ResetRotationPivotAxisView)
-                currentKeyCode_ResetRotationPivotAxisView = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchFocusToNextBeaconObject)
-                currentKeyCode_SwitchFocusToNextBeaconObject = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToNextAutomapRenderMode)
-                currentKeyCode_SwitchToNextAutomapRenderMode = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeCutout)
-                currentKeyCode_SwitchToAutomapRenderModeCutout = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeWireframe)
-                currentKeyCode_SwitchToAutomapRenderModeWireframe = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapRenderModeTransparent)
-                currentKeyCode_SwitchToAutomapRenderModeTransparent = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundOriginal)
-                currentKeyCode_SwitchToAutomapBackgroundOriginal = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative1)
-                currentKeyCode_SwitchToAutomapBackgroundAlternative1 = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative2)
-                currentKeyCode_SwitchToAutomapBackgroundAlternative2 = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_SwitchToAutomapBackgroundAlternative3)
-                currentKeyCode_SwitchToAutomapBackgroundAlternative3 = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveLeft)
-                currentKeyCode_MoveLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRight)
-                currentKeyCode_MoveRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveForward)
-                currentKeyCode_MoveForward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveBackward)
-                currentKeyCode_MoveBackward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisLeft)
-                currentKeyCode_MoveRotationPivotAxisLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisRight)
-                currentKeyCode_MoveRotationPivotAxisRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisForward)
-                currentKeyCode_MoveRotationPivotAxisForward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_MoveRotationPivotAxisBackward)
-                currentKeyCode_MoveRotationPivotAxisBackward = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateLeft)
-                currentKeyCode_RotateLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateRight)
-                currentKeyCode_RotateRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraLeft)
-                currentKeyCode_RotateCameraLeft = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraRight)
-                currentKeyCode_RotateCameraRight = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraOnCameraYZplaneAroundObjectUp)
-                currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_RotateCameraOnCameraYZplaneAroundObjectDown)
-                currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_Upstairs)
-                currentKeyCode_Upstairs = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_Downstairs)
-                currentKeyCode_Downstairs = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_IncreaseSliceLevel)
-                currentKeyCode_IncreaseSliceLevel = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_DecreaseSliceLevel)
-                currentKeyCode_DecreaseSliceLevel = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ZoomIn)
-                currentKeyCode_ZoomIn = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_ZoomOut)
-                currentKeyCode_ZoomOut = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_IncreaseCameraFieldOfFiew)
-                currentKeyCode_IncreaseCameraFieldOfFiew = fallbackKey;
-
-            if (toggleClosedBinding == keyCode_DecreaseCameraFieldOfFiew)
-                currentKeyCode_DecreaseCameraFieldOfFiew = fallbackKey;
-
-
-            HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(currentKeyCode_SwitchAutomapGridMode, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_ResetView = new HotkeySequence(currentKeyCode_ResetView, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(currentKeyCode_ResetRotationPivotAxisView, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_SwitchFocusToNextBeaconObject = new HotkeySequence(currentKeyCode_SwitchFocusToNextBeaconObject, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(currentKeyCode_SwitchToNextAutomapRenderMode, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeCutout, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeWireframe, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(currentKeyCode_SwitchToAutomapRenderModeTransparent, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundOriginal = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundOriginal, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundAlternative1 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative1, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundAlternative2 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative2, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_SwitchToAutomapBackgroundAlternative3 = new HotkeySequence(currentKeyCode_SwitchToAutomapBackgroundAlternative3, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveLeft = new HotkeySequence(currentKeyCode_MoveLeft, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveRight = new HotkeySequence(currentKeyCode_MoveRight, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveForward = new HotkeySequence(currentKeyCode_MoveForward, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveBackward = new HotkeySequence(currentKeyCode_MoveBackward, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_MoveRotationPivotAxisLeft = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisLeft, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_MoveRotationPivotAxisRight = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisRight, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_MoveRotationPivotAxisForward = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisForward, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_MoveRotationPivotAxisBackward = new HotkeySequence(currentKeyCode_MoveRotationPivotAxisBackward, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_RotateLeft = new HotkeySequence(currentKeyCode_RotateLeft, HotkeySequence.KeyModifiers.Alt);
-            HotkeySequence_RotateRight = new HotkeySequence(currentKeyCode_RotateRight, HotkeySequence.KeyModifiers.Alt);
-            HotkeySequence_RotateCameraLeft = new HotkeySequence(currentKeyCode_RotateCameraLeft, HotkeySequence.KeyModifiers.Shift);
-            HotkeySequence_RotateCameraRight = new HotkeySequence(currentKeyCode_RotateCameraRight, HotkeySequence.KeyModifiers.Shift);
-            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = new HotkeySequence(currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectUp, HotkeySequence.KeyModifiers.Shift);
-            HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = new HotkeySequence(currentKeyCode_RotateCameraOnCameraYZplaneAroundObjectDown, HotkeySequence.KeyModifiers.Shift);
-            HotkeySequence_Upstairs = new HotkeySequence(currentKeyCode_Upstairs, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_Downstairs = new HotkeySequence(currentKeyCode_Downstairs, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_IncreaseSliceLevel = new HotkeySequence(currentKeyCode_IncreaseSliceLevel, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_DecreaseSliceLevel = new HotkeySequence(currentKeyCode_DecreaseSliceLevel, HotkeySequence.KeyModifiers.Control);
-            HotkeySequence_ZoomIn = new HotkeySequence(currentKeyCode_ZoomIn, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_ZoomOut = new HotkeySequence(currentKeyCode_ZoomOut, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(currentKeyCode_IncreaseCameraFieldOfFiew, HotkeySequence.KeyModifiers.None);
-            HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(currentKeyCode_DecreaseCameraFieldOfFiew, HotkeySequence.KeyModifiers.None);
+        private HotkeySequence ShortcutOrFallback(DaggerfallShortcut.Buttons button)
+        {
+            HotkeySequence hotkeySequence = DaggerfallShortcut.Keys[button];
+            if (hotkeySequence.IsSameKeyCode(automapBinding))
+                return hotkeySequence.WithKeyCode(fallbackKey);
+            else
+                return hotkeySequence;
         }
 
         /// <summary>
@@ -472,16 +271,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void UpdateButtonToolTipsText()
         {
-            gridButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipTextGridButton"), currentKeyCode_SwitchAutomapGridMode.ToString(), currentKeyCode_ResetRotationPivotAxisView.ToString());
-            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipForwardButton"), currentKeyCode_MoveForward.ToString(), currentKeyCode_MoveRotationPivotAxisForward.ToString());
-            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipBackwardButton"), currentKeyCode_MoveBackward.ToString(), currentKeyCode_MoveRotationPivotAxisBackward.ToString());
-            leftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipLeftButton"), currentKeyCode_MoveLeft.ToString(), currentKeyCode_MoveRotationPivotAxisLeft.ToString());
-            rightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRightButton"), currentKeyCode_MoveRight.ToString(), currentKeyCode_MoveRotationPivotAxisRight.ToString());
-            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateLeftButton"), currentKeyCode_RotateLeft.ToString(), currentKeyCode_RotateCameraLeft.ToString());
-            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateRightButton"), currentKeyCode_RotateRight.ToString(), currentKeyCode_RotateCameraRight.ToString());
-            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipUpstairsButton"), currentKeyCode_Upstairs.ToString(), currentKeyCode_IncreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipDownstairsButton"), currentKeyCode_Downstairs.ToString(), currentKeyCode_DecreaseSliceLevel.ToString(), currentKeyCode_SwitchToAutomapRenderModeCutout.ToString(), currentKeyCode_SwitchToAutomapRenderModeWireframe.ToString(), currentKeyCode_SwitchToAutomapRenderModeTransparent.ToString());
-            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipPanelCompass"), currentKeyCode_SwitchFocusToNextBeaconObject.ToString(), currentKeyCode_ResetView.ToString());
+            gridButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipTextGridButton"), HotkeySequence_SwitchAutomapGridMode, HotkeySequence_ResetRotationPivotAxisView);
+            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipForwardButton"), HotkeySequence_MoveForward, HotkeySequence_MoveRotationPivotAxisForward);
+            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipBackwardButton"), HotkeySequence_MoveBackward, HotkeySequence_MoveRotationPivotAxisBackward);
+            leftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipLeftButton"), HotkeySequence_MoveLeft, HotkeySequence_MoveRotationPivotAxisLeft);
+            rightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRightButton"), HotkeySequence_MoveRight, HotkeySequence_MoveRotationPivotAxisRight);
+            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateLeftButton"), HotkeySequence_RotateLeft, HotkeySequence_RotateCameraLeft);
+            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateRightButton"), HotkeySequence_RotateRight, HotkeySequence_RotateCameraRight);
+            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipUpstairsButton"), HotkeySequence_Upstairs, HotkeySequence_IncreaseSliceLevel, HotkeySequence_SwitchToAutomapRenderModeCutout, HotkeySequence_SwitchToAutomapRenderModeWireframe, HotkeySequence_SwitchToAutomapRenderModeTransparent);
+            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipDownstairsButton"), HotkeySequence_Downstairs, HotkeySequence_DecreaseSliceLevel, HotkeySequence_SwitchToAutomapRenderModeCutout, HotkeySequence_SwitchToAutomapRenderModeWireframe, HotkeySequence_SwitchToAutomapRenderModeTransparent);
+            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipPanelCompass"), HotkeySequence_SwitchFocusToNextBeaconObject, HotkeySequence_ResetView);
         }
 
         /// <summary>
@@ -699,9 +498,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             labelHoverText.HorizontalAlignment = HorizontalAlignment.Center;
             labelHoverText.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Center;
 
-            // update button tool tip texts
-            UpdateButtonToolTipsText();
-
             if (defaultToolTip != null)
             {
                 gridButton.ToolTip.ToolTipDelay = toolTipDelay;
@@ -723,12 +519,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Scale = scale;
             NativePanel.Components.Add(compass);
 
-            // Store toggle closed binding for this window
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
-
-            // update hotkey sequences taking current toggleClosedBinding into account
-            SetupHotkeySequences();
-
             isSetup = true;
         }
 
@@ -747,11 +537,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 automap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
                 //ResetRotationPivotAxisPosition(); // reset rotation pivot axis                
             }
+
             // check if global automap open/close hotkey has changed
-            if (toggleClosedBinding != InputManager.Instance.GetBinding(InputManager.Actions.AutoMap))
+            if (InputManager.Instance.GetBinding(InputManager.Actions.AutoMap) != automapBinding)
             {
+                automapBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
+
                 // Store toggle closed binding for this window
-                toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
+                HotkeySequence_toggleClose = new HotkeySequence(automapBinding, HotkeySequence.KeyModifiers.None);
                 // update hotkey sequences taking current toggleClosedBinding into account
                 SetupHotkeySequences();
                 // update button tool tip texts - since hotkeys changed
@@ -917,11 +710,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
             ResizeGUIelementsOnDemand();
 
-            // Toggle window closed with same hotkey used to open it
-            if (Input.GetKeyUp(toggleClosedBinding))
-                CloseWindow();
-
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+
+            if (Input.GetKeyUp(KeyCode.Escape) ||
+                // Toggle window closed with same hotkey used to open it
+                HotkeySequence_toggleClose.IsUpWith(keyModifiers))
+            {
+                CloseWindow();
+                return;
+            }
 
             // debug teleport mode action
             if (
