@@ -20,6 +20,7 @@ description,                Description
 author,                     Author
 ok,                         OK
 versionMismatch,            Version mismatch!
+titleOrDescriptionMissing,  Title and Description are mandatory fields.
 
 increase,                   Increase
 lower,                      Lower

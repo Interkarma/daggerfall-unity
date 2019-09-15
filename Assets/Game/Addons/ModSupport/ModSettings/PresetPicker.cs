@@ -53,12 +53,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 mainPanel.Outline.Enabled = true;
                 NativePanel.Components.Add(mainPanel);
 
-                var titleLabel = new TextLabel();
-                titleLabel.Size = new Vector2(60, 12);
-                titleLabel.Position = new Vector2(0, 5);
-                titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
-                titleLabel.Text = ModManager.GetText("presetCreator");
-                mainPanel.Components.Add(titleLabel);
+                mainPanel.Components.Add(MakeCancelButton(uiManager, "presets"));
+                mainPanel.Components.Add(MakeTitleLabel("presetCreator"));
 
                 var creatorPanel = new Panel();
                 creatorPanel.Outline.Enabled = false;
@@ -71,15 +67,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 creatorPanel.Components.Add(MakeLabelledTextBox(descriptionTextBox, ModManager.GetText("description"), VerticalAlignment.Middle));
                 creatorPanel.Components.Add(MakeLabelledTextBox(authorTextBox, ModManager.GetText("author"), VerticalAlignment.Bottom));
 
-                var confirmButton = new Button();
-                confirmButton.Size = new Vector2(40, 12);
-                confirmButton.Position = new Vector2(0, 110);
-                confirmButton.HorizontalAlignment = HorizontalAlignment.Center;
-                confirmButton.Outline.Enabled = true;
-                confirmButton.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
-                confirmButton.Label.Text = ModManager.GetText("ok");
-                confirmButton.OnMouseClick += ConfirmButton_OnMouseClick;
-                mainPanel.Components.Add(confirmButton);
+                mainPanel.Components.Add(MakeSimpleButton("ok", new Vector2(0, 110), ConfirmButton_OnMouseClick));
             }
 
             private Panel MakeLabelledTextBox(TextBox textBox, string text, VerticalAlignment verticalAlignment)
@@ -112,8 +100,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             private void ConfirmButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
             {
-                createPresetCallback(titleTextBox.ResultText, descriptionTextBox.ResultText, authorTextBox.ResultText);
-                uiManager.PopWindow();
+                if (string.IsNullOrEmpty(titleTextBox.ResultText) || string.IsNullOrEmpty(descriptionTextBox.ResultText))
+                {
+                    var messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.AllowCancel = true;
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.SetText(ModManager.GetText("titleOrDescriptionMissing"));
+                    uiManager.PushWindow(messageBox);
+                }
+                else
+                {
+                    createPresetCallback(titleTextBox.ResultText, descriptionTextBox.ResultText, authorTextBox.ResultText);
+                    uiManager.PopWindow();
+                }
             }
         }
 
@@ -122,36 +121,31 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         #region Fields
 
         const float windowWidth = 150;
-        const int titleMaxChars = 20;
-        const int descriptionMaxChars = 35;
 
         readonly Mod mod;
         readonly ModSettingsData settings;
 
-        Panel mainPanel = new Panel();
-        Panel infoPanel = new Panel();
-        Panel controlPanel = new Panel();
+        readonly Panel sideBarPanel = new Panel();
 
-        ListBox listBox = new ListBox();
-        VerticalScrollBar scrollBar = new VerticalScrollBar();
-        TextLabel descriptionLabel = new TextLabel();
-        TextLabel authorLabel = new TextLabel();
-        TextLabel versionLabel = new TextLabel();
+        readonly ListBox listBox = new ListBox();
+        readonly VerticalScrollBar scrollBar = new VerticalScrollBar();
+        readonly TextLabel descriptionLabel = new TextLabel();
+        readonly TextLabel authorLabel = new TextLabel();
+        readonly TextLabel versionLabel = new TextLabel();
 
-        Button newPresetButton = new Button();
-        Button loadButton = new Button();
-        Button saveButton = new Button();
-        Button deleteButton = new Button();
+        readonly Button newPresetButton = new Button();
+        readonly Button loadButton = new Button();
+        readonly Button saveButton = new Button();
+        readonly Button deleteButton = new Button();
 
-        Color mainBackgroundColor = new Color(0, 0, 0, 0.7f);
-        Color infoBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
-        Color creatorBackgroundColor = new Color(0, 0, 1, 0.1f);
-        Color titleColor = Color.gray;
-        Color selectedTitleColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
-        Color warningColor = new Color(1, 0, 0, 0.4f);
-        Color enabledButtonsColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+        readonly Color mainBackgroundColor = new Color(0, 0, 0, 0.7f);
+        readonly Color infoBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+        readonly Color titleColor = Color.gray;
+        readonly Color selectedTitleColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+        readonly Color warningColor = new Color(1, 0, 0, 0.4f);
+        readonly Color enabledButtonColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+        readonly Color disabledButtonColor = new Color(0.5f, 0.5f, 0.5f, 0.4f);
 
-        bool creationMode = false;
         bool writeToDiskFlag = false;
 
         #endregion
@@ -184,6 +178,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             ParentPanel.BackgroundColor = Color.clear;
 
+            var mainPanel = new Panel();
             mainPanel.Size = new Vector2(windowWidth, 120 + 10);
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
@@ -191,42 +186,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             mainPanel.Outline.Enabled = true;
             NativePanel.Components.Add(mainPanel);
 
-            TextLabel titleLabel = new TextLabel(DaggerfallUI.Instance.Font3);
-            titleLabel.Position = new Vector2(5, 2);
-            titleLabel.Text = ModManager.GetText("presets");
-            titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            titleLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Center;
-            titleLabel.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
-            titleLabel.ShadowColor = Color.clear;
-            titleLabel.TextScale = 1.2f;
-            mainPanel.Components.Add(titleLabel);
-
-            Button cancelButton = new Button();
-            cancelButton.Size = new Vector2(40, 10);
-            cancelButton.Position = new Vector2(0, 0);
-            cancelButton.Label.Text = string.Format("< {0}", ModManager.GetText("settings"));
-            cancelButton.Label.Font = DaggerfallUI.Instance.Font3;
-            cancelButton.Label.ShadowColor = Color.clear;
-            cancelButton.Label.TextColor = Color.grey;
-            cancelButton.Label.TextScale = 0.8f;
-            cancelButton.OnMouseClick += CancelButton_OnMouseClick;
-            mainPanel.Components.Add(cancelButton);
+            mainPanel.Components.Add(MakeTitleLabel("presets"));
+            mainPanel.Components.Add(MakeCancelButton(uiManager, "settings"));
 
             listBox.Position = new Vector2(5, 12);
-            listBox.Size = new Vector2(140, 80);
+            listBox.Size = new Vector2((150 / 3 * 2) - 10, 80);
             listBox.BackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
             listBox.OnScroll += () => scrollBar.ScrollIndex = listBox.ScrollIndex;
             listBox.OnSelectItem += ListBox_OnSelectItem;
             mainPanel.Components.Add(listBox);
 
             scrollBar.Size = new Vector2(5, listBox.Size.y);
-            scrollBar.Position = new Vector2(0, listBox.Position.y);
-            scrollBar.HorizontalAlignment = HorizontalAlignment.Right;
+            scrollBar.Position = new Vector2(listBox.Size.x + 5, listBox.Position.y);
             scrollBar.BackgroundColor = Color.grey;
             scrollBar.DisplayUnits = 9;
             scrollBar.OnScroll += () => listBox.ScrollIndex = scrollBar.ScrollIndex;
             mainPanel.Components.Add(scrollBar);
 
+            var infoPanel = new Panel();
             infoPanel.Position = new Vector2(5, 100);
             infoPanel.Size = new Vector2(windowWidth - 10, 20);
             infoPanel.BackgroundColor = infoBackgroundColor;
@@ -261,18 +238,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             descriptionLabel.MaxWidth = Mathf.FloorToInt(infoPanel.Size.x);
             infoPanel.Components.Add(descriptionLabel);
 
-            controlPanel.BackgroundColor = Color.clear;
-            controlPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            controlPanel.VerticalAlignment = VerticalAlignment.Bottom;
-            controlPanel.Size = new Vector2(mainPanel.Size.x, 10);
-            controlPanel.SetMargins(Margins.All, 1);
-            mainPanel.Components.Add(controlPanel);
+            sideBarPanel.Size = new Vector2(150 / 3, listBox.Size.y);
+            sideBarPanel.Position = new Vector2(0, listBox.Position.y);
+            sideBarPanel.HorizontalAlignment = HorizontalAlignment.Right;
+            sideBarPanel.BackgroundColor = Color.clear;
+            sideBarPanel.Outline.Enabled = false;
+            mainPanel.Components.Add(sideBarPanel);
 
-            SetupBottomBarButton(0, "new", AddPresetButton_OnMouseClick, newPresetButton);
-            SetupBottomBarButton(1, "load", LoadButton_OnMouseClick, loadButton);
-            SetupBottomBarButton(2, "save", SaveButton_OnMouseClick, saveButton);
-            SetupBottomBarButton(3, "delete", DeleteButton_OnMouseClick, deleteButton);
-            SetupBottomBarButton(4, "export", ExportButton_OnMouseClick);
+            SetupSideBarButton(0, "new", AddPresetButton_OnMouseClick, newPresetButton);
+            SetupSideBarButton(1, "load", LoadButton_OnMouseClick, loadButton);
+            SetupSideBarButton(2, "save", SaveButton_OnMouseClick, saveButton);
+            SetupSideBarButton(3, "delete", DeleteButton_OnMouseClick, deleteButton);
+            SetupSideBarButton(4, "export", ExportButton_OnMouseClick);
 
             ToggleButtons(true, newPresetButton);
             ToggleButtons(false, loadButton, saveButton, deleteButton);
@@ -328,39 +305,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             listBox.ScrollToSelected();
         }
 
-        private void SetCreationMode(bool toggle)
+        private void SetupSideBarButton(int index, string labelKey, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
         {
-            if (toggle)
-                uiManager.PushWindow(new PresetCreator(uiManager, CreatePreset));
-
-            creationMode = toggle;
-        }
-
-        private void PresetCreator_OnCancel(DaggerfallPopupWindow sender)
-        {
-            SetCreationMode(false);
-        }
-
-        private void SetupBottomBarButton(int index, string labelKey, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
-        {
-            if (button == null)
-                button = new Button();
-            button.Size = new Vector2((mainPanel.Size.x - 10) / 5f, 10);
-            button.Position = new Vector2(button.Size.x * index, 0);
-            button.VerticalAlignment = VerticalAlignment.Middle;
-            button.Label.Text = ModManager.GetText(labelKey);
-            button.Label.Font = DaggerfallUI.Instance.Font3;
-            button.Label.ShadowColor = Color.clear;
-            button.Label.TextColor = enabledButtonsColor;
-            button.OnMouseClick += onMouseClickHandler;
-            controlPanel.Components.Add(button);
+            const int buttonsCount = 5;
+            sideBarPanel.Components.Add(MakeSimpleButton(labelKey, new Vector2(0, sideBarPanel.Size.y / buttonsCount * index), onMouseClickHandler, button));
         }
 
         private void ToggleButtons(bool toggle, params Button[] buttons)
         {
             foreach (Button button in buttons)
             {
-                button.Label.TextColor = toggle ? enabledButtonsColor : Color.grey;
+                button.BackgroundColor = toggle ? enabledButtonColor : disabledButtonColor;
                 button.Tag = toggle;
             }
         }
@@ -380,7 +335,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             };
             settings.FillPreset(preset, true);
             AddPreset(preset);
-            SetCreationMode(false);
             ListBox_OnSelectItem();
 
             writeToDiskFlag = true;
@@ -397,9 +351,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         private void ListBox_OnSelectItem()
         {
-            if (creationMode)
-                SetCreationMode(false);
-
             Preset preset = SelectedPreset;
             descriptionLabel.Text = preset.Description;
             authorLabel.Text = !string.IsNullOrEmpty(preset.Author) ? string.Format("{0}: {1}", ModManager.GetText("author"), preset.Author) : string.Empty;
@@ -415,9 +366,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (!(bool)newPresetButton.Tag)
                 return;
 
-            ToggleButtons(true, saveButton);
-            ToggleButtons(false, newPresetButton, loadButton, deleteButton);
-            SetCreationMode(true);
+            uiManager.PushWindow(new PresetCreator(uiManager, CreatePreset));
         }
 
         private void LoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -476,6 +425,50 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 source.PopWindow();
             };
             uiManager.PushWindow(messageBox);
+        }
+
+        #endregion
+
+        #region Static Methods
+
+        private static TextLabel MakeTitleLabel(string labelKey)
+        {
+            var titleLabel = new TextLabel();
+            titleLabel.Size = new Vector2(60, 12);
+            titleLabel.Position = new Vector2(0, 5);
+            titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            titleLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Center;
+            titleLabel.Text = ModManager.GetText(labelKey);
+            return titleLabel;
+        }
+
+        private static Button MakeCancelButton(IUserInterfaceManager uiManager, string labelKey)
+        {
+            var cancelButton = new Button();
+            cancelButton.Size = new Vector2(20, 10);
+            cancelButton.Position = new Vector2(0, 0);
+            cancelButton.Label.Text = string.Format("< {0}", ModManager.GetText(labelKey));
+            cancelButton.Label.Font = DaggerfallUI.Instance.Font3;
+            cancelButton.Label.ShadowColor = Color.clear;
+            cancelButton.Label.TextColor = Color.grey;
+            cancelButton.Label.TextScale = 0.8f;
+            cancelButton.OnMouseClick += (sender, position) => uiManager.PopWindow();
+            return cancelButton;
+        }
+
+        private static Button MakeSimpleButton(string labelKey, Vector2 position, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
+        {
+            if (button == null)
+                button = new Button();
+
+            button.Size = new Vector2(40, 12);
+            button.Position = position;
+            button.HorizontalAlignment = HorizontalAlignment.Center;
+            button.Outline.Enabled = true;
+            button.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+            button.Label.Text = ModManager.GetText(labelKey);
+            button.OnMouseClick += onMouseClickHandler;
+            return button;
         }
 
         #endregion
