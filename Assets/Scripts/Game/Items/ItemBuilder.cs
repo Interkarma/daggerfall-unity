@@ -810,6 +810,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             DaggerfallUnityItem newItem = CreateItem(ItemGroups.Currency, (int)Currency.Gold_pieces);
             newItem.stackCount = amount;
+            newItem.value = 1;
 
             return newItem;
         }
