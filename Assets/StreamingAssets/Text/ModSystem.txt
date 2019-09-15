@@ -10,11 +10,15 @@ modAuthor,                  Author
 modAuthorContact,           Contact
 modDFTFUVersion,            DFUnity Version
 
+presetCreator,              Preset Creator
 emptyTitle,                 <title>
 missingTitle,               <Unknown>
 emptyDescription,           <description>
 missingDescription,         <Missing description>
+title,                      Title
+description,                Description
 author,                     Author
+ok,                         OK
 versionMismatch,            Version mismatch!
 
 increase,                   Increase
