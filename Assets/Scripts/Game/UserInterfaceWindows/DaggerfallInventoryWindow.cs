@@ -484,6 +484,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            if (itemInfoPanel != null)
+                goldButton.OnMouseEnter += GoldButton_OnMouseEnter;
         }
 
         protected void SetupAccessoryElements()
@@ -2024,6 +2026,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
         {
             UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            // UpdateItemInfoPanel wants a item, so temporarily reify gold
+            int playerGold = GameManager.Instance.PlayerEntity.GoldPieces;
+            DaggerfallUnityItem goldPieces = ItemBuilder.CreateGoldPieces(playerGold);
+            UpdateItemInfoPanel(goldPieces);
+
         }
 
         protected virtual void StartGameBehaviour_OnNewGame()
