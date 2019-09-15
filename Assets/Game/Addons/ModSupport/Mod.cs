@@ -639,11 +639,46 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 AssetDatabase.LoadAssetAtPath<T>(x)).FirstOrDefault(x => x != null);
         }
 
+        /// <summary>
+        /// Makes a delegate that checks if a given path is the path to the asset with the given name.
+        /// Input path must be an editor asset path (forward slashes as separators) and the match is case-insensitive.
+        /// </summary>
+        /// <param name="name">Asset name with or without extension; case is not important.</param>
+        /// <returns>A comparer delegate that matches a path from a filename.</returns>
+        /// <remarks>
+        /// Searching a match among all mod asset paths is very expensive, so this method relies on ordinal comparison
+        /// without creating substrings or using Path API.
+        /// Nevertheless, this method is only for Editor testing; AssetBundle API only should be used at run-time.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// var predicate = CompareNameWithPath("name");
+        /// Debug.Log(predicate("Assets/SubDir/Name.foo")); // True
+        /// </code>
+        /// </example>
         private Func<string, bool> CompareNameWithPath(string name)
         {
-            if (Path.HasExtension(name))
-                return x => Path.GetFileName(x).ToLower() == name;
-            return x => Path.GetFileNameWithoutExtension(x).ToLower() == name;
+            if (name == null)
+                throw new ArgumentNullException("name");
+
+            return path =>
+            {
+                if (path == null)
+                    throw new ArgumentNullException("null");
+
+                int separatorIndex = path.LastIndexOf('/');
+                if (separatorIndex == -1)
+                    throw new ArgumentException("path is not a valid asset path.", "path");
+
+                if (string.Compare(path, separatorIndex + 1, name, 0, name.Length, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    int end = separatorIndex + 1 + name.Length;
+                    if (end == path.Length || path[end] == '.')
+                        return true;
+                }
+
+                return false;
+            };
         }
 #endif
 
