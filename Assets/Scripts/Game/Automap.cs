@@ -1861,11 +1861,13 @@ namespace DaggerfallWorkshop.Game
                 colors[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
             textureMicroMap.SetPixels(0, 0, width, height, colors);
 
+            const int originX = 5;
+            const int originY = 5;
             DFLocation location = currentLocation.Value;
             foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
             {
-                int xBlockPos = 3 + block.X;
-                int yBlockPos = 3 + block.Z;
+                int xBlockPos = originX + block.X;
+                int yBlockPos = originY + block.Z;
                 for (int y = 0; y < microMapBlockSizeInPixels; y++)
                 {
                     for (int x = 0; x < microMapBlockSizeInPixels; x++)
@@ -1879,8 +1881,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
             float entrancePosX = dungeon.StartMarker.transform.position.x / RDBLayout.RDBSide;
             float entrancePosY = dungeon.StartMarker.transform.position.z / RDBLayout.RDBSide;
-            int xPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosX*2)) * (microMapBlockSizeInPixels / 2);
-            int yPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosY*2)) * (microMapBlockSizeInPixels / 2);
+            int xPosOfBlock = originX * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosX*2)) * (microMapBlockSizeInPixels / 2);
+            int yPosOfBlock = originY * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosY*2)) * (microMapBlockSizeInPixels / 2);
             for (int y = 0; y < microMapBlockSizeInPixels / 2; y++)
             {
                 for (int x = 0; x < microMapBlockSizeInPixels / 2; x++)
@@ -1892,8 +1894,8 @@ namespace DaggerfallWorkshop.Game
             // mark player position on micro map            
             float playerPosX = gameObjectPlayerAdvanced.transform.position.x / RDBLayout.RDBSide;
             float playerPosY = gameObjectPlayerAdvanced.transform.position.z / RDBLayout.RDBSide;
-            xPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosX * 2)) * (microMapBlockSizeInPixels / 2);
-            yPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosY * 2)) * (microMapBlockSizeInPixels / 2);
+            xPosOfBlock = originX * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosX * 2)) * (microMapBlockSizeInPixels / 2);
+            yPosOfBlock = originY * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosY * 2)) * (microMapBlockSizeInPixels / 2);
             for (int y = 0; y < microMapBlockSizeInPixels / 2; y++)
             {
                 for (int x = 0; x < microMapBlockSizeInPixels / 2; x++)
