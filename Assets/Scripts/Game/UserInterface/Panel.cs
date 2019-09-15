@@ -218,11 +218,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (component.Enabled && component is Button)
                 {
                     Button buttonComponent = (Button)component;
-                    if (buttonComponent.Hotkey.IsDownWith(keyModifiers))
-                    {
-                        buttonComponent.TriggerMouseClick();
+                    if (buttonComponent.KeyboardActivation(keyModifiers))
                         return true;
-                    }
                 }
             }
             return false;
