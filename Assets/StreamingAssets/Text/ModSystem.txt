@@ -37,6 +37,8 @@ load,                       Load
 save,                       Save
 delete,                     Delete
 cancel,                     Cancel
+export,                     Export
+exportMessage,              {0} will be exported to {1}.
 reset,                      Reset
 resetConfirmation,          Revert all settings to default values?
 cleanConfigurationDir,      Found configuration files for unknown or uninstalled mods. Do you want to remove them?
