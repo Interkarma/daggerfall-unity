@@ -78,6 +78,12 @@ TradeSell,            L
 TradeClear,           C
 TradeExit,            X
 
+- Taverns menu
+TavernRoom,           R
+TavernTalk,           T
+TavernFood,           F
+TavernExit,           E
+
 - Guilds
 GuildsJoin,           J
 GuildsTalk,           T

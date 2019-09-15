@@ -87,6 +87,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TradeClear,
             TradeExit,
 
+            // Taverns menu
+            TavernRoom,
+            TavernTalk,
+            TavernFood,
+            TavernExit,
+
             // Guilds
             GuildsJoin,
             GuildsTalk,
