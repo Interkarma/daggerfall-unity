@@ -10,8 +10,10 @@
 //
 
 using System;
+using System.IO;
 using System.Linq;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -179,6 +181,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             SetupBottomBarButton(1, "load", LoadButton_OnMouseClick, loadButton);
             SetupBottomBarButton(2, "save", SaveButton_OnMouseClick, saveButton);
             SetupBottomBarButton(3, "delete", DeleteButton_OnMouseClick, deleteButton);
+            SetupBottomBarButton(4, "export", ExportButton_OnMouseClick);
 
             creatorPanel.BackgroundColor = creatorBackgroundColor;
             creatorPanel.Outline.Enabled = false;
@@ -272,7 +275,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (button == null)
                 button = new Button();
-            button.Size = new Vector2((mainPanel.Size.x - 10) / 4f, 10);
+            button.Size = new Vector2((mainPanel.Size.x - 10) / 5f, 10);
             button.Position = new Vector2(button.Size.x * index, 0);
             button.VerticalAlignment = VerticalAlignment.Middle;
             button.Label.Text = ModManager.GetText(labelKey);
@@ -402,6 +405,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 creatorDescription.BackgroundColor = Color.red;
             else if (creatorDescription.BackgroundColor != Color.clear)
                 creatorDescription.BackgroundColor = Color.clear;
+        }
+
+        private void ExportButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            Preset preset = settings.Presets[listBox.SelectedIndex];
+            string fileName =  string.Join("_", preset.Title.Split(Path.GetInvalidFileNameChars())) + ".json";
+
+            string dirPath = ModManager.CombinePaths(Application.persistentDataPath, "Mods", "ExportedPresets", mod.FileName);
+            string filePath = Path.Combine(dirPath, fileName);
+
+            var messageBox = new DaggerfallMessageBox(uiManager, this, true);
+            messageBox.AllowCancel = true;
+            messageBox.SetText(string.Format(ModManager.GetText("exportMessage"), preset.Title, filePath));
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.OK, true);
+            messageBox.OnButtonClick += (source, messageBoxButton) =>
+            {
+                Directory.CreateDirectory(dirPath);
+                File.WriteAllText(filePath, SaveLoadManager.Serialize(typeof(Preset), preset, true));
+                source.PopWindow();
+            };
+            uiManager.PushWindow(messageBox);
         }
 
         #endregion

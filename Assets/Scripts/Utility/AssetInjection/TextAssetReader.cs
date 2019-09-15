@@ -1,0 +1,123 @@
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: TheLacus
+// Contributors:
+// 
+// Notes:
+//
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEngine;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
+
+namespace DaggerfallWorkshop.Utility.AssetInjection
+{
+    /// <summary>
+    /// An helper class that creates a virtual layer for reading text from mods and loose files.
+    /// </summary>
+    public static class TextAssetReader
+    {
+        /// <summary>
+        /// Gets content of a text file from loose files or a text asset from mods.
+        /// A folder named 'Assets' (i.e. Assets/Game/Mods/ExampleMod/Assets) is the equivalent of the 'StreamingAssets' folder on disk.
+        /// </summary>
+        /// <param name="relativePath">Relative path to text asset with forward slashes (i.e. 'Data/foo.json' for 'Assets/Data/foo.json' and 'StreamingAssets/Data/foo.json').</param>
+        /// <param name="content">Read content of text asset or null.</param>
+        /// <returns>True if file found.</returns>
+        public static bool TryRead(string relativePath, out string content)
+        {
+            if (relativePath == null)
+                throw new ArgumentNullException("relativePath");
+
+            string path = Path.Combine(Application.streamingAssetsPath, relativePath);
+            if (File.Exists(path))
+            {
+                content = File.ReadAllText(path);
+                return true;
+            }
+
+            TextAsset textAsset;
+            if (ModManager.Instance && ModManager.Instance.TryGetAsset(Path.GetFileName(relativePath), false, out textAsset))
+            {
+                content = textAsset.text;
+                return true;
+            }
+
+            content = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Gets deserialized content of a text file from loose files or a text asset from mods.
+        /// A folder named 'Assets' (i.e. Assets/Game/Mods/ExampleMod/Assets) is the equivalent of the 'StreamingAssets' folder on disk.
+        /// </summary>
+        /// <param name="relativePath">Relative path to text asset with forward slashes (i.e. 'Data/foo.json' for 'Assets/Data/foo.json' and 'StreamingAssets/Data/foo.json').</param>
+        /// <param name="data">Deserialized content or type default.</param>
+        /// <returns>True if asset found and parsed.</returns>
+        public static bool TryRead<T>(string relativePath, out T data)
+        {
+            string content;
+            if (TryRead(relativePath, out content))
+            {
+                data = (T)SaveLoadManager.Deserialize(typeof(T), content);
+                return true;
+            }
+
+            data = default(T);
+            return false;
+        }
+
+        /// <summary>
+        /// Gets content of all text files from loose files and text assets from mods inside the given relative directory.
+        /// A folder named 'Assets' (i.e. Assets/Game/Mods/ExampleMod/Assets) is the equivalent of the 'StreamingAssets' folder on disk.
+        /// </summary>
+        /// <param name="relativeDirectory">Relative path to a directory with forward slashes (i.e. 'Data/Foo' for 'Assets/Data/Foo' and 'StreamingAssets/Data/Foo').</param>
+        /// <param name="extension">The extension without leading dot (i.e. 'txt' for 'foo.txt') or null to match all extensions.</param>
+        /// <returns>A list of text contents.</returns>
+        public static List<string> ReadAll(string relativeDirectory, string extension = null)
+        {
+            if (relativeDirectory == null)
+                throw new ArgumentNullException("relativeDirectory");
+
+            var content = new List<string>();
+
+            string dirPath = Path.Combine(Application.streamingAssetsPath, relativeDirectory);
+            if (Directory.Exists(dirPath))
+            {
+                foreach (string path in extension != null ? Directory.GetFiles(dirPath, string.Format("*.{0}", extension)) : Directory.GetFiles(dirPath))
+                    content.Add(File.ReadAllText(path));
+            }
+
+            if (ModManager.Instance)
+            {
+                var assets = ModManager.Instance.FindAssets<TextAsset>(string.Format("Assets/{0}", relativeDirectory), extension != null ? string.Format(".{0}", extension) : null);
+                if (assets != null)
+                {
+                    foreach (TextAsset asset in assets)
+                        content.Add(asset.text);
+                }
+            }
+
+            return content;
+        }
+
+        /// <summary>
+        /// Gets deserialized content of all text files from loose files and text assets from mods inside the given relative directory.
+        /// A folder named 'Assets' (i.e. Assets/Game/Mods/ExampleMod/Assets) is the equivalent of the 'StreamingAssets' folder on disk.
+        /// </summary>
+        /// <param name="relativeDirectory">Relative path to a directory with forward slashes (i.e. 'Data/Foo' for 'Assets/Data/Foo' and 'StreamingAssets/Data/Foo').</param>
+        /// <param name="extension">The extension without leading dot (i.e. 'json' for 'foo.json') or null to match all extensions.</param>
+        /// <returns>A list of parsed contents.</returns>
+        public static IEnumerable<T> ReadAll<T>(string relativeDirectory, string extension = null)
+        {
+            return ReadAll(relativeDirectory, extension).Select(x => (T)SaveLoadManager.Deserialize(typeof(T), x));
+        }
+    }
+}

@@ -861,6 +861,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.MessageReceiver(message, data, callback);
         }
 
+        /// <summary>
+        /// Combines an array of strings into a path.
+        /// This is a substitute of an overload of <see cref="Path.Combine(string, string)"/> which is not available with current .NET version.
+        /// </summary>
+        /// <param name="paths">An array of parts of the path.</param>
+        /// <returns>The combined paths.</returns>
+        public static string CombinePaths(params string[] paths)
+        {
+            string path = string.Empty;
+
+            for (int i = 0; i < paths.Length; i++)
+                path = Path.Combine(path, paths[i]);
+
+            return path;
+        }
+
 #if UNITY_EDITOR
         /// <summary>
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
