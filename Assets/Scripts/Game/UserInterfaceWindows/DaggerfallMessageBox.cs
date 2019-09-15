@@ -300,9 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Tag = messageBoxButton;
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
-            HotkeySequence buttonShortcut;
-            if (DaggerfallShortcut.Keys.TryGetValue(toShortcutButton[messageBoxButton], out buttonShortcut))
-                button.ShortcutKey = buttonShortcut;
+            button.Hotkey = DaggerfallShortcut.GetBinding(toShortcutButton[messageBoxButton]);
             buttons.Add(button);
 
             // Once a button has been added the owner is expecting some kind of input from player

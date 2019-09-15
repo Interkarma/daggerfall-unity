@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private HotkeySequence ShortcutOrFallback(DaggerfallShortcut.Buttons button)
         {
-            HotkeySequence hotkeySequence = DaggerfallShortcut.Keys[button];
+            HotkeySequence hotkeySequence = DaggerfallShortcut.GetBinding(button);
             if (hotkeySequence.IsSameKeyCode(automapBinding))
                 return hotkeySequence.WithKeyCode(fallbackKey);
             else

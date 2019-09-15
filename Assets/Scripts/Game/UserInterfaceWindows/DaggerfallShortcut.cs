@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -9,6 +10,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public enum Buttons
         {
+            None,
+
             Accept,
             Reject,
             Cancel,
@@ -119,28 +122,68 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AutomapZoomOut,
             AutomapIncreaseCameraFieldOfFiew,
             AutomapDecreaseCameraFieldOfFiew,
+
+            // Guilds
+            GuildsJoin,
+            GuildsTalk,
+            GuildsExit,
+            GuildsTraining,
+            GuildsGetQuest,
+            GuildsRepair,
+            GuildsIdentify,
+            GuildsDonate,
+            GuildsCure,
+            GuildsBuyPotions,
+            GuildsMakePotions,
+            GuildsBuySpells,
+            GuildsMakeSpells,
+            GuildsBuyMagicItems,
+            GuildsMakeMagicItems,
+            GuildsSellMagicItems,
+            GuildsTeleport,
+            GuildsDaedraSummon,
+            GuildsSpymaster,
+            GuildsBuySoulgems,
+            GuildsReceiveArmor,
+            GuildsReceiveHouse,
+
+            // Witches Covens
+            WitchesTalk,
+            WitchesDaedraSummon,
+            WitchesQuest,
+            WitchesExit,
         }
 
         public static Dictionary<Buttons, HotkeySequence> keys = null;
 
-        public static Dictionary<Buttons, HotkeySequence> Keys
+        private static void CheckLoaded()
         {
-            get
+            if (keys == null)
             {
-                if (keys == null)
+                keys = new Dictionary<Buttons, HotkeySequence>();
+                foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
                 {
-                    keys = new Dictionary<Buttons, HotkeySequence>();
-                    foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
+                    if (button == Buttons.None)
+                        continue;
+
+                    string buttonName = Enum.GetName(typeof(Buttons), button);
+                    if (TextManager.Instance.HasText(textDatabase, buttonName))
                     {
-                        string buttonName = Enum.GetName(typeof(Buttons), button);
-                        if (TextManager.Instance.HasText(textDatabase, buttonName))
-                        {
-                            keys[button] = HotkeySequence.FromString(TextManager.Instance.GetText(textDatabase, buttonName));
-                        }
+                        keys[button] = HotkeySequence.FromString(TextManager.Instance.GetText(textDatabase, buttonName));
                     }
+                    else
+                        Debug.Log(string.Format("{0}: no {1} entry", textDatabase, buttonName));
                 }
-                return keys;
             }
+        }
+
+        public static HotkeySequence GetBinding(Buttons button)
+        {
+            CheckLoaded();
+            HotkeySequence key;
+            if (keys.TryGetValue(button, out key))
+                return key;
+            return HotkeySequence.None;
         }
     }
 }

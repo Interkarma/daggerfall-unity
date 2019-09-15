@@ -109,12 +109,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (lastChunk && !answerGiven)
             {
                 HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-                if (DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.Yes].IsDownWith(keyModifiers))
+                if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Yes).IsDownWith(keyModifiers))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.AcceptQuest);
                     QuestMachine.Instance.InstantiateQuest(daedraQuest);
                 }
-                else if (DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.No].IsDownWith(keyModifiers))
+                else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.No).IsDownWith(keyModifiers))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.RefuseQuest);
                     GameObjectHelper.CreateFoeSpawner(true, DaggerfallQuestPopupWindow.daedricFoes[UnityEngine.Random.Range(0, 5)], UnityEngine.Random.Range(3, 6), 8, 64);

@@ -52,11 +52,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             // Shortcuts for options
-            if (DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.MainMenuLoad].IsDownWith(keyModifiers))
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuLoad).IsDownWith(keyModifiers))
                 LoadGame();
-            else if (DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.MainMenuStart].IsDownWith(keyModifiers))
+            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuStart).IsDownWith(keyModifiers))
                 StartNewGame();
-            else if (DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.MainMenuExit].IsDownWith(keyModifiers))
+            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuExit).IsDownWith(keyModifiers))
                 ExitGame();
         }
 

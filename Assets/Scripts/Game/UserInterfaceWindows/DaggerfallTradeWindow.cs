@@ -225,7 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            exitButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeExit];
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeExit);
 
             // Setup initial state
             SelectTabPage((windowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
@@ -280,48 +280,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 wagonButton = DaggerfallUI.AddButton(wagonButtonRect, actionButtonsPanel);
                 wagonButton.OnMouseClick += WagonButton_OnMouseClick;
-                wagonButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeWagon];
+                wagonButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeWagon);
             }
 
             infoButton = DaggerfallUI.AddButton(infoButtonRect, actionButtonsPanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
-            infoButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeInfo];
+            infoButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeInfo);
 
             selectButton = DaggerfallUI.AddButton(selectButtonRect, actionButtonsPanel);
             selectButton.OnMouseClick += SelectButton_OnMouseClick;
-            selectButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeSelect];
+            selectButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSelect);
 
             if (windowMode == WindowModes.Buy)
             {
                 stealButton = DaggerfallUI.AddButton(stealButtonRect, actionButtonsPanel);
                 stealButton.OnMouseClick += StealButton_OnMouseClick;
-                stealButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeSteal];
+                stealButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSteal);
             }
             modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
             modeActionButton.OnMouseClick += ModeActionButton_OnMouseClick;
             switch (windowMode)
             {
                 case WindowModes.Buy:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeBuy];
+                    modeActionButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeBuy);
                     break;
                 case WindowModes.Identify:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeIdentify];
+                    modeActionButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeIdentify);
                     break;
                 case WindowModes.Inventory:
                     // Shouldn't happen
                     break;
                 case WindowModes.Repair:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeRepair];
+                    modeActionButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeRepair);
                     break;
                 case WindowModes.Sell:
                 case WindowModes.SellMagic:
-                    modeActionButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeSell];
+                    modeActionButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSell);
                     break;
             }
 
             clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
             clearButton.OnMouseClick += ClearButton_OnMouseClick;
-            clearButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TradeClear];
+            clearButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeClear);
         }
 
         #endregion

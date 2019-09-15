@@ -78,6 +78,36 @@ TradeSell,            L
 TradeClear,           C
 TradeExit,            X
 
+- Guilds
+GuildsJoin,           J
+GuildsTalk,           T
+GuildsExit,           E
+GuildsTraining,       R
+GuildsGetQuest,       G
+GuildsRepair,         R
+GuildsIdentify,       I
+GuildsDonate,         D
+GuildsCure,           C
+GuildsBuyPotions,     B
+GuildsMakePotions,    M
+GuildsBuySpells,      B
+GuildsMakeSpells,     M
+GuildsBuyMagicItems,  B
+GuildsMakeMagicItems, M
+GuildsSellMagicItems, S
+GuildsTeleport,       L
+GuildsDaedraSummon,   D
+GuildsSpymaster,      S
+GuildsBuySoulgems,    B
+GuildsReceiveArmor,   R
+GuildsReceiveHouse,   R
+
+- Witches Covens
+WitchesTalk,          T
+WitchesDaedraSummon,  D
+WitchesQuest,         Q
+WitchesExit,          E
+
 - Automap
 AutomapSwitchAutomapGridMode,                       Space
 AutomapResetView,                                   Backspace

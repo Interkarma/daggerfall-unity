@@ -94,13 +94,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Foot button
             footButton = DaggerfallUI.AddButton(footButtonRect, mainPanel);
             footButton.OnMouseClick += FootButton_OnMouseClick;
-            footButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TransportFoot];
+            footButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportFoot);
 
             // Horse button
             horseButton = DaggerfallUI.AddButton(horseButtonRect, mainPanel);
             if (hasHorse) {
                 horseButton.OnMouseClick += HorseButton_OnMouseClick;
-                horseButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TransportHorse];
+                horseButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportHorse);
             }
             else {
                 horseButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, horseDisabledRect, disabledTextureSize);
@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cartButton = DaggerfallUI.AddButton(cartButtonRect, mainPanel);
             if (hasCart) {
                 cartButton.OnMouseClick += CartButton_OnMouseClick;
-                cartButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TransportCart];
+                cartButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportCart);
             }
             else {
                 cartButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, cartDisabledRect, disabledTextureSize);
@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             shipButton = DaggerfallUI.AddButton(shipButtonRect, mainPanel);
             if (hasShip) {
                 shipButton.OnMouseClick += ShipButton_OnMouseClick;
-                shipButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TransportShip];
+                shipButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportShip);
             }
             else {
                 shipButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, shipDisabledRect, disabledTextureSize);
@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            exitButton.ShortcutKey = DaggerfallShortcut.Keys[DaggerfallShortcut.Buttons.TransportExit];
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportExit);
 
             NativePanel.Components.Add(mainPanel);
 

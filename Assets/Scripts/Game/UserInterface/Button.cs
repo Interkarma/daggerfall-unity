@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { clickSound = value; }
         }
 
-        public HotkeySequence ShortcutKey
+        public HotkeySequence Hotkey
         {
             get { return shortcutKey; }
             set { shortcutKey = value; }
