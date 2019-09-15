@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (a.k.a. Nystul)
-// Contributors:    Lypyl, Interkarma
+// Contributors:    Lypyl, Interkarma, Numidium
 // 
 // Notes:
 //
