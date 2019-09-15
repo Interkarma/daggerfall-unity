@@ -55,27 +55,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return new HotkeySequence(newKeyCode, modifiers);
         }
 
-        // Build a HotkeySequence from string of syntax   [[Left|Right]Control-][[Left|Right]Shift-][[Left|Right]Alt-]KeyCode
+        // Build a HotkeySequence from string
         // the order of modifiers doesn't matter
+        public static readonly string expectedSyntax = "[[Left|Right]Ctrl-][[Left|Right]Alt-][[Left|Right]Shift-]<KeyCode>";
+
         public static HotkeySequence FromString(string hotkeyName)
         {
-            int startKeyName = 0;
-            HotkeySequence.KeyModifiers modifiers = KeyModifiers.None;
-            bool foundModifier;
-            do 
+            try
             {
-                foundModifier = false;
-                foreach (KeyModifiers keyModifier in Enum.GetValues(typeof(KeyModifiers)))
+                string[] keywords = hotkeyName.Split('-');
+
+                KeyCode keyCode = ParseEnum<KeyCode>(keywords[keywords.Length - 1]);
+                KeyModifiers modifiers = KeyModifiers.None;
+                for (int i = 0; i < keywords.Length - 1; i++)
                 {
-                    if (hotkeyName.Substring(startKeyName).StartsWith(keyModifier.ToString() + "-", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        modifiers |= keyModifier;
-                        startKeyName += keyModifier.ToString().Length + 1;
-                        foundModifier = true;
-                    }
+                    KeyModifiers keyModifier = ParseEnum<KeyModifiers>(keywords[i]);
+                    modifiers |= keyModifier;
                 }
-            } while (foundModifier);
-            return new HotkeySequence(ParseEnum<KeyCode>(hotkeyName.Substring(startKeyName)), modifiers);
+                return new HotkeySequence(keyCode, modifiers);
+            }
+            catch (Exception)
+            {
+                Debug.Log(string.Format("Failed parsing hotkey {0}, expected {1}", hotkeyName, expectedSyntax));
+                return HotkeySequence.None;
+            }
         }
 
         public override string ToString()
