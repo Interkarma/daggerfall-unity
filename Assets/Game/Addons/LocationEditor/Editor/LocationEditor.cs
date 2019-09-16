@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Loc {
         private string[] listModeString = { "3D Model", "Billboard", "NPC", "Door" ,"Int. Parts"};
         private string[] modelSubListString = { "Civil", "Nature", "Dungeon" };
         private string[] billboardSubListString = { "Interior", "Nature", "Lights", "Treasure", "Markers" };
-        private string[] interiorPartsSetsString= { "BlueGrey", "brownGreyPillars"};
+        private string[] interiorPartsSetsString= { "White_Dark", "BlueGrey1", "Grey Face", "BlueGrey2","Brown ♦", "Brown Pillar", "Grey Brick" , "White_Ligh" , "All Wood"};
         private bool isExteriorMode = false;
         private BuildingReplacementData levelData;
         private string currentWorkFile;
@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Loc {
 
                 else if (listMode == 4) {
                     GUI.BeginGroup(new Rect(8, 124, Screen.width - 16, 32), lightGrayBG);
-                    interiorSubPartSetList = GUI.SelectionGrid(new Rect(8, 4, (interiorPartsSetsString.Length * 80) + 8, 24), interiorSubPartSetList, interiorPartsSetsString, interiorPartsSetsString.Length);
+                    interiorSubPartSetList = GUI.SelectionGrid(new Rect(8, 4, (interiorPartsSetsString.Length * 96) + 8, 24), interiorSubPartSetList, interiorPartsSetsString, interiorPartsSetsString.Length);
                     GUI.EndGroup();
 
                 }
@@ -361,9 +361,23 @@ namespace DaggerfallWorkshop.Loc {
             else if (listMode == 1 && billboardSubList == 4)
                 currentList = LocationEditorHelper.billboards_markers;
             else if (listMode == 4 && interiorSubPartSetList == 0)
-                currentList = LocationEditorHelper.blueGrayHouseParts;
+                currentList = LocationEditorHelper.brownWhite_darkwood_Parts;
             else if (listMode == 4 && interiorSubPartSetList == 1)
-                currentList = LocationEditorHelper.brownGreyPillarsHouseParts;
+                currentList = LocationEditorHelper.blueGrey_Wood_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 2)
+                currentList = LocationEditorHelper.greyFace_Checkboard_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 3)
+                currentList = LocationEditorHelper.blueGrey_Stone_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 4)
+                currentList = LocationEditorHelper.brown_Diamond_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 5)
+                currentList = LocationEditorHelper.brownPillars_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 6)
+                currentList = LocationEditorHelper.greyBrick_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 7)
+                currentList = LocationEditorHelper.brownWhite_lightwood_Parts;
+            else if (listMode == 4 && interiorSubPartSetList == 8)
+                currentList = LocationEditorHelper.wood_wood_Parts;
             else
                 currentList = LocationEditorHelper.NPCs;
 
