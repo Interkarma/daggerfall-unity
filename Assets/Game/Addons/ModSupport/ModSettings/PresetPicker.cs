@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 creatorPanel.Components.Add(MakeLabelledTextBox(descriptionTextBox, ModManager.GetText("description"), VerticalAlignment.Middle));
                 creatorPanel.Components.Add(MakeLabelledTextBox(authorTextBox, ModManager.GetText("author"), VerticalAlignment.Bottom));
 
-                mainPanel.Components.Add(MakeSimpleButton("ok", new Vector2(0, 110), ConfirmButton_OnMouseClick));
+                mainPanel.Components.Add(MakeSimpleButton("ok", null, null, new Vector2(0, 110), ConfirmButton_OnMouseClick));
             }
 
             private Panel MakeLabelledTextBox(TextBox textBox, string text, VerticalAlignment verticalAlignment)
@@ -245,11 +245,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             sideBarPanel.Outline.Enabled = false;
             mainPanel.Components.Add(sideBarPanel);
 
-            SetupSideBarButton(0, "new", AddPresetButton_OnMouseClick, newPresetButton);
-            SetupSideBarButton(1, "load", LoadButton_OnMouseClick, loadButton);
-            SetupSideBarButton(2, "save", SaveButton_OnMouseClick, saveButton);
-            SetupSideBarButton(3, "delete", DeleteButton_OnMouseClick, deleteButton);
-            SetupSideBarButton(4, "export", ExportButton_OnMouseClick);
+            SetupSideBarButton(0, "new", "presetNewInfo", AddPresetButton_OnMouseClick, newPresetButton);
+            SetupSideBarButton(1, "load", "presetLoadInfo", LoadButton_OnMouseClick, loadButton);
+            SetupSideBarButton(2, "save", "presetSaveInfo", SaveButton_OnMouseClick, saveButton);
+            SetupSideBarButton(3, "delete", "presetDeleteInfo", DeleteButton_OnMouseClick, deleteButton);
+            SetupSideBarButton(4, "export", "presetExportInfo", ExportButton_OnMouseClick);
 
             ToggleButtons(true, newPresetButton);
             ToggleButtons(false, loadButton, saveButton, deleteButton);
@@ -305,10 +305,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             listBox.ScrollToSelected();
         }
 
-        private void SetupSideBarButton(int index, string labelKey, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
+        private void SetupSideBarButton(int index, string labelKey, string toolTipKey, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
         {
             const int buttonsCount = 5;
-            sideBarPanel.Components.Add(MakeSimpleButton(labelKey, new Vector2(0, sideBarPanel.Size.y / buttonsCount * index), onMouseClickHandler, button));
+            sideBarPanel.Components.Add(MakeSimpleButton(labelKey, defaultToolTip, toolTipKey, new Vector2(0, sideBarPanel.Size.y / buttonsCount * index), onMouseClickHandler, button));
         }
 
         private void ToggleButtons(bool toggle, params Button[] buttons)
@@ -456,7 +456,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return cancelButton;
         }
 
-        private static Button MakeSimpleButton(string labelKey, Vector2 position, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
+        private static Button MakeSimpleButton(string labelKey, ToolTip toolTip, string toolTipKey, Vector2 position, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler, Button button = null)
         {
             if (button == null)
                 button = new Button();
@@ -467,6 +467,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             button.Outline.Enabled = true;
             button.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
             button.Label.Text = ModManager.GetText(labelKey);
+            if (toolTip != null)
+            {
+                button.Label.ToolTip = toolTip;
+                button.Label.ToolTipText = ModManager.GetText(toolTipKey);
+            }
             button.OnMouseClick += onMouseClickHandler;
             return button;
         }
