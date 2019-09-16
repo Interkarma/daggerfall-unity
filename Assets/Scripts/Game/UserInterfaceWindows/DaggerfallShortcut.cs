@@ -81,6 +81,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TravelMapFind,
             TravelMapList,
 
+            // Talk screen
+            TalkTellMeAbout,
+            TalkWhereIs,
+            TalkCategoryLocation,
+            TalkCategoryPeople,
+            TalkCategoryThings,
+            TalkCategoryWork,
+            TalkAsk,
+            TalkExit,
+            TalkCopy,
+            TalkTonePolite,
+            TalkToneNormal,
+            TalkToneBlunt,
+
             // Travel menu
             TravelBegin,
             TravelExit,

@@ -72,6 +72,21 @@ TransportExit,        E
 TravelMapFind,        F
 TravelMapList,        L
 
+-- Talk screen
+TalkTellMeAbout,      A
+TalkWhereIs,          W
+TalkCategoryLocation, L
+TalkCategoryPeople,   P
+TalkCategoryThings,   T
+- conflict with TalkWhereIs
+TalkCategoryWork,     J
+TalkAsk,              O
+TalkExit,             G
+TalkCopy,             C
+TalkTonePolite,       F1
+TalkToneNormal,       F2
+TalkToneBlunt,        F3
+
 -- Travel menu
 TravelBegin,               B
 TravelExit,                E
