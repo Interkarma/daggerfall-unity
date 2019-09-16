@@ -45,6 +45,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             OptionsFullScreen,
             OptionsHeadBobbing,
 
+            // General
+            HUDToggle,
+
+            // Debugger
+            DebuggerToggle,
+            DebuggerPrevQuest,
+            DebuggerNextQuest,
+
             // Rest menu
             RestForAWhile,
             RestUntilHealed,
