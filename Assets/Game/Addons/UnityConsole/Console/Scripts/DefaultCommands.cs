@@ -26,8 +26,7 @@ namespace Wenzil.Console
     {
         public static bool showDebugStrings = false;
 
-        void Start()
-        {
+        void Start() {
             ConsoleCommandsDatabase.RegisterCommand(QuitCommand.name, QuitCommand.description, QuitCommand.usage, QuitCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(HelpCommand.name, HelpCommand.description, HelpCommand.usage, HelpCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(LoadCommand.name, LoadCommand.description, LoadCommand.usage, LoadCommand.Execute);
@@ -107,17 +106,13 @@ namespace Wenzil.Console
             public static readonly string usage = "dumpblock blockName";
             public static readonly string description = "Dump a block to json file";
 
-            public static string Execute(params string[] args)
-            {
-                if (args.Length == 0)
-                {
+            public static string Execute(params string[] args) {
+                if (args.Length == 0) {
                     return HelpCommand.Execute(DumpBlock.name);
                 }
-                else
-                {
+                else {
                     DFBlock blockData;
-                    if (RMBLayout.GetBlockData(args[0], out blockData))
-                    {
+                    if (RMBLayout.GetBlockData(args[0], out blockData)) {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
                         File.WriteAllText(Path.Combine(Application.persistentDataPath, args[0]), blockJson);
                         return "Block data json written to " + Path.Combine(Application.persistentDataPath, args[0]);
@@ -134,17 +129,13 @@ namespace Wenzil.Console
             public static readonly string usage = "dumplocblocks [blockName.RMB]*";
             public static readonly string description = "Dump the names of blocks for each location, or locations for given block(s), to json file";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 MapsFile mapFileReader = DaggerfallUnity.Instance.ContentReader.MapFileReader;
-                if (args.Length == 0)
-                {
+                if (args.Length == 0) {
                     Dictionary<string, string[]> locBlocks = new Dictionary<string, string[]>();
-                    for (int region = 0; region < mapFileReader.RegionCount; region++)
-                    {
+                    for (int region = 0; region < mapFileReader.RegionCount; region++) {
                         DFRegion dfRegion = mapFileReader.GetRegion(region);
-                        for (int location = 0; location < dfRegion.LocationCount; location++)
-                        {
+                        for (int location = 0; location < dfRegion.LocationCount; location++) {
                             DFLocation dfLoc = mapFileReader.GetLocation(region, location);
                             locBlocks[dfLoc.Name] = dfLoc.Exterior.ExteriorData.BlockNames;
                         }
@@ -154,27 +145,22 @@ namespace Wenzil.Console
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
                 }
-                else
-                {
+                else {
                     Dictionary<string, List<string>> regionLocs = new Dictionary<string, List<string>>();
-                    for (int region = 0; region < mapFileReader.RegionCount; region++)
-                    {
+                    for (int region = 0; region < mapFileReader.RegionCount; region++) {
                         DFRegion dfRegion = mapFileReader.GetRegion(region);
-                        if (string.IsNullOrEmpty(dfRegion.Name))
-                        {
+                        if (string.IsNullOrEmpty(dfRegion.Name)) {
                             Debug.Log("region null: " + region);
                             continue;
                         }
                         List<string> locs;
                         if (regionLocs.ContainsKey(dfRegion.Name))
                             locs = regionLocs[dfRegion.Name];
-                        else
-                        {
+                        else {
                             locs = new List<string>();
                             regionLocs[dfRegion.Name] = locs;
                         }
-                        for (int location = 0; location < dfRegion.LocationCount; location++)
-                        {
+                        for (int location = 0; location < dfRegion.LocationCount; location++) {
                             DFLocation dfLoc = mapFileReader.GetLocation(region, location);
 
                             foreach (string blockName in dfLoc.Exterior.ExteriorData.BlockNames)
@@ -203,18 +189,15 @@ namespace Wenzil.Console
             public static readonly string usage = "dumpbuilding";
             public static readonly string description = "Dump the current building player is inside to json file";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
                 int blockIndex = interior.EntryDoor.blockIndex;
                 int recordIndex = interior.EntryDoor.recordIndex;
 
                 DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockIndex);
-                if (blockData.Type == DFBlock.BlockTypes.Rmb)
-                {
+                if (blockData.Type == DFBlock.BlockTypes.Rmb) {
                     string fileName = WorldDataReplacement.GetBuildingReplacementFilename(blockData.Name, blockIndex, recordIndex);
-                    BuildingReplacementData buildingData = new BuildingReplacementData()
-                    {
+                    BuildingReplacementData buildingData = new BuildingReplacementData() {
                         RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex]
                     };
 
@@ -235,8 +218,7 @@ namespace Wenzil.Console
             public static readonly string description = "Log an analysis of potion recipe usage of ingredients";
             public static readonly string usage = "ingredUsage";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length > 0)
                     return usage;
 
@@ -253,11 +235,9 @@ namespace Wenzil.Console
             public static readonly string usage = "tgm";
             public static readonly string description = "Toggle god mode";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerHealth playerHealth = GameManager.Instance.PlayerHealth;//GameObject.FindObjectOfType<PlayerHealth>();
-                if (playerHealth)
-                {
+                if (playerHealth) {
                     PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                     playerEntity.GodMode = !playerEntity.GodMode;
                     return string.Format("Godmode enabled: {0}", playerEntity.GodMode);
@@ -274,11 +254,9 @@ namespace Wenzil.Console
             public static readonly string usage = "nt";
             public static readonly string description = "Toggle NoTarget mode";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                if (playerEntity != null)
-                {
+                if (playerEntity != null) {
                     playerEntity.NoTargetMode = !playerEntity.NoTargetMode;
                     return string.Format("NoTarget enabled: {0}", playerEntity.NoTargetMode);
                 }
@@ -294,11 +272,9 @@ namespace Wenzil.Console
             public static readonly string usage = "tai";
             public static readonly string description = "Toggles AI on or off";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 GameManager gameManager = GameManager.Instance;
-                if (gameManager != null)
-                {
+                if (gameManager != null) {
                     gameManager.DisableAI = !gameManager.DisableAI;
                     return string.Format("AI disabled: {0}", gameManager.DisableAI);
                 }
@@ -314,13 +290,11 @@ namespace Wenzil.Console
             public static readonly string usage = "cm [n] [team]";
             public static readonly string description = "Creates a mobile of type [n] on [team]. Omit team argument for default team.";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args.Length < 1) return "See usage.";
 
                 GameObject player = GameManager.Instance.PlayerObject;
-                if (player != null)
-                {
+                if (player != null) {
                     int id = 0;
                     if (!int.TryParse(args[0], out id))
                         return "Invalid mobile ID.";
@@ -329,8 +303,7 @@ namespace Wenzil.Console
                         return "Invalid mobile ID.";
 
                     int team = 0;
-                    if (args.Length > 1)
-                    {
+                    if (args.Length > 1) {
                         if (!int.TryParse(args[1], out team))
                             return "Invalid team.";
 
@@ -342,8 +315,7 @@ namespace Wenzil.Console
 
                     DaggerfallEntityBehaviour behaviour = mobile[0].GetComponent<DaggerfallEntityBehaviour>();
                     EnemyEntity entity = behaviour.Entity as EnemyEntity;
-                    if (args.Length > 1)
-                    {
+                    if (args.Length > 1) {
                         entity.Team = (MobileTeams)team;
                     }
                     else
@@ -366,8 +338,7 @@ namespace Wenzil.Console
             public static readonly string description = "Toggles if the debug information is displayed";
             public static readonly string usage = "tdbg";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
                 DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = DaggerfallUnity.Instance;
                 DaggerfallSongPlayer[] songPlayers = GameObject.FindObjectsOfType<DaggerfallSongPlayer>();
@@ -378,10 +349,8 @@ namespace Wenzil.Console
                     streamingWorld.ShowDebugString = show;
                 if (daggerfallUnity)
                     daggerfallUnity.WorldTime.ShowDebugString = show;
-                foreach (DaggerfallSongPlayer songPlayer in songPlayers)
-                {
-                    if (songPlayer && songPlayer.IsPlaying)
-                    {
+                foreach (DaggerfallSongPlayer songPlayer in songPlayers) {
+                    if (songPlayer && songPlayer.IsPlaying) {
                         songPlayer.ShowDebugString = show;
                         break;
                     }
@@ -400,18 +369,15 @@ namespace Wenzil.Console
             public static readonly string description = "Set Health";
             public static readonly string usage = "set_Health [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
 
                 int health = 0;
-                if (args == null || args.Length < 1 || !int.TryParse(args[0], out health))
-                {
+                if (args == null || args.Length < 1 || !int.TryParse(args[0], out health)) {
                     return HelpCommand.Execute(SetHealth.name);
 
                 }
-                else if (playerBehavior != null)
-                {
+                else if (playerBehavior != null) {
                     playerBehavior.Entity.SetHealth(health);
                     return string.Format("Set health to: {0}", playerBehavior.Entity.CurrentHealth);
                 }
@@ -427,8 +393,7 @@ namespace Wenzil.Console
             public static readonly string description = "Clears mesh and material asset caches then reloads game. Warning: Uses QuickSave slot to reload game in-place. The in-place reload will trigger a longer than usual delay.";
             public static readonly string usage = "reset_assets";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallUnity.Instance.MeshReader.ClearCache();
                 DaggerfallUnity.Instance.MaterialReader.ClearCache();
 
@@ -445,8 +410,7 @@ namespace Wenzil.Console
             public static readonly string description = "Clears records of import attempts for assets from loose files and mods.";
             public static readonly string usage = "retry_assets";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 MeshReplacement.RetryAssetImports();
 
                 return "Cleared records of import attempts for assets from loose files and mods.";
@@ -460,14 +424,12 @@ namespace Wenzil.Console
             public static readonly string description = "Kill self";
             public static readonly string usage = "suicide";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
 
                 if (playerBehavior == null)
                     return error;
-                else
-                {
+                else {
                     playerBehavior.Entity.SetHealth(0);
                     return "Are you still there?";
                 }
@@ -480,8 +442,7 @@ namespace Wenzil.Console
             public static readonly string description = "Sets the weather to indicated type";
             public static readonly string usage = "set_weather [#] \n0 = Sunny \n1 = Cloudy \n2 = Overcast \n3 = Fog \n4 = Rain \n5 = Thunder \n6 = Snow";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 WeatherManager weatherManager = GameManager.Instance.WeatherManager;
                 int weatherCode;
 
@@ -491,8 +452,7 @@ namespace Wenzil.Console
                 if (weatherManager == null)
                     return HelpCommand.Execute(SetWeather.name);
 
-                if (int.TryParse(args[0], out weatherCode) && weatherCode >= 0 && weatherCode <= 6)
-                {
+                if (int.TryParse(args[0], out weatherCode) && weatherCode >= 0 && weatherCode <= 6) {
                     var type = (WeatherType)weatherCode;
                     weatherManager.SetWeather(type);
                     return "Set weather: " + type.ToString();
@@ -509,37 +469,31 @@ namespace Wenzil.Console
             public static readonly string description = "Set walk speed. Set to -1 to return to default speed.";
             public static readonly string usage = "set_walkspeed [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int speed;
                 PlayerSpeedChanger speedChanger = GameManager.Instance.SpeedChanger;
 
                 if (speedChanger == null)
                     return error;
 
-                if (args == null || args.Length < 1)
-                {
-                    try
-                    {
+                if (args == null || args.Length < 1) {
+                    try {
                         Console.Log(string.Format("Current Walk Speed: {0}", speedChanger.GetWalkSpeed(GameManager.Instance.PlayerEntity)));
                         return HelpCommand.Execute(SetWalkSpeed.name);
 
                     }
-                    catch
-                    {
+                    catch {
                         return HelpCommand.Execute(SetWalkSpeed.name);
                     }
 
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
-                else if (speed == -1)
-                {
+                else if (speed == -1) {
                     speedChanger.useWalkSpeedOverride = false;
                     return string.Format("Walk speed set to default.");
                 }
-                else
-                {
+                else {
                     speedChanger.useWalkSpeedOverride = true;
                     speedChanger.walkSpeedOverride = speed;
                     return string.Format("Walk speed set to: {0}", speed);
@@ -555,40 +509,33 @@ namespace Wenzil.Console
             public static readonly string description = "Set run speed. Set to -1 to return to default speed.";
             public static readonly string usage = "set_runspeed [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int speed;
                 PlayerSpeedChanger speedChanger = GameManager.Instance.SpeedChanger;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (speedChanger == null)
                     return error;
 
-                if (args == null || args.Length < 1)
-                {
-                    try
-                    {
+                if (args == null || args.Length < 1) {
+                    try {
                         Console.Log(string.Format("Current RunSpeed: {0}", speedChanger.GetRunSpeed(speedChanger.GetWalkSpeed(GameManager.Instance.PlayerEntity))));
                         return HelpCommand.Execute(SetRunSpeed.name);
 
                     }
-                    catch
-                    {
+                    catch {
                         return HelpCommand.Execute(SetRunSpeed.name);
                     }
 
 
                 }
-                else if (!int.TryParse(args[0], out speed))
-                {
+                else if (!int.TryParse(args[0], out speed)) {
                     return error;
                 }
-                else if (speed == -1)
-                {
+                else if (speed == -1) {
                     speedChanger.useRunSpeedOverride = false;
                     return string.Format("Run speed set to default.");
                 }
-                else
-                {
+                else {
                     speedChanger.runSpeedOverride = speed;
                     speedChanger.useRunSpeedOverride = true;
                     return string.Format("Run speed set to: {0}", speed);
@@ -603,38 +550,31 @@ namespace Wenzil.Console
             public static readonly string description = "Set Timescale; Default 12.  Setting it too high can have adverse affects";
             public static readonly string usage = "set_timescale [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int speed;
                 DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = DaggerfallWorkshop.DaggerfallUnity.Instance;
 
                 if (daggerfallUnity == null)
                     return error;
 
-                if (args == null || args.Length < 1)
-                {
-                    try
-                    {
+                if (args == null || args.Length < 1) {
+                    try {
                         Console.Log(string.Format("Current TimeScale: {0}", DaggerfallWorkshop.DaggerfallUnity.Instance.WorldTime.TimeScale));
                         return HelpCommand.Execute(SetTimeScale.name);
                     }
-                    catch
-                    {
+                    catch {
                         return HelpCommand.Execute(SetTimeScale.name);
                     }
 
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         DaggerfallWorkshop.DaggerfallUnity.Instance.WorldTime.TimeScale = speed;
                         return string.Format("Time Scale set to: {0}", speed);
                     }
-                    catch
-                    {
+                    catch {
                         return "Unspecified error; failed to set timescale";
                     }
 
@@ -650,20 +590,17 @@ namespace Wenzil.Console
             public static readonly string description = "Set mouse sensitivity. Default is 1.5";
             public static readonly string usage = "set_mspeed [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 float speed = 0;
-                if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
-                {
+                if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed)) {
                     if (mLook)
                         Console.Log(string.Format("Current mouse sensitivity: {0}", mLook.sensitivity));
                     return HelpCommand.Execute(SetMouseSensitivity.name);
                 }
                 else if (mLook == null)
                     return error;
-                else
-                {
+                else {
                     mLook.sensitivity = new Vector2(speed, speed);
                     return string.Format("Set mouse sensitivity to: {0}", mLook.sensitivity.ToString());
                 }
@@ -679,13 +616,11 @@ namespace Wenzil.Console
             public static readonly string description = "Toggle mouse smoothing.";
             public static readonly string usage = "tmsmooth";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 if (mLook == null)
                     return error;
-                else
-                {
+                else {
                     //mLook.smoothing = new Vector2(speed, speed);
                     mLook.enableSmoothing = !mLook.enableSmoothing;
                     return string.Format("Mouse smoothing is on: {0}", mLook.enableSmoothing.ToString());
@@ -702,20 +637,17 @@ namespace Wenzil.Console
             public static readonly string description = "Set mouse smoothing. Default is 3";
             public static readonly string usage = "set_msmooth [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 float speed = 0;
-                if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
-                {
+                if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed)) {
                     if (mLook)
                         Console.Log(string.Format("Current mouse smoothing: {0}", mLook.smoothing));
                     return HelpCommand.Execute(SetMouseSmoothing.name);
                 }
                 else if (mLook == null)
                     return error;
-                else
-                {
+                else {
                     mLook.smoothing = new Vector2(speed, speed);
                     return string.Format("Set mouse smoothing to: {0}", mLook.smoothing.ToString());
                 }
@@ -730,21 +662,17 @@ namespace Wenzil.Console
             public static readonly string description = "Set Vertical Sync count. Must be 0, 1, 2;";
             public static readonly string usage = "set_vsync";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int count = 0;
-                if (args == null || args.Count() < 1)
-                {
+                if (args == null || args.Count() < 1) {
                     Console.Log(string.Format("Current VSync Count: {0}", UnityEngine.QualitySettings.vSyncCount));
                     return HelpCommand.Execute(SetVSync.name);
                 }
-                else if (!int.TryParse(args[0], out count))
-                {
+                else if (!int.TryParse(args[0], out count)) {
                     Console.Log(string.Format("Current VSync Count: {0}", UnityEngine.QualitySettings.vSyncCount));
                     return HelpCommand.Execute(SetVSync.name);
                 }
-                else if (count == 0 || count == 1 || count == 2)
-                {
+                else if (count == 0 || count == 1 || count == 2) {
                     UnityEngine.QualitySettings.vSyncCount = count;
                     return string.Format("Set vSyncCount to: {0}", UnityEngine.QualitySettings.vSyncCount.ToString());
                 }
@@ -761,31 +689,26 @@ namespace Wenzil.Console
             public static readonly string description = "Set gravity. Default is 20";
             public static readonly string usage = "set_grav [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int gravity = 0;
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
                 if (acrobatMotor == null)
                     return error;
 
-                if (args == null || args.Length < 1)
-                {
-                    try
-                    {
+                if (args == null || args.Length < 1) {
+                    try {
                         Console.Log(string.Format("Current gravity: {0}", acrobatMotor.gravity));
                         return HelpCommand.Execute(SetGravity.name);
                     }
-                    catch
-                    {
+                    catch {
                         return HelpCommand.Execute(SetGravity.name);
                     }
 
                 }
                 else if (!int.TryParse(args[0], out gravity))
                     return error;
-                else
-                {
+                else {
                     acrobatMotor.gravity = gravity;
                     return string.Format("Gravity set to: {0}", acrobatMotor.gravity);
                 }
@@ -800,31 +723,25 @@ namespace Wenzil.Console
             public static readonly string description = "Set jump speed. Default is 8";
             public static readonly string usage = "set_jump [#]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int speed;
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
-                if (acrobatMotor == null)
-                {
+                if (acrobatMotor == null) {
                     return error;
                 }
-                if (args == null || args.Length < 1)
-                {
-                    try
-                    {
+                if (args == null || args.Length < 1) {
+                    try {
                         Console.Log(string.Format("Current Jump Speed: {0}", acrobatMotor.jumpSpeed));
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
-                    catch
-                    {
+                    catch {
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
-                else
-                {
+                else {
                     acrobatMotor.jumpSpeed = speed;
                     return string.Format("Jump speed set to: {0}", acrobatMotor.jumpSpeed);
                 }
@@ -838,14 +755,12 @@ namespace Wenzil.Console
             public static readonly string description = "Toggle air control, which allows player to move while in the air.";
             public static readonly string usage = "tac";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
                 if (acrobatMotor == null)
                     return error;
-                else
-                {
+                else {
                     acrobatMotor.airControl = !acrobatMotor.airControl;
                     return string.Format("air control set to: {0}", acrobatMotor.airControl);
                 }
@@ -859,8 +774,7 @@ namespace Wenzil.Console
             public static readonly string description = "Send the player to the x,y coordinates";
             public static readonly string usage = "tele2pixel [x y]; where x is between 0 & 1000 and y is between 0 & 500";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int x = 0; int y = 0;
                 DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
                 PlayerEnterExit playerEE = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
@@ -875,8 +789,7 @@ namespace Wenzil.Console
                 else if (playerEE == null || playerEE.IsPlayerInside)
                     return "PlayerEnterExit could not be found or player inside";
 
-                else if (int.TryParse(args[0], out x) && int.TryParse(args[1], out y))
-                {
+                else if (int.TryParse(args[0], out x) && int.TryParse(args[1], out y)) {
                     if (x <= 0 || y <= 0)
                         return "Invalid Coordinates";
                     else if (x >= MapsFile.MaxMapPixelX || y >= MapsFile.MaxMapPixelY)
@@ -894,8 +807,7 @@ namespace Wenzil.Console
             public static readonly string name = "location";
             public static readonly string description = "Send the player to the predefined location";
             public static readonly string usage = "location [n]; where n is between 0 & 9:\n0 ... random location\n1 ... Daggerfall/Daggerfall\n2 ... Wayrest/Wayrest\n3 ... Sentinel/Sentinel\n4 ... Orsinium Area/Orsinium\n5 ... Tulune/The Old Copperham Place\n6 ... Pothago/The Stronghold of Cirden\n7 ... Daggerfall/Privateer's Hold\n8 ... Wayrest/Merwark Hollow\n9 ... Isle of Balfiera/Direnni Tower\n";
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int n = 0;
                 DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
                 PlayerEnterExit playerEE = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
@@ -910,56 +822,51 @@ namespace Wenzil.Console
                     return "PlayerEnterExit could not be found or player inside";
 
 
-                else if (int.TryParse(args[0], out n))
-                {
+                else if (int.TryParse(args[0], out n)) {
                     if (n < 0 || n > 9)
                         return "Invalid location index";
-                    else
-                    {
-                        switch (n)
-                        {
+                    else {
+                        switch (n) {
                             case 0:
-                            int xpos, ypos;
-                            while (true)
-                            {
-                                xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX);
-                                ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY);
-                                DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
-                                if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
-                                {
-                                    streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location - locations always seem to be one pixel to the northern east - so compensate for this (since locations are never at the border - there should not occur a index out of bounds...)
-                                    return (string.Format("Teleported player to location at: {0}, {1}", xpos, ypos));
+                                int xpos, ypos;
+                                while (true) {
+                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX);
+                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY);
+                                    DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
+                                    if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary)) {
+                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location - locations always seem to be one pixel to the northern east - so compensate for this (since locations are never at the border - there should not occur a index out of bounds...)
+                                        return (string.Format("Teleported player to location at: {0}, {1}", xpos, ypos));
+                                    }
                                 }
-                            }
                             case 1:
-                            streamingWorld.TeleportToCoordinates(207, 213, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Daggerfall/Daggerfall");
+                                streamingWorld.TeleportToCoordinates(207, 213, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Daggerfall/Daggerfall");
                             case 2:
-                            streamingWorld.TeleportToCoordinates(859, 244, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Wayrest/Wayrest");
+                                streamingWorld.TeleportToCoordinates(859, 244, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Wayrest/Wayrest");
                             case 3:
-                            streamingWorld.TeleportToCoordinates(397, 343, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Sentinel/Sentinel");
+                                streamingWorld.TeleportToCoordinates(397, 343, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Sentinel/Sentinel");
                             case 4:
-                            streamingWorld.TeleportToCoordinates(892, 146, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Orsinium Area/Orsinium");
+                                streamingWorld.TeleportToCoordinates(892, 146, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Orsinium Area/Orsinium");
                             case 5:
-                            streamingWorld.TeleportToCoordinates(67, 119, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Tulune/The Old Copperham Place");
+                                streamingWorld.TeleportToCoordinates(67, 119, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Tulune/The Old Copperham Place");
                             case 6:
-                            streamingWorld.TeleportToCoordinates(254, 408, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Pothago/The Stronghold of Cirden");
+                                streamingWorld.TeleportToCoordinates(254, 408, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Pothago/The Stronghold of Cirden");
                             case 7:
-                            streamingWorld.TeleportToCoordinates(109, 158, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Daggerfall/Privateer's Hold");
+                                streamingWorld.TeleportToCoordinates(109, 158, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Daggerfall/Privateer's Hold");
                             case 8:
-                            streamingWorld.TeleportToCoordinates(860, 245, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Wayrest/Merwark Hollow");
+                                streamingWorld.TeleportToCoordinates(860, 245, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Wayrest/Merwark Hollow");
                             case 9:
-                            streamingWorld.TeleportToCoordinates(718, 204, StreamingWorld.RepositionMethods.RandomStartMarker);
-                            return ("Teleported player to Isle of Balfiera/Direnni Tower");
+                                streamingWorld.TeleportToCoordinates(718, 204, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Isle of Balfiera/Direnni Tower");
                             default:
-                            break;
+                                break;
                         }
                         return "Teleported successfully.";
                     }
@@ -977,31 +884,24 @@ namespace Wenzil.Console
             public static readonly string usage = "trans_out";
 
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
-                if (playerEnterExit == null || !playerEnterExit.IsPlayerInside)
-                {
+                if (playerEnterExit == null || !playerEnterExit.IsPlayerInside) {
                     Console.Log(HelpCommand.Execute(TransitionToExterior.name));
                     return error;
                 }
-                else
-                {
-                    try
-                    {
-                        if (playerEnterExit.IsPlayerInsideDungeon)
-                        {
+                else {
+                    try {
+                        if (playerEnterExit.IsPlayerInsideDungeon) {
                             playerEnterExit.TransitionDungeonExterior();
                         }
-                        else
-                        {
+                        else {
                             playerEnterExit.TransitionExterior();
                         }
 
                         return "Transitioning to exterior";
                     }
-                    catch
-                    {
+                    catch {
                         return "Error on transitioning";
                     }
 
@@ -1021,24 +921,19 @@ namespace Wenzil.Console
             public static readonly string usage = "tele2exit";
 
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
                 GameObject playerObj = GameManager.Instance.PlayerObject;//GameObject.FindGameObjectWithTag("Player") as GameObject;
-                if (playerObj == null || playerEnterExit == null || !playerEnterExit.IsPlayerInsideDungeon)
-                {
+                if (playerObj == null || playerEnterExit == null || !playerEnterExit.IsPlayerInsideDungeon) {
                     return error;
                 }
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         // Teleport to StartMarker at dungeon entrance
                         playerObj.transform.position = playerEnterExit.Dungeon.StartMarker.transform.position;
                         return "Transitioning to door position";
                     }
-                    catch
-                    {
+                    catch {
                         return "Unspecified Error";
                     }
 
@@ -1054,8 +949,7 @@ namespace Wenzil.Console
             public static readonly string description = "Teleport player to quest spawn marker (monster, NPC placement)";
             public static readonly string usage = "tele2qspawn";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 QuestMarker spawnMarker;
                 Vector3 buildingOrigin;
                 bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestSpawn, out spawnMarker, out buildingOrigin);
@@ -1077,8 +971,7 @@ namespace Wenzil.Console
             public static readonly string description = "Teleport player to quest item marker";
             public static readonly string usage = "tele2qitem";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 QuestMarker itemMarker;
                 Vector3 buildingOrigin;
                 bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestItem, out itemMarker, out buildingOrigin);
@@ -1101,18 +994,14 @@ namespace Wenzil.Console
             public static readonly string description = "Immediately give player a copy of any items referenced by active quests (including rewards). This can break quest execution flow.";
             public static readonly string usage = "getallquestitems";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int itemsFound = 0;
                 ulong[] uids = QuestMachine.Instance.GetAllActiveQuests();
-                foreach (ulong questUID in uids)
-                {
+                foreach (ulong questUID in uids) {
                     Quest quest = QuestMachine.Instance.GetQuest(questUID);
-                    if (quest != null)
-                    {
+                    if (quest != null) {
                         QuestResource[] itemResources = quest.GetAllResources(typeof(Item));
-                        foreach (Item item in itemResources)
-                        {
+                        foreach (Item item in itemResources) {
                             GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, ItemCollection.AddPosition.Front);
                             itemsFound++;
                         }
@@ -1133,8 +1022,7 @@ namespace Wenzil.Console
             public static readonly string description = "Tombstone quest. Does not issue reward.";
             public static readonly string usage = "endquest <questUID>";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (QuestMachine.Instance.QuestCount == 0)
                     return "No quests are running";
 
@@ -1165,8 +1053,7 @@ namespace Wenzil.Console
             public static readonly string description = "Tombstone quest currently shown by HUD quest debugger (if any). Does not issue reward.";
             public static readonly string usage = "enddebugquest";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State == HUDQuestDebugger.DisplayState.Nothing)
                     return "Quest debugger is not open.";
 
@@ -1178,8 +1065,7 @@ namespace Wenzil.Console
                     return "Quest is already tombstoned";
 
                 // Disallow ending main quest backbone
-                if (QuestMachine.IsProtectedQuest(currentQuest))
-                {
+                if (QuestMachine.IsProtectedQuest(currentQuest)) {
                     return "Cannot end main quest backbone with 'enddebugquest'. Use 'clearmqstate' instead. Not this will clear ALL quests and ALL global variables.";
                 }
 
@@ -1196,8 +1082,7 @@ namespace Wenzil.Console
             public static readonly string description = "Immediately tombstones all quests then removes from quest machine. Does not issue rewards.";
             public static readonly string usage = "purgeallquests";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (QuestMachine.Instance.QuestCount == 0)
                     return error;
 
@@ -1214,8 +1099,7 @@ namespace Wenzil.Console
             public static readonly string description = "Modify reputation with last NPC clicked by a positive or negative amount. Clamped at -100 through 100.";
             public static readonly string usage = "modnpcrep <amount>";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length != 1)
                     return HelpCommand.Execute(ModNPCRep.name);
 
@@ -1228,8 +1112,7 @@ namespace Wenzil.Console
                 if (npc == null)
                     return error;
 
-                if (GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(npc.Data.factionID, amount))
-                {
+                if (GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(npc.Data.factionID, amount)) {
                     return string.Format("Changed NPC rep for {0} by {1}", npc.DisplayName, amount);
                 }
 
@@ -1244,8 +1127,7 @@ namespace Wenzil.Console
             public static readonly string description = "Change player level to a value from 1 to 30. Does not allow player to distribute points, only changes level value.";
             public static readonly string usage = "setlevel <level>";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length != 1)
                     return HelpCommand.Execute(SetLevel.name);
 
@@ -1265,8 +1147,7 @@ namespace Wenzil.Console
             public static readonly string description = "Start or stop levitating.";
             public static readonly string usage = "levitate on|off";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length != 1)
                     return HelpCommand.Execute(name);
 
@@ -1275,13 +1156,11 @@ namespace Wenzil.Console
                     return "Could not find LevitateMotor component peered with PlayerMotor.";
 
                 string state = args[0];
-                if (string.Compare(state, "on", true) == 0)
-                {
+                if (string.Compare(state, "on", true) == 0) {
                     levitateMotor.IsLevitating = true;
                     return "Player is now levitating";
                 }
-                else if (string.Compare(state, "off", true) == 0)
-                {
+                else if (string.Compare(state, "off", true) == 0) {
                     levitateMotor.IsLevitating = false;
                     return "Player is no longer levitating";
                 }
@@ -1297,18 +1176,14 @@ namespace Wenzil.Console
             public static readonly string description = "Opens all doors in an interior or dungeon, regardless of locked state";
             public static readonly string usage = "openalldoors";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (!GameManager.Instance.IsPlayerInside)
                     return error;
-                else
-                {
+                else {
                     DaggerfallActionDoor[] doors = GameObject.FindObjectsOfType<DaggerfallActionDoor>();
                     int count = 0;
-                    for (int i = 0; i < doors.Length; i++)
-                    {
-                        if (!doors[i].IsOpen)
-                        {
+                    for (int i = 0; i < doors.Length; i++) {
+                        if (!doors[i].IsOpen) {
                             doors[i].SetOpen(true, false, true);
                             count++;
                         }
@@ -1327,19 +1202,16 @@ namespace Wenzil.Console
             public static readonly string description = "Opens a single door the player is looking at, regardless of locked state";
             public static readonly string usage = "opendoor";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (!GameManager.Instance.IsPlayerInside)
                     return "You are not inside";
-                else
-                {
+                else {
                     DaggerfallActionDoor door;
                     RaycastHit hitInfo;
                     Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                     if (!(Physics.Raycast(ray, out hitInfo)))
                         return error;
-                    else
-                    {
+                    else {
                         door = hitInfo.transform.GetComponent<DaggerfallActionDoor>();
                         if (door == null)
                             return error;
@@ -1359,16 +1231,14 @@ namespace Wenzil.Console
             public static readonly string description = "Triggers an action object regardless of whether it is able to be activated normally";
             public static readonly string usage = "activate";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
 
                 DaggerfallAction action;
                 RaycastHit hitInfo;
                 Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 if (!(Physics.Raycast(ray, out hitInfo)))
                     return error;
-                else
-                {
+                else {
                     action = hitInfo.transform.GetComponent<DaggerfallAction>();
                     if (action == null)
                         return error;
@@ -1387,15 +1257,12 @@ namespace Wenzil.Console
             public static readonly string description = "Kills any enemies currently in scene";
             public static readonly string usage = "killall";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
                 int count = 0;
-                for (int i = 0; i < entityBehaviours.Length; i++)
-                {
+                for (int i = 0; i < entityBehaviours.Length; i++) {
                     DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
-                    if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
-                    {
+                    if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass) {
                         entityBehaviour.Entity.SetHealth(0);
                         count++;
                     }
@@ -1411,29 +1278,24 @@ namespace Wenzil.Console
             public static readonly string description = "get pixel coordinates for a location";
             public static readonly string usage = "getlocpixel <region name>/<location name> (no space between region name & location name)";
 
-            public static string Execute(params string[] args)
-            {
-                if (args == null || args.Count() < 1)
-                {
+            public static string Execute(params string[] args) {
+                if (args == null || args.Count() < 1) {
                     return string.Format("Invalid paramaters; \n {0}", usage);
                 }
 
                 DaggerfallConnect.DFLocation loc;
 
                 string name = args[0];
-                for (int i = 1; i < args.Count(); i++)
-                {
+                for (int i = 1; i < args.Count(); i++) {
                     name += " " + args[i];
                 }
 
 
-                if (DaggerfallWorkshop.Utility.GameObjectHelper.FindMultiNameLocation(name, out loc))
-                {
+                if (DaggerfallWorkshop.Utility.GameObjectHelper.FindMultiNameLocation(name, out loc)) {
                     DaggerfallConnect.Utility.DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)loc.MapTableData.Longitude, (int)loc.MapTableData.Latitude);
                     return string.Format("{0} found; Pixel Coordinates: \nx: {1} y: {2}", name, pos.X, pos.Y);
                 }
-                else
-                {
+                else {
                     return "Invalid location.  Check spelling?";
                 }
             }
@@ -1450,8 +1312,7 @@ namespace Wenzil.Console
             public static readonly string usage = "teleport \noptional paramaters: \n{true/false} always teleport if true, even if looking at empty space (default false) \n{max distance}" +
                 "max distance to teleport (default 500) \n{up/down/left/right} final position adjustment (default up) \n Examples:\nteleport \n teleport up \n teleport 999 left true";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
 
                 bool forceTeleOnNoHit = false;              //teleport maxDistance even if raycast doesn't hit
                 float maxDistance = 500;                    //max distance
@@ -1459,10 +1320,8 @@ namespace Wenzil.Console
                 Vector3 dir = Camera.main.transform.up;
                 Vector3 loc;
 
-                if (args != null)
-                {
-                    for (int i = 0; i < args.Length; i++)
-                    {
+                if (args != null) {
+                    for (int i = 0; i < args.Length; i++) {
                         float temp = 0;
                         if (string.IsNullOrEmpty(args[i]))
                             continue;
@@ -1489,20 +1348,16 @@ namespace Wenzil.Console
                 Vector3 origin = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
                 Ray ray = new Ray(origin + Camera.main.transform.forward * .2f, Camera.main.transform.forward);
                 GameManager.Instance.AcrobatMotor.ClearFallingDamage();
-                if (!(Physics.Raycast(ray, out hitInfo, maxDistance)))
-                {
+                if (!(Physics.Raycast(ray, out hitInfo, maxDistance))) {
                     Console.Log("Didn't hit anything...");
-                    if (forceTeleOnNoHit)
-                    {
+                    if (forceTeleOnNoHit) {
                         GameManager.Instance.PlayerObject.transform.position = ray.GetPoint(maxDistance);
                         Console.Log("...teleporting anyways");
                     }
                 }
-                else
-                {
+                else {
                     loc = hitInfo.point;
-                    while (Physics.CheckCapsule(loc, loc + dir, GameManager.Instance.PlayerController.radius + .1f) && step < 50)
-                    {
+                    while (Physics.CheckCapsule(loc, loc + dir, GameManager.Instance.PlayerController.radius + .1f) && step < 50) {
                         loc = dir + loc;
                         step++;
                     }
@@ -1518,8 +1373,7 @@ namespace Wenzil.Console
             public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
             public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|soul|gold|magic|drug|map|torch) [n]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args.Length < 1) return "see usage";
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -1528,72 +1382,67 @@ namespace Wenzil.Console
                 DaggerfallUnityItem newItem = null;
 
                 int n = 1;
-                if (args.Length >= 2)
-                {
+                if (args.Length >= 2) {
                     Int32.TryParse(args[1], out n);
                 }
 
                 if (n < 1)
                     return "Error - see usage";
 
-                if (args[0] == "gold")
-                {
+                if (args[0] == "gold") {
                     GameManager.Instance.PlayerEntity.GoldPieces += n;
                     return string.Format("Added {0} gold pieces", n);
                 }
 
                 UnityEngine.Random.InitState(Time.frameCount);
-                while (n >= 1)
-                {
+                while (n >= 1) {
                     n--;
-                    switch (args[0])
-                    {
+                    switch (args[0]) {
                         case "book":
-                        newItem = ItemBuilder.CreateRandomBook();
-                        break;
+                            newItem = ItemBuilder.CreateRandomBook();
+                            break;
                         case "weapon":
-                        newItem = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
-                        break;
+                            newItem = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
+                            break;
                         case "armor":
-                        newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                        break;
+                            newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                            break;
                         case "cloth":
-                        newItem = ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race);
-                        break;
+                            newItem = ItemBuilder.CreateRandomClothing(playerEntity.Gender, playerEntity.Race);
+                            break;
                         case "ingr":
-                        newItem = ItemBuilder.CreateRandomIngredient();
-                        break;
+                            newItem = ItemBuilder.CreateRandomIngredient();
+                            break;
                         case "relig":
-                        newItem = ItemBuilder.CreateRandomReligiousItem();
-                        break;
+                            newItem = ItemBuilder.CreateRandomReligiousItem();
+                            break;
                         case "soul":
-                        newItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
-                        break;
+                            newItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
+                            break;
                         case "magic":
-                        newItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
-                        break;
+                            newItem = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                            break;
                         case "drug":
-                        newItem = ItemBuilder.CreateRandomDrug();
-                        break;
+                            newItem = ItemBuilder.CreateRandomDrug();
+                            break;
                         case "map":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Map);
-                        break;
+                            newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Map);
+                            break;
                         case "torch":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch);
-                        break;
+                            newItem = ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch);
+                            break;
                         case "soultrap":
-                        newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-                        break;
+                            newItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+                            break;
                         default:
-                        return "unrecognized keyword. see usage";
+                            return "unrecognized keyword. see usage";
                     }
                     items.AddItem(newItem);
                 }
                 return "success";
 
             }
-            private static T RandomEnumValue<T>()
-            {
+            private static T RandomEnumValue<T>() {
                 var v = Enum.GetValues(typeof(T));
                 return (T)v.GetValue(UnityEngine.Random.Range(0, v.Length));
             }
@@ -1605,8 +1454,7 @@ namespace Wenzil.Console
             public static readonly string description = "Adds an artifact of ID n to the character";
             public static readonly string usage = "addArtifact [n]";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args.Length < 1) return "See usage.";
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -1614,79 +1462,78 @@ namespace Wenzil.Console
                 ItemCollection items = playerEntity.Items;
                 DaggerfallUnityItem newItem = null;
 
-                switch (args[0])
-                {
+                switch (args[0]) {
                     case "0":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Masque_of_Clavicus);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Masque_of_Clavicus);
+                        break;
                     case "1":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mehrunes_Razor);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mehrunes_Razor);
+                        break;
                     case "2":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mace_of_Molag_Bal);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Mace_of_Molag_Bal);
+                        break;
                     case "3":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Hircine_Ring);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Hircine_Ring);
+                        break;
                     case "4":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Sanguine_Rose);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Sanguine_Rose);
+                        break;
                     case "5":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Oghma_Infinium);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Oghma_Infinium);
+                        break;
                     case "6":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Wabbajack);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Wabbajack);
+                        break;
                     case "7":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Namira);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Namira);
+                        break;
                     case "8":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skull_of_Corruption);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skull_of_Corruption);
+                        break;
                     case "9":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Azuras_Star);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Azuras_Star);
+                        break;
                     case "10":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Volendrung);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Volendrung);
+                        break;
                     case "11":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Warlocks_Ring);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Warlocks_Ring);
+                        break;
                     case "12":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Bow);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Bow);
+                        break;
                     case "13":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Necromancers_Amulet);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Necromancers_Amulet);
+                        break;
                     case "14":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Chrysamere);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Chrysamere);
+                        break;
                     case "15":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Lords_Mail);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Lords_Mail);
+                        break;
                     case "16":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Staff_of_Magnus);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Staff_of_Magnus);
+                        break;
                     case "17":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Khajiit);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ring_of_Khajiit);
+                        break;
                     case "18":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Mail);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Mail);
+                        break;
                     case "19":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Shield);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Auriels_Shield);
+                        break;
                     case "20":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Spell_Breaker);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Spell_Breaker);
+                        break;
                     case "21":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skeletons_Key);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Skeletons_Key);
+                        break;
                     case "22":
-                    newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Blade);
-                    break;
+                        newItem = ItemBuilder.CreateItem(ItemGroups.Artifacts, (int)ArtifactsSubTypes.Ebony_Blade);
+                        break;
                     default:
-                    return "Invalid artifact ID.";
+                        return "Invalid artifact ID.";
                 }
                 items.AddItem(newItem);
 
@@ -1700,8 +1547,7 @@ namespace Wenzil.Console
             public static readonly string description = "Move back to last known good position";
             public static readonly string usage = "groundme";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
                 FrictionMotor frictionMotor = GameManager.Instance.FrictionMotor;
                 CharacterController cc = GameManager.Instance.PlayerController;
@@ -1711,12 +1557,10 @@ namespace Wenzil.Console
                 Vector3 origin = frictionMotor.ContactPoint;
                 origin.y += cc.height;
                 Ray ray = new Ray(origin, Vector3.down);
-                if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2)))
-                {
+                if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2))) {
                     return "Failed to reposition - try Teleport or if inside tele2exit";
                 }
-                else
-                {
+                else {
                     GameManager.Instance.PlayerObject.transform.position = frictionMotor.ContactPoint;
                     GameManager.Instance.PlayerMotor.FixStanding(cc.height / 2);
                     return "Finished - moved to last known good location at " + frictionMotor.ContactPoint.ToString();
@@ -1731,8 +1575,7 @@ namespace Wenzil.Console
             public static readonly string usage = "showbankwindow {region index}";
             public static DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow bankWindow;
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (bankWindow == null)
                     bankWindow = new DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow(DaggerfallUI.UIManager);
                 DaggerfallUI.UIManager.PushWindow(bankWindow);
@@ -1748,8 +1591,7 @@ namespace Wenzil.Console
             public static readonly string description = "Opens a spellmaker window for creating spells";
             public static readonly string usage = "showspellmaker";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellMakerWindow);
                 return "Finished";
             }
@@ -1761,8 +1603,7 @@ namespace Wenzil.Console
             public static readonly string description = "Opens a item maker window for enchanting items";
             public static readonly string usage = "showitemmaker";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 DaggerfallUI.UIManager.PostMessage(DaggerfallUIMessages.dfuiOpenItemMakerWindow);
                 return "Finished";
             }
@@ -1774,8 +1615,7 @@ namespace Wenzil.Console
             public static readonly string description = "Gives player a new spellbook if they do not have one.";
             public static readonly string usage = "addspellbook";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (GameManager.Instance.ItemHelper.AddSpellbookItem(GameManager.Instance.PlayerEntity))
                     return "Spellbook added";
                 else
@@ -1789,8 +1629,7 @@ namespace Wenzil.Console
             public static readonly string description = "Starts the specified quest";
             public static readonly string usage = "startquest {quest name}";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length < 1)
                     return usage;
                 UnityEngine.Random.InitState(Time.frameCount);
@@ -1813,32 +1652,29 @@ namespace Wenzil.Console
                 Wereboar,
             }
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length != 1)
                     return usage;
 
                 // Determine if valid string or expecting index
                 CommandDiseaseTypes diseaseType;
-                switch (args[0].ToLower())
-                {
+                switch (args[0].ToLower()) {
                     case "vampire":
-                    diseaseType = CommandDiseaseTypes.Vampire;
-                    break;
+                        diseaseType = CommandDiseaseTypes.Vampire;
+                        break;
                     case "werewolf":
-                    diseaseType = CommandDiseaseTypes.Werewolf;
-                    break;
+                        diseaseType = CommandDiseaseTypes.Werewolf;
+                        break;
                     case "wereboar":
-                    diseaseType = CommandDiseaseTypes.Wereboar;
-                    break;
+                        diseaseType = CommandDiseaseTypes.Wereboar;
+                        break;
                     default:
-                    diseaseType = CommandDiseaseTypes.Numerical;
-                    break;
+                        diseaseType = CommandDiseaseTypes.Numerical;
+                        break;
                 }
 
                 // Disease player by index
-                if (diseaseType == CommandDiseaseTypes.Numerical)
-                {
+                if (diseaseType == CommandDiseaseTypes.Numerical) {
                     // Get index and validate range
                     int index = -1;
                     if (!int.TryParse(args[0], out index))
@@ -1854,29 +1690,25 @@ namespace Wenzil.Console
                 }
 
                 // Vampirism/Werewolf/Wereboar
-                if (diseaseType == CommandDiseaseTypes.Vampire)
-                {
+                if (diseaseType == CommandDiseaseTypes.Vampire) {
                     // Infect player with vampirism stage one
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
                     GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                     return "Player infected with vampirism.";
                 }
-                else if (diseaseType == CommandDiseaseTypes.Werewolf)
-                {
+                else if (diseaseType == CommandDiseaseTypes.Werewolf) {
                     // Infect player with werewolf lycanthropy stage one
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
                     GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                     return "Player infected with werewolf lycanthropy.";
                 }
-                else if (diseaseType == CommandDiseaseTypes.Wereboar)
-                {
+                else if (diseaseType == CommandDiseaseTypes.Wereboar) {
                     // Infect player with wereboar lycanthropy stage one
                     EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
                     GameManager.Instance.PlayerEffectManager.AssignBundle(bundle, AssignBundleFlags.SpecialInfection);
                     return "Player infected with wereboar lycanthropy.";
                 }
-                else
-                {
+                else {
                     return usage;
                 }
             }
@@ -1888,8 +1720,7 @@ namespace Wenzil.Console
             public static readonly string description = "Infect player with a classic poison.";
             public static readonly string usage = "poisonplayer index (a number 0-11)";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length != 1)
                     return usage;
 
@@ -1917,8 +1748,7 @@ namespace Wenzil.Console
             public static readonly string usage = "execute Script00.cs Script01.cs Script02.cs....";
 
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null)
                     return error;
                 else if (args.Length < 1)
@@ -1927,8 +1757,7 @@ namespace Wenzil.Console
                 int count = 0;
                 string[] files = new string[args.Length];
 
-                for (int i = 0; i < args.Length; i++)
-                {
+                for (int i = 0; i < args.Length; i++) {
                     if (string.IsNullOrEmpty(args[i]))
                         continue;
 
@@ -1939,8 +1768,7 @@ namespace Wenzil.Console
 
                     if (!File.Exists(fullName))
                         return error;
-                    else
-                    {
+                    else {
                         Console.Log("Found File: " + fullName);
                         files[i] = fullName;
                         count++;
@@ -1955,31 +1783,26 @@ namespace Wenzil.Console
                 //    source[i] = File.ReadAllText(files[i]);
                 //}
 
-                try
-                {
+                try {
                     System.Reflection.Assembly assembly = DaggerfallWorkshop.Game.Utility.Compiler.CompileSource(files, false);//(files.ToArray(), false);
                     var loadableTypes = DaggerfallWorkshop.Game.Utility.Compiler.GetLoadableTypes(assembly);
 
-                    foreach (Type t in loadableTypes)
-                    {
+                    foreach (Type t in loadableTypes) {
                         bool isAssignable = typeof(Component).IsAssignableFrom(t);
                         bool hasDefaultConstructor = (t.GetConstructor(Type.EmptyTypes) != null && !t.IsAbstract);
 
-                        if (isAssignable)
-                        {
+                        if (isAssignable) {
                             GameObject newObj = new GameObject(t.Name);
                             newObj.AddComponent(t);
                         }
-                        else if (hasDefaultConstructor)
-                        {
+                        else if (hasDefaultConstructor) {
                             Activator.CreateInstance(t); //only works if has a default constructor
                         }
                     }
 
                     return "Finished";
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     return ex.Message;
                 }
             }
@@ -1991,8 +1814,7 @@ namespace Wenzil.Console
             public static readonly string description = "Play the specified .FLC file";
             public static readonly string usage = "playflc {filename.flc} (e.g. playflc azura.flc)";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length < 1)
                     return usage;
 
@@ -2010,8 +1832,7 @@ namespace Wenzil.Console
             public static readonly string description = "Play the specified .VID file";
             public static readonly string usage = "playvid {filename.vid} (e.g. playvid anim0000.vid)";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args == null || args.Length < 1)
                     return usage;
 
@@ -2030,13 +1851,10 @@ namespace Wenzil.Console
             public static readonly string description = "Output current legal status and reputation value for all regions";
             public static readonly string usage = "print_legalrep";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 string output = string.Empty;
-                if (GameManager.Instance.PlayerEntity != null && GameManager.Instance.PlayerEntity.RegionData != null)
-                {
-                    for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
-                    {
+                if (GameManager.Instance.PlayerEntity != null && GameManager.Instance.PlayerEntity.RegionData != null) {
+                    for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++) {
                         string regionName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
                         string reputationString = string.Empty;
                         int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
@@ -2071,8 +1889,7 @@ namespace Wenzil.Console
                     }
                     output += "Finished";
                 }
-                else
-                {
+                else {
                     return "Could not read legal reputation data.";
                 }
 
@@ -2086,8 +1903,7 @@ namespace Wenzil.Console
             public static readonly string description = "Unmutes all quest npcs when 'mute npc' is stuck from a bug. Has no effect on NPCs not muted by an active quest script.";
             public static readonly string usage = "unmutequestnpcs";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 int count = QuestMachine.Instance.UnmuteQuestNPCs();
                 return string.Format("Unmuted {0} active quest NPCs", count);
             }
@@ -2099,8 +1915,7 @@ namespace Wenzil.Console
             public static readonly string description = "Fill HUD buffer with messages";
             public static readonly string usage = "addpopuptext count";
 
-            public static string Execute(params string[] args)
-            {
+            public static string Execute(params string[] args) {
                 if (args.Length < 1) return "see usage";
 
                 int n = 1;
