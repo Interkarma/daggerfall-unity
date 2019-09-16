@@ -22,7 +22,7 @@ Lie,                  L
 Anchor,               A
 Teleport,             T
 
-- Game Setup menu
+-- Game Setup menu
 GameSetupPlay,             P
 GameSetupAdvancedSettings, A
 GameSetupMods,             M
@@ -33,13 +33,12 @@ GameSetupRefresh,          R
 GameSetupSaveAndClose,     S
 GameSetupExit,             E
 
-
-- Main menu
+-- Main menu
 MainMenuLoad,         L
 MainMenuStart,        S
 MainMenuExit,         E
 
-- Options menu
+-- Options menu
 OptionsExit,          E
 OptionsContinue,      C
 OptionsSave,          S
@@ -48,32 +47,40 @@ OptionsControls,      N
 OptionsFullScreen,    F
 OptionsHeadBobbing,   H
 
-- General
+-- General
 HUDToggle,            Shift-F10
 
-- Debugger
+-- Debugger
 DebuggerToggle,       Shift-Tab
 DebuggerPrevQuest,    LeftBracket
 DebuggerNextQuest,    RightBracket
 
-- Rest menu
+-- Rest menu
 RestForAWhile,        F
 RestUntilHealed,      U
 RestLoiter,           L
 RestStop,             S
 
-- Transport menu
+-- Transport menu
 TransportFoot,        F
 TransportHorse,       H
 TransportCart,        C
 TransportShip,        S
 TransportExit,        E
 
-- Travel map
+-- Travel map screen
 TravelMapFind,        F
 TravelMapList,        L
 
-- Inventory screen
+-- Travel menu
+TravelBegin,               B
+TravelExit,                E
+TravelSpeedToggle,         S
+TravelTransportModeToggle, T
+- N for Nights?
+TravelInnCampOutToggle,    N
+
+-- Inventory screen
 InventoryWeapons,     F1
 InventoryMagic,       F2
 InventoryClothing,    F3
@@ -86,7 +93,7 @@ InventoryUse,         U
 InventoryGold,        G
 InventoryExit,        X
 
-- Trade screen - keep in sync with inventory?
+-- Trade screen - keep in sync with inventory?
 TradeWagon,           W
 TradeInfo,            I
 TradeSelect,          S
@@ -98,13 +105,13 @@ TradeSell,            L
 TradeClear,           C
 TradeExit,            X
 
-- Taverns menu
+-- Taverns menu
 TavernRoom,           R
 TavernTalk,           T
 TavernFood,           F
 TavernExit,           E
 
-- Guilds
+-- Guilds
 GuildsJoin,           J
 GuildsTalk,           T
 GuildsExit,           E
@@ -128,13 +135,13 @@ GuildsBuySoulgems,    B
 GuildsReceiveArmor,   R
 GuildsReceiveHouse,   R
 
-- Witches Covens
+-- Witches Covens
 WitchesTalk,          T
 WitchesDaedraSummon,  D
 WitchesQuest,         Q
 WitchesExit,          E
 
-- Automap
+-- Automap
 AutomapSwitchAutomapGridMode,                       Space
 AutomapResetView,                                   Backspace
 AutomapResetRotationPivotAxisView,                  Ctrl-Backspace

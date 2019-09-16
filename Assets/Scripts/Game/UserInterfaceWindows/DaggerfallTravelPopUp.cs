@@ -151,21 +151,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             beginButton = DaggerfallUI.AddButton(beginButtonRect, NativePanel );
             beginButton.OnMouseClick += BeginButtonOnClickHandler;
+            beginButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelBegin);
 
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButtonOnClickHandler;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelExit);
 
             speedToggleButton = DaggerfallUI.AddButton(speedButtonRect, NativePanel);
             speedToggleButton.OnMouseClick += SpeedButtonOnClickHandler;
+            speedToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelSpeedToggle);
 
             transportModeToggleButton = DaggerfallUI.AddButton(transportButtonRect, NativePanel);
             transportModeToggleButton.OnMouseClick += TransportModeButtonOnClickHandler;
+            transportModeToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelTransportModeToggle);
 
             innToggleButton = DaggerfallUI.AddButton(innsButtonRect, NativePanel);
             innToggleButton.OnMouseClick += SleepModeButtonOnClickHandler;
+            innToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelInnCampOutToggle);
 
             campOutToggleButton = DaggerfallUI.AddButton(campoutButtonRect, NativePanel);
             campOutToggleButton.OnMouseClick += SleepModeButtonOnClickHandler;
+            campOutToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelInnCampOutToggle);
         }
 
 
@@ -202,7 +208,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
                     performFastTravel();
                 }
-
+            }
+            else
+            {
+                HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+                NativePanel.KeyboardActivation(keyModifiers);
             }
         }
 

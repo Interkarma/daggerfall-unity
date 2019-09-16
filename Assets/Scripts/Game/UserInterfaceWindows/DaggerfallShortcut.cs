@@ -77,9 +77,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TransportShip,
             TransportExit,
 
-            // TravelMap
+            // Travel Map screen
             TravelMapFind,
             TravelMapList,
+
+            // Travel menu
+            TravelBegin,
+            TravelExit,
+            TravelSpeedToggle,
+            TravelTransportModeToggle,
+            TravelInnCampOutToggle,
 
             // Inventory screen
             InventoryWeapons,
