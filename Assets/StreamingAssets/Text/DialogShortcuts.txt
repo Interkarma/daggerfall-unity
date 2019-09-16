@@ -22,6 +22,18 @@ Lie,                  L
 Anchor,               A
 Teleport,             T
 
+- Game Setup menu
+GameSetupPlay,             P
+GameSetupAdvancedSettings, A
+GameSetupMods,             M
+GameSetupClose,            C
+GameSetupBackToOptions,    O
+GameSetupRestart,          R
+GameSetupRefresh,          R
+GameSetupSaveAndClose,     S
+GameSetupExit,             E
+
+
 - Main menu
 MainMenuLoad,         L
 MainMenuStart,        S

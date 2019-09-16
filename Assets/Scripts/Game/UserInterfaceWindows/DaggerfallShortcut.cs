@@ -31,6 +31,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Anchor,
             Teleport,
 
+            // Game Setup menu
+            GameSetupPlay,
+            GameSetupAdvancedSettings,
+            GameSetupMods,
+            GameSetupClose,
+            GameSetupBackToOptions,
+            GameSetupRestart,
+            GameSetupRefresh,
+            GameSetupSaveAndClose,
+            GameSetupExit,
+
             // Main menu
             MainMenuLoad,
             MainMenuStart,
