@@ -773,9 +773,12 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 FactionFile.FactionData factionData = GetFactionData(factionID);
 
-                // This must is an individual NPC
-                if (factionData.type != (int)FactionFile.FactionTypes.Individual)
-                    throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC", individualNPCName, factionID));
+                // This must is an individual NPC or Daedra
+                if (factionData.type != (int) FactionFile.FactionTypes.Individual 
+                    && factionData.type != (int) FactionFile.FactionTypes.Daedra)
+                {
+                    throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC or Daedra", individualNPCName, factionID));
+                }
 
                 // Setup Person resource
                 isIndividualNPC = true;
