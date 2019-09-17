@@ -117,7 +117,7 @@ Item _reward_ gold
 
 Person _questgiver_ face 112 group Questor
 Person _qgfriend_ group Noble female anyInfo 1011
-Person _dummyorc_ named Orsinium
+Person _dummyorc_ faction Orsinium
 
 Place _mondung_ remote dungeon4
 
