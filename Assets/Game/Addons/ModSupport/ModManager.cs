@@ -958,6 +958,42 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
+        /// <summary>
+        /// Checks if a given version is lower or equal to another version.
+        /// For example <c>"9.0.8"</c> is lower than <c>"10.0.2"</c>.
+        /// </summary>
+        /// <param name="first">A version with format x.y.z, x.y or just x that is expected to be lower or equal.</param>
+        /// <param name="second">A version with format x.y.z, x.y or just x that is expected to be higher or equal.</param>
+        /// <returns>true if first is lower or equal to second, false is first is higher than second, null if parse failed.</returns>
+        internal static bool? IsVersionLowerOrEqual(string first, string second)
+        {
+            if (string.IsNullOrEmpty(first) || string.IsNullOrEmpty(second))
+                return null;
+
+            string[] firstParts = first.Split('.');
+            if (firstParts.Length < 1 || firstParts.Length > 3)
+                return null;
+
+            string[] secondParts = second.Split('.');
+            if (secondParts.Length < 1 || secondParts.Length > 3)
+                return null;
+
+            for (int i = 0; i < firstParts.Length && i < secondParts.Length; i++)
+            {
+                int firstPart, secondPart;
+                if (!int.TryParse(firstParts[i], out firstPart) || !int.TryParse(secondParts[i], out secondPart))
+                    return null;
+
+                if (firstPart > secondPart)
+                    return false;
+
+                if (firstPart < secondPart)
+                    break;
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Private Methods

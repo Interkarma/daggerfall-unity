@@ -503,6 +503,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Internal Methods
 
         /// <summary>
+        /// Checks if this mod is expected to run on current version of Daggerfall Unity.
+        /// </summary>
+        /// <returns>True if game version is satisfied, false if is not, null if unknown.</returns>
+        internal bool? IsGameVersionSatisfied()
+        {
+            return ModManager.IsVersionLowerOrEqual(ModInfo.DFUnity_Version, VersionInfo.DaggerfallUnityVersion);
+        }
+
+        /// <summary>
         /// Gets a localized string from the text table associated with this mod.
         /// </summary>
         /// <param name="key">Key used in the text table.</param>
