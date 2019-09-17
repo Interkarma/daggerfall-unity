@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (artifact)
                         textOut = item.shortName;
                     else
-                        textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
+                        textOut = (isGoldPieces) ? item.stackCount.ToString() : GetLongName(item);
                     break;
 
                 default:                                // Macro not supported
@@ -249,6 +249,12 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Private Methods
+
+        // Custom long name getter that prevents plant suffix being displayed in quest text
+        string GetLongName(DaggerfallUnityItem item)
+        {
+            return DaggerfallUnity.Instance.ItemHelper.ResolveItemLongName(item, false);
+        }
 
         // Create by item or artifact name
         // This gets class and subclass values from p1 and p2 of items lookup table
