@@ -773,7 +773,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 FactionFile.FactionData factionData = GetFactionData(factionID);
 
-                // This must is an individual NPC or Daedra
+                // This must be an individual NPC or Daedra
                 if (factionData.type != (int) FactionFile.FactionTypes.Individual 
                     && factionData.type != (int) FactionFile.FactionTypes.Daedra)
                 {
