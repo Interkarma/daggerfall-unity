@@ -79,27 +79,51 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AnchorTeleport,
         }
 
-        private readonly Dictionary<MessageBoxButtons, DaggerfallShortcut.Buttons> toShortcutButton = new Dictionary<MessageBoxButtons, DaggerfallShortcut.Buttons>()
+        private DaggerfallShortcut.Buttons ToShortcutButton(MessageBoxButtons button)
         {
-            { MessageBoxButtons.Accept, DaggerfallShortcut.Buttons.Accept },
-            { MessageBoxButtons.Reject, DaggerfallShortcut.Buttons.Reject },
-            { MessageBoxButtons.Cancel, DaggerfallShortcut.Buttons.Cancel },
-            { MessageBoxButtons.Yes, DaggerfallShortcut.Buttons.Yes },
-            { MessageBoxButtons.No, DaggerfallShortcut.Buttons.No },
-            { MessageBoxButtons.OK, DaggerfallShortcut.Buttons.OK },
-            { MessageBoxButtons.Male, DaggerfallShortcut.Buttons.Male },
-            { MessageBoxButtons.Female, DaggerfallShortcut.Buttons.Female },
-            { MessageBoxButtons.Add, DaggerfallShortcut.Buttons.Add },
-            { MessageBoxButtons.Delete, DaggerfallShortcut.Buttons.Delete },
-            { MessageBoxButtons.Edit, DaggerfallShortcut.Buttons.Edit },
-            { MessageBoxButtons.Copy, DaggerfallShortcut.Buttons.Copy },
-            { MessageBoxButtons.Guilty, DaggerfallShortcut.Buttons.Guilty },
-            { MessageBoxButtons.NotGuilty, DaggerfallShortcut.Buttons.NotGuilty },
-            { MessageBoxButtons.Debate, DaggerfallShortcut.Buttons.Debate },
-            { MessageBoxButtons.Lie, DaggerfallShortcut.Buttons.Lie },
-            { MessageBoxButtons.Anchor, DaggerfallShortcut.Buttons.Anchor },
-            { MessageBoxButtons.Teleport, DaggerfallShortcut.Buttons.Teleport },
-        };
+            switch (button)
+            {
+                case MessageBoxButtons.Accept:
+                    return DaggerfallShortcut.Buttons.Accept;
+                case MessageBoxButtons.Reject:
+                    return DaggerfallShortcut.Buttons.Reject;
+                case MessageBoxButtons.Cancel:
+                    return DaggerfallShortcut.Buttons.Cancel;
+                case MessageBoxButtons.Yes:
+                    return DaggerfallShortcut.Buttons.Yes;
+                case MessageBoxButtons.No:
+                    return DaggerfallShortcut.Buttons.No;
+                case MessageBoxButtons.OK:
+                    return DaggerfallShortcut.Buttons.OK;
+                case MessageBoxButtons.Male:
+                    return DaggerfallShortcut.Buttons.Male;
+                case MessageBoxButtons.Female:
+                    return DaggerfallShortcut.Buttons.Female;
+                case MessageBoxButtons.Add:
+                    return DaggerfallShortcut.Buttons.Add;
+                case MessageBoxButtons.Delete:
+                    return DaggerfallShortcut.Buttons.Delete;
+                case MessageBoxButtons.Edit:
+                    return DaggerfallShortcut.Buttons.Edit;
+                case MessageBoxButtons.Copy:
+                    return DaggerfallShortcut.Buttons.Copy;
+                case MessageBoxButtons.Guilty:
+                    return DaggerfallShortcut.Buttons.Guilty;
+                case MessageBoxButtons.NotGuilty:
+                    return DaggerfallShortcut.Buttons.NotGuilty;
+                case MessageBoxButtons.Debate:
+                    return DaggerfallShortcut.Buttons.Debate;
+                case MessageBoxButtons.Lie:
+                    return DaggerfallShortcut.Buttons.Lie;
+                case MessageBoxButtons.Anchor:
+                    return DaggerfallShortcut.Buttons.Anchor;
+                case MessageBoxButtons.Teleport:
+                    return DaggerfallShortcut.Buttons.Teleport;
+                default:
+                    Debug.Log("No shortcut for MessageBoxButton " + button);
+                    return DaggerfallShortcut.Buttons.None;
+            }
+        }
 
         public int ButtonSpacing
         {
@@ -300,7 +324,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Tag = messageBoxButton;
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
-            button.Hotkey = DaggerfallShortcut.GetBinding(toShortcutButton[messageBoxButton]);
+            button.Hotkey = DaggerfallShortcut.GetBinding(ToShortcutButton(messageBoxButton));
             buttons.Add(button);
 
             // Once a button has been added the owner is expecting some kind of input from player
