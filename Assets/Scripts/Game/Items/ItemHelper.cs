@@ -122,6 +122,11 @@ namespace DaggerfallWorkshop.Game.Items
             return itemTemplates[templateIndex];
         }
 
+        public void SetItemTemplate(ItemTemplate template)
+        {
+            itemTemplates[template.index] = template;
+        }
+
         /// <summary>
         /// Gets artifact template from magic item template data.
         /// </summary>
