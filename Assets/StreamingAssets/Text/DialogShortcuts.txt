@@ -156,6 +156,26 @@ WitchesDaedraSummon,  D
 WitchesQuest,         Q
 WitchesExit,          E
 
+-- Spellmaker screen
+SpellMakerAddEffect,            A
+SpellMakerBuySpell,             B
+SpellMakerNewSpell,             W
+SpellMakerExit,                 E
+SpellMakerNameSpell,            N
+SpellMakerTargetCaster,         Shift-C
+SpellMakerTargetTouch,          Shift-T
+SpellMakerTargetSingleAtRange,  Shift-S
+SpellMakerTargetAroundCaster,   Shift-A
+SpellMakerTargetAreaAtRange,    Shift-R
+SpellMakerElementFire,          Ctrl-F
+SpellMakerElementCold,          Ctrl-C
+SpellMakerElementPoison,        Ctrl-P
+SpellMakerElementShock,         Ctrl-S
+SpellMakerElementMagic,         Ctrl-M
+SpellMakerNextIcon,             F1
+SpellMakerPrevIcon,             F2
+SpellMakerSelectIcon,           I
+
 -- Automap
 AutomapSwitchAutomapGridMode,                       Space
 AutomapResetView,                                   Backspace

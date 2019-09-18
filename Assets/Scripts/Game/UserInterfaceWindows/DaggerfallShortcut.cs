@@ -163,6 +163,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             WitchesQuest,
             WitchesExit,
 
+            // Spellmaker screen
+            SpellMakerAddEffect,
+            SpellMakerBuySpell,
+            SpellMakerNewSpell,
+            SpellMakerExit,
+            SpellMakerNameSpell,
+            SpellMakerTargetCaster,
+            SpellMakerTargetTouch,
+            SpellMakerTargetSingleAtRange,
+            SpellMakerTargetAroundCaster,
+            SpellMakerTargetAreaAtRange,
+            SpellMakerElementFire,
+            SpellMakerElementCold,
+            SpellMakerElementPoison,
+            SpellMakerElementShock,
+            SpellMakerElementMagic,
+            SpellMakerNextIcon,
+            SpellMakerPrevIcon,
+            SpellMakerSelectIcon,
+
             // Automap screen
             AutomapSwitchAutomapGridMode,
             AutomapResetView,

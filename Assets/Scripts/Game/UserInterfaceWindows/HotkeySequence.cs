@@ -61,6 +61,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public static HotkeySequence FromString(string hotkeyName)
         {
+            if (hotkeyName == "None")
+                // Make sure to return the HotkeySequence.None instance
+                return None;
             try
             {
                 string[] keywords = hotkeyName.Split('-');
@@ -77,7 +80,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             catch (Exception)
             {
                 Debug.Log(string.Format("Failed parsing hotkey {0}, expected {1}", hotkeyName, expectedSyntax));
-                return HotkeySequence.None;
+                return None;
             }
         }
 
