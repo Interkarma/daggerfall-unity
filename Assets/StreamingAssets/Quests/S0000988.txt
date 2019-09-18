@@ -27,7 +27,7 @@ Dear %pcf,
  come again. The Totem of Tiber Septim is used
  to control Numidium. However, legend has it that
  great Numidium lost his Mantellan heart,
- whatever that is, in the final with Tiber
+ whatever that is, in the finale with Tiber
  Septim's Battlemage. Until his heart is found,
  the Totem is useless.
  
@@ -40,7 +40,7 @@ Dear %pcf,
  bid for supreme power: a thousand foot tall automaton,
  a golem or an atronach of sorts powered by a gem called
  the Mantella. The Mantella was infused with the life
- orce of Tiber Septim's Imperial Battlemage, and with
+ force of Tiber Septim's Imperial Battlemage, and with
  it, Septim crushed all who stood in his way. After the
  complete and total defeat of all his opponents, Septim
  began using Numidium to crush the neutral royal families
@@ -56,7 +56,7 @@ Dear %pcf,
  In the centuries that followed, the Emperor's elite
  soldiers, for generation after generation, collected the
  pieces of the Numidium and became known as the Blades.
- Tiber Septim's Imperial Battle Mage became known as the
+ Tiber Septim's Imperial Battlemage became known as the
  Underking, and sent his forces out to find the Mantella.
  
  Be warned, therefore. Those who search for the Totem of
