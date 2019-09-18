@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel gameTimeLabel = new TextLabel();
         TextLabel saveVersionLabel = new TextLabel();
         TextLabel saveFolderLabel = new TextLabel();
+        TextLabel loadingLabel = new TextLabel();
         ListBox savesList = new ListBox();
         Button deleteSaveButton = new Button();
         Button goButton = new Button();
@@ -68,6 +69,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Modes mode = Modes.SaveGame;
         string currentPlayerName;
         bool displayMostRecentChar;
+        bool loading = false;
+        int loadingCountdown = 2;
 
         #endregion
 
@@ -235,6 +238,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gameTimeLabel.Position = new Vector2(0, 9);
             infoPanel.Components.Add(gameTimeLabel);
 
+            // Loading label
+            loadingLabel.BackgroundColor = Color.gray;
+            loadingLabel.TextColor = Color.white;
+            loadingLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            loadingLabel.VerticalAlignment = VerticalAlignment.Middle;
+            loadingLabel.Position = new Vector2(mainPanel.Size.x / 2f, mainPanel.Size.y / 2f);
+            mainPanel.Components.Add(loadingLabel);
+
             // Delete save button
             deleteSaveButton.Position = new Vector2(0, 132);
             deleteSaveButton.Size = new Vector2(98, 8);
@@ -280,6 +291,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (Input.GetKeyDown(KeyCode.Return))
                 SaveLoadEventHandler(null, Vector2.zero);
+            if (loading && --loadingCountdown == 0) // Allow loading text to draw before loading
+                LoadGame();
         }
 
         #endregion
@@ -474,7 +487,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
                 }
 
-                LoadGame();
+                loadingLabel.Text = "Please wait...";
+                loading = true;
             }
         }
 
