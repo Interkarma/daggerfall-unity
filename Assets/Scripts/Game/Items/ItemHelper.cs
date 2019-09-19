@@ -1205,6 +1205,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 TextAsset templates = Resources.Load<TextAsset>(itemTemplatesFilename);
                 itemTemplates = SaveLoadManager.Deserialize(typeof(List<ItemTemplate>), templates.text) as List<ItemTemplate>;
+                TextAssetReader.Merge(itemTemplates, "ItemTemplates.json", (item, data) => item.index == (int)data["index"].AsInt64);
             }
             catch
             {

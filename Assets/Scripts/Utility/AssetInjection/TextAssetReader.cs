@@ -16,6 +16,7 @@ using System.Linq;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -118,6 +119,65 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static IEnumerable<T> ReadAll<T>(string relativeDirectory, string extension = null)
         {
             return ReadAll(relativeDirectory, extension).Select(x => (T)SaveLoadManager.Deserialize(typeof(T), x));
+        }
+
+        /// <summary>
+        /// Reads all text assets with the given name, which are expected to contain a list or array of items, and merges all contributes in a single collection.
+        /// If an item, identified by <paramref name="isItemData"/>, is found more than one time, all of its data is merged in a single instance following mods load order.
+        /// </summary>
+        /// <param name="items">A collection of items, which may be non-empty.</param>
+        /// <param name="name">Name of serialized text assets.</param>
+        /// <param name="isItemData">A delegate that checks if serialized data of an item, provided as a dictionary, can be deserialized on top of the given item.</param>
+        /// <typeparam name="T">Type of each item, which can be a struct or a class.</typeparam>
+        public static void Merge<T>(List<T> items, string name, Func<T, Dictionary<string, fsData>, bool> isItemData = null) where T: new()
+        {
+            if (items == null)
+                throw new ArgumentNullException("items");
+            
+            if (name == null)
+                throw new ArgumentNullException("name");
+
+            if (ModManager.Instance)
+            {
+                foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.HasAsset(name)))
+                {
+                    var textAsset = mod.GetAsset<TextAsset>(name);
+                    if (textAsset)
+                    {
+                        foreach (fsData itemData in fsJsonParser.Parse(textAsset.text).AsList)
+                        {
+                            T item;
+                            int index;
+
+                            if (isItemData != null)
+                            {
+                                Dictionary<string, fsData> data = itemData.AsDictionary;
+                                if ((index = items.FindIndex(x => isItemData(x, data))) != -1)
+                                    item = items[index];
+                                else
+                                    item = new T();
+                            }
+                            else
+                            {
+                                index = -1;
+                                item = new T();
+                            }
+
+                            fsResult fsResult = ModManager._serializer.TryDeserialize(itemData, ref item);
+                            if (fsResult.HasWarnings)
+                                Debug.LogWarningFormat("Deserialization of {0} from {1} produced the following messages: {2}", name, mod.Title, fsResult.FormattedMessages);
+
+                            if (fsResult.Succeeded)
+                            {
+                                if (index != -1)
+                                    items[index] = item;
+                                else
+                                    items.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
