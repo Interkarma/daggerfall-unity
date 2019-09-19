@@ -26,6 +26,17 @@ namespace DaggerfallWorkshop.Game.Entity
         protected EntityEffectManager entityEffectManager;
         protected MeshRenderer meshRenderer;
 
+
+        private bool isConcealed = false;
+
+        public bool IsConcealed
+        {
+            get { return (isConcealed); }
+        }
+
+        // Override any concealment to force billboard to always be hidden
+        public bool forceConcealment { get; set; }
+        
         #region Unity
 
         void Awake()
@@ -38,8 +49,8 @@ namespace DaggerfallWorkshop.Game.Entity
             if (!entityBehaviour || entityBehaviour.Entity == null)
                 return;
 
-            bool isConcealed = (entityBehaviour && entityBehaviour.Entity.IsMagicallyConcealed);
-            MakeConcealed(isConcealed);
+            isConcealed = (entityBehaviour && entityBehaviour.Entity.IsMagicallyConcealed);
+            MakeConcealed(isConcealed || forceConcealment);
         }
 
         #endregion
