@@ -132,7 +132,7 @@ TradeExit,            X
 TavernRoom,           R
 TavernTalk,           T
 TavernFood,           F
-TavernExit,           E
+TavernExit,           G
 
 -- Guilds
 GuildsJoin,           J
