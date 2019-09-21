@@ -139,9 +139,9 @@ namespace DaggerfallWorkshop.Game
                 // Use a sqrmagnitude movement threshold check to see if player is stuck
                 // This is fast and overcomes precision issues with a simple position check
                 // Player must be stuck for multiple frames before unstuck handler will attempt to resolve
-                float testMagnitude = Mathf.Abs(lastMovePosition.sqrMagnitude - myTransform.position.sqrMagnitude);
+                float testMagnitude = (lastMovePosition - myTransform.position).sqrMagnitude;
                 //Debug.LogFormat("Testing stuck with {0} test magnitude", testMagnitude);
-                if (testMagnitude < stuckMovementThreshold)
+                if (testMagnitude < Mathf.Pow(stuckMovementThreshold, 2))
                 {
                     stuckFrameCount++;
                     if (stuckFrameCount > stuckFrameThreshold)

@@ -415,8 +415,8 @@ namespace DaggerfallWorkshop.Game
             if (smoothFollower != null && controller != null)
             {
                 float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
-                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
-                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;                                         // Without question any distance travelled less than the running speed is legal.
+                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.fixedDeltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
+                float speedThreshold = speedChanger.GetRunSpeed(speed) * Time.fixedDeltaTime;                            // Without question any distance travelled less than the running speed is legal.
 
                 // NOTE: Maybe the min distance should also include the height different between crouching / standing.
                 if (distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
@@ -426,6 +426,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (smoothFollowerReset)
                 {
+                    // Debug.Log("smooth follower reset");
                     smoothFollowerPrevWorldPos = transform.position;
                     smoothFollowerReset = false;
                 }
