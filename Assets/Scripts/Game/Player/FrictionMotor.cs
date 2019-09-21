@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game
             //  -Tolerances should prevent false positives, but it's still possible - might require tuning/reworking later
             //  -Works best when player is standing as spherecast test has more clearance
             //  -Enemies will still become stuck as their motor does not have this handling
-            const float stuckMovementThreshold = 0.25f;
+            const float stuckMovementThreshold = 0.07f;
             const float stuckSampleDistance = 0.5f;
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
