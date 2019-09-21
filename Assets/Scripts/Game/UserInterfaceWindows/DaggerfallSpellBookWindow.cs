@@ -203,6 +203,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
+
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            mainPanel.KeyboardActivation(keyModifiers);
         }
 
         void RefreshSpellsList(bool preservePosition)
@@ -380,27 +383,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 deleteButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
                 deleteButton.OnMouseClick += DeleteButton_OnMouseClick;
+                deleteButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookDelete);
 
                 upButton = DaggerfallUI.AddButton(upButtonRect, mainPanel);
-                sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
-                downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
-
                 upButton.OnMouseClick += SwapButton_OnMouseClick;
+                upButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookUp);
+
+                sortButton = DaggerfallUI.AddButton(sortButtonRect, mainPanel);
                 sortButton.OnMouseClick += SortButton_OnMouseClick;
+                sortButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookSort);
+
+                downButton = DaggerfallUI.AddButton(downButtonRect, mainPanel);
                 downButton.OnMouseClick += SwapButton_OnMouseClick;
+                downButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookDown);
             }
             else
             {
                 buyButton = DaggerfallUI.AddButton(deleteOrBuyButtonRect, mainPanel);
                 buyButton.OnMouseClick += BuyButton_OnMouseClick;
+                buyButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookBuy);
             }
 
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookExit);
 
             // Scroller buttons
             upArrowButton = DaggerfallUI.AddButton(upArrowButtonRect, mainPanel);
             upArrowButton.OnMouseClick += UpArrowButton_OnMouseClick;
+
             downArrowButton = DaggerfallUI.AddButton(downArrowButtonRect, mainPanel);
             downArrowButton.OnMouseClick += DownArrowButton_OnMouseClick;
         }
@@ -413,6 +424,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellIconPanel.ToolTip = defaultToolTip;
             spellIconPanel.ToolTipText = TextManager.Instance.GetText(textDatabase, "selectIcon");
             spellIconPanel.OnMouseClick += SpellIconPanel_OnMouseClick;
+            // Add a hotkey to a panel?
 
             spellTargetIconPanel = DaggerfallUI.AddPanel(spellTargetPanelRect, mainPanel);
             spellTargetIconPanel.BackgroundColor = Color.black;

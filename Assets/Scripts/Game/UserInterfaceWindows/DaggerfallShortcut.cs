@@ -95,6 +95,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TalkToneNormal,
             TalkToneBlunt,
 
+            // Spellbook screen
+            SpellbookDelete,
+            SpellbookUp,
+            SpellbookSort,
+            SpellbookDown,
+            SpellbookBuy,
+            SpellbookExit,
+
             // Travel menu
             TravelBegin,
             TravelExit,

@@ -87,6 +87,14 @@ TalkTonePolite,       F1
 TalkToneNormal,       F2
 TalkToneBlunt,        F3
 
+-- Spellbook screen
+SpellbookDelete,      L
+SpellbookUp,          U
+SpellbookSort,        S
+SpellbookDown,        D
+SpellbookBuy,         B
+SpellbookExit,        E
+
 -- Travel menu
 TravelBegin,               B
 TravelExit,                E
