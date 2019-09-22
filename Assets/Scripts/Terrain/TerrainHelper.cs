@@ -464,7 +464,7 @@ namespace DaggerfallWorkshop
         }
 
         // Drops nature flats based on random chance scaled by simple rules
-        public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int tDist)
+        public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int terrainDist)
         {
             const float maxSteepness = 50f;         // 50
             const float baseChanceOnDirt = 0.2f;        // 0.2
@@ -578,7 +578,7 @@ namespace DaggerfallWorkshop
 
                     // Add to batch unless a mesh replacement is found
                     int record = Random.Range(1, 32);
-                    if (tDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                    if (terrainDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
                         dfBillboardBatch.AddItem(record, pos);
                     else if (!NatureMeshUsed)
                         NatureMeshUsed = true;  // Signal that nature mesh has been used to initiate extra terrain updates

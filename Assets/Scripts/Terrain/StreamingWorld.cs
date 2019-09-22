@@ -10,7 +10,7 @@
 //
 
 #define SHOW_LAYOUT_TIMES
-#define SHOW_LAYOUT_TIMES_NATURE
+//#define SHOW_LAYOUT_TIMES_NATURE
 
 using UnityEngine;
 using System;
@@ -1235,8 +1235,8 @@ namespace DaggerfallWorkshop
                 // Get current climate and nature archive and terrain distance
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
-                int tDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, dfTerrain.MapPixelX, dfTerrain.MapPixelY);
-                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale, tDist);
+                int terrainDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale, terrainDist);
             }
 
             // Only set active again once complete
