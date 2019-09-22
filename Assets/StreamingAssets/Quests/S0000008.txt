@@ -9,7 +9,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                     %pcf, I'm glad you could meet
-<ce>               me here. The Blades and your Emperor need
+<ce>               me here. The Blades and your emperor need
 <ce>                you again. You may or may not be aware
 <ce>                that the Totem of Tiber Septim has been
 <ce>               found. For a brief time Lord Woodborne of
