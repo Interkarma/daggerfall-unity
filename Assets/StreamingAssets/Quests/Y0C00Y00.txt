@@ -21,15 +21,15 @@ QuestorOffer:  [1000]
 <ce>                        lovely _artifact_, yes?
 
 RefuseQuest:  [1001]
-<ce>               Scruh! Mortal creature say no to Mehrunes
-<ce>               Dagon! Mortal creature know you time means
+<ce>               Scruh! Mortalcreature say no to Mehrunes
+<ce>               Dagon! Mortalcreature know you time means
 <ce>              nothing to Dagon, he remembers insult, yes.
 <ce>                Hamita too black for Mortal creature, no,
 <ce>                        I ... will ... remember
 <ce>                                 %pcn.
 
 AcceptQuest:  [1002]
-<ce>              Mmm, Mortal creature brave, good good. Now,
+<ce>              Mmm, Mortalcreature brave, good good. Now,
 <ce>                  go to ___mondung_, kill frost daedra
 <ce>                there. It thinks safe, ha, we slaughter
 <ce>               frostflesh tight and everywhere. You kill
