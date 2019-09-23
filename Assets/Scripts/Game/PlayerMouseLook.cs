@@ -75,13 +75,13 @@ namespace DaggerfallWorkshop.Game
         public float PitchMaxLimit
         {
             get { return pitchMax; }
-            set { pitchMax = Mathf.Clamp(value, 0, PitchMax); }
+            set { pitchMax = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
         public float PitchMinLimit
         {
             get { return pitchMin; }
-            set { pitchMin = Mathf.Clamp(value, 0, PitchMin); }
+            set { pitchMin = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
         void Start()
