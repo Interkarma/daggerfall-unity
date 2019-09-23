@@ -1033,11 +1033,6 @@ namespace DaggerfallWorkshop
             // Get discovery data for building
             discoveredBuildingOut = dl.discoveredBuildings[buildingKey];
 
-            // Check if name should be overridden (owned house / quest site)
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
-                discoveredBuildingOut.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
-
             return true;
         }
 

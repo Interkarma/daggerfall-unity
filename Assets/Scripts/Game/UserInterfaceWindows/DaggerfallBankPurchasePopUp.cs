@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Render the model into display panel
                     RenderModel();
                     // Rotate model
-                    goModel.transform.Rotate(Vector3.up, 1);
+                    goModel.transform.Rotate(Vector3.up, -1);
                 }
             }
         }
@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                camera.transform.position = new Vector3(0, 3, -16);
+                camera.transform.position = new Vector3(0, 3, -20);
                 BuildingSummary house = housesForSale[selectedIdx];
                 modelId = house.ModelID;
             }

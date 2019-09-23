@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Banking
 {
@@ -420,13 +421,14 @@ namespace DaggerfallWorkshop.Game.Banking
             houses[regionIndex].buildingKey = house.buildingKey;
 
             // Ensure building is discovered
-            GameManager.Instance.PlayerGPS.DiscoverBuilding(house.buildingKey);
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            GameManager.Instance.PlayerGPS.DiscoverBuilding(house.buildingKey, HardStrings.playerResidence.Replace("%s", playerEntity.Name));
 
             // Add interior scene to permanent list
             SaveLoadManager.StateManager.AddPermanentScene(DaggerfallInterior.GetSceneName(mapID, house.buildingKey));
 
             // Add note to journal
-            GameManager.Instance.PlayerEntity.Notebook.AddNote(
+            playerEntity.Notebook.AddNote(
                 TextManager.Instance.GetText("DaggerfallUI", "houseDeed").Replace("%town", location.Name).Replace("%region", MapsFile.RegionNames[regionIndex]));
         }
 
@@ -440,6 +442,7 @@ namespace DaggerfallWorkshop.Game.Banking
                 {
                     BankAccounts[regionIndex].accountGold += GetHouseSellPrice(house);
                     SaveLoadManager.StateManager.RemovePermanentScene(DaggerfallInterior.GetSceneName(houses[regionIndex].mapID, house.buildingKey));
+                    GameManager.Instance.PlayerGPS.UndiscoverBuilding(house.buildingKey);
                     houses[regionIndex] = new HouseData_v1() { regionIndex = regionIndex };
                 }
             }
