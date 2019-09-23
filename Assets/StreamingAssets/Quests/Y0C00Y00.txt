@@ -24,7 +24,7 @@ RefuseQuest:  [1001]
 <ce>               Scruh! Mortalcreature say no to Mehrunes
 <ce>               Dagon! Mortalcreature know you time means
 <ce>              nothing to Dagon, he remembers insult, yes.
-<ce>                Hamita too black for Mortal creature, no,
+<ce>                Hamita too black for Mortalcreature, no,
 <ce>                        I ... will ... remember
 <ce>                                 %pcn.
 
