@@ -728,8 +728,8 @@ namespace DaggerfallWorkshop.Game
                     if (targetBehaviour.EntityType == EntityTypes.EnemyMonster || targetBehaviour.EntityType == EntityTypes.EnemyClass)
                         targetSenses = targetBehaviour.GetComponent<EnemySenses>();
 
-                    // Allows infighting via custom quest action
-                    if (targetSenses && targetSenses.QuestBehaviour && !targetSenses.QuestBehaviour.IsAttackableByAI)
+                    // For now, quest AI can't be targeted
+                    if (targetSenses && targetSenses.QuestBehaviour)
                         continue;
 
                     Vector3 toTarget = targetBehaviour.transform.position - transform.position;
