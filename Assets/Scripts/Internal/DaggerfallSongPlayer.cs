@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop
 
         [Range(0.0f, 10.0f)]
         public float Gain = 5.0f;
+        private bool IsMuted = false;
         public string SongFolder = "Songs/";
         public SongFiles Song = SongFiles.song_none;
 
@@ -102,7 +103,7 @@ namespace DaggerfallWorkshop
                 CurrentTime = audioSource.timeSamples;
                 EndTime = audioSource.clip.samples;
             }
-            audioSource.volume = DaggerfallUnity.Settings.MusicVolume;
+            audioSource.volume = IsMuted ? 0f : DaggerfallUnity.Settings.MusicVolume;
         }
 
         void LateUpdate()
@@ -357,12 +358,14 @@ namespace DaggerfallWorkshop
             // Mute music while video is playing
             oldGain = Gain;
             Gain = 0;
+            IsMuted = true;
         }
 
         private void DaggerfallVidPlayerWindow_OnVideoEnd()
         {
             // Restore music to previous level
             Gain = oldGain;
+            IsMuted = false;
         }
 
         #endregion
