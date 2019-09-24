@@ -133,6 +133,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Play infection warning dream video
                 DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, dreamVideoName);
+                vidPlayerWindow.EndOnAnyKey = false;
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 warningDreamVideoPlayed = true;
             }
