@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Utility
             return GetNameBank(race);
         }
 
-        public static string GetLordNameForFaction(int factionId)
+        public static string GetLordNameForFaction(int factionId, bool oldRuler = false)
         {
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.FactionData fd;
@@ -295,7 +295,8 @@ namespace DaggerfallWorkshop.Utility
 
             Genders gender = (Genders) ((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
             Races race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)fd.race);
-            DFRandom.Seed = fd.rulerNameSeed & 0xffff; // Matched to classic: used to retain the same ruler name for each region
+            // Matched to classic: used to retain the same old and new ruler name for each region
+            DFRandom.Seed = oldRuler ? fd.rulerNameSeed >> 16 : fd.rulerNameSeed & 0xffff;
 
             return DaggerfallUnity.Instance.NameHelper.FullName(GetNameBank(race), gender);
         }
@@ -899,7 +900,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static string OldLordOfFaction1(IMacroContextProvider mcp)
         {   // %ol1
-            return GetLordNameForFaction(idFaction1);
+            return GetLordNameForFaction(idFaction1, true);
         }
 
         public static string LordOfFaction1(IMacroContextProvider mcp)
