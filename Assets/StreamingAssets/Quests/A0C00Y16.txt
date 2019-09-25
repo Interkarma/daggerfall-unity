@@ -290,7 +290,7 @@ _clearclick_ task:
 	clear _S.18_ _clearclick_
 
 _yes_ task:
-	when _S.08_ or _S.09_ or _S.10_ or _S.11_ 
+	when _S.08_ or _S.09_ or _S.10_ or _S.11_ or _S.22_
 
 _givereward_ task:
 	when _yes_ and _S.18_ 
@@ -304,8 +304,6 @@ _S.22_ task:
 	clicked npc _missingperson_ 
 	hide npc _missingperson_ 
 	add _missingperson_ face saying 1040 
-	start task _yes_
---added _yes_ to finding NPC by surprise
 
 _S.23_ task:
 	when _S.22_ and _S.18_ 
