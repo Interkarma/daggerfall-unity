@@ -13,7 +13,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>             My name is unimportant. All you need to know
 <ce>               is that I need someone who isn't afraid to
-<ce>            spill a little blood, for say _gold_ gold. Tell
+<ce>            spill a little blood for, say, _gold_ gold. Tell
 <ce>            me now if you're not interested. Are you willing
 <ce>                           to take this job?
                                      <--->
@@ -22,7 +22,7 @@ QuestorOffer:  [1000]
 <ce>               will kill for gold? How about _gold_ gold?
                                      <--->
 <ce>             I am looking for someone that won't faint at
-<ce>            the sight of blood. Human blood. For _gold_ gold
+<ce>            the sight of blood. Human blood. For _gold_ gold,
 <ce>                         would you kill a man?
 
 RefuseQuest:  [1001]
@@ -37,13 +37,13 @@ AcceptQuest:  [1002]
 <ce>           the Dark Brotherhood won't take the job. Something
 <ce>           about a favor they owe. I need an independent. Do
 <ce>           the job and get back to me within a week and I'll
-<ce>          pay you the _gold_ gold. Just ask for _questgiver_,
+<ce>          pay you the _gold_ gold. Just ask for _questgiver_.
 <ce>                  I'll be waiting right here for you.
 
 QuestComplete:  [1004]
 <ce>            Revenge is mine! By the way, you had better get
 <ce>            out of town. I hear the Brotherhood caught wind
-<ce>                    of this. Here's your money %pcf.
+<ce>                    of this. Here's your money, %pcf.
 
 RumorsDuringQuest:  [1005]
 <ce>                  I hear _questgiver_ hates _darkb_.
@@ -51,7 +51,7 @@ RumorsDuringQuest:  [1005]
 <ce>             _darkb_ is connected to the Dark Brotherhood.
 
 RumorsPostsuccess:  [1007]
-<ce>             Someone slew _darkb_, and in public no less!
+<ce>             Someone slew _darkb_, and in public, no less!
                                      <--->
 <ce>                Did you hear about the murder? _darkb_
 <ce>                       was slain by an assassin.
@@ -68,7 +68,7 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>              I hired you to do a job, but you couldn't.
 <ce>                  All you had to do was kill _darkb_.
-<ce>               Now its too late, and the Dark Brotherhood
+<ce>               Now it's too late, and the Dark Brotherhood
 <ce>                   is after me. Just leave me alone.
 
 QuestLogEntry:  [1010]
@@ -79,7 +79,7 @@ QuestLogEntry:  [1010]
 
 Message:  1015
 <ce>                _darkb_ isn't dead! What kind of a fool
-<ce>                        do you take me for %pcf?
+<ce>                        do you take me for, %pcf?
 
 Message:  1021
 <ce>                         Help! Murderer! Help!
@@ -94,7 +94,7 @@ Message:  1024
 <ce>          Coward! You attack me without cause or provocation.
 
 Message:  1030
-<ce>              _questgiver_?  I don't know much about %g2.
+<ce>              _questgiver_? I don't know much about %g2.
 <ce>                           Keeps to %g2self.
 
 Message:  1031
@@ -102,7 +102,7 @@ Message:  1031
 <ce>                    But you didn't hear it from me.
 
 Message:  1032
-<ce>                A fine upstanding citizen.  Ask anyone.
+<ce>                A fine upstanding citizen. Ask anyone.
 
 Message:  1033
 <ce>                  _darkb_ is usually at _place_, but
