@@ -11,23 +11,23 @@ Quest: A0C00Y10
 QRC:
 
 QuestorOffer:  [1000]
-<ce>             Excuse me! Can't you see I'm busy you smelly
-<ce>             %ra. Are you looking for trouble or something?
+<ce>             Excuse me! Can't you see I'm busy, you smelly
+<ce>             %ra? Are you looking for trouble or something?
                                      <--->
 <ce>           What? What did you say? I hope I didn't hear you
 <ce>                 say something. Did you say something?
                                      <--->
-<ce>            Can't you see I'm busy! And not in a good mood
+<ce>            Can't you see I'm busy! And not in a good mood,
 <ce>               I might add! If you don't leave now, there
- could be trouble. Is that what you want?
+<ce>                could be trouble. Is that what you want?
                                      <--->
-<ce>            Well excuse me. Didn't want to get in your way
+<ce>            Well, excuse me. Didn't want to get in your way,
 <ce>               you fat %ra pig. You want to step outside?
 
 RefuseQuest:  [1001]
-<ce>                  That's more like it, now shove off.
+<ce>                  That's more like it. Now shove off.
                                      <--->
-<ce>            I didn't think so, go on with whatever you do.
+<ce>            I didn't think so. Go on with whatever you do.
                                      <--->
 <ce>                Didn't think you would say yes anyway.
 <ce>                       Now begone with yourself.
@@ -60,7 +60,7 @@ RumorsDuringQuest:  [1005]
 <ce>                        wandering %ra to a duel!
 
 RumorsPostfailure:  [1006]
-<ce>                     Aren't you that coward %pcn?
+<ce>                     Aren't you that coward, %pcn?
 <ce>                    You refused a duel, didn't you?
                                      <--->
 <ce>                         I heard that _giver_
@@ -79,7 +79,7 @@ RumorsPostsuccess:  [1007]
 QuestorPostsuccess:  [1008]
 <ce>                    %oth. I had hoped never to see
 <ce>                 you again. You bested my champion in a
-<ce>                  duel, but I am an honarable person.
+<ce>                  duel, but I am an honorable person.
                                      <--->
 <ce>                  Don't hurt me! You beat my champion
 <ce>                     in a duel, isn't that enough?
@@ -127,7 +127,7 @@ Message:  1019
 <ce>                  me well to come here and cut you to
 <ce>                pieces. And I shall. Prepare for battle!
                                      <--->
-<ce>              It is you! _giver_ said you would be here,
+<ce>              It's you! _giver_ said you would be here,
 <ce>                    and I always finish %g3 fights.
                                      <--->
 <ce>                  You should watch who you mess with.
@@ -135,11 +135,11 @@ Message:  1019
 <ce>                                to die!
 
 Message:  1025
-<ce>            This could get ugly, not as ugly as you, but I
+<ce>            This could get ugly. Not as ugly as you, but I
 <ce>             have no problem cutting your head off for such
-<ce>           words! You want this to turn into a battle do ya?
+<ce>           words! You want this to turn into a battle, do ya?
                                      <--->
-<ce>                You're lookin' for a fight aren't you?
+<ce>                You're lookin' for a fight, aren't you?
 <ce>                     Is that what you want, child?
                                      <--->
 <ce>                 Oh ... we do have a live one ... with
