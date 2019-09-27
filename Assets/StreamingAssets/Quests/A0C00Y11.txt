@@ -12,10 +12,10 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                  Excuse me, are you a doctor or have
-<ce>                  any healing abilities? I really need
+<ce>                  you any healing abilities? I really need
 <ce>                    someone that can heal my cousin.
                                      <--->
-<ce>                 My cousin is dying!  Can you help me?
+<ce>                 My cousin is dying! Can you help me?
 
 RefuseQuest:  [1001]
 <ce>                  Damn. I could have used some help.
@@ -37,7 +37,7 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                   Oh, you've brought me the healing
-<ce>                      Talisman!  Thank you, %pcn.
+<ce>                      Talisman! Thank you, %pcn.
 <ce>                  Here is the rest of the gold that my
 <ce>               cousin promised you. I really can't thank
 <ce>              you enough. I hope the rest of your travels
@@ -68,7 +68,7 @@ RumorsPostsuccess:  [1007]
 <ce>                       poor person in ___cousin_?
 
 QuestorPostsuccess:  [1008]
-<ce>                  Bless you %pcf. I will never forget
+<ce>                  Bless you, %pcf. I will never forget
 <ce>                    what you did for _cousin_ and I.
 <ce>                    %g has fully recovered from the
 <ce>                              Wizard Bane.
@@ -99,16 +99,16 @@ Message:  1012
 <ce>                  the local healers has found a cure.
                                      <--->
 <ce>                I did hear something of %g2. Something
-<ce>             about a mysterious, fatal illness.  Very sad.
+<ce>             about a mysterious, fatal illness. Very sad.
                                      <--->
-<ce>              Yes, I know the story.  Sounds like Wizard
+<ce>              Yes, I know the story. Sounds like Wizard
 <ce>                              Bane to me.
                                      <--->
 <ce>                No one knows what's wrong with %g2, but
 <ce>                   they say %g has only days to live.
                                      <--->
 <ce>             A most unfortunate case.  No one knows what's
-<ce>             wrong with %g2.  You might try a healer named
+<ce>             wrong with %g2. You might try a healer named
 <ce>                    _healer_, who is said to have an
 <ce>              encyclopedic knowledge of obscure diseases.
                                      <--->
@@ -117,18 +117,18 @@ Message:  1012
 Message:  1013
 <ce>                   Hello there. Yes, I have heard of
 <ce>                     _cousin_ of ___cousin_ and %g3
-<ce>               problem. Wizard Bane it is. I should know.
+<ce>               problem. Wizard Bane, it is. I should know.
 <ce>             Anyway, I do have a special Talisman that will
-<ce>               cure it. It can only be used once though.
-<ce>                 I'll sell it to you for 20 gold.  Here
-<ce>                     you go.  Thank you very much.
+<ce>               cure it. It can only be used once, though.
+<ce>                 I'll sell it to you for 20 gold. Here
+<ce>                     you go. Thank you very much.
 
 Message:  1015
 <ce>                   Hello there. Yes, I have heard of
 <ce>                     _cousin_ of ___cousin_ and %g3
-<ce>               problem. Wizard Bane it is. I should know.
+<ce>               problem. Wizard Bane, it is. I should know.
 <ce>             Anyway, I do have a special Talisman that will
-<ce>               cure it. It can only be used once though.
+<ce>               cure it. It can only be used once, though.
 <ce>             I'd sell it to you for 20 gold, but you don't
 <ce>                   seem to have enough to pay for it.
 
@@ -143,23 +143,23 @@ Message:  1019
 
 Message:  1030
 <ce>              I feel so weak. I don't know what is wrong
-<ce>                with me.  My cousin, _giver_ sent you to
-<ce>               help me?  Oh, thank you, thank you! I have
+<ce>                with me. My cousin, _giver_ sent you to
+<ce>               help me? Oh, thank you, thank you! I have
 <ce>                 just heard of a healer named _healer_
 <ce>                     in ___healer_ who may be able
-<ce>                to help me.  Please go to %g2, and bring
-<ce>                  me the cure, before it is too late!
+<ce>                to help me. Please go to %g2 and bring
+<ce>                  me the cure before it is too late!
 
 Message:  1040
 <ce>                   They say _healer_ specializes in
 <ce>                       the most obscure diseases.
                                      <--->
-<ce>              _healer_?  Lives in ___healer_, I believe.
+<ce>              _healer_? Lives in ___healer_, I believe.
 
 Message:  1041
 <ce>             _healer_'s the best healer around, they say.
- You'll find %g2 in ___healer_.
-<ce>                                   
+<ce>                     You'll find %g2 in ___healer_.
+                                     <--->
 <ce>                 I've heard of _healer_ of ___healer_.
 <ce>    %g has quite a reputation for healing the most difficult cases.
 
