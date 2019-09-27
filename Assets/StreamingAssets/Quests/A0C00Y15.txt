@@ -39,7 +39,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                       Great! Take this package
-<ce>                       it to ___pickupregion_ and
+<ce>                        to ___pickupregion_ and
 <ce>                        ask for _pickupregion_.
 <ce>                       %g will pay you. It needs
 <ce>                   to be there in =traveltime_ days.
@@ -47,14 +47,14 @@ AcceptQuest:  [1002]
                                      <--->
 <ce>                What luck! My friend is _pickupregion_
 <ce>                     in ___pickupregion_. Just ask
-<ce>                  around, everyone knows %g3. %g will
+<ce>                  around, everyone knows %g2. %g will
 <ce>                    pay you right away. If you take
 <ce>                   longer than =traveltime_ days, you
 <ce>                      might as well throw it away.
 <ce>                              Here it is.
 
 QuestComplete:  [1004]
-<ce>                       I was hoping _questgiver_
+<ce>                    I was hoping _questgiver_ would
 <ce>                   be able to get this to me in time.
 <ce>                      %g has been so busy lately.
 <ce>                 Here is the _gold_ you were promised.
@@ -69,7 +69,7 @@ RumorsPostfailure:  [1006]
 RumorsPostsuccess:  [1007]
 <ce>                A sea storm wrecked a ship just off the
 <ce>                shores of Daggerfall. I hear it carried
-<ce>                     an emissary from the Emperor.
+<ce>                     an emissary from the emperor.
 
 QuestorPostsuccess:  [1008]
 <ce>               My humble thanks for taking that package
@@ -85,7 +85,7 @@ QuestLogEntry:  [1010]
  _questgiver_ of
  ___questgiver_ has charged
  me with the task of delivering
- a package to _pickupregion_,
+ a package to _pickupregion_
  of ___pickupregion_.
  I have to have it there within
  =traveltime_ days.
@@ -104,7 +104,7 @@ Message:  1012
 Message:  1013
 <ce>                       This _jewelry_ is a gift
 <ce>                      to _pickupregion_ that will
-<ce>                      seal my arrangement with %g2
+<ce>                     seal my arrangement with %g2.
 
 Message:  1014
 <ce>                   This is a special _mensclothing_
