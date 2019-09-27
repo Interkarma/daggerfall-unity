@@ -30,7 +30,7 @@ AcceptQuest:  [1002]
 <ce>                The only person who might help you find
 <ce>                         _hermit_ is _spouse_.
 <ce>                     %g can be found in ___spouse_.
-<ce>              Take these flowers.  They are %g2 favorites.
+<ce>              Take these flowers. They are %g2 favorites.
 <ce>                 They may gain you some favor with %g2.
 <ce>                    Here is a letter with _hermit_'s
 <ce>               riddle inscribed upon it. If you have not
@@ -63,7 +63,7 @@ RumorsPostsuccess:  [1007]
 QuestorPostsuccess:  [1008]
 <ce>                  Anything for the %ra that found the
 <ce>                     answer to my riddle. _spouse_
-<ce>                      and I are married you know.
+<ce>                      and I are married, you know.
 
 QuestorPostfailure:  [1009]
 <ce>              You are the %ra that was unable to find the
@@ -90,7 +90,7 @@ Message:  1012
 <ce>                    _hermit_ asked me not to reveal
 <ce>                 %g3 whereabouts to strangers. However,
 <ce>                      since you bring _book_ from
-<ce>                   _spouse_ you are clearly not just
+<ce>                   _spouse_, you are clearly not just
 <ce>                 some stranger. _hermit_ secluded %g2-
 <ce>                   self in a dungeon to study arcane
 <ce>                  lore. I have marked its location on
@@ -106,12 +106,12 @@ Message:  1013
 
 Message:  1014
 Speak not of love or hate, but tell
- me this; what gift can you give to
- me, that I can never buy for myself?
+ me this: what gift can you give to
+ me that I can never buy for myself?
 
 Message:  1015
 On %dat, I spoke with
- _spouse_.  %g told me that
+ _spouse_. %g told me that
  _hermit_ left to
  study under _teacher_
  in __school_.
@@ -126,8 +126,8 @@ On %dat, I met with
 
 Message:  1017
 Speak not of love or hate, but tell
- me this; what gift can you give to
- to me, that I can never buy for myself?
+ me this: what gift can you give to
+ to me that I can never buy for myself?
  
  'It's KINDNESS, stupid!'
 
