@@ -527,10 +527,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallListPickerWindow questPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
             questPicker.OnItemPicked += QuestPicker_OnItemPicked;
-            // Populate a list with loaded quests that the player can choose from.
+            questPicker.OnClose += QuestPicker_OnClose;
+            // Populate a list with quests that the player can choose from.
             for (int i = 0; i < questPool.Count; i++)
             {
                 // Fully loading the quest is currently the only way to get the human readable quest name.
+                // @TODO: remove this when the QuestListsManager can get at display names too.
                 Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
                 if (quest != null)
                 {
@@ -541,14 +543,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(questPicker);
         }
 
+        private void QuestPicker_OnClose()
+        {
+            for (int i = 0; i < loadedQuests.Count; i++)
+            {
+                if (loadedQuests[i] != offeredQuest)
+                {
+                    // Get rid of all the quest data that was created when loading the quests to get their display name.
+                    // @TODO: remove this when GettingQuestsBox_OnClose doesn't need to load the full quests anymore.  
+                    ulong uid = loadedQuests[i].UID;
+                    // inform TalkManager so that it can remove the quest topics that have been added
+                    GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(uid);
+                    // remove quest rumors (rumor mill command) for this quest from talk manager
+                    GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(uid);
+                    // remove quest progress rumors for this quest from talk manager
+                    GameManager.Instance.TalkManager.RemoveQuestProgressRumorsFromRumorMill(uid);
+                    loadedQuests[i].Dispose();
+                }
+            }
+        }
+
         public void QuestPicker_OnItemPicked(int index, string name)
         {
             DaggerfallUI.UIManager.PopWindow();
-            if (index < loadedQuests.Count)
-            {
-                offeredQuest = loadedQuests[index];
-                OfferQuest();
-            }
+            offeredQuest = loadedQuests[index];
+            OfferQuest();
         }
 
         #endregion
