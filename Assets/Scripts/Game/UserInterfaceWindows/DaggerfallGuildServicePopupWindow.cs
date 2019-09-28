@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int curingCost = 0;
 
         List<QuestData> questPool;
+        private List<Quest> loadedQuests = new List<Quest>();
 
         #endregion
 
@@ -467,12 +468,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get the faction id for affecting reputation on success/failure
             int factionId = GetFactionIdForGuild();
 
-            // Select a quest at random from appropriate pool
+            // Set up a pool of available quests.
             QuestListsManager questListsManager = GameManager.Instance.QuestListsManager;
             questPool = GameManager.Instance.QuestListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
 
+            // Show the quest selection list if that feature has been enabled.
             if (DaggerfallUnity.Settings.GuildQuestListBox)
             {
+                loadedQuests.Clear();
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.CreateTokens(
                     TextFile.Formatting.JustifyCenter,
                     TextManager.Instance.GetText(textDatabase, "gettingQuests1"),
@@ -486,6 +489,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
+                // Select a quest at random from appropriate pool
                 offeredQuest = questListsManager.SelectQuest(questPool, factionId);
                 OfferQuest();
             }
@@ -523,19 +527,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallListPickerWindow questPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
             questPicker.OnItemPicked += QuestPicker_OnItemPicked;
+            // Populate a list with loaded quests that the player can choose from.
             for (int i = 0; i < questPool.Count; i++)
             {
-                try
+                // Fully loading the quest is currently the only way to get the human readable quest name.
+                Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
+                if (quest != null)
                 {
-                    Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
-                    if (quest != null)
-                        questPicker.ListBox.AddItem(quest.DisplayName == null ? quest.QuestName : quest.DisplayName);
-                    else
-                        questPool.RemoveAt(i);  // Remove any that fail compilation
-                }
-                catch (Exception)
-                {
-                    questPool.RemoveAt(i);  // Remove any that throw exceptions
+                    loadedQuests.Add(quest);
+                    questPicker.ListBox.AddItem(quest.DisplayName ?? quest.QuestName);
                 }
             }
             uiManager.PushWindow(questPicker);
@@ -544,10 +544,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void QuestPicker_OnItemPicked(int index, string name)
         {
             DaggerfallUI.UIManager.PopWindow();
-            if (index < questPool.Count)
+            if (index < loadedQuests.Count)
             {
-                QuestData questData = questPool[index];
-                offeredQuest = GameManager.Instance.QuestListsManager.LoadQuest(questData, GetFactionIdForGuild());
+                offeredQuest = loadedQuests[index];
                 OfferQuest();
             }
         }
