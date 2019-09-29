@@ -17,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>               _gold_ gold to the person who puts a stop
 <ce>                       to them. What do you say?
                                      <--->
-<ce>                   The malicious, downright libelous
+<ce>                  The malicious, downright slanderous
 <ce>                 rumors about me must cease and desist
 <ce>                 immediately. I need someone anonymous
 <ce>                  to trace these rumors back to their
@@ -48,14 +48,14 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>              You have been honorable, %pcn. I thank you.
-<ce>           Take this _magicsword_, my most prized possession,
-<ce>          it is the least I can offer. We are friends forever,
+<ce>           Take this _magicsword_, my most prized possession.
+<ce>          It is the least I can offer. We are friends forever,
 <ce>                             and I owe you.
 <ce>                   Leave _giver_ and _sister_ to me,
 <ce>                   I have something planned for them.
 
 RumorsDuringQuest:  [1005]
-I heard that _giver_ keeps slaves!
+<ce>                   I heard that _giver_ keeps slaves!
 <--->
 <ce>                       _giver_ beats %g3 spouse.
 
@@ -70,7 +70,7 @@ RumorsPostsuccess:  [1007]
 
 QuestorPostsuccess:  [1008]
 <ce>                 You must think I am a horrible person
-<ce>                 after what I did to my sister's lover
+<ce>                 after what I did to my sister's lover,
 <ce>                   _lover_. Let me make it up to you.
 
 QuestorPostfailure:  [1009]
@@ -87,9 +87,9 @@ QuestLogEntry:  [1010]
 Message:  1015
 _giver_,
  My words will be quick. _lover_ is too
- much as you have said, and a little scare
+ much, as you have said, and a little scare
  may be what is needed. I'll be leaving on a trip
- tonight, so tomorrow at sunset
+ tonight, so tomorrow at sunset,
  you should take him. I'll be in touch again,
  but I don't imagine we will need to continue
  for more than a week.
@@ -97,7 +97,7 @@ _giver_,
 
 Message:  1017
 <ce>                     What's that you say? _giver_?
-<ce>               I have heard something...but we must keep
+<ce>               I have heard something... but we must keep
 <ce>                 our voices low. Seems that %g3 sister,
 <ce>            _sister_, was having a hard time with her lover.
 <ce>             I believe his name is _lover_. I do know that
@@ -113,30 +113,30 @@ Message:  1018
  outlining the plan to kidnap _lover_,
  and _giver_ has now divulged that
  %g hired some bandits to lock him away in
- ___dungeon_.  %g begged for his life
+ ___dungeon_. %g begged for his life
  and asked that I rescue _lover_.
 
 Message:  1020
 <ce>                         Lies, all lies I say!
-<ce>                   I hate those nasty street rumors,
-<ce>                please hurry up and put a stop to them!
+<ce>                   I hate those nasty street rumors.
+<ce>                Please hurry up and put a stop to them!
 
 Message:  1021
 <ce>                     What?! What is this? Oh my...
 <ce>                     Please, please don't kill me!
-<ce>                  My sister put me up to it...I didn't
+<ce>                  My sister put me up to it... I didn't
 <ce>                  mean any harm. She only asked that I
 <ce>                 scare him a little, you know, make him
-<ce>                appreciate her more. I know I shouldn't
+<ce>              appreciate her more. I know that I shouldn't
 <ce>                have done it. Now I'm in over my head...
 <ce>               you see, I paid a group of bandits to take
 <ce>                 him away and lock him in ___dungeon_.
 <ce>                I figured this would scare him enough...
-<ce>               but he hasn't returned! I went too far...I
-<ce>             know. Please...you must rescue him! I thought
-<ce>               I could cover it up, but I can't any more.
-<ce>            You've got to rescue him, if he's not back when 
-<ce>           my sister returns...well, she'll kill me for sure!
+<ce>               but he hasn't returned! I went too far... I
+<ce>             know. Please... you must rescue him! I thought
+<ce>               I could cover it up, but I can't anymore.
+<ce>            You've got to rescue him. If he's not back when 
+<ce>           my sister returns... well, she'll kill me for sure!
 
 Message:  1022
 <ce>                  _giver_ is a big topic these days.
@@ -147,13 +147,13 @@ Message:  1022
                                      <--->
 <ce>               You can usually find _giver_ at __giver_.
                                      <--->
-<ce>              _giver_?  You find %g2 either at __giver_,
+<ce>              _giver_? You can find %g2 either at __giver_,
 <ce>                      or at home at _givershouse_.
                                      <--->
 <ce>                  _giver_ is well liked in ___giver_.
                                      <--->
-<ce>                         You should try _inn_,
-<ce>                    the good gossip is always there.
+<ce>                         You should try _inn_.
+<ce>                    The good gossip is always there.
                                      <--->
 <ce>       _giver_ is often seen shopping with %g3 sister, _sister_.
                                      <--->
@@ -171,7 +171,7 @@ Message:  1022
 <ce>                  _giver_ is in league with the orcs.
                                      <--->
 <ce>                  There are more rumors about _giver_
-<ce>                then anyone else in ___giver_ this week.
+<ce>                than anyone else in ___giver_ this week.
                                      <--->
 <ce>            _giver_ promised to kidnap %g3 sister's lover.
                                      <--->
@@ -186,9 +186,9 @@ Message:  1022
 <ce>                     There's always talk at _inn_.
 
 Message:  1030
-_lover_ is _sister_'s lover.  You know, I haven't seen him around lately.
+<ce>_lover_ is _sister_'s lover. You know, I haven't seen him around lately.
 <--->
-<ce>_lover_ hasn't been seen around town in days.  I bet _giver_ is behind
+<ce>_lover_ hasn't been seen around town in days. I bet _giver_ is behind
 <ce>                              it somehow.
 
 Message:  2000
@@ -196,7 +196,7 @@ Message:  2000
 <ce>             out of here. I've been wandering around these
 <ce>                passages for days, trying to stay alive.
 <ce>                   What is that you say? _sister_ and
-<ce>                      _giver_ are behind all this!
+<ce>                    _giver_ are behind all of this!?
 <ce>               Well, you get me back to _sistershouse_ in
 <ce>               __sistershouse_ and I'll reward you well.
 <ce>                And then I will take care of those two!
