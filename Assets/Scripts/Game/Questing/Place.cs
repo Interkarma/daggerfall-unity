@@ -564,11 +564,11 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get list of valid sites
             SiteDetails[] foundSites = null;
             if (p2 == -1 && p3 == 0)
-                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
+                foundSites = CollectQuestSitesOfBuildingType(ref location, DFLocation.BuildingTypes.AllValid, p3);
             else if (p2 == -1 && p3 == 1)
-                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+                foundSites = CollectQuestSitesOfBuildingType(ref location, DFLocation.BuildingTypes.AnyHouse, p3);
             else
-                foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
+                foundSites = CollectQuestSitesOfBuildingType(ref location, (DFLocation.BuildingTypes)p2, p3);
 
             // Do some fallback for house types if nothing found locally
             // There should almost always be a suitable local house available
@@ -578,7 +578,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 requiredBuildingType <= DFLocation.BuildingTypes.House6)
             {
                 p2 = -1;
-                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+                foundSites = CollectQuestSitesOfBuildingType(ref location, DFLocation.BuildingTypes.AnyHouse, p3);
             }
 
             // Must have found at least one site
@@ -679,18 +679,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Get list of valid sites
                 SiteDetails[] foundSites = null;
                 if (p2 == -1 && p3 == 0)
-                    foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
+                    foundSites = CollectQuestSitesOfBuildingType(ref location, DFLocation.BuildingTypes.AllValid, p3);
                 else if (p2 == -1 && p3 == 1)
-                    foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+                    foundSites = CollectQuestSitesOfBuildingType(ref location, DFLocation.BuildingTypes.AnyHouse, p3);
                 else
                 {
                     // Check if town contains specified building type in MAPS.BSA directory
-                    if (!HasBuildingType(location, requiredBuildingType))
+                    if (!HasBuildingType(ref location, requiredBuildingType))
                         continue;
 
                     // Get an array of potential quest sites with specified building type
                     // This ensures building site actually exists inside town, as MAPS.BSA directory can be incorrect
-                    foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
+                    foundSites = CollectQuestSitesOfBuildingType(ref location, (DFLocation.BuildingTypes)p2, p3);
                 }
 
                 // Must have found at least one site
@@ -751,7 +751,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Dungeon must have at least one marker available
             QuestMarker[] questSpawnMarkers, questItemMarkers;
-            EnumerateDungeonQuestMarkers(location, out questSpawnMarkers, out questItemMarkers);
+            EnumerateDungeonQuestMarkers(ref location, out questSpawnMarkers, out questItemMarkers);
             if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
             {
                 Debug.LogFormat("Could not find any quest markers in random dungeon {0}", location.Name);
@@ -864,7 +864,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (siteType == SiteTypes.Dungeon)
             {
                 // Enumerate markers
-                EnumerateDungeonQuestMarkers(location, out questSpawnMarkers, out questItemMarkers);
+                EnumerateDungeonQuestMarkers(ref location, out questSpawnMarkers, out questItemMarkers);
                 if (p1 == 50000)
                 {
                     // Hardcode for MantellanCrux as it only has a quest spawn marker
@@ -949,7 +949,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
         /// Specify BuildingTypes.AllValid to find all valid building types
         /// </summary>
-        SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType, int guildHallFaction)
+        SiteDetails[] CollectQuestSitesOfBuildingType(ref DFLocation location, DFLocation.BuildingTypes buildingType, int guildHallFaction)
         {
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
@@ -963,8 +963,6 @@ namespace DaggerfallWorkshop.Game.Questing
             QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
 
             // Iterate through all blocks
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             for (int y = 0; y < height; y++)
@@ -973,7 +971,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Iterate through all buildings in this block
                     int index = y * width + x;
-                    BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index], x, y);
+                    BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(ref location.Exterior.Blocks[index], x, y);
                     for (int i = 0; i < buildingSummary.Length; i++)
                     {
                         bool wildcardFound = false;
@@ -1026,7 +1024,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                             // Building must have at least one marker available
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
-                            EnumerateBuildingQuestMarkers(blocks[index], i, out questSpawnMarkers, out questItemMarkers);
+                            EnumerateBuildingQuestMarkers(ref location.Exterior.Blocks[index], i, out questSpawnMarkers, out questItemMarkers);
                             if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
                                 continue;
 
@@ -1127,7 +1125,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Quick check to see if map data lists a specific building type in header.
         /// This can be inaccurate so should always followed up with a full check.
         /// </summary>
-        bool HasBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
+        bool HasBuildingType(ref DFLocation location, DFLocation.BuildingTypes buildingType)
         {
             foreach (var building in location.Exterior.Buildings)
             {
@@ -1319,7 +1317,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Collect all quest markers inside a building.
         /// </summary>
-        void EnumerateBuildingQuestMarkers(DFBlock blockData, int recordIndex, out QuestMarker[] questSpawnMarkers, out QuestMarker[] questItemMarkers)
+        void EnumerateBuildingQuestMarkers(ref DFBlock blockData, int recordIndex, out QuestMarker[] questSpawnMarkers, out QuestMarker[] questItemMarkers)
         {
             questSpawnMarkers = null;
             questItemMarkers = null;
@@ -1355,7 +1353,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Collect all quest markers from inside a dungeon.
         /// </summary>
-        void EnumerateDungeonQuestMarkers(DFLocation location, out QuestMarker[] questSpawnMarkers, out QuestMarker[] questItemMarkers)
+        void EnumerateDungeonQuestMarkers(ref DFLocation location, out QuestMarker[] questSpawnMarkers, out QuestMarker[] questItemMarkers)
         {
             questSpawnMarkers = null;
             questItemMarkers = null;

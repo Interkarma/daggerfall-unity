@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -694,6 +695,9 @@ namespace DaggerfallConnect.Arena2
             DFLocation dfLocation = new DFLocation();
             if (!ReadLocation(region, location, ref dfLocation))
                 return new DFLocation();
+
+            // Get RMB blocks
+            RMBLayout.GetLocationBuildingData(ref dfLocation);
 
             // Store indices
             dfLocation.RegionIndex = region;

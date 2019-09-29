@@ -178,7 +178,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Event Handlers
 
-        private void PlayerGPS_OnEnterLocationRect(DaggerfallConnect.DFLocation location)
+        private void PlayerGPS_OnEnterLocationRect(ref DFLocation location)
         {
             // Refresh when entering a location rect
             RefreshSiteTargets();

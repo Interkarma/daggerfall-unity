@@ -438,10 +438,10 @@ namespace DaggerfallWorkshop.Utility
         /// Otherwise not all building data will be present.
         /// </summary>
         /// <param name="blockData">DFBlock data.</param>
-        /// <param name="layoutX">X coordindate in map layout used to generate building key.</param>
-        /// <param name="layoutY">Y coordindate in map layout used to generate building key.</param>
+        /// <param name="layoutX">X coordinate in map layout used to generate building key.</param>
+        /// <param name="layoutY">Y coordinate in map layout used to generate building key.</param>
         /// <returns>BuildingSummary.</returns>
-        public static BuildingSummary[] GetBuildingData(DFBlock blockData, int layoutX = -1, int layoutY = -1)
+        public static BuildingSummary[] GetBuildingData(ref DFBlock blockData, int layoutX = -1, int layoutY = -1)
         {
             // Store building information
             int buildingCount = blockData.RmbBlock.SubRecords.Length;
@@ -484,7 +484,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="location">Location to use.</param>
         /// <param name="blocksOut">Array of blocks populated with data from MAPS.BSA.</param>
-        public static void GetLocationBuildingData(DFLocation location, out DFBlock[] blocksOut)
+        public static void GetLocationBuildingData(ref DFLocation location)
         {
             List<BuildingPoolItem> namedBuildingPool = new List<BuildingPoolItem>();
             List<DFBlock> blocks = new List<DFBlock>();
@@ -574,7 +574,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Send blocks array back to caller
-            blocksOut = blocks.ToArray();
+            location.Exterior.Blocks = blocks.ToArray();
         }
 
         /// <summary>

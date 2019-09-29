@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Gets the scene name for the dungeon at the given location.
         /// </summary>
-        public static string GetSceneName(DFLocation location)
+        public static string GetSceneName(ref DFLocation location)
         {
             return string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
         }
@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop
             public DFRegion.DungeonTypes DungeonType;
         }
 
-        public void SetDungeon(DFLocation location, bool importEnemies = true)
+        public void SetDungeon(ref DFLocation location, bool importEnemies = true)
         {
             if (!ReadyCheck())
                 return;

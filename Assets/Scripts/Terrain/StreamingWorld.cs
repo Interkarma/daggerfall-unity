@@ -699,7 +699,7 @@ namespace DaggerfallWorkshop
                 {
                     // Add building directory to location game object
                     BuildingDirectory buildingDirectory = locationObject.AddComponent<BuildingDirectory>();
-                    buildingDirectory.SetLocation(location);
+                    buildingDirectory.SetLocation(ref location);
 
                     // Add location to loose object list
                     LooseObjectDesc looseObject = new LooseObjectDesc();
@@ -727,7 +727,7 @@ namespace DaggerfallWorkshop
                     // Position RMB blocks inside terrain area
                     int width = location.Exterior.ExteriorData.Width;
                     int height = location.Exterior.ExteriorData.Height;
-                    DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
+                    DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(ref location);
                     Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
                     // Get location component
@@ -1139,7 +1139,7 @@ namespace DaggerfallWorkshop
                 return null;
 
             // Get location data
-            locationOut = dfUnity.ContentReader.MapFileReader.GetLocation(dfTerrain.MapData.mapRegionIndex, dfTerrain.MapData.mapLocationIndex);
+            locationOut = dfTerrain.MapData.location;
             if (!locationOut.Loaded)
                 return null;
 
@@ -1160,7 +1160,7 @@ namespace DaggerfallWorkshop
             locationObject.hideFlags = defaultHideFlags;
             locationObject.transform.position = terrainArray[terrain].terrainObject.transform.position + new Vector3(0, height, 0);
             DaggerfallLocation dfLocation = locationObject.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
-            dfLocation.SetLocation(locationOut, false);
+            dfLocation.SetLocation(ref locationOut, false);
 
             // Raise event
             RaiseOnCreateLocationGameObjectEvent(dfLocation);
@@ -1414,7 +1414,8 @@ namespace DaggerfallWorkshop
             // Get location dimensions for positioning
             int width = currentLocation.Summary.BlockWidth;
             int height = currentLocation.Summary.BlockHeight;
-            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(currentLocation.Summary.LegacyLocation);
+            DFLocation legacyLocation = currentLocation.Summary.LegacyLocation;
+            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(ref legacyLocation);
             Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
             // Position player to random side of location

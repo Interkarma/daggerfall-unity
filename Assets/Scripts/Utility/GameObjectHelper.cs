@@ -1298,7 +1298,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = new GameObject(string.Format("DaggerfallLocation [Region={0}, Name={1}]", location.RegionName, location.Name));
             if (parent) go.transform.parent = parent;
             DaggerfallLocation c = go.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
-            c.SetLocation(location);
+            c.SetLocation(ref location);
 
             return go;
         }
@@ -1310,10 +1310,10 @@ namespace DaggerfallWorkshop.Utility
             if (!FindMultiNameLocation(multiName, out location))
                 return null;
 
-            return CreateDaggerfallDungeonGameObject(location, parent);
+            return CreateDaggerfallDungeonGameObject(ref location, parent);
         }
 
-        public static GameObject CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent, bool importEnemies = true)
+        public static GameObject CreateDaggerfallDungeonGameObject(ref DFLocation location, Transform parent, bool importEnemies = true)
         {
             if (!location.HasDungeon)
             {
@@ -1322,10 +1322,10 @@ namespace DaggerfallWorkshop.Utility
                 return null;
             }
 
-            GameObject go = new GameObject(DaggerfallDungeon.GetSceneName(location));
+            GameObject go = new GameObject(DaggerfallDungeon.GetSceneName(ref location));
             if (parent) go.transform.parent = parent;
             DaggerfallDungeon c = go.AddComponent<DaggerfallDungeon>();
-            c.SetDungeon(location, importEnemies);
+            c.SetDungeon(ref location, importEnemies);
 
             return go;
         }

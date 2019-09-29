@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Game
             //cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
 
             // recreate building nameplates (since a discovery could have happened since exterior automap has been opened last time)
-            CreateBuildingNameplates(location);
+            CreateBuildingNameplates(ref location);
 
             // focus player position
             cameraExteriorAutomap.transform.position = GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
@@ -321,21 +321,21 @@ namespace DaggerfallWorkshop.Game
         public void SwitchToExteriorAutomapViewModeOriginal()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original;
-            CreateExteriorLayoutTexture(location, false, true, false);
+            CreateExteriorLayoutTexture(ref location, false, true, false);
             AssignExteriorLayoutTextureToCustomCanvas();
         }
 
         public void SwitchToExteriorAutomapViewModeExtra()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Extra;
-            CreateExteriorLayoutTexture(location, true, true, false);
+            CreateExteriorLayoutTexture(ref location, true, true, false);
             AssignExteriorLayoutTextureToCustomCanvas();
         }
 
         public void SwitchToExteriorAutomapViewModeAll()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.All;
-            CreateExteriorLayoutTexture(location, true, false, false);
+            CreateExteriorLayoutTexture(ref location, true, false, false);
             AssignExteriorLayoutTextureToCustomCanvas();
         }
 
@@ -639,7 +639,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void CreateBuildingNameplates(DFLocation location)
+        private void CreateBuildingNameplates(ref DFLocation location)
         {
             DeleteBuildingNameplates();
 
@@ -648,8 +648,6 @@ namespace DaggerfallWorkshop.Game
             gameObjectBuildingNameplates = new GameObject("building name plates");
             gameObjectBuildingNameplates.transform.SetParent(gameobjectExteriorAutomap.transform);
 
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             int uniqueIndex = 0;
@@ -659,7 +657,7 @@ namespace DaggerfallWorkshop.Game
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index], x, y);
+                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(ref location.Exterior.Blocks[index], x, y);
                     BlockLayout layout = exteriorLayout[index];
 
                     foreach (BuildingSummary buildingSummary in buildingsInBlock)
@@ -1342,7 +1340,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// creates the map layout in the exterior layout texture
         /// </summary>  
-        private void CreateExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true, bool createNameplates = true)
+        private void CreateExteriorLayoutTexture(ref DFLocation location, bool showAll = false, bool removeGroundFlats = true, bool createNameplates = true)
         {
             if (exteriorLayoutTexture != null)
             {
@@ -1358,15 +1356,6 @@ namespace DaggerfallWorkshop.Game
             {
                 for (int x = 0; x < locationWidth; x++)
                 {
-                    // Get the block name
-                    string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-
-                    // Get the block data
-                    //                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
-
-                    // Now we can get the automap image data for this block and lay it out
-                    //block.RmbBlock.SubRecords.
-
                     int index = y * locationWidth + x;
                     exteriorLayout[index].x = x;
                     exteriorLayout[index].y = y;
@@ -1375,7 +1364,7 @@ namespace DaggerfallWorkshop.Game
                     exteriorLayout[index].rect.ypos = ypos;
                     exteriorLayout[index].rect.width = blockSizeWidth;
                     exteriorLayout[index].rect.height = blockSizeHeight;
-                    exteriorLayout[index].name = blockName;
+                    exteriorLayout[index].name = location.Exterior.Blocks[index].Name;
                     exteriorLayout[index].blocktype = DFBlock.BlockTypes.Rmb;
                     exteriorLayout[index].rdbType = DFBlock.RdbTypes.Unknown;
                     xpos += blockSizeWidth;
@@ -1515,39 +1504,20 @@ namespace DaggerfallWorkshop.Game
 
             if (createNameplates)
             {
-                CreateBuildingNameplates(location);
+                CreateBuildingNameplates(ref location);
             }
         }
 
         private void LoadAndCreateLocationExteriorAutomap()
         {
-            ContentReader.MapSummary mapSummary;
-            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
-            {
-                // no location found
-                return; // do nothing
-            }
-
-            DFLocation currentPlayerLocation = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-            if (!currentPlayerLocation.Loaded)
-            {
-                // Location not loaded, something went wrong
-                DaggerfallUnity.LogMessage("error when loading location for exterior automap layouting", true);
-                if (Application.isEditor)
-                    Debug.Break();
-                else
-                    Application.Quit();
-            }
-
-            if ((location.Loaded) && (currentPlayerLocation.Name == location.Name)) // if already loaded
+            if ((location.Loaded) && (GameManager.Instance.PlayerGPS.CurrentLocation.Name == location.Name)) // if already loaded
             {
                 return; // do nothing
             }
 
             UnloadLocationExteriorAutomap(); // first make sure to unload location exterior automap and destroy resources
 
-            location = currentPlayerLocation; // set current location as new location
+            location = GameManager.Instance.PlayerGPS.CurrentLocation; // set current location as new location
 
             // and now layout it
 
@@ -1563,13 +1533,13 @@ namespace DaggerfallWorkshop.Game
             switch (currentExteriorAutomapViewMode)
             {
                 case ExteriorAutomapViewMode.Original:
-                    CreateExteriorLayoutTexture(location, false, true);
+                    CreateExteriorLayoutTexture(ref location, false, true);
                     break;
                 case ExteriorAutomapViewMode.Extra:
-                    CreateExteriorLayoutTexture(location, true, true);
+                    CreateExteriorLayoutTexture(ref location, true, true);
                     break;
                 case ExteriorAutomapViewMode.All:
-                    CreateExteriorLayoutTexture(location, true, false);
+                    CreateExteriorLayoutTexture(ref location, true, false);
                     break;
             }
 

@@ -358,7 +358,7 @@ namespace DaggerfallWorkshop.Game.Utility
                         streamingWorld.suppressWorld = true;
                     }
                     playerEnterExit.EnableDungeonParent();
-                    playerEnterExit.StartDungeonInterior(location);
+                    playerEnterExit.StartDungeonInterior(ref location);
                 }
                 else
                 {

@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         #region Events Handlers
 
-        private void PlayerGPS_OnEnterLocationRect(DFLocation location)
+        private void PlayerGPS_OnEnterLocationRect(ref DFLocation location)
         {
             previousLocationType = currentLocationType;
             if (location.Loaded)

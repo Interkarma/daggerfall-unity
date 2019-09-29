@@ -287,20 +287,7 @@ namespace DaggerfallWorkshop
                 return;
 
             // Update local world information whenever player map pixel changes
-            DFPosition pos = CurrentMapPixel;
-            if (pos.X != lastMapPixelX || pos.Y != lastMapPixelY)
-            {
-                RaiseOnMapPixelChangedEvent(pos);
-                UpdateWorldInfo(pos.X, pos.Y);
-
-                // Clear non-permanent scenes from cache, unless going to/from owned ship
-                DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
-                if (shipCoords == null || (!(pos.X == shipCoords.X && pos.Y == shipCoords.Y) && !(lastMapPixelX == shipCoords.X && lastMapPixelY == shipCoords.Y)))
-                    SaveLoadManager.ClearSceneCache(false);
-
-                lastMapPixelX = pos.X;
-                lastMapPixelY = pos.Y;
-            }
+            UpdateWorldInfo();
 
             // Raise other events
             RaiseEvents();
@@ -362,12 +349,24 @@ namespace DaggerfallWorkshop
         #region Public Methods
 
         /// <summary>
-        /// Force update of world information (climate, politic, etc.) when Update() not running.
+        /// Update world information (climate, politic, etc.)
         /// </summary>
         public void UpdateWorldInfo()
         {
             DFPosition pos = CurrentMapPixel;
-            UpdateWorldInfo(pos.X, pos.Y);
+            if (pos.X != lastMapPixelX || pos.Y != lastMapPixelY)
+            {
+                UpdateWorldInfo(pos.X, pos.Y);
+                RaiseOnMapPixelChangedEvent(pos);
+
+                // Clear non-permanent scenes from cache, unless going to/from owned ship
+                DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
+                if (shipCoords == null || (pos.X != shipCoords.X || pos.Y != shipCoords.Y) && (lastMapPixelX != shipCoords.X || lastMapPixelY != shipCoords.Y))
+                    SaveLoadManager.ClearSceneCache(false);
+
+                lastMapPixelX = pos.X;
+                lastMapPixelY = pos.Y;
+            }
         }
 
         /// <summary>
@@ -599,7 +598,7 @@ namespace DaggerfallWorkshop
             DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
 
             // Find tile offset point using same logic as terrain helper
-            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(CurrentLocation);
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(ref currentLocation);
 
             // Adjust world origin by tileorigin*2 in world units
             worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
@@ -657,7 +656,7 @@ namespace DaggerfallWorkshop
             if (check && !isPlayerInLocationRect)
             {
                 // Player has entered location rect
-                RaiseOnEnterLocationRectEvent(CurrentLocation);
+                RaiseOnEnterLocationRectEvent(ref currentLocation);
 
                 // Perform location discovery
                 DiscoverCurrentLocation();
@@ -1270,12 +1269,12 @@ namespace DaggerfallWorkshop
         }
 
         // OnEnterLocationRect
-        public delegate void OnEnterLocationRectEventHandler(DFLocation location);
+        public delegate void OnEnterLocationRectEventHandler(ref DFLocation location);
         public static event OnEnterLocationRectEventHandler OnEnterLocationRect;
-        protected virtual void RaiseOnEnterLocationRectEvent(DFLocation location)
+        protected virtual void RaiseOnEnterLocationRectEvent(ref DFLocation location)
         {
             if (OnEnterLocationRect != null)
-                OnEnterLocationRect(location);
+                OnEnterLocationRect(ref location);
         }
 
         // OnExitLocationRect

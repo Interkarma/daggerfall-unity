@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             UnregisterEvents();
         }
 
-        private void PlayerGPS_OnEnterLocationRect(DFLocation location)
+        private void PlayerGPS_OnEnterLocationRect(ref DFLocation location)
         {
             RevealGuildHallOnMap();
         }

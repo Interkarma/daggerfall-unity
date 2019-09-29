@@ -2581,25 +2581,9 @@ namespace DaggerfallWorkshop.Game
         {
             listBuildings = new List<BuildingInfo>();
 
-            ContentReader.MapSummary mapSummary;
-            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
-            {
-                // No location found
-                return; // Do nothing
-            }
-
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-            if (!location.Loaded)
-            {
-                // Location not loaded, something went wrong
-                DaggerfallUnity.LogMessage("Error when loading location in TalkManager.GetBuildingList", true);
-            }
-
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             ExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
 
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             bool populateQuestors = false;
@@ -2615,7 +2599,7 @@ namespace DaggerfallWorkshop.Game
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index], x, y);
+                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(ref location.Exterior.Blocks[index], x, y);
 
                     for (int i = 0; i < buildingsInBlock.Length; i++)
                     {
@@ -2645,7 +2629,7 @@ namespace DaggerfallWorkshop.Game
                         if (populateQuestors)
                         {
                             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
-                            DFBlock.RmbBlockPeopleRecord[] buildingNpcs = blocks[index].RmbBlock.SubRecords[i].Interior.BlockPeopleRecords;
+                            DFBlock.RmbBlockPeopleRecord[] buildingNpcs = location.Exterior.Blocks[index].RmbBlock.SubRecords[i].Interior.BlockPeopleRecords;
                             for (int p = 0; p < buildingNpcs.Length; p++)
                             {
                                 FactionFile.FactionData factionData;

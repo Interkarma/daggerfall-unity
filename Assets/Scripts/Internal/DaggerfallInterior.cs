@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Gets the scene name for the interior behind the given door.
         /// </summary>
-        public static string GetSceneName(DFLocation location, StaticDoor door)
+        public static string GetSceneName(ref DFLocation location, StaticDoor door)
         {
             return GetSceneName(location.MapTableData.MapId, door.buildingKey);
         }
@@ -369,14 +369,12 @@ namespace DaggerfallWorkshop
         {
             // Get block data
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
             bool foundBlock = false;
-            for (int index = 0; index < blocks.Length && !foundBlock; ++index)
+            for (int index = 0; index < location.Exterior.Blocks.Length && !foundBlock; ++index)
             {
-                if (blocks[index].Index == door.blockIndex)
+                if (location.Exterior.Blocks[index].Index == door.blockIndex)
                 {
-                    this.blockData = blocks[index];
+                    this.blockData = location.Exterior.Blocks[index];
                     foundBlock = true;
                 }
             }

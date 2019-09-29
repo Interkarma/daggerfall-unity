@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop
             ApplyClimateSettings();
         }
 
-        public void SetLocation(DFLocation location, bool performLayout = true)
+        public void SetLocation(ref DFLocation location, bool performLayout = true)
         {
             if (!ReadyCheck())
                 return;
@@ -301,14 +301,14 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="location">Target location.</param>
         /// <returns>Location rect in world space. xMin,yMin is SW corner. xMax,yMax is NE corner.</returns>
-        public static Rect GetLocationRect(DFLocation location)
+        public static Rect GetLocationRect(ref DFLocation location)
         {
             // This finds the absolute SW origin of map pixel in world coords
             DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(location.MapTableData.Longitude, location.MapTableData.Latitude);
             DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
 
             // Find tile offset point using same logic as terrain helper
-            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(location);
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(ref location);
 
             // Adjust world origin by tileorigin*2 in world units
             worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
@@ -338,7 +338,7 @@ namespace DaggerfallWorkshop
 
             // Find tile offset point using same logic as terrain helper
             DFLocation currentLocation = Summary.LegacyLocation;
-            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(currentLocation);
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(ref currentLocation);
 
             // Adjust world origin by tileorigin*2 in world units
             worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
@@ -423,9 +423,9 @@ namespace DaggerfallWorkshop
                         //miscBillboardBatch.BlockOrigin = blockOrigin;
                     }
 
-                    string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+                    int index = y * width + x;
                     GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
-                        blockName,
+                        location.Exterior.Blocks[index].Name,
                         x,
                         y,
                         dfUnity.Option_RMBGroundPlane,

@@ -486,19 +486,17 @@ namespace DaggerfallWorkshop.Game
             else if (hasLocation && insideDungeon)
             {
                 // Start in dungeon
-                DFLocation location;
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
-                dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
-                StartDungeonInterior(location, true, importEnemies);
+                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                StartDungeonInterior(ref location, true, importEnemies);
                 world.suppressWorld = true;
             }
             else if (hasLocation && insideBuilding && exteriorDoors != null)
             {
                 // Start in building
-                DFLocation location;
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
-                dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
-                StartBuildingInterior(location, exteriorDoors[0], start);
+                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                StartBuildingInterior(ref location, exteriorDoors[0], start);
                 world.suppressWorld = true;
             }
             else
@@ -660,7 +658,8 @@ namespace DaggerfallWorkshop.Game
 
             // Layout interior
             // This needs to be done first so we know where the enter markers are
-            GameObject newInterior = new GameObject(DaggerfallInterior.GetSceneName(playerGPS.CurrentLocation, door));
+            DFLocation location = playerGPS.CurrentLocation;
+            GameObject newInterior = new GameObject(DaggerfallInterior.GetSceneName(ref location, door));
             newInterior.hideFlags = defaultHideFlags;
             interior = newInterior.AddComponent<DaggerfallInterior>();
 
@@ -857,7 +856,7 @@ namespace DaggerfallWorkshop.Game
             RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior, door);
 
             // Layout dungeon
-            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
+            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(ref location, DungeonParent.transform);
             newDungeon.hideFlags = defaultHideFlags;
             dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
@@ -906,7 +905,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Starts player inside dungeon with no exterior world.
         /// </summary>
-        public void StartDungeonInterior(DFLocation location, bool preferEnterMarker = true, bool importEnemies = true)
+        public void StartDungeonInterior(ref DFLocation location, bool preferEnterMarker = true, bool importEnemies = true)
         {
             // Ensure we have component references
             if (!ReferenceComponents())
@@ -916,7 +915,7 @@ namespace DaggerfallWorkshop.Game
             RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior);
 
             // Layout dungeon
-            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, importEnemies);
+            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(ref location, DungeonParent.transform, importEnemies);
             newDungeon.hideFlags = defaultHideFlags;
             dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
@@ -955,7 +954,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Starts player inside building with no exterior world.
         /// </summary>
-        public void StartBuildingInterior(DFLocation location, StaticDoor exteriorDoor, bool start = true)
+        public void StartBuildingInterior(ref DFLocation location, StaticDoor exteriorDoor, bool start = true)
         {
             // Store start flag
             lastInteriorStartFlag = start;
@@ -1262,7 +1261,7 @@ namespace DaggerfallWorkshop.Game
         // Notify player when they enter location rect
         // For exterior towns, print out "You are entering %s".
         // For exterior dungeons, print out flavour text.
-        private void PlayerGPS_OnEnterLocationRect(DFLocation location)
+        private void PlayerGPS_OnEnterLocationRect(ref DFLocation location)
         {
             const int set1StartID = 500;
             const int set2StartID = 520;

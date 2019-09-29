@@ -1936,7 +1936,8 @@ namespace DaggerfallWorkshop.Game
         /// <param name="args"> the static door for loading the correct interior </param>
         private void CreateIndoorGeometryForAutomap(StaticDoor door)
         {
-            String newGeometryName = DaggerfallInterior.GetSceneName(GameManager.Instance.PlayerGPS.CurrentLocation, door);
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            String newGeometryName = DaggerfallInterior.GetSceneName(ref location, door);
 
             //SetupMicroMapTexture(null); // setup micro map texture for interior geometry
 
@@ -1990,7 +1991,7 @@ namespace DaggerfallWorkshop.Game
         private void CreateDungeonGeometryForAutomap()
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            String newGeometryName = DaggerfallDungeon.GetSceneName(location);
+            String newGeometryName = DaggerfallDungeon.GetSceneName(ref location);
 
             //SetupMicroMapTexture(location); // setup micro map texture for dungeon
 

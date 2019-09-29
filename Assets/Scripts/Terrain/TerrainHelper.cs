@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop
 
             // Get location if present
             int id = -1, regionIndex = -1, mapIndex = -1;
-            string locationName = string.Empty;
+            DFLocation location = new DFLocation();
             ContentReader.MapSummary mapSummary = new ContentReader.MapSummary();
             bool hasLocation = contentReader.HasLocation(mapPixelX, mapPixelY, out mapSummary);
             if (hasLocation)
@@ -72,8 +72,7 @@ namespace DaggerfallWorkshop
                 id = mapSummary.ID;
                 regionIndex = mapSummary.RegionIndex;
                 mapIndex = mapSummary.MapIndex;
-                DFLocation location = contentReader.MapFileReader.GetLocation(regionIndex, mapIndex);
-                locationName = location.Name;
+                location = contentReader.MapFileReader.GetLocation(regionIndex, mapIndex);
             }
 
             // Create map pixel data
@@ -89,7 +88,7 @@ namespace DaggerfallWorkshop
                 mapRegionIndex = regionIndex,
                 mapLocationIndex = mapIndex,
                 locationID = id,
-                locationName = locationName,
+                location = location
             };
 
             return mapPixel;
@@ -100,7 +99,7 @@ namespace DaggerfallWorkshop
         // logic/formula for locations of certain RMB dimensions (e.g. 1x1).
         // Unknown if there are more exceptions or if a specific formula is needed.
         // This method will be used in the interim pending further research.
-        public static DFPosition GetLocationTerrainTileOrigin(DFLocation location)
+        public static DFPosition GetLocationTerrainTileOrigin(ref DFLocation location)
         {
             // Get map width and height
             int width = location.Exterior.ExteriorData.Width;
@@ -129,12 +128,10 @@ namespace DaggerfallWorkshop
         // Set location tilemap data
         public static void SetLocationTiles(ref MapPixelData mapPixel)
         {
-            // Get location
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(mapPixel.mapRegionIndex, mapPixel.mapLocationIndex);
 
             // Position tiles inside terrain area
-            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
+            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(ref mapPixel.location);
 
             // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
             // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.
@@ -143,15 +140,13 @@ namespace DaggerfallWorkshop
             int xmax = 0, ymax = 0;
 
             // Iterate blocks of this location
-            for (int blockY = 0; blockY < location.Exterior.ExteriorData.Height; blockY++)
+            for (int blockY = 0; blockY < mapPixel.location.Exterior.ExteriorData.Height; blockY++)
             {
-                for (int blockX = 0; blockX < location.Exterior.ExteriorData.Width; blockX++)
+                for (int blockX = 0; blockX < mapPixel.location.Exterior.ExteriorData.Width; blockX++)
                 {
                     // Get block data
-                    DFBlock block;
-                    string blockName = dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
-                    if (!dfUnity.ContentReader.GetBlock(blockName, out block))
-                        continue;
+                    int index = blockY * mapPixel.location.Exterior.ExteriorData.Width + blockX;
+                    DFBlock block = mapPixel.location.Exterior.Blocks[index];
 
                     // Copy ground tile info
                     for (int tileY = 0; tileY < RMBLayout.RMBTilesPerBlock; tileY++)
