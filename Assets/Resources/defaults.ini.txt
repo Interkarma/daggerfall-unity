@@ -14,7 +14,6 @@ FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
 ShadowResolutionMode=0
-UseLegacyDeferred=False
 DungeonLightShadows=False
 InteriorLightShadows=True
 ExteriorLightShadows=True
