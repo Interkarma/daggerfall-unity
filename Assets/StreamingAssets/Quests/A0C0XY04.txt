@@ -13,7 +13,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                         My name is _agent_. I
 <ce>                    represent a someone that needs
-<ce>                   to ... acquire something. Whoever
+<ce>                   to... acquire something. Whoever
 <ce>                     delivers it will be rewarded
 <ce>                          with _artifact_. I
 <ce>                    don't know what that is, but I
@@ -32,7 +32,7 @@ AcceptQuest:  [1002]
 <ce>                    I don't know where that is, but
 <ce>                       I'm sure you can find it.
 <ce>                       When you have the daedric
-<ce>                       _ingredient_ bring it to
+<ce>                       _ingredient_, bring it to
 <ce>                     _meetingplace_ here in town.
 <ce>                     There you will meet _qgiver_,
 <ce>                 and %g will give you the _artifact_.
@@ -107,12 +107,12 @@ Message:  1013
 <ce>                        am =monster_. Kill him!
 
 Message:  1014
-<ce>                     Wha ... I have been betrayed!
+<ce>                     Wha... I have been betrayed!
 <ce>                     You have broken the illusion
 <ce>                      and cast a spell of silence
 <ce>                     on me. That cursed _guardian_
 <ce>                    =guardian_ put you up to this,
-<ce>                     didn't %g? To arms!  Help me!
+<ce>                     didn't %g? To arms! Help me!
 <ce>                               To arms!
 
 Message:  1015
