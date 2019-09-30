@@ -103,6 +103,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PlayVID.name, PlayVID.description, PlayVID.usage, PlayVID.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
 
@@ -2209,6 +2210,39 @@ namespace Wenzil.Console
                             reputationString = HardStrings.undependable;
 
                         output += string.Format("In '{0}' you are {1} [{2}]\n", regionName, reputationString, rep);
+                    }
+                    output += "Finished";
+                }
+                else
+                {
+                    return "Could not read legal reputation data.";
+                }
+
+                return output;
+            }
+        }
+
+        private static class ClearNegativeLegalRep
+        {
+            public static readonly string name = "clear_negativelegalrep";
+            public static readonly string description = "Negative legal reputation and banishment state for all regions is set back to 0. Does not affect positive legal reputation. Does not change factional reputation.";
+            public static readonly string usage = "clear_negativelegalrep";
+
+            public static string Execute(params string[] args)
+            {
+                string output = string.Empty;
+                if (GameManager.Instance.PlayerEntity != null && GameManager.Instance.PlayerEntity.RegionData != null)
+                {
+                    for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
+                    {
+                        string regionName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+                        int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
+                        if (rep < 0)
+                        {
+                            GameManager.Instance.PlayerEntity.RegionData[region].LegalRep = 0;
+                            GameManager.Instance.PlayerEntity.RegionData[region].SeverePunishmentFlags = 0;
+                            output += string.Format("Cleared negative legal reputation for '{0}'.\n", regionName);
+                        }
                     }
                     output += "Finished";
                 }
