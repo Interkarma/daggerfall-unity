@@ -931,7 +931,7 @@ Foe _guard4_ is Spellsword
 	log 1010 step 0 
 	pick one of _S.03_ _S.01_ _S.00_ _S.02_ 
 	letter19 used do _S.26_ 
-	legal repute -200 
+	legal repute -15 
 	place npc _noble_ at _noblehome_ 
 	place npc _merchant_ at _merchanthome_ 
 	place npc _witness_ at _inn_ 
@@ -1145,7 +1145,7 @@ _mow2_ task:
 	toting _gem_ and _qgiver_ clicked 
 	give pc _reward_ 
 	change repute with _qgiver_ by +10 
-	legal repute +110 
+	legal repute +20
 	end quest 
 
 _S.51_ task:
