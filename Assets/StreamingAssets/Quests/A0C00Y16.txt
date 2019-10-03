@@ -109,7 +109,7 @@ Message:  1024
 <ce>                              %ra, Smiley!
 
 Message:  1031
-<ce>                     _missingperson_? Naw. Haven't
+<ce>                     _missingperson_? Nah. Haven't
 <ce>                     seen %g2 for a couple of days.
 <ce>                     Try asking _friend3_. %g might
 <ce>                                 know.
@@ -156,13 +156,13 @@ Message:  1051
 <ce>                        been very helpful, %pcn.
 
 Message:  1052
-<ce>                    In jail! I have to leave right
+<ce>                    In jail!? I have to leave right
 <ce>                      away. Maybe I can bribe the
 <ce>                              magistrate.
 
 Message:  1053
 <ce>                        So _missingperson_ has
-<ce>                   left town... %g didn't need to do
+<ce>                    left town? %g didn't need to do
 <ce>                    that. I would have forgiven %g2.
 
 Message:  1054
