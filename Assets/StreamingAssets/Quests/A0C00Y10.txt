@@ -11,17 +11,17 @@ Quest: A0C00Y10
 QRC:
 
 QuestorOffer:  [1000]
-<ce>             Excuse me! Can't you see I'm busy, you smelly
+<ce>              Excuse me?! Can't you see I'm busy, you smelly
 <ce>             %ra? Are you looking for trouble or something?
                                      <--->
 <ce>           What? What did you say? I hope I didn't hear you
 <ce>                 say something. Did you say something?
                                      <--->
-<ce>            Can't you see I'm busy! And not in a good mood,
+<ce>            Can't you see I'm busy?! And not in a good mood,
 <ce>               I might add! If you don't leave now, there
 <ce>                could be trouble. Is that what you want?
                                      <--->
-<ce>            Well, excuse me. Didn't want to get in your way,
+<ce>            Well, excuse me! Didn't want to get in your way,
 <ce>               you fat %ra pig. You want to step outside?
 
 RefuseQuest:  [1001]
@@ -33,11 +33,11 @@ RefuseQuest:  [1001]
 <ce>                       Now begone with yourself.
 
 AcceptQuest:  [1002]
-<ce>                   Oh ... you want to play, do you?
+<ce>                    Oh... you want to play, do you?
                                      <--->
 <ce>                     I think we've got a live one!
                                      <--->
-<ce>                      Well ... looks like my day
+<ce>                       Well... looks like my day
 <ce>                       just got more interesting!
                                      <--->
 <ce>                 You really are as stupid as you look!
@@ -142,7 +142,7 @@ Message:  1025
 <ce>                You're lookin' for a fight, aren't you?
 <ce>                     Is that what you want, child?
                                      <--->
-<ce>                 Oh ... we do have a live one ... with
+<ce>                  Oh... we do have a live one... with
 <ce>                  weapons! You want to use that on me?
                                      <--->
 <ce>          The two fights I got into yesterday didn't end well
