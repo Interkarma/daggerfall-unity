@@ -94,8 +94,8 @@ spellEffectFailed,          Spell effect failed.
 spellAbsorbed,              Spell was absorbed.
 spellReflected,             Spell was reflected.
 spellResisted,              Spell was resisted.
-readyToLock,                Ready to attempt lock.
-readyToOpen,                Ready to attempt open.
+readyToLock,                Ready to lock.
+readyToOpen,                Ready to open.
 doorLocked,                 Door is now locked.
 doorAlreadyLocked,          Door already locked.
 openFailed,                 Lock is too powerful.
