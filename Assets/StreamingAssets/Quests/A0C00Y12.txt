@@ -65,8 +65,8 @@ QuestLogEntry:  [1010]
 
 Message:  1014
 <ce>                  You may want to try _informant_ in
-<ce>              __informant1_. %g seems to know everything
-<ce>                 that goes on around __informant1_.
+<ce>              _informant1_. %g seems to know everything
+<ce>                 that goes on around _informant1_.
                                      <--->
 <ce>                   You should ask at the local inns.
 <ce>                       They are full of gossip.
