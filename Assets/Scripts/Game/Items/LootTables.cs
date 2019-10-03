@@ -255,10 +255,19 @@ namespace DaggerfallWorkshop.Game.Items
                 chance *= 0.5f;
             }
         }
+<<<<<<< Updated upstream
         static int RollForBonus(int playerlevel, int chanceSuccess)
         {
             float tier = 0;
             int chanceMultiplier = Random.Range(1, 6) - 2;
+=======
+<<<<<<< Updated upstream
+=======
+        static int RollForBonus(int playerlevel, int chanceSuccess)
+        {
+            float tier = 0;
+            int chanceMultiplier = Random.Range(1, 11) - 7;
+>>>>>>> Stashed changes
             if (chanceMultiplier < 1)
                 chanceMultiplier = 1;
 
@@ -266,7 +275,11 @@ namespace DaggerfallWorkshop.Game.Items
             if (Dice100.SuccessRoll(chanceSuccess))
             {
                 tier = (float)Random.Range(1, 101);
+<<<<<<< Updated upstream
                 if (tier < 90f)
+=======
+                if (tier < 97f)
+>>>>>>> Stashed changes
                     tier = tier / 15f;
             }
             else
@@ -276,6 +289,10 @@ namespace DaggerfallWorkshop.Game.Items
                 tier = 100f;
             return (int)tier;
         }
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
         #endregion
     }
