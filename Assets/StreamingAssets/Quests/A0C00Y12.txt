@@ -66,7 +66,7 @@ QuestLogEntry:  [1010]
 Message:  1014
 <ce>                  You may want to try _informant_ in
 <ce>              _informant1_. %g seems to know everything
-<ce>                 that goes on around _informant1_.
+<ce>                 that goes on around __informant1_.
                                      <--->
 <ce>                   You should ask at the local inns.
 <ce>                       They are full of gossip.
@@ -109,11 +109,11 @@ Message:  1035
 Message:  1027
 _thief_ lives at _house_ in __house_.
 <--->
-_thief_ does live in __house_.
+_thief_ lives in __house_.
 <--->
 _thief_ spends %g3 nights at _house_.
 <--->
-You should try to find _thief_ at home. %g lives in __house_.
+You should try to find _thief_ at %g3 home. %g lives in __house_.
 <--->
 _thief_ does a lot of trading at _store_.
 <--->
