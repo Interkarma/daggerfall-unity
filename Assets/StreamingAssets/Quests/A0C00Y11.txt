@@ -33,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                =questtime_ days! Whatever you can do to
 <ce>                 cure %g2 will be greatly appreciated.
 <ce>                  Here is _gold1_ gold. I will pay you
-<ce>                   _gold2_ more if you can heal %g2.
+<ce>                 _gold2_ gold more if you can heal %g2.
 
 QuestComplete:  [1004]
 <ce>                   Oh, you've brought me the healing
