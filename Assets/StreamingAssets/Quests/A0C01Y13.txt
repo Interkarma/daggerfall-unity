@@ -127,7 +127,7 @@ Message:  1021
 <ce>                  My sister put me up to it... I didn't
 <ce>                  mean any harm. She only asked that I
 <ce>                 scare him a little, you know, make him
-<ce>              appreciate her more. I know that I shouldn't
+<ce>                appreciate her more. I know I shouldn't
 <ce>                have done it. Now I'm in over my head...
 <ce>               you see, I paid a group of bandits to take
 <ce>                 him away and lock him in ___dungeon_.
