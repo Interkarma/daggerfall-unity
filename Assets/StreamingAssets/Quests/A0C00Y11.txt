@@ -143,7 +143,7 @@ Message:  1019
 
 Message:  1030
 <ce>              I feel so weak. I don't know what is wrong
-<ce>                with me. My cousin, _giver_ sent you to
+<ce>                with me. My cousin _giver_ sent you to
 <ce>               help me? Oh, thank you, thank you! I have
 <ce>                 just heard of a healer named _healer_
 <ce>                     in ___healer_ who may be able
