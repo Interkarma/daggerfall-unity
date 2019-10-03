@@ -35,7 +35,7 @@ RefuseQuest:  [1001]
 <ce>                        _betrothed_ from _ruler_
 
 AcceptQuest:  [1002]
-<ce>                     My gratitude will be endless
+<ce>                     My gratitude will be endless,
 <ce>                     %pcn. Quickly, let us away to
 <ce>                      get _betrothed_. We can find
 <ce>                         %g2 at _betrothedhome_
@@ -69,7 +69,7 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>                  I have lost my _betrothed_ forever!
 <ce>                   %g has been forced to wed _ruler_.
-<ce>                 Any you want me to help you? Get out!
+<ce>                 And you want me to help you? Get out!
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -77,7 +77,7 @@ QuestLogEntry:  [1010]
  asked me to escort %g2 to
  __betrothedhome_ to find
  _betrothed_. _qgiver_
- is betrothed to _betrothed_
+ is betrothed to _betrothed_,
  but _ruler_ wants to
  kill _qgiver_ to prevent
  the marriage. They are to
@@ -85,7 +85,7 @@ QuestLogEntry:  [1010]
  in __temple_.
 
 Message:  1011
-<ce>                      Ah my beloved _betrothed_!
+<ce>                      Ah, my beloved _betrothed_!
 <ce>                           %pcn has agreed to
 <ce>                        protect us from _ruler_.
 <ce>                          Quickly, %pcn, take
@@ -95,7 +95,7 @@ Message:  1011
 Message:  1012
 <ce>                       We are under orders from
 <ce>                           _ruler_ to prevent
-<ce>                     this marraige. If _betrothed_
+<ce>                     this marriage. If _betrothed_
 <ce>                       comes with us now, nobody
 <ce>                             will get hurt.
 
@@ -127,7 +127,7 @@ Message:  1015
 
 Message:  1020
 <ce>                     _qgiver_ shakes %g2 head with
-<ce>                  disgust.  "I'll have to try to save
+<ce>                  disgust. "I'll have to try to save
 <ce>                      _betrothed_ myself, I guess.
 <ce>                        You let me down, %pcf."
 
