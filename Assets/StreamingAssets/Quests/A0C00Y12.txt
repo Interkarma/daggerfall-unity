@@ -72,7 +72,7 @@ Message:  1014
 <ce>                       They are full of gossip.
                                      <--->
 <ce>                            You should try
-<ce>               __informant1_. There's always talk there.
+<ce>               _informant1_. There's always talk there.
                                      <--->
 <ce>                      It was stolen from _giver_.
                                      <--->
