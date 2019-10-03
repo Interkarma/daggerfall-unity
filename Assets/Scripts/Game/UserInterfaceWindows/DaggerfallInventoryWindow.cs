@@ -87,8 +87,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Panel itemInfoPanel;
         protected MultiFormatTextLabel itemInfoPanelLabel;
 
-        protected string filterString = string.Empty;
-        protected string[] itemGroupNames = new string[30];
+        protected static string filterString = string.Empty;
+        protected static string[] itemGroupNames = new string[30];
 
         protected ItemListScroller localItemListScroller;
         protected ItemListScroller remoteItemListScroller;
