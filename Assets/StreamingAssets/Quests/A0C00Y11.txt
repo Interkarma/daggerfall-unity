@@ -89,7 +89,7 @@ QuestLogEntry:  [1010]
 
 Message:  1011
 %qdt:
- I have seen _cousin_. %g2 condition
+ I have seen _cousin_. %g3 condition
  is even worse than _giver_ said.
  _cousin_ says that _healer_ in
  ___healer_ might have a cure.
