@@ -73,7 +73,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button useButton;
         Button goldButton;
         
-
         Button[] accessoryButtons = new Button[accessoryCount];
         Panel[] accessoryIconPanels = new Panel[accessoryCount];
 
@@ -531,6 +530,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
             useButton.OnMouseClick += UseButton_OnMouseClick;
+
+            goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
+            goldButton.OnMouseClick += GoldButton_OnMouseClick;
         }
 
         protected void SetupAccessoryElements()
