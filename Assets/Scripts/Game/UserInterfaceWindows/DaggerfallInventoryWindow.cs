@@ -82,11 +82,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected TextLabel localTargetIconLabel;
         protected Button localFilterButton;
         protected TextBox localFilterTextBox;
+        protected Button localCloseFilterButton;
+        protected bool filterButtonNeedUpdate;
         protected Panel remoteTargetIconPanel;
         protected TextLabel remoteTargetIconLabel;
         protected Panel itemInfoPanel;
         protected MultiFormatTextLabel itemInfoPanelLabel;
-        protected static string filterString = string.Empty;
+        protected static string filterString = null;
         protected static string[] itemGroupNames = new string[]
         {
             "drugs",
@@ -370,6 +372,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            if (filterButtonNeedUpdate)
+            {
+                filterButtonNeedUpdate = false;
+                UpdateFilterButton();
+            }
+
             // Toggle window closed with same hotkey used to open it
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
@@ -447,8 +455,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), localTargetIconPanel);
             localTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
 
-            localFilterTextBox = DaggerfallUI.AddTextBoxWithFocus(new Rect(new Vector2(1, 24), new Vector2(40, 8)), "filter pattern", localTargetIconPanel);
+            localFilterTextBox = DaggerfallUI.AddTextBoxWithFocus(new Rect(new Vector2(1, 24), new Vector2(47, 8)), "filter pattern", localTargetIconPanel);
             localFilterTextBox.VerticalAlignment = VerticalAlignment.Bottom;
+            localFilterTextBox.OnType += LocalFilterTextBox_OnType;
+
+            localCloseFilterButton = DaggerfallUI.AddButton(new Rect(47, 25, 8, 8), localTargetIconPanel);
+            localCloseFilterButton.Label.Text = "x";
+            localCloseFilterButton.Label.TextScale = 0.75f;
+            localCloseFilterButton.Label.ShadowColor = Color.black;
+            localCloseFilterButton.VerticalAlignment = VerticalAlignment.Bottom;
+            localCloseFilterButton.HorizontalAlignment = HorizontalAlignment.Right;
+            localCloseFilterButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
+            localCloseFilterButton.OnMouseClick += localCloseFilterButton_OnMouseClick;
+
             localFilterButton = DaggerfallUI.AddButton(new Rect(40, 25, 15, 8), localTargetIconPanel);
             localFilterButton.Label.Text = "Filter";
             localFilterButton.Label.TextScale = 0.75f;
@@ -457,6 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localFilterButton.HorizontalAlignment = HorizontalAlignment.Right;
             localFilterButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
             localFilterButton.OnMouseClick += localFilterButton_OnMouseClick;
+            filterButtonNeedUpdate = true;
 
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
             remoteTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
@@ -468,6 +488,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteTargetIconPanel.OnMiddleMouseClick += RemoteTargetIconPanel_OnMiddleMouseClick;
         }
 
+        private void UpdateFilterButton()
+        {
+            if (filterString != null && localFilterButton.Enabled)
+            {
+                localFilterButton.Enabled = false;
+                localFilterTextBox.Enabled = true;
+                localCloseFilterButton.Enabled = true;
+            }
+            else
+            {
+                localFilterButton.Enabled = true;
+                localFilterTextBox.Enabled = false;
+                localCloseFilterButton.Enabled = false;
+            }
+        }
 
         protected void SetupItemInfoPanel()
         {
@@ -994,7 +1029,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
              bool iterationPass = false;
 
-            if (filterString.Length == 0)
+            if (String.IsNullOrEmpty(filterString))
                 return true;
 
             foreach (string word in filterString.Split(' '))
@@ -1289,7 +1324,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ClearFilterFields()
         {
-            filterString = string.Empty;
+            filterString = null;
             localFilterTextBox.Text = string.Empty;
         }
 
@@ -2042,12 +2077,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void localFilterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // If items are being dropped by player, iterate up through drop textures
-            filterString = localFilterTextBox.Text.ToLower();
-            Refresh(false);
-
+            filterString = "";
+            filterButtonNeedUpdate = true;
         }
 
+        private void localCloseFilterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            filterString = null;
+            Refresh(false);
+            filterButtonNeedUpdate = true;
+        }
+
+
+        private void LocalFilterTextBox_OnType()
+        {
+            filterString = localFilterTextBox.Text.ToLower();
+            Refresh(false);
+        }
 
 
 
