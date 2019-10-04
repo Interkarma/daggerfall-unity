@@ -54,6 +54,9 @@ namespace DaggerfallWorkshop.Game.Items
         readonly Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         readonly Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
 
+        public delegate bool ItemUseHander(DaggerfallUnityItem item, ItemCollection collection);
+        Dictionary<int, ItemUseHander> itemUseHandlers = new Dictionary<int, ItemUseHander>();
+
         #endregion
 
         #region Constructors
@@ -68,6 +71,23 @@ namespace DaggerfallWorkshop.Game.Items
         #endregion
 
         #region Public Methods
+
+        public bool RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
+        {
+            DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex={1}" + templateIndex);
+            if (!itemUseHandlers.ContainsKey(templateIndex))
+            {
+                itemUseHandlers.Add(templateIndex, itemUseHander);
+                return true;
+            }
+            return false;
+        }
+
+        public bool GetItemUseHander(int templateIndex, out ItemUseHander itemUseHander)
+        {
+            return itemUseHandlers.TryGetValue(templateIndex, out itemUseHander);
+        }
+
 
         /// <summary>
         /// Gets item template data using group and index.

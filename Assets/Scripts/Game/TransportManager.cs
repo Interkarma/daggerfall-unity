@@ -70,15 +70,7 @@ namespace DaggerfallWorkshop.Game
         {
             StreamingWorld world = GameManager.Instance.StreamingWorld;
             DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
-            return boardShipPosition != null && world.MapPixelX == shipCoords.X && world.MapPixelY == shipCoords.Y;
-        }
-
-        /// <summary>
-        /// True when player has bought a ship
-        /// </summary>
-        public bool HasShip()
-        {
-            return DaggerfallBankManager.OwnsShip;
+            return boardShipPosition != null && shipCoords != null && world.MapPixelX == shipCoords.X && world.MapPixelY == shipCoords.Y;
         }
 
         /// <summary>
@@ -122,6 +114,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public delegate bool PlayerShipAvailiable();
+        public PlayerShipAvailiable ShipAvailiable { get; set; }
+
+        /// <summary>
+        /// True when player has bought a ship
+        /// </summary>
+        private bool HasShip()
+        {
+            return DaggerfallBankManager.OwnsShip;
+        }
+
         #endregion
 
         #region Private Fields
@@ -158,6 +161,12 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Unity
+
+        void Awake()
+        {
+            ShipAvailiable = HasShip;
+        }
+
         // Use this for initialization
         void Start()
         {
@@ -272,6 +281,7 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
         private void UpdateMode(TransportModes transportMode)
         {
             // Update the transport mode and stop any riding sounds playing.
