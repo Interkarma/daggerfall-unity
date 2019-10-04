@@ -72,6 +72,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button removeButton;
         Button useButton;
         Button goldButton;
+        
 
         Button[] accessoryButtons = new Button[accessoryCount];
         Panel[] accessoryIconPanels = new Panel[accessoryCount];
@@ -86,7 +87,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected TextLabel remoteTargetIconLabel;
         protected Panel itemInfoPanel;
         protected MultiFormatTextLabel itemInfoPanelLabel;
-
         protected static string filterString = string.Empty;
         protected static string[] itemGroupNames = new string[]
         {
@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             "currency"
         };
 
-    protected ItemListScroller localItemListScroller;
+        protected ItemListScroller localItemListScroller;
         protected ItemListScroller remoteItemListScroller;
 
         // Only used for setting equip delay
