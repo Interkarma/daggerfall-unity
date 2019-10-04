@@ -88,9 +88,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected MultiFormatTextLabel itemInfoPanelLabel;
 
         protected static string filterString = string.Empty;
-        protected static string[] itemGroupNames = new string[30];
+        protected static string[] itemGroupNames = new string[]
+        {
+            "drugs",
+            "uselessitems1",
+            "armor",
+            "weapons",
+            "magicitems",
+            "artifacts",
+            "mensclothing",
+            "books",
+            "furniture",
+            "uselessitems2",
+            "religiousitems",
+            "maps",
+            "womensclothing",
+            "paintings",
+            "gems",
+            "plantingredients1",
+            "plantingredients2",
+            "creatureingredients1",
+            "creatureingredients2",
+            "creatureingredients3",
+            "miscellaneousingredients1",
+            "metalingredients",
+            "miscellaneousingredients2",
+            "transportation",
+            "deeds",
+            "jewellery",
+            "questitems",
+            "miscitems",
+            "currency"
+        };
 
-        protected ItemListScroller localItemListScroller;
+    protected ItemListScroller localItemListScroller;
         protected ItemListScroller remoteItemListScroller;
 
         // Only used for setting equip delay
@@ -288,9 +319,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            //Populate ItemGroupNames
-            PopulateItemGroupNames();
-
             // Load all the textures used by inventory system
             LoadTextures();
 
@@ -503,10 +531,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
             useButton.OnMouseClick += UseButton_OnMouseClick;
-
-            goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
-            goldButton.OnMouseClick += GoldButton_OnMouseClick;
-            goldButton.OnMouseEnter += GoldButton_OnMouseEnter;
         }
 
         protected void SetupAccessoryElements()
@@ -665,7 +689,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             chooseOne = false;
 
             // Clear the Filter
-            clearFilterFields();
+            ClearFilterFields();
 
             // Handle stealing and reset shop shelf stealing mode
             if (shopShelfStealing && remoteItems.Count < lootTargetStartCount)
@@ -791,7 +815,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Select new tab page
             selectedTabPage = tabPage;
-            clearFilterFields();
+            ClearFilterFields();
 
             // Set all buttons to appropriate state
             weaponsAndArmorButton.BackgroundTexture = (tabPage == TabPages.WeaponsAndArmor) ? weaponsAndArmorSelected : weaponsAndArmorNotSelected;
@@ -966,8 +990,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ///</summary>
         protected virtual bool ItemPassesFilter(DaggerfallUnityItem item)
         {
-            bool itemPasses = true;
-            bool iterationPass = false;
+             bool iterationPass = false;
 
             if (filterString.Length == 0)
                 return true;
@@ -978,39 +1001,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     if (word[0] == '-')
                     {
+                        string wordLessFirstChar = word.Remove(0, 1);
                         iterationPass = true;
-                        if (item.LongName.ToLower().Contains(word.Remove(0, 1)))
+                        if (item.LongName.IndexOf(wordLessFirstChar, StringComparison.OrdinalIgnoreCase) != -1)
                             iterationPass = false;
-                        else if (itemGroupNames[(int)item.ItemGroup].Contains(word.Remove(0, 1)))
+                        else if (itemGroupNames[(int)item.ItemGroup].IndexOf(wordLessFirstChar, StringComparison.OrdinalIgnoreCase) != -1)
                             iterationPass = false;
                     }
                     else
                     {
                         iterationPass = false;
-                        if (item.LongName.ToLower().Contains(word))
+                        if (item.LongName.IndexOf(word, StringComparison.OrdinalIgnoreCase) != -1)
                             iterationPass = true;
-                        else if (itemGroupNames[(int)item.ItemGroup].Contains(word))
+                        else if (itemGroupNames[(int)item.ItemGroup].IndexOf(word, StringComparison.OrdinalIgnoreCase) != -1)
                             iterationPass = true;
                     }
 
-                    if (iterationPass == true && itemPasses == true)
-                        itemPasses = true;
-                    else
-                    {
-                        itemPasses = false;
-                        break;
-                    }
+                    if (!iterationPass)
+                        return false;
                 }
-                else
-                {
-                    iterationPass = true;
-                    if (iterationPass == true && itemPasses == true)
-                        itemPasses = true;
-                }
-
             }
 
-            return itemPasses;
+            return true;
         }
 
 
@@ -1053,44 +1065,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Private Methods
-        protected void PopulateItemGroupNames()
-        {
-            itemGroupNames[0] = "drugs";
-            itemGroupNames[1] = "uselessitems1";
-            itemGroupNames[2] = "armor";
-            itemGroupNames[3] = "weapons";
-            itemGroupNames[4] = "magicitems";
-            itemGroupNames[5] = "artifacts";
-            itemGroupNames[6] = "mensclothing";
-            itemGroupNames[7] = "books";
-            itemGroupNames[8] = "furniture";
-            itemGroupNames[9] = "uselessitems2";
-            itemGroupNames[10] = "religiousitems";
-            itemGroupNames[11] = "maps";
-            itemGroupNames[12] = "womensclothing";
-            itemGroupNames[13] = "paintings";
-            itemGroupNames[14] = "gems";
-            itemGroupNames[15] = "plantingredients1";
-            itemGroupNames[16] = "plantingredients2";
-            itemGroupNames[17] = "creatureingredients1";
-            itemGroupNames[18] = "creatureingredients2";
-            itemGroupNames[19] = "creatureingredients3";
-            itemGroupNames[20] = "miscellaneousingredients1";
-            itemGroupNames[21] = "metalingredients";
-            itemGroupNames[22] = "miscellaneousingredients2";
-            itemGroupNames[23] = "transportation";
-            itemGroupNames[24] = "deeds";
-            itemGroupNames[25] = "jewellery";
-            itemGroupNames[26] = "questitems";
-            itemGroupNames[27] = "miscitems";
-            itemGroupNames[28] = "currency";
-
-        }
-
-
-
-
-
         protected virtual void LoadTextures()
         {
             // Load source textures
@@ -1311,7 +1285,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectTabPage(TabPages.Ingredients);
         }
 
-        private void clearFilterFields()
+        private void ClearFilterFields()
         {
             filterString = string.Empty;
             localFilterTextBox.Text = string.Empty;
@@ -2165,14 +2139,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lastMouseOverPaperDollEquipIndex = value;
             }
         }
-        protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)
-        {
-            TextAsset textAsset;
-            string str = string.Format("Gold Amount: {0}", GameManager.Instance.PlayerEntity.GoldPieces);
-            textAsset = new TextAsset(str);
-            itemInfoPanelLabel.Clear();
-            itemInfoPanelLabel.SetText(textAsset);
-        }
+
+
         protected virtual void AccessoryItemsButton_OnMouseEnter(BaseScreenComponent sender)
         {
             // Get item

@@ -171,9 +171,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            //Populate ItemGroupNames
-            PopulateItemGroupNames();
-
             // Load all the textures used by inventory system
             LoadTextures();
 
@@ -654,11 +651,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             (windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
                             (windowMode == WindowModes.SellMagic && item.IsEnchanted)))
                     {
-
                         if (ItemPassesFilter(item))
                             AddLocalItem(item);
-
-
                     }
                 }
             }
