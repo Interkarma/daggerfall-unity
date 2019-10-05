@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public ImageData RidingTexture { get { return ridingTexture; } }
+        public int FrameIdx { get { return frameIdx; } }
 
         #endregion
 
