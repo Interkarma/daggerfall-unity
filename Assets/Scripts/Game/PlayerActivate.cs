@@ -386,9 +386,14 @@ namespace DaggerfallWorkshop.Game
 
                         DaggerfallMessageBox mb;
 
+                        PlayerGPS.DiscoveredBuilding buildingData;
+                        GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out buildingData);
+
                         if (buildingUnlocked &&
                             buildingType >= DFLocation.BuildingTypes.House1 &&
                             buildingType <= DFLocation.BuildingTypes.House4 &&
+                            buildingData.factionID != (int)FactionFile.FactionIDs.The_Thieves_Guild &&
+                            buildingData.factionID != (int)FactionFile.FactionIDs.The_Dark_Brotherhood &&
                             !DaggerfallBankManager.IsHouseOwned(building.buildingKey))
                         {
                             string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
