@@ -85,6 +85,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(AddWeapon.name, AddWeapon.description, AddWeapon.usage, AddWeapon.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddArmor.name, AddArmor.description, AddArmor.usage, AddArmor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddClothing.name, AddClothing.description, AddClothing.usage, AddClothing.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddBook.name, AddBook.description, AddBook.usage, AddBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowItemMakerWindow.name, ShowItemMakerWindow.description, ShowItemMakerWindow.usage, ShowItemMakerWindow.Execute);
@@ -1820,6 +1821,27 @@ namespace Wenzil.Console
                     ItemBuilder.CreateMensClothing(x.Parse<MensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>()) :
                     ItemBuilder.CreateWomensClothing(x.Parse<WomensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>())
                 );
+            }
+        }
+
+        private static class AddBook
+        {
+            public static readonly string name = "addbook";
+            public static readonly string description = "Gives player the book with the given id or name.";
+            public static readonly string usage = "addbook {id|name}";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 1)
+                    return usage;
+
+                int id;
+                DaggerfallUnityItem book = int.TryParse(args[0], out id) ? ItemBuilder.CreateBook(id) : ItemBuilder.CreateBook(args[0]);
+                if (book == null)
+                    return "Failed to create book";
+
+                GameManager.Instance.PlayerEntity.Items.AddItem(book);
+                return string.Format("Added {0} to inventory.", book.ItemName);
             }
         }
 

@@ -255,8 +255,7 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Creates a new book from resource provided by mods.
-        /// Use <see cref="CreateBook(int)"/> for classic books.
+        /// Creates a new book.
         /// </summary>
         /// <param name="fileName">The name of the books resource.</param>
         /// <returns>An instance of the book item or null.</returns>
@@ -266,18 +265,29 @@ namespace DaggerfallWorkshop.Game.Items
                 fileName += ".TXT";
 
             var entry = BookReplacement.BookMappingEntries.Values.FirstOrDefault(x => x.Name.Equals(fileName, StringComparison.Ordinal));
-            return entry.ID != 0 ? CreateBook(entry.ID) : null;
+            if (entry.ID != 0)
+                return CreateBook(entry.ID);
+
+            int id;
+            if (fileName.Length == 12 && fileName.StartsWith("BOK") && int.TryParse(fileName.Substring(3, 5), out id))
+                return CreateBook(id);
+
+            return null;
         }
 
         /// <summary>
-        /// Creates a new book from resource provided by classic game data or mods.
+        /// Creates a new book.
         /// </summary>
         /// <param name="id">The numeric id of book resource.</param>
         /// <returns>An instance of the book item or null.</returns>
         public static DaggerfallUnityItem CreateBook(int id)
         {
             var bookFile = new BookFile();
-            string name = DaggerfallUnity.Instance.ItemHelper.GetBookFileName(id);
+
+            string name = DaggerfallUnity.Settings.CustomBooksImport ?
+                    GameManager.Instance.ItemHelper.GetBookFileName(id) :
+                    BookFile.messageToBookFilename(id);
+
             if (!BookReplacement.TryImportBook(name, bookFile) &&
                 !bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
                 return null;
