@@ -411,8 +411,14 @@ namespace DaggerfallConnect
             /// <summary>Unknown.</summary>
             internal UInt32 NullValue2;
 
+            /// <summary>X rotation.</summary>
+            public Int16 XRotation;
+
             /// <summary>Y rotation.</summary>
             public Int16 YRotation;
+
+            /// <summary>Z rotation.</summary>
+            public Int16 ZRotation;
 
             /// <summary>Unknown.</summary>
             internal UInt16 Unknown4;
