@@ -208,6 +208,7 @@ namespace DaggerfallWorkshop
         public int Weight;                          // Weight of this enemy. Affects chance of being knocked back by a hit.
         public bool CastsMagic;                     // Whether this enemy casts magic. Only used for enemy classes.
         public bool SeesThroughInvisibility;        // Whether this enemy sees through the shade, chameleon and invisibility effects.
+        public bool NoShadow;                       // Casts no shadows
         public int SoulPts;                         // Number of enchantment points in a trapped soul of this enemy
         public int[] PrimaryAttackAnimFrames;       // Animation sequence to play when doing primary attack
         public int ChanceForAttack2;                // Chance to use PrimaryAttackAnimFrames2 for an attack

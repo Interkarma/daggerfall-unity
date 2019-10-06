@@ -96,6 +96,15 @@ namespace DaggerfallWorkshop.Game
                     enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
                 }
 
+                MeshRenderer meshRenderer = dfMobile.GetComponent<MeshRenderer>();
+                if (meshRenderer)
+                {
+                    if (dfMobile.Summary.Enemy.NoShadow)
+                    {
+                        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    }
+                }
+
                 // Setup entity
                 if (entityBehaviour)
                 {
