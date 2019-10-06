@@ -329,12 +329,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="filter">A filter that accepts or rejects a mod; can be used to check if a contribute is present.</param>
         /// <returns>An enumeration of mods with contributes.</returns>
-        internal IOrderedEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
+        internal IEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
         {
-            return from mod in mods
-                   where mod.ModInfo.Contributes != null && (filter == null || filter(mod.ModInfo.Contributes))
-                   orderby mod.LoadPriority descending
-                   select mod;
+            return EnumerateModsReverse().Where(x => x.Enabled && x.ModInfo.Contributes != null && (filter == null || filter(x.ModInfo.Contributes)));
         }
 
         /// <summary>
