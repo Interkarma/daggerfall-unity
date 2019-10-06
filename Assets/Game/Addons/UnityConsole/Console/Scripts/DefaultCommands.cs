@@ -85,6 +85,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(AddWeapon.name, AddWeapon.description, AddWeapon.usage, AddWeapon.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddArmor.name, AddArmor.description, AddArmor.usage, AddArmor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddClothing.name, AddClothing.description, AddClothing.usage, AddClothing.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddAllEquip.name, AddAllEquip.description, AddAllEquip.usage, AddAllEquip.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddBook.name, AddBook.description, AddBook.usage, AddBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
@@ -126,11 +127,20 @@ namespace Wenzil.Console
                 else
                 {
                     DFBlock blockData;
-                    if (RMBLayout.GetBlockData(args[0], out blockData))
+                    if (!RMBLayout.GetBlockData(args[0], out blockData))
+                    {
+                        if (args[0].EndsWith(".RDB", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(args[0]);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(blockData.Name))
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
-                        File.WriteAllText(Path.Combine(Application.persistentDataPath, args[0]), blockJson);
-                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, args[0]);
+                        string fileName = WorldDataReplacement.GetRMBBlockReplacementFilename(blockData.Name);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
+                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
                     return error;
                 }
@@ -1575,7 +1585,8 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                if (args.Length < 1) return "see usage";
+                if (args.Length < 1)
+                    return usage;
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
@@ -1589,11 +1600,11 @@ namespace Wenzil.Console
                 }
 
                 if (n < 1)
-                    return "Error - see usage";
+                    return usage;
 
                 if (args[0] == "gold")
                 {
-                    GameManager.Instance.PlayerEntity.GoldPieces += n;
+                    playerEntity.GoldPieces += n;
                     return string.Format("Added {0} gold pieces", n);
                 }
 
@@ -1821,6 +1832,96 @@ namespace Wenzil.Console
                     ItemBuilder.CreateMensClothing(x.Parse<MensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>()) :
                     ItemBuilder.CreateWomensClothing(x.Parse<WomensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>())
                 );
+            }
+        }
+
+        private static class AddAllEquip
+        {
+            public static readonly string name = "add_all_equip";
+            public static readonly string description = "Adds all equippable item types to inventory for the current characters gender & race. (for testing paperdoll images)";
+            public static readonly string usage = "add_all_equip (clothing|armor|weapons)";
+
+            public static ArmorMaterialTypes[] armorMaterials = {
+                ArmorMaterialTypes.Leather,
+                ArmorMaterialTypes.Chain,
+                ArmorMaterialTypes.Iron,
+                ArmorMaterialTypes.Steel,
+                ArmorMaterialTypes.Silver,
+                ArmorMaterialTypes.Elven,
+                ArmorMaterialTypes.Dwarven,
+                ArmorMaterialTypes.Mithril,
+                ArmorMaterialTypes.Adamantium,
+                ArmorMaterialTypes.Ebony,
+                ArmorMaterialTypes.Orcish,
+                ArmorMaterialTypes.Daedric
+            };
+            public static WeaponMaterialTypes[] weaponMaterials = {
+                WeaponMaterialTypes.Iron,
+                WeaponMaterialTypes.Steel,
+                WeaponMaterialTypes.Silver,
+                WeaponMaterialTypes.Elven,
+                WeaponMaterialTypes.Dwarven,
+                WeaponMaterialTypes.Mithril,
+                WeaponMaterialTypes.Adamantium,
+                WeaponMaterialTypes.Ebony,
+                WeaponMaterialTypes.Orcish,
+                WeaponMaterialTypes.Daedric
+            };
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 1)
+                    return usage;
+
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                ItemCollection items = playerEntity.Items;
+                DaggerfallUnityItem newItem = null;
+
+                switch (args[0])
+                {
+                    case "clothing":
+                        ItemGroups clothing = (playerEntity.Gender == Genders.Male) ? ItemGroups.MensClothing : ItemGroups.WomensClothing;
+                        foreach (DyeColors dye in ItemBuilder.clothingDyes)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(clothing);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                newItem = new DaggerfallUnityItem(clothing, i);
+                                ItemBuilder.SetRace(newItem, playerEntity.Race);
+                                newItem.dyeColor = dye;
+                                playerEntity.Items.AddItem(newItem);
+                            }
+                        }
+                        return string.Format("Added all clothing types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
+
+                    case "armor":
+                        foreach (ArmorMaterialTypes material in armorMaterials)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Armor);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, (Armor)enumArray.GetValue(i), material);
+                                playerEntity.Items.AddItem(newItem);
+                            }
+                        }
+                        return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
+
+                    case "weapons":
+                        foreach (WeaponMaterialTypes material in weaponMaterials)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
+                                playerEntity.Items.AddItem(newItem);
+                            }
+                        }
+                        return string.Format("Added all weapon types for any gender/race.");
+
+                    default:
+                        return "No valid equippable item group specified.";
+                }
+
             }
         }
 

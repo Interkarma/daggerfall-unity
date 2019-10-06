@@ -68,6 +68,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
+        public static string GetRMBBlockReplacementFilename(string blockName)
+        {
+            return string.Format("{0}.json", blockName);
+        }
+
         public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
         {
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
