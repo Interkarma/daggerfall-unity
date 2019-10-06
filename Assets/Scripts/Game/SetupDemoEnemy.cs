@@ -103,6 +103,16 @@ namespace DaggerfallWorkshop.Game
                     {
                         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                     }
+                    if (dfMobile.Summary.Enemy.GlowColor != null)
+                    {
+                        meshRenderer.receiveShadows = false;
+                        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        Light enemyLight = dfMobile.gameObject.AddComponent<Light>();
+                        enemyLight.type = LightType.Point;
+                        enemyLight.range = 3f;
+                        enemyLight.color = (Color)dfMobile.Summary.Enemy.GlowColor;
+                        enemyLight.shadows = DaggerfallUnity.Settings.DungeonLightShadows ? LightShadows.Soft : LightShadows.None;
+                    }
                 }
 
                 // Setup entity
