@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -336,7 +337,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return null;
         }
 
-        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, int rep, int level)
+        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, Genders gender, int rep, int level)
         {
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
@@ -347,7 +348,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in socialQuests)
                 {
-                    if ((quest.minReq < 10 && quest.minReq <= level) || rep >= quest.minReq)
+                    if (((quest.minReq < 10 && quest.minReq <= level) || rep >= quest.minReq) &&
+                        (quest.membership == 'N' ||
+                         (quest.membership == 'M' && gender == Genders.Male) ||
+                         (quest.membership == 'F' && gender == Genders.Female)))
                     {
                         if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
                             pool.Add(quest);
