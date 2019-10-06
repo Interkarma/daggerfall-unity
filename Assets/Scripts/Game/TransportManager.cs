@@ -210,6 +210,7 @@ namespace DaggerfallWorkshop.Game
                 if (playerMotor.IsStandingStill || !playerMotor.IsGrounded || GameManager.IsGamePaused)
                 {   // Stop animation frames and sound playing.
                     lastFrameTime = 0;
+                    frameIdx = 0;
                     ridingTexture = ridingTexures[0];
                     ridingAudioSource.Stop();
                 }
