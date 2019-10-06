@@ -311,7 +311,9 @@ namespace DaggerfallWorkshop.Game.Items
             book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
             // Update item value for this book.
             BookFile bookFile = new BookFile();
-            string name = BookFile.messageToBookFilename(book.message);
+            string name = DaggerfallUnity.Settings.CustomBooksImport ?
+                    GameManager.Instance.ItemHelper.GetBookFileName(book.message) :
+                    BookFile.messageToBookFilename(book.message);
             if (!BookReplacement.TryImportBook(name, bookFile))
                 bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
             book.value = bookFile.Price;
