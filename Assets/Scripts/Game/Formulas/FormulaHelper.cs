@@ -6,6 +6,7 @@
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Hazelnut
 //                  ifkopifko
+//                  Numidium
 // 
 // Notes:
 //
@@ -51,6 +52,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static Dictionary<string, Formula_1i_1f>     formula_1i_1f = new Dictionary<string, Formula_1i_1f>();
         public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
         public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
+
+        public static float specialInfectionChance = 0.6f;
 
         #region Basic Formulas
 
@@ -147,18 +150,18 @@ namespace DaggerfallWorkshop.Game.Formulas
         #region Player
 
         // Generates player health based on level and career hit points per level
-        public static int RollMaxHealth(int level, int hitPointsPerLevel)
+        public static int RollMaxHealth(PlayerEntity player)
         {
             Formula_2i del;
             if (formula_2i.TryGetValue("RollMaxHealth", out del))
-                return del(level, hitPointsPerLevel);
+                return del(player.Level, player.Career.HitPointsPerLevel);
 
             const int baseHealth = 25;
-            int maxHealth = baseHealth + hitPointsPerLevel;
+            int maxHealth = baseHealth + player.Career.HitPointsPerLevel;
 
-            for (int i = 1; i < level; i++)
+            for (int i = 1; i < player.Level; i++)
             {
-                maxHealth += UnityEngine.Random.Range(1, hitPointsPerLevel + 1);
+                maxHealth += CalculateHitPointsPerLevelUp(player);
             }
 
             return maxHealth;
@@ -295,7 +298,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int minRoll = player.Career.HitPointsPerLevel / 2;
             int maxRoll = player.Career.HitPointsPerLevel;
             int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll + 1); // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
-            addHitPoints += HitPointsModifier(player.Stats.LiveEndurance);
+            addHitPoints += HitPointsModifier(player.Stats.PermanentEndurance);
             if (addHitPoints < 1)
                 addHitPoints = 1;
             return addHitPoints;
@@ -638,9 +641,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 DaggerfallUnityItem item = null;
                 if (equippedItems.Length != 0)
                 {
-                    item = IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) ? equippedItems[(int)EquipSlots.Ring0] : equippedItems[(int)EquipSlots.Ring1];
-                    item = IsRingOfNamira(item) ? item : null;
-                    if (item != null)
+                    if (IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) || IsRingOfNamira(equippedItems[(int)EquipSlots.Ring1]))
                     {
                         IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
                         effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
@@ -832,7 +833,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Werewolf:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= 0.6f)
+                    if (random <= specialInfectionChance && target.EntityBehaviour.EntityType == EntityTypes.Player)
                     {
                         // Werewolf
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Werewolf);
@@ -845,7 +846,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Wereboar:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= 0.6f)
+                    if (random <= specialInfectionChance && target.EntityBehaviour.EntityType == EntityTypes.Player)
                     {
                         // Wereboar
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateLycanthropyDisease(LycanthropyTypes.Wereboar);
@@ -866,7 +867,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
                     random = UnityEngine.Random.Range(0f, 100f);
-                    if (random <= 0.6f)
+                    if (random <= specialInfectionChance && target.EntityBehaviour.EntityType == EntityTypes.Player)
                     {
                         // Inflict stage one vampirism disease
                         EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreateVampirismDisease();
@@ -1055,7 +1056,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 if (target.Level != 1)
                 {
                     // Infect target
-                    EntityEffectBundle bundle = GameManager.Instance.PlayerEffectManager.CreatePoison(poisonType);
+                    EntityEffectBundle bundle = effectManager.CreatePoison(poisonType);
                     effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                 }
             }
@@ -1063,6 +1064,28 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 Debug.LogFormat("Poison resisted by {0}.", target.EntityBehaviour.name);
             }
+        }
+
+        public static DFCareer.ToleranceFlags GetToleranceFlag(DFCareer.Tolerance tolerance)
+        {
+            DFCareer.ToleranceFlags flag = DFCareer.ToleranceFlags.Normal;
+            switch (tolerance)
+            {
+                case DFCareer.Tolerance.Immune:
+                    flag = DFCareer.ToleranceFlags.Immune;
+                    break;
+                case DFCareer.Tolerance.Resistant:
+                    flag = DFCareer.ToleranceFlags.Resistant;
+                    break;
+                case DFCareer.Tolerance.LowTolerance:
+                    flag = DFCareer.ToleranceFlags.LowTolerance;
+                    break;
+                case DFCareer.Tolerance.CriticalWeakness:
+                    flag = DFCareer.ToleranceFlags.CriticalWeakness;
+                    break;
+            }
+
+            return flag;
         }
 
         public static int SavingThrow(DFCareer.Elements elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
@@ -1077,13 +1100,13 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Magic effect resistances did not stop the effect. Try with career flags and biography modifiers
             int savingThrow = 50;
-            DFCareer.Tolerance toleranceFlags = 0;
+            DFCareer.ToleranceFlags toleranceFlags = DFCareer.ToleranceFlags.Normal;
             int biographyMod = 0;
 
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if ((effectFlags & DFCareer.EffectFlags.Paralysis) != 0)
             {
-                toleranceFlags |= target.Career.Paralysis;
+                toleranceFlags |= GetToleranceFlag(target.Career.Paralysis);
                 // Innate immunity if high elf. Start with 100 saving throw, but can be modified by
                 // tolerance flags. Note this differs from classic, where high elves have 100% immunity
                 // regardless of tolerance flags.
@@ -1092,25 +1115,25 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
             if ((effectFlags & DFCareer.EffectFlags.Magic) != 0)
             {
-                toleranceFlags |= target.Career.Magic;
+                toleranceFlags |= GetToleranceFlag(target.Career.Magic);
                 if (target == playerEntity)
                     biographyMod += playerEntity.BiographyResistMagicMod;
             }
             if ((effectFlags & DFCareer.EffectFlags.Poison) != 0)
             {
-                toleranceFlags |= target.Career.Poison;
+                toleranceFlags |= GetToleranceFlag(target.Career.Poison);
                 if (target == playerEntity)
                     biographyMod += playerEntity.BiographyResistPoisonMod;
             }
             if ((effectFlags & DFCareer.EffectFlags.Fire) != 0)
-                toleranceFlags |= target.Career.Fire;
+                toleranceFlags |= GetToleranceFlag(target.Career.Fire);
             if ((effectFlags & DFCareer.EffectFlags.Frost) != 0)
-                toleranceFlags |= target.Career.Frost;
+                toleranceFlags |= GetToleranceFlag(target.Career.Frost);
             if ((effectFlags & DFCareer.EffectFlags.Shock) != 0)
-                toleranceFlags |= target.Career.Shock;
+                toleranceFlags |= GetToleranceFlag(target.Career.Shock);
             if ((effectFlags & DFCareer.EffectFlags.Disease) != 0)
             {
-                toleranceFlags |= target.Career.Disease;
+                toleranceFlags |= GetToleranceFlag(target.Career.Disease);
                 if (target == playerEntity)
                     biographyMod += playerEntity.BiographyResistDiseaseMod;
             }
@@ -1120,13 +1143,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             // always 0% resistance if there is no immunity. Here we are using
             // a method that allows mixing different tolerance flags, getting
             // rid of related exploits when creating a character class.
-            if ((toleranceFlags & DFCareer.Tolerance.Immune) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.Immune) != 0)
                 savingThrow += 50;
-            if ((toleranceFlags & DFCareer.Tolerance.CriticalWeakness) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.CriticalWeakness) != 0)
                 savingThrow -= 50;
-            if ((toleranceFlags & DFCareer.Tolerance.LowTolerance) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.LowTolerance) != 0)
                 savingThrow -= 25;
-            if ((toleranceFlags & DFCareer.Tolerance.Resistant) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.Resistant) != 0)
                 savingThrow += 25;
 
             savingThrow += biographyMod + modifier;
@@ -1134,6 +1157,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                 savingThrow += 30;
             else if (elementType == DFCareer.Elements.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
                 savingThrow += 30;
+
+            // Handle perfect immunity of 100% or greater
+            // Otherwise clamping to 5-95 allows a perfectly immune character to sometimes receive incoming payload
+            // This doesn't seem to match immunity intent or player expectations from classic
+            if (savingThrow >= 100)
+                return 0;
 
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
@@ -1277,7 +1306,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static void InflictDisease(DaggerfallEntity target, byte[] diseaseList)
         {
             // Must have a valid disease list
-            if (diseaseList == null || diseaseList.Length == 0)
+            if (diseaseList == null || diseaseList.Length == 0 || target.EntityBehaviour.EntityType != EntityTypes.Player)
                 return;
 
             // Only allow player to catch a disease this way

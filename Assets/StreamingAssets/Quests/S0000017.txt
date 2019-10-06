@@ -45,7 +45,7 @@ QuestLogEntry:  [1010]
 Message:  1011
 Dear %pcn,
  
- Your presence is our court is desired
+ Your presence in our court is desired
  before the end of the next season.
  Prince Lhotun has recommended you with
  high praise. I await your arrival.

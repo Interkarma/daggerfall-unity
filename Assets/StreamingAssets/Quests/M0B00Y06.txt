@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B00Y06
+DisplayName: Wild Animal
 -- Message panels
 QRC:
 
@@ -32,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                           waiting for you."
 <ce>                                    
 <ce>                  _qgiver_ calls out, "Hey, what kind
- of animal is it in _house_?"
+<ce> of animal is it in _house_?"
 
 QuestComplete:  [1004]
 <ce>                           Well done, %pcf.

@@ -259,11 +259,13 @@ namespace DaggerfallWorkshop
             meshRenderer = GetComponent<MeshRenderer>();
 
             Vector2 size;
+            Vector2 scale;
             Mesh mesh = null;
             Material material = null;
-            if (material = TextureReplacement.GetStaticBillboardMaterial(gameObject, archive, record, ref summary))
+            if (material = TextureReplacement.GetStaticBillboardMaterial(gameObject, archive, record, ref summary, out scale))
             {
                 mesh = dfUnity.MeshReader.GetBillboardMesh(summary.Rect, archive, record, out size);
+                size *= scale;
                 summary.AtlasedMaterial = false;
                 summary.AnimatedMaterial = summary.ImportedTextures.FrameCount > 1;
             }

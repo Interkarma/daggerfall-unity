@@ -46,8 +46,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         VerticalAlignment verticalAlignment = VerticalAlignment.None;
 
         // restricted render area can be used to force background rendering inside this rect (must be used in conjunction with ui elements that also support restricted render area like textlabel)
-        protected bool useRestrictedRenderArea = false;
         protected Rect rectRestrictedRenderArea;
+        protected Panel restrictedRenderAreaCustomParent;
+        protected RestrictedRenderArea_CoordinateType restrictedRenderAreaCoordinateType = RestrictedRenderArea_CoordinateType.None;
 
         float doubleClickDelay = 0.3f;
         float leftClickTime;
@@ -109,7 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public delegate void OnRightMouseDownHandler(BaseScreenComponent sender, Vector2 position);
         public event OnRightMouseDownHandler OnRightMouseDown;
-        
+
         public delegate void OnRightMouseUpHandler(BaseScreenComponent sender, Vector2 position);
         public event OnRightMouseUpHandler OnRightMouseUp;
 
@@ -136,6 +137,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public delegate void OnMouseScrollDownEventHandler(BaseScreenComponent sender);
         public event OnMouseScrollDownEventHandler OnMouseScrollDown;
+
+        #endregion
+
+        #region Enums
+
+        public enum RestrictedRenderArea_CoordinateType
+        {
+            None,
+            ScreenCoordinates,
+            ParentCoordinates,
+            CustomParent,
+        };
 
         #endregion
 
@@ -185,7 +198,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public virtual Vector2 Position
         {
             get { return position; }
-            internal set { position = value;}
+            internal set { position = value; }
         }
 
         /// <summary>
@@ -244,16 +257,38 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// get/set a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
+        /// Gets or sets the type of coordinate specification (e.g. absolute) of the restricted render area
+        /// </summary>
+        public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
+        {
+            get { return restrictedRenderAreaCoordinateType; }
+            set { restrictedRenderAreaCoordinateType = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a restricted render area for background rendering - the background will only be rendered inside the specified Rect's bounds
         /// </summary>
         public Rect RectRestrictedRenderArea
         {
             get { return rectRestrictedRenderArea; }
-            set
-            {
-                rectRestrictedRenderArea = value;
-                useRestrictedRenderArea = true;
-            }
+            set { rectRestrictedRenderArea = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a custom panel for restricted memory area.
+        /// </summary>
+        public Panel RestrictedRenderAreaCustomParent
+        {
+            get { return restrictedRenderAreaCustomParent; }
+            set { restrictedRenderAreaCustomParent = value; }
+        }
+
+        /// <summary>
+        /// Check if restricted rendering area used.
+        /// </summary>
+        public bool UseRestrictedRenderArea
+        {
+            get { return restrictedRenderAreaCoordinateType != RestrictedRenderArea_CoordinateType.None; }
         }
 
         /// <summary>
@@ -333,6 +368,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return backgroundTexture; }
             set { backgroundTexture = value; }
         }
+
+        /// <summary>
+        /// Gets or sets subrect when using BackgroundLayout.Cropped
+        /// Subrect should be in pixel coordinates relative to texture size.
+        /// Selected subrect will be scaled to fit inside panel area.
+        /// </summary>
+        public Rect BackgroundCroppedRect { get; set; }
 
         /// <summary>
         /// Gets or sets array of background textures for animated background.
@@ -707,7 +749,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Calculate cutout rect
             Rect myRect = Rectangle;
-            if (useRestrictedRenderArea)
+            if (UseRestrictedRenderArea)
             {
                 Rect rect = new Rect(this.Parent.Position + this.Position, this.Size);
 
@@ -753,6 +795,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
                         GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
+                        break;
+                    case BackgroundLayout.Cropped:
+                        backgroundTexture.wrapMode = TextureWrapMode.Clamp;
+                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(
+                            BackgroundCroppedRect.x / backgroundTexture.width,
+                            BackgroundCroppedRect.y / backgroundTexture.height,
+                            BackgroundCroppedRect.width / backgroundTexture.width,
+                            BackgroundCroppedRect.height / backgroundTexture.height));
                         break;
                 }
             }
@@ -1100,6 +1150,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 case AutoSizeModes.None:
                     localScale = (parent != null) ? parent.LocalScale : scale;
                     break;
+                case AutoSizeModes.Scale:
+                    rectangle = ScaleToSelf(rectangle);
+                    break;
                 case AutoSizeModes.ResizeToFill:
                     rectangle = ResizeToFill(rectangle);
                     break;
@@ -1227,6 +1280,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 localScale.x = localScale.y = scale;
             }
+
+            return finalRect;
+        }
+
+        private Rect ScaleToSelf(Rect srcRect)
+        {
+            Rect finalRect = srcRect;
+
+            finalRect.width *= scale.x;
+            finalRect.height *= scale.y;
 
             return finalRect;
         }

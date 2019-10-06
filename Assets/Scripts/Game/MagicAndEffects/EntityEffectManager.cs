@@ -426,6 +426,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
             instancedBundle.icon = sourceBundle.Settings.Icon;
             instancedBundle.fromEquippedItem = sourceBundle.FromEquippedItem;
+            instancedBundle.castByItem = sourceBundle.CastByItem;
             instancedBundle.liveEffects = new List<IEntityEffect>();
             if (sourceBundle.CasterEntityBehaviour)
             {
@@ -515,10 +516,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Saving throw handling for effects without magnitude
-                // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
+                // Entity has a chance to save against entire effect using a saving throw
                 // Self-cast spells (e.g. self heals and buffs) should never be saved against
-                if (!bypassSavingThrows && !effect.BypassSavingThrows && !effect.Properties.SupportMagnitude && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
+                if (!bypassSavingThrows && !effect.BypassSavingThrows && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
@@ -1265,7 +1265,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectBundleSettings settings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
-                BundleType = BundleTypes.None,
+                BundleType = BundleTypes.Disease,
                 Effects = new EffectEntry[] { new EffectEntry(effectKey) },
             };
 
@@ -1494,15 +1494,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoMagicRound()
         {
-            // Do nothing further if no bundles, entity has perished, or object disabled
-            if (instancedBundles.Count == 0 || entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
-                return;
-
             // Clear direct mods
             Array.Clear(directStatMods, 0, DaggerfallStats.Count);
             Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
             if (IsPlayerEntity)
                 (entityBehaviour.Entity as PlayerEntity).ClearReactionMods();
+
+            // Do nothing further if no bundles, entity has perished, or object disabled
+            if (instancedBundles.Count == 0 || entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
+                return;
 
             // Run all bundles
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -1894,6 +1894,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public EntityTypes casterEntityType;
             public ulong casterLoadID;
             public ulong fromEquippedItemID;
+            public ulong castByItemID;
             public bool fromPoison;
             public EffectSaveData_v1[] liveEffects;
         }
@@ -1935,6 +1936,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.casterEntityType = bundle.casterEntityType;
                 bundleData.casterLoadID = bundle.casterLoadID;
                 if (bundle.fromEquippedItem != null) bundleData.fromEquippedItemID = bundle.fromEquippedItem.UID;
+                if (bundle.castByItem != null) bundleData.castByItemID = bundle.castByItem.UID;
 
                 List<EffectSaveData_v1> liveEffectsSaveData = new List<EffectSaveData_v1>();
                 foreach (IEntityEffect effect in bundle.liveEffects)
@@ -1998,7 +2000,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.liveEffects = new List<IEntityEffect>();
                 instancedBundle.caster = GetCasterReference(bundleData.casterEntityType, bundleData.casterLoadID);
                 if (instancedBundle.caster)
+                {
                     instancedBundle.fromEquippedItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.fromEquippedItemID);
+                    instancedBundle.castByItem = instancedBundle.caster.Entity.Items.GetItem(bundleData.castByItemID);
+                }
 
                 // If bundle is supposed to be an equipped item, and we did not find that item, then do not restore bundle
                 if (instancedBundle.bundleType == BundleTypes.HeldMagicItem && instancedBundle.fromEquippedItem == null)

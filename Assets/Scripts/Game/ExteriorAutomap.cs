@@ -52,6 +52,8 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
+        const string textDatabase = "DaggerfallUI";
+
         // this structure defines all the infos used for building nameplates (appearance and placement)
         public struct BuildingNameplate
         {
@@ -169,6 +171,11 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+
+        public static string TextDatabase
+        {
+            get { return textDatabase; }
+        }
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to get automap layer
@@ -691,9 +698,9 @@ namespace DaggerfallWorkshop.Game
                                             bool receivedDirectionalHints = false;
                                             bool locationWasMarkedOnMapByNPC = false;
                                             string overrideBuildingName = string.Empty;
-                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
+                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.IsBuildingQuestResource(GameManager.Instance.PlayerGPS.CurrentMapID, buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
                                             {
-                                                if (pcLearnedAboutExistence)
+                                                if (locationWasMarkedOnMapByNPC)
                                                     buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest (same as overrideBuildingName)
                                             }
                                         }
@@ -720,55 +727,55 @@ namespace DaggerfallWorkshop.Game
                             switch (buildingSummary.BuildingType)
                             {
                                 case DFLocation.BuildingTypes.Alchemist:
-                                    newBuildingNameplate.name = "Alchemist";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeAlchemist");
                                     break;
                                 case DFLocation.BuildingTypes.Armorer:
-                                    newBuildingNameplate.name = "Armorer";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeArmorer");
                                     break;
                                 case DFLocation.BuildingTypes.Bank:
-                                    newBuildingNameplate.name = "Bank";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeBank");
                                     break;
                                 case DFLocation.BuildingTypes.Bookseller:
-                                    newBuildingNameplate.name = "Bookseller";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeBookSeller");
                                     break;
                                 case DFLocation.BuildingTypes.ClothingStore:
-                                    newBuildingNameplate.name = "Clothing Store";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeClothingStore");
                                     break;
                                 case DFLocation.BuildingTypes.FurnitureStore:
-                                    newBuildingNameplate.name = "Furniture Store";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeFurnitureStore");
                                     break;
                                 case DFLocation.BuildingTypes.GemStore:
-                                    newBuildingNameplate.name = "Gem Store";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeGemStore");
                                     break;
                                 case DFLocation.BuildingTypes.GeneralStore:
-                                    newBuildingNameplate.name = "General Store";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeGeneralStore");
                                     break;
                                 case DFLocation.BuildingTypes.GuildHall:
-                                    newBuildingNameplate.name = "Guild Hall";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeGuildHall");
                                     break;
                                 case DFLocation.BuildingTypes.HouseForSale:
-                                    newBuildingNameplate.name = "House for Sale";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeHouseForSale");
                                     break;
                                 case DFLocation.BuildingTypes.Library:
-                                    newBuildingNameplate.name = "Library";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeLibrary");
                                     break;
                                 case DFLocation.BuildingTypes.Palace:
-                                    newBuildingNameplate.name = "Palace";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypePalace");
                                     break;
                                 case DFLocation.BuildingTypes.PawnShop:
-                                    newBuildingNameplate.name = "Pawn Shop";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypePawnShop");
                                     break;
                                 case DFLocation.BuildingTypes.Tavern:
-                                    newBuildingNameplate.name = "Tavern";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeTavern");
                                     break;
                                 case DFLocation.BuildingTypes.Temple:
-                                    newBuildingNameplate.name = "Temple";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeTemple");
                                     break;
                                 case DFLocation.BuildingTypes.WeaponSmith:
-                                    newBuildingNameplate.name = "Weapon Smith";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeWeaponSmith");
                                     break;
                                 default:
-                                    newBuildingNameplate.name = "unknown";
+                                    newBuildingNameplate.name = TextManager.Instance.GetText(textDatabase, "exteriorAutomapBuildingTypeUnknown");
                                     break;
                             }
                         }

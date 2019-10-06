@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -75,6 +75,20 @@ namespace DaggerfallConnect
         {
             if (!Load(FilePath))
                 Fill(0xff, 0, 0);
+        }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other">Palette to copy from.</param>
+        public DFPalette(DFPalette other)
+        {
+            if (other != null && other.PaletteBuffer != null && other.paletteBuffer.Length != 0)
+            {
+                headerLength = other.HeaderLength;
+                paletteBuffer = new byte[other.PaletteBuffer.Length];
+                Array.Copy(other.PaletteBuffer, paletteBuffer, other.PaletteBuffer.Length);
+            }
         }
 
         /// <summary>
@@ -155,6 +169,21 @@ namespace DaggerfallConnect
                 paletteBuffer[offset++] = (byte)i;
                 paletteBuffer[offset++] = (byte)i;
                 paletteBuffer[offset++] = (byte)i;
+            }
+        }
+
+        /// <summary>
+        /// Fills entire palette with random values.
+        /// </summary>
+        public void MakeRandom()
+        {
+            Random rnd = new Random();
+            int offset = headerLength;
+            for (int i = 0; i < 256; i++)
+            {
+                paletteBuffer[offset++] = (byte)(rnd.Next() % 255);
+                paletteBuffer[offset++] = (byte)(rnd.Next() % 255);
+                paletteBuffer[offset++] = (byte)(rnd.Next() % 255);
             }
         }
 

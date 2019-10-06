@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop
         public bool FindClosestDoorToPlayer(Vector3 playerPos, int record, out Vector3 doorPosOut, out int doorIndexOut, DoorTypes requiredDoorType = DoorTypes.None)
         {
             // Init output
-            doorPosOut = playerPos;
+            doorPosOut = Vector3.zero;
             doorIndexOut = -1;
 
             // Must have door array
@@ -118,18 +118,19 @@ namespace DaggerfallWorkshop
 
             // Find closest door to player position
             float minDistance = float.MaxValue;
+            bool found = false;
             for (int i = 0; i < Doors.Length; i++)
             {
                 // Must be of door type if set
                 if (requiredDoorType != DoorTypes.None && Doors[i].doorType != requiredDoorType)
                     continue;
 
-                // Get this door centre in world space
-                Vector3 centre = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre) + transform.position;
-
                 // Check if door belongs to same building record or accept any record
-                if (Doors[i].recordIndex == record || record == -1)
+                if (record == -1 || Doors[i].recordIndex == record)
                 {
+                    // Get this door centre in world space
+                    Vector3 centre = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre) + transform.position;
+
                     // Check distance and save closest
                     float distance = Vector3.Distance(playerPos, centre);
                     if (distance < minDistance)
@@ -137,11 +138,12 @@ namespace DaggerfallWorkshop
                         doorPosOut = centre;
                         doorIndexOut = i;
                         minDistance = distance;
+                        found = true;
                     }
                 }
             }
 
-            return true;
+            return found;
         }
 
         /// <summary>

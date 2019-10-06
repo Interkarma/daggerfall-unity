@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -57,10 +57,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
-            // Reserve SiteLink for Place resource
-            // This will also be done automatically by "place npc", "place foe", etc.
-            if (!QuestMachine.HasSiteLink(ParentQuest, placeSymbol))
-                QuestMachine.CreateSiteLink(ParentQuest, placeSymbol);
+            // For compatibility with legacy decompiled TEMPLATE scripts only
+            // Has no requirement to be used in Daggerfall Unity
+            // Please use "place npc <anNPC> at <aPlace>" instead
 
             // Possible historical note:
             //  Many quests are very strict about first reserving a site using "create npc at"

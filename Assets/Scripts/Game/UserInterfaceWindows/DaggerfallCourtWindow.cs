@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int daysInPrison;
         int daysInPrisonLeft;
         int state;
-        bool inPrison;
         bool repositionPlayer;
 
         float prisonUpdateTimer = 0f;
@@ -248,7 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (state == 3) // Serve prison sentence
             {
-                inPrison = true;
+                playerEntity.InPrison = true;
                 SwitchToPrisonScreen();
                 daysInPrisonLeft = daysInPrison;
                 playerEntity.RaiseReputationForDoingSentence();
@@ -288,7 +287,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (state == 100) // Done
             {
-                if (inPrison)
+                if (playerEntity.InPrison)
                 {
                     if (Input.GetKey(exitKey)) // Speed up prison day countdown. Not in classic.
                         prisonUpdateInterval = 0.001f;
@@ -427,7 +426,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.Arrested = false;
             state = 0;
             prisonUpdateTimer = 0f;
-            inPrison = false;
+            GameManager.Instance.PlayerEntity.InPrison = false;
             repositionPlayer = false;
             daysUntilFreedomLabel.Text = string.Empty;
 
@@ -466,7 +465,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.PreventNormalizingReputations = true;
                 DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
                 RaiseOnEndPrisonTimeEvent();
-                inPrison = false;
+                playerEntity.InPrison = false;
                 playerEntity.FillVitalSigns();
             }
         }

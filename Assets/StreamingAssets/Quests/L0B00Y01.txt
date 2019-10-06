@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 14
 Quest: L0B00Y01
+DisplayName: No Escape
 -- Message panels
 QRC:
 
@@ -37,13 +38,15 @@ AcceptQuest:  [1002]
 <ce>                       =target_, having learned
 <ce>                  something during %g3 tenure in the
 <ce>               Brotherhood, has wisely hidden %g2-self,
-<ce>                  but we have a contact in __snitch_,
-<ce>                        a miserable =snitch_, a
+<ce>                  but we have a contact in __snitch_
+<ce> of ___snitch_, a miserable =snitch_, a
 <ce>                        snitch named _snitch_.
 <ce>                    Talk to %g2 and get =target_'s
 <ce>               location. I will expect the accounting to
 <ce>                  be accomplished, and you to be back
 <ce>                        here in =queston_ days.
+
+-added town name of snitch to 1002
 
 QuestComplete:  [1004]
 <ce>                           Well done, %pct.

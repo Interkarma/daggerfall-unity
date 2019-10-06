@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 13
 Quest: C0B3XY09
+DisplayName: The Great Evil
 -- Message panels
 QRC:
 
@@ -93,6 +94,9 @@ Message:  1012
 <ce>                        Then die like the pious
 <ce>                            mortal you are!
 
+Message:  1013
+<ce>  The curse is lifted. You should report to _qgiver_.
+
 
 -- Symbols used in the QRC file:
 --
@@ -135,22 +139,21 @@ _traveltime_ task:
 
 _S.01_ task:
 	clicked item _evilfocus_ 
-	prompt 1011 yes yes no _no_ 
+	prompt 1011 yes _yes_ no _no_ 
 	take _evilfocus_ from pc 
-	place foe _guardian_ at _dungeon_ 
+--replaced place foe command with create foe. Place foe would locate the monster far away.
 	clear _S.01_ 
 
-yes task:
+_yes_ task:
 	get item _magicitem_ 
 	make _magicitem_ permanent 
 	change repute with _qgiver_ by -10 
 	end quest 
 
-until yes performed:
-	injured _guardian_ 
-
 _no_ task:
-	injured _guardian_ 
+	injured _guardian_
+	create foe _guardian_ every 1 minutes 1 times with 100% success
+--moved create guardian down to here due to S.01 clearing itself
 	create foe _F.02_ every 5 minutes 1 times with 100% success 
 	create foe _spiders_ every 9 minutes 1 times with 100% success 
 	create foe _lesserdaedra_ every 7 minutes 1 times with 100% success 
@@ -159,6 +162,8 @@ _no_ task:
 
 _S.04_ task:
 	killed 1 _guardian_ 
+	say 1013
+--added a victory message. original quest was confusing up to this point.
 
 _questdone_ task:
 	clicked npc _qgiver_ 
@@ -170,4 +175,5 @@ _success_ task:
 
 _clearclick_ task:
 	when _questdone_ and not _S.04_ 
-	clear _questdone_ 
+	clear _questdone_ _clearclick_
+--permits repeated clearclick

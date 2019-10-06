@@ -22,6 +22,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 using Unity.Jobs;
 
 namespace DaggerfallWorkshop
@@ -227,6 +228,12 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Unity
+
+        private void Awake()
+        {
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
 
         void Update()
         {
@@ -1267,8 +1274,9 @@ namespace DaggerfallWorkshop
 
         // Repositions player in world after a teleport.
         // If position.y is less than terrain height then player will be raised to sit on terrain.
+        // If grounded is true, position.y will be unconditionally set to terrain height.
         // Terrain data must already be loaded and LocalGPS must be attached to your player game object.
-        private void RepositionPlayer(int mapPixelX, int mapPixelY, Vector3 position)
+        private void RepositionPlayer(int mapPixelX, int mapPixelY, Vector3 position, bool grounded = false)
         {
             // Get terrain key
             int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
@@ -1289,7 +1297,7 @@ namespace DaggerfallWorkshop
                 targetPosition.y = height + controller.height / 2f + 0.15f;
 
                 // If desired position is higher then minimum position then we can safely use that
-                if (position.y > targetPosition.y)
+                if (!grounded && position.y > targetPosition.y)
                     targetPosition.y = position.y;
 
                 // Move player object to new position
@@ -1399,7 +1407,8 @@ namespace DaggerfallWorkshop
                 width,
                 height,
                 (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity ||
-                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips));
+                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips),
+                currentLocation.Summary.LocationType != DFRegion.LocationTypes.HomeYourShips);
         }
 
         // Sets player to ground level near a location
@@ -1412,7 +1421,8 @@ namespace DaggerfallWorkshop
             Vector3 origin,
             int mapWidth,
             int mapHeight,
-            bool useNearestStartMarker = false)
+            bool useNearestStartMarker = false,
+            bool grounded = true)
         {
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
 
@@ -1520,14 +1530,14 @@ namespace DaggerfallWorkshop
                 if (closestMarker != -1)
                 {
                     //PositionPlayerToTerrain(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
-                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
+                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position, grounded);
                     return;
                 }
             }
 
             // Just position to outside location
             //PositionPlayerToTerrain(mapPixelX, mapPixelY, newPlayerPosition);
-            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition);
+            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition, grounded);
         }
 
         // Align player to ground
@@ -1553,6 +1563,32 @@ namespace DaggerfallWorkshop
             worldX = mapPixelOrigin.X + (playerPos.x * SceneMapRatio);
             worldZ = mapPixelOrigin.Y + (playerPos.z * SceneMapRatio);
             lastPlayerPos = playerPos;
+        }
+
+        // Destroy untracked objects parented to streaming target
+        // This will remove loose enemies, missiles, etc. on load or new game
+        // These dynamically spawned objects are fully untracked in wilderness
+        void CleanupUntrackedObjects()
+        {
+            // Destroy loose enemies
+            EnemyMotor[] enemies = StreamingTarget.GetComponentsInChildren<EnemyMotor>();
+            foreach(EnemyMotor enemy in enemies)
+                GameObject.Destroy(enemy.gameObject);
+
+            // Destroy loose missiles
+            DaggerfallMissile[] missiles = StreamingTarget.GetComponentsInChildren<DaggerfallMissile>();
+            foreach (DaggerfallMissile missile in missiles)
+                GameObject.Destroy(missile.gameObject);
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            CleanupUntrackedObjects();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            CleanupUntrackedObjects();
         }
 
         #endregion

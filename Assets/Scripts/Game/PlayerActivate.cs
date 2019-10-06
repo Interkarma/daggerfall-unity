@@ -147,10 +147,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Fire ray into scene
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCenterObject))
             {
-                // TODO: Clean all this up
-
                 // Fire ray into scene for hit tests (excluding player so their ray does not intersect self)
                 Ray ray = new Ray(transform.position + Vector3.up * 0.8f, mainCamera.transform.forward);
                 RaycastHit hit;
@@ -293,10 +291,10 @@ namespace DaggerfallWorkshop.Game
                     if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
                         && buildingType != DFLocation.BuildingTypes.HouseForSale)
                     {
-                        string storeClosedMessage = HardStrings.storeClosed;
-                        storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
-                        storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
-                        DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
+                        string buildingClosedMessage = (buildingType == DFLocation.BuildingTypes.GuildHall) ? HardStrings.guildClosed : HardStrings.storeClosed;
+                        buildingClosedMessage = buildingClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
+                        buildingClosedMessage = buildingClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
+                        DaggerfallUI.Instance.PopupMessage(buildingClosedMessage);
                     }
                 }
             }
@@ -485,6 +483,15 @@ namespace DaggerfallWorkshop.Game
 
         void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)
         {
+            // Do not activate static NPCs carrying specific non-dialog actions as these usually have some bespoke task to perform
+            // Note: currently only ShowText and ShowTextWithInput NPCs are excluded
+            // Examples are guard at entrance of Daggerfall Castle and Benefactor and Sheogorath in Mantellan Crux
+            DaggerfallAction action = npc.GetComponent<DaggerfallAction>();
+            if (action &&
+                (action.ActionFlag == DFBlock.RdbActionFlags.ShowTextWithInput ||
+                 action.ActionFlag == DFBlock.RdbActionFlags.ShowText))
+                return;
+
             switch (currentMode)
             {
                 case PlayerActivateModes.Info:
@@ -1051,7 +1058,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Check if building is used in an active quest inside current map
-        bool IsActiveQuestBuilding(BuildingSummary buildingSummary, bool residencesOnly = true)
+        public bool IsActiveQuestBuilding(BuildingSummary buildingSummary, bool residencesOnly = true)
         {
             SiteDetails[] siteDetails = QuestMachine.Instance.GetAllActiveQuestSites();
             foreach (SiteDetails site in siteDetails)
@@ -1282,11 +1289,6 @@ namespace DaggerfallWorkshop.Game
             }
             else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
             {
-                // with one exception: guards
-                if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
-                    return; // if guard was clicked don't open talk window
-
-                // otherwise open talk window
                 talkManager.TalkToStaticNPC(npc, false);
             }
         }

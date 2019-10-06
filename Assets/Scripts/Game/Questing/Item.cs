@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (artifact)
                         textOut = item.shortName;
                     else
-                        textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
+                        textOut = (isGoldPieces) ? item.stackCount.ToString() : GetLongName(item);
                     break;
 
                 default:                                // Macro not supported
@@ -249,6 +249,12 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Private Methods
+
+        // Custom long name getter that prevents plant suffix being displayed in quest text
+        string GetLongName(DaggerfallUnityItem item)
+        {
+            return DaggerfallUnity.Instance.ItemHelper.ResolveItemLongName(item, false);
+        }
 
         // Create by item or artifact name
         // This gets class and subclass values from p1 and p2 of items lookup table
@@ -278,10 +284,10 @@ namespace DaggerfallWorkshop.Game.Questing
             DaggerfallUnityItem result;
 
             // Handle random magic items
-            if (itemClass == (int)ItemGroups.MagicItems && itemSubClass == -1)
+            if (itemClass == (int)ItemGroups.MagicItems)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                result = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, playerEntity.Level, playerEntity.Gender, playerEntity.Race);
             }
             // Handle books
             else if (itemClass == (int)ItemGroups.Books)
@@ -304,7 +310,17 @@ namespace DaggerfallWorkshop.Game.Questing
             // Link item to quest
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
-            return result;
+            string name = result.shortName.Replace("%it", result.ItemTemplate.name);
+            QuestMachine.LogFormat(
+                ParentQuest,
+                "Generated \"{0}\" from Class {1} and Subclass {2} for item {3}",
+                name,
+                itemClass,
+                itemSubClass,
+                Symbol.Original
+            );
+
+             return result;
         }
 
         // Create stack of gold pieces

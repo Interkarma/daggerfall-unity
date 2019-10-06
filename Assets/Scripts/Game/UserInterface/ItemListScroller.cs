@@ -450,7 +450,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Tooltip text
                 itemButtons[i].ToolTipText =
-                    (item.ItemGroup == ItemGroups.Books && !item.IsArtifact) ? DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName) : item.LongName;
+                    (item.ItemGroup == ItemGroups.Books && !item.IsArtifact) ? DaggerfallUnity.Instance.ItemHelper.GetBookTitle(item.message, item.LongName) : item.LongName;
             }
         }
 

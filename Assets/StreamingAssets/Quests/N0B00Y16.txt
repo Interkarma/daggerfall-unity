@@ -4,8 +4,10 @@
 -- Questor: mage
 -- Repute: 0
 -- QuestId: 16
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 52
 Quest: N0B00Y16
+DisplayName: Open a chest
 -- Message panels
 QRC:
 
@@ -162,6 +164,7 @@ Message:  1051
 
 QBN:
 Item _crn_ item class 1 subclass 8
+--changed %crn to _crn_. variables should have underscores
 Item _I.01_ wand
 
 Person _questgiver_ face 86 group Questor
@@ -215,7 +218,7 @@ _a6_ task:
 	say 1043 
 
 _S.07_ task:
-	have _crn_ set _S.08_ 
+	have _crn_ set _S.08_
 
 _S.08_ task:
 	pick one of _a3_ _a4_ _a5_ _a6_ 
@@ -236,6 +239,11 @@ _success_ task:
 	give pc nothing 
 	unset _clickqgiver_ 
 	end quest 
+
+_clearclick_ task:
+	when _clickqgiver_ and not _S.11_
+	say 1003
+	clear _clearclick_ _clickqgiver_
 
 _S.13_ task:
 	when _S.10_ and not _S.08_ 

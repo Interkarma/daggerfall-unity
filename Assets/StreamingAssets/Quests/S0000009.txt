@@ -37,7 +37,7 @@ AcceptQuest:  [1002]
 <ce>                     to a place called __contact_.
 <ce>                %g will pay you =reward_ gold pieces for
 <ce>                     bringing %g2 _foil_. Don't you
- just love these dangeous missions?
+<ce>				  just love these dangerous missions?
 
 QuestFail:  [1003]
 <ce>                  I have nothing to discuss with you.
@@ -156,8 +156,8 @@ Message:  1021
 QBN:
 Item _note_ letter used 1013
 Item _reward_ gold
-Item letter45 letter used 1018
-Item letter46 letter used 1016
+Item _letter45_ letter used 1018
+Item _letter46_ letter used 1016
 Item _bribe_ gold
 
 Person _elysana_ named Princess_Elysana atHome
@@ -165,17 +165,18 @@ Person _foil_ face 115 faction The_Prostitutes
 Person _contact_ group Local_3.3 female
 Person Woodborne face 1 named Lord_Woodborne
 
-
-Clock _S.11_ 7.00:00 14.00:00
+Clock _giveLetter_ 7.00:00 14.00:00
 Clock _S.14_ 2.00:00 0 flag 1 range 0 1
 
-Foe _F.00_ is Barbarian
-Foe _F.01_ is Knight
+Foe _barbarians_ is Barbarian
+Foe _knights_ is Knight
 
 --	Quest start-up:
-	start timer _S.11_ 
-	give pc letter45 notify 1015 
+	start timer _giveLetter_ 
+	give pc _letter45_ notify 1015 
 	add _elysana_ as questor 
+	start task _spawnBarbarians_
+	start task _spawnKnights_
 
 _npcclicked_ task:
 	clicked npc _contact_ 
@@ -183,67 +184,75 @@ _npcclicked_ task:
 	hide npc _contact_ 
 
 _S.01_ task:
-	when not _S.09_ and _npcclicked_ 
+	when not _foilGone_ and _npcclicked_ 
 	give pc _reward_ 
 	drop _foil_ face 
 
 _S.02_ task:
-	when _S.09_ and _npcclicked_ 
+	when _foilGone_ and _npcclicked_ 
 	get item _reward_ 
 	get item _bribe_ 
 	say 1012 
 	drop _foil_ face 
 
-yes task:
+_yes_ task:
 	log 1010 step 0 
 	say AcceptQuest 
 	add _foil_ face 
 	change repute with _elysana_ by -25 
-	unset _S.12_ 
+	unset _clickedElysana_ 
 
 _no_ task:
 	say RefuseQuest 
 	end quest 
 
 _S.05_ task:
-	injured _F.00_ 
-	give item _note_ to _F.00_ 
+	injured _barbarians_ 
+	give item _note_ to _barbarians_ 
 
 _S.06_ task:
-	injured _F.01_ 
-	give item letter45 to _F.01_ 
+	injured _knights_ 
+	give item _letter45_ to _knights_ 
 
 _S.07_ task:
-	killed 3 _F.00_ 
-	say 1021 
+	killed 3 _barbarians_ 
+	unset _spawnBarbarians_
 
-until _S.07_ performed:
-	send _F.00_ every 70 minutes 10 times with 10% success 
+_slainBarbarians_ task:
+	when _S.07_ and _yes_
+	say 1020 
+	
+_spawnBarbarians_ task:
+	send _barbarians_ every 70 minutes 10 times with 10% success 
 
 _S.08_ task:
-	killed 2 _F.01_ 
-	say 1020 
+	killed 2 _knights_ 
+	unset _spawnKnights_
 
-until _S.08_ performed:
-	send _F.01_ every 91 minutes 10 times with 10% success 
+_slainKnights_ task:
+	when _S.08_ and _yes_
+	say 1021 
 
-_S.09_ task:
-	when _S.07_ and _S.08_ and not _S.10_ 
+_spawnKnights_ task:
+	send _knights_ every 91 minutes 10 times with 10% success 
+
+_foilGone_ task:
+	when _slainKnights_ and _slainBarbarians_ and not _daytime_ 
 	say 1011 
 	drop _foil_ face 
 
-_S.10_ task:
+_daytime_ task:
 	daily from 06:00 to 18:00 
 
-_S.11_ task:
-	give pc letter46 silently 
+_giveLetter_ task:
+	give pc _letter46_ silently 
 
-_S.12_ task:
+_clickedElysana_ task:
 	clicked npc _elysana_ 
 
 _S.13_ task:
-	when _S.12_ and _S.11_ 
-	prompt QuestorOffer yes yes no _no_ 
+	when _clickedElysana_ and _giveLetter_ 
+	prompt QuestorOffer yes _yes_ no _no_ 
 
 _S.14_ task:
 	end quest 

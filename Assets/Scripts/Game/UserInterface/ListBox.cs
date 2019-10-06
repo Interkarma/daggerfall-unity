@@ -43,10 +43,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
         Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
-        // restricted render area can be used to force list box content rendering inside this rect (used for content rendering in window frames where content is larger than frame)
-        new bool useRestrictedRenderArea = false;
-        new Rect rectRestrictedRenderArea;
-
         public enum VerticalScrollModes
         {
             EntryWise,
@@ -238,19 +234,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// define a restricted render area so that listbox content (textlabels) are only rendered within these Rect's bounds
-        /// </summary>
-        public new Rect RectRestrictedRenderArea
-        {
-            get { return rectRestrictedRenderArea; }
-            set
-            {
-                rectRestrictedRenderArea = value;
-                useRestrictedRenderArea = true;
-            }
-        }
-
-        /// <summary>
         /// set vertical scroll mode to either character wise or pixel wise
         /// </summary>
         public VerticalScrollModes VerticalScrollMode
@@ -318,7 +301,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                     currentLine += label.NumTextLines;                
                     label.StartCharacterIndex = horizontalScrollIndex;
-                    label.RefreshLayout();
 
                     DecideTextColor(label, i);
 
@@ -346,7 +328,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         label.StartCharacterIndex = horizontalScrollIndex;
                     else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
                         x = -horizontalScrollIndex;
-                    label.RefreshLayout();
 
                     DecideTextColor(label, i);
 
@@ -499,10 +480,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
-            if (useRestrictedRenderArea)
+            if (UseRestrictedRenderArea)
             {
-                textLabel.RectRestrictedRenderArea = this.rectRestrictedRenderArea;
-                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
             }
             if (horizontalScrollMode == HorizontalScrollModes.CharWise)
                 textLabel.MaxWidth = (int)Size.x;
@@ -530,6 +512,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listItems.Insert(position, itemOut);
         }
 
+        public void AddItem(TextLabel textLabel, out ListItem itemOut, int position = -1, string tag = null)
+        {
+            if (textLabel == null)
+            {
+                itemOut = new ListItem(null);
+                return;
+            }
+
+            if (UseRestrictedRenderArea)
+            {
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
+            }
+            if (horizontalScrollMode == HorizontalScrollModes.CharWise)
+                textLabel.MaxWidth = (int)Size.x;
+            else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
+                textLabel.MaxWidth = -1;
+            textLabel.Parent = this;
+            textLabel.WrapText = wrapTextItems;
+            textLabel.WrapWords = wrapWords;
+
+            itemOut = new ListItem(textLabel);
+            itemOut.textColor = textColor;
+            itemOut.selectedTextColor = selectedTextColor;
+            itemOut.shadowColor = shadowColor;
+            itemOut.selectedShadowColor = selectedShadowColor;
+            itemOut.tag = tag;
+            if (position < 0)
+                listItems.Add(itemOut);
+            else
+                listItems.Insert(position, itemOut);
+        }
+
         public void AddItem(string text, int position = -1, object tag = null)
         {
             ListItem itemOut;
@@ -540,6 +556,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             foreach (string item in items)
                 AddItem(item);
+        }
+
+        public void AddItems(TextLabel[] labels)
+        {
+            if (labels == null || labels.Length == 0)
+                return;
+
+            ListItem itemOut;
+            foreach (TextLabel label in labels)
+            {
+                AddItem(label, out itemOut);
+            }
         }
 
         public void RemoveItem(int index)

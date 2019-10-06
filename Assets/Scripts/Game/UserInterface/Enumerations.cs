@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Tile,                           // Texture is tiled inside parent
         StretchToFill,                  // Texture will stretch to fill parent
         ScaleToFit,                     // Texture will scale to fit parent while maintaining aspect ratio
+        Cropped,                        // Texture is cropped and visible part scaled to fit
     }
 
     /// <summary>
@@ -96,6 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public enum AutoSizeModes
     {
         None,                           // Panel will not resize or scale
+        Scale,                          // Panel will use own scale
         ResizeToFill,                   // Panel will resize to fill parent vertically and horizontally
         ScaleToFit,                     // Panel will scale to fit parent while maintaining aspect ratio
         ScaleFreely,                    // Panel will scale to fit parent with no regard to aspect ratio

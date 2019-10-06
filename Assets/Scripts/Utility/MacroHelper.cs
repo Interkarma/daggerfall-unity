@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Utility
             { "%ba", BookAuthor },  // Book Author
             { "%bch", ChanceBase }, // Base chance
             { "%bdr", DurationBase }, // Base Duration
-            { "%bn", null },  // ?
+            { "%bn", Name }, // Random name in biography text
             { "%bt", ItemName },  // Book title
             { "%cbl", null }, // Cash balance in current region
             { "%clc", ChancePerLevel }, // Per level (Chance)
@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Utility
             { "%dae", Daedra }, // A daedra
             { "%dam", DmgMod }, // Damage modifier
             { "%dat", Date }, // Date
-            { "%di", LocationDirection },  // Direction
+            { "%di", Direction },  // Direction (depending on scope of last referenced place resource)
             { "%dip", DaysInPrison }, // Days in prison
             { "%dng", Dungeon }, // Dungeon
             { "%dts", null }, // Daedra
@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop.Utility
             { "%mod", ArmourMod }, // Modification
             { "%n", Name },   // A random name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", Name }, // A random full name
-            { "%nrn", null }, // Noble of the current region (used in: O0B00Y01)
+            { "%nrn", LordOfCurrentRegion }, // Noble of the current region (used in: O0B00Y01)
             { "%nt", NearbyTavern },  // Nearby Tavern
             { "%ol1", OldLordOfFaction1 }, // Old lord of _fx1
             { "%olf", OldLeaderFate }, // What happened to _ol1
@@ -278,14 +278,25 @@ namespace DaggerfallWorkshop.Utility
             return GetNameBank(race);
         }
 
-        public static string GetLordNameForFaction(int factionId)
+        public static string GetLordNameForFaction(int factionId, bool oldRuler = false)
         {
             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.FactionData fd;
             factions.GetFactionData(factionId, out fd);
 
+            // If the first faction child is an individual, she/he is the ruler: return her/his name
+            if (fd.children != null && fd.children.Count > 0)
+            {
+                FactionFile.FactionData firstChild;
+                factions.GetFactionData(fd.children[0], out firstChild);
+                if (firstChild.type == (int)FactionFile.FactionTypes.Individual)
+                    return firstChild.name;
+            }
+
             Genders gender = (Genders) ((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
             Races race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)fd.race);
+            // Matched to classic: used to retain the same old and new ruler name for each region
+            DFRandom.Seed = oldRuler ? fd.rulerNameSeed >> 16 : fd.rulerNameSeed & 0xffff;
 
             return DaggerfallUnity.Instance.NameHelper.FullName(GetNameBank(race), gender);
         }
@@ -294,21 +305,23 @@ namespace DaggerfallWorkshop.Utility
         {
             switch (race)
             {
-                case Races.Argonian:
                 case Races.Breton:
-                case Races.Khajiit:
                 default:
                     return NameHelper.BankTypes.Breton;
+                case Races.Redguard:
+                    return NameHelper.BankTypes.Redguard;
+                case Races.Nord:
+                    return NameHelper.BankTypes.Nord;
                 case Races.DarkElf:
                     return NameHelper.BankTypes.DarkElf;
                 case Races.HighElf:
                     return NameHelper.BankTypes.HighElf;
                 case Races.WoodElf:
                     return NameHelper.BankTypes.WoodElf;
-                case Races.Nord:
-                    return NameHelper.BankTypes.Nord;
-                case Races.Redguard:
-                    return NameHelper.BankTypes.Redguard;
+                case Races.Khajiit:
+                    return NameHelper.BankTypes.Khajiit;
+                case Races.Argonian:
+                    return NameHelper.BankTypes.Imperial;
             }
         }
 
@@ -887,7 +900,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static string OldLordOfFaction1(IMacroContextProvider mcp)
         {   // %ol1
-            return GetLordNameForFaction(idFaction1);
+            return GetLordNameForFaction(idFaction1, true);
         }
 
         public static string LordOfFaction1(IMacroContextProvider mcp)
@@ -898,6 +911,11 @@ namespace DaggerfallWorkshop.Utility
         public static string LordOfFaction2(IMacroContextProvider mcp)
         {   // %fl2
             return GetLordNameForFaction(idFaction2);
+        }
+
+        public static string LordOfCurrentRegion(IMacroContextProvider mcp)
+        {   // %nrn
+            return GetLordNameForFaction(GameManager.Instance.PlayerGPS.GetCurrentRegionFaction());
         }
 
         public static string TitleOfLordOfFaction1(IMacroContextProvider mcp)
@@ -1247,10 +1265,11 @@ namespace DaggerfallWorkshop.Utility
             return mcp.GetMacroDataSource().Daedra();
         }
 
-        public static string LocationDirection(IMacroContextProvider mcp)
+        public static string Direction(IMacroContextProvider mcp)
         {   // %di
             if (mcp == null) return null;
-            return mcp.GetMacroDataSource().LocationDirection();
+
+            return mcp.GetMacroDataSource().Direction();
         }
 
         public static string DialogHint(IMacroContextProvider mcp)

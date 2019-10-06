@@ -78,7 +78,8 @@ QuestorPostfailure:  [1009]
 <ce>                               behavior.
 
 QuestLogEntry:  [1010]
-%qdt: I have been sent
+%qdt:
+I have been sent
  by _questgiver_ to ___contact_
  where a =contact_
  named _contact_ is waiting
@@ -110,7 +111,8 @@ Item _reward_ gold
 Item _item_ magic_item
 
 Person _questgiver_ group Questor male
-Person _contact_ group Local_3.0 female
+Person _contact_ group Local_3.0
+--removed "female" parameter. UESP says it could be either.
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 4

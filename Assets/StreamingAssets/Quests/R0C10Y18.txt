@@ -82,7 +82,8 @@ QuestLogEntry:  [1010]
 <ce>                   wait longer than =2ndparton_ days.
 
 Message:  1015
-%qdt: _questgiver_
+%qdt:
+_questgiver_
  of ___questgiver_ has sent me
  to bring a _item1_ to a priest in
  ___npc1_, a certain
@@ -196,8 +197,10 @@ yes task:
 
 variable _no_
 _S.10_ task:
-	give item _item2_ to _thief_ saying 1021 
+	give item _item2_ to _thief_
+	say 1021 
 	restrain foe _thief_ 
+--moved "saying 1021" to its own line, wouldn't work as was
 
 _S.11_ task:
 	injured _thief_ 

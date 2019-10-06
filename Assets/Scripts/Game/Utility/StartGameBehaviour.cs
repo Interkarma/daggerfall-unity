@@ -165,10 +165,20 @@ namespace DaggerfallWorkshop.Game.Utility
         void ApplyStartSettings()
         {
             // Resolution
-            Screen.SetResolution(
-                DaggerfallUnity.Settings.ResolutionWidth,
-                DaggerfallUnity.Settings.ResolutionHeight,
-                DaggerfallUnity.Settings.Fullscreen);
+            if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    FullScreenMode.ExclusiveFullScreen);
+            }
+            else
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    DaggerfallUnity.Settings.Fullscreen);
+            }
 
             // Camera settings
             GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
@@ -197,23 +207,8 @@ namespace DaggerfallWorkshop.Game.Utility
                     camera.renderingPath = RenderingPath.DeferredLighting;
             }
 
-            // Shadow Resoltion Mode
-            switch (DaggerfallUnity.Settings.ShadowResolutionMode)
-            {
-                case 0:
-                    QualitySettings.shadowResolution = ShadowResolution.Low;
-                    break;
-                case 1:
-                default:
-                    QualitySettings.shadowResolution = ShadowResolution.Medium;
-                    break;
-                case 2:
-                    QualitySettings.shadowResolution = ShadowResolution.High;
-                    break;
-                case 3:
-                    QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
-                    break;
-            }        
+            // Set shadow resolution
+            GameManager.UpdateShadowResolution();
 
             // VSync settings
             if (DaggerfallUnity.Settings.VSync)

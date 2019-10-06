@@ -186,9 +186,12 @@ Message:  1050
  of vampirism by killing my bloodfather.
  _hunter_ does not know who or where
  my bloodfather is, but %g suggested
- that _vamp1_ of ___vamp1_ might know.
+ that _vamp1_ of
+ ___vamp1_ might know.
  I have =huntstart_ days before the vampire
  hunt begins.
+
+-moved vamp1 line down, was running outside journal boundaries
 
 Message:  1051
 %qdt:

@@ -32,7 +32,6 @@ QuestFail:  [1003]
 <ce>             %pcf, you had better get busy with our little
 <ce>                              arrangement.
 
-
 QuestComplete:  [1004]
 <ce>                   Ah, good to see you %pcf. And the
 <ce>                 _item_ too. Excellent. Here's a little
@@ -70,7 +69,8 @@ QuestorPostfailure:  [1009]
 <ce>                                on you?
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_
+%qdt:
+_questgiver_
  asked me to deliver a _item_ to a contact
  in ___contact_ called _contact_.
  I need to have the _item_ delivered to %g2 at
@@ -109,7 +109,8 @@ Person _contact_ group Local_3.0 female
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 4
-Clock _delay_ 00:30 0 flag 1 range 0 1
+Clock _delay_ 00:30
+--removed flags from _delay_
 
 Foe _thief_ is Nightblade
 
@@ -140,7 +141,9 @@ _S.06_ task:
 	prompt 1020 yes yes no _no_ 
 
 _S.07_ task:
-	give item _item_ to _thief_ saying 1021 
+	give item _item_ to _thief_
+	say 1021
+--moved "saying 1021" to new line. bad argument 
 	restrain foe _thief_ 
 
 _delay_ task:

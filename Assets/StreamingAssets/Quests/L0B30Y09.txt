@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 22
 Quest: L0B30Y09
+DisplayName: An Anonymous Job
 -- Message panels
 QRC:
 
@@ -138,4 +139,5 @@ _onehour_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.02_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 

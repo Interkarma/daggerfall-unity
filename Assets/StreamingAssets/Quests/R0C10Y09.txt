@@ -98,7 +98,8 @@ I hear that =spy_ is over %di of here -- around _hidingplace_.
 A nervous =spy_? I've seen %g2 near _hidingplace_.
 
 Message:  1015
-%qdt: _questgiver_ of
+%qdt:
+_questgiver_ of
  __questgiver_, ___questgiver_,
  has sent me to get a special
  _item_ from someone by the name

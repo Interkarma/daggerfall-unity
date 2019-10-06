@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             minSize = new Vector2(1000, 500);
 
             saveOnExit = EditorPrefs.GetBool(Prefs.SaveOnExit, true);
-            rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Addons");
+            rootPath = Path.Combine(Path.Combine(Application.dataPath, "Game"), "Mods");
             targetPath = EditorPrefs.GetString(Prefs.CurrentTarget, rootPath);
             textPath = Path.Combine(Path.Combine(Application.dataPath, "StreamingAssets"), "Text");
 
@@ -460,7 +460,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             currentPreset = -1;
             LoadPreset(-1);
             data.SyncPresets();
-            modName = GetModName(targetPath);
+            modName = Path.GetFileName(targetPath);
             localPath = GetLocalPath(targetPath);
         }
 
@@ -594,21 +594,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 name = string.Format("{0}({1})", baseName, index++);
 
             return name;
-        }
-
-        private static string GetModName(string path)
-        {
-            int index = path.IndexOf("Addons/");
-            if (index != -1)
-            {
-                string name = path.Substring(index + "Addons/".Length);
-                int endIndex = name.IndexOf('/');
-                if (endIndex != -1)
-                    name = name.Substring(0, endIndex);
-                return name;
-            }
-
-            return "Unknown";
         }
 
         private static string GetLocalPath(string path)

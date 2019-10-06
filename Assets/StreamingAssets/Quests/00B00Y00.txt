@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 32
 Quest: 00B00Y00
+DisplayName: The Price of Knowledge
 -- Message panels
 QRC:
 
@@ -121,5 +122,6 @@ _1stparton_ task:
 	end quest 
 
 _clearclick_ task:
-	when _qgclicked_ and not _mondead_ 
+	when _qgclicked_ and not _mondead_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 

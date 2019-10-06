@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         EffectBundleSettings settings;
         DaggerfallEntityBehaviour casterEntityBehaviour = null;
         DaggerfallUnityItem fromEquippedItem = null;
+        DaggerfallUnityItem castByItem = null;
         int reflectedCount = 0;
 
         #endregion
@@ -66,6 +67,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return fromEquippedItem; }
             set { fromEquippedItem = value; }
+        }
+
+        public DaggerfallUnityItem CastByItem
+        {
+            get { return castByItem; }
+            set { castByItem = value; }
         }
 
         /// <summary>

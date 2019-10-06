@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string conversationDataFilename = "ConversationData.txt";
         const string notebookDataFilename = "NotebookData.txt";
         const string automapDataFilename = "AutomapData.txt";
+        const string questExceptionsFilename = "QuestExceptions.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string bioFileName = "bio.txt";
         const string notReadyExceptionText = "SaveLoad not ready.";
@@ -307,6 +308,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, screenshotFilename));
             File.Delete(Path.Combine(path, containerDataFilename));
             File.Delete(Path.Combine(path, automapDataFilename));
+            File.Delete(Path.Combine(path, questExceptionsFilename));
             File.Delete(Path.Combine(path, conversationDataFilename));
             File.Delete(Path.Combine(path, discoveryDataFilename));
             File.Delete(Path.Combine(path, factionDataFilename));
@@ -346,18 +348,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (LoadInProgress)
                 return;
 
-            // Look for existing save with this character and name
-            int key = FindSaveFolderByNames(characterName, saveName);
-
-            // Get or create folder
-            string path;
-            if (key == -1)
-                path = CreateNewSavePath(enumeratedSaveFolders);
-            else
-                path = GetSaveFolder(key);
-
             // Save game
-            StartCoroutine(SaveGame(saveName, path, instantReload));
+            StartCoroutine(SaveGame(characterName, saveName, instantReload));
         }
 
         public void QuickSave(bool instantReload = false)
@@ -916,8 +908,18 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Utility
 
-        IEnumerator SaveGame(string saveName, string path, bool instantReload = false)
+        IEnumerator SaveGame(string characterName, string saveName, bool instantReload = false)
         {
+            // Look for existing save with this character and name
+            int key = FindSaveFolderByNames(characterName, saveName);
+
+            // Get or create folder
+            string path;
+            if (key == -1)
+                path = CreateNewSavePath(enumeratedSaveFolders);
+            else
+                path = GetSaveFolder(key);
+
             // Build save data
             SaveData_v1 saveData = BuildSaveData();
 
@@ -927,6 +929,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveInfo.saveName = saveName;
             saveInfo.characterName = saveData.playerData.playerEntity.name;
             saveInfo.dateAndTime = saveData.dateAndTime;
+            saveInfo.dfuVersion = VersionInfo.DaggerfallUnityVersion;
 
             // Build faction data
             FactionData_v2 factionData = stateManager.GetPlayerFactionData();
@@ -984,6 +987,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, conversationDataFilename), conversationDataJson);
             WriteSaveFile(Path.Combine(path, notebookDataFilename), notebookDataJson);
 
+            // Save quest exceptions
+            QuestMachine.StoredException[] storedExceptions = QuestMachine.Instance.GetStoredExceptions();
+            string questExceptionsJson = Serialize(storedExceptions.GetType(), storedExceptions);
+            WriteSaveFile(Path.Combine(path, questExceptionsFilename), questExceptionsJson);
+
             // Save backstory text
             if (!File.Exists(Path.Combine(path, bioFileName)))
             {
@@ -1033,6 +1041,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Raise OnSaveEvent
             RaiseOnSaveEvent(saveData);
 
+            // Update saves if needed
+            if (key == -1)
+                EnumerateSaves();
+
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
 
@@ -1058,6 +1070,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
             string conversationDataJson = ReadSaveFile(Path.Combine(path, conversationDataFilename));
             string notebookDataJson = ReadSaveFile(Path.Combine(path, notebookDataFilename));
+
+            // Read quest exceptions
+            if (File.Exists(Path.Combine(path, questExceptionsFilename)))
+            {
+                string questExceptionsJson = ReadSaveFile(Path.Combine(path, questExceptionsFilename));
+                QuestMachine.StoredException[] storedExceptions = Deserialize(typeof(QuestMachine.StoredException[]), questExceptionsJson) as QuestMachine.StoredException[];
+                QuestMachine.Instance.SetStoredExceptions(storedExceptions);
+            }
 
             // Load backstory text
             playerEntity.BackStory = new List<string>();

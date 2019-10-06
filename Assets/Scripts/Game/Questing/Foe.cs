@@ -12,13 +12,13 @@
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility;
-using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing
         string displayName;                 // Foe display name for quest system macros
         string typeName;                    // Foe type name for quest system macros
         List<SpellReference> spellQueue;    // Virtual spell queue to cast on entity
+        ItemCollection itemQueue;           // Items added to this foe by quest system - items will be replicated to all new instances of this foe
 
         #endregion
 
@@ -82,6 +83,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public List<SpellReference> SpellQueue
         {
             get { return spellQueue; }
+        }
+
+        public int ItemQueueCount
+        {
+            get { return (itemQueue == null) ? 0 : itemQueue.Count; }
         }
 
         #endregion
@@ -217,8 +223,34 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (spellQueue == null)
                 spellQueue = new List<SpellReference>();
-            else
-                spellQueue.Add(spell);
+
+            spellQueue.Add(spell);
+        }
+
+        /// <summary>
+        /// Queues an item to be added to Foe inventory.
+        /// Clone of item will be added to all instances of Foe, current and future.
+        /// </summary>
+        /// <param name="item">Item to add.</param>
+        public void QueueItem(DaggerfallUnityItem item)
+        {
+            if (itemQueue == null)
+                itemQueue = new ItemCollection();
+
+            itemQueue.AddItem(item);
+        }
+
+        /// <summary>
+        /// Gets a clone of all items queued on this Foe.
+        /// Original item UIDs will remain on Foe in their item queue.
+        /// </summary>
+        /// <returns>Clone of item queue.</returns>
+        public DaggerfallUnityItem[] GetClonedItemQueue()
+        {
+            if (itemQueue == null || itemQueue.Count == 0)
+                return null;
+
+            return itemQueue.CloneAll();
         }
 
         #endregion
@@ -268,6 +300,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public string displayName;
             public string typeName;
             public List<SpellReference> spellQueue;
+            public ItemData_v1[] itemQueue;
         }
 
         public override object GetSaveData()
@@ -282,6 +315,8 @@ namespace DaggerfallWorkshop.Game.Questing
             data.displayName = displayName;
             data.typeName = typeName;
             data.spellQueue = spellQueue;
+            if (itemQueue != null)
+                data.itemQueue = itemQueue.SerializeItems();
 
             return data;
         }
@@ -301,6 +336,11 @@ namespace DaggerfallWorkshop.Game.Questing
             displayName = data.displayName;
             typeName = data.typeName;
             spellQueue = data.spellQueue;
+            if (data.itemQueue != null)
+            {
+                itemQueue = new ItemCollection();
+                itemQueue.DeserializeItems(data.itemQueue);
+            }
         }
 
         #endregion

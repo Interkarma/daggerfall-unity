@@ -43,6 +43,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Also exit if lycanthropy type not set by this stage (should be set during SetProperties call)
             if (manager.GetRacialOverrideEffect() != null || InfectionType == LycanthropyTypes.None)
                 EndDisease();
+
+            // Cancel infection if player already infected with opposing lycanthropy disease type
+            if (Key == WerewolfInfection.WerewolfInfectionKey)
+            {
+                if (manager.FindIncumbentEffect<WereboarInfection>() != null)
+                    EndDisease();
+            }
+            else if (Key == WereboarInfection.WereboarInfectionKey)
+            {
+                if (manager.FindIncumbentEffect<WerewolfInfection>() != null)
+                    EndDisease();
+            }
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            // While there can only be a single disease incumbent per key, incoming effect can remain memory resident for a short time
+            // This can present duplicate symptoms during time acceleration (e.g. fast travel) from instances waiting to expire
+            // Explicitly terminate non-incumbent payload that it doesn't fire during time acceleration
+            EndDisease();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
@@ -80,8 +100,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void End()
         {
             base.End();
-            DaggerfallRestWindow.OnSleepTick -= ProgressDiseaseAfterSleepOrTravel;
-            DaggerfallTravelPopUp.OnPostFastTravel -= ProgressDiseaseAfterSleepOrTravel;
+            if (IsIncumbent)
+            {
+                DaggerfallRestWindow.OnSleepTick -= ProgressDiseaseAfterSleepOrTravel;
+                DaggerfallTravelPopUp.OnPostFastTravel -= ProgressDiseaseAfterSleepOrTravel;
+            }
         }
 
         #region Abstract Methods
@@ -95,6 +118,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         void ProgressDiseaseAfterSleepOrTravel()
         {
             const string dreamVideoName = "ANIM0002.VID";   // Lycanthropy dream video
+
+            // Do nothing if not incumbent or effect ended
+            if (!IsIncumbent || forcedRoundsRemaining == 0 || daysOfSymptomsLeft == completedDiseaseValue)
+                return;
 
             // Get current day and number of days that have passed (e.g. fast travel can progress time several days)
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
@@ -118,9 +145,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DeployFullBlownLycanthropy();
                 deployedFullBlownLycanthropy = true;
 
-                // End infection
-                forcedRoundsRemaining = 0;
-                ResignAsIncumbent();
+                // Terminate custom disease lifecycle
+                EndDisease();
             }
         }
 

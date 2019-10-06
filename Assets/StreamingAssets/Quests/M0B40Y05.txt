@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: M0B40Y05
+DisplayName: Hunt for a Spriggan
 -- Message panels
 QRC:
 
@@ -184,7 +185,9 @@ _qgclicked_ task:
 
 _normalvict_ task:
                 when _qgclicked_ and _S.01_
+	say 1003
                 start task _victory_
+--1003 appears to be a victory statement for kill path
 
 _victory_ task:
 	give pc _gold_ 
@@ -199,7 +202,7 @@ _S.04_ task:
 	injured _monster_
 
 _injtalk_ task:
-                when _S.04 and not _S.01_
+    when _S.04_ and not _S.01_
 	prompt 1020 yes _yes_ no _no_ 
 
 _yes_ task:

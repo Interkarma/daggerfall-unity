@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 01
 -- QuestId: 6
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C01Y06
 -- Message panels
@@ -153,7 +154,8 @@ Place _meetingplace_ local tavern
 Place _hidingplace_ remote house1
 
 Clock _escapetime_ 00:00 0 flag 1 range 0 5
-Clock _shortdelay_ 00:01 0 flag 1 range 0 1
+Clock _shortdelay_ 00:01
+--flags extend the timer greatly
 Clock _S.13_ 1.00:00 0 flag 1 range 0 1
 
 Foe _mmaster_ is Orc_shaman

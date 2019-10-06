@@ -16,7 +16,7 @@ spells,                                             Spells
 tooltips,                                           Tooltips
 hud,                                                HUD
 gui,                                                GUI
-light,                                              Light
+light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
 
@@ -52,11 +52,11 @@ bowDrawback,                                        Bows - draw and release
 bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
 
 toolTips,                                           Tool Tips
-toolTipsInfo,                                       Shows informations about GUI items
+toolTipsInfo,                                       Shows information about GUI items
 toolTipDelayInSeconds,                              Delay
 toolTipDelayInSecondsInfo,                          Tooltip delay in seconds
 toolTipTextColor,                                   Text Color
-toolTipTextColorInfo,                               Font color for tooltips text
+toolTipTextColorInfo,                               Font color for tooltips' text
 toolTipBackgroundColor,                             Background Color
 toolTipBackgroundColorInfo,                         Background color for tooltips
 crosshair,                                          Crosshair
@@ -64,7 +64,7 @@ crosshairInfo,                                      Enable Crosshair on HUD
 vitalsIndicators,                                   Vitals Indicators
 vitalsIndicatorsInfo,                               Show indicators on vitals bars that display changes in vitals
 interactionModeIcon,                                Interaction Mode Icon
-interactionModeIconInfo,                            Style of contex icon for interaction mode
+interactionModeIconInfo,                            Style of context icon for interaction mode
 arrowCounter,                                       Arrow counter
 arrowCounterInfo,                                   Enable an arrow counter on the HUD when using bows
 freeScaling,                                        Free scaling
@@ -82,7 +82,11 @@ helmAndShieldMaterialDisplayInfo,                   Show material for helms and 
 geographicBackgrounds,                              Geographic backgrounds
 geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 dungeonExitWagonPrompt,                             Dungeon wagon access prompt
-dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 10m of exit)
+dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 5m of exit)
+loiterLimitInHours,                                 Maximum loiter time in hours
+loiterLimitInHoursInfo,                             Change default loiter time limit in hours
+guildQuestListBox,                                  Guild quest player selection
+guildQuestListBoxInfo,                              Presents eligible guild quests in a list box
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
@@ -119,6 +123,8 @@ resolution,                                         Resolution
 resolutionInfo,                                     Screen resolution
 fullscreen,                                         Fullscreen
 fullscreenInfo,                                     Enable fullscreen
+exclusiveFullscreen,                                Exclusive Fullscreen
+exclusiveFullscreenInfo,                            Enable exclusive fullscreen
 qualityLevel,                                       Quality Level
 qualityLevelInfo,                                   General graphic quality
 mainFilterMode,                                     Main Filter
@@ -138,7 +144,7 @@ dungeonLightShadowsInfo,                            Dungeon lights cast shadows
 interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
 exteriorLightShadows,                               Exterior Light Shadows
-exteriorLightShadowsInfo,                           Exterior sunlight cast shadows
+exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
 useLegacyDeferred,                                  Use Legacy Deferred
 useLegacyDeferredInfo,                              Legacy rendering path
 retroRenderingMode,                                 Retro Rendering Mode

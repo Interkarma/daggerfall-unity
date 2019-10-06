@@ -160,6 +160,7 @@ _1stparton_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 
+	say 1003
 	clear _qgclicked_ 
 
 _delay_ task:

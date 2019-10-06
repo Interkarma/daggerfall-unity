@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: F0B00Y00
+DisplayName: Desired Artwork
 -- Message panels
 QRC:
 
@@ -165,6 +166,14 @@ _qgclicked_ task:
 	toting _item_ and _questgiver_ clicked 
 	give pc _reward_ 
 	end quest 
+
+_qgclick2_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgclick2_
 
 variable _S.04_
 variable _S.05_

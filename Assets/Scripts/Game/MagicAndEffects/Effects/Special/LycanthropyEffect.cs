@@ -38,8 +38,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const string cureQuestName = "$CUREWER";
         const int paperDollWidth = 110;
         const int paperDollHeight = 184;
-        const int needToKillHealthLimit = 4;
+        const int needToKillHealthLimitMinimum = 4;
         const int needToKillNotifySeconds = 120;
+        const int needToKillPeriod = DaggerfallDateTime.MinutesPerDay * DaggerfallDateTime.DaysPerMonth;
+        const float needToKillHealthLossPerMinute = 24.0f / DaggerfallDateTime.MinutesPerDay;
 
         RaceTemplate compoundRace;
         LycanthropyTypes infectionType = LycanthropyTypes.None;
@@ -70,6 +72,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #endregion
 
         #region Properties
+
+        private uint TimeSinceLastInnocentKilled
+        {
+            get { return DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastKilledInnocent; }
+        }
 
         public LycanthropyTypes InfectionType
         {
@@ -203,7 +210,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 }
 
                 // Limit maximum health
-                GameManager.Instance.PlayerEntity.SetMaxHealthLimiter(needToKillHealthLimit);
+                // This gradually decreases max health over time until a limit is reached
+                uint urgeDuration = TimeSinceLastInnocentKilled - needToKillPeriod;
+                int reduction = Mathf.RoundToInt(urgeDuration * needToKillHealthLossPerMinute);
+                int healthLimit = GameManager.Instance.PlayerEntity.RawMaxHealth - reduction;
+                if (healthLimit < needToKillHealthLimitMinimum)
+                    healthLimit = needToKillHealthLimitMinimum;
+                GameManager.Instance.PlayerEntity.SetMaxHealthLimiter(healthLimit);
             }
 
             // Copy transformed state to player entity - used as a hostile condition by mobile NPCs
@@ -401,10 +414,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         public void UpdateSatiation()
         {
-            // Store time sated and reset need to kill timer to 0 so player is notified immediately next time
-            lastKilledInnocent = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            urgeToKillRising = false;
+            // Store time sated
+            lastKilledInnocent = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();  
+
+            // Reset need to kill timer to 0 so player is notified immediately next time
             needToKillNotifyTimer = 0;
+            urgeToKillRising = false;
         }
 
         /// <summary>
@@ -561,7 +576,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         bool GetNeedToKill()
         {
-            return !wearingHircineRing && DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastKilledInnocent > DaggerfallDateTime.MinutesPerDay * DaggerfallDateTime.DaysPerMonth;
+            return !wearingHircineRing && TimeSinceLastInnocentKilled > needToKillPeriod;
         }
 
         bool CanCastMorphSelf()

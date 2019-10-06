@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public EntityTypes casterEntityType;
         public ulong casterLoadID;
         public DaggerfallUnityItem fromEquippedItem;
+        public DaggerfallUnityItem castByItem;
         public List<IEntityEffect> liveEffects;
     }
 }

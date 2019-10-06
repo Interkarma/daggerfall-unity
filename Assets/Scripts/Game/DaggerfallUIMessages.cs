@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenSpellBookWindow = "dfuiOpenSpellBookWindow";
         public const string dfuiOpenSpellMakerWindow = "dfuiOpenSpellMakerWindow";
         public const string dfuiOpenItemMakerWindow = "dfuiOpenItemMakerWindow";
+        public const string dfuiOpenPotionMakerWindow = "dfuiOpenPotionMakerWindow";
         public const string dfuiOpenUseMagicItemWindow = "dfuiOpenUseMagicItemWindow";
 
         // Status info messages
@@ -66,5 +67,6 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenCourtWindow = "dfuiOpenCourtWindow";
 
         // "Debug" window messages
+        public const string dfuiOpenDemoClassQuestions = "dfuiOpenDemoClassQuestions";
     }
 }

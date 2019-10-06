@@ -21,9 +21,6 @@ namespace DaggerfallWorkshop.Game
 
         bool isCrouching = false;
 
-        // TODO: Placeholder integration of horse & cart riding - using same speed for cart to simplify PlayerMotor integration
-        // and avoid adding any references to TransportManager.
-
         bool isRiding = false;
 
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
@@ -47,7 +44,7 @@ namespace DaggerfallWorkshop.Game
 
         private ClimbingMotor climbingMotor;
         private RappelMotor rappelMotor;
-        private HangingMotor hangingMotor;
+        //private HangingMotor hangingMotor;
         private PlayerHeightChanger heightChanger;
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
@@ -240,7 +237,7 @@ namespace DaggerfallWorkshop.Game
             playerScanner = GetComponent<PlayerMoveScanner>();
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
             rappelMotor = GetComponent<RappelMotor>();
-            hangingMotor = GetComponent<HangingMotor>();
+            //hangingMotor = GetComponent<HangingMotor>();
 
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
@@ -277,14 +274,14 @@ namespace DaggerfallWorkshop.Game
             playerScanner.FindHeadHit(new Ray(controller.transform.position, Vector3.up));
             playerScanner.SetHitSomethingInFront();
             // Check if should hang
-            hangingMotor.HangingChecks();
+            //hangingMotor.HangingChecks();
             // Handle Rappeling
             rappelMotor.RappelChecks();
             // Handle climbing
             climbingMotor.ClimbingCheck();
 
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
-            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing || hangingMotor.IsHanging)
+            if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing /*|| hangingMotor.IsHanging*/)
             {
                 moveDirection = Vector3.zero;
                 return;

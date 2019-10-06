@@ -6,6 +6,7 @@
 -- QuestId: 8
 Messages: 14
 Quest: Q0C00Y08
+DisplayName: A Rare Tome
 -- Message panels
 QRC:
 

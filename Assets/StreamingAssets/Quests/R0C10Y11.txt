@@ -84,7 +84,8 @@ One of _questgiver_'s fences. _qgfriend_ practically lives at __qgfriend_.
 That =qgfriend_? _qgfriend_ is a fence for a den of smugglers at __qgfriend_.
 
 Message:  1015
-%qdt: _questgiver_ of
+%qdt:
+_questgiver_ of
  __questgiver_ has asked me
  to deliver a certain _item_ to
  an associate named _qgfriend_.

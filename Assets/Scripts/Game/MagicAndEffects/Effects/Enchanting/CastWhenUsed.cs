@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         // Self-cast spells are all assigned directly to self, "click to cast" spells are loaded to ready spell
                         // TODO: Support multiple ready spells so all loaded spells are launched on click
                         bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
+                        bundle.CastByItem = sourceItem;
                         if (bundle.Settings.TargetType == TargetTypes.CasterOnly)
                             effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
                         else

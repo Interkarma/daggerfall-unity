@@ -27,10 +27,20 @@ namespace DaggerfallWorkshop.Game.Utility
         void Start()
         {
             // Resolution
-            Screen.SetResolution(
-                DaggerfallUnity.Settings.ResolutionWidth,
-                DaggerfallUnity.Settings.ResolutionHeight,
-                DaggerfallUnity.Settings.Fullscreen);
+            if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    FullScreenMode.ExclusiveFullScreen);
+            }
+            else
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    DaggerfallUnity.Settings.Fullscreen);
+            }
 
             // Check arena2 path is validated OK, otherwise start game setup
             if (!DaggerfallUnity.Instance.IsPathValidated || DaggerfallUnity.Settings.ShowOptionsAtStart)

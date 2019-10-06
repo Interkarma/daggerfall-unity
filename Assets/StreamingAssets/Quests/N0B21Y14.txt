@@ -4,8 +4,10 @@
 -- Questor: mage
 -- Repute: 21
 -- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 25
 Quest: N0B21Y14
+DisplayName: Oracle
 -- Message panels
 QRC:
 
@@ -115,14 +117,19 @@ Message:  1015
 
 Message:  1016
 %qdt:
- The Acolyte told me that he is attempting to
- convince _noble_, to leave _noblehouse_
- lest %g die and by dying, bring calamity to
- all %reg. I have been asked either to speak
- with _noble_ myself or go to __oracletemple_
- to escort the Oracle, the Acolyte's mistress, here.
- She might be able to convince _noble_,
- but, then again, so might I.
+ The Acolyte told me that
+ he is attempting to convince
+ _noble_, to leave _noblehouse_
+ lest %g die and by dying, bring
+ calamity to all %reg. I have been
+ asked either to speak with _noble_
+ myself or go to __oracletemple_
+ to escort the Oracle, the Acolyte's
+ mistress, here. She might be able to
+ convince _noble_, but, then again,
+ so might I.
+
+-changed 1016 to shorter lines, was running offscreen in journal
 
 Message:  1017
 <ce>                         You are %pcn, the %ra
@@ -242,14 +249,17 @@ Message:  1024
 --          _temple_ occurs 7 times.
 
 QBN:
-Item oracleNote letter used 1011
-Item oracleMsg letter used 1024
+Item _oracleNote_ letter used 1011
+Item _oracleMsg_ letter used 1024
+--added underscores to oracleNote and oracleMsg because they are variables
 Item _gold_ gold
 
-Person _oracle_ face 251 faction The_Oracle anyInfo 1013
-Person _acolyte_ face 5 faction The_Acolyte anyInfo 1012
+Person _oracle_ face 251 named The_Oracle anyInfo 1013
+Person _acolyte_ face 5 named The_Acolyte anyInfo 1012
+-changed oracle and acolyte to Named instead of Faction to prevent dialogue beginning
 Person _noble_ face 25 factiontype Province
-Person %thd named Queen_Akorithi
+Person _thd_ named Queen_Akorithi
+--%thd corrected to _thd_
 Person _love_ face 1 group Group_7.0
 Person _giver_ group Questor male
 
@@ -264,12 +274,12 @@ Clock _queston2_ 00:00 0 flag 17 range 0 2
 
 --	Quest start-up:
 	dialog link for location _temple_ person _acolyte_ 
-	dialog link for location _mondung_ person %thd 
+	dialog link for location _mondung_ person _thd_ 
 	dialog link for location _noblehouse_ person _love_ 
 	dialog link for person _noble_ 
 	pick one of _S.02_ _S.01_ 
-	oracleNote used do _readletter_ 
-	oracleMsg used do _readletter_ 
+	_oracleNote_ used do _readletter_ 
+	_oracleMsg_ used do _readletter_ 
 	create npc at _noblehouse_ 
 	place npc _oracle_ at _oracletemple_ 
 	place npc _acolyte_ at _temple_ 
@@ -284,11 +294,11 @@ _S.00_ task:
 
 _S.01_ task:
 	start timer _queston1_ 
-	get item oracleNote 
+	get item _oracleNote_ 
 
 _S.02_ task:
 	start timer _queston2_ 
-	get item oracleMsg 
+	get item _oracleMsg_ 
 
 _S.03_ task:
 	clicked npc _oracle_ 
@@ -301,17 +311,19 @@ _S.04_ task:
 
 _S.05_ task:
 	when _S.04_ and _S.03_ 
-	give pc nothing 
 	say 1018 
-	change repute with %thd by +10 
+	give pc nothing 
+	change repute with _thd_ by +10 
 	end quest 
+--victory message changed to after 1018, more logical dialogue
 
 _S.06_ task:
 	when _S.04_ and _S.07_ 
-	give pc _gold_ 
 	get item _gold_ 
 	say 1019 
+	give pc _gold_ 
 	end quest 
+-victory message changed to after 1019, more logical dialogue
 
 _S.07_ task:
 	clicked npc _love_ 

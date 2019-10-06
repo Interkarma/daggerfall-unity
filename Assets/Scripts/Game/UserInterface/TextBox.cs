@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         NumericMode numericMode = NumericMode.Natural;
         bool upperOnly = false;
         bool fixedSize = false;
+        bool previousSDFState;
 
         public int MaxCharacters
         {
@@ -142,6 +143,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (!fixedSize)
                 this.Size = CalculateCurrentSize();
+
+            previousSDFState = this.font.IsSDFCapable;
         }
 
         public override void Update()
@@ -155,6 +158,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Do nothing if focus-enabled and does not have focus
             if (UseFocus && !HasFocus())
                 return;
+
+            // SDF fonts can have different widths to classic so need to recalc cursor position any time this changes
+            bool sdfState = font.IsSDFCapable;
+            if (sdfState != previousSDFState)
+            {
+                SetCursorPosition(cursorPosition);
+                previousSDFState = sdfState;
+            }
 
             // Moving cursor left and right
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
@@ -314,10 +325,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             cursorPosition = newCursorPosition;
 
             float width = 0;
-            if (cursorPosition > 0)
-                width = GetCharacterWidthToCursor() - font.GlyphSpacing;
-
-            textCursor.Position = new Vector2(width + textOffset, textOffset);
+            if (!font.IsSDFCapable)
+            {
+                if (cursorPosition > 0)
+                    width = GetCharacterWidthToCursor() - font.GlyphSpacing;
+                textCursor.Position = new Vector2(width + textOffset, textOffset);
+            }
+            else
+            {
+                width = GetCharacterWidthToCursor();
+                textCursor.Position = new Vector2(width, textOffset);
+            }
             textCursor.BlinkOn();
         }
 
@@ -326,7 +344,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (font == null)
                 return 0;
 
-            return font.GetCharacterWidth(text, cursorPosition);
+            return font.CalculateTextWidth(text, LocalScale, 0, cursorPosition);
         }
 
         //calculate the size required for max chars using widest glyphs
@@ -345,14 +363,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
-            int totalWidth = (width + font.GlyphSpacing) * MaxCharacters;
+            float totalWidth = (width + font.GlyphSpacing) * MaxCharacters;
             return new Vector2(totalWidth, font.GlyphHeight);
         }
 
         // Calculate the current size
         private Vector2 CalculateCurrentSize()
         {
-            int width = 0;
+            float width = 0;
             byte[] asciiBytes;
             asciiBytes = Encoding.ASCII.GetBytes(text);
 
@@ -360,7 +378,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Invalid ASCII bytes are cast to a space character
                 if (!font.HasGlyph(asciiBytes[i]))
-                    asciiBytes[i] = DaggerfallFont.SpaceASCII;
+                    asciiBytes[i] = DaggerfallFont.SpaceCode;
 
                 // Calculate total width
                 DaggerfallFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);

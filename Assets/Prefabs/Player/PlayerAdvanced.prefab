@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 114397629012878356}
   - component: {fileID: 114025923971531530}
   - component: {fileID: 114374011142275900}
-  - component: {fileID: 114306241537309130}
   m_Layer: 0
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -1100,7 +1099,7 @@ MonoBehaviour:
   jumpSpeed: 8
   gravity: 20
   crouchingJumpDelta: 0.8
-  fallingDamageThreshold: 10
+  fallingDamageThreshold: 5
   airControl: 0
 --- !u!114 &114121517922970790
 MonoBehaviour:
@@ -1164,17 +1163,6 @@ MonoBehaviour:
   useWalkSpeedOverride: 0
   runSpeedOverride: 11
   useRunSpeedOverride: 0
---- !u!114 &114306241537309130
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5edb302c5ae1c94418f8d81f1e9257a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114338371543951144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1348,7 +1336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e59a84727916a12479a199612a450dcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RidingVolumeScale: 1
+  RidingVolumeScale: 0.45
 --- !u!114 &114807000041290672
 MonoBehaviour:
   m_ObjectHideFlags: 1

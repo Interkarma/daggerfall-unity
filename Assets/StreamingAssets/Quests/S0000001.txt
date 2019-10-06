@@ -20,7 +20,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>               You will? Thank %god. You see, I used to
-<ce>          to have an older brother, ten or eleven years older
+<ce>          have an older brother, ten or eleven years older
 <ce>        than me, named _brother_. Whenever I ask what happened
 <ce>          to him, I'm told a different story. Some say he got
 <ce>            sick and died, some say he was kidnapped by the
@@ -318,6 +318,7 @@ Place _dirennitower_ permanent DirenniTowerEntry
 Place _agentplace_ remote tavern
 
 Clock _S.13_ 3.00:00 7.00:00
+-1002 edited to remove additional 'to'
 
 
 --	Quest start-up:
@@ -331,6 +332,8 @@ _S.00_ task:
 	give pc _magicitem_ 
 	add dialog for location _dirennitower_ 
 	remove log step 0 
+	remove log step 1
+--added additional remove log. directions would linger in journal.
 	reveal _dirennitower_ in province 9 at 204718 
 	repute with _akorithi_ exceeds 0 do _S.16_ 
 	change repute with _lhotun_ by +15 

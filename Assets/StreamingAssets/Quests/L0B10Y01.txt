@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 21
 Quest: L0B10Y01
+DisplayName: A Fateful Song
 -- Message panels
 QRC:
 
@@ -140,4 +141,5 @@ _1stparton_ task:
 variable _2ndparton_
 _clearclick_ task:
 	when _qgclicked_ and not _S.02_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 

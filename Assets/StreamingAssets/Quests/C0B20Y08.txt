@@ -6,6 +6,7 @@
 -- QuestId: 8
 Messages: 12
 Quest: C0B20Y08
+DisplayName: The Rite of Atonement
 -- Message panels
 QRC:
 

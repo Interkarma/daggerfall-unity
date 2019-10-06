@@ -4,8 +4,10 @@
 -- Questor: witch
 -- Repute: 0X
 -- QuestId: 2
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 21
 Quest: Q0C0XY02
+DisplayName: A Treacherous Gift
 -- Message panels
 QRC:
 
@@ -183,7 +185,8 @@ _qgclicked_ task:
 
 _S.08_ task:
 	when _qgclicked_ and _S.06_ 
-	say 1020 
+	say 1012
+	--this was 1020, could not be correct. changed to 1012.
 	change repute with _man_ by -15 
 	make pc ill with Witches'_Pox 
 	end quest 

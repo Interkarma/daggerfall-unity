@@ -542,7 +542,7 @@ MonoBehaviour:
   toggleRun: 0
   jumpSpeed: 8
   gravity: 20
-  fallingDamageThreshold: 10
+  fallingDamageThreshold: 5
   slideWhenOverSlopeLimit: 0
   slideOnTaggedObjects: 0
   slideSpeed: 12

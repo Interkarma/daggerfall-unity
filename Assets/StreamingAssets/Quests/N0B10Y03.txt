@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 14
 Quest: N0B10Y03
+DisplayName: Guard the Guild
 -- Message panels
 QRC:
 
@@ -69,12 +70,15 @@ QuestorPostfailure:  [1009]
 <ce>                            Leave me, %pcn.
 
 QuestLogEntry:  [1010]
-%qdt: I agreed
+%qdt:
+ I agreed
  to guard a magic _treasure_
  at the Mages Guild of
  ___qgiver_. I have
  to be there between midnight
  and three.
+
+-moved line down from %qdt line.
 
 Message:  1011
 %qdt:
@@ -115,8 +119,8 @@ Person _qgiver_ group Questor male
 
 Place _magesguild_ local magery
 
-Clock _oneday_ 1.03:00 0 flag 1 range 0 1
-Clock _S.10_ 3.00:00 0 flag 1 range 0 1
+Clock _oneday_ 1.03:00
+Clock _S.10_ 3.00:00
 
 Foe _F.00_ is Thief
 Foe _F.01_ is 4 Knight
@@ -124,7 +128,7 @@ Foe _F.01_ is 4 Knight
 --	Quest start-up:
 	place item _treasure_ at _magesguild_ 
 	start timer _oneday_ 
-	log 1010 step 0 
+	log 1010 step 0
 	create npc at _magesguild_ 
 
 _oneday_ task:
@@ -138,10 +142,11 @@ _S.02_ task:
 	pc at _magesguild_ set _S.03_ 
 
 _S.03_ task:
-	create foe _F.00_ every 83 minutes 1 times with 100% success 
-	create foe _F.00_ every 100 minutes 1 times with 100% success 
-	create foe _F.00_ every 85 minutes 1 times with 100% success 
-	create foe _F.00_ every 82 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	--spawn times reduced. leaving them at classic values would be very disjointed; one thief would arrive nearly half an hour later. classic tended to spawn all at once
 
 _S.04_ task:
 	injured _F.00_ saying 1012 
@@ -151,9 +156,11 @@ _S.05_ task:
 
 _S.06_ task:
 	clicked item _treasure_ 
+	clear _dropped_
 
-until _S.06_ performed:
+_dropped_ task:
 	dropped _treasure_ at _magesguild_ 
+	clear _S.06_
 
 _S.07_ task:
 	when _S.06_ and not _S.02_ 

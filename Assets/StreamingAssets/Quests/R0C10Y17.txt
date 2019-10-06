@@ -81,7 +81,8 @@ QuestorPostfailure:  [1009]
 <ce>                             with you now.
 
 QuestLogEntry:  [1010]
-%qdt: I am bringing
+%qdt:
+I am bringing
  _npc1_ of __npc1_,
  ___npc1_ a _item1_ in
  exchange for some item that
@@ -91,7 +92,8 @@ QuestLogEntry:  [1010]
  the first part of this delivery.
 
 Message:  1011
-%qdt: _npc1_ sent
+%qdt:
+_npc1_ sent
  me on to _npc2_, the third
  party in ___npc2_, with some
  _item2_. I will recognize

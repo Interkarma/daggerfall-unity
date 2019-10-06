@@ -6,6 +6,7 @@
 -- QuestId: 4
 Messages: 18
 Quest: Q0C00Y04
+DisplayName: A Special Mixture
 -- Message panels
 QRC:
 

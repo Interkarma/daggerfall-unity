@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 16
 Quest: B0B00Y00
+DisplayName: The Princess
 -- Message panels
 QRC:
 
@@ -14,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                 has been captured from our protection,
 <ce>                   and it is the responsibility of us
 <ce>                 knights to rescue her. Unfortunately,
-<ce>                  many of our members of off fighting
+<ce>                  many of our members are off fighting
 <ce>                  in the war. In the truest spirit of
 <ce>                  chivalry, will you go to rescue the
 <ce>                  princess from the _monster_ who has
@@ -210,5 +211,6 @@ _S.09_ task:
 	say 1013 
 
 _clearclick_ task:
-	when _qgclicked_ and not _S.04_ 
+	when _qgclicked_ and not _S.04_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 

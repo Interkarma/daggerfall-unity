@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.currentPosition = loot.transform.position;
             data.localPosition = loot.transform.localPosition;
             data.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
+            data.heightScale = loot.transform.localScale.y;
             data.worldContext = loot.WorldContext;
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
@@ -126,6 +127,15 @@ namespace DaggerfallWorkshop.Game.Serialization
 
                     // Restore billboard appearance
                     billboard.SetMaterial(data.textureArchive, data.textureRecord);
+
+                    // Fix position if custom scale changed
+                    if (data.heightScale == 0)
+                        data.heightScale = 1;
+                    if (data.heightScale != billboard.transform.localScale.y)
+                    {
+                        float height = billboard.Summary.Size.y * (data.heightScale / billboard.transform.localScale.y);
+                        billboard.transform.Translate(0, (billboard.Summary.Size.y - height) / 2f, 0);
+                    }
                 }
             }
 

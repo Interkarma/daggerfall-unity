@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: O0B00Y00
+DisplayName: A Hot Stone
 -- Message panels
 QRC:
 
@@ -160,6 +161,15 @@ _npcclicked_ task:
 	create foe _guards_ every 173 minutes 3 times with 25% success 
 	get item _gems_ 
 	say 1010 
+
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
 
 _1stparton_ task:
 	start timer _delay_ 

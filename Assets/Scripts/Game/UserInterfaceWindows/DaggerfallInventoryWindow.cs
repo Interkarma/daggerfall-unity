@@ -172,6 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool usingWagon = false;
         bool allowDungeonWagonAccess = false;
         bool chooseOne = false;
+        Action<DaggerfallUnityItem> chooseOneCallback;
         bool shopShelfStealing = false;
         bool isPrivateProperty = false;
         int lootTargetStartCount = 0;
@@ -254,10 +255,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowDungeonWagonAccess = true;
         }
 
-        public void SetChooseOne(ItemCollection items)
+        public void SetChooseOne(ItemCollection items, Action<DaggerfallUnityItem> callback)
         {
             chooseOne = true;
             remoteItems = items;
+            chooseOneCallback = callback;
         }
 
         public void SetShopShelfStealing()
@@ -313,10 +315,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
-            if (lootTarget != null)
-                SelectActionMode(ActionModes.Remove);
-            else
-                SelectActionMode(ActionModes.Equip);
+            SelectActionMode((lootTarget != null) ? ActionModes.Remove : ActionModes.Equip);
+            CheckWagonAccess();
 
             // Setup initial display
             FilterLocalItems();
@@ -374,11 +374,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
-            if (shopShelfStealing)
-            {
-                remoteItemListScroller.BackgroundAnimationHandler = StealItemBackgroundAnimationHandler;
-                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
-            }
+            SetRemoteItemsAnimation();
+
             if (itemInfoPanelLabel != null)
                 remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
         }
@@ -620,14 +617,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (IsSetup)
             {
-                // Start with wagon if accessing from dungeon
-                if (allowDungeonWagonAccess) {
-                    ShowWagon(true);
-                    SelectActionMode(ActionModes.Remove);
-                }
+                CheckWagonAccess();
                 // Reset item list scroll
                 localItemListScroller.ResetScroll();
                 remoteItemListScroller.ResetScroll();
+                SetRemoteItemsAnimation();
             }
             // Clear info panel
             if (itemInfoPanelLabel != null)
@@ -635,9 +629,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Update tracked weapons for setting equip delay
             SetEquipDelayTime(false);
-
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                DungeonWagonAccessProximityCheck();
 
             // Refresh window
             Refresh();
@@ -758,6 +749,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Helper Methods
+
+        protected void SetRemoteItemsAnimation()
+        {
+            // Add animation handler for shop shelf stealing
+            if (shopShelfStealing)
+            {
+                remoteItemListScroller.BackgroundAnimationHandler = StealItemBackgroundAnimationHandler;
+                remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
+            }
+            else
+                remoteItemListScroller.BackgroundAnimationHandler = null;
+        }
 
         protected void SelectTabPage(TabPages tabPage)
         {
@@ -1034,7 +1037,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
         }
 
-        void DungeonWagonAccessProximityCheck()
+        private void CheckWagonAccess()
+        {
+            if (allowDungeonWagonAccess)
+            {
+                ShowWagon(true);
+                SelectActionMode(ActionModes.Remove);
+            }
+            else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon &&
+                     PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart) &&
+                     DungeonWagonAccessProximityCheck())
+            {
+                allowDungeonWagonAccess = true;
+                if (lootTarget == null)
+                    ShowWagon(true);
+            }
+        }
+
+        bool DungeonWagonAccessProximityCheck()
         {
             const float proximityWagonAccessDistance = 5f;
 
@@ -1042,13 +1062,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallStaticDoors[] allDoors = GameObject.FindObjectsOfType<DaggerfallStaticDoors>();
             if (allDoors != null && allDoors.Length > 0)
             {
+                Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
                 // Find closest door to player
                 float closestDoorDistance = float.MaxValue;
                 foreach (DaggerfallStaticDoors doors in allDoors)
                 {
                     int doorIndex;
                     Vector3 doorPos;
-                    Vector3 playerPos = GameManager.Instance.PlayerObject.transform.position;
                     if (doors.FindClosestDoorToPlayer(playerPos, -1, out doorPos, out doorIndex, DoorTypes.DungeonExit))
                     {
                         float distance = Vector3.Distance(playerPos, doorPos);
@@ -1059,8 +1079,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Allow wagon access if close enough to any exit door
                 if (closestDoorDistance < proximityWagonAccessDistance)
-                    allowDungeonWagonAccess = true;
-            }  
+                    return true;
+            }
+            return false;
         }
 
         void UpdateItemInfoPanel(DaggerfallUnityItem item)
@@ -1163,15 +1184,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon || allowDungeonWagonAccess)
-            {
-                if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
-                    ShowWagon(!usingWagon);
-                else
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
-            }
-            else
+            if (!PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
+            else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
+            else
+                ShowWagon(!usingWagon);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -1396,16 +1414,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Item questItem = GetQuestItem(item);
 
                 // Player cannot drop most quest items
-                if (questItem == null | (!questItem.AllowDrop && from == localItems))
+                if (questItem == null || (!questItem.AllowDrop && from == localItems))
                 {
                     DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
                     return;
                 }
 
                 // Dropping or picking up quest item
-                if (questItem.AllowDrop && from == localItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                if (questItem.AllowDrop && from == localItems && remoteTargetType != RemoteTargetTypes.Wagon)
                     questItem.PlayerDropped = true;
-                else if (questItem.AllowDrop && from == remoteItems && remoteTargetType == RemoteTargetTypes.Dropped)
+                else if (from == remoteItems)
                     questItem.PlayerDropped = false;
             }
             // Extinguish light sources when transferring out of player inventory
@@ -1487,8 +1505,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            if (chooseOne)
+            if (chooseOne && remoteItems == from && !usingWagon)
+            {
+                while (uiManager.TopWindow != this)
+                    uiManager.PopWindow();
                 CloseWindow();
+                chooseOneCallback(item);
+            }
         }
 
         protected void ShowInfoPopup(DaggerfallUnityItem item)
@@ -1595,11 +1618,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
+            // Try to handle use with a registered delegate
+            ItemHelper.ItemUseHander itemUseHander;
+            if (DaggerfallUnity.Instance.ItemHelper.GetItemUseHander(item.TemplateIndex, out itemUseHander))
+            {
+                if (itemUseHander(item, collection))
+                    return;
+            }
+
             // Handle normal items
             if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
-                DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                DaggerfallUI.Instance.BookReaderWindow.OpenBook(item);
+                if (DaggerfallUI.Instance.BookReaderWindow.IsBookOpen)
+                {
+                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                }
+                else
+                {
+                    var messageBox = new DaggerfallMessageBox(uiManager, this);
+                    messageBox.SetText(TextManager.Instance.GetText(textDatabase, "bookUnavailable"));
+                    messageBox.ClickAnywhereToClose = true;
+                    uiManager.PushWindow(messageBox);
+                }
             }
             else if (item.IsPotion)
             {   // Handle drinking magic potions
@@ -1686,11 +1727,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Will see what feedback is like and revert to classic behaviour if widely preferred
             if (item.IsEnchanted)
             {
+                // Close the inventory window first. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to close those.
+                CloseWindow();
                 GameManager.Instance.PlayerEffectManager.DoItemEnchantmentPayloads(MagicAndEffects.EnchantmentPayloadFlags.Used, item, collection);
-
-                // Only pop the inventory window. Some artifacts (Azura's Star, the Oghma Infinium) create windows on use and we don't want to pop those.
-                if (DaggerfallUI.Instance.UserInterfaceManager.TopWindow.GetType() == typeof(DaggerfallInventoryWindow))
-                  DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
                 return;
             }
         }
@@ -1860,7 +1899,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Transfer to local items
                 if (localItems != null)
                     TransferItem(item, remoteItems, localItems, CanCarryAmount(item), equip: true);
-                if (lootTarget.houseOwned)
+                if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
@@ -1873,7 +1912,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (selectedActionMode == ActionModes.Remove)
             {
                 TransferItem(item, remoteItems, localItems, CanCarryAmount(item));
-                if (lootTarget.houseOwned)
+                if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
             else if (selectedActionMode == ActionModes.Info)

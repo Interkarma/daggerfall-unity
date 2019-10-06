@@ -71,6 +71,7 @@ namespace DaggerfallWorkshop
         public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
+        public bool ExclusiveFullscreen { get; set; }
         public int FieldOfView { get; set; }
         public int ShadowResolutionMode { get; set; }
         public int MainFilterMode { get; set; }
@@ -118,6 +119,9 @@ namespace DaggerfallWorkshop
         public bool EnableArrowCounter { get; set; }
         public bool DungeonExitWagonPrompt { get; set; }
         public bool IllegalRestWarning { get; set; }
+        public int LoiterLimitInHours { get; set; }
+        public bool LargeHUD { get; set; }
+        public float LargeHUDScale { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -158,6 +162,7 @@ namespace DaggerfallWorkshop
 
         public float TerrainHeightmapPixelError { get; set; }
         public bool SmallerDungeons { get; set; }
+        public bool CustomBooksImport { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -174,6 +179,7 @@ namespace DaggerfallWorkshop
         public bool CombatVoices { get; set; }
         public bool EnemyInfighting { get; set; }
         public bool EnhancedCombatAI { get; set; }
+        public bool GuildQuestListBox { get; set; }
 
         #endregion
 
@@ -197,6 +203,7 @@ namespace DaggerfallWorkshop
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
+            ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
@@ -241,6 +248,9 @@ namespace DaggerfallWorkshop
             EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
             DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
+            LoiterLimitInHours = GetInt(sectionGUI, "LoiterLimitInHours");
+            LargeHUD = GetBool(sectionGUI, "LargeHUD");
+            LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -275,6 +285,7 @@ namespace DaggerfallWorkshop
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
+            CustomBooksImport = GetBool(sectionExperimental, "CustomBooksImport");
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -290,6 +301,7 @@ namespace DaggerfallWorkshop
             CombatVoices = GetBool(sectionEnhancements, "CombatVoices");
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
+            GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
         }
 
         /// <summary>
@@ -307,6 +319,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
+            SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
             SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);
@@ -352,6 +365,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
             SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
+            SetInt(sectionGUI, "LoiterLimitInHours", LoiterLimitInHours);
+            SetBool(sectionGUI, "LargeHUD", LargeHUD);
+            SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
@@ -379,10 +395,11 @@ namespace DaggerfallWorkshop
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
             SetBool(sectionExperimental, "SmallerDungeons", SmallerDungeons);
+            SetBool(sectionExperimental, "CustomBooksImport", CustomBooksImport);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
-            SetBool(sectionEnhancements, "MeshAndTextureReplacement", AssetInjection);
+            SetBool(sectionEnhancements, "AssetInjection", AssetInjection);
             SetBool(sectionEnhancements, "CompressModdedTextures", CompressModdedTextures);
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);
@@ -394,6 +411,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "CombatVoices", CombatVoices);
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
+            SetBool(sectionEnhancements, "GuildQuestListBox", GuildQuestListBox);
 
             // Write settings to persistent file
             WriteSettingsFile();

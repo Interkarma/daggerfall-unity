@@ -221,12 +221,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int GetTotalEnchantmentCost()
         {
-            return powersList.GetTotalEnchantmentCost() + sideEffectsList.GetTotalEnchantmentCost();
+            return powersList.GetTotalEnchantmentCost(false) + sideEffectsList.GetTotalEnchantmentCost(false);
         }
 
         int GetTotalGoldCost()
         {
-            return powersList.GetTotalEnchantmentCost() * 10;
+            return powersList.GetTotalEnchantmentCost(true) * 10;
         }
 
         void EnumerateEnchantments()
@@ -249,7 +249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Sort enchantments into powers and side-effects
                 foreach(EnchantmentSettings enchantment in enchantments)
                 {
-                    if (enchantment.EnchantCost >= 0)
+                    if (enchantment.EnchantCost > 0)
                     {
                         // Add grouped key if not present
                         if (!groupedPowerTemplates.ContainsKey(effect.Key))
@@ -350,12 +350,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             powersList.Position = new Vector2(powersListRect.x, powersListRect.y);
             powersList.Size = new Vector2(powersListRect.width, powersListRect.height);
             powersList.OnRefreshList += EnchantmentList_OnRefreshList;
+            powersList.OnRemoveItem += EnchantmentList_OnRemoveItem;
             NativePanel.Components.Add(powersList);
 
             sideEffectsList = new EnchantmentListPicker();
             sideEffectsList.Position = new Vector2(sideEffectsListRect.x, sideEffectsListRect.y);
             sideEffectsList.Size = new Vector2(sideEffectsListRect.width, sideEffectsListRect.height);
             sideEffectsList.OnRefreshList += EnchantmentList_OnRefreshList;
+            sideEffectsList.OnRemoveItem += EnchantmentList_OnRemoveItem;
             NativePanel.Components.Add(sideEffectsList);
         }
 
@@ -475,6 +477,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        void AddForcedPowers(EnchantmentSettings[] powerEnchantments)
+        {
+            if (powerEnchantments == null || powerEnchantments.Length == 0)
+                return;
+
+            foreach(EnchantmentSettings enchantment in powerEnchantments)
+            {
+                itemPowers.Add(enchantment);
+                powersList.AddEnchantment(enchantment);
+            }
+        }
+
+        void AddForcedSideEffects(EnchantmentSettings[] sideEffectEnchantments)
+        {
+            if (sideEffectEnchantments == null || sideEffectEnchantments.Length == 0)
+                return;
+
+            foreach (EnchantmentSettings enchantment in sideEffectEnchantments)
+            {
+                itemSideEffects.Add(enchantment);
+                sideEffectsList.AddEnchantment(enchantment);
+            }
+        }
+
         bool ContainsEnchantmentKey(string effectKey)
         {
             if (selectingPowers)
@@ -516,6 +542,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             return filteredEnchantments;
+        }
+
+        void SortForcedEnchantments(EnchantmentSettings parentEnchantment, ForcedEnchantmentSet set, out EnchantmentSettings[] forcedPowersOut, out EnchantmentSettings[] forcedSideEffectsOut)
+        {
+            List<EnchantmentSettings> forcedPowers = new List<EnchantmentSettings>();
+            List<EnchantmentSettings> forcedSideEffects = new List<EnchantmentSettings>();
+
+            foreach (ForcedEnchantment forcedEnchantment in set.forcedEffects)
+            {
+                IEntityEffect effect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(forcedEnchantment.key);
+                if (effect == null)
+                    continue;
+
+                EnchantmentSettings? enchantmentSettings = effect.GetEnchantmentSettings(forcedEnchantment.param);
+                if (enchantmentSettings == null)
+                    continue;
+
+                EnchantmentSettings forcedSettings = enchantmentSettings.Value;
+                forcedSettings.ParentEnchantment = parentEnchantment.GetHashCode();
+                if (forcedSettings.EnchantCost > 0)
+                    forcedPowers.Add(forcedSettings);
+                else
+                    forcedSideEffects.Add(forcedSettings);
+            }
+
+            forcedPowersOut = forcedPowers.ToArray();
+            forcedSideEffectsOut = forcedSideEffects.ToArray();
         }
 
         #endregion
@@ -799,17 +852,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void EnchantmentSecondaryPicker_OnUseSelectedItem()
         {
-            // TODO: Add any automatic enchantments related to this one (e.g. a soul bound Daedra add a few auto enchantments)
-
-            // TODO: Check for overflow from automatic enchantments and display "no room in item..."
-
             // Get enchantment tagged to selected item
             ListBox.ListItem listItem = enchantmentSecondaryPicker.ListBox.SelectedValue;
             if (listItem.tag == null)
                 throw new Exception(string.Format("ListItem '{0}' has no EnchantmentSettings tag", listItem.textLabel.Text));
 
+            // Get enchantment settings
+            EnchantmentSettings enchantmentSettings = (EnchantmentSettings)listItem.tag;
+            IEntityEffect enchantmentEffect = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(enchantmentSettings.EffectKey);
+            EnchantmentParam enchantmentParam = new EnchantmentParam() { ClassicParam = enchantmentSettings.ClassicParam, CustomParam = enchantmentSettings.CustomParam };
+
+            // Get forced enchantments for this effect
+            EnchantmentSettings[] forcedPowers = null;
+            EnchantmentSettings[] forcedSideEffects = null;
+            ForcedEnchantmentSet? forcedEnchantmentSet = enchantmentEffect.GetForcedEnchantments(enchantmentParam);
+            if (forcedEnchantmentSet != null)
+            {
+                // Sort forced enchantments into powers and side effects
+                SortForcedEnchantments(enchantmentSettings, forcedEnchantmentSet.Value, out forcedPowers, out forcedSideEffects);
+
+                // Check for overflow from automatic enchantments and display "no room in item..."
+                // Also adding +1 to account for incoming enchantment
+                if (powersList.EnchantmentCount + sideEffectsList.EnchantmentCount + forcedPowers.Length + forcedSideEffects.Length + 1 > 10)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noRoomInItem"));
+                    return;
+                }
+            }
+
             // Add selected enchantment settings to powers/side-effects
-            AddEnchantmentSettings((EnchantmentSettings)listItem.tag);
+            AddEnchantmentSettings(enchantmentSettings);
+            AddForcedPowers(forcedPowers);
+            AddForcedSideEffects(forcedSideEffects);
 
             // Close effect pickers
             enchantmentPrimaryPicker.CloseWindow();
@@ -819,6 +893,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void EnchantmentList_OnRefreshList(EnchantmentListPicker sender)
         {
             Refresh();
+        }
+
+        private void EnchantmentList_OnRemoveItem(EnchantmentListPicker.EnchantmentPanel panel)
+        {
+            powersList.RemoveForcedEnchantments(panel.Enchantment.GetHashCode());
+            sideEffectsList.RemoveForcedEnchantments(panel.Enchantment.GetHashCode());
         }
 
         #endregion

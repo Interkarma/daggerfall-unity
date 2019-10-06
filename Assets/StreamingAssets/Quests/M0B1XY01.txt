@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 81
 Quest: M0B1XY01
+DisplayName: Hunt for Harpies
 -- Message panels
 QRC:
 
@@ -72,13 +73,18 @@ Message:  1020
 <ce>                         to hold _questgiver_.
 
 Message:  1030
-%qdt: The Fighter Guild
+%qdt:
+ The Fighters Guild
  of ___questgiver_ has hired me
  to exterminate a nest of harpies
  that has infested ___mondung_
  I need to have at least five of them dead and
  be back in =1stparton_ days if I want to
  collect my reward.
+
+
+--separated qdt line, added s to Fighter
+
 
 Message:  1080
 <ce>                  Hey, since you've been so helpful,
@@ -134,7 +140,8 @@ _S.04_ task:
 	create foe _monster_ every 15 minutes 20 times with 50% success 
 
 _clearclick_ task:
-	when _qgclicked_ and not _mondead_ 
+	when _qgclicked_ and not _mondead_
+	say 1003 
 	clear _qgclicked_ _clearclick_ 
 
 variable _map_

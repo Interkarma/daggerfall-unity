@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 11
 Quest: O0B10Y06
+DisplayName: The Jewel Heist
 -- Message panels
 QRC:
 

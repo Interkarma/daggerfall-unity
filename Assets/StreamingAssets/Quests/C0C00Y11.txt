@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 81
 Quest: C0C00Y11
+DisplayName: The Spook
 -- Message panels
 QRC:
 
@@ -39,7 +40,7 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                    So you exorcised the place, eh?
 <ce>                    This will look good for you when
-<ce>                   I speak with the temple heirarchs.
+<ce>                   I speak with the temple hierarchs.
 
 RumorsDuringQuest:  [1005]
 _house_ is haunted by many powerful, evil spirits, they say.

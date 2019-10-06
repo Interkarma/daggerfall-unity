@@ -4,8 +4,10 @@
 -- Questor: mage
 -- Repute: 30
 -- QuestId: 15
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 11
 Quest: N0B30Y15
+DisplayName: Rogue Imp
 -- Message panels
 QRC:
 
@@ -97,9 +99,11 @@ Place _palace_ remote palace
 
 Clock _traveltime_ 00:00 0 flag 17 range 0 2
 Clock _S.02_ 00:04 00:20
-Clock Gothryd 00:04 0 flag 1 range 0 1
-Clock _S.08_ 00:04 0 flag 1 range 0 1
-Clock _S.09_ 00:04 0 flag 1 range 0 1
+Clock _Gothryd_ 00:04
+--timer Gothryd given underscores
+Clock _S.08_ 00:04
+Clock _S.09_ 00:04
+--flags removed to make timers precise
 
 Foe _imp_ is Imp
 
@@ -122,7 +126,7 @@ _S.01_ task:
 	cast Invisibility spell on _imp_ 
 
 _S.02_ task:
-	start timer Gothryd 
+	start timer _Gothryd_ 
 	cast Shield spell on _imp_ 
 	cast Troll's_Blood spell on _imp_ 
 	cast Spell_Shield spell on _imp_ 
@@ -143,7 +147,7 @@ _S.06_ task:
 	give pc _gold_ 
 	end quest 
 
-Gothryd task:
+_Gothryd_ task:
 	start timer _S.08_ 
 	cast Invisibility spell on _imp_ 
 	cast Spell_Shield spell on _imp_ 

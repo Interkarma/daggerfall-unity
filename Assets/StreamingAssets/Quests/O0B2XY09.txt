@@ -6,6 +6,7 @@
 -- QuestId: 9
 Messages: 11
 Quest: O0B2XY09
+DisplayName: The Rich Merchant
 -- Message panels
 QRC:
 

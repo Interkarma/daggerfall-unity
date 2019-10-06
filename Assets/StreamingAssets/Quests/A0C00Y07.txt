@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
 Messages: 11
 Quest: A0C00Y07
 -- Message panels
@@ -79,6 +80,13 @@ QuestLogEntry:  [1010]
  __house_ of monsters. %g needs
  them gone within a day.
 
+Message:  1011
+<ce>  That should be enough.
+
+Message:  1012
+<ce>  You hear scratching noises coming from the walls.
+<ce>  The creatures will most certainly react poorly
+<ce>  to your intrusion on their territory.
 
 -- Symbols used in the QRC file:
 --
@@ -101,7 +109,8 @@ Person _qgiver_ group Questor male
 
 Place _house_ local random
 
-Clock _oneday_ 1.00:00 0 flag 1 range 0 1
+--time set to 24 strict hours. if it carries flags in DFU, time becomes variable
+Clock _oneday_ 1.00:00
 
 Foe _spiders_ is Spider
 Foe _rats_ is Giant_rat
@@ -117,31 +126,52 @@ Foe _bats_ is Giant_bat
 _oneday_ task:
 	end quest 
 
+--instant reward glitch fixed.
+_questdone_ task:
+	clicked npc _qgiver_
+
 _S.01_ task:
+	say 1012
+	start task _pickspawn_
+--preventing multiple spawns by using static pick
+
+_pickspawn_ task:
 	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
 
-_questdone_ task:
-	clicked npc _qgiver_ 
-	give pc _gold_ 
-
+--this quest had a rare case of no victory message
 _S.03_ task:
 	killed 6 _bats_ 
 	killed 3 _spiders_ 
 	killed 7 _rats_ 
-	killed 3 _scorpions_ 
+	killed 3 _scorpions_
+	say 1011
 
-_S.04_ task:
-	create foe _bats_ every 3 minutes 8 times with 25% success 
+variable _S.04_
+_spawn1_ task:
+	when _S.01_ and _S.04_ and not _S.03_
+	create foe _bats_ every 1 minutes indefinitely with 100% success 
 
-_S.05_ task:
-	create foe _rats_ every 3 minutes 10 times with 25% success 
+variable _S.05_
+_spawn2_ task:
+	when _S.01_ and _S.05_ and not _S.03_
+	create foe _rats_ every 1 minutes indefinitely with 100% success 
 
-_S.06_ task:
-	create foe _scorpions_ every 3 minutes 4 times with 25% success 
+variable _S.06_
+_spawn3_ task:
+	when _S.01_ and _S.06_ and not _S.03_
+	create foe _scorpions_ every 2 minutes indefinitely with 100% success 
 
-_S.07_ task:
-	create foe _spiders_ every 3 minutes 4 times with 25% success 
+variable _S.07_
+_spawn4_ task:
+	when _S.01_ and _S.07_ and not _S.03_
+	create foe _spiders_ every 2 minutes indefinitely with 100% success 
 
 _clearclick_ task:
 	when not _S.03_ and _questdone_ 
 	clear _questdone_ _clearclick_ 
+
+
+_pcgetsgold_ task:
+	when _questdone_ and _S.03_
+	give pc _gold_ 
+	end quest

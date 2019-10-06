@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop
 {
@@ -57,6 +58,7 @@ namespace DaggerfallWorkshop
         const float skyScale = 1.3f;            // Scale of sky image relative to display area
 
         DaggerfallUnity dfUnity;
+        WeatherManager weatherManager;
         public SkyFile skyFile;
         public ImgFile imgFile;
         Camera mainCamera;
@@ -94,6 +96,7 @@ namespace DaggerfallWorkshop
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
+            weatherManager = FindObjectOfType<WeatherManager>();
 
             // Try to find local player GPS if not set
             if (LocalPlayerGPS == null)
@@ -330,8 +333,21 @@ namespace DaggerfallWorkshop
             cameraClearColor = colors.clearColor;
             myCamera.backgroundColor = ((cameraClearColor * SkyTintColor) * 2f) * SkyColorScale;
 
-            // Assign colour to fog
-            UnityEngine.RenderSettings.fogColor = cameraClearColor;
+            // Set gray fog color for anything denser than heavy rain, otherwise use sky color for atmospheric fogging
+            // Only operates when weatherManager can be found (i.e. in game scene) while DaggerfallSky is running
+            if (weatherManager)
+            {
+                WeatherManager.FogSettings currentFogSettings = GameManager.Instance.WeatherManager.currentOutdoorFogSettings;
+                WeatherManager.FogSettings rainyFogSettings = GameManager.Instance.WeatherManager.RainyFogSettings;
+                if (currentFogSettings.fogMode == FogMode.Exponential && currentFogSettings.density > rainyFogSettings.density)
+                    RenderSettings.fogColor = Color.gray;
+                else
+                    RenderSettings.fogColor = cameraClearColor;
+            }
+            else
+            {
+                RenderSettings.fogColor = cameraClearColor;
+            }
         }
 
         private void ApplyTimeAndSpace()

@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new DaedraData((int) FactionFile.FactionIDs.Molag_Bal, "20C00Y00", 350, "MOLAGBAL.FLC", Weather.WeatherType.None),
             new DaedraData((int) FactionFile.FactionIDs.Sanguine, "70C00Y00", 46, "SANGUINE.FLC", Weather.WeatherType.Rain),
             new DaedraData((int) FactionFile.FactionIDs.Peryite, "50C00Y00", 99, "PERYITE.FLC", Weather.WeatherType.Rain),
-            new DaedraData((int) FactionFile.FactionIDs.Malacath, "80C00Y00", 278, "MALACATH.FLC", Weather.WeatherType.None),
+            new DaedraData((int) FactionFile.FactionIDs.Malacath, "80C0XY00", 278, "MALACATH.FLC", Weather.WeatherType.None),
             new DaedraData((int) FactionFile.FactionIDs.Hermaeus_Mora, "W0C00Y00", 65, "HERMAEUS.FLC", Weather.WeatherType.None),
             new DaedraData((int) FactionFile.FactionIDs.Sheogorath, "60C00Y00", 32, "SHEOGRTH.FLC", Weather.WeatherType.Thunder),
             new DaedraData((int) FactionFile.FactionIDs.Boethiah, "U0C00Y00", 302, "BOETHIAH.FLC", Weather.WeatherType.Rain),

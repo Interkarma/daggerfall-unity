@@ -1,106 +1,166 @@
 - Text database for general daggerfall UI. These text items were previously hardcoded into FALL.EXE.
 
-schema: *key,text
+schema: *key,$text
 
 - Journal window:
 
-dialogButtonInfo,   Switch between: Active Quests; Finished Quests; Notebook; Messages
-activeQuests,       Active Quests
-activeQuestsInfo,   Click on an active quest that has a target location to initiate travel.
-finishedQuests,     Finished Quests
-finishedQuestsInfo, Click on an entry to move it. Right click to delete.
-notebook,           Notebook
-notebookInfo,       Click a note to move. Right click to delete. Click in-between to add a new note.
-messages,           Messages
-messagesInfo,       History of messages recently shown on screen
-confirmMoveHead,    Move entry
-confirmMove,        Do you want to change the position of this entry?
-confirmMove2,       (It will be moved to before the next entry clicked)
-confirmRemoveHead,  Delete entry
-confirmRemove,      Are you sure you want to remove this entry?
-confirmRemove2,     (It will be deleted permanently and cannot be restored)
-confirmFindHead,    Travel to location
-confirmFind,        Do you want to open the world map to travel to:
-confirmFind2,       (Note: you can cancel travel from the world map)
-enterNote,          Enter your note:
-completedQuest,     completed
-endedQuest,         ended
-finishQuestHeader,  {0} {1} at {2}:
-quest,              Quest
-noteHeader,         {0} in {1}:
+dialogButtonInfo,   "Switch between: Active Quests; Finished Quests; Notebook; Messages"
+activeQuests,       "Active Quests"
+activeQuestsInfo,   "Click on an active quest that has a target location to initiate travel."
+finishedQuests,     "Finished Quests"
+finishedQuestsInfo, "Click on an entry to move it. Right click to delete."
+notebook,           "Notebook"
+notebookInfo,       "Click a note to move. Right click to delete. Click in-between to add a new note."
+messages,           "Messages"
+messagesInfo,       "History of messages recently shown on screen"
+confirmMoveHead,    "Move entry"
+confirmMove,        "Do you want to change the position of this entry?"
+confirmMove2,       "(It will be moved to before the next entry clicked)"
+confirmRemoveHead,  "Delete entry"
+confirmRemove,      "Are you sure you want to remove this entry?"
+confirmRemove2,     "(It will be deleted permanently and cannot be restored)"
+confirmFindHead,    "Travel to location"
+confirmFind,        "Do you want to open the world map to travel to:"
+confirmFind2,       "(Note: you can cancel travel from the world map)"
+enterNote,          "Enter your note:"
+completedQuest,     "completed"
+endedQuest,         "ended"
+finishQuestHeader,  "{0} {1} at {2}:"
+quest,              "Quest"
+noteHeader,         "{0} in {1}:"
+houseDeed,          "You obtained the deeds and now own a house in %town of %region."
 
 - Character window:
 
-levelProgress,      Progress made to the next level: {0}%
+levelProgress,      "Progress made to the next level: {0}%"
 
 - Inventory & trade windows:
 
-readMap,            Discovered the location of %map after studying a map.
-readMapTG,          The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
-readMapDB,          The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
-readMapFail,        You have already discovered the location shown by this map.
-howManyItems,       Pick how many items (max {0})?
-wagonFullGold,      Your wagon could only hold {0} gold pieces.
-itemsIdentified,    Items identified.
-repairDone,         DONE
-repairDays,         %d days
-interruptRepair,    Take back that item before it's repaired?
-repairNote,         Left my {0} for repair at {1}.
-doesntNeedIdentify, This does not need to be identified.
-letterOfCredit,     You are paid with a letter of credit.
-stealSuccess,       You are successful.
-stealFailure,       You are not successful...
-cannotRemoveItem,   You cannot remove this item.
-cannotCarryAnymore, You cannot carry anymore stuff.
-cannotHoldAnymore,  Your cart cannot hold anymore stuff.
-cannotUseThis,      You cannot use this.
-equippingWeapon,    Equipping %s
-lightDouse,         You douse the %it.
-lightLight,         You light the %it.
-lightDies,          Your %it flickers and dies.
-lightEmpty,         Your %it has no fuel left.
-lightRefuel,        You refuel your %it with a bottle of oil.
-lightFull,          Your %it is full.
-kgSrc,              kilograms
-kgRep,              kg
-damSrc,             points of damage
-damRep,             damage
-arSrc,              armor rating
-arRep,              armor
-northern,           (northern)
-southern,           (southern)
-noWagon,            You don't own a wagon.
-exitTooFar,         The exit is too far away for you to access your wagon.
+readMap,            "Discovered the location of %map after studying a map."
+readMapTG,          "The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map."
+readMapDB,          "The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map."
+readMapFail,        "You have already discovered the location shown by this map."
+howManyItems,       "Pick how many items (max {0})?"
+wagonFullGold,      "Your wagon could only hold {0} gold pieces."
+itemsIdentified,    "Items identified."
+repairDone,         "DONE"
+repairDays,         "%d days"
+interruptRepair,    "Take back that item before it's repaired?"
+repairNote,         "Left my {0} for repair at {1}."
+doesntNeedIdentify, "This does not need to be identified."
+letterOfCredit,     "You are paid with a letter of credit."
+stealSuccess,       "You are successful."
+stealFailure,       "You are not successful..."
+cannotRemoveItem,   "You cannot remove this item."
+cannotCarryAnymore, "You cannot carry anymore stuff."
+cannotHoldAnymore,  "Your cart cannot hold anymore stuff."
+cannotUseThis,      "You cannot use this."
+equippingWeapon,    "Equipping %s"
+lightDouse,         "You douse the %it."
+lightLight,         "You light the %it."
+lightDies,          "Your %it flickers and dies."
+lightEmpty,         "Your %it has no fuel left."
+lightRefuel,        "You refuel your %it with a bottle of oil."
+lightFull,          "Your %it is full."
+kgSrc,              "kilograms"
+kgRep,              "kg"
+damSrc,             "points of damage"
+damRep,             "damage"
+arSrc,              "armor rating"
+arRep,              "armor"
+northern,           "(northern)"
+southern,           "(southern)"
+noWagon,            "You don't own a wagon."
+exitTooFar,         "The exit is too far away for you to access your wagon."
+bookUnavailable,    "The book is ruined and is now unreadable."
+unknownAuthor,      "unknown author"
+
+- Spellbook window:
+
+cannotDeleteVamp,   "Cannot delete special vampire spells."
+cannotDeleteWere,   "Cannot delete special lycanthropy spell."
 
 - Potion mixing window:
 
-noRecipes,          You have no recipes.
-potionMixed,        Your potion has been mixed.
-potionFailed,       Those ingredients did not concoct an effective potion.
-reqIngredients,     You do not have the ingredients required.
+noRecipes,          "You have no recipes."
+potionMixed,        "Your potion has been mixed."
+potionFailed,       "Those ingredients did not concoct an effective potion."
+reqIngredients,     "You do not have the ingredients required."
 
 - Banking status:
 
-region,             Region
-account,            Account
-loan,               Loan
-dueDate,            Loan Due Date
-noAccount,          None
-loanReminder,       You have a loan of {0} gold pieces due in
-loanReminder2,      less than {0} months in {1}
+region,             "Region"
+account,            "Account"
+loan,               "Loan"
+dueDate,            "Loan Due Date"
+noAccount,          "None"
+loanReminder,       "You have a loan of {0} gold pieces due in"
+loanReminder2,      "less than {0} months in {1}"
 
 - Icon picker window:
 
-classicIcons,       Classic
-suggestedIcons,     Suggested
+classicIcons,       "Classic"
+suggestedIcons,     "Suggested"
 
 - Guild service window:
 
-serviceMembersOnly, My services are reserved for members only.
-serviceDonateHowMuch, Donate how much money : 
-curedDisease,       You are cured.
-freeHolidayCuring,  You are cured free from cost due to todays' holiday.
+serviceMembersOnly, "My services are reserved for members only."
+serviceDonateHowMuch, "Donate how much money : "
+curedDisease,       "You are cured."
+freeHolidayCuring,  "You are cured free from cost due to todays' holiday."
+gettingQuests1,     "Hmm, let me see what tasks we have availiable."
+gettingQuests2,     "Please have patience and wait here a moment, %pcf."
 
 - Rest window
 
-illegalRestWarning, It is illegal to camp in or near a city. Continue?
+illegalRestWarning, "It is illegal to camp in or near a city. Continue?"
+
+- Automap window
+
+automapToolTipTextGridButton,		"left click: switch between 2D top view and 3D view (hotkey: {0})\rright click: reset rot. axis to player pos (hotkey: Ctrl+{1})\rmouse wheel up while over btn: inc. perspective (only 3D mode)\rmouse wheel down while over btn: dec. perspective (only 3D mode)"
+automapToolTipForwardButton,		"left click: move viewpoint forward (hotkey: {0})\rright click: move rotation axis forward (hotkey: Ctrl+{1})"
+automapToolTipBackwardButton,		"left click: move viewpoint backwards (hotkey: {0})\rright click: move rotation axis backwards (hotkey: Ctrl+{1})"
+automapToolTipLeftButton,			"left click: move viewpoint to the left (hotkey: {0})\rright click: move rotation axis to the left (hotkey: Ctrl+{1})"
+automapToolTipRightButton,			"left click: move viewpoint to the right (hotkey: {0})\rright click: move rotation axis to the right (hotkey: Ctrl+{1})"
+automapToolTipRotateLeftButton,		"left click: rotate dungeon to the left (hotkey: Alt+{0})\rright click: rotate camera to the left (hotkey: Shift+{1})"
+automapToolTipRotateRightButton,	"left click: rotate dungeon to the right (hotkey: Alt+{0})\rright click: rotate camera to the right (hotkey: Shift+{1})"
+automapToolTipUpstairsButton,		"left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r"
+automapToolTipDownstairsButton,		"left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: Control+{1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r"
+automapToolTipPanelCompass,			"left click: toggle focus (hotkey: {0})\rbeacons: red ... player, green ... entrance, blue ... rotation axis\r\rright click: reset view (hotkey: {1})\r\rdouble-click left mouse btn in window to create+edit marker note\rdouble-click left mouse btn (+Ctrl key) in window to create marker\rdouble-click left mouse btn on a marker to add/edit a note\rdouble-click right mouse btn on a marker to delete it\rdouble-click right mouse btn in window to position rotation axis\rdouble-click middle mouse btn in window to center view\rdouble-click left mouse btn on discovered portal marker to jump\rto connected teleporter portal"
+automapPlayerPositionBeacon,		"player position beacon"
+automapRotationPivotAxis,			"rotation pivot axis"
+automapEntranceExitPositionBeacon,	"entrance/exit position beacon"
+automapEntranceExit,				"entrance/exit"
+automapPlayerMarker,				"player marker"
+automapTeleporterEntrance,			"teleporter (entrance)"
+automapTeleporterExit,				"teleporter (exit)"
+
+- Exterior Automap window
+
+exteriorAutomapBuildingTypeAlchemist,		"Alchemist"
+exteriorAutomapBuildingTypeArmorer,			"Armorer"
+exteriorAutomapBuildingTypeBank,			"Bank"
+exteriorAutomapBuildingTypeBookseller,		"Bookseller"
+exteriorAutomapBuildingTypeClothingStore,	"Clothing Store"
+exteriorAutomapBuildingTypeFurnitureStore,	"Furniture Store"
+exteriorAutomapBuildingTypeGemStore,		"Gem Store"
+exteriorAutomapBuildingTypeGeneralStore,	"General Store"
+exteriorAutomapBuildingTypeGuildHall,		"Guild Hall"
+exteriorAutomapBuildingTypeHouseForSale,	"HouseForSale"
+exteriorAutomapBuildingTypeLibrary,			"Library"
+exteriorAutomapBuildingTypePalace,			"Palace"
+exteriorAutomapBuildingTypePawnShop,		"Pawn Shop"
+exteriorAutomapBuildingTypeTavern,			"Tavern"
+exteriorAutomapBuildingTypeTemple,			"Temple"
+exteriorAutomapBuildingTypeWeaponSmith,		"Weapon Smith"
+exteriorAutomapBuildingTypeUnknown,			"Unknown"
+exteriorAutomapToolTipTextGridButton,		"left click: switch to next view mode (hotkey: {0})\ravailable view modes are:\r- original (hotkey {1})\r- extra: includes extra buildings (hotkey {2})\r- all: includes extra buildings, ground flats (hotkey {3})\rswitch background texture with {4}, {5}, {6}, {7}"
+exteriorAutomapToolTipForwardButton,		"left click: move up (hotkey: {0})\rright click: move to north location border (hotkey: Shift+{1})"
+exteriorAutomapToolTipBackwardButton,		"left click: move down (hotkey: {0})\rright click: move to south location border (hotkey: Shift+{1})"
+exteriorAutomapToolTipLeftButton,			"left click: move to the left (hotkey: {0})\rright click: move to west location border (hotkey: Shift+{1})"
+exteriorAutomapToolTipRightButton,			"left click: move to the right (hotkey: {0})\rright click: move to east location border (hotkey: Shift+{1})"
+exteriorAutomapToolTipRotateLeftButton,		"left click: rotate map to the left (hotkey: Control+{0})\rright click: rotate map around the player position\rto the left  (hotkey: Alt+{1})"
+exteriorAutomapToolTipRotateRightButton,	"left click: rotate map to the right (hotkey: Control+{0})\rright click: rotate map around the player position\rto the right (hotkey: Alt+{1})"
+exteriorAutomapToolTipUpstairsButton,		"left click: zoom in (hotkey: {0})\rright click: apply maximum zoom)"
+exteriorAutomapToolTipDownstairsButton,		"left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)"
+exteriorAutomapToolTipPanelCompass,			"left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})"

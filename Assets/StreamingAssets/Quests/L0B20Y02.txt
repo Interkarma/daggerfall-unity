@@ -6,6 +6,7 @@
 -- QuestId: 2
 Messages: 22
 Quest: L0B20Y02
+DisplayName: A Knight Without Honor
 -- Message panels
 QRC:
 
@@ -158,4 +159,5 @@ _S.09_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.02_ 
+	say 1003
 	clear _qgclicked_ _clearclick_ 

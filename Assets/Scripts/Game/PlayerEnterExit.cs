@@ -372,7 +372,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Player in sunlight or darkness
-            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside;
+            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside && !GameManager.Instance.PlayerEntity.InPrison;
         }
 
         #region Public Methods
@@ -680,17 +680,24 @@ namespace DaggerfallWorkshop.Game
             interior.transform.position = door.ownerPosition + (Vector3)door.buildingMatrix.GetColumn(3);
             interior.transform.rotation = GameObjectHelper.QuaternionFromMatrix(door.buildingMatrix);
 
+            // Find closest enter marker to exterior door position within building interior
+            // If a marker is found, it will be used as the new check position to find actual interior door
+            Vector3 closestEnterMarkerPosition;
+            Vector3 checkPosition = DaggerfallStaticDoors.GetDoorPosition(door);
+            if (interior.FindClosestEnterMarker(checkPosition, out closestEnterMarkerPosition))
+                checkPosition = closestEnterMarkerPosition;
+
             // Position player in front of closest interior door
             Vector3 landingPosition = Vector3.zero;
             Vector3 foundDoorNormal = Vector3.zero;
-            if (interior.FindClosestInteriorDoor(transform.position, out landingPosition, out foundDoorNormal))
+            if (interior.FindClosestInteriorDoor(checkPosition, out landingPosition, out foundDoorNormal))
             {
-                landingPosition += foundDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
+                landingPosition += foundDoorNormal * (GameManager.Instance.PlayerController.radius + 0.4f);
             }
             else
             {
                 // If no door found position player above closest enter marker
-                if (interior.FindClosestEnterMarker(transform.position, out landingPosition))
+                if (interior.FindClosestEnterMarker(checkPosition, out landingPosition))
                 {
                     landingPosition += Vector3.up * (controller.height * 0.6f);
                 }

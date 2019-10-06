@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 15
 Quest: L0B10Y03
+DisplayName: Unauthorized Absence
 -- Message panels
 QRC:
 
@@ -180,8 +181,8 @@ _S.03_ task:
 _S.04_ task:
 	killed 1 _target_ saying 1014 
 
-variable _reward_
 variable _S.06_
+--unused variables
 _clearclick_ task:
 	when _qgclicked_ and not _S.04_ 
 	clear _qgclicked_ _clearclick_ 

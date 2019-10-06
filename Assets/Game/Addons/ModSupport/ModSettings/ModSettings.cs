@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #endregion
 
-        #region Public Methods
+        #region Constructors
 
         /// <summary>
         /// Import settings for a mod.
@@ -44,6 +44,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             data = ModSettingsData.Make(mod);
             data.LoadLocalValues();
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Get string from user settings or, as fallback, from default settings.

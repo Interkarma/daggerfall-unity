@@ -170,6 +170,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeOfLastSkillIncreaseCheck;
         public uint[] skillsRecentlyRaised;
         public int startingLevelUpSkillSum;
+        public int currentLevelUpSkillSum;
         public ulong[] equipTable;
         public ItemData_v1[] items;
         public ItemData_v1[] wagonItems;
@@ -370,6 +371,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public EntityEffectManager.EffectBundleSaveData_v1[] instancedEffectBundles;
         public bool alliedToPlayer;
         public int questFoeSpellQueueIndex;
+        public int questFoeItemQueueIndex;
         public bool wabbajackActive;
     }
 
@@ -387,6 +389,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Vector3 currentPosition;
         public Vector3 localPosition;
         public Vector3 worldCompensation;
+        public float heightScale;
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
@@ -439,6 +442,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string saveName;
         public string characterName;
         public DateAndTime_v1 dateAndTime;
+        public string dfuVersion;
     }
 
     #endregion

@@ -168,7 +168,7 @@ Place _scourgbarrow_ permanent ScourgBarrow1
 
 Clock _2ndgo_ 30.00:00 0 flag 1 range 0 1
 Clock _S.01_ 7.00:00 14.00:00
-
+Clock _letterdelay_ 1.00:00
 
 --	Quest start-up:
 	prompt QuestorOffer yes yes no _no_ 
@@ -215,10 +215,14 @@ _no_ task:
 
 MorgiahSatisfied _S.08_
 _S.09_ task:
-	when _S.01_ and not _S.07_ 
+	when _S.01_ and not _S.07_
 	start quest 21 21 
 	end quest 
 
 _S.10_ task:
+	start timer _letterdelay_
+--adding 24-hour delay to allow to read letter. this is a very common bug report
+
+_letterdelay_ task:
 	start quest 21 21 
 	end quest 

@@ -125,6 +125,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.skillsRecentlyRaised = entity.SkillsRecentlyRaised;
             data.playerEntity.timeOfLastSkillTraining = entity.TimeOfLastSkillTraining;
             data.playerEntity.startingLevelUpSkillSum = entity.StartingLevelUpSkillSum;
+            data.playerEntity.currentLevelUpSkillSum = entity.CurrentLevelUpSkillSum;
             data.playerEntity.equipTable = entity.ItemEquipTable.SerializeEquipTable();
             data.playerEntity.items = entity.Items.SerializeItems();
             data.playerEntity.wagonItems = entity.WagonItems.SerializeItems();
@@ -281,6 +282,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.TimeOfLastSkillIncreaseCheck = data.playerEntity.timeOfLastSkillIncreaseCheck;
             entity.TimeOfLastSkillTraining = data.playerEntity.timeOfLastSkillTraining;
             entity.StartingLevelUpSkillSum = data.playerEntity.startingLevelUpSkillSum;
+            if ((entity.CurrentLevelUpSkillSum = data.playerEntity.currentLevelUpSkillSum) == 0)
+                entity.SetCurrentLevelUpSkillSum();
             entity.Items.DeserializeItems(data.playerEntity.items);
             entity.WagonItems.DeserializeItems(data.playerEntity.wagonItems);
             entity.OtherItems.DeserializeItems(data.playerEntity.otherItems);
@@ -302,7 +305,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.LastTimePlayerAteOrDrankAtTavern = data.playerEntity.lastTimePlayerAteOrDrankAtTavern;
             entity.CrimeCommitted = data.playerEntity.crimeCommitted;
             entity.HaveShownSurrenderToGuardsDialogue = data.playerEntity.haveShownSurrenderToGuardsDialogue;
-            entity.SetCurrentLevelUpSkillSum();
             if (DaggerfallUnity.Settings.PlayerTorchFromItems)
                 entity.LightSource = entity.Items.GetItem(data.playerEntity.lightSourceUID);
             entity.SGroupReputations[(int)FactionFile.SocialGroups.Commoners] = data.playerEntity.reputationCommoners;
@@ -350,6 +352,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                     entity.UpdateEquippedArmorValues(equipTable[i], true);
                 }
             }
+
+            // Trim name strings as these might contain trailing whitespace characters previously imported from classic saves
+            entity.Name = entity.Name.Trim();
+            entity.Career.Name = entity.Career.Name.Trim();
 
             // Flag determines if player position is restored
             bool restorePlayerPosition = true;
