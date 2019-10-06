@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Game.Items
         public static DaggerfallUnityItem CreateBook(int id)
         {
             var bookFile = new BookFile();
-            string name = DaggerfallUnity.Instance.ItemHelper.GetBookFileNameByMessage(id);
+            string name = DaggerfallUnity.Instance.ItemHelper.GetBookFileName(id);
             if (!BookReplacement.TryImportBook(name, bookFile) &&
                 !bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
                 return null;

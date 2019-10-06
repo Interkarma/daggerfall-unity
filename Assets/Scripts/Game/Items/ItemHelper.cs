@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Books are handled differently
             if (item.ItemGroup == ItemGroups.Books)
-                return DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.shortName);
+                return DaggerfallUnity.Instance.ItemHelper.GetBookTitle(item.message, item.shortName);
 
             // Start with base name
             string result = item.shortName;
@@ -450,7 +450,8 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="id">The book's ID</param>
         /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
         /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
-        public String getBookNameByID(int id, string defaultBookName)
+        [Obsolete("Use GetBookTitle() with standard initial uppercase and less ambiguity between title and filename.")]
+        public string getBookNameByID(int id, string defaultBookName)
         {
             string title = "";
             return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookName;
@@ -463,28 +464,41 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="message">The message field for the book Item, from which the ID is derived</param>
         /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
         /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
-        public String getBookNameByMessage(int message, string defaultBookName)
+        [Obsolete("Masking break support for custom books. Use GetBookTitle() instead.")]
+        public string getBookNameByMessage(int message, string defaultBookName)
         {
             return getBookNameByID(message & 0xFF, defaultBookName);
         }
 
         /// <summary>
+        /// Gets the title of a book from its ID.
+        /// </summary>
+        /// <param name="id">The book's ID</param>
+        /// <param name="defaultBookTitle">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
+        /// <returns>The title of the bookd or defaultBookName if no name was found.</returns>
+        public string GetBookTitle(int id, string defaultBookTitle)
+        {
+            string title;
+            return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookTitle;
+        }
+
+        /// <summary>
         /// Gets the filename for a book (classic or imported).
         /// </summary>
-        /// <param name="message">The message field for the book Item, containing the book ID.</param>
+        /// <param name="id">The book's ID</param>
         /// <returns>The filename of the book or null.</returns>
-        internal string GetBookFileNameByMessage(int message)
+        internal string GetBookFileName(int id)
         {
             BookReplacement.AssertCustomBooksImportEnabled();
 
-            if (message <= 111 || message == 10000)
-                return BookFile.messageToBookFilename(message);
+            if (id <= 111 || id == 10000)
+                return BookFile.messageToBookFilename(id);
 
             BookMappingEntry entry;
-            if (BookReplacement.BookMappingEntries.TryGetValue(message, out entry))
+            if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
                 return entry.Name;
 
-            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", message);
+            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
             return null;
         }
 

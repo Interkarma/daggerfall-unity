@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public bool ReformatBook(int id)
         {
             if (DaggerfallUnity.Settings.CustomBooksImport)
-                return ReformatBook(DaggerfallUnity.Instance.ItemHelper.GetBookFileNameByMessage(id));
+                return ReformatBook(DaggerfallUnity.Instance.ItemHelper.GetBookFileName(id));
 
             return ReformatBook(BookFile.messageToBookFilename(id));
         }

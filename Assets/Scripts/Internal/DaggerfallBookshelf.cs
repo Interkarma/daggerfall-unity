@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop
                 for (int i=0; i<10; i++)
                 {
                     int bookNum = DaggerfallUnity.Settings.CustomBooksImport ? DaggerfallUnity.Instance.ItemHelper.GetRandomBookID() : Random.Range(0, 111);
-                    string bookName = DaggerfallUnity.Instance.ItemHelper.getBookNameByID(bookNum, string.Empty);
+                    string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
                     if (bookName != string.Empty)
                         books.Add(bookNum);
                 }
@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop
 
                 foreach (int bookNum in books)
                 {
-                    string bookName = DaggerfallUnity.Instance.ItemHelper.getBookNameByID(bookNum, string.Empty);
+                    string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
                     if (bookName != string.Empty)
                         bookPicker.ListBox.AddItem(bookName);
                 }
