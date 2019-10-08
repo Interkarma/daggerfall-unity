@@ -461,7 +461,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
+            if (!transactionInput.Enabled)
+                CloseWindow();
         }
 
         public void OnTransactionEventHandler(TransactionType type, TransactionResult result, int amount)
