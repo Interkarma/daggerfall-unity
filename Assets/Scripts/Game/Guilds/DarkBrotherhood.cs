@@ -189,6 +189,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             RevealGuildHallOnMap();
         }
 
+        override public void Leave()
+        {
+            UnregisterEvents();
+        }
+
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
         {
             throw new NotImplementedException();

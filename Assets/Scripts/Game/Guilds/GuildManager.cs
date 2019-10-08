@@ -130,7 +130,10 @@ namespace DaggerfallWorkshop.Game.Guilds
                 }
             }
             if (guildGroup != FactionFile.GuildGroups.None)
+            {
+                guild.Leave();
                 memberships.Remove(guildGroup);
+            }
         }
 
         public bool HasJoined(FactionFile.GuildGroups guildGroup)
@@ -266,6 +269,10 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public void ClearMembershipData()
         {
+            foreach (Guild guild in memberships.Values)
+            {
+                guild.Leave();
+            }
             memberships.Clear();
         }
 

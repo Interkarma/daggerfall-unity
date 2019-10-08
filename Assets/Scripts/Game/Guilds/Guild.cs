@@ -302,6 +302,8 @@ namespace DaggerfallWorkshop.Game.Guilds
             lastRankChange = CalculateDaySinceZero(DaggerfallUnity.Instance.WorldTime.Now);
         }
 
+        public virtual void Leave() {   }
+
         public virtual bool IsEligibleToJoin(PlayerEntity playerEntity)
         {
             // Check reputation & skills
