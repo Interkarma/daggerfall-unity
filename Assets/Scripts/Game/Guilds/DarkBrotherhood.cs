@@ -80,16 +80,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
-        public DarkBrotherhood()
-        {
-            RegisterEvents();
-        }
-
-        ~DarkBrotherhood()
-        {
-            UnregisterEvents();
-        }
-
         public static int FactionId { get { return factionId; } }
 
         public override int GetFactionId()
