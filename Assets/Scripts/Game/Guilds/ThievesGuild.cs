@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #endregion
 
-            #region Benefits
+        #region Benefits
 
         public override bool HallAccessAnytime()
         {
