@@ -12,6 +12,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using System;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -74,20 +75,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Guild Membership and Faction
-
-        public ThievesGuild()
-        {
-            // Register for location entry events so can auto discover guild houses.
-            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
-            StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
-        }
-
-        ~ThievesGuild()
-        {
-            // Unregister events
-            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
-            StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
-        }
 
         public static int FactionId { get { return factionId; } }
 
@@ -179,7 +166,13 @@ namespace DaggerfallWorkshop.Game.Guilds
         override public void Join()
         {
             base.Join();
+            RegisterEvents();
             RevealGuildHallOnMap();
+        }
+
+        override public void Leave() 
+        {
+            UnregisterEvents();
         }
 
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
@@ -198,6 +191,20 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Event handlers
+
+        private void RegisterEvents()
+        {
+            // Register for location entry events so can auto discover guild houses
+            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
+        }
+
+        private void UnregisterEvents()
+        {
+            // Unregister events
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
+        }
 
         private void PlayerGPS_OnEnterLocationRect(DFLocation location)
         {
@@ -219,6 +226,16 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (buildingDirectory)
                 foreach (BuildingSummary building in buildingDirectory.GetBuildingsOfFaction(factionId))
                     GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey, GetGuildName());
+        }
+
+        #endregion
+
+        #region Serialization
+
+        internal override void RestoreGuildData(GuildMembership_v1 data)
+        {
+            base.RestoreGuildData(data);
+            RegisterEvents();
         }
 
         #endregion

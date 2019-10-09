@@ -17,6 +17,7 @@ using Wenzil.Console;
 using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Save;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -46,6 +47,10 @@ namespace DaggerfallWorkshop.Game.Guilds
             // Listen for quest end events which trigger joining TG & DB.
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
 
+            // Clear all guilds affilations when loading or starting a new game
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+
             // Register console commands
             GuildConsoleCommands.RegisterCommands();
         }
@@ -65,6 +70,16 @@ namespace DaggerfallWorkshop.Game.Guilds
                     AddMembership(FactionFile.GuildGroups.DarkBrotherHood, db);
                 }
             }
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            ClearMembershipData();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            ClearMembershipData();
         }
 
         /// <summary>
@@ -130,7 +145,10 @@ namespace DaggerfallWorkshop.Game.Guilds
                 }
             }
             if (guildGroup != FactionFile.GuildGroups.None)
+            {
+                guild.Leave();
                 memberships.Remove(guildGroup);
+            }
         }
 
         public bool HasJoined(FactionFile.GuildGroups guildGroup)
@@ -266,6 +284,10 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public void ClearMembershipData()
         {
+            foreach (Guild guild in memberships.Values)
+            {
+                guild.Leave();
+            }
             memberships.Clear();
         }
 
