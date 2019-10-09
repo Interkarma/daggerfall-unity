@@ -378,7 +378,7 @@ namespace DaggerfallWorkshop.Utility
             imageData.height = dfBitmap.Height;
 
             // Create Texture2D
-            if (createTexture)
+            if (createTexture && imageData.width > 0 && imageData.height > 0)
             {
                 // Get colors array
                 Color32[] colors = GetColors(imageData);
