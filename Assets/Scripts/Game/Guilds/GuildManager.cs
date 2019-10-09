@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         // A base temple class defining non-membership.
         public static Guild templeNotMember = new NonMemberGuild(true);
 
-        // Custom guild registry.
+        // Custom guild registry. Can override vanilla guilds.
         private static Dictionary<FactionFile.GuildGroups, Type> customGuilds = new Dictionary<FactionFile.GuildGroups, Type>();
 
         public static bool RegisterCustomGuild(FactionFile.GuildGroups guildGroup, Type guildType)
@@ -174,32 +174,36 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private IGuild CreateGuildObj(FactionFile.GuildGroups guildGroup, int variant = 0)
         {
-            switch (guildGroup)
+            Type guildType;
+            if (customGuilds.TryGetValue(guildGroup, out guildType))
             {
-                case FactionFile.GuildGroups.FightersGuild:
-                    return new FightersGuild();
+                return (IGuild)Activator.CreateInstance(guildType);
+            }
+            else
+            {
+                switch (guildGroup)
+                {
+                    case FactionFile.GuildGroups.FightersGuild:
+                        return new FightersGuild();
 
-                case FactionFile.GuildGroups.MagesGuild:
-                    return new MagesGuild();
+                    case FactionFile.GuildGroups.MagesGuild:
+                        return new MagesGuild();
 
-                case FactionFile.GuildGroups.HolyOrder:
-                    return new Temple(Temple.GetDivine(variant));
+                    case FactionFile.GuildGroups.HolyOrder:
+                        return new Temple(Temple.GetDivine(variant));
 
-                case FactionFile.GuildGroups.KnightlyOrder:
-                    return new KnightlyOrder(KnightlyOrder.GetOrder(variant));
+                    case FactionFile.GuildGroups.KnightlyOrder:
+                        return new KnightlyOrder(KnightlyOrder.GetOrder(variant));
 
-                case FactionFile.GuildGroups.GeneralPopulace:
-                    return new ThievesGuild();
+                    case FactionFile.GuildGroups.GeneralPopulace:
+                        return new ThievesGuild();
 
-                case FactionFile.GuildGroups.DarkBrotherHood:
-                    return new DarkBrotherhood();
+                    case FactionFile.GuildGroups.DarkBrotherHood:
+                        return new DarkBrotherhood();
 
-                default:
-                    Type guildType;
-                    if (customGuilds.TryGetValue(guildGroup, out guildType))
-                        return (IGuild)Activator.CreateInstance(guildType);
-                    else
+                    default:
                         return null;
+                }
             }
         }
 
