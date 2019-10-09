@@ -1019,13 +1019,13 @@ namespace DaggerfallWorkshop.Game
             // Handle guild halls
             if (type == DFLocation.BuildingTypes.GuildHall)
             {
-                Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
+                IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
                 unlocked = guild.HallAccessAnytime() ? true : IsBuildingOpen(type);
             }
             // Handle TG/DB houses
             else if (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0)
             {
-                Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
+                IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
                 unlocked = guild.IsMember();
             }
             // Handle House1 through House4

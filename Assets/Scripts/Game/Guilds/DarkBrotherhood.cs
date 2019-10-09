@@ -241,7 +241,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Serialization
 
-        internal override void RestoreGuildData(GuildMembership_v1 data)
+        public override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
             RegisterEvents();

@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop
             PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
             int factionID = buildingData.factionID;
             Debug.Log("Bookshelf access, Faction ID = " + factionID);
-            Guild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
+            IGuild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
             if ((buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
                  buildingData.buildingType == DFLocation.BuildingTypes.Temple) &&
                  !guild.CanAccessLibrary())
