@@ -125,10 +125,10 @@ namespace DaggerfallWorkshop.Game.Guilds
         protected override int CalculateNewRank(PlayerEntity playerEntity)
         {
             int newRank = base.CalculateNewRank(playerEntity);
-            return AllowGuildExpulsion(newRank);
+            return AllowGuildExpulsion(playerEntity, newRank);
         }
 
-        protected virtual int AllowGuildExpulsion(int newRank)
+        protected virtual int AllowGuildExpulsion(PlayerEntity playerEntity, int newRank)
         {
             // Thieves guild never expel members (I assume at some point they 'retire' you instead!)
             return (newRank < 0) ? 0 : newRank;

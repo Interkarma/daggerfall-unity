@@ -17,7 +17,6 @@ using Wenzil.Console;
 using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallConnect.Save;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
