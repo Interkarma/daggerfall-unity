@@ -226,7 +226,9 @@ MonoBehaviour:
   EnemyType: 15
   EnemyReaction: 0
   EnemyGender: 0
+  AlliedToPlayer: 0
   ClassicSpawnDistanceType: 0
+  LightAura: {fileID: 1563319636301202, guid: 1004bbfa7b5984f40a7b080e442a8eea, type: 2}
 --- !u!114 &11424130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -238,8 +240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 148778fc11ccec74aa9f538dab0d07d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MeleeAttackSpeed: 1.25
   MeleeDistance: 2.25
+  ClassicMeleeDistanceVsAI: 1.5
   MeleeTimer: 0
   ArrowMissilePrefab: {fileID: 114624404217668130, guid: 0fdc5fb41ee669e49b44322b7db26e9e,
     type: 2}
@@ -366,6 +368,7 @@ MonoBehaviour:
       Weight: 0
       CastsMagic: 0
       SeesThroughInvisibility: 0
+      NoShadow: 0
       SoulPts: 0
       PrimaryAttackAnimFrames: 
       ChanceForAttack2: 0

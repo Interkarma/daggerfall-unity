@@ -22,6 +22,8 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallEntityBehaviour entityBehaviour;
 
+        public GameObject LightAura;
+
         void Awake()
         {
             // Must have an entity behaviour
@@ -107,11 +109,11 @@ namespace DaggerfallWorkshop.Game
                     {
                         meshRenderer.receiveShadows = false;
                         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                        Light enemyLight = dfMobile.gameObject.AddComponent<Light>();
-                        enemyLight.type = LightType.Point;
-                        enemyLight.range = 8f;
+                        GameObject enemyLightGameObject = Instantiate(LightAura);
+                        enemyLightGameObject.transform.parent = dfMobile.transform;
+                        enemyLightGameObject.transform.localPosition += new Vector3(0, 0.65f, 0.1f);
+                        Light enemyLight = enemyLightGameObject.GetComponent<Light>();
                         enemyLight.color = (Color)dfMobile.Summary.Enemy.GlowColor;
-                        enemyLight.intensity = 0.1f;
                         enemyLight.shadows = DaggerfallUnity.Settings.DungeonLightShadows ? LightShadows.Soft : LightShadows.None;
                     }
                 }
