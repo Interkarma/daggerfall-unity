@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game.Entity;
 using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -75,6 +76,16 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Guild Membership and Faction
+
+        public ThievesGuild()
+        {
+            RegisterEvents();
+        }
+
+        ~ThievesGuild()
+        {
+            UnregisterEvents();
+        }
 
         public static int FactionId { get { return factionId; } }
 
@@ -194,9 +205,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private void RegisterEvents()
         {
-            // Register for location entry events so can auto discover guild houses
+            // Register events for location entry events so can auto discover guild houses.
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
             StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
+
+            // Register events so as to know when to unregister events.
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         private void UnregisterEvents()
@@ -204,6 +219,18 @@ namespace DaggerfallWorkshop.Game.Guilds
             // Unregister events
             PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
             StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            UnregisterEvents();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            UnregisterEvents();
         }
 
         private void PlayerGPS_OnEnterLocationRect(DFLocation location)
