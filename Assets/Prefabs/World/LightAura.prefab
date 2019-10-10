@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4267279812102522}
   - component: {fileID: 108636351846433320}
+  - component: {fileID: 114833400777933900}
   m_Layer: 11
   m_Name: LightAura
   m_TagString: Untagged
@@ -50,7 +51,7 @@ Light:
   serializedVersion: 8
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.1
+  m_Intensity: 0.12
   m_Range: 8
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -77,3 +78,16 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114833400777933900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1563319636301202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76e51ef8298020d4180ccc91bee045b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animate: 1
+  InteriorLight: 1
