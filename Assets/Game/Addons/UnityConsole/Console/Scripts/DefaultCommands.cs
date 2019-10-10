@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallConnect.FallExe;
 
 namespace Wenzil.Console
 {
@@ -1839,33 +1840,28 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add_all_equip";
             public static readonly string description = "Adds all equippable item types to inventory for the current characters gender & race. (for testing paperdoll images)";
-            public static readonly string usage = "add_all_equip (clothing|armor|weapons)";
+            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons)";
 
             public static ArmorMaterialTypes[] armorMaterials = {
-                ArmorMaterialTypes.Leather,
-                ArmorMaterialTypes.Chain,
-                ArmorMaterialTypes.Iron,
-                ArmorMaterialTypes.Steel,
-                ArmorMaterialTypes.Silver,
-                ArmorMaterialTypes.Elven,
-                ArmorMaterialTypes.Dwarven,
-                ArmorMaterialTypes.Mithril,
-                ArmorMaterialTypes.Adamantium,
-                ArmorMaterialTypes.Ebony,
-                ArmorMaterialTypes.Orcish,
-                ArmorMaterialTypes.Daedric
+                ArmorMaterialTypes.Leather, ArmorMaterialTypes.Chain, ArmorMaterialTypes.Iron, ArmorMaterialTypes.Steel,
+                ArmorMaterialTypes.Silver, ArmorMaterialTypes.Elven, ArmorMaterialTypes.Dwarven, ArmorMaterialTypes.Mithril,
+                ArmorMaterialTypes.Adamantium, ArmorMaterialTypes.Ebony, ArmorMaterialTypes.Orcish, ArmorMaterialTypes.Daedric
             };
             public static WeaponMaterialTypes[] weaponMaterials = {
-                WeaponMaterialTypes.Iron,
-                WeaponMaterialTypes.Steel,
-                WeaponMaterialTypes.Silver,
-                WeaponMaterialTypes.Elven,
-                WeaponMaterialTypes.Dwarven,
-                WeaponMaterialTypes.Mithril,
-                WeaponMaterialTypes.Adamantium,
-                WeaponMaterialTypes.Ebony,
-                WeaponMaterialTypes.Orcish,
-                WeaponMaterialTypes.Daedric
+                WeaponMaterialTypes.Iron, WeaponMaterialTypes.Steel, WeaponMaterialTypes.Silver, WeaponMaterialTypes.Elven,
+                WeaponMaterialTypes.Dwarven, WeaponMaterialTypes.Mithril, WeaponMaterialTypes.Adamantium, WeaponMaterialTypes.Ebony,
+                WeaponMaterialTypes.Orcish, WeaponMaterialTypes.Daedric
+            };
+
+            public static List<MensClothing> mensUsableClothing = new List<MensClothing>() {
+                MensClothing.Casual_cloak, MensClothing.Formal_cloak, MensClothing.Reversible_tunic, MensClothing.Plain_robes,
+                MensClothing.Short_shirt, MensClothing.Short_shirt_with_belt, MensClothing.Long_shirt, MensClothing.Long_shirt_with_belt,
+                MensClothing.Short_shirt_closed_top, MensClothing.Short_shirt_closed_top2, MensClothing.Long_shirt_closed_top, MensClothing.Long_shirt_closed_top2
+            };
+            public static List<WomensClothing> womensUsableClothing = new List<WomensClothing>() {
+                WomensClothing.Casual_cloak, WomensClothing.Formal_cloak, WomensClothing.Strapless_dress, WomensClothing.Plain_robes,
+                WomensClothing.Short_shirt, WomensClothing.Short_shirt_belt, WomensClothing.Long_shirt, WomensClothing.Long_shirt_belt,
+                WomensClothing.Short_shirt_closed, WomensClothing.Short_shirt_closed_belt, WomensClothing.Long_shirt_closed, WomensClothing.Long_shirt_closed_belt
             };
 
             public static string Execute(params string[] args)
@@ -1880,16 +1876,27 @@ namespace Wenzil.Console
                 switch (args[0])
                 {
                     case "clothing":
+                    case "clothingAllDyes":
+                        DyeColors[] clothingDyes = (args[0] == "clothing") ? new DyeColors[] { DyeColors.White } : ItemBuilder.clothingDyes;
                         ItemGroups clothing = (playerEntity.Gender == Genders.Male) ? ItemGroups.MensClothing : ItemGroups.WomensClothing;
-                        foreach (DyeColors dye in ItemBuilder.clothingDyes)
+                        foreach (DyeColors dye in clothingDyes)
                         {
                             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(clothing);
                             for (int i = 0; i < enumArray.Length; i++)
                             {
-                                newItem = new DaggerfallUnityItem(clothing, i);
-                                ItemBuilder.SetRace(newItem, playerEntity.Race);
-                                newItem.dyeColor = dye;
-                                playerEntity.Items.AddItem(newItem);
+                                ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(clothing, i);
+                                if ((playerEntity.Gender == Genders.Male && mensUsableClothing.Contains((MensClothing)enumArray.GetValue(i))) ||
+                                    womensUsableClothing.Contains((WomensClothing)enumArray.GetValue(i)))
+                                    itemTemplate.variants = 1;
+
+                                for (int v = 0; v < itemTemplate.variants; v++)
+                                {
+                                    newItem = new DaggerfallUnityItem(clothing, i);
+                                    ItemBuilder.SetRace(newItem, playerEntity.Race);
+                                    newItem.dyeColor = dye;
+                                    newItem.CurrentVariant = v;
+                                    playerEntity.Items.AddItem(newItem);
+                                }
                             }
                         }
                         return string.Format("Added all clothing types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
@@ -1900,8 +1907,55 @@ namespace Wenzil.Console
                             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Armor);
                             for (int i = 0; i < enumArray.Length; i++)
                             {
-                                newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, (Armor)enumArray.GetValue(i), material);
-                                playerEntity.Items.AddItem(newItem);
+                                Armor armorType = (Armor)enumArray.GetValue(i);
+                                int vs = 0;
+                                int vf = 0;
+                                if (armorType == Armor.Cuirass || armorType == Armor.Left_Pauldron || armorType == Armor.Right_Pauldron)
+                                {
+                                    if (material == ArmorMaterialTypes.Chain)
+                                    {
+                                        vs = 4;
+                                    }
+                                    else if (material >= ArmorMaterialTypes.Iron)
+                                    {
+                                        vs = 1;
+                                        vf = 4;
+                                    }
+                                }
+                                else if (armorType == Armor.Greaves)
+                                {
+                                    if (material == ArmorMaterialTypes.Leather)
+                                    {
+                                        vs = 0;
+                                        vf = 2;
+                                    }
+                                    else if (material == ArmorMaterialTypes.Chain)
+                                    {
+                                        vs = 6;
+                                    }
+                                    else if (material >= ArmorMaterialTypes.Iron)
+                                    {
+                                        vs = 2;
+                                        vf = 6;
+                                    }
+                                }
+                                else if (armorType == Armor.Gauntlets && material != ArmorMaterialTypes.Leather)
+                                {
+                                    vs = 1;
+                                }
+                                else
+                                {
+                                    ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i);
+                                    vf = itemTemplate.variants;
+                                }
+                                if (vf == 0)
+                                    vf = vs + 1;
+
+                                for (int v = vs; v < vf; v++)
+                                {
+                                    newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armorType, material, v);
+                                    playerEntity.Items.AddItem(newItem);
+                                }
                             }
                         }
                         return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
