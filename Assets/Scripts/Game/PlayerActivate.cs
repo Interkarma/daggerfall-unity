@@ -256,8 +256,12 @@ namespace DaggerfallWorkshop.Game
                     ActivateLaddersAndShelves(hit);
 
                     // Invoke any matched custom model activations registered by mods.
+                    string modelName = hit.transform.gameObject.name;
+                    int pos = modelName.IndexOf(']');
+                    if (pos > 0 && pos < modelName.Length - 1)
+                        modelName = modelName.Remove(pos + 1);
                     ModelActivation activation;
-                    if (customModelActivations.TryGetValue(hit.transform.gameObject.name, out activation))
+                    if (customModelActivations.TryGetValue(modelName, out activation))
                     {
                         activation(hit.transform);
                     }
