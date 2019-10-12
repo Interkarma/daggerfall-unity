@@ -25,15 +25,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Fields
 
         const float blinkInterval = 0.25f;
-        const int maxIconRow = 10;
-        const int maxIconPool = 20;
+        const int maxIconPool = 24;
 
-        const int classicSelfStartX = 51;
+        const int classicSelfStartX = 27;
         const int classicSelfStartY = 16;
-        const int classicOtherStartX = 75;
+        const int classicOtherStartX = 27;
         const int classicOtherStartY = 177;
         const int classicIconDim = 16;
         const int classicHorzSpacing = 24;
+        const int classicTotalWidth = 280;
+        const int classicVertSpacing = 24;
 
         Panel[] iconPool = new Panel[maxIconPool];
         List<ActiveSpellIcon> activeSelfList = new List<ActiveSpellIcon>();
@@ -245,12 +246,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Update icon panels in pooled collection
-            AlignIcons(activeSelfList, classicSelfStartX, classicSelfStartY, classicIconDim, classicIconDim, classicHorzSpacing);
-            AlignIcons(activeOtherList, classicOtherStartX, classicOtherStartY, classicIconDim, classicIconDim, classicHorzSpacing);
+            AlignIcons(activeSelfList, classicSelfStartX, classicSelfStartY, classicIconDim, classicIconDim, classicTotalWidth, classicHorzSpacing, classicVertSpacing);
+            AlignIcons(activeOtherList, classicOtherStartX, classicOtherStartY, classicIconDim, classicIconDim, classicTotalWidth, classicHorzSpacing, -classicVertSpacing);
         }
 
-        void AlignIcons(List<ActiveSpellIcon> icons, float xpos, float ypos, float width, float height, float xspacing, float yspacing = 0)
+        void AlignIcons(List<ActiveSpellIcon> icons, float xpos, float ypos, float width, float height, float totalWidth, float xspacing, float yspacing)
         {
+            float xpos0 = xpos;
+            float rightMargin = xpos + totalWidth;
             foreach (ActiveSpellIcon spell in icons)
             {
                 if(spell.poolIndex < maxIconPool)
@@ -261,8 +264,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     iconPool[spell.poolIndex].Size = new Vector2(width, height);
                     iconPool[spell.poolIndex].ToolTipText = spell.displayName;
                     xpos += xspacing;
-                    ypos += yspacing;
-
+                    if (xpos + width > rightMargin)
+                    {
+                        xpos = xpos0;
+                        ypos += yspacing;
+                    }
                 }
             }
         }
