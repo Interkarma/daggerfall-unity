@@ -525,14 +525,24 @@ namespace DaggerfallConnect.Arena2
             }
             else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdb)
             {
-                // Read RDB data
-                ReadRdbHeader(reader, block);
-                ReadRdbModelReferenceList(reader, block);
-                ReadRdbModelDataList(reader, block);
-                ReadRdbObjectSectionHeader(reader, block);
-                ReadRdbUnknownLinkedList(reader, block);
-                ReadRdbObjectSectionRootList(reader, block);
-                ReadRdbObjectLists(reader, block);
+                // Check for replacement dungeon block data and use it if found
+                DFBlock rdbBlock;
+                if (WorldDataReplacement.GetRDBBlockReplacementData(block, GetBlockName(block), out rdbBlock))
+                {
+                    UnityEngine.Debug.LogFormat("Found RDB block override: {0} - {1}", block, GetBlockName(block));
+                    blocks[block].DFBlock = rdbBlock;
+                }
+                else
+                {
+                    // Read RDB data
+                    ReadRdbHeader(reader, block);
+                    ReadRdbModelReferenceList(reader, block);
+                    ReadRdbModelDataList(reader, block);
+                    ReadRdbObjectSectionHeader(reader, block);
+                    ReadRdbUnknownLinkedList(reader, block);
+                    ReadRdbObjectSectionRootList(reader, block);
+                    ReadRdbObjectLists(reader, block);
+                }
             }
             else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
             {

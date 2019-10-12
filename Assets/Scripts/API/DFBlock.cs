@@ -10,6 +10,7 @@
 //
 
 #region Using Statements
+using DaggerfallWorkshop.Utility.AssetInjection;
 using FullSerializer;
 using System;
 #endregion
@@ -777,6 +778,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// An RDB block has this general structure.
         /// </summary>
+        [fsObject(Processor = typeof(RdbBlockDescProcessor))]
         public struct RdbBlockDesc
         {
             /// <summary>Position in stream to find this data.</summary>
@@ -900,10 +902,11 @@ namespace DaggerfallConnect
         /// <summary>
         /// A single RDB object has this structure.
         /// </summary>
+        [fsObject(Processor = typeof(RdbObjectProcessor))]
         public struct RdbObject
         {
             /// <summary>Offset of this object from start of RDB record. Not required unless you are extending the block reader.</summary>
-            internal Int32 Position;
+            public Int32 Position;
 
             /// <summary>Offset to next object from start of RDB record. Not required unless you are extending the block reader.</summary>
             internal Int32 Next;

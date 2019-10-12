@@ -7,7 +7,9 @@
 // Contributors:
 //
 
+using System;
 using System.IO;
+using FullSerializer;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
@@ -52,6 +54,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         const int noReplacementBT = -1;
         static readonly BuildingReplacementData noReplacementData = new BuildingReplacementData() { BuildingType = noReplacementBT };
+        static readonly DFBlock nullBlock = new DFBlock();
 
         static readonly string worldDataPath = Path.Combine(Application.streamingAssetsPath, "WorldData");
 
@@ -84,6 +87,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
         {
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
+        }
+
+        // TODO - add cache, or change BlocksFile.AutoDiscard to false? Speak to Interkarma!
+        public static bool GetRDBBlockReplacementData(int block, string blockName, out DFBlock rdbBlock)
+        {
+            if (DaggerfallUnity.Settings.AssetInjection && blockName.EndsWith(".RDB"))
+            {
+                string fileName = GetBlockReplacementFilename(blockName);
+
+                // Seek from loose files
+                if (File.Exists(Path.Combine(worldDataPath, fileName)))
+                {
+                    string blockReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
+                    rdbBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJson);
+                    return true;
+                }
+                // Seek from mods
+                TextAsset blockReplacementJsonAsset;
+                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out blockReplacementJsonAsset))
+                {
+                    rdbBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJsonAsset.text);
+                    return true;
+                }
+            }
+            rdbBlock = nullBlock;
+            return false;
         }
 
         public static bool GetBuildingReplacementData(string blockName, int blockIndex, int recordIndex, out BuildingReplacementData buildingData)
@@ -129,7 +158,65 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-#endregion
+        #endregion
 
     }
+
+    #region FullSerializer custom processors
+
+    public class RdbBlockDescProcessor : fsObjectProcessor
+    {
+        /*
+        public override void OnBeforeSerialize(Type storageType, object instance)
+        {
+            // Invoked before serialization begins. Update any state inside of instance / etc.
+            DFBlock.RdbBlockDesc blockData = (DFBlock.RdbBlockDesc) instance;
+            for (int i=0; i < blockData.ModelReferenceList.Length; i++)
+            {
+                if (blockData.ModelReferenceList[i].ModelIdNum == 0)
+                {
+                    Array.Resize(ref blockData.ModelReferenceList, i);
+                    break;
+                }
+            }
+            instance = blockData;
+            Debug.Log("RDB block");
+        }*/
+
+        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        {
+            // Truncate ModelReferenceList at the first null entry in array[750].
+            List<fsData> modelRefs = data.AsDictionary["ModelReferenceList"].AsList;
+            for (int i = 0; i < modelRefs.Count; i++)
+            {
+                if (modelRefs[i].AsDictionary["ModelIdNum"].AsInt64 == 0)
+                {
+                    modelRefs.RemoveRange(i, modelRefs.Count - i);
+                    break;
+                }
+            }
+        }
+    }
+
+    public class RdbObjectProcessor : fsObjectProcessor
+    {
+        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        {
+            // Only write relevant type resource data for Rdb Objects.
+            Dictionary<string, fsData> rdbObject = data.AsDictionary;
+            DFBlock.RdbResourceTypes type = (DFBlock.RdbResourceTypes) Enum.Parse(typeof(DFBlock.RdbResourceTypes), rdbObject["Type"].AsString);
+            Dictionary<string, fsData> resources = rdbObject["Resources"].AsDictionary;
+
+            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Light)
+                resources.Remove("ModelResource");
+            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Model)
+                resources.Remove("LightResource");
+            if (type == DFBlock.RdbResourceTypes.Model || type == DFBlock.RdbResourceTypes.Light)
+                resources.Remove("FlatResource");
+        }
+    }
+
+    #endregion
 }
