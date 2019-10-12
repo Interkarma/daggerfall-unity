@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!TryImportGameObject(modelID, true, out go))
                 return null;
 
-            go.name = string.Format("DaggerfallMesh[Replacement][ID ={0}]", modelID);
+            go.name = GameObjectHelper.GetGoModelName(modelID) + " [Replacement]";
             go.transform.parent = parent;
             go.transform.position = matrix.GetColumn(3);
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
