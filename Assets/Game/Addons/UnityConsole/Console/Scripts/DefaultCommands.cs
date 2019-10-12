@@ -170,7 +170,7 @@ namespace Wenzil.Console
                     if (!string.IsNullOrEmpty(blockData.Name))
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
-                        string fileName = WorldDataReplacement.GetRMBBlockReplacementFilename(blockData.Name);
+                        string fileName = WorldDataReplacement.GetBlockReplacementFilename(blockData.Name);
                         File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
                         return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
