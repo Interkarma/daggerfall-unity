@@ -68,7 +68,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
-        // Replacing entire blocks is not currently possible as RmbFldGroundData contains
+        public static string GetLocationReplacementFilename(int regionIndex, int locationIndex)
+        {
+            return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
+        }
+
+        // Replacing entire RMB blocks is not currently possible as RmbFldGroundData contains
         // groundData as a 2d array and FullSerializer can't do 2D arrays out of the box.
         public static string GetRMBBlockReplacementFilename(string blockName)
         {

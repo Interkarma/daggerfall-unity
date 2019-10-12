@@ -98,6 +98,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PoisonPlayer.name, PoisonPlayer.usage, PoisonPlayer.description, PoisonPlayer.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(DumpLocation.name, DumpLocation.description, DumpLocation.usage, DumpLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
@@ -110,6 +111,36 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
 
+        }
+
+        private static class DumpLocation
+        {
+            public static readonly string name = "dumplocation";
+            public static readonly string error = "Player not at a location, unable to dump";
+            public static readonly string usage = "dumplocation";
+            public static readonly string description = "Dump the current location (from MAPS.BSA) that the player is currently in to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 0)
+                {
+                    return HelpCommand.Execute(DumpLocation.name);
+                }
+                else
+                {
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    if (playerGPS.HasCurrentLocation)
+                    {
+                        DFLocation location = playerGPS.CurrentLocation;
+
+                        string locJson = SaveLoadManager.Serialize(location.GetType(), location);
+                        string fileName = WorldDataReplacement.GetLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), locJson);
+                        return "Location data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    }
+                    return error;
+                }
+            }
         }
 
         private static class DumpBlock
