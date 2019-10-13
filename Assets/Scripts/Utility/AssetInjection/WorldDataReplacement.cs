@@ -68,6 +68,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
+        public static string GetLocationReplacementFilename(int regionIndex, int locationIndex)
+        {
+            return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
+        }
+
+        // Currently only RDB block replacement is possible.
+        // Replacing entire RMB blocks is not currently possible as RmbFldGroundData contains
+        // groundData as a 2D array and FullSerializer can't do 2D arrays out of the box.
+        public static string GetBlockReplacementFilename(string blockName)
+        {
+            return string.Format("{0}.json", blockName);
+        }
+
         public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
         {
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
