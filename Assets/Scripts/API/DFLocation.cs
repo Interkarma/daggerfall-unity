@@ -80,6 +80,22 @@ namespace DaggerfallConnect
 
         #endregion
 
+        #region Methods
+
+        /// <summary>Some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
+        /// Seems to be 1x1 blocks using CUST prefix, but possibly more research needed</summary>
+        public bool HasCustomLocationPosition()
+        {
+            const string custBlockPrefix = "CUST";
+            if (Exterior.ExteriorData.Width == 1 && Exterior.ExteriorData.Height == 1)
+            {
+                return Exterior.ExteriorData.BlockNames[0].StartsWith(custBlockPrefix);
+            }
+            return false;
+        }
+
+        #endregion
+
         #region Building Enumerations
 
         /// <summary>

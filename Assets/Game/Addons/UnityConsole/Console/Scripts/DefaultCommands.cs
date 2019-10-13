@@ -191,8 +191,8 @@ namespace Wenzil.Console
         {
             public static readonly string name = "dumplocblocks";
             public static readonly string error = "Failed to dump locations";
-            public static readonly string usage = "dumplocblocks [blockName.RMB]*";
-            public static readonly string description = "Dump the names of blocks for each location, or locations for given block(s), to json file";
+            public static readonly string usage = "dumplocblocks [locindex|(blockName.RMB )*]\nExamples:\ndumplocblocks\ndumplocblocks locindex\ndumplocblocks RESIAM10.RMB GEMSAM02.RMB";
+            public static readonly string description = "Dump the names of blocks for each location, location index or locations for list of given block(s), to json file";
 
             public static string Execute(params string[] args)
             {
@@ -213,6 +213,22 @@ namespace Wenzil.Console
                     string fileName = Path.Combine(Application.persistentDataPath, "LocationBlockNames.json");
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
+                }
+                else if (args.Length == 1 && args[0] == "locindex")
+                {
+                    string locIndex = "";
+                    for (int region = 0; region < mapFileReader.RegionCount; region++)
+                    {
+                        DFRegion dfRegion = mapFileReader.GetRegion(region);
+                        for (int location = 0; location < dfRegion.LocationCount; location++)
+                        {
+                            DFLocation dfLoc = mapFileReader.GetLocation(region, location);
+                            locIndex += string.Format("{0}, {1}: {2}\n", region, dfLoc.LocationIndex, dfLoc.Name);
+                        }
+                    }
+                    string fileName = Path.Combine(Application.persistentDataPath, "LocationIndex.txt");
+                    File.WriteAllText(fileName, locIndex);
+                    return "Location index written to " + fileName;
                 }
                 else
                 {

@@ -52,9 +52,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Fields & Properties
 
+        static readonly DFLocation nullLocation = new DFLocation();
+        static readonly DFBlock nullBlock = new DFBlock();
+
         const int noReplacementBT = -1;
         static readonly BuildingReplacementData noReplacementData = new BuildingReplacementData() { BuildingType = noReplacementBT };
-        static readonly DFBlock nullBlock = new DFBlock();
 
         static readonly string worldDataPath = Path.Combine(Application.streamingAssetsPath, "WorldData");
 
@@ -71,7 +73,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
-        public static string GetLocationReplacementFilename(int regionIndex, int locationIndex)
+        public static string GetDFLocationReplacementFilename(int regionIndex, int locationIndex)
         {
             return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
         }
@@ -84,6 +86,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
         {
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
+        }
+
+        public static bool GetDFLocationReplacementData(int regionIndex, int locationIndex, out DFLocation dfLocation)
+        {
+            if (DaggerfallUnity.Settings.AssetInjection)
+            {
+                string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex);
+
+                // Seek from loose files
+                if (File.Exists(Path.Combine(worldDataPath, fileName)))
+                {
+                    string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
+                    dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
+                    Debug.LogFormat("Found DFLocation override: {0}, {1}", regionIndex, locationIndex);
+                    return true;
+                }
+                // Seek from mods
+                TextAsset locationReplacementJsonAsset;
+                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out locationReplacementJsonAsset))
+                {
+                    dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
+                    return true;
+                }
+            }
+            dfLocation = nullLocation;
+            return false;
         }
 
         // Currently only RDB block replacement is possible.
