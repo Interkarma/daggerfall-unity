@@ -27,14 +27,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const float blinkInterval = 0.25f;
         const int maxIconPool = 24;
 
-        const int classicSelfStartX = 27;
-        const int classicSelfStartY = 16;
-        const int classicOtherStartX = 27;
-        const int classicOtherStartY = 177;
-        const int classicIconDim = 16;
-        const int classicHorzSpacing = 24;
-        const int classicTotalWidth = 280;
-        const int classicVertSpacing = 24;
+        class IconsPositioning
+        {
+            public readonly Vector2 iconSize;
+
+            public readonly Vector2 origin;
+            public readonly Vector2 columnStep;
+            public readonly Vector2 rowStep;
+
+            public readonly int iconColumns;
+
+            public IconsPositioning(Vector2 iconSize, Vector2 origin, Vector2 columnStep, Vector2 rowStep, int iconColumns)
+            {
+                this.iconSize = iconSize;
+                this.origin = origin;
+                this.columnStep = columnStep;
+                this.rowStep = rowStep;
+                this.iconColumns = iconColumns;
+            }
+        }
+
+        IconsPositioning selfIconsPositioning;
+        IconsPositioning otherIconsPositioning;
 
         Panel[] iconPool = new Panel[maxIconPool];
         List<ActiveSpellIcon> activeSelfList = new List<ActiveSpellIcon>();
@@ -169,6 +183,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void InitIcons()
         {
+            switch (DaggerfallUnity.Settings.IconsPositioningScheme.ToLower())
+            {
+                case "classic":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 16), new Vector2(24, 0), new Vector2(0, 24), 12);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 177), new Vector2(24, 0), new Vector2(0, -24), 12);
+                    break;
+                case "small":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(10, 0), new Vector2(0, 10), 6);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(10, 0), new Vector2(0, -10), 6);
+                    break;
+            }
+
             // Setup default tooltip
             if (DaggerfallUnity.Settings.EnableToolTips)
             {
@@ -182,11 +208,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Setup icon panels
             for (int i = 0; i < iconPool.Length; i++)
             {
-                iconPool[i] = new Panel();
-                iconPool[i].BackgroundColor = Color.black;
-                iconPool[i].AutoSize = AutoSizeModes.None;
-                iconPool[i].Enabled = false;
-                iconPool[i].ToolTip = defaultToolTip;
+                iconPool[i] = new Panel
+                {
+                    BackgroundColor = Color.black,
+                    AutoSize = AutoSizeModes.None,
+                    Enabled = false,
+                    ToolTip = defaultToolTip
+                };
                 Components.Add(iconPool[i]);
             }
         }
@@ -246,28 +274,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Update icon panels in pooled collection
-            AlignIcons(activeSelfList, classicSelfStartX, classicSelfStartY, classicIconDim, classicIconDim, classicTotalWidth, classicHorzSpacing, classicVertSpacing);
-            AlignIcons(activeOtherList, classicOtherStartX, classicOtherStartY, classicIconDim, classicIconDim, classicTotalWidth, classicHorzSpacing, -classicVertSpacing);
+            AlignIcons(activeSelfList, selfIconsPositioning);
+            AlignIcons(activeOtherList, otherIconsPositioning);
         }
 
-        void AlignIcons(List<ActiveSpellIcon> icons, float xpos, float ypos, float width, float height, float totalWidth, float xspacing, float yspacing)
+        void AlignIcons(List<ActiveSpellIcon> icons, IconsPositioning iconsPositioning)
         {
-            float xpos0 = xpos;
-            float rightMargin = xpos + totalWidth;
+            Vector2 rowOrigin = iconsPositioning.origin;
+            Vector2 position = rowOrigin;
+            int column = 0;
             foreach (ActiveSpellIcon spell in icons)
             {
                 if(spell.poolIndex < maxIconPool)
                 {
-                    iconPool[spell.poolIndex].Enabled = true;
-                    iconPool[spell.poolIndex].BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.icon);
-                    iconPool[spell.poolIndex].Position = new Vector2(xpos, ypos);
-                    iconPool[spell.poolIndex].Size = new Vector2(width, height);
-                    iconPool[spell.poolIndex].ToolTipText = spell.displayName;
-                    xpos += xspacing;
-                    if (xpos + width > rightMargin)
+                    Panel icon = iconPool[spell.poolIndex];
+                    icon.Enabled = true;
+                    icon.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.icon);
+                    icon.Position = position;
+                    icon.Size = iconsPositioning.iconSize;
+                    icon.ToolTipText = spell.displayName;
+                    if (++column == iconsPositioning.iconColumns)
                     {
-                        xpos = xpos0;
-                        ypos += yspacing;
+                        rowOrigin += iconsPositioning.rowStep;
+                        position = rowOrigin;
+                        column = 0;
+                    }
+                    else
+                    {
+                        position += iconsPositioning.columnStep;
                     }
                 }
             }
