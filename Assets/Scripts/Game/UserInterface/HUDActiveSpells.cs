@@ -189,7 +189,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     selfIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 16), new Vector2(24, 0), new Vector2(0, 24), 12);
                     otherIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 177), new Vector2(24, 0), new Vector2(0, -24), 12);
                     break;
-                case "average":
+                case "medium":
                     selfIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 16), new Vector2(16, 0), new Vector2(0, 16), 16);
                     otherIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 177), new Vector2(16, 0), new Vector2(0, -16), 16);
                     break;
