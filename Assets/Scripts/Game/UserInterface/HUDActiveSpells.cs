@@ -189,9 +189,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     selfIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 16), new Vector2(24, 0), new Vector2(0, 24), 12);
                     otherIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 177), new Vector2(24, 0), new Vector2(0, -24), 12);
                     break;
+                case "average":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 16), new Vector2(16, 0), new Vector2(0, 16), 16);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 177), new Vector2(16, 0), new Vector2(0, -16), 16);
+                    break;
                 case "small":
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(10, 0), new Vector2(0, 10), 6);
                     otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(10, 0), new Vector2(0, -10), 6);
+                    break;
+                case "smalldeckleft":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 28), new Vector2(10, -2), new Vector2(0, 10), 6);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 165), new Vector2(10, 2), new Vector2(0, -10), 6);
+                    break;
+                case "smalldeckright":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 28), new Vector2(-10, -2), new Vector2(0, 10), 6);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 165), new Vector2(-10, 2), new Vector2(0, -10), 6);
+                    break;
+                case "smallvertleft":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(0, 10), new Vector2(10, 0), 10);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(0, -10), new Vector2(10, 0), 4);
+                    break;
+                case "smallvertright":
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 16), new Vector2(0, 10), new Vector2(-10, 0), 10);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 177), new Vector2(0, -10), new Vector2(-10, 0), 4);
                     break;
             }
 
