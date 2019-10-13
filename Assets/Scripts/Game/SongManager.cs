@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -298,7 +298,7 @@ namespace DaggerfallWorkshop.Game
                     int region = 0;
                     if (gps.HasCurrentLocation)
                     {
-                        unknown2 = (ushort)gps.CurrentLocation.Dungeon.RecordElement.Header.Unknown2;
+                        unknown2 = (ushort)gps.CurrentLocation.Dungeon.RecordElement.Header.LocationIndex;
                         region = gps.CurrentRegionIndex;
                     }
                     DFRandom.srand(unknown2 ^ ((byte)region << 8));

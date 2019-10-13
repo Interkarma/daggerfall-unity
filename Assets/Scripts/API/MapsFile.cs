@@ -1116,7 +1116,7 @@ namespace DaggerfallConnect.Arena2
             recordElement.Header.IsExterior = reader.ReadUInt16();
             recordElement.Header.NullValue4 = reader.ReadUInt16();
             recordElement.Header.Unknown1 = reader.ReadUInt32();
-            recordElement.Header.Unknown2 = reader.ReadUInt32();
+            recordElement.Header.LocationIndex = reader.ReadUInt32();
             recordElement.Header.AlwaysOne2 = reader.ReadUInt16();
             recordElement.Header.LocationId = reader.ReadUInt16();
             recordElement.Header.NullValue5 = reader.ReadUInt32();

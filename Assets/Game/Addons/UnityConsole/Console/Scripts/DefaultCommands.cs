@@ -134,7 +134,7 @@ namespace Wenzil.Console
                         DFLocation location = playerGPS.CurrentLocation;
 
                         string locJson = SaveLoadManager.Serialize(location.GetType(), location);
-                        string fileName = WorldDataReplacement.GetLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
+                        string fileName = WorldDataReplacement.GetDFLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
                         File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), locJson);
                         return "Location data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
