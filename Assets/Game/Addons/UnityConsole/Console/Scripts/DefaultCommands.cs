@@ -147,14 +147,22 @@ namespace Wenzil.Console
         {
             public static readonly string name = "dumpblock";
             public static readonly string error = "Failed to dump block";
-            public static readonly string usage = "dumpblock blockName";
-            public static readonly string description = "Dump a block to json file";
+            public static readonly string usage = "dumpblock [blockName]";
+            public static readonly string description = "Dump a block to json file, or index if no block name specified";
 
             public static string Execute(params string[] args)
             {
                 if (args.Length == 0)
                 {
-                    return HelpCommand.Execute(DumpBlock.name);
+                    string blockIndex = "";
+                    BsaFile blockBsa = DaggerfallUnity.Instance.ContentReader.BlockFileReader.BsaFile;
+                    for (int b = 0; b < blockBsa.Count; b++)
+                    {
+                        blockIndex += string.Format("{0}: {1}\n", b, blockBsa.GetRecordName(b));
+                    }
+                    string fileName = Path.Combine(Application.persistentDataPath, "BlockIndex.txt");
+                    File.WriteAllText(fileName, blockIndex);
+                    return "Block index data written to " + Path.Combine(Application.persistentDataPath, fileName);
                 }
                 else
                 {
@@ -170,7 +178,7 @@ namespace Wenzil.Console
                     if (!string.IsNullOrEmpty(blockData.Name))
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
-                        string fileName = WorldDataReplacement.GetBlockReplacementFilename(blockData.Name);
+                        string fileName = WorldDataReplacement.GetDFBlockReplacementFilename(blockData.Name);
                         File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
                         return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }

@@ -513,26 +513,26 @@ namespace DaggerfallConnect.Arena2
         /// <param name="block">Destination block index.</param>
         private void ReadBlock(BinaryReader reader, int block)
         {
-            // Step through file based on type
-            reader.BaseStream.Position = 0;
-            if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rmb)
+            // Check for replacement block data and use it if found
+            DFBlock dfBlock;
+            if (WorldDataReplacement.GetDFBlockReplacementData(block, GetBlockName(block), out dfBlock))
             {
-                // Read RMB data
-                ReadRmbFldHeader(reader, block);
-                ReadRmbBlockData(reader, block);
-                ReadRmbMisc3dObjects(reader, block);
-                ReadRmbMiscFlatObjectRecords(reader, block);
+                UnityEngine.Debug.LogFormat("Found DFBlock override: {0} - {1}", block, GetBlockName(block));
+                blocks[block].DFBlock = dfBlock;
             }
-            else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdb)
+            else
             {
-                // Check for replacement dungeon block data and use it if found
-                DFBlock rdbBlock;
-                if (WorldDataReplacement.GetRDBBlockReplacementData(block, GetBlockName(block), out rdbBlock))
+                // Step through file based on type
+                reader.BaseStream.Position = 0;
+                if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rmb)
                 {
-                    UnityEngine.Debug.LogFormat("Found RDB block override: {0} - {1}", block, GetBlockName(block));
-                    blocks[block].DFBlock = rdbBlock;
+                    // Read RMB data
+                    ReadRmbFldHeader(reader, block);
+                    ReadRmbBlockData(reader, block);
+                    ReadRmbMisc3dObjects(reader, block);
+                    ReadRmbMiscFlatObjectRecords(reader, block);
                 }
-                else
+                else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdb)
                 {
                     // Read RDB data
                     ReadRdbHeader(reader, block);
@@ -543,16 +543,16 @@ namespace DaggerfallConnect.Arena2
                     ReadRdbObjectSectionRootList(reader, block);
                     ReadRdbObjectLists(reader, block);
                 }
-            }
-            else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
-            {
-                // Read RDI data
-                ReadRdiRecord(reader, block);
-            }
-            else
-            {
-                DiscardBlock(block);
-                return;
+                else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
+                {
+                    // Read RDI data
+                    ReadRdiRecord(reader, block);
+                }
+                else
+                {
+                    DiscardBlock(block);
+                    return;
+                }
             }
         }
 

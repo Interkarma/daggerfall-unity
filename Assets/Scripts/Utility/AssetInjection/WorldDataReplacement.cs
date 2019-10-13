@@ -76,10 +76,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
         }
 
-        // Currently only RDB block replacement is possible.
-        // Replacing entire RMB blocks is not currently possible as RmbFldGroundData contains
-        // groundData as a 2D array and FullSerializer can't do 2D arrays out of the box.
-        public static string GetBlockReplacementFilename(string blockName)
+        public static string GetDFBlockReplacementFilename(string blockName)
         {
             return string.Format("{0}.json", blockName);
         }
@@ -89,29 +86,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
         }
 
-        // TODO - add cache, or change BlocksFile.AutoDiscard to false? Speak to Interkarma!
-        public static bool GetRDBBlockReplacementData(int block, string blockName, out DFBlock rdbBlock)
+        // Currently only RDB block replacement is possible.
+        // Replacing entire RMB blocks is not currently possible as RmbFldGroundData contains
+        // groundData as a 2D array and FullSerializer can't do 2D arrays out of the box.
+        // TODO - add cache so that the replacement data check isn't seeking files constantly.
+        public static bool GetDFBlockReplacementData(int block, string blockName, out DFBlock dfBlock)
         {
-            if (DaggerfallUnity.Settings.AssetInjection && blockName.EndsWith(".RDB"))
+            if (DaggerfallUnity.Settings.AssetInjection)
             {
-                string fileName = GetBlockReplacementFilename(blockName);
+                string fileName = GetDFBlockReplacementFilename(blockName);
 
                 // Seek from loose files
                 if (File.Exists(Path.Combine(worldDataPath, fileName)))
                 {
                     string blockReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
-                    rdbBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJson);
+                    dfBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJson);
                     return true;
                 }
                 // Seek from mods
                 TextAsset blockReplacementJsonAsset;
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out blockReplacementJsonAsset))
                 {
-                    rdbBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJsonAsset.text);
+                    dfBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJsonAsset.text);
                     return true;
                 }
             }
-            rdbBlock = nullBlock;
+            dfBlock = nullBlock;
             return false;
         }
 

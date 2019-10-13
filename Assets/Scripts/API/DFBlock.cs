@@ -800,7 +800,7 @@ namespace DaggerfallConnect
             public RdbObjectRoot[] ObjectRootList;
 
             /// <summary>List of unknown objects from RdbObjectHeader.</summary>
-            public RdbUnknownObject[] UnknownObjectList;
+            internal RdbUnknownObject[] UnknownObjectList;
         }
 
         /// <summary>
