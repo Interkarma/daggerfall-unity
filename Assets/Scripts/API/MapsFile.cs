@@ -883,37 +883,37 @@ namespace DaggerfallConnect.Arena2
         private bool ReadLocation(int region, int location, ref DFLocation dfLocation)
         {
             // Check for replacement location data and use it if found
-            if (!WorldDataReplacement.GetDFLocationReplacementData(region, location, out dfLocation))
+            if (WorldDataReplacement.GetDFLocationReplacementData(region, location, out dfLocation))
+                return true;
+
+            try
             {
-                try
-                {
-                    // Store parent region name
-                    dfLocation.RegionName = RegionNames[region];
+                // Store parent region name
+                dfLocation.RegionName = RegionNames[region];
 
-                    // Read MapPItem for this location
-                    BinaryReader reader = regions[region].MapPItem.GetReader();
-                    ReadMapPItem(ref reader, region, location, ref dfLocation);
+                // Read MapPItem for this location
+                BinaryReader reader = regions[region].MapPItem.GetReader();
+                ReadMapPItem(ref reader, region, location, ref dfLocation);
 
-                    // Read MapDItem for this location
-                    reader = regions[region].MapDItem.GetReader();
-                    ReadMapDItem(ref reader, region, ref dfLocation);
+                // Read MapDItem for this location
+                reader = regions[region].MapDItem.GetReader();
+                ReadMapDItem(ref reader, region, ref dfLocation);
 
-                    // Copy RegionMapTable data to this location
-                    dfLocation.MapTableData = regions[region].DFRegion.MapTable[location];
+                // Copy RegionMapTable data to this location
+                dfLocation.MapTableData = regions[region].DFRegion.MapTable[location];
 
-                    // Read climate and politic data
-                    ReadClimatePoliticData(ref dfLocation);
+                // Read climate and politic data
+                ReadClimatePoliticData(ref dfLocation);
 
-                    // Set loaded flag
-                    dfLocation.Loaded = true;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    return false;
-                }
+                // Set loaded flag
+                dfLocation.Loaded = true;
+                return true;
             }
-            return true;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
 
         /// <summary>
