@@ -98,6 +98,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PoisonPlayer.name, PoisonPlayer.usage, PoisonPlayer.description, PoisonPlayer.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(DumpRegion.name, DumpRegion.description, DumpRegion.usage, DumpRegion.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocation.name, DumpLocation.description, DumpLocation.usage, DumpLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
@@ -111,6 +112,36 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
 
+        }
+
+        private static class DumpRegion
+        {
+            public static readonly string name = "dumpregion";
+            public static readonly string error = "Player not in a region, unable to dump";
+            public static readonly string usage = "dumpregion";
+            public static readonly string description = "Dump the current region (from MAPS.BSA) that the player is currently in to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 0)
+                {
+                    return HelpCommand.Execute(DumpRegion.name);
+                }
+                else
+                {
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    if (playerGPS)
+                    {
+                        DFRegion region = playerGPS.CurrentRegion;
+
+                        string regionJson = SaveLoadManager.Serialize(region.GetType(), region);
+                        string fileName = WorldDataReplacement.GetDFRegionReplacementFilename(playerGPS.CurrentRegionIndex);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), regionJson);
+                        return "Region data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    }
+                    return error;
+                }
+            }
         }
 
         private static class DumpLocation

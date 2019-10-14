@@ -298,7 +298,7 @@ namespace DaggerfallWorkshop.Game
                     int region = 0;
                     if (gps.HasCurrentLocation)
                     {
-                        unknown2 = (ushort)gps.CurrentLocation.Dungeon.RecordElement.Header.LocationIndex;
+                        unknown2 = (ushort)gps.CurrentLocation.Dungeon.RecordElement.Header.Unknown2;
                         region = gps.CurrentRegionIndex;
                     }
                     DFRandom.srand(unknown2 ^ ((byte)region << 8));

@@ -867,6 +867,9 @@ namespace DaggerfallConnect.Arena2
                 return false;
             }
 
+            // Add any additional replacement location data to the region, assigning locationIndex
+            WorldDataReplacement.GetDFRegionAdditionalLocationData(region, ref regions[region].DFRegion);
+
             return true;
         }
 
@@ -984,6 +987,15 @@ namespace DaggerfallConnect.Arena2
             }
         }
 
+        /// <summary>Read location count from maps file, used to get count in
+        /// classic datafiles only, excluding added locations. </summary>
+        private uint ReadLocationCount(int region)
+        {
+            BinaryReader reader = regions[region].MapNames.GetReader();
+            reader.BaseStream.Position = 0;
+            return reader.ReadUInt32();
+        }
+
         /// <summary>
         /// Quickly reads the LocationId with minimal overhead.
         /// Region must be loaded before calling this method.
@@ -993,12 +1005,19 @@ namespace DaggerfallConnect.Arena2
         /// <returns>LocationId.</returns>
         public int ReadLocationIdFast(int region, int location)
         {
+            // Added new locations will put the LocationId in regions map table, since it doesn't exist in classic data
+            if (regions[region].DFRegion.MapTable[location].LocationId != 0)
+                return regions[region].DFRegion.MapTable[location].LocationId;
+
+            // Get datafile location count (excluding added locations)
+            uint locationCount = ReadLocationCount(region);
+
             // Get reader
             BinaryReader reader = regions[region].MapPItem.GetReader();
 
             // Position reader at location record by reading offset and adding to end of offset table
             reader.BaseStream.Position = location * 4;
-            reader.BaseStream.Position = (regions[region].DFRegion.LocationCount * 4) + reader.ReadUInt32();
+            reader.BaseStream.Position = (locationCount * 4) + reader.ReadUInt32(); // TODO remove MapsFileLocationCount, read from file
 
             // Skip doors (+6 bytes per door)
             UInt32 doorCount = reader.ReadUInt32();
@@ -1022,9 +1041,12 @@ namespace DaggerfallConnect.Arena2
         /// <param name="dfLocation">Destination DFLocation.</param>
         private void ReadMapPItem(ref BinaryReader reader, int region, int location, ref DFLocation dfLocation)
         {
+            // Get datafile location count (excluding added locations)
+            uint locationCount = ReadLocationCount(region);
+
             // Position reader at location record by reading offset and adding to end of offset table
             reader.BaseStream.Position = location * 4;
-            reader.BaseStream.Position = (regions[region].DFRegion.LocationCount * 4) + reader.ReadUInt32();
+            reader.BaseStream.Position = (locationCount * 4) + reader.ReadUInt32();
 
             // Store name
             dfLocation.Name = regions[region].DFRegion.MapNames[location];
@@ -1120,7 +1142,7 @@ namespace DaggerfallConnect.Arena2
             recordElement.Header.IsExterior = reader.ReadUInt16();
             recordElement.Header.NullValue4 = reader.ReadUInt16();
             recordElement.Header.Unknown1 = reader.ReadUInt32();
-            recordElement.Header.LocationIndex = reader.ReadUInt32();
+            recordElement.Header.Unknown2 = reader.ReadUInt32();
             recordElement.Header.AlwaysOne2 = reader.ReadUInt16();
             recordElement.Header.LocationId = reader.ReadUInt16();
             recordElement.Header.NullValue5 = reader.ReadUInt32();

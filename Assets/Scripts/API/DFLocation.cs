@@ -446,8 +446,11 @@ namespace DaggerfallConnect
             /// <summary>Unknown.</summary>
             internal UInt32 Unknown1;
 
-            /// <summary>Location index. (from data, should match top level index)</summary>
-            public UInt32 LocationIndex;
+            /// <summary>
+            /// Unknown value for LocationDungeon structure, used by SongManager to select songs.
+            /// Location index for Exterior structure. (should match top level index)
+            /// </summary>
+            public UInt32 Unknown2;
 
             /// <summary>Always 1.</summary>
             internal UInt16 AlwaysOne2;

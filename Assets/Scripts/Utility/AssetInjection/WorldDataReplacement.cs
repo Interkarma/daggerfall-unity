@@ -52,8 +52,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Fields & Properties
 
-        static readonly DFLocation nullLocation = new DFLocation();
-        static readonly DFBlock nullBlock = new DFBlock();
+        static readonly DFLocation noReplaceLocation = new DFLocation() ;
+        static readonly DFBlock noReplaceBlock = new DFBlock();
+
+        private static Dictionary<int, DFLocation> locations = new Dictionary<int, DFLocation>();
 
         const int noReplacementBT = -1;
         static readonly BuildingReplacementData noReplacementData = new BuildingReplacementData() { BuildingType = noReplacementBT };
@@ -73,6 +75,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
+        public static string GetDFRegionReplacementFilename(int regionIndex)
+        {
+            return string.Format("region-{0}.json", regionIndex);
+        }
+
         public static string GetDFLocationReplacementFilename(int regionIndex, int locationIndex)
         {
             return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
@@ -88,10 +95,69 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
         }
 
+        public static uint GetDFRegionAdditionalLocationData(int regionIndex, ref DFRegion dfRegion)
+        {
+            if (DaggerfallUnity.Settings.AssetInjection)
+            {
+                // Seek from loose files
+                string locationPattern = string.Format("location-{0}-add-*.json", regionIndex);
+                string[] fileNames = Directory.GetFiles(worldDataPath, locationPattern);
+                if (fileNames.Length > 0)
+                {
+                    uint dataLocationCount = dfRegion.LocationCount;
+                    List<string> mapNames = new List<string>(dfRegion.MapNames);
+                    List<DFRegion.RegionMapTable> mapTable = new List<DFRegion.RegionMapTable>(dfRegion.MapTable);
+                    foreach (string fileName in fileNames)
+                    {
+                        string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
+                        DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
+
+                        // Copy the location id for ReadLocationIdFast() to use instead of peeking the classic data files
+                        dfLocation.MapTableData.LocationId = dfLocation.Exterior.RecordElement.Header.LocationId;
+
+                        // Add location to region using next index value
+                        int locationIndex = (int)dfRegion.LocationCount++;
+                        mapNames.Add(dfLocation.Name);
+                        dfLocation.LocationIndex = locationIndex;
+                        dfLocation.Exterior.RecordElement.Header.Unknown2 = (uint)locationIndex;
+                        mapTable.Add(dfLocation.MapTableData);
+                        dfRegion.MapIdLookup.Add(dfLocation.MapTableData.MapId, locationIndex);
+                        dfRegion.MapNameLookup.Add(dfLocation.Name, locationIndex);
+
+                        // Store location replacement/addition
+                        locations[MakeLocationKey(regionIndex, locationIndex)] = dfLocation;
+                    }
+                    dfRegion.MapNames = mapNames.ToArray();
+                    dfRegion.MapTable = mapTable.ToArray();
+
+                    // TODO - cache the DFLocation so GetDFLocationReplacementData can return it.
+
+                    Debug.LogFormat("Added {0} DFLocation's to region {1}, indexes: {2} - {3}",
+                        dfRegion.LocationCount - dataLocationCount, regionIndex, dataLocationCount, dfRegion.LocationCount-1);
+                    return dfRegion.LocationCount - dataLocationCount;
+                }
+                // Seek from mods
+/*                TextAsset locationReplacementJsonAsset;
+                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out locationReplacementJsonAsset))
+                {
+                    dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
+                    return true;
+                }*/
+            }
+            return 0;
+        }
+
         public static bool GetDFLocationReplacementData(int regionIndex, int locationIndex, out DFLocation dfLocation)
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
+                int locationKey = MakeLocationKey(regionIndex, locationIndex);
+                if (locations.ContainsKey(locationKey))
+                {
+                    dfLocation = locations[locationKey];
+                    return dfLocation.Name != noReplaceLocation.Name;
+                }
+
                 string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex);
 
                 // Seek from loose files
@@ -100,6 +166,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                     dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
                     Debug.LogFormat("Found DFLocation override: {0}, {1}", regionIndex, locationIndex);
+//                    locations[locationKey] = dfLocation;
                     return true;
                 }
                 // Seek from mods
@@ -107,10 +174,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out locationReplacementJsonAsset))
                 {
                     dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
+//                    locations[locationKey] = dfLocation;
                     return true;
                 }
+                // Mark location as having no replacement
+//                locations[locationKey] = noReplaceLocation;
             }
-            dfLocation = nullLocation;
+            dfLocation = noReplaceLocation;
             return false;
         }
 
@@ -139,7 +209,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     return true;
                 }
             }
-            dfBlock = nullBlock;
+            dfBlock = noReplaceBlock;
             return false;
         }
 
@@ -188,6 +258,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #endregion
 
+        #region Private Methods
+
+        static int MakeLocationKey(int regionIndex, int locationIndex)
+        {
+            return (locationIndex * 100) + regionIndex;
+        }
+
+        #endregion
     }
 
     #region FullSerializer custom processors
