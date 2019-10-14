@@ -15,6 +15,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -52,10 +53,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Fields & Properties
 
-        static readonly DFLocation noReplaceLocation = new DFLocation() ;
-        static readonly DFBlock noReplaceBlock = new DFBlock();
+        static readonly DFLocation noReplaceLocation = new DFLocation() { LocationIndex = -1 };
+        static readonly DFBlock noReplaceBlock = new DFBlock() { Index = -1 };
 
         private static Dictionary<int, DFLocation> locations = new Dictionary<int, DFLocation>();
+
+        private static int nextBlockIndex;
+        private static Dictionary<int, string> newBlockNames = new Dictionary<int, string>();
+        private static Dictionary<string, int> newBlockIndices = new Dictionary<string, int>();
+        private static Dictionary<string, DFBlock> blocks = new Dictionary<string, DFBlock>();
 
         const int noReplacementBT = -1;
         static readonly BuildingReplacementData noReplacementData = new BuildingReplacementData() { BuildingType = noReplacementBT };
@@ -124,15 +130,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         dfRegion.MapIdLookup.Add(dfLocation.MapTableData.MapId, locationIndex);
                         dfRegion.MapNameLookup.Add(dfLocation.Name, locationIndex);
 
+                        // Assign any new blocks in this location a block index if they haven't already ben assigned
+                        AssignBlockIndices(dfLocation);
+
                         // Store location replacement/addition
                         locations[MakeLocationKey(regionIndex, locationIndex)] = dfLocation;
                     }
+                    // Update the region arrays from local lists
                     dfRegion.MapNames = mapNames.ToArray();
                     dfRegion.MapTable = mapTable.ToArray();
 
-                    // TODO - cache the DFLocation so GetDFLocationReplacementData can return it.
-
-                    Debug.LogFormat("Added {0} DFLocation's to region {1}, indexes: {2} - {3}",
+                    Debug.LogFormat("Added {0} new DFLocation's to region {1}, indexes: {2} - {3}",
                         dfRegion.LocationCount - dataLocationCount, regionIndex, dataLocationCount, dfRegion.LocationCount-1);
                     return dfRegion.LocationCount - dataLocationCount;
                 }
@@ -151,6 +159,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
+                // Check the location cache
                 int locationKey = MakeLocationKey(regionIndex, locationIndex);
                 if (locations.ContainsKey(locationKey))
                 {
@@ -159,29 +168,52 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
 
                 string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex);
+                TextAsset locationReplacementJsonAsset;
 
                 // Seek from loose files
                 if (File.Exists(Path.Combine(worldDataPath, fileName)))
                 {
                     string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                     dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
-                    Debug.LogFormat("Found DFLocation override: {0}, {1}", regionIndex, locationIndex);
-//                    locations[locationKey] = dfLocation;
-                    return true;
                 }
                 // Seek from mods
-                TextAsset locationReplacementJsonAsset;
-                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out locationReplacementJsonAsset))
+                else if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out locationReplacementJsonAsset))
                 {
                     dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
-//                    locations[locationKey] = dfLocation;
-                    return true;
                 }
-                // Mark location as having no replacement
-//                locations[locationKey] = noReplaceLocation;
+                else
+                {
+                    // Only look for replacement data once, unless running in editor
+                    //                  locations[locationKey] = noReplaceLocation;
+                    dfLocation = noReplaceLocation;
+                    return false;
+                }
+                // Assign any new blocks in this location a block index if they haven't already ben assigned
+                AssignBlockIndices(dfLocation);
+
+                // Cache location replacement data, unless running in editor 
+                //              locations[locationKey] = dfLocation;
+                Debug.LogFormat("Found DFLocation override: {0}, {1}", regionIndex, locationIndex);
+                return true;
             }
             dfLocation = noReplaceLocation;
             return false;
+        }
+
+        public static int GetNewDFBlockIndex(string blockName)
+        {
+            if (newBlockIndices.ContainsKey(blockName))
+                return newBlockIndices[blockName];
+            else
+                return -1;
+        }
+
+        public static string GetNewDFBlockName(int block)
+        {
+            if (newBlockNames.ContainsKey(block))
+                return newBlockNames[block];
+            else
+                return null;
         }
 
         // Currently only RDB block replacement is possible.
@@ -192,23 +224,39 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
+                // Check the block cache
+                if (blocks.ContainsKey(blockName))
+                {
+                    dfBlock = blocks[blockName];
+                    return dfBlock.Index != noReplaceBlock.Index;
+                }
+
                 string fileName = GetDFBlockReplacementFilename(blockName);
+                TextAsset blockReplacementJsonAsset;
 
                 // Seek from loose files
                 if (File.Exists(Path.Combine(worldDataPath, fileName)))
                 {
                     string blockReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                     dfBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJson);
-                    Debug.LogFormat("Found DFBlock override: {0} - {1}", block, blockName);
-                    return true;
                 }
                 // Seek from mods
-                TextAsset blockReplacementJsonAsset;
-                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out blockReplacementJsonAsset))
+                else if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(fileName, false, out blockReplacementJsonAsset))
                 {
                     dfBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJsonAsset.text);
-                    return true;
                 }
+                else
+                {
+                    // Only look for replacement data once, unless running in editor
+//                    blocks[blockName] = noReplaceBlock;
+                    dfBlock = noReplaceBlock;
+                    return false;
+                }
+                dfBlock.Index = block;
+                // Cache block replacement data, unless running in editor
+                blocks[blockName] = dfBlock;
+                Debug.LogFormat("Found DFBlock override: {0} (index: {1})", blockName, block);
+                return true;
             }
             dfBlock = noReplaceBlock;
             return false;
@@ -266,6 +314,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return (locationIndex * 100) + regionIndex;
         }
 
+        private static void AssignBlockIndices(DFLocation dfLocation)
+        {
+            ContentReader reader = DaggerfallUnity.Instance.ContentReader;
+            if (reader != null)
+            {
+                BlocksFile blocksFile = reader.BlockFileReader;
+                if (blocksFile != null)
+                {
+                    if (nextBlockIndex == 0)
+                        nextBlockIndex = blocksFile.BsaFile.Count;
+
+                    // RMB blocks
+                    foreach (string blockName in dfLocation.Exterior.ExteriorData.BlockNames)
+                        if (blocksFile.GetBlockIndex(blockName) == -1)
+                            AssignNextIndex(blockName);
+
+                    // RDB blocks
+                    foreach (DFLocation.DungeonBlock dungeonBlock in dfLocation.Dungeon.Blocks)
+                    {
+                        string blockName = dungeonBlock.BlockName;
+                        if (blocksFile.GetBlockIndex(blockName) == -1)
+                            AssignNextIndex(blockName);
+                    }
+                }
+            }
+        }
+
+        private static void AssignNextIndex(string blockName)
+        {
+            newBlockNames[nextBlockIndex] = blockName;
+            newBlockIndices[blockName] = nextBlockIndex;
+            Debug.LogFormat("Found new DFBlock: {0}, (assigned index: {1})", blockName, nextBlockIndex);
+            nextBlockIndex++;
+        }
+
         #endregion
     }
 
@@ -273,23 +356,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
     public class RdbBlockDescProcessor : fsObjectProcessor
     {
-        /*
-        public override void OnBeforeSerialize(Type storageType, object instance)
-        {
-            // Invoked before serialization begins. Update any state inside of instance / etc.
-            DFBlock.RdbBlockDesc blockData = (DFBlock.RdbBlockDesc) instance;
-            for (int i=0; i < blockData.ModelReferenceList.Length; i++)
-            {
-                if (blockData.ModelReferenceList[i].ModelIdNum == 0)
-                {
-                    Array.Resize(ref blockData.ModelReferenceList, i);
-                    break;
-                }
-            }
-            instance = blockData;
-            Debug.Log("RDB block");
-        }*/
-
         // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
         public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
         {

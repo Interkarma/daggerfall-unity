@@ -211,7 +211,11 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Name of the block.</returns>
         public string GetBlockName(int block)
         {
-            // TODO: check added blocks first
+            // Check for any new blocks added first
+            string replacementBlockName = WorldDataReplacement.GetNewDFBlockName(block);
+            if (replacementBlockName != null)
+                return replacementBlockName;
+
             return bsaFile.GetRecordName(block);
         }
 
@@ -269,6 +273,11 @@ namespace DaggerfallConnect.Arena2
             // Return known value if already indexed
             if (blockNameLookup.ContainsKey(name))
                 return blockNameLookup[name];
+
+            // Check for any new blocks added next
+            int blockIndex = WorldDataReplacement.GetNewDFBlockIndex(name);
+            if (blockIndex != -1)
+                return blockIndex;
 
             // Otherwise find and store index by searching for name
             for (int i = 0; i < Count; i++)
@@ -379,7 +388,11 @@ namespace DaggerfallConnect.Arena2
             // Check for replacement block data and use it if found
             DFBlock dfBlock;
             if (WorldDataReplacement.GetDFBlockReplacementData(block, GetBlockName(block), out dfBlock))
-                blocks[block].DFBlock = dfBlock;
+            {
+                if (blocks.Length > block)
+                    blocks[block].DFBlock = dfBlock;
+                return dfBlock;
+            }
             else
             // Load the record
             if (!LoadBlock(block))
