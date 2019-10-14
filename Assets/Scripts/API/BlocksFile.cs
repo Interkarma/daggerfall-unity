@@ -211,6 +211,7 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Name of the block.</returns>
         public string GetBlockName(int block)
         {
+            // TODO: check added blocks first
             return bsaFile.GetRecordName(block);
         }
 
@@ -375,6 +376,11 @@ namespace DaggerfallConnect.Arena2
         /// <returns>DFBlock object.</returns>
         public DFBlock GetBlock(int block)
         {
+            // Check for replacement block data and use it if found
+            DFBlock dfBlock;
+            if (WorldDataReplacement.GetDFBlockReplacementData(block, GetBlockName(block), out dfBlock))
+                blocks[block].DFBlock = dfBlock;
+            else
             // Load the record
             if (!LoadBlock(block))
                 return new DFBlock();
@@ -513,46 +519,36 @@ namespace DaggerfallConnect.Arena2
         /// <param name="block">Destination block index.</param>
         private void ReadBlock(BinaryReader reader, int block)
         {
-            // Check for replacement block data and use it if found
-            DFBlock dfBlock;
-            if (WorldDataReplacement.GetDFBlockReplacementData(block, GetBlockName(block), out dfBlock))
+            // Step through file based on type
+            reader.BaseStream.Position = 0;
+            if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rmb)
             {
-                UnityEngine.Debug.LogFormat("Found DFBlock override: {0} - {1}", block, GetBlockName(block));
-                blocks[block].DFBlock = dfBlock;
+                // Read RMB data
+                ReadRmbFldHeader(reader, block);
+                ReadRmbBlockData(reader, block);
+                ReadRmbMisc3dObjects(reader, block);
+                ReadRmbMiscFlatObjectRecords(reader, block);
+            }
+            else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdb)
+            {
+                // Read RDB data
+                ReadRdbHeader(reader, block);
+                ReadRdbModelReferenceList(reader, block);
+                ReadRdbModelDataList(reader, block);
+                ReadRdbObjectSectionHeader(reader, block);
+                ReadRdbUnknownLinkedList(reader, block);
+                ReadRdbObjectSectionRootList(reader, block);
+                ReadRdbObjectLists(reader, block);
+            }
+            else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
+            {
+                // Read RDI data
+                ReadRdiRecord(reader, block);
             }
             else
             {
-                // Step through file based on type
-                reader.BaseStream.Position = 0;
-                if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rmb)
-                {
-                    // Read RMB data
-                    ReadRmbFldHeader(reader, block);
-                    ReadRmbBlockData(reader, block);
-                    ReadRmbMisc3dObjects(reader, block);
-                    ReadRmbMiscFlatObjectRecords(reader, block);
-                }
-                else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdb)
-                {
-                    // Read RDB data
-                    ReadRdbHeader(reader, block);
-                    ReadRdbModelReferenceList(reader, block);
-                    ReadRdbModelDataList(reader, block);
-                    ReadRdbObjectSectionHeader(reader, block);
-                    ReadRdbUnknownLinkedList(reader, block);
-                    ReadRdbObjectSectionRootList(reader, block);
-                    ReadRdbObjectLists(reader, block);
-                }
-                else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
-                {
-                    // Read RDI data
-                    ReadRdiRecord(reader, block);
-                }
-                else
-                {
-                    DiscardBlock(block);
-                    return;
-                }
+                DiscardBlock(block);
+                return;
             }
         }
 

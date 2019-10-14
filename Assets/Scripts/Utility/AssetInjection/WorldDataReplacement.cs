@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
-                string locationPattern = string.Format("location-{0}-add-*.json", regionIndex);
+                string locationPattern = string.Format("location-new-{0}-*.json", regionIndex);
                 string[] fileNames = Directory.GetFiles(worldDataPath, locationPattern);
                 if (fileNames.Length > 0)
                 {
@@ -199,6 +199,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     string blockReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                     dfBlock = (DFBlock)SaveLoadManager.Deserialize(typeof(DFBlock), blockReplacementJson);
+                    Debug.LogFormat("Found DFBlock override: {0} - {1}", block, blockName);
                     return true;
                 }
                 // Seek from mods
