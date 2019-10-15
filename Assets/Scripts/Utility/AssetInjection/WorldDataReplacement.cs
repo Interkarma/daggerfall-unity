@@ -180,7 +180,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // Return the previously cached DFRegion if found
+                // If found, return a previously cached DFRegion
                 if (regions.ContainsKey(regionIndex))
                 {
                     if (regions[regionIndex].LocationCount != noReplacementRegion.LocationCount)
@@ -226,7 +226,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     dfRegion.MapNames = mapNames.ToArray();
                     dfRegion.MapTable = mapTable.ToArray();
 
-#if !UNITY_EDITOR  // Cache region data for added locations if new blocks have been assigned indices, unless running in editor
+#if !UNITY_EDITOR  // Cache region data for added locations if new blocks have been assigned indices (unless running in editor)
                     if (newBlocksAssigned)
                         regions.Add(regionIndex, dfRegion);
 #endif
@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     return true;
                 }
 
-#if !UNITY_EDITOR  // Cache no region data so only look for added locations once per region, unless running in editor
+#if !UNITY_EDITOR // Cache that there's no replacement region data, so only look for added locations once per region (unless running in editor)
                 regions.Add(regionIndex, noReplacementRegion);
 #endif
             }
@@ -246,12 +246,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // Check the location cache
+                // If found, return a previously cached DFLocation
                 int locationKey = MakeLocationKey(regionIndex, locationIndex);
                 if (locations.ContainsKey(locationKey))
                 {
                     dfLocation = locations[locationKey];
-                    return dfLocation.Name != noReplacementLocation.Name;
+                    return dfLocation.LocationIndex != noReplacementLocation.LocationIndex;
                 }
 
                 string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex);
@@ -270,16 +270,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
                 else
                 {
-                    // Only look for replacement data once, unless running in editor
-                    //                  locations[locationKey] = noReplaceLocation;
+#if !UNITY_EDITOR // Cache that there's no replacement location data, so only look for replaced locations once (unless running in editor)
+                    locations[locationKey] = noReplacementLocation;
+#endif
                     dfLocation = noReplacementLocation;
                     return false;
                 }
-                // Assign any new blocks in this location a block index if they haven't already ben assigned
-                AssignBlockIndices(dfLocation);
-
-                // Cache location replacement data, unless running in editor 
-                //              locations[locationKey] = dfLocation;
+                // Assign any new blocks in this location a block index if they haven't already been assigned
+                if (AssignBlockIndices(dfLocation))
+                {
+#if !UNITY_EDITOR   // Cache location data for replaced locations if new blocks have been assigned indices (unless running in editor)
+                    locations[locationKey] = dfLocation;
+#endif
+                }
                 Debug.LogFormat("Found DFLocation override: {0}, {1}", regionIndex, locationIndex);
                 return true;
             }
@@ -392,11 +395,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        #endregion
+#endregion
 
     }
 
-    #region FullSerializer custom processors
+#region FullSerializer custom processors
 
     public class RdbBlockDescProcessor : fsObjectProcessor
     {
@@ -435,5 +438,5 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
     }
 
-    #endregion
+#endregion
 }
