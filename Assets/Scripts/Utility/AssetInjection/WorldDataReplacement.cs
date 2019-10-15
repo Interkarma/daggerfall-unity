@@ -304,7 +304,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// 
+        /// Checks for replacement building data within a block.
         /// </summary>
         /// <param name="blockName">Block name</param>
         /// <param name="blockIndex">Block index</param>
