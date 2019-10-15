@@ -1017,7 +1017,7 @@ namespace DaggerfallConnect.Arena2
 
             // Position reader at location record by reading offset and adding to end of offset table
             reader.BaseStream.Position = location * 4;
-            reader.BaseStream.Position = (locationCount * 4) + reader.ReadUInt32(); // TODO remove MapsFileLocationCount, read from file
+            reader.BaseStream.Position = (locationCount * 4) + reader.ReadUInt32();
 
             // Skip doors (+6 bytes per door)
             UInt32 doorCount = reader.ReadUInt32();
