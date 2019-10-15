@@ -244,7 +244,7 @@ namespace DaggerfallConnect
             /// <summary>A key for the contents of the location.</summary>
             public UInt32 Key;
 
-            /// <summary>The LocationId of the location for added locations. (not read from classic data)</summary>
+            /// <summary>The LocationId of the location for any added locations. (can't be read from classic data by ReadLocationIdFast)</summary>
             internal UInt16 LocationId;
         }
 
