@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace DaggerfallWorkshop.Game.UserInterfaceWindows
+namespace DaggerfallWorkshop.Game
 {
     // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
     public class HotkeySequence

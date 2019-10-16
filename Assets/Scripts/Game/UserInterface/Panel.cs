@@ -13,7 +13,6 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {

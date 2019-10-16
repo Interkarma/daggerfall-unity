@@ -17,7 +17,6 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {

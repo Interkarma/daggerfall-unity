@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DaggerfallWorkshop.Game.UserInterfaceWindows
+namespace DaggerfallWorkshop.Game.UserInterface
 {
     public static class DaggerfallShortcut
     {
