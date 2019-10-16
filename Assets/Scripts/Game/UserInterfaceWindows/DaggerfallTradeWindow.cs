@@ -218,7 +218,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
             }
             // Setup special behaviour for remote items when repairing
-            if (windowMode == WindowModes.Repair) {
+            if (windowMode == WindowModes.Repair)
+            {
                 remoteItemListScroller.BackgroundColourHandler = RepairItemBackgroundColourHandler;
                 remoteItemListScroller.LabelTextHandler = RepairItemLabelTextHandler;
             }
@@ -259,8 +260,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         string RepairItemLabelTextHandler(DaggerfallUnityItem item)
         {
             bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
-            return repairDone ? 
-                    TextManager.Instance.GetText(textDatabase, "repairDone") : 
+            return repairDone ?
+                    TextManager.Instance.GetText(textDatabase, "repairDone") :
                     TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
         }
 
@@ -632,7 +633,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = basketItems.GetItem(i);
                     // Add if not equipped
                     if (!item.IsEquipped)
+                    {
                         AddLocalItem(item);
+                    }
+
                 }
             }
             // Add local items to filtered list
@@ -645,15 +649,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (!item.IsEquipped && (
                             (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic) ||
                             (windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
-                            (windowMode == WindowModes.SellMagic && item.IsEnchanted) ))
+                            (windowMode == WindowModes.SellMagic && item.IsEnchanted)))
                     {
-                        AddLocalItem(item);
+                        if (ItemPassesFilter(item))
+                            AddLocalItem(item);
                     }
                 }
             }
         }
 
-        protected override void FilterRemoteItems()
+        protected override void FilterRemoteItems(bool applyExtraFilter = true)
         {
             if (windowMode == WindowModes.Repair)
             {
@@ -675,7 +680,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UpdateRepairTimes(false);
             }
             else
-                base.FilterRemoteItems();
+                base.FilterRemoteItems(false);
         }
 
         protected void SelectWagon(bool show)
@@ -704,13 +709,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.LoadTextures();
 
             // Load special button texture.
-            if (windowMode == WindowModes.Sell || windowMode == WindowModes.SellMagic) {
+            if (windowMode == WindowModes.Sell || windowMode == WindowModes.SellMagic)
+            {
                 actionButtonsTexture = ImageReader.GetTexture(sellButtonsTextureName);
-            } else if (windowMode == WindowModes.Buy) {
+            }
+            else if (windowMode == WindowModes.Buy)
+            {
                 actionButtonsTexture = ImageReader.GetTexture(buyButtonsTextureName);
-            } else if (windowMode == WindowModes.Repair) {
+            }
+            else if (windowMode == WindowModes.Repair)
+            {
                 actionButtonsTexture = ImageReader.GetTexture(repairButtonsTextureName);
-            } else if (windowMode == WindowModes.Identify) {
+            }
+            else if (windowMode == WindowModes.Identify)
+            {
                 actionButtonsTexture = ImageReader.GetTexture(identifyButtonsTextureName);
             }
             actionButtonsGoldTexture = ImageReader.GetTexture(sellButtonsGoldTextureName);
@@ -833,7 +845,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
+            if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
             {
                 SelectWagon(!usingWagon);
                 Refresh(false);
@@ -855,7 +867,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (windowMode == WindowModes.Buy && cost > 0)
             {
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
-                int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
+                int weightAndNumItems = (int)basketItems.GetWeight() + basketItems.Count;
                 int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(PlayerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
                 PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
