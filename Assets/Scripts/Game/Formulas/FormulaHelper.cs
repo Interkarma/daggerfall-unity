@@ -1447,7 +1447,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
-        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, Guild guild)
+        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, IGuild guild)
         {
             // Don't cost already repaired item
             if (condition == max)
@@ -1473,7 +1473,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Max(repairTime, DaggerfallDateTime.SecondsPerDay);
         }
 
-        public static int CalculateItemIdentifyCost(int baseItemValue, Guild guild)
+        public static int CalculateItemIdentifyCost(int baseItemValue, IGuild guild)
         {
             // Free on Witches Festival
             uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

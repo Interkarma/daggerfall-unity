@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Game.Entity;
 using System;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -123,8 +124,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         protected override int CalculateNewRank(PlayerEntity playerEntity)
         {
-            // Thieves guild never expel members (I assume at some point they 'retire' you instead!)
             int newRank = base.CalculateNewRank(playerEntity);
+            return AllowGuildExpulsion(playerEntity, newRank);
+        }
+
+        protected virtual int AllowGuildExpulsion(PlayerEntity playerEntity, int newRank)
+        {
+            // Thieves guild never expel members (I assume at some point they 'retire' you instead!)
             return (newRank < 0) ? 0 : newRank;
         }
 
@@ -194,9 +200,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private void RegisterEvents()
         {
-            // Register for location entry events so can auto discover guild houses
+            // Register events for location entry events so can auto discover guild houses.
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
             StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
+
+            // Register events so as to know when to unregister events.
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         private void UnregisterEvents()
@@ -204,6 +214,18 @@ namespace DaggerfallWorkshop.Game.Guilds
             // Unregister events
             PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
             StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            UnregisterEvents();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            UnregisterEvents();
         }
 
         private void PlayerGPS_OnEnterLocationRect(DFLocation location)
@@ -232,7 +254,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Serialization
 
-        internal override void RestoreGuildData(GuildMembership_v1 data)
+        public override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
             RegisterEvents();
