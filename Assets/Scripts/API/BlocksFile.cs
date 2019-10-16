@@ -211,12 +211,7 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Name of the block.</returns>
         public string GetBlockName(int block)
         {
-            // Check for any new blocks added first
-            string replacementBlockName = WorldDataReplacement.GetNewDFBlockName(block);
-            if (replacementBlockName != null)
-                return replacementBlockName;
-
-            return bsaFile.GetRecordName(block);
+            return WorldDataReplacement.GetNewDFBlockName(block) ?? bsaFile.GetRecordName(block);
         }
 
         /// <summary>

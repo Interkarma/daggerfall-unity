@@ -423,45 +423,4 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #endregion
     }
-
-    #region FullSerializer Custom Processors (used when serializing world data structures)
-
-    public class RdbBlockDescProcessor : fsObjectProcessor
-    {
-        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
-        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
-        {
-            // Truncate ModelReferenceList at the first null entry in array[750].
-            List<fsData> modelRefs = data.AsDictionary["ModelReferenceList"].AsList;
-            for (int i = 0; i < modelRefs.Count; i++)
-            {
-                if (modelRefs[i].AsDictionary["ModelIdNum"].AsInt64 == 0)
-                {
-                    modelRefs.RemoveRange(i, modelRefs.Count - i);
-                    break;
-                }
-            }
-        }
-    }
-
-    public class RdbObjectProcessor : fsObjectProcessor
-    {
-        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
-        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
-        {
-            // Only write relevant type resource data for Rdb Objects.
-            Dictionary<string, fsData> rdbObject = data.AsDictionary;
-            DFBlock.RdbResourceTypes type = (DFBlock.RdbResourceTypes) Enum.Parse(typeof(DFBlock.RdbResourceTypes), rdbObject["Type"].AsString);
-            Dictionary<string, fsData> resources = rdbObject["Resources"].AsDictionary;
-
-            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Light)
-                resources.Remove("ModelResource");
-            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Model)
-                resources.Remove("LightResource");
-            if (type == DFBlock.RdbResourceTypes.Model || type == DFBlock.RdbResourceTypes.Light)
-                resources.Remove("FlatResource");
-        }
-    }
-
-    #endregion
 }
