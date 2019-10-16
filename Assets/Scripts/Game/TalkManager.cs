@@ -786,7 +786,7 @@ namespace DaggerfallWorkshop.Game
 
         private string GetNPCQuestGreeting()
         {
-            Guild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
+            IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
 
             if (currentNPCType == NPCType.Static)
             {
@@ -876,8 +876,8 @@ namespace DaggerfallWorkshop.Game
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
 
             int greetingIndex = 8;
-            List<Guild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
-            foreach (Guild guild in guildMemberships)
+            List<IGuild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
+            foreach (IGuild guild in guildMemberships)
             {
                 FactionFile.FactionData guildFactionData;
                 persistentFactionData.GetFactionData(guild.GetFactionId(), out guildFactionData);

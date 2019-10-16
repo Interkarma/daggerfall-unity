@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         GuildServices service;
         int buildingFactionId;  // Needed for temples & orders
 
-        Guild guild;
+        IGuild guild;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         int curingCost = 0;
 

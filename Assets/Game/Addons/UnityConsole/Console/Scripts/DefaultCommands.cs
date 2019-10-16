@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallConnect.FallExe;
 
 namespace Wenzil.Console
 {
@@ -85,6 +86,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(AddWeapon.name, AddWeapon.description, AddWeapon.usage, AddWeapon.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddArmor.name, AddArmor.description, AddArmor.usage, AddArmor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddClothing.name, AddClothing.description, AddClothing.usage, AddClothing.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddAllEquip.name, AddAllEquip.description, AddAllEquip.usage, AddAllEquip.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddBook.name, AddBook.description, AddBook.usage, AddBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
@@ -96,6 +98,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PoisonPlayer.name, PoisonPlayer.usage, PoisonPlayer.description, PoisonPlayer.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(DumpLocation.name, DumpLocation.description, DumpLocation.usage, DumpLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
@@ -108,6 +111,36 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
 
+        }
+
+        private static class DumpLocation
+        {
+            public static readonly string name = "dumplocation";
+            public static readonly string error = "Player not at a location, unable to dump";
+            public static readonly string usage = "dumplocation";
+            public static readonly string description = "Dump the current location (from MAPS.BSA) that the player is currently in to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 0)
+                {
+                    return HelpCommand.Execute(DumpLocation.name);
+                }
+                else
+                {
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    if (playerGPS.HasCurrentLocation)
+                    {
+                        DFLocation location = playerGPS.CurrentLocation;
+
+                        string locJson = SaveLoadManager.Serialize(location.GetType(), location);
+                        string fileName = WorldDataReplacement.GetLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), locJson);
+                        return "Location data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    }
+                    return error;
+                }
+            }
         }
 
         private static class DumpBlock
@@ -126,11 +159,20 @@ namespace Wenzil.Console
                 else
                 {
                     DFBlock blockData;
-                    if (RMBLayout.GetBlockData(args[0], out blockData))
+                    if (!RMBLayout.GetBlockData(args[0], out blockData))
+                    {
+                        if (args[0].EndsWith(".RDB", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(args[0]);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(blockData.Name))
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
-                        File.WriteAllText(Path.Combine(Application.persistentDataPath, args[0]), blockJson);
-                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, args[0]);
+                        string fileName = WorldDataReplacement.GetBlockReplacementFilename(blockData.Name);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
+                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
                     return error;
                 }
@@ -1575,7 +1617,8 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                if (args.Length < 1) return "see usage";
+                if (args.Length < 1)
+                    return usage;
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
@@ -1589,11 +1632,11 @@ namespace Wenzil.Console
                 }
 
                 if (n < 1)
-                    return "Error - see usage";
+                    return usage;
 
                 if (args[0] == "gold")
                 {
-                    GameManager.Instance.PlayerEntity.GoldPieces += n;
+                    playerEntity.GoldPieces += n;
                     return string.Format("Added {0} gold pieces", n);
                 }
 
@@ -1821,6 +1864,149 @@ namespace Wenzil.Console
                     ItemBuilder.CreateMensClothing(x.Parse<MensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>()) :
                     ItemBuilder.CreateWomensClothing(x.Parse<WomensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>())
                 );
+            }
+        }
+
+        private static class AddAllEquip
+        {
+            public static readonly string name = "add_all_equip";
+            public static readonly string description = "Adds all equippable item types to inventory for the current characters gender & race. (for testing paperdoll images)";
+            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons)";
+
+            public static ArmorMaterialTypes[] armorMaterials = {
+                ArmorMaterialTypes.Leather, ArmorMaterialTypes.Chain, ArmorMaterialTypes.Iron, ArmorMaterialTypes.Steel,
+                ArmorMaterialTypes.Silver, ArmorMaterialTypes.Elven, ArmorMaterialTypes.Dwarven, ArmorMaterialTypes.Mithril,
+                ArmorMaterialTypes.Adamantium, ArmorMaterialTypes.Ebony, ArmorMaterialTypes.Orcish, ArmorMaterialTypes.Daedric
+            };
+            public static WeaponMaterialTypes[] weaponMaterials = {
+                WeaponMaterialTypes.Iron, WeaponMaterialTypes.Steel, WeaponMaterialTypes.Silver, WeaponMaterialTypes.Elven,
+                WeaponMaterialTypes.Dwarven, WeaponMaterialTypes.Mithril, WeaponMaterialTypes.Adamantium, WeaponMaterialTypes.Ebony,
+                WeaponMaterialTypes.Orcish, WeaponMaterialTypes.Daedric
+            };
+
+            public static List<MensClothing> mensUsableClothing = new List<MensClothing>() {
+                MensClothing.Casual_cloak, MensClothing.Formal_cloak, MensClothing.Reversible_tunic, MensClothing.Plain_robes,
+                MensClothing.Short_shirt, MensClothing.Short_shirt_with_belt, MensClothing.Long_shirt, MensClothing.Long_shirt_with_belt,
+                MensClothing.Short_shirt_closed_top, MensClothing.Short_shirt_closed_top2, MensClothing.Long_shirt_closed_top, MensClothing.Long_shirt_closed_top2
+            };
+            public static List<WomensClothing> womensUsableClothing = new List<WomensClothing>() {
+                WomensClothing.Casual_cloak, WomensClothing.Formal_cloak, WomensClothing.Strapless_dress, WomensClothing.Plain_robes,
+                WomensClothing.Short_shirt, WomensClothing.Short_shirt_belt, WomensClothing.Long_shirt, WomensClothing.Long_shirt_belt,
+                WomensClothing.Short_shirt_closed, WomensClothing.Short_shirt_closed_belt, WomensClothing.Long_shirt_closed, WomensClothing.Long_shirt_closed_belt
+            };
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 1)
+                    return usage;
+
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                ItemCollection items = playerEntity.Items;
+                DaggerfallUnityItem newItem = null;
+
+                switch (args[0])
+                {
+                    case "clothing":
+                    case "clothingAllDyes":
+                        DyeColors[] clothingDyes = (args[0] == "clothing") ? new DyeColors[] { DyeColors.White } : ItemBuilder.clothingDyes;
+                        ItemGroups clothing = (playerEntity.Gender == Genders.Male) ? ItemGroups.MensClothing : ItemGroups.WomensClothing;
+                        foreach (DyeColors dye in clothingDyes)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(clothing);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(clothing, i);
+                                if ((playerEntity.Gender == Genders.Male && mensUsableClothing.Contains((MensClothing)enumArray.GetValue(i))) ||
+                                    womensUsableClothing.Contains((WomensClothing)enumArray.GetValue(i)))
+                                    itemTemplate.variants = 1;
+
+                                for (int v = 0; v < itemTemplate.variants; v++)
+                                {
+                                    newItem = new DaggerfallUnityItem(clothing, i);
+                                    ItemBuilder.SetRace(newItem, playerEntity.Race);
+                                    newItem.dyeColor = dye;
+                                    newItem.CurrentVariant = v;
+                                    playerEntity.Items.AddItem(newItem);
+                                }
+                            }
+                        }
+                        return string.Format("Added all clothing types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
+
+                    case "armor":
+                        foreach (ArmorMaterialTypes material in armorMaterials)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Armor);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                Armor armorType = (Armor)enumArray.GetValue(i);
+                                int vs = 0;
+                                int vf = 0;
+                                if (armorType == Armor.Cuirass || armorType == Armor.Left_Pauldron || armorType == Armor.Right_Pauldron)
+                                {
+                                    if (material == ArmorMaterialTypes.Chain)
+                                    {
+                                        vs = 4;
+                                    }
+                                    else if (material >= ArmorMaterialTypes.Iron)
+                                    {
+                                        vs = 1;
+                                        vf = 4;
+                                    }
+                                }
+                                else if (armorType == Armor.Greaves)
+                                {
+                                    if (material == ArmorMaterialTypes.Leather)
+                                    {
+                                        vs = 0;
+                                        vf = 2;
+                                    }
+                                    else if (material == ArmorMaterialTypes.Chain)
+                                    {
+                                        vs = 6;
+                                    }
+                                    else if (material >= ArmorMaterialTypes.Iron)
+                                    {
+                                        vs = 2;
+                                        vf = 6;
+                                    }
+                                }
+                                else if (armorType == Armor.Gauntlets && material != ArmorMaterialTypes.Leather)
+                                {
+                                    vs = 1;
+                                }
+                                else
+                                {
+                                    ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i);
+                                    vf = itemTemplate.variants;
+                                }
+                                if (vf == 0)
+                                    vf = vs + 1;
+
+                                for (int v = vs; v < vf; v++)
+                                {
+                                    newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armorType, material, v);
+                                    playerEntity.Items.AddItem(newItem);
+                                }
+                            }
+                        }
+                        return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
+
+                    case "weapons":
+                        foreach (WeaponMaterialTypes material in weaponMaterials)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
+                                playerEntity.Items.AddItem(newItem);
+                            }
+                        }
+                        return string.Format("Added all weapon types for any gender/race.");
+
+                    default:
+                        return "No valid equippable item group specified.";
+                }
+
             }
         }
 

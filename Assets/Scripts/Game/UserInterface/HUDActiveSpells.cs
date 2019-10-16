@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 iconPool[i] = new Panel
                 {
-                    BackgroundColor = Color.black,
+                    BackgroundColor = Color.clear, // classic uses a black background
                     AutoSize = AutoSizeModes.None,
                     Enabled = false,
                     ToolTip = defaultToolTip
