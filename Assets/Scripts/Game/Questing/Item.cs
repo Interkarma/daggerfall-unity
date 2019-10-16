@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.FallExe;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Guilds;
 
 /*Example patterns:
  * 
@@ -330,18 +331,27 @@ namespace DaggerfallWorkshop.Game.Questing
             int amount = 0;
             if (rangeLow == -1 || rangeHigh == -1)
             {
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
-                // TODO: If this is a faction quest, playerMod is (player factionrank + 1) rather than level
-                int playerMod = (player.Level / 2) + 1;
+                int playerMod = (playerEntity.Level / 2) + 1;
+                int factionMod = 50;
+                if (ParentQuest.FactionId != 0)
+                {
+                    // If this is a faction quest, playerMod is (player factionrank + 1) rather than level
+                    IGuild guild = GameManager.Instance.GuildManager.GetGuild(ParentQuest.FactionId);
+                    if (guild != null)
+                        playerMod = guild.Rank + 1;
+
+                    // If this is a faction quest, factionMod = faction.power rather than 50
+                    FactionFile.FactionData factionData;
+                    if (playerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out factionData))
+                        factionMod = factionData.power;
+                }
                 if (playerMod > 10)
                     playerMod = 10;
 
-                // TODO: If this is a faction quest, factionMod = faction.power rather than 50
-                int factionMod = 50;
-
                 PlayerGPS gps = GameManager.Instance.PlayerGPS;
-                int regionPriceMod = player.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
+                int regionPriceMod = playerEntity.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
                 amount = UnityEngine.Random.Range(150 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
             }
             else
