@@ -97,6 +97,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return (rank >= 6);
         }
 
+        public override int AlterReward(int reward)
+        {
+            return (((10 + rank) << 8) / 10 * reward) >> 8;
+        }
+
         public override int ReducedRepairCost(int price)
         {
             return (((10 - rank) << 8) / 10 * price) >> 8;

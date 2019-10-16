@@ -199,6 +199,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public virtual int AlterReward(int reward)
+        {
+            return reward;
+        }
+
         public virtual int ReducedRepairCost(int price)
         {
             return price;

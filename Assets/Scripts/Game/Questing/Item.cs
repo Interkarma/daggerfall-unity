@@ -335,10 +335,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 int playerMod = (playerEntity.Level / 2) + 1;
                 int factionMod = 50;
+                IGuild guild = null;
                 if (ParentQuest.FactionId != 0)
                 {
                     // If this is a faction quest, playerMod is (player factionrank + 1) rather than level
-                    IGuild guild = GameManager.Instance.GuildManager.GetGuild(ParentQuest.FactionId);
+                    guild = GameManager.Instance.GuildManager.GetGuild(ParentQuest.FactionId);
                     if (guild != null)
                         playerMod = guild.Rank + 1;
 
@@ -353,6 +354,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 PlayerGPS gps = GameManager.Instance.PlayerGPS;
                 int regionPriceMod = playerEntity.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
                 amount = UnityEngine.Random.Range(150 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
+
+                if (guild != null)
+                    amount = guild.AlterReward(amount);
             }
             else
                 amount = UnityEngine.Random.Range(rangeLow, rangeHigh + 1);

@@ -394,7 +394,7 @@ namespace DaggerfallWorkshop.Game.Questing
             string questFile = Path.Combine(questData.path, questName);
             if (File.Exists(questFile))
             {
-                quest = QuestMachine.Instance.ParseQuest(questName, File.ReadAllLines(questFile));
+                quest = QuestMachine.Instance.ParseQuest(questName, File.ReadAllLines(questFile), factionId);
                 if (quest == null)
                     return null;
             }
@@ -405,14 +405,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(questName, false, out questAsset))
                 {
                     List<string> lines = ModManager.GetTextAssetLines(questAsset);
-                    quest = QuestMachine.Instance.ParseQuest(questName, lines.ToArray());
+                    quest = QuestMachine.Instance.ParseQuest(questName, lines.ToArray(), factionId);
                     if (quest == null)
                         return null;
                 }
                 else
                     throw new Exception("Quest file " + questFile + " not found.");
             }
-            quest.FactionId = factionId;
             quest.OneTime = questData.oneTime;
             return quest;
         }
