@@ -178,6 +178,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!TryImportGameObject(archive, record, false, out prefab))
                 return false;
 
+            // Store state of random sequence
+            Random.State prevState = Random.state;
+
             // Get instance properties
             Vector3 position = new Vector3(x / (float)tilemapDim, 0.0f, y / (float)tilemapDim);
             float scale = getTreeScaleCallback();
@@ -198,6 +201,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             };
             terrain.AddTreeInstance(treeInstance);
 
+            Random.state = prevState;   // Restore random state
             return true;
         }
 
