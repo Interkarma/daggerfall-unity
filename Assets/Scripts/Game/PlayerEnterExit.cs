@@ -1119,6 +1119,14 @@ namespace DaggerfallWorkshop.Game
             RaiseOnTransitionDungeonExteriorEvent();
         }
 
+        public void TransitionDungeonExteriorImmediate()
+        {
+            if (!ReferenceComponents() || !dungeon || !isPlayerInsideDungeon)
+                return;
+
+            RaiseOnPreTransitionEvent(PlayerEnterExit.TransitionType.ToDungeonExterior);
+        }
+
         #endregion
 
         #region Private Methods

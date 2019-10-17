@@ -157,6 +157,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);      // Player is outside
                 else if (playerEnterExit.IsPlayerInsideBuilding)
                     SaveLoadManager.CacheScene(playerEnterExit.Interior.name);                      // Player inside a building
+                else // Player inside a dungeon
+                    playerEnterExit.TransitionDungeonExteriorImmediate();
 
                 // Need to load some other part of the world again - player could be anywhere
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
