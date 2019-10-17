@@ -14,7 +14,6 @@ FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
 ShadowResolutionMode=0
-UseLegacyDeferred=False
 DungeonLightShadows=False
 InteriorLightShadows=True
 ExteriorLightShadows=True
@@ -100,7 +99,7 @@ StartInDungeon=True
 TerrainDistance=3
 TerrainHeightmapPixelError=5
 SmallerDungeons=False
-CustomBooksImport=False
+CustomBooksImport=True
 
 [Enhancements]
 LypyL_GameConsole=True

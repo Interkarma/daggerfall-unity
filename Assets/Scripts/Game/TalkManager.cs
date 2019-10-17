@@ -786,7 +786,7 @@ namespace DaggerfallWorkshop.Game
 
         private string GetNPCQuestGreeting()
         {
-            Guild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
+            IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)GameManager.Instance.PlayerEnterExit.FactionID);
 
             if (currentNPCType == NPCType.Static)
             {
@@ -876,8 +876,8 @@ namespace DaggerfallWorkshop.Game
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
 
             int greetingIndex = 8;
-            List<Guild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
-            foreach (Guild guild in guildMemberships)
+            List<IGuild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
+            foreach (IGuild guild in guildMemberships)
             {
                 FactionFile.FactionData guildFactionData;
                 persistentFactionData.GetFactionData(guild.GetFactionId(), out guildFactionData);
@@ -1513,22 +1513,24 @@ namespace DaggerfallWorkshop.Game
             if (currentQuestionListItem.key != string.Empty)
                 key = currentQuestionListItem.key;
 
-            Person person;
-            GetPersonResource(currentQuestionListItem.questID, key, out person);
-            int buildingKey = GetPersonBuildingKey(ref person);
-
             string backupKeySubject = currentKeySubject; // Backup current key subject
 
             currentKeySubject = "";
-            if (buildingKey != 0)
-            {
-                BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
-                currentKeySubject = buildingInfo.name;
 
-                PlayerGPS.DiscoveredBuilding discoveredBuilding;
-                GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
-                if (discoveredBuilding.displayName != null)
-                    currentKeySubject = discoveredBuilding.displayName;
+            Person person;
+            GetPersonResource(currentQuestionListItem.questID, key, out person);
+
+            int buildingKey;
+
+            if (person.IsQuestor)
+            {
+                buildingKey = GetPersonBuildingKey(ref person);
+            }
+            else
+            {
+                SiteDetails siteDetails = GetPersonSiteDetails(ref person);
+                buildingKey = siteDetails.buildingKey;
+                currentKeySubject = siteDetails.buildingName;
             }
 
             if (string.IsNullOrEmpty(currentKeySubject) || currentKeySubject == HardStrings.residence)
@@ -1660,16 +1662,27 @@ namespace DaggerfallWorkshop.Game
             // Check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
             if (currentQuestionListItem.questionType == QuestionType.Person)
             {
+                int buildingKey;
+                string buildingName = "";
+
                 string key = currentQuestionListItem.key;
                 Person person;
                 GetPersonResource(currentQuestionListItem.questID, key, out person);
-                int buildingKey = GetPersonBuildingKey(ref person);
+                if (person.IsQuestor)
+                {
+                    buildingKey = GetPersonBuildingKey(ref person);                    
+                    if (buildingKey != 0)
+                        buildingName = GetBuildingNameForBuildingKey(buildingKey);
+                }
+                else
+                {
+                    SiteDetails siteDetails = GetPersonSiteDetails(ref person);
+                    buildingKey = siteDetails.buildingKey;
+                    buildingName = siteDetails.buildingName;
+                }
 
-                string buildingName = "";
-                if (buildingKey != 0)
-                    buildingName = GetBuildingNameForBuildingKey(buildingKey);
-
-                if (string.IsNullOrEmpty(buildingName))
+                // in case building name could not be resolved correctly
+                if (string.IsNullOrEmpty(buildingName) || buildingName == HardStrings.residence)
                     // Default to person home
                     buildingName = person.HomeBuildingName;
 
@@ -2145,6 +2158,18 @@ namespace DaggerfallWorkshop.Game
 
             return assignedPlace.SiteDetails.buildingKey;
         }
+
+        public SiteDetails GetPersonSiteDetails(ref Person person)
+        {
+            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            if (assignedPlaceSymbol == null)
+                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
+
+            Place assignedPlace = person.ParentQuest.GetPlace(assignedPlaceSymbol);
+
+            return assignedPlace.SiteDetails;
+        }
+
 
         public DFLocation.BuildingTypes GetBuildingTypeForBuildingKey(int buildingKey)
         {

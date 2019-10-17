@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public ImageData RidingTexture { get { return ridingTexture; } }
+        public int FrameIndex { get { return frameIndex; } }
 
         #endregion
 
@@ -152,7 +153,7 @@ namespace DaggerfallWorkshop.Game
         ImageData ridingTexture;
         ImageData[] ridingTexures = new ImageData[4];
         float lastFrameTime = 0;
-        int frameIdx = 0;
+        int frameIndex = 0;
 
         AudioClip neighClip;
         float neighTime = 0;
@@ -209,6 +210,7 @@ namespace DaggerfallWorkshop.Game
                 if (playerMotor.IsStandingStill || !playerMotor.IsGrounded || GameManager.IsGamePaused)
                 {   // Stop animation frames and sound playing.
                     lastFrameTime = 0;
+                    frameIndex = 0;
                     ridingTexture = ridingTexures[0];
                     ridingAudioSource.Stop();
                 }
@@ -221,8 +223,8 @@ namespace DaggerfallWorkshop.Game
                     else if (Time.time > lastFrameTime + animFrameTime)
                     {
                         lastFrameTime = Time.time;
-                        frameIdx = (frameIdx == 3) ? 0 : frameIdx + 1;
-                        ridingTexture = ridingTexures[frameIdx];
+                        frameIndex = (frameIndex == 3) ? 0 : frameIndex + 1;
+                        ridingTexture = ridingTexures[frameIndex];
                     }
                     // Get appropriate hoof sound for horse
                     if (mode == TransportModes.Horse)

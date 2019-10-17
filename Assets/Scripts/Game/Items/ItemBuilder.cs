@@ -31,8 +31,8 @@ namespace DaggerfallWorkshop.Game.Items
     {
         #region Data
 
-        const int firstFemaleArchive = 245;
-        const int firstMaleArchive = 249;
+        public const int firstFemaleArchive = 245;
+        public const int firstMaleArchive = 249;
         private const int chooseAtRandom = -1;
 
         // This array is used to pick random material values.
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Items
             Khajiit = 3,
         }
 
-        static DyeColors[] clothingDyes = {
+        public static DyeColors[] clothingDyes = {
             DyeColors.Blue,
             DyeColors.Grey,
             DyeColors.Red,
@@ -311,7 +311,9 @@ namespace DaggerfallWorkshop.Game.Items
             book.CurrentVariant = UnityEngine.Random.Range(0, book.TotalVariants);
             // Update item value for this book.
             BookFile bookFile = new BookFile();
-            string name = BookFile.messageToBookFilename(book.message);
+            string name = DaggerfallUnity.Settings.CustomBooksImport ?
+                    GameManager.Instance.ItemHelper.GetBookFileName(book.message) :
+                    BookFile.messageToBookFilename(book.message);
             if (!BookReplacement.TryImportBook(name, bookFile))
                 bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
             book.value = bookFile.Price;
@@ -868,15 +870,15 @@ namespace DaggerfallWorkshop.Game.Items
 
         #endregion
 
-        #region Private Methods
+        #region Static Utility Methods
 
-        static void SetRace(DaggerfallUnityItem item, Races race)
+        public static void SetRace(DaggerfallUnityItem item, Races race)
         {
             int offset = (int)GetBodyMorphology(race);
             item.PlayerTextureArchive += offset;
         }
 
-        static void SetVariant(DaggerfallUnityItem item, int variant)
+        public static void SetVariant(DaggerfallUnityItem item, int variant)
         {
             // Range check
             int totalVariants = item.ItemTemplate.variants;

@@ -74,6 +74,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             base.Update(caller);
 
             DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, videoName);
+            vidPlayerWindow.EndOnAnyKey = false;
             DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
 
             SetComplete();

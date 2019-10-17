@@ -143,6 +143,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Play infection warning dream video
                 DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, dreamVideoName);
+                vidPlayerWindow.EndOnAnyKey = false;
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 warningDreamVideoPlayed = true;
             }
@@ -150,6 +151,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Play "death" video ahead of final stage of infection
                 DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, deathVideoName);
+                vidPlayerWindow.EndOnAnyKey = false;
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 vidPlayerWindow.OnClose += DeployFullBlownVampirism;
                 fakeDeathVideoPlayed = true;

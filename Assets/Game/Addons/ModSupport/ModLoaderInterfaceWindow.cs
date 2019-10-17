@@ -353,6 +353,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         Mod mod = ModManager.Instance.GetMod(ms.modInfo.ModTitle);
 
+        modDFTFUVersionLabel.TextColor = mod.IsGameVersionSatisfied() == false ? Color.red : DaggerfallUI.DaggerfallDefaultTextColor;
+
 #if UNITY_EDITOR
         if (mod.IsVirtual)
             modTitleLabel.Text += " (debug)";

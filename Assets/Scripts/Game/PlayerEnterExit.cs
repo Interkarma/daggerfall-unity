@@ -282,6 +282,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (!GameManager.Instance.IsPlayingGame())
+                return;
+
             // Track which dungeon block player is inside of
             if (dungeon && isPlayerInsideDungeon)
             {

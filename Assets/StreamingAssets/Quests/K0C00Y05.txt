@@ -241,6 +241,11 @@ _metal_ task:
 _S.03_ task:
 	start timer _S.04_ 
 
+_altsafe_ task:
+	when _metal_ and not _S.03_
+	start task _S.01_
+--if FG rep not met, reverts to normal path
+
 _S.04_ task:
 	_letter11_ used do _S.05_ 
 	--removed say nothing
@@ -260,9 +265,10 @@ _S.07_ task:
 	prompt 1017 yes _S.09_ no _no_ 
 
 _S.08_ task:
-	when _S.09_ and _metal_ 
+	when _S.09_ and _S.04_ 
 	create foe _warrior_ every 21 minutes 10 times with 20% success 
 	change repute with _knight_ by -15 
+--changed _metal_ here to _s.04_ to prevent false knight spawning
 
 _S.09_ task:
 	hide npc _child_ 

@@ -12,6 +12,8 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using System;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -78,20 +80,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Guild Membership and Faction
 
-        public DarkBrotherhood()
-        {
-            // Register for location entry events so can auto discover guild houses.
-            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
-            StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
-        }
-
-        ~DarkBrotherhood()
-        {
-            // Unregister events
-            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
-            StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
-        }
-
         public static int FactionId { get { return factionId; } }
 
         public override int GetFactionId()
@@ -141,8 +129,13 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         protected override int CalculateNewRank(PlayerEntity playerEntity)
         {
-            // Dark Brotherhood never expel members (I assume at some point they 'retire' you instead!)
             int newRank = base.CalculateNewRank(playerEntity);
+            return AllowGuildExpulsion(playerEntity, newRank);
+        }
+
+        protected virtual int AllowGuildExpulsion(PlayerEntity playerEntity, int newRank)
+        {
+            // Dark Brotherhood never expel members (I assume at some point they 'retire' you instead!)
             return (newRank < 0) ? 0 : newRank;
         }
 
@@ -188,7 +181,13 @@ namespace DaggerfallWorkshop.Game.Guilds
         override public void Join()
         {
             base.Join();
+            RegisterEvents();
             RevealGuildHallOnMap();
+        }
+
+        override public void Leave()
+        {
+            UnregisterEvents();
         }
 
         public override TextFile.Token[] TokensIneligible(PlayerEntity playerEntity)
@@ -207,6 +206,36 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Event handlers
+
+        private void RegisterEvents()
+        {
+            // Register events for location entry events so can auto discover guild houses.
+            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            StreamingWorld.OnAvailableLocationGameObject += StreamingWorld_OnAvailableLocationGameObject;
+
+            // Register events so as to know when to unregister events.
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
+
+        private void UnregisterEvents()
+        {
+            // Unregister events
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            StreamingWorld.OnAvailableLocationGameObject -= StreamingWorld_OnAvailableLocationGameObject;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            UnregisterEvents();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            UnregisterEvents();
+        }
 
         private void PlayerGPS_OnEnterLocationRect(DFLocation location)
         {
@@ -228,6 +257,16 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (buildingDirectory)
                 foreach (BuildingSummary building in buildingDirectory.GetBuildingsOfFaction(factionId))
                     GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey, GetGuildName());
+        }
+
+        #endregion
+
+        #region Serialization
+
+        public override void RestoreGuildData(GuildMembership_v1 data)
+        {
+            base.RestoreGuildData(data);
+            RegisterEvents();
         }
 
         #endregion
