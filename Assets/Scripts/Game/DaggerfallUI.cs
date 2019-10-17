@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game
                             if (racialOverride != null && !racialOverride.CheckStartRest(GameManager.Instance.PlayerEntity))
                                 return;
 
-                            uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.Rest, uiManager));
+                            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Rest, new object[] { uiManager, false }));
                         }
                     }
                     break;

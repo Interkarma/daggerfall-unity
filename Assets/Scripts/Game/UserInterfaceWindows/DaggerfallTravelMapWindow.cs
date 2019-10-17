@@ -1271,7 +1271,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (popUp == null)
             {
-                popUp = (DaggerfallTravelPopUp)UIWindowFactory.GetInstanceWithArgs(UIWindowType.TravelPopUp, new object[] { uiManager, uiManager.TopWindow, this });
+                popUp = (DaggerfallTravelPopUp)UIWindowFactory.GetInstanceWithArgs(UIWindowType.TravelPopUp, new object[] { uiManager, this, this });
             }
 
             popUp.SleepModeInn = data.sleepInn;
