@@ -187,10 +187,10 @@ Foe _F.00_ is Nightblade
 
 _S.00_ task:
 	clicked npc _Mynisera_ 
-	prompt QuestorOffer yes yes no _no_ 
+	prompt QuestorOffer yes _yes_ no _no_ 
 	add _aubki_ as questor 
 
-yes task:
+_yes_ task:
 	add dialog for item signetRing 
 	log 1010 step 0 
 	get item signetRing 
@@ -228,8 +228,10 @@ _S.07_ task:
 
 _S.08_ task:
 	clicked npc _aubki_ 
-	say 1015 
-	change repute with _aubki_ by -10 
+
+_preventspawn_ task:
+	when _S.08_ and not _yes_
+	clear _S.08_ _preventspawn_
 
 _S.09_ task:
 	injured _F.00_ saying 1016 
@@ -247,5 +249,7 @@ _S.10_ task:
 	end quest 
 
 _S.11_ task:
-	when yes and _S.08_ 
+	when _yes_ and _S.08_ 
+	say 1015 
+	change repute with _aubki_ by -10 
 	send _F.00_ every 500 minutes 10 times with 50% success 
