@@ -2698,7 +2698,7 @@ namespace DaggerfallWorkshop.Game
                                             buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
                                         };
 
-                                        if (npcWork.buildingName == string.Empty)
+                                        if (!RMBLayout.IsNamedBuilding(buildingSummary.BuildingType))
                                         {
                                             workStats[(int)socialGroup + 8]++;
                                             continue;
