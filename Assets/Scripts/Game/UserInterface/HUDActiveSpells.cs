@@ -186,32 +186,44 @@ namespace DaggerfallWorkshop.Game.UserInterface
             switch (DaggerfallUnity.Settings.IconsPositioningScheme.ToLower())
             {
                 case "classic":
+                    // row of big buff icons at the top, wrapping downward, row of debuffs at the bottom, wrapping upward
                     selfIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 16), new Vector2(24, 0), new Vector2(0, 24), 12);
                     otherIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 177), new Vector2(24, 0), new Vector2(0, -24), 12);
                     break;
                 case "medium":
+                    // same as classic, slightly smaller icons
                     selfIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 16), new Vector2(16, 0), new Vector2(0, 16), 16);
                     otherIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 177), new Vector2(16, 0), new Vector2(0, -16), 16);
                     break;
                 case "small":
+                    // same as classic, even smaller icons, wrapped to stays on left side of screen
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(10, 0), new Vector2(0, 10), 6);
                     otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(10, 0), new Vector2(0, -10), 6);
                     break;
                 case "smalldeckleft":
+                    // same as small, but slightly slanted toward the center of the screen
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 28), new Vector2(10, -2), new Vector2(0, 10), 6);
                     otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 165), new Vector2(10, 2), new Vector2(0, -10), 6);
                     break;
                 case "smalldeckright":
+                    // same as smalldeckleft, but on the right side of screen
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 28), new Vector2(-10, -2), new Vector2(0, 10), 6);
                     otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 165), new Vector2(-10, 2), new Vector2(0, -10), 6);
                     break;
                 case "smallvertleft":
+                    // Two aligned columns on the left, buffs going downward, debuffs going upward
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(0, 10), new Vector2(10, 0), 10);
                     otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(0, -10), new Vector2(10, 0), 4);
                     break;
                 case "smallvertright":
+                    // Two aligned columns on the right, buffs going downward, debuffs going upward
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 16), new Vector2(0, 10), new Vector2(-10, 0), 10);
                     otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 177), new Vector2(0, -10), new Vector2(-10, 0), 4);
+                    break;
+                case "smallhorzbottom":
+                    // No wrapping, two rows at the bottom of screen, debuffs above buffs
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(10, 0), new Vector2(0, 0), 0);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 167), new Vector2(10, 0), new Vector2(0, 0), 0);
                     break;
             }
 
