@@ -73,7 +73,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
-            DaggerfallUI.UIManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, videoName }));
+            DaggerfallVidPlayerWindow vidPlayerWindow = (DaggerfallVidPlayerWindow)
+                UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, videoName });
+            vidPlayerWindow.EndOnAnyKey = false;
+            DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
 
             SetComplete();
         }

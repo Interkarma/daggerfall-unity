@@ -142,13 +142,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (daysPast > 0 && !warningDreamVideoPlayed)
             {
                 // Play infection warning dream video
-                DaggerfallUI.UIManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, dreamVideoName }));
+                DaggerfallVidPlayerWindow vidPlayerWindow = (DaggerfallVidPlayerWindow)
+                    UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, dreamVideoName });
+                vidPlayerWindow.EndOnAnyKey = false;
+                DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 warningDreamVideoPlayed = true;
             }
             else if (daysPast > 3 && warningDreamVideoPlayed && !fakeDeathVideoPlayed)
             {
                 // Play "death" video ahead of final stage of infection
-                DaggerfallVidPlayerWindow vidPlayerWindow = (DaggerfallVidPlayerWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, deathVideoName });
+                DaggerfallVidPlayerWindow vidPlayerWindow = (DaggerfallVidPlayerWindow)
+                    UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, deathVideoName });
+                vidPlayerWindow.EndOnAnyKey = false;
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
                 vidPlayerWindow.OnClose += DeployFullBlownVampirism;
                 fakeDeathVideoPlayed = true;
