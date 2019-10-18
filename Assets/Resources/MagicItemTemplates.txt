@@ -157,7 +157,7 @@
     },
     {
         "index": 190,
-        "name": "The Hircine's Ring",
+        "name": "The Hircine Ring",
         "type": "ArtifactClass1",
         "group": 25,
         "groupIndex": 2,
