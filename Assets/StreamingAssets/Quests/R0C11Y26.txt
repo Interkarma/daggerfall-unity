@@ -342,6 +342,17 @@ _S.07_ task:
 	place item _I.03_ at _hookerhouse_ 
 	hide npc _hooker_ 
 
+_deadbody_ task:
+	clicked item _I.04_
+	take _I.04_ from pc
+--added deadbody task. otherwise body would clog inventory
+
+
+_deadbody2_ task:
+	clicked item _I.05_
+	take _I.05_ from pc
+--added deadbody task. otherwise body would clog inventory
+
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
