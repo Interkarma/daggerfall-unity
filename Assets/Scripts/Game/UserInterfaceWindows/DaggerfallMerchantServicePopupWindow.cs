@@ -12,6 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -143,10 +144,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 default:
                 case Services.Sell:
-                    uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Sell, this));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Sell, null }));
                     break;
                 case Services.Banking:
-                    uiManager.PushWindow(new DaggerfallBankingWindow(uiManager, this));
+                    uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.Banking, uiManager, this));
                     break;
             }
         }

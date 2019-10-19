@@ -652,7 +652,7 @@ namespace DaggerfallWorkshop.Game
                     // Open Trade Window if shop is open
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
                     {
-                        DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
+                        DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow) UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Buy, null });
                         tradeWindow.MerchantItems = loot.Items;
                         uiManager.PushWindow(tradeWindow);
                         return;
@@ -1281,7 +1281,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
                     // Popup guild service menu.
-                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.GuildServicePopup, new object[] { uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID }));
                 }
                 // Check if this NPC is a merchant.
                 else if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
@@ -1290,23 +1290,23 @@ namespace DaggerfallWorkshop.Game
                     if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                     {
                         if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                            uiManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(uiManager, npc));
+                            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantRepairPopup, new object[] { uiManager, npc }));
                         else
-                            uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell));
+                            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantServicePopup, new object[] { uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell }));
                     }
                     // Bank?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
-                        uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantServicePopup, new object[] { uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking }));
                     // Tavern?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
-                        uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Tavern, new object[] { uiManager, npc }));
                     else
                         talkManager.TalkToStaticNPC(npc, false);
                 }
                 // Check if this NPC is part of a witches coven.
                 else if ((FactionFile.FactionTypes)factionData.type == FactionFile.FactionTypes.WitchesCoven)
                 {
-                    uiManager.PushWindow(new DaggerfallWitchesCovenPopupWindow(uiManager, npc));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.WitchesCovenPopup, new object[] { uiManager, npc }));
                 }
                 // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc

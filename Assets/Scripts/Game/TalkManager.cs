@@ -641,15 +641,16 @@ namespace DaggerfallWorkshop.Game
             // Populate NPC faction data
             FactionFile.FactionData targetFactionData;
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
+            IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
 
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer, new object[] { uiManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu }));
                 return;
             }
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer, new object[] { uiManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu }));
                 return;
             }
             currentNPCType = NPCType.Static;

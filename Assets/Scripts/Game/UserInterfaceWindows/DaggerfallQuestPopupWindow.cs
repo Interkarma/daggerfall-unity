@@ -260,7 +260,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     {
                         // Close menu and push DaggerfallDaedraSummoningWindow here for video and dismissal..
                         CloseWindow();
-                        uiManager.PushWindow(new DaggerfallDaedraSummonedWindow(uiManager, daedraToSummon, SummonBefore, this));
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.DaedraSummoned, new object[] { uiManager, daedraToSummon, SummonBefore, this }));
                     }
                     else
                     {   // Record the summoning.
@@ -272,7 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         {
                             // Close menu and push DaggerfallDaedraSummoningWindow here for video and custom quest offer..
                             CloseWindow();
-                            uiManager.PushWindow(new DaggerfallDaedraSummonedWindow(uiManager, daedraToSummon, offeredQuest));
+                            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.DaedraSummoned, new object[] { uiManager, daedraToSummon, offeredQuest }));
                         }
                     }
                 }

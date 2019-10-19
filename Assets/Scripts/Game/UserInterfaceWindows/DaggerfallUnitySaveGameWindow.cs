@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SwitchClassicButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            uiManager.PushWindow(new DaggerfallLoadClassicGameWindow(uiManager));
+            uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.LoadClassicGame, uiManager, null));
         }
 
         private void Picker_OnItemPicked(int index, string itemString)

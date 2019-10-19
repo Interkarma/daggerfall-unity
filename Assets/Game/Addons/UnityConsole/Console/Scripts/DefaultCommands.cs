@@ -2492,9 +2492,10 @@ namespace Wenzil.Console
                 if (!found)
                     return string.Format("Could not find daedra named {0}. Valid names are {1}", args[0], validNames);
 
+                IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
                 Quest quest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest);
                 if (quest != null)
-                    DaggerfallUI.UIManager.PushWindow(new DaggerfallDaedraSummonedWindow(DaggerfallUI.UIManager, daedraToSummon, quest));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.DaedraSummoned, new object[] { uiManager, daedraToSummon, quest }));
                 else
                     return string.Format("Could not find quest {0} for deadra {1}", daedraToSummon.quest, args[0]);
 
