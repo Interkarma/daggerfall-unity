@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const string spellsFilename = "SPELLS.STD";
 
         uint startingDay = 0;
+        bool warningDreamVideoScheduled = false;
         bool warningDreamVideoPlayed = false;
         bool fakeDeathVideoPlayed = false;
         int infectionRegionIndex = -1;
@@ -86,45 +87,22 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Record region of infection for clan at time of deployment
             // Think classic uses current region at time of turning, this will use current region at time of infection
             infectionRegionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-
-            // Capture rest and travel events for disease progression on Start
-            if (IsIncumbent)
-            {
-                DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
-                DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
-            }
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
-
-            // Capture rest and travel events for disease progression on Resume
-            if (IsIncumbent)
-            {
-                DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
-                DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
-            }
         }
 
         protected override void UpdateDisease()
         {
             // Not calling base as this is a very custom disease that manages its own lifecycle
-        }
-
-        public override void End()
-        {
-            base.End();
-            if (IsIncumbent)
-            {
-                DaggerfallRestWindow.OnSleepTick -= ProgressDiseaseAfterSleepOrTravel;
-                DaggerfallTravelPopUp.OnPostFastTravel -= ProgressDiseaseAfterSleepOrTravel;
-            }
+            ProgressDisease();
         }
 
         #region Private Methods
 
-        void ProgressDiseaseAfterSleepOrTravel()
+        void ProgressDisease()
         {
             const string dreamVideoName = "ANIM0004.VID";   // Vampire dream video
             const string deathVideoName = "ANIM0012.VID";   // Death video
@@ -137,16 +115,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
             int daysPast = (int)(currentDay - startingDay);
 
-            // Always allow dream to play on first rest or travel event
-            // In current implementation, disease will not progress to stage 2 effect until player has experienced dream then rests or travels a second time
-            if (daysPast > 0 && !warningDreamVideoPlayed)
+            // Show dream after 1 day has passed, progress to full-blown vampirism after 3 have passed
+            if (daysPast > 0 && !warningDreamVideoScheduled)
             {
                 // Play infection warning dream video
                 DaggerfallVidPlayerWindow vidPlayerWindow = (DaggerfallVidPlayerWindow)
                     UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, dreamVideoName });
                 vidPlayerWindow.EndOnAnyKey = false;
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
-                warningDreamVideoPlayed = true;
+                vidPlayerWindow.OnClose += WarningDreamVideoCompleted;
+                warningDreamVideoScheduled = true;
             }
             else if (daysPast > 3 && warningDreamVideoPlayed && !fakeDeathVideoPlayed)
             {
@@ -158,6 +136,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 vidPlayerWindow.OnClose += DeployFullBlownVampirism;
                 fakeDeathVideoPlayed = true;
             }
+        }
+
+        private void WarningDreamVideoCompleted()
+        {
+            warningDreamVideoPlayed = true;
         }
 
         private void DeployFullBlownVampirism()
