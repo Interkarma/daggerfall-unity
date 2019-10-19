@@ -261,21 +261,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //// TEMP: Quick save
-            //SaveLoadManager.Instance.QuickSave();
-            //CancelWindow();
-
-            DaggerfallUnitySaveGameWindow saveWindow = new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this);
-            uiManager.PushWindow(saveWindow);
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this, false }));
         }
 
         private void LoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TEMP: Show load window
-            //uiManager.PushWindow(new DaggerfallLoadSavedGameWindow(uiManager));
-
-            DaggerfallUnitySaveGameWindow loadWindow = new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, this);
-            uiManager.PushWindow(loadWindow);
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, this, false }));
         }
 
         private void ControlsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

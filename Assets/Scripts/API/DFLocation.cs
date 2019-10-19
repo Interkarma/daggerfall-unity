@@ -80,6 +80,22 @@ namespace DaggerfallConnect
 
         #endregion
 
+        #region Methods
+
+        /// <summary>Some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
+        /// Seems to be 1x1 blocks using CUST prefix, but possibly more research needed</summary>
+        public bool HasCustomLocationPosition()
+        {
+            const string custBlockPrefix = "CUST";
+            if (Exterior.ExteriorData.Width == 1 && Exterior.ExteriorData.Height == 1)
+            {
+                return Exterior.ExteriorData.BlockNames[0].StartsWith(custBlockPrefix);
+            }
+            return false;
+        }
+
+        #endregion
+
         #region Building Enumerations
 
         /// <summary>
@@ -367,10 +383,10 @@ namespace DaggerfallConnect
         public struct LocationRecordElement
         {
             /// <summary>Number of doors in this location.</summary>
-            public UInt32 DoorCount;
+            internal UInt32 DoorCount;
 
             /// <summary>Door data array with DoorCount members.</summary>
-            public LocationDoorElement[] Doors;
+            internal LocationDoorElement[] Doors;
 
             /// <summary>Header for location data.</summary>
             public LocationRecordElementHeader Header;
@@ -404,19 +420,19 @@ namespace DaggerfallConnect
         public struct LocationRecordElementHeader
         {
             /// <summary>Always 1.</summary>
-            public UInt32 AlwaysOne1;
+            internal UInt32 AlwaysOne1;
 
             /// <summary>Always 0.</summary>
-            public UInt16 NullValue1;
+            internal UInt16 NullValue1;
 
             /// <summary>Always 0.</summary>
-            public Byte NullValue2;
+            internal Byte NullValue2;
 
             /// <summary>X coordinate for location in world units.</summary>
             public Int32 X;
 
             /// <summary>Always 0.</summary>
-            public UInt32 NullValue3;
+            internal UInt32 NullValue3;
 
             /// <summary>X coordinate for location in world units.</summary>
             public Int32 Y;
@@ -425,22 +441,25 @@ namespace DaggerfallConnect
             public UInt16 IsExterior;
 
             /// <summary>Always 0.</summary>
-            public UInt16 NullValue4;
+            internal UInt16 NullValue4;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown1;
+            internal UInt32 Unknown1;
 
-            /// <summary>Unknown.</summary>
+            /// <summary>
+            /// Unknown value for LocationDungeon structure, used by SongManager to select songs.
+            /// Location index for Exterior structure. (should match top level index)
+            /// </summary>
             public UInt32 Unknown2;
 
             /// <summary>Always 1.</summary>
-            public UInt16 AlwaysOne2;
+            internal UInt16 AlwaysOne2;
 
             /// <summary>LocationID used by the quest subsystem.</summary>
             public UInt16 LocationId;
 
             /// <summary>Always 0.</summary>
-            public UInt32 NullValue5;
+            internal UInt32 NullValue5;
 
             /// <summary>Set to 0x0000 for exterior data, or 0x0001 for interior data.</summary>
             public UInt16 IsInterior;
@@ -449,13 +468,13 @@ namespace DaggerfallConnect
             public UInt32 ExteriorLocationId;
 
             /// <summary>Array of 26 0-value bytes.</summary>
-            public Byte[] NullValue6;
+            internal Byte[] NullValue6;
 
             /// <summary>Name of location used when entering it.</summary>
             public String LocationName;
 
             /// <summary>Array of 9 unknown bytes.</summary>
-            public Byte[] Unknown3;
+            internal Byte[] Unknown3;
         }
 
         #endregion
@@ -474,7 +493,7 @@ namespace DaggerfallConnect
             public UInt16 BuildingCount;
 
             /// <summary>Unknown.</summary>
-            public Byte[] Unknown1;
+            internal Byte[] Unknown1;
 
             /// <summary>Data associated with each building.</summary>
             public BuildingData[] Buildings;
@@ -495,19 +514,19 @@ namespace DaggerfallConnect
             public UInt16 NameSeed;
 
             /// <summary>For taverns this is the time in game minutes when room rental will end.</summary>
-            public UInt32 ServiceTimeLimit;
+            internal UInt32 ServiceTimeLimit;
 
             /// <summary>Unknown. Set to 1 after renting a tavern room</summary>
-            public UInt16 Unknown;
+            internal UInt16 Unknown;
 
             /// <summary>Unknown.</summary>
-            public UInt16 Unknown2;
+            internal UInt16 Unknown2;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown3;
+            internal UInt32 Unknown3;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown4;
+            internal UInt32 Unknown4;
 
             /// <summary>FactionId associated with building, or 0 if no faction.</summary>
             public UInt16 FactionId;
@@ -547,46 +566,46 @@ namespace DaggerfallConnect
             public Byte Height;
 
             /// <summary>Unknown.</summary>
-            public Byte[] Unknown2;
+            internal Byte[] Unknown2;
 
             /// <summary>Unknown.</summary>
-            public Byte Unknown3;
+            internal Byte Unknown3;
 
             /// <summary>ASCII value for first letter in .RMB file name.</summary>
-            public Byte Letter1ForRMBName;
+            internal Byte Letter1ForRMBName;
 
             /// <summary>If non-zero, ships can be purchased at banks here. Also has an unknown use.</summary>
             public Byte PortTownAndUnknown;
 
             /// <summary>Only first Width*Height elements will have any meaning.</summary>
-            public Byte[] BlockIndex;
+            internal Byte[] BlockIndex;
 
             /// <summary>Only first Width*Height elements will have any meaning.</summary>
-            public Byte[] BlockNumber;
+            internal Byte[] BlockNumber;
 
             /// <summary>Only first Width*Height elements will have any meaning.</summary>
-            public Byte[] BlockCharacter;
+            internal Byte[] BlockCharacter;
 
             /// <summary>Resolved block names.</summary>
             public string[] BlockNames;
 
             /// <summary>Unknown.</summary>
-            public Byte[] Unknown4;
+            internal Byte[] Unknown4;
 
             /// <summary>Always 0.</summary>
-            public UInt64 NullValue1;
+            internal UInt64 NullValue1;
 
             /// <summary>Always 0.</summary>
-            public Byte NullValue2;
+            internal Byte NullValue2;
 
             /// <summary>Unknown.</summary>
-            public UInt32[] Unknown5;
+            internal UInt32[] Unknown5;
 
             /// <summary>Always 0.</summary>
-            public Byte[] NullValue3;
+            internal Byte[] NullValue3;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown6;
+            internal UInt32 Unknown6;
         }
 
         #endregion
@@ -614,19 +633,19 @@ namespace DaggerfallConnect
         public struct DungeonHeader
         {
             /// <summary>Always 0.</summary>
-            public UInt16 NullValue1;
+            internal UInt16 NullValue1;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown1;
+            internal UInt32 Unknown1;
 
             /// <summary>Unknown.</summary>
-            public UInt32 Unknown2;
+            internal UInt32 Unknown2;
 
             /// <summary>Count of DungeonBlock elements.</summary>
             public UInt16 BlockCount;
 
             /// <summary>Unknown.</summary>
-            public Byte[] Unknown3;
+            internal Byte[] Unknown3;
         }
 
         /// <summary>
@@ -641,16 +660,16 @@ namespace DaggerfallConnect
             public SByte Z;
 
             /// <summary>Bitfield containing BlockNumber, start bit, and BlockIndex.</summary>
-            public UInt16 BlockNumberStartIndexBitfield;
+            internal UInt16 BlockNumberStartIndexBitfield;
 
             /// <summary>BlockNumber read from bitfield.</summary>
-            public UInt16 BlockNumber;
+            internal UInt16 BlockNumber;
 
             /// <summary>IsStartingBlock read from bitfield.</summary>
             public Boolean IsStartingBlock;
 
             /// <summary>BlockIndex read from bitfield.</summary>
-            public Byte BlockIndex;
+            internal Byte BlockIndex;
 
             /// <summary>Name of RDB block.</summary>
             public String BlockName;

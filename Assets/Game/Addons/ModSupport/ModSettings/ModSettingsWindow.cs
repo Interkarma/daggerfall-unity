@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         readonly Mod mod;
         readonly ModSettingsData settings;
+        readonly bool liveChange;
 
         int x = startX;
         int y = startY;
@@ -94,10 +95,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// Constructor for the mod settings window.
         /// </summary>
         /// <param name="mod">Mod whose values are to be exposed on screen.</param>
-        public ModSettingsWindow(IUserInterfaceManager uiManager, Mod mod)
+        /// <param name="liveChange">True if the game is already running.</param>
+        public ModSettingsWindow(IUserInterfaceManager uiManager, Mod mod, bool liveChange = false)
             : base(uiManager)
         {
             this.mod = mod;
+            this.liveChange = liveChange;
 
             settings = ModSettingsData.Make(mod);
             settings.SaveDefaults();
@@ -215,11 +218,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// Save settings.
         /// </summary>
         /// <param name="writeToDisk">Write settings to file on disk.</param>
-        private void SaveSettings(bool writeToDisk = true)
+        /// <param name="changedSettings">An hashet where names of changed settings are stored.</param>
+        private void SaveSettings(bool writeToDisk, HashSet<string> changedSettings = null)
         {
-            foreach (Section section in settings.Sections)
-                foreach (Key key in section.Keys)
-                    key.OnSaveWindow(uiControls[key]);
+            if (changedSettings != null)
+            {
+                foreach (Section section in settings.Sections)
+                {
+                    bool sectionHasChanged = false;
+
+                    foreach (Key key in section.Keys)
+                    {
+                        bool hasChanged;
+                        key.OnSaveWindow(uiControls[key], out hasChanged);
+                        if (hasChanged)
+                        {
+                            changedSettings.Add(string.Format("{0}.{1}", section.Name, key.Name));
+                            sectionHasChanged = true;
+                        }
+                    }
+
+                    if (sectionHasChanged)
+                        changedSettings.Add(section.Name);
+                }
+            }
+            else
+            {
+                foreach (Section section in settings.Sections)
+                    foreach (Key key in section.Keys)
+                        key.OnSaveWindow(uiControls[key]);
+            }
 
             // Save to file
             if (writeToDisk)
@@ -393,7 +421,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         private void SaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            SaveSettings();
+            if (liveChange)
+            {
+                var changedSettings = new HashSet<string>();
+                SaveSettings(true, changedSettings);
+
+                if (changedSettings.Count > 0)
+                    mod.LoadSettingsCallback(new ModSettings(mod, settings), new ModSettingsChange(changedSettings));
+            }
+            else
+            {
+                SaveSettings(true);
+            }
+
             DaggerfallUI.UIManager.PopWindow();
         }
 

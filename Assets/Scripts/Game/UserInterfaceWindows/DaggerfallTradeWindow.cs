@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DaggerfallBaseWindow previous = null, IGuild guild = null)
+        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null, WindowModes windowMode = WindowModes.Sell, IGuild guild = null)
             : base(uiManager, previous)
         {
             this.windowMode = windowMode;

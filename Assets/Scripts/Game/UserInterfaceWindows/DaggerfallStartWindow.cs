@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -61,12 +61,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void LoadGame()
         {
-            uiManager.PushWindow(new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, null, true));
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, null, true }));
         }
 
         void StartNewGame()
         {
-            uiManager.PushWindow(new StartNewGameWizard(uiManager));
+            uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.StartNewGameWizard, uiManager));
         }
 
         void ExitGame()

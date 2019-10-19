@@ -281,10 +281,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         void Update()
-        {
-            if (!GameManager.Instance.IsPlayingGame())
-                return;
-
+        {            
             // Track which dungeon block player is inside of
             if (dungeon && isPlayerInsideDungeon)
             {
@@ -327,6 +324,14 @@ namespace DaggerfallWorkshop.Game
                 holidayTextPrimed = false;
                 ShowHolidayText();
             }
+
+            // Player in sunlight or darkness
+            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside && !GameManager.Instance.PlayerEntity.InPrison;
+
+            // Do not process underwater logic if not playing game
+            // This prevents player catching breath during load
+            if (!GameManager.Instance.IsPlayingGame())
+                return;
 
             // Underwater swimming logic should only be processed in dungeons at this time
             if (isPlayerInsideDungeon)
@@ -373,9 +378,6 @@ namespace DaggerfallWorkshop.Game
                 isPlayerSubmerged = false;
                 levitateMotor.IsSwimming = false;
             }
-
-            // Player in sunlight or darkness
-            isPlayerInSunlight = DaggerfallUnity.Instance.WorldTime.Now.IsDay && !IsPlayerInside && !GameManager.Instance.PlayerEntity.InPrison;
         }
 
         #region Public Methods
@@ -1119,6 +1121,14 @@ namespace DaggerfallWorkshop.Game
 
             // Raise event
             RaiseOnTransitionDungeonExteriorEvent();
+        }
+
+        public void TransitionDungeonExteriorImmediate()
+        {
+            if (!ReferenceComponents() || !dungeon || !isPlayerInsideDungeon)
+                return;
+
+            RaiseOnPreTransitionEvent(PlayerEnterExit.TransitionType.ToDungeonExterior);
         }
 
         #endregion

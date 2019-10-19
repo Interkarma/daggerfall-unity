@@ -21,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -142,6 +143,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// If this mod has settings, they can be retrieved with <see cref="GetSettings()"/>.
         /// </summary>
         public bool HasSettings { get; private set; }
+
+        /// <summary>
+        /// If not null, this callback is invoked when settings are changed or when raised with <see cref="LoadSettings()"/>.
+        /// </summary>
+        public Action<ModSettings.ModSettings, ModSettingsChange> LoadSettingsCallback { internal get; set; }
 
         /// <summary>
         /// Cached list of all asset names (not the relative paths).
@@ -472,10 +478,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         /// <summary>
         /// Imports settings for this mod and provides a sanitized read-only access.
+        /// Use <see cref="LoadSettings()"/> if you want to support live changes.
         /// </summary>
         public ModSettings.ModSettings GetSettings()
         {
             return new ModSettings.ModSettings(this);
+        }
+
+        /// <summary>
+        /// Loads mod settings using <see cref="LoadSettingsCallback"/> with an event where all settings are considered changed.
+        /// Use <see cref="GetSettings"/> if you don't want to support live changes.
+        /// </summary>
+        public void LoadSettings()
+        {
+            if (LoadSettingsCallback == null)
+                throw new InvalidOperationException("LoadSettingsCallback is not set.");
+
+            LoadSettingsCallback(GetSettings(), new ModSettingsChange());
         }
 
         /// <summary>

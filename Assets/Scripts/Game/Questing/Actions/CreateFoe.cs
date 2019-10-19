@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Init spawn timer on first update
             if (lastSpawnTime == 0)
-                lastSpawnTime = gameSeconds + (uint)UnityEngine.Random.Range(0, spawnInterval + 1);
+                lastSpawnTime = gameSeconds - (uint)UnityEngine.Random.Range(0, spawnInterval);
 
             // Do nothing if max foes already spawned
             // This can be cleared on next set/rearm
@@ -128,14 +128,13 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Check for a new spawn event - only one spawn event can be running at a time
-            if (gameSeconds > lastSpawnTime + spawnInterval && !spawnInProgress)
+            if (gameSeconds >= lastSpawnTime + spawnInterval && !spawnInProgress)
             {
                 // Update last spawn time
                 lastSpawnTime = gameSeconds;
 
                 // Roll for spawn chance
-                float chance = spawnChance / 100f;
-                if (UnityEngine.Random.Range(0f, 1f) > chance)
+                if (Dice100.FailedRoll(spawnChance))
                     return;
 
                 // Get the Foe resource

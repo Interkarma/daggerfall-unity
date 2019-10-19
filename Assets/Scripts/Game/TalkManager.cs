@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors:    Numidium, Allofich, Interkarma
+// Contributors:    Numidium, Allofich, Interkarma, Ferital
 // 
 // Notes:
 //
@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         string nameNPC = "";
-        bool isGreeting = false;  // Indicates a greeting is being parsed, %n = nameNPC.
+        string greetingNameNPC = ""; // used only for PC first question
 
         string npcGreetingText = ""; // the last NPC greeting text
 
@@ -396,9 +396,9 @@ namespace DaggerfallWorkshop.Game
             get { return nameNPC; }
         }
 
-        public bool IsGreeting
+        public string GreetingNameNPC
         {
-            get { return isGreeting; }
+            get { return greetingNameNPC; }
         }
 
         public ListItem CurrentQuestionListItem
@@ -641,15 +641,16 @@ namespace DaggerfallWorkshop.Game
             // Populate NPC faction data
             FactionFile.FactionData targetFactionData;
             GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
+            IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
 
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer, new object[] { uiManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu }));
                 return;
             }
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                DaggerfallUI.UIManager.PushWindow(new DaggerfallQuestOfferWindow(DaggerfallUI.UIManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer, new object[] { uiManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu }));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -995,9 +996,12 @@ namespace DaggerfallWorkshop.Game
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
-            isGreeting = true;
+            if (reactionToPlayer <= 0)
+                greetingNameNPC = ExpandRandomTextRecord(7221 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
+            else
+                greetingNameNPC = nameNPC;
             string greetingText = ExpandRandomTextRecord(7215 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
-            isGreeting = false;
+            greetingNameNPC = string.Empty;
             return greetingText;
         }
 
@@ -1008,13 +1012,10 @@ namespace DaggerfallWorkshop.Game
 
         public string GetPCGreetingOrFollowUpText()
         {
-            if (questionOpeningText == "")
-            {
-                if (numQuestionsAsked == 0)
-                    questionOpeningText = GetPCGreetingText(currentTalkTone);
-                else
-                    questionOpeningText = GetPCFollowUpText(currentTalkTone);
-            }
+            if (numQuestionsAsked == 0)
+                questionOpeningText = GetPCGreetingText(currentTalkTone);
+            else
+                questionOpeningText = GetPCFollowUpText(currentTalkTone);
             return questionOpeningText;
         }
 
@@ -2682,7 +2683,7 @@ namespace DaggerfallWorkshop.Game
                                             buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
                                         };
 
-                                        if (npcWork.buildingName == string.Empty)
+                                        if (!RMBLayout.IsNamedBuilding(buildingSummary.BuildingType))
                                         {
                                             workStats[(int)socialGroup + 8]++;
                                             continue;
