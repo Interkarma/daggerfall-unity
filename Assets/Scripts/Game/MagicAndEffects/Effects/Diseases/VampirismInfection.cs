@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
             int daysPast = (int)(currentDay - startingDay);
 
-            // Show dream after 1 day has passed, progress to full-blown vampirism after 3 have passed
+            // Show dream after 1 day has passed, progress to full-blown vampirism after 3 days have passed
             if (daysPast > 0 && !warningDreamVideoScheduled)
             {
                 // Play infection warning dream video
