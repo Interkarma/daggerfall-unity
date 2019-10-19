@@ -45,6 +45,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             data.LoadLocalValues();
         }
 
+        /// <summary>
+        /// Makes an instance of mod settings from existing settings data.
+        /// </summary>
+        /// <param name="mod">Target mod.</param>
+        /// <param name="data">Settings data for target mod.</param>
+        internal ModSettings(Mod mod, ModSettingsData data)
+        {
+            this.mod = mod;
+            this.data = data;
+        }
+
         #endregion
 
         #region Public Methods
