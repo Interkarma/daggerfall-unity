@@ -437,7 +437,7 @@ namespace DaggerfallWorkshop
                     stopCombine = true;
 
                 // Get model transform
-                Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
+                Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
                 // Does this model have doors?
@@ -467,8 +467,8 @@ namespace DaggerfallWorkshop
                     }
                 }
 
-                // Make ladder collider convex
-                if (obj.ModelIdNum == ladderModelId)
+                // Make ladder collider convex and ladder functionality, if set up as propModelType
+                if (obj.ModelIdNum == ladderModelId && obj.ObjectType == propModelType)
                 {
                     var meshCollider = go.GetComponent<MeshCollider>();
                     if (meshCollider) meshCollider.convex = true;

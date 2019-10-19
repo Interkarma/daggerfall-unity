@@ -49,7 +49,7 @@
     },
     {
         "id": 22,
-        "title": "The MemoryStone"
+        "title": "The Memory Stone"
     },
     {
         "id": 25,
@@ -361,6 +361,6 @@
     },
     {
         "id": 10000,
-        "title": "Ark`ay The God"
+        "title": "Ark'ay The God"
     }
 ]

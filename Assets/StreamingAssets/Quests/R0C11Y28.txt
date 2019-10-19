@@ -454,6 +454,11 @@ _pcgetsgold_ task:
 	unset _qgclicked_ 
 	end quest 
 
+_deadbody_ task:
+	clicked item _I.04_
+	take _I.04_ from pc
+--added deadbody task. otherwise body would clog inventory
+
 _S.07_ task:
 	when _S.17_ and not _S.00_ 
 	place foe _murder_ at _ripperhouse_ 

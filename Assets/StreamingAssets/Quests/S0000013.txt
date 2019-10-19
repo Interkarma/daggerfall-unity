@@ -55,7 +55,7 @@ QuestComplete:  [1004]
 <ce>                 Poor Mynisera. Everyone at court knows
 <ce>               that her husband, the late King Lysandus,
 <ce>              preferred the face and form of another woman
-<ce>               of her, but she still attempts to hide all
+<ce>               to her, but she still attempts to hide all
 <ce>               evidence of it. Her loyalty to Lysandus is
 <ce>               almost as great as his foolish loyalty to
 <ce>                              the emperor.

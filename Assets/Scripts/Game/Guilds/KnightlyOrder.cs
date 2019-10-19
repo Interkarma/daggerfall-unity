@@ -280,12 +280,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Serialization
 
-        internal override GuildMembership_v1 GetGuildData()
+        public override GuildMembership_v1 GetGuildData()
         {
             return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int)order, flags = flags };
         }
 
-        internal override void RestoreGuildData(GuildMembership_v1 data)
+        public override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
             order = (Orders)data.variant;

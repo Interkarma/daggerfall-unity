@@ -10,8 +10,6 @@
 //
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Entity;
@@ -35,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool restraintApplied = false;
         int foeSpellQueuePosition = 0;
         int foeItemQueuePosition = 0;
+        bool isAttackableByAI = false;
 
         [NonSerialized] Quest targetQuest;
         [NonSerialized] QuestResource targetResource = null;
@@ -52,6 +51,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool isFoeDead;
             public int foeSpellQueuePosition;
             public int foeItemQueuePosition;
+            public bool isAttackableByAI;
         }
 
         #endregion
@@ -105,6 +105,16 @@ namespace DaggerfallWorkshop.Game.Questing
         DaggerfallEntityBehaviour EnemyEntityBehaviour
         {
             get { return enemyEntityBehaviour; }
+        }
+
+        /// <summary>
+        /// Gets or sets flag allowing enemy resource to be attacked by another mobile AI.
+        /// Never set in core. Must be set by a custom quest action.
+        /// </summary>
+        public bool IsAttackableByAI
+        {
+            get { return isAttackableByAI; }
+            set { isAttackableByAI = value; }
         }
 
         #endregion
@@ -257,6 +267,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.isFoeDead = isFoeDead;
             data.foeSpellQueuePosition = foeSpellQueuePosition;
             data.foeItemQueuePosition = foeItemQueuePosition;
+            data.isAttackableByAI = isAttackableByAI;
 
             return data;
         }
@@ -272,6 +283,7 @@ namespace DaggerfallWorkshop.Game.Questing
             isFoeDead = data.isFoeDead;
             foeSpellQueuePosition = data.foeSpellQueuePosition;
             foeItemQueuePosition = data.foeItemQueuePosition;
+            isAttackableByAI = data.isAttackableByAI;
             CacheTarget();
         }
 

@@ -206,6 +206,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public abstract void OnSaveWindow(BaseScreenComponent control);
 
+        /// <summary>
+        /// Save value from a control and checks if value has changed.
+        /// </summary>
+        public abstract void OnSaveWindow(BaseScreenComponent control, out bool hasChanged);
+
 #if UNITY_EDITOR
         /// <summary>
         /// Draws a control on editor window. Returns number of lines.
@@ -303,6 +308,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return Value;
         }
 
+        public sealed override void OnSaveWindow(BaseScreenComponent control, out bool hasChanged)
+        {
+            T previousValue = Value;
+            OnSaveWindow(control);
+            hasChanged = !IsValueEqual(previousValue);
+        }
+
+        protected abstract bool IsValueEqual(T value);
+
         protected virtual string Serialize()
         {
             return Convert.ToString(Value, CultureInfo.InvariantCulture);
@@ -340,6 +354,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return 1;
         }
 #endif
+
+        protected override bool IsValueEqual(bool value)
+        {
+            return Value == value;
+        }
 
         protected override void Deserialize(string textValue)
         {
@@ -411,6 +430,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
+        protected override bool IsValueEqual(int value)
+        {
+            return Value == value;
+        }
+
         protected override void Deserialize(string textValue)
         {
             int value;
@@ -458,6 +482,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return 2;
         }
 #endif
+
+        protected override bool IsValueEqual(int value)
+        {
+            return Value == value;
+        }
 
         protected override void Deserialize(string textValue)
         {
@@ -507,6 +536,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
+        protected override bool IsValueEqual(float value)
+        {
+            return Value == value;
+        }
+
         protected override void Deserialize(string textValue)
         {
             float value;
@@ -547,6 +581,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return 1;
         }
 #endif
+
+        protected override bool IsValueEqual(Tuple<int, int> value)
+        {
+            return Value.First == value.First && Value.Second == value.Second;
+        }
 
         protected override string Serialize()
         {
@@ -594,6 +633,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
+        protected override bool IsValueEqual(Tuple<float, float> value)
+        {
+            return Value.First == value.First && Value.Second == value.Second;
+        }
+
         protected override string Serialize()
         {
             return Join(Value.First, Value.Second);
@@ -638,6 +682,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
+        protected override bool IsValueEqual(string value)
+        {
+            return Value.Equals(value, StringComparison.Ordinal);
+        }
+
         protected override void Deserialize(string textValue)
         {
             Value = textValue;
@@ -673,6 +722,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             return 1;
         }
 #endif
+
+        protected override bool IsValueEqual(Color32 value)
+        {
+            return Value.r == value.r || Value.g == value.g || Value.b == value.b || Value.a == value.a;
+        }
 
         protected override string Serialize()
         {
@@ -789,6 +843,44 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
 #endif
+    }
+
+    /// <summary>
+    /// Results of a mod settings change event.
+    /// </summary>
+    public struct ModSettingsChange
+    {
+        readonly HashSet<string> changedSettings;
+
+        /// <summary>
+        /// Makes an holder for a mod settings change event.
+        /// </summary>
+        /// <param name="changedSettings">A set containing names of changed settings or null to define all settings as changed.</param>
+        internal ModSettingsChange(HashSet<string> changedSettings = null)
+        {
+            this.changedSettings = changedSettings;
+        }
+
+        /// <summary>
+        /// Checks if any mod setting value in a section has changed during current change event.
+        /// </summary>
+        /// <param name="section">The name of the section.</param>
+        /// <returns>True if section has changed.</returns>
+        public bool HasChanged(string section)
+        {
+            return changedSettings == null || changedSettings.Contains(section);
+        }
+
+        /// <summary>
+        /// Checks if a mod setting value has changed during current change event.
+        /// </summary>
+        /// <param name="section">The name of the section.</param>
+        /// <param name="key">The name of the key.</param>
+        /// <returns>True if value has changed.</returns>
+        public bool HasChanged(string section, string key)
+        {
+            return changedSettings == null || changedSettings.Contains(string.Format("{0}.{1}", section, key));
+        }
     }
 
     #endregion

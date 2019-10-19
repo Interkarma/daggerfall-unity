@@ -1261,7 +1261,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void SetTravelMapFromSaveData(TravelMapSaveData data)
         {
             // If doesn't have save data, use defaults
-            if(data == null)
+            if (data == null)
                 data = new TravelMapSaveData();
 
             filterDungeons = data.filterDungeons;
@@ -1269,9 +1269,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             filterTemples = data.filterTemples;
             filterTowns = data.filterTowns;
 
-            if(popUp == null)
+            if (popUp == null)
             {
-                popUp = new DaggerfallTravelPopUp(DaggerfallUI.UIManager, this, this);
+                popUp = (DaggerfallTravelPopUp)UIWindowFactory.GetInstanceWithArgs(UIWindowType.TravelPopUp, new object[] { uiManager, this, this });
             }
 
             popUp.SleepModeInn = data.sleepInn;
@@ -1550,19 +1550,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
             if (teleportationTravel)
             {
-                DaggerfallTeleportPopUp telePopup = new DaggerfallTeleportPopUp(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, this);
+                DaggerfallTeleportPopUp telePopup = (DaggerfallTeleportPopUp)UIWindowFactory.GetInstanceWithArgs(UIWindowType.TeleportPopUp, new object[] { uiManager, uiManager.TopWindow, this });
                 telePopup.DestinationPos = pos;
                 telePopup.DestinationName = currentDFRegion.MapNames[locationSummary.MapIndex];
-                DaggerfallUI.UIManager.PushWindow(telePopup);
+                uiManager.PushWindow(telePopup);
             }
             else
             {
                 if (popUp == null)
                 {
-                    popUp = new DaggerfallTravelPopUp(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, this);
+                    popUp = (DaggerfallTravelPopUp)UIWindowFactory.GetInstanceWithArgs(UIWindowType.TravelPopUp, new object[] { uiManager, uiManager.TopWindow, this });
                 }
                 popUp.EndPos = pos;
-                DaggerfallUI.UIManager.PushWindow(popUp);
+                uiManager.PushWindow(popUp);
             }
         }
 

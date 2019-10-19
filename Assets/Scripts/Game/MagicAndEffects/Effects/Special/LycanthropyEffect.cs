@@ -531,6 +531,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetSkillMod(DFCareer.Skills.CriticalStrike, skillModAmount);
             SetSkillMod(DFCareer.Skills.Climbing, skillModAmount);
             SetSkillMod(DFCareer.Skills.HandToHand, skillModAmount);
+            SetSkillMod(DFCareer.Skills.Jumping, skillModAmount);
         }
 
         void InitMoveSoundTimer(float minTime = 4, float maxTime = 20)

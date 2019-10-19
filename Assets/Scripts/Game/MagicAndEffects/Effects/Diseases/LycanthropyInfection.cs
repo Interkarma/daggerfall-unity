@@ -22,6 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     public abstract class LycanthropyInfection : DiseaseEffect
     {
         uint startingDay = 0;
+        bool warningDreamVideoScheduled = false;
         bool warningDreamVideoPlayed = false;
         bool deployedFullBlownLycanthropy = false;
 
@@ -71,40 +72,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Record starting day of infection
             startingDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
-
-            // Capture rest and travel events for disease progression on Start
-            if (IsIncumbent)
-            {
-                DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
-                DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
-            }
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
-
-            // Capture rest and travel events for disease progression on Resume
-            if (IsIncumbent)
-            {
-                DaggerfallRestWindow.OnSleepTick += ProgressDiseaseAfterSleepOrTravel;
-                DaggerfallTravelPopUp.OnPostFastTravel += ProgressDiseaseAfterSleepOrTravel;
-            }
         }
 
         protected override void UpdateDisease()
         {
             // Not calling base as this is a very custom disease that manages its own lifecycle
-        }
-
-        public override void End()
-        {
-            base.End();
-            if (IsIncumbent)
-            {
-                DaggerfallRestWindow.OnSleepTick -= ProgressDiseaseAfterSleepOrTravel;
-                DaggerfallTravelPopUp.OnPostFastTravel -= ProgressDiseaseAfterSleepOrTravel;
-            }
+            ProgressDisease();
         }
 
         #region Abstract Methods
@@ -115,7 +93,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Private Methods
 
-        void ProgressDiseaseAfterSleepOrTravel()
+        void ProgressDisease()
         {
             const string dreamVideoName = "ANIM0002.VID";   // Lycanthropy dream video
 
@@ -127,14 +105,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             uint currentDay = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay;
             int daysPast = (int)(currentDay - startingDay);
 
-            // Always allow dream to play on first rest or travel event
-            // In current implementation, disease will not progress to stage 2 effect until player has experienced dream then rests or travels a second time
-            if (daysPast > 0 && !warningDreamVideoPlayed)
+            // Show dream after 1 day has passed, progress to full-blown lycanthropy after 3 days have passed
+            if (daysPast > 0 && !warningDreamVideoScheduled)
             {
                 // Play infection warning dream video
-                DaggerfallVidPlayerWindow vidPlayerWindow = new DaggerfallVidPlayerWindow(DaggerfallUI.UIManager, dreamVideoName);
+                DaggerfallVidPlayerWindow vidPlayerWindow = (DaggerfallVidPlayerWindow)
+                    UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { DaggerfallUI.UIManager, dreamVideoName });
+                vidPlayerWindow.EndOnAnyKey = false;
                 DaggerfallUI.UIManager.PushWindow(vidPlayerWindow);
-                warningDreamVideoPlayed = true;
+                vidPlayerWindow.OnClose += WarningDreamVideoCompleted;
+                warningDreamVideoScheduled = true;
             }
             else if (daysPast > 3 && warningDreamVideoPlayed && !deployedFullBlownLycanthropy)
             {
@@ -148,6 +128,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 // Terminate custom disease lifecycle
                 EndDisease();
             }
+        }
+
+        private void WarningDreamVideoCompleted()
+        {
+            warningDreamVideoPlayed = true;
         }
 
         #endregion

@@ -21,6 +21,8 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 namespace Wenzil.Console
 {
@@ -98,6 +100,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PoisonPlayer.name, PoisonPlayer.usage, PoisonPlayer.description, PoisonPlayer.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(DumpRegion.name, DumpRegion.description, DumpRegion.usage, DumpRegion.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocation.name, DumpLocation.description, DumpLocation.usage, DumpLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
@@ -110,7 +113,37 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ChangeModSettings.name, ChangeModSettings.description, ChangeModSettings.usage, ChangeModSettings.Execute);
+        }
 
+        private static class DumpRegion
+        {
+            public static readonly string name = "dumpregion";
+            public static readonly string error = "Player not in a region, unable to dump";
+            public static readonly string usage = "dumpregion";
+            public static readonly string description = "Dump the current region (from MAPS.BSA) that the player is currently in to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 0)
+                {
+                    return HelpCommand.Execute(DumpRegion.name);
+                }
+                else
+                {
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    if (playerGPS)
+                    {
+                        DFRegion region = playerGPS.CurrentRegion;
+
+                        string regionJson = SaveLoadManager.Serialize(region.GetType(), region);
+                        string fileName = WorldDataReplacement.GetDFRegionReplacementFilename(playerGPS.CurrentRegionIndex);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), regionJson);
+                        return "Region data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    }
+                    return error;
+                }
+            }
         }
 
         private static class DumpLocation
@@ -134,7 +167,7 @@ namespace Wenzil.Console
                         DFLocation location = playerGPS.CurrentLocation;
 
                         string locJson = SaveLoadManager.Serialize(location.GetType(), location);
-                        string fileName = WorldDataReplacement.GetLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
+                        string fileName = WorldDataReplacement.GetDFLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
                         File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), locJson);
                         return "Location data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
@@ -147,14 +180,22 @@ namespace Wenzil.Console
         {
             public static readonly string name = "dumpblock";
             public static readonly string error = "Failed to dump block";
-            public static readonly string usage = "dumpblock blockName";
-            public static readonly string description = "Dump a block to json file";
+            public static readonly string usage = "dumpblock [blockName]";
+            public static readonly string description = "Dump a block to json file, or index if no block name specified";
 
             public static string Execute(params string[] args)
             {
                 if (args.Length == 0)
                 {
-                    return HelpCommand.Execute(DumpBlock.name);
+                    string blockIndex = "";
+                    BsaFile blockBsa = DaggerfallUnity.Instance.ContentReader.BlockFileReader.BsaFile;
+                    for (int b = 0; b < blockBsa.Count; b++)
+                    {
+                        blockIndex += string.Format("{0}: {1}\n", b, blockBsa.GetRecordName(b));
+                    }
+                    string fileName = Path.Combine(Application.persistentDataPath, "BlockIndex.txt");
+                    File.WriteAllText(fileName, blockIndex);
+                    return "Block index data written to " + Path.Combine(Application.persistentDataPath, fileName);
                 }
                 else
                 {
@@ -170,7 +211,7 @@ namespace Wenzil.Console
                     if (!string.IsNullOrEmpty(blockData.Name))
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
-                        string fileName = WorldDataReplacement.GetBlockReplacementFilename(blockData.Name);
+                        string fileName = WorldDataReplacement.GetDFBlockReplacementFilename(blockData.Name);
                         File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
                         return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
@@ -183,8 +224,8 @@ namespace Wenzil.Console
         {
             public static readonly string name = "dumplocblocks";
             public static readonly string error = "Failed to dump locations";
-            public static readonly string usage = "dumplocblocks [blockName.RMB]*";
-            public static readonly string description = "Dump the names of blocks for each location, or locations for given block(s), to json file";
+            public static readonly string usage = "dumplocblocks [locindex|(blockName.RMB )*]\nExamples:\ndumplocblocks\ndumplocblocks locindex\ndumplocblocks RESIAM10.RMB GEMSAM02.RMB";
+            public static readonly string description = "Dump the names of blocks for each location, location index or locations for list of given block(s), to json file";
 
             public static string Execute(params string[] args)
             {
@@ -205,6 +246,22 @@ namespace Wenzil.Console
                     string fileName = Path.Combine(Application.persistentDataPath, "LocationBlockNames.json");
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
+                }
+                else if (args.Length == 1 && args[0] == "locindex")
+                {
+                    string locIndex = "";
+                    for (int region = 0; region < mapFileReader.RegionCount; region++)
+                    {
+                        DFRegion dfRegion = mapFileReader.GetRegion(region);
+                        for (int location = 0; location < dfRegion.LocationCount; location++)
+                        {
+                            DFLocation dfLoc = mapFileReader.GetLocation(region, location);
+                            locIndex += string.Format("{0}, {1}: {2}\n", region, dfLoc.LocationIndex, dfLoc.Name);
+                        }
+                    }
+                    string fileName = Path.Combine(Application.persistentDataPath, "LocationIndex.txt");
+                    File.WriteAllText(fileName, locIndex);
+                    return "Location index written to " + fileName;
                 }
                 else
                 {
@@ -2492,9 +2549,10 @@ namespace Wenzil.Console
                 if (!found)
                     return string.Format("Could not find daedra named {0}. Valid names are {1}", args[0], validNames);
 
+                IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
                 Quest quest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest);
                 if (quest != null)
-                    DaggerfallUI.UIManager.PushWindow(new DaggerfallDaedraSummonedWindow(DaggerfallUI.UIManager, daedraToSummon, quest));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.DaedraSummoned, new object[] { uiManager, daedraToSummon, quest }));
                 else
                     return string.Format("Could not find quest {0} for deadra {1}", daedraToSummon.quest, args[0]);
 
@@ -2523,6 +2581,60 @@ namespace Wenzil.Console
                 return "Finished";
             }
         }
-    }
 
+        private static class ChangeModSettings
+        {
+            static ConsoleController controller;
+
+            public static readonly string name = "change_modsettings";
+            public static readonly string description = "Change mod settings (experimental).";
+            public static readonly string usage = "change_modsettings";
+
+            public static string Execute(params string[] args)
+            {
+                if (!ModManager.Instance)
+                    return "ModManager instance not found.";
+
+                string[] modTitles = ModManager.Instance.Mods.Where(x => x.HasSettings && x.LoadSettingsCallback != null).Select(x => x.Title).ToArray();
+                if (modTitles.Length == 0)
+                    return "There are no mods that support live changes to settings.";
+
+                ModManager.Instance.StartCoroutine(OpenSettingsWindow(modTitles));
+                return string.Format("Found {0} mod(s) that support live changes to settings. Close the console to open settings window.", modTitles.Length);
+            }
+
+            private static IEnumerator OpenSettingsWindow(string[] modTitles)
+            {
+                if (!FindController())
+                    yield break;
+
+                while (controller.ui.isConsoleOpen)
+                    yield return null;
+
+                var userInterfaceManager = DaggerfallUI.Instance.UserInterfaceManager;
+
+                var listPicker = new DaggerfallListPickerWindow(userInterfaceManager);
+                listPicker.ListBox.AddItems(modTitles);
+                listPicker.OnItemPicked += (index, modTitle) =>
+                {
+                    listPicker.PopWindow();
+                    userInterfaceManager.PushWindow(new ModSettingsWindow(userInterfaceManager, ModManager.Instance.GetMod(modTitle), true));
+                };
+                userInterfaceManager.PushWindow(listPicker);
+            }
+
+            private static bool FindController()
+            {
+                if (controller)
+                    return true;
+
+                GameObject console = GameObject.Find("Console");
+                if (console && (controller = console.GetComponent<ConsoleController>()))
+                    return true;
+
+                Debug.LogError("Failed to find console controller.");
+                return false;
+            }
+        }
+    }
 }

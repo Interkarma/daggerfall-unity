@@ -357,7 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ShowAffiliationsDialog()
         {
             List<TextFile.Token> tokens = new List<TextFile.Token>();
-            List<Guild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
+            List<IGuild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
 
             if (guildMemberships.Count == 0)
                 DaggerfallUI.MessageBox(noAffiliationsMsgId);
@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 });
                 tokens.Add(TextFile.NewLineToken);
 
-                foreach (Guild guild in guildMemberships)
+                foreach (IGuild guild in guildMemberships)
                 {
                     tokens.Add(TextFile.CreateTextToken(guild.GetAffiliation()));
                     tokens.Add(tab);

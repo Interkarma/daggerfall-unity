@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.Guilds
     /// <summary>
     ///  Guild objects define player status and benefits with the guild.
     /// </summary>
-    public abstract class Guild : IMacroContextProvider  // TODO: Extract interface?
+    public abstract class Guild : IGuild
     {
         #region Constants
 
@@ -199,6 +199,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public virtual int AlterReward(int reward)
+        {
+            return reward;
+        }
+
         public virtual int ReducedRepairCost(int price)
         {
             return price;
@@ -326,12 +331,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Serialization
 
-        internal virtual GuildMembership_v1 GetGuildData()
+        public virtual GuildMembership_v1 GetGuildData()
         {
             return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange };
         }
 
-        internal virtual void RestoreGuildData(GuildMembership_v1 data)
+        public virtual void RestoreGuildData(GuildMembership_v1 data)
         {
             rank = data.rank;
             lastRankChange = data.lastRankChange;

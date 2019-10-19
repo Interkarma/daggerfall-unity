@@ -813,8 +813,8 @@ namespace DaggerfallWorkshop.Game
             if (isGamePaused)
                 return false;
 
-            // Game not active when SaveLoadManager not present
-            if (SaveLoadManager.Instance == null)
+            // Game not active when SaveLoadManager not present or when loading
+            if (SaveLoadManager.Instance == null || SaveLoadManager.Instance.LoadInProgress)
                 return false;
 
             // Game not active when top window is neither null or HUD

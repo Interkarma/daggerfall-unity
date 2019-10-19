@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop
         public const float maxTerrainScale = 10.0f;
         public const float defaultTerrainScale = 1.5f;
 
+        public static bool NatureMeshUsed { get; private set; }
+
         /// <summary>
         /// Gets the Terrain name for a given map pixel
         /// </summary>
@@ -109,18 +111,12 @@ namespace DaggerfallWorkshop
             result.X = (RMBLayout.RMBTilesPerTerrain - width * RMBLayout.RMBTilesPerBlock) / 2;
             result.Y = (RMBLayout.RMBTilesPerTerrain - height * RMBLayout.RMBTilesPerBlock) / 2;
 
-            // But some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
-            // Seems to be 1x1 blocks using CUST prefix, but possibly more research needed
-            const int custPrefixIndex = 40;
-            if (width == 1 && height == 1)
+            // Handle custom 1x1 location position
+            if (location.HasCustomLocationPosition())
             {
-                if (location.Exterior.ExteriorData.BlockIndex[0] == custPrefixIndex)
-                {
-                    result.X = 72;
-                    result.Y = 55;
-                }
+                result.X = 72;
+                result.Y = 55;
             }
-
             return result;
         }
 
@@ -462,7 +458,7 @@ namespace DaggerfallWorkshop
         }
 
         // Drops nature flats based on random chance scaled by simple rules
-        public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale)
+        public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int terrainDist)
         {
             const float maxSteepness = 50f;         // 50
             const float baseChanceOnDirt = 0.2f;        // 0.2
@@ -543,17 +539,17 @@ namespace DaggerfallWorkshop
                     int tile = dfTerrain.MapData.tilemapSamples[x, y] & 0x3F;
                     if (tile == 1)
                     {   // Dirt
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnDirt)
+                        if (Random.Range(0f, 1f) > chanceOnDirt)
                             continue;
                     }
                     else if (tile == 2)
                     {   // Grass
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnGrass)
+                        if (Random.Range(0f, 1f) > chanceOnGrass)
                             continue;
                     }
                     else if (tile == 3)
                     {   // Stone
-                        if (UnityEngine.Random.Range(0f, 1f) > chanceOnStone)
+                        if (Random.Range(0f, 1f) > chanceOnStone)
                             continue;
                     }
                     else
@@ -574,10 +570,12 @@ namespace DaggerfallWorkshop
                     float height2 = terrain.SampleHeight(pos + terrain.transform.position);
                     pos.y = height2;
 
-                    // Add to batch
-                    int record = UnityEngine.Random.Range(1, 32);
-                    if (!MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
+                    // Add to batch unless a mesh replacement is found
+                    int record = Random.Range(1, 32);
+                    if (terrainDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
                         dfBillboardBatch.AddItem(record, pos);
+                    else if (!NatureMeshUsed)
+                        NatureMeshUsed = true;  // Signal that nature mesh has been used to initiate extra terrain updates
                 }
             }
 

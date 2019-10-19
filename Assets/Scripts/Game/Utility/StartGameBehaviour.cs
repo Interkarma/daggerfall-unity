@@ -201,10 +201,6 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Set mouse look sensitivity
                 if (mouseLook)
                     mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
-
-                // Set rendering path
-                if (DaggerfallUnity.Settings.UseLegacyDeferred)
-                    camera.renderingPath = RenderingPath.DeferredLighting;
             }
 
             // Set shadow resolution
