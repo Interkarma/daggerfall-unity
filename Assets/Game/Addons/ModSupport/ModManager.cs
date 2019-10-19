@@ -111,15 +111,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
-
-            SetupSingleton();
-
-            if (Instance == this)
-                StateManager.OnStateChange += StateManager_OnStateChange;
         }
 
         void Start()
         {
+            SetupSingleton();
+
+            if (Instance == this)
+                StateManager.OnStateChange += StateManager_OnStateChange;
+
             if (!DaggerfallUnity.Settings.LypyL_ModSystem)
             {
                 Debug.Log("Mod System disabled");
