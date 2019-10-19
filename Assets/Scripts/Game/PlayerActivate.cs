@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich, Numidium
+// Contributors:    Allofich, Numidium, TheLacus
 // 
 // Notes:
 //
@@ -28,6 +28,19 @@ using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
+    /// <summary>
+    /// Defines a <see cref="MonoBehaviour"/> component that can be activated by player interaction.
+    /// Activation is detected when a ray cast hits a collider or trigger collider on the GameObject on which the component is instantiated.
+    /// </summary>
+    public interface IPlayerActivable
+    {
+        /// <summary>
+        /// Fired when the player activate this object. This method can be called more than once if the collider is not disabled by implementation.
+        /// </summary>
+        /// <param name="hit">The hit that caused the activation.</param>
+        void Activate(RaycastHit hit);
+    }
+
     /// <summary>
     /// Example class to handle activation of doors, switches, etc. from Fire1 input.
     /// </summary>
@@ -265,6 +278,11 @@ namespace DaggerfallWorkshop.Game
                     {
                         activation(hit.transform);
                     }
+
+                    // Check for custom activation
+                    var playerActivable = hit.transform.GetComponent<IPlayerActivable>();
+                    if (playerActivable != null)
+                        playerActivable.Activate(hit);
 
                     // Debug for identifying interior furniture model ids.
                     Debug.Log(string.Format("hit='{0}' static={1}", hit.transform, GameObjectHelper.IsStaticGeometry(hit.transform.gameObject)));

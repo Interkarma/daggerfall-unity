@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -25,6 +26,7 @@ namespace DaggerfallWorkshop.Game
         public int MinWaitTime = 4;             // Min wait time in seconds before next sound
         public int MaxWaitTime = 35;            // Max wait time in seconds before next sound
         public AmbientSoundPresets Presets;     // Ambient sound preset
+        public bool IsMuted = false;
         public bool doNotPlayInCastle = true;   // Do not play ambient effects in castle blocks
         public bool PlayLightningEffect;        // Play a lightning effect where appropriate
         //public DaggerfallSky SkyForEffects;     // Sky to receive effects
@@ -68,6 +70,9 @@ namespace DaggerfallWorkshop.Game
             StartWaiting();
             playerBehaviour = GameManager.Instance.PlayerEntityBehaviour;
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            DaggerfallVidPlayerWindow.OnVideoStart += AmbientEffectsPlayer_OnVideoStart;
+            DaggerfallVidPlayerWindow.OnVideoEnd += AmbientEffectsPlayer_OnVideoEnd;
         }
 
         void OnDisable()
@@ -84,6 +89,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (IsMuted)
+                return;
+
             // Change sound presets
             if (Presets != lastPresets)
             {
@@ -452,6 +460,27 @@ namespace DaggerfallWorkshop.Game
             AmbientEffectsEventArgs args = new AmbientEffectsEventArgs(clip);
             if (OnPlayEffect != null)
                 OnPlayEffect(args);
+        }
+
+
+        private void AmbientEffectsPlayer_OnVideoStart()
+        {
+            rainLoop = null;
+            cricketsLoop = null;
+
+            // Stop playing any loops
+            if (loopAudioSource.isPlaying)
+            {
+                loopAudioSource.Stop();
+                loopAudioSource.clip = null;
+                loopAudioSource.loop = false;
+            }
+            IsMuted = true;
+        }
+
+        private void AmbientEffectsPlayer_OnVideoEnd()
+        {
+            IsMuted = false;
         }
 
         #endregion

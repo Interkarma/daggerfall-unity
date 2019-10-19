@@ -282,6 +282,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (!GameManager.Instance.IsPlayingGame())
+                return;
+
             // Track which dungeon block player is inside of
             if (dungeon && isPlayerInsideDungeon)
             {
@@ -1117,6 +1120,14 @@ namespace DaggerfallWorkshop.Game
 
             // Raise event
             RaiseOnTransitionDungeonExteriorEvent();
+        }
+
+        public void TransitionDungeonExteriorImmediate()
+        {
+            if (!ReferenceComponents() || !dungeon || !isPlayerInsideDungeon)
+                return;
+
+            RaiseOnPreTransitionEvent(PlayerEnterExit.TransitionType.ToDungeonExterior);
         }
 
         #endregion

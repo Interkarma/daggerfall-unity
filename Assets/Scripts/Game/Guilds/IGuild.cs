@@ -74,6 +74,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         bool FreeMagickaRecharge();
 
+        int AlterReward(int reward);
+
         int ReducedRepairCost(int price);
 
         int ReducedIdentifyCost(int price);

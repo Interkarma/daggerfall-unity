@@ -854,7 +854,9 @@ namespace DaggerfallConnect.Arena2
                 recordsOut[i].YPos = reader.ReadInt32();
                 recordsOut[i].ZPos = reader.ReadInt32();
                 recordsOut[i].NullValue2 = reader.ReadUInt32();
+                recordsOut[i].XRotation = 0;
                 recordsOut[i].YRotation = reader.ReadInt16();
+                recordsOut[i].ZRotation = 0;
                 recordsOut[i].Unknown4 = reader.ReadUInt16();
                 recordsOut[i].NullValue3 = reader.ReadUInt32();
                 recordsOut[i].Unknown5 = reader.ReadUInt32();

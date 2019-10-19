@@ -76,7 +76,6 @@ namespace DaggerfallWorkshop
         public int ShadowResolutionMode { get; set; }
         public int MainFilterMode { get; set; }
         public int QualityLevel { get; set; }
-        public bool UseLegacyDeferred { get; set; }
         public bool DungeonLightShadows { get; set; }
         public bool InteriorLightShadows { get; set; }
         public bool ExteriorLightShadows { get; set; }
@@ -208,7 +207,6 @@ namespace DaggerfallWorkshop
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
             QualityLevel = GetInt(sectionVideo, "QualityLevel", 0, 5);
-            UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
             ExteriorLightShadows = GetBool(sectionVideo, "ExteriorLightShadows");
@@ -324,7 +322,6 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
             SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);
             SetInt(sectionVideo, "QualityLevel", QualityLevel);
-            SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
             SetBool(sectionVideo, "ExteriorLightShadows", ExteriorLightShadows);

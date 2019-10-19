@@ -181,7 +181,7 @@
     },
     {
         "index": 9,
-        "name": "Green leaves",
+        "name": "Green Leaves",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -201,7 +201,7 @@
     },
     {
         "index": 10,
-        "name": "Red flowers",
+        "name": "Red Flowers",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 1,
@@ -221,7 +221,7 @@
     },
     {
         "index": 11,
-        "name": "Yellow flowers",
+        "name": "Yellow Flowers",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -241,7 +241,7 @@
     },
     {
         "index": 12,
-        "name": "Root tendrils",
+        "name": "Root Tendrils",
         "baseWeight": 0.25,
         "hitPoints": 12,
         "capacityOrTarget": 0,
@@ -261,7 +261,7 @@
     },
     {
         "index": 13,
-        "name": "Root bulb",
+        "name": "Root Bulb",
         "baseWeight": 0.25,
         "hitPoints": 12,
         "capacityOrTarget": 0,
@@ -281,7 +281,7 @@
     },
     {
         "index": 14,
-        "name": "Pine branch",
+        "name": "Pine Branch",
         "baseWeight": 1.0,
         "hitPoints": 40,
         "capacityOrTarget": 0,
@@ -301,7 +301,7 @@
     },
     {
         "index": 15,
-        "name": "Green berries",
+        "name": "Green Berries",
         "baseWeight": 0.5,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -321,7 +321,7 @@
     },
     {
         "index": 16,
-        "name": "Red berries",
+        "name": "Red Berries",
         "baseWeight": 0.5,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -341,7 +341,7 @@
     },
     {
         "index": 17,
-        "name": "Yellow berries",
+        "name": "Yellow Berries",
         "baseWeight": 0.5,
         "hitPoints": 5,
         "capacityOrTarget": 5,
@@ -381,7 +381,7 @@
     },
     {
         "index": 19,
-        "name": "Red rose",
+        "name": "Red Rose",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 0,
@@ -401,7 +401,7 @@
     },
     {
         "index": 20,
-        "name": "Yellow rose",
+        "name": "Yellow Rose",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 0,
@@ -421,7 +421,7 @@
     },
     {
         "index": 21,
-        "name": "Black rose",
+        "name": "Black Rose",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 0,
@@ -441,7 +441,7 @@
     },
     {
         "index": 22,
-        "name": "White rose",
+        "name": "White Rose",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 1,
@@ -461,7 +461,7 @@
     },
     {
         "index": 23,
-        "name": "Red poppy",
+        "name": "Red Poppy",
         "baseWeight": 0.25,
         "hitPoints": 8,
         "capacityOrTarget": 0,
@@ -481,7 +481,7 @@
     },
     {
         "index": 24,
-        "name": "Black poppy",
+        "name": "Black Poppy",
         "baseWeight": 0.25,
         "hitPoints": 8,
         "capacityOrTarget": 2,
@@ -501,7 +501,7 @@
     },
     {
         "index": 25,
-        "name": "Golden poppy",
+        "name": "Golden Poppy",
         "baseWeight": 0.25,
         "hitPoints": 8,
         "capacityOrTarget": 0,
@@ -521,7 +521,7 @@
     },
     {
         "index": 26,
-        "name": "White poppy",
+        "name": "White Poppy",
         "baseWeight": 0.25,
         "hitPoints": 8,
         "capacityOrTarget": 1,
@@ -541,7 +541,7 @@
     },
     {
         "index": 27,
-        "name": "Ginkgo leaves",
+        "name": "Ginkgo Leaves",
         "baseWeight": 0.25,
         "hitPoints": 7,
         "capacityOrTarget": 0,
@@ -661,7 +661,7 @@
     },
     {
         "index": 33,
-        "name": "Werewolf's blood",
+        "name": "Werewolf's Blood",
         "baseWeight": 0.25,
         "hitPoints": 9,
         "capacityOrTarget": 3,
@@ -681,7 +681,7 @@
     },
     {
         "index": 34,
-        "name": "Wereboar's tusk",
+        "name": "Wereboar's Tusk",
         "baseWeight": 1.0,
         "hitPoints": 15,
         "capacityOrTarget": 0,
@@ -701,7 +701,7 @@
     },
     {
         "index": 35,
-        "name": "Fairy dragon's scales",
+        "name": "Fairy Dragon's Scales",
         "baseWeight": 2.0,
         "hitPoints": 700,
         "capacityOrTarget": 0,
@@ -721,7 +721,7 @@
     },
     {
         "index": 36,
-        "name": "Nymph hair",
+        "name": "Nymph Hair",
         "baseWeight": 0.25,
         "hitPoints": 2000,
         "capacityOrTarget": 5,
@@ -741,7 +741,7 @@
     },
     {
         "index": 37,
-        "name": "Unicorn horn",
+        "name": "Unicorn Horn",
         "baseWeight": 1.5,
         "hitPoints": 50000,
         "capacityOrTarget": 1,
@@ -761,7 +761,7 @@
     },
     {
         "index": 38,
-        "name": "Wraith essence",
+        "name": "Wraith Essence",
         "baseWeight": 0.25,
         "hitPoints": 50000,
         "capacityOrTarget": 2,
@@ -801,7 +801,7 @@
     },
     {
         "index": 40,
-        "name": "Ghoul's tongue",
+        "name": "Ghoul's Tongue",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -821,7 +821,7 @@
     },
     {
         "index": 41,
-        "name": "Spider's venom",
+        "name": "Spider's Venom",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 0,
@@ -841,7 +841,7 @@
     },
     {
         "index": 42,
-        "name": "Troll's blood",
+        "name": "Troll's Blood",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -861,7 +861,7 @@
     },
     {
         "index": 43,
-        "name": "Snake venom",
+        "name": "Snake Venom",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 2,
@@ -881,7 +881,7 @@
     },
     {
         "index": 44,
-        "name": "Gorgon snake",
+        "name": "Gorgon Snake",
         "baseWeight": 0.5,
         "hitPoints": 500,
         "capacityOrTarget": 0,
@@ -901,7 +901,7 @@
     },
     {
         "index": 45,
-        "name": "Lich dust",
+        "name": "Lich Dust",
         "baseWeight": 0.25,
         "hitPoints": 50000,
         "capacityOrTarget": 1,
@@ -921,7 +921,7 @@
     },
     {
         "index": 46,
-        "name": "Dragon's scales",
+        "name": "Dragon's Scales",
         "baseWeight": 3.0,
         "hitPoints": 50000,
         "capacityOrTarget": 0,
@@ -941,7 +941,7 @@
     },
     {
         "index": 47,
-        "name": "Giant scorpion stinger",
+        "name": "Giant Scorpion Stinger",
         "baseWeight": 1.5,
         "hitPoints": 25,
         "capacityOrTarget": 0,
@@ -961,7 +961,7 @@
     },
     {
         "index": 48,
-        "name": "Small scorpion stinger",
+        "name": "Small Scorpion Stinger",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -981,7 +981,7 @@
     },
     {
         "index": 49,
-        "name": "Mummy wrappings",
+        "name": "Mummy Wrappings",
         "baseWeight": 0.5,
         "hitPoints": 7,
         "capacityOrTarget": 2,
@@ -1001,7 +1001,7 @@
     },
     {
         "index": 50,
-        "name": "Giant's blood",
+        "name": "Giant's Blood",
         "baseWeight": 0.25,
         "hitPoints": 10,
         "capacityOrTarget": 0,
@@ -1021,7 +1021,7 @@
     },
     {
         "index": 51,
-        "name": "Basilisk's eye",
+        "name": "Basilisk's Eye",
         "baseWeight": 0.25,
         "hitPoints": 4,
         "capacityOrTarget": 2,
@@ -1041,7 +1041,7 @@
     },
     {
         "index": 52,
-        "name": "Gryphon's feather",
+        "name": "Gryphon's Feather",
         "baseWeight": 0.25,
         "hitPoints": 20,
         "capacityOrTarget": 0,
@@ -1061,7 +1061,7 @@
     },
     {
         "index": 53,
-        "name": "Daedra's heart",
+        "name": "Daedra's Heart",
         "baseWeight": 1.0,
         "hitPoints": 50000,
         "capacityOrTarget": 2,
@@ -1081,7 +1081,7 @@
     },
     {
         "index": 54,
-        "name": "Saint's hair",
+        "name": "Saint's Hair",
         "baseWeight": 0.25,
         "hitPoints": 2000,
         "capacityOrTarget": 0,
@@ -1101,7 +1101,7 @@
     },
     {
         "index": 55,
-        "name": "Holy relic",
+        "name": "Holy Relic",
         "baseWeight": 0.5,
         "hitPoints": 9000,
         "capacityOrTarget": 0,
@@ -1121,7 +1121,7 @@
     },
     {
         "index": 56,
-        "name": "Big tooth",
+        "name": "Big Tooth",
         "baseWeight": 0.5,
         "hitPoints": 7,
         "capacityOrTarget": 2,
@@ -1141,7 +1141,7 @@
     },
     {
         "index": 57,
-        "name": "Medium tooth",
+        "name": "Medium Tooth",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 2,
@@ -1161,7 +1161,7 @@
     },
     {
         "index": 58,
-        "name": "Small tooth",
+        "name": "Small Tooth",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 2,
@@ -1181,7 +1181,7 @@
     },
     {
         "index": 59,
-        "name": "Pure water",
+        "name": "Pure Water",
         "baseWeight": 0.25,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -1201,7 +1201,7 @@
     },
     {
         "index": 60,
-        "name": "Rain water",
+        "name": "Rain Water",
         "baseWeight": 0.25,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -1221,7 +1221,7 @@
     },
     {
         "index": 61,
-        "name": "Orc's blood",
+        "name": "Orc's Blood",
         "baseWeight": 0.25,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -1241,7 +1241,7 @@
     },
     {
         "index": 62,
-        "name": "Elixir vitae",
+        "name": "Elixir Vitae",
         "baseWeight": 0.25,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -1641,7 +1641,7 @@
     },
     {
         "index": 82,
-        "name": "Glass jar",
+        "name": "Glass Jar",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 1,
@@ -1661,7 +1661,7 @@
     },
     {
         "index": 83,
-        "name": "Glass bottle",
+        "name": "Glass Bottle",
         "baseWeight": 0.25,
         "hitPoints": 5,
         "capacityOrTarget": 1,
@@ -1701,7 +1701,7 @@
     },
     {
         "index": 85,
-        "name": "Clay jar",
+        "name": "Clay Jar",
         "baseWeight": 0.5,
         "hitPoints": 7,
         "capacityOrTarget": 1,
@@ -1721,7 +1721,7 @@
     },
     {
         "index": 86,
-        "name": "Small sack",
+        "name": "Small Sack",
         "baseWeight": 0.25,
         "hitPoints": 12,
         "capacityOrTarget": 20,
@@ -1741,7 +1741,7 @@
     },
     {
         "index": 87,
-        "name": "Large sack",
+        "name": "Large Sack",
         "baseWeight": 0.5,
         "hitPoints": 14,
         "capacityOrTarget": 60,
@@ -1801,7 +1801,7 @@
     },
     {
         "index": 90,
-        "name": "Small chest",
+        "name": "Small Chest",
         "baseWeight": 5.0,
         "hitPoints": 500,
         "capacityOrTarget": 200,
@@ -1821,7 +1821,7 @@
     },
     {
         "index": 91,
-        "name": "Wine rack",
+        "name": "Wine Rack",
         "baseWeight": 25.0,
         "hitPoints": 700,
         "capacityOrTarget": 50,
@@ -1841,7 +1841,7 @@
     },
     {
         "index": 92,
-        "name": "Large chest",
+        "name": "Large Chest",
         "baseWeight": 25.0,
         "hitPoints": 1000,
         "capacityOrTarget": 300,
@@ -1861,7 +1861,7 @@
     },
     {
         "index": 93,
-        "name": "Small cart",
+        "name": "Small Cart",
         "baseWeight": 400.0,
         "hitPoints": 1400,
         "capacityOrTarget": 400,
@@ -1921,7 +1921,7 @@
     },
     {
         "index": 96,
-        "name": "Large boat",
+        "name": "Large Boat",
         "baseWeight": 750.0,
         "hitPoints": 3600,
         "capacityOrTarget": 5000,
@@ -1941,7 +1941,7 @@
     },
     {
         "index": 97,
-        "name": "Small ship",
+        "name": "Small Ship",
         "baseWeight": 2500.0,
         "hitPoints": 9000,
         "capacityOrTarget": 10000,
@@ -1961,7 +1961,7 @@
     },
     {
         "index": 98,
-        "name": "Large galley",
+        "name": "Large Galley",
         "baseWeight": 25000.0,
         "hitPoints": 20000,
         "capacityOrTarget": 30000,
@@ -2101,7 +2101,7 @@
     },
     {
         "index": 105,
-        "name": "Left pauldron",
+        "name": "Left Pauldron",
         "baseWeight": 2.0,
         "hitPoints": 2048,
         "capacityOrTarget": 0,
@@ -2121,7 +2121,7 @@
     },
     {
         "index": 106,
-        "name": "Right pauldron",
+        "name": "Right Pauldron",
         "baseWeight": 2.0,
         "hitPoints": 2048,
         "capacityOrTarget": 0,
@@ -2201,7 +2201,7 @@
     },
     {
         "index": 110,
-        "name": "Round shield",
+        "name": "Round Shield",
         "baseWeight": 4.5,
         "hitPoints": 1280,
         "capacityOrTarget": 0,
@@ -2221,7 +2221,7 @@
     },
     {
         "index": 111,
-        "name": "Kite shield",
+        "name": "Kite Shield",
         "baseWeight": 7.5,
         "hitPoints": 2048,
         "capacityOrTarget": 0,
@@ -2241,7 +2241,7 @@
     },
     {
         "index": 112,
-        "name": "Tower shield",
+        "name": "Tower Shield",
         "baseWeight": 12.5,
         "hitPoints": 2560,
         "capacityOrTarget": 0,
@@ -2541,7 +2541,7 @@
     },
     {
         "index": 127,
-        "name": "Battle axe",
+        "name": "Battle Axe",
         "baseWeight": 6.0,
         "hitPoints": 1200,
         "capacityOrTarget": 0,
@@ -2561,7 +2561,7 @@
     },
     {
         "index": 128,
-        "name": "War axe",
+        "name": "War Axe",
         "baseWeight": 7.5,
         "hitPoints": 800,
         "capacityOrTarget": 0,
@@ -2581,7 +2581,7 @@
     },
     {
         "index": 129,
-        "name": "Short bow",
+        "name": "Short Bow",
         "baseWeight": 1.0,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -2601,7 +2601,7 @@
     },
     {
         "index": 130,
-        "name": "Long bow",
+        "name": "Long Bow",
         "baseWeight": 1.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -2961,7 +2961,7 @@
     },
     {
         "index": 148,
-        "name": "Tall boots",
+        "name": "Tall Boots",
         "baseWeight": 1.5,
         "hitPoints": 300,
         "capacityOrTarget": 0,
@@ -3021,7 +3021,7 @@
     },
     {
         "index": 151,
-        "name": "Casual pants",
+        "name": "Casual Pants",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3061,7 +3061,7 @@
     },
     {
         "index": 153,
-        "name": "Short skirt",
+        "name": "Short Skirt",
         "baseWeight": 0.5,
         "hitPoints": 140,
         "capacityOrTarget": 0,
@@ -3081,7 +3081,7 @@
     },
     {
         "index": 154,
-        "name": "Casual cloak",
+        "name": "Casual Cloak",
         "baseWeight": 1.0,
         "hitPoints": 140,
         "capacityOrTarget": 0,
@@ -3101,7 +3101,7 @@
     },
     {
         "index": 155,
-        "name": "Formal cloak",
+        "name": "Formal Cloak",
         "baseWeight": 1.0,
         "hitPoints": 120,
         "capacityOrTarget": 0,
@@ -3121,7 +3121,7 @@
     },
     {
         "index": 156,
-        "name": "Khajiit suit",
+        "name": "Khajiit Suit",
         "baseWeight": 1.0,
         "hitPoints": 110,
         "capacityOrTarget": 0,
@@ -3141,7 +3141,7 @@
     },
     {
         "index": 157,
-        "name": "Dwynnen surcoat",
+        "name": "Dwynnen Surcoat",
         "baseWeight": 1.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3161,7 +3161,7 @@
     },
     {
         "index": 158,
-        "name": "Short tunic",
+        "name": "Short Tunic",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3181,7 +3181,7 @@
     },
     {
         "index": 159,
-        "name": "Formal tunic",
+        "name": "Formal Tunic",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3221,7 +3221,7 @@
     },
     {
         "index": 161,
-        "name": "Reversible tunic",
+        "name": "Reversible Tunic",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3261,7 +3261,7 @@
     },
     {
         "index": 163,
-        "name": "Plain robes",
+        "name": "Plain Robes",
         "baseWeight": 1.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3281,7 +3281,7 @@
     },
     {
         "index": 164,
-        "name": "Priest robes",
+        "name": "Priest Robes",
         "baseWeight": 1.0,
         "hitPoints": 180,
         "capacityOrTarget": 0,
@@ -3301,7 +3301,7 @@
     },
     {
         "index": 165,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3321,7 +3321,7 @@
     },
     {
         "index": 166,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3341,7 +3341,7 @@
     },
     {
         "index": 167,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -3361,7 +3361,7 @@
     },
     {
         "index": 168,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -3381,7 +3381,7 @@
     },
     {
         "index": 169,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3401,7 +3401,7 @@
     },
     {
         "index": 170,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3421,7 +3421,7 @@
     },
     {
         "index": 171,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -3441,7 +3441,7 @@
     },
     {
         "index": 172,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -3461,7 +3461,7 @@
     },
     {
         "index": 173,
-        "name": "Open tunic",
+        "name": "Open Tunic",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3501,7 +3501,7 @@
     },
     {
         "index": 175,
-        "name": "Long skirt",
+        "name": "Long Skirt",
         "baseWeight": 0.5,
         "hitPoints": 130,
         "capacityOrTarget": 0,
@@ -3521,7 +3521,7 @@
     },
     {
         "index": 176,
-        "name": "Anticlere surcoat",
+        "name": "Anticlere Surcoat",
         "baseWeight": 1.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3541,7 +3541,7 @@
     },
     {
         "index": 177,
-        "name": "Challenger straps",
+        "name": "Challenger Straps",
         "baseWeight": 0.5,
         "hitPoints": 200,
         "capacityOrTarget": 0,
@@ -3561,7 +3561,7 @@
     },
     {
         "index": 178,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3581,7 +3581,7 @@
     },
     {
         "index": 179,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -3621,7 +3621,7 @@
     },
     {
         "index": 181,
-        "name": "Champion straps",
+        "name": "Champion Straps",
         "baseWeight": 0.25,
         "hitPoints": 200,
         "capacityOrTarget": 0,
@@ -3661,7 +3661,7 @@
     },
     {
         "index": 183,
-        "name": "Formal brassiere",
+        "name": "Formal Brassiere",
         "baseWeight": 0.25,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3681,7 +3681,7 @@
     },
     {
         "index": 184,
-        "name": "Peasant blouse",
+        "name": "Peasant Blouse",
         "baseWeight": 0.25,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -3741,7 +3741,7 @@
     },
     {
         "index": 187,
-        "name": "Tall boots",
+        "name": "Tall Boots",
         "baseWeight": 1.5,
         "hitPoints": 300,
         "capacityOrTarget": 0,
@@ -3801,7 +3801,7 @@
     },
     {
         "index": 190,
-        "name": "Casual pants",
+        "name": "Casual Pants",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -3821,7 +3821,7 @@
     },
     {
         "index": 191,
-        "name": "Casual cloak",
+        "name": "Casual Cloak",
         "baseWeight": 0.5,
         "hitPoints": 140,
         "capacityOrTarget": 0,
@@ -3841,7 +3841,7 @@
     },
     {
         "index": 192,
-        "name": "Formal cloak",
+        "name": "Formal Cloak",
         "baseWeight": 0.5,
         "hitPoints": 120,
         "capacityOrTarget": 0,
@@ -3861,7 +3861,7 @@
     },
     {
         "index": 193,
-        "name": "Khajiit suit",
+        "name": "Khajiit Suit",
         "baseWeight": 0.5,
         "hitPoints": 110,
         "capacityOrTarget": 0,
@@ -3881,7 +3881,7 @@
     },
     {
         "index": 194,
-        "name": "Formal eodoric",
+        "name": "Formal Eodoric",
         "baseWeight": 2.0,
         "hitPoints": 180,
         "capacityOrTarget": 0,
@@ -3901,7 +3901,7 @@
     },
     {
         "index": 195,
-        "name": "Evening gown",
+        "name": "Evening Gown",
         "baseWeight": 2.5,
         "hitPoints": 200,
         "capacityOrTarget": 0,
@@ -3921,7 +3921,7 @@
     },
     {
         "index": 196,
-        "name": "Day gown",
+        "name": "Day Gown",
         "baseWeight": 2.5,
         "hitPoints": 200,
         "capacityOrTarget": 0,
@@ -3941,7 +3941,7 @@
     },
     {
         "index": 197,
-        "name": "Casual dress",
+        "name": "Casual Dress",
         "baseWeight": 2.0,
         "hitPoints": 220,
         "capacityOrTarget": 0,
@@ -3961,7 +3961,7 @@
     },
     {
         "index": 198,
-        "name": "Strapless dress",
+        "name": "Strapless Dress",
         "baseWeight": 1.0,
         "hitPoints": 220,
         "capacityOrTarget": 0,
@@ -4001,7 +4001,7 @@
     },
     {
         "index": 200,
-        "name": "Plain robes",
+        "name": "Plain Robes",
         "baseWeight": 1.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4021,7 +4021,7 @@
     },
     {
         "index": 201,
-        "name": "Priestess robes",
+        "name": "Priestess Robes",
         "baseWeight": 1.0,
         "hitPoints": 180,
         "capacityOrTarget": 0,
@@ -4041,7 +4041,7 @@
     },
     {
         "index": 202,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4061,7 +4061,7 @@
     },
     {
         "index": 203,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4081,7 +4081,7 @@
     },
     {
         "index": 204,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4101,7 +4101,7 @@
     },
     {
         "index": 205,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4121,7 +4121,7 @@
     },
     {
         "index": 206,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4141,7 +4141,7 @@
     },
     {
         "index": 207,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4161,7 +4161,7 @@
     },
     {
         "index": 208,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4181,7 +4181,7 @@
     },
     {
         "index": 209,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4201,7 +4201,7 @@
     },
     {
         "index": 210,
-        "name": "Open tunic",
+        "name": "Open Tunic",
         "baseWeight": 0.5,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4241,7 +4241,7 @@
     },
     {
         "index": 212,
-        "name": "Long skirt",
+        "name": "Long Skirt",
         "baseWeight": 0.5,
         "hitPoints": 130,
         "capacityOrTarget": 0,
@@ -4281,7 +4281,7 @@
     },
     {
         "index": 214,
-        "name": "Short shirt",
+        "name": "Short Shirt",
         "baseWeight": 0.5,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4301,7 +4301,7 @@
     },
     {
         "index": 215,
-        "name": "Long shirt",
+        "name": "Long Shirt",
         "baseWeight": 0.5,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4341,7 +4341,7 @@
     },
     {
         "index": 217,
-        "name": "Plain single bed",
+        "name": "Plain Single Bed",
         "baseWeight": 350.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4361,7 +4361,7 @@
     },
     {
         "index": 218,
-        "name": "Fancy single bed",
+        "name": "Fancy Single Bed",
         "baseWeight": 375.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4381,7 +4381,7 @@
     },
     {
         "index": 219,
-        "name": "Plain double bed",
+        "name": "Plain Double Bed",
         "baseWeight": 700.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4401,7 +4401,7 @@
     },
     {
         "index": 220,
-        "name": "Fancy double bed",
+        "name": "Fancy Double Bed",
         "baseWeight": 750.0,
         "hitPoints": 250,
         "capacityOrTarget": 0,
@@ -4421,7 +4421,7 @@
     },
     {
         "index": 221,
-        "name": "Large oak table",
+        "name": "Large Oak Table",
         "baseWeight": 550.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4441,7 +4441,7 @@
     },
     {
         "index": 222,
-        "name": "Large cherry table",
+        "name": "Large Cherry Table",
         "baseWeight": 550.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4461,7 +4461,7 @@
     },
     {
         "index": 223,
-        "name": "Large mahogany table",
+        "name": "Large Mahogany Table",
         "baseWeight": 550.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4481,7 +4481,7 @@
     },
     {
         "index": 224,
-        "name": "Large teak table",
+        "name": "Large Teak Table",
         "baseWeight": 550.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4501,7 +4501,7 @@
     },
     {
         "index": 225,
-        "name": "Small oak table",
+        "name": "Small Oak Table",
         "baseWeight": 200.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4521,7 +4521,7 @@
     },
     {
         "index": 226,
-        "name": "Small cherry table",
+        "name": "Small Cherry Table",
         "baseWeight": 200.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4541,7 +4541,7 @@
     },
     {
         "index": 227,
-        "name": "Small mahogany table",
+        "name": "Small Mahogany Table",
         "baseWeight": 200.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4561,7 +4561,7 @@
     },
     {
         "index": 228,
-        "name": "Small teak table",
+        "name": "Small Teak Table",
         "baseWeight": 200.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -4581,7 +4581,7 @@
     },
     {
         "index": 229,
-        "name": "Oak chair",
+        "name": "Oak Chair",
         "baseWeight": 10.0,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -4601,7 +4601,7 @@
     },
     {
         "index": 230,
-        "name": "Cherry chair",
+        "name": "Cherry Chair",
         "baseWeight": 10.0,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -4621,7 +4621,7 @@
     },
     {
         "index": 231,
-        "name": "Mahogany chair",
+        "name": "Mahogany Chair",
         "baseWeight": 10.0,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4641,7 +4641,7 @@
     },
     {
         "index": 232,
-        "name": "Teak chair",
+        "name": "Teak Chair",
         "baseWeight": 10.0,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4681,7 +4681,7 @@
     },
     {
         "index": 234,
-        "name": "Fancy curtains",
+        "name": "Fancy Curtains",
         "baseWeight": 4.0,
         "hitPoints": 30,
         "capacityOrTarget": 0,
@@ -4701,7 +4701,7 @@
     },
     {
         "index": 235,
-        "name": "Large pillow",
+        "name": "Large Pillow",
         "baseWeight": 1.0,
         "hitPoints": 10,
         "capacityOrTarget": 0,
@@ -4721,7 +4721,7 @@
     },
     {
         "index": 236,
-        "name": "Small pillow",
+        "name": "Small Pillow",
         "baseWeight": 0.25,
         "hitPoints": 7,
         "capacityOrTarget": 0,
@@ -4741,7 +4741,7 @@
     },
     {
         "index": 237,
-        "name": "Small plain rug",
+        "name": "Small Plain Rug",
         "baseWeight": 10.0,
         "hitPoints": 30,
         "capacityOrTarget": 0,
@@ -4761,7 +4761,7 @@
     },
     {
         "index": 238,
-        "name": "Large plain rug",
+        "name": "Large Plain Rug",
         "baseWeight": 40.0,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -4781,7 +4781,7 @@
     },
     {
         "index": 239,
-        "name": "Small fine rug",
+        "name": "Small Fine Rug",
         "baseWeight": 10.0,
         "hitPoints": 30,
         "capacityOrTarget": 0,
@@ -4801,7 +4801,7 @@
     },
     {
         "index": 240,
-        "name": "Large fine rug",
+        "name": "Large Fine Rug",
         "baseWeight": 40.0,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -4821,7 +4821,7 @@
     },
     {
         "index": 241,
-        "name": "Large tapestry",
+        "name": "Large Tapestry",
         "baseWeight": 30.0,
         "hitPoints": 70,
         "capacityOrTarget": 0,
@@ -4841,7 +4841,7 @@
     },
     {
         "index": 242,
-        "name": "Medium tapestry",
+        "name": "Medium Tapestry",
         "baseWeight": 10.0,
         "hitPoints": 60,
         "capacityOrTarget": 0,
@@ -4861,7 +4861,7 @@
     },
     {
         "index": 243,
-        "name": "Small tapestry",
+        "name": "Small Tapestry",
         "baseWeight": 4.0,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -4881,7 +4881,7 @@
     },
     {
         "index": 244,
-        "name": "Large skins",
+        "name": "Large Skins",
         "baseWeight": 40.0,
         "hitPoints": 150,
         "capacityOrTarget": 0,
@@ -4901,7 +4901,7 @@
     },
     {
         "index": 245,
-        "name": "Small skins",
+        "name": "Small Skins",
         "baseWeight": 8.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -5161,7 +5161,7 @@
     },
     {
         "index": 258,
-        "name": "Prayer beads",
+        "name": "Prayer Beads",
         "baseWeight": 0.25,
         "hitPoints": 25,
         "capacityOrTarget": 0,
@@ -5181,7 +5181,7 @@
     },
     {
         "index": 259,
-        "name": "Rare symbol",
+        "name": "Rare Symbol",
         "baseWeight": 0.5,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -5201,7 +5201,7 @@
     },
     {
         "index": 260,
-        "name": "Common symbol",
+        "name": "Common Symbol",
         "baseWeight": 0.5,
         "hitPoints": 25,
         "capacityOrTarget": 0,
@@ -5241,7 +5241,7 @@
     },
     {
         "index": 262,
-        "name": "Holy water",
+        "name": "Holy Water",
         "baseWeight": 0.5,
         "hitPoints": 5,
         "capacityOrTarget": 0,
@@ -5281,7 +5281,7 @@
     },
     {
         "index": 264,
-        "name": "Religious item",
+        "name": "Religious Item",
         "baseWeight": 2.5,
         "hitPoints": 60,
         "capacityOrTarget": 0,
@@ -5301,7 +5301,7 @@
     },
     {
         "index": 265,
-        "name": "Small statue",
+        "name": "Small Statue",
         "baseWeight": 15.0,
         "hitPoints": 100,
         "capacityOrTarget": 0,
@@ -5321,7 +5321,7 @@
     },
     {
         "index": 266,
-        "name": "Large statue",
+        "name": "Large Statue",
         "baseWeight": 500.0,
         "hitPoints": 500,
         "capacityOrTarget": 0,
@@ -5381,7 +5381,7 @@
     },
     {
         "index": 269,
-        "name": "Holy candle",
+        "name": "Holy Candle",
         "baseWeight": 0.25,
         "hitPoints": 20,
         "capacityOrTarget": 10,
@@ -5401,7 +5401,7 @@
     },
     {
         "index": 270,
-        "name": "Holy dagger",
+        "name": "Holy Dagger",
         "baseWeight": 0.5,
         "hitPoints": 50,
         "capacityOrTarget": 0,
@@ -5421,7 +5421,7 @@
     },
     {
         "index": 271,
-        "name": "Holy tome",
+        "name": "Holy Tome",
         "baseWeight": 2.0,
         "hitPoints": 20,
         "capacityOrTarget": 0,
@@ -5521,7 +5521,7 @@
     },
     {
         "index": 276,
-        "name": "Gold pieces",
+        "name": "Gold Pieces",
         "baseWeight": 0.0025,
         "hitPoints": 1,
         "capacityOrTarget": 0,
@@ -5621,7 +5621,7 @@
     },
     {
         "index": 281,
-        "name": "Dead body",
+        "name": "Dead Body",
         "baseWeight": 200.0,
         "hitPoints": 0,
         "capacityOrTarget": 0,
@@ -5701,7 +5701,7 @@
     },
     {
         "index": 285,
-        "name": "House deed",
+        "name": "House Deed",
         "baseWeight": 0.25,
         "hitPoints": 1,
         "capacityOrTarget": 0,
@@ -5721,7 +5721,7 @@
     },
     {
         "index": 286,
-        "name": "Ship deed",
+        "name": "Ship Deed",
         "baseWeight": 0.25,
         "hitPoints": 1,
         "capacityOrTarget": 0,

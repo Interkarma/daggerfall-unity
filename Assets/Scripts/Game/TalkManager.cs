@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors:    Numidium, Allofich, Interkarma
+// Contributors:    Numidium, Allofich, Interkarma, Ferital
 // 
 // Notes:
 //
@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         string nameNPC = "";
-        bool isGreeting = false;  // Indicates a greeting is being parsed, %n = nameNPC.
+        string greetingNameNPC = ""; // used only for PC first question
 
         string npcGreetingText = ""; // the last NPC greeting text
 
@@ -396,9 +396,9 @@ namespace DaggerfallWorkshop.Game
             get { return nameNPC; }
         }
 
-        public bool IsGreeting
+        public string GreetingNameNPC
         {
-            get { return isGreeting; }
+            get { return greetingNameNPC; }
         }
 
         public ListItem CurrentQuestionListItem
@@ -996,9 +996,12 @@ namespace DaggerfallWorkshop.Game
 
         public string GetPCGreetingText(DaggerfallTalkWindow.TalkTone talkTone)
         {
-            isGreeting = true;
+            if (reactionToPlayer <= 0)
+                greetingNameNPC = ExpandRandomTextRecord(7221 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
+            else
+                greetingNameNPC = nameNPC;
             string greetingText = ExpandRandomTextRecord(7215 + DaggerfallTalkWindow.TalkToneToIndex(talkTone));
-            isGreeting = false;
+            greetingNameNPC = string.Empty;
             return greetingText;
         }
 
@@ -1009,13 +1012,10 @@ namespace DaggerfallWorkshop.Game
 
         public string GetPCGreetingOrFollowUpText()
         {
-            if (questionOpeningText == "")
-            {
-                if (numQuestionsAsked == 0)
-                    questionOpeningText = GetPCGreetingText(currentTalkTone);
-                else
-                    questionOpeningText = GetPCFollowUpText(currentTalkTone);
-            }
+            if (numQuestionsAsked == 0)
+                questionOpeningText = GetPCGreetingText(currentTalkTone);
+            else
+                questionOpeningText = GetPCFollowUpText(currentTalkTone);
             return questionOpeningText;
         }
 
@@ -1514,22 +1514,24 @@ namespace DaggerfallWorkshop.Game
             if (currentQuestionListItem.key != string.Empty)
                 key = currentQuestionListItem.key;
 
-            Person person;
-            GetPersonResource(currentQuestionListItem.questID, key, out person);
-            int buildingKey = GetPersonBuildingKey(ref person);
-
             string backupKeySubject = currentKeySubject; // Backup current key subject
 
             currentKeySubject = "";
-            if (buildingKey != 0)
-            {
-                BuildingInfo buildingInfo = listBuildings.Find(x => x.buildingKey == buildingKey);
-                currentKeySubject = buildingInfo.name;
 
-                PlayerGPS.DiscoveredBuilding discoveredBuilding;
-                GameManager.Instance.PlayerGPS.GetAnyBuilding(buildingInfo.buildingKey, out discoveredBuilding);
-                if (discoveredBuilding.displayName != null)
-                    currentKeySubject = discoveredBuilding.displayName;
+            Person person;
+            GetPersonResource(currentQuestionListItem.questID, key, out person);
+
+            int buildingKey;
+
+            if (person.IsQuestor)
+            {
+                buildingKey = GetPersonBuildingKey(ref person);
+            }
+            else
+            {
+                SiteDetails siteDetails = GetPersonSiteDetails(ref person);
+                buildingKey = siteDetails.buildingKey;
+                currentKeySubject = siteDetails.buildingName;
             }
 
             if (string.IsNullOrEmpty(currentKeySubject) || currentKeySubject == HardStrings.residence)
@@ -1661,16 +1663,27 @@ namespace DaggerfallWorkshop.Game
             // Check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
             if (currentQuestionListItem.questionType == QuestionType.Person)
             {
+                int buildingKey;
+                string buildingName = "";
+
                 string key = currentQuestionListItem.key;
                 Person person;
                 GetPersonResource(currentQuestionListItem.questID, key, out person);
-                int buildingKey = GetPersonBuildingKey(ref person);
+                if (person.IsQuestor)
+                {
+                    buildingKey = GetPersonBuildingKey(ref person);                    
+                    if (buildingKey != 0)
+                        buildingName = GetBuildingNameForBuildingKey(buildingKey);
+                }
+                else
+                {
+                    SiteDetails siteDetails = GetPersonSiteDetails(ref person);
+                    buildingKey = siteDetails.buildingKey;
+                    buildingName = siteDetails.buildingName;
+                }
 
-                string buildingName = "";
-                if (buildingKey != 0)
-                    buildingName = GetBuildingNameForBuildingKey(buildingKey);
-
-                if (string.IsNullOrEmpty(buildingName))
+                // in case building name could not be resolved correctly
+                if (string.IsNullOrEmpty(buildingName) || buildingName == HardStrings.residence)
                     // Default to person home
                     buildingName = person.HomeBuildingName;
 
@@ -2146,6 +2159,18 @@ namespace DaggerfallWorkshop.Game
 
             return assignedPlace.SiteDetails.buildingKey;
         }
+
+        public SiteDetails GetPersonSiteDetails(ref Person person)
+        {
+            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            if (assignedPlaceSymbol == null)
+                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
+
+            Place assignedPlace = person.ParentQuest.GetPlace(assignedPlaceSymbol);
+
+            return assignedPlace.SiteDetails;
+        }
+
 
         public DFLocation.BuildingTypes GetBuildingTypeForBuildingKey(int buildingKey)
         {
@@ -2674,7 +2699,7 @@ namespace DaggerfallWorkshop.Game
                                             buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
                                         };
 
-                                        if (npcWork.buildingName == string.Empty)
+                                        if (!RMBLayout.IsNamedBuilding(buildingSummary.BuildingType))
                                         {
                                             workStats[(int)socialGroup + 8]++;
                                             continue;

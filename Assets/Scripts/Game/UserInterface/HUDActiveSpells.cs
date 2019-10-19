@@ -182,7 +182,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             for (int i = 0; i < iconPool.Length; i++)
             {
                 iconPool[i] = new Panel();
-                iconPool[i].BackgroundColor = Color.black;
+                iconPool[i].BackgroundColor = Color.clear; // classic uses a black background
                 iconPool[i].AutoSize = AutoSizeModes.None;
                 iconPool[i].Enabled = false;
                 iconPool[i].ToolTip = defaultToolTip;
