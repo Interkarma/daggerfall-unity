@@ -80,45 +80,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Panel localTargetIconPanel;
         protected TextLabel localTargetIconLabel;
-        protected Button localFilterButton;
-        protected TextBox localFilterTextBox;
         protected Panel remoteTargetIconPanel;
         protected TextLabel remoteTargetIconLabel;
         protected Panel itemInfoPanel;
         protected MultiFormatTextLabel itemInfoPanelLabel;
-        protected static string filterString = string.Empty;
-        protected static string[] itemGroupNames = new string[]
-        {
-            "drugs",
-            "uselessitems1",
-            "armor",
-            "weapons",
-            "magicitems",
-            "artifacts",
-            "mensclothing",
-            "books",
-            "furniture",
-            "uselessitems2",
-            "religiousitems",
-            "maps",
-            "womensclothing",
-            "paintings",
-            "gems",
-            "plantingredients1",
-            "plantingredients2",
-            "creatureingredients1",
-            "creatureingredients2",
-            "creatureingredients3",
-            "miscellaneousingredients1",
-            "metalingredients",
-            "miscellaneousingredients2",
-            "transportation",
-            "deeds",
-            "jewellery",
-            "questitems",
-            "miscitems",
-            "currency"
-        };
 
         protected ItemListScroller localItemListScroller;
         protected ItemListScroller remoteItemListScroller;
@@ -374,7 +339,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
 
-
             // Close window immediately if inventory suppressed
             if (suppressInventory)
             {
@@ -447,17 +411,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), localTargetIconPanel);
             localTargetIconLabel.TextColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
 
-            localFilterTextBox = DaggerfallUI.AddTextBoxWithFocus(new Rect(new Vector2(1, 24), new Vector2(40, 8)), "filter pattern", localTargetIconPanel);
-            localFilterTextBox.VerticalAlignment = VerticalAlignment.Bottom;
-            localFilterButton = DaggerfallUI.AddButton(new Rect(40, 25, 15, 8), localTargetIconPanel);
-            localFilterButton.Label.Text = "Filter";
-            localFilterButton.Label.TextScale = 0.75f;
-            localFilterButton.Label.ShadowColor = Color.black;
-            localFilterButton.VerticalAlignment = VerticalAlignment.Bottom;
-            localFilterButton.HorizontalAlignment = HorizontalAlignment.Right;
-            localFilterButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
-            localFilterButton.OnMouseClick += localFilterButton_OnMouseClick;
-
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
             remoteTargetIconPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             remoteTargetIconLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(1, 2), remoteTargetIconPanel);
@@ -467,7 +420,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             remoteTargetIconPanel.OnRightMouseClick += RemoteTargetIconPanel_OnRightMouseClick;
             remoteTargetIconPanel.OnMiddleMouseClick += RemoteTargetIconPanel_OnMiddleMouseClick;
         }
-
 
         protected void SetupItemInfoPanel()
         {
@@ -690,9 +642,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Reset choose one mode
             chooseOne = false;
 
-            // Clear the Filter
-            ClearFilterFields();
-
             // Handle stealing and reset shop shelf stealing mode
             if (shopShelfStealing && remoteItems.Count < lootTargetStartCount)
             {
@@ -817,7 +766,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Select new tab page
             selectedTabPage = tabPage;
-            ClearFilterFields();
 
             // Set all buttons to appropriate state
             weaponsAndArmorButton.BackgroundTexture = (tabPage == TabPages.WeaponsAndArmor) ? weaponsAndArmorSelected : weaponsAndArmorNotSelected;
@@ -833,8 +781,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemListScroller.ResetScroll();
             FilterLocalItems();
             localItemListScroller.Items = localItemsFiltered;
-            FilterRemoteItems();
-            remoteItemListScroller.Items = remoteItemsFiltered;
         }
 
         void SelectActionMode(ActionModes mode)
@@ -922,11 +868,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = localItems.GetItem(i);
                     // Add if not equipped
                     if (!item.IsEquipped)
-                    {
-                        if (ItemPassesFilter(item))
-                            AddLocalItem(item);
-                    }
-
+                        AddLocalItem(item);
                 }
             }
         }
@@ -966,68 +908,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// Creates filtered list of remote items.
         /// For now this just creates a flat list, as that is Daggerfall's behaviour.
         /// </summary>
-        protected virtual void FilterRemoteItems(bool applyExtraFilter = true)
+        protected virtual void FilterRemoteItems()
         {
-            DaggerfallUnityItem item;
             // Clear current references
             remoteItemsFiltered.Clear();
 
             // Add items to list
             if (remoteItems != null)
                 for (int i = 0; i < remoteItems.Count; i++)
-                {
-                    if (applyExtraFilter)
-                    {
-                        item = remoteItems.GetItem(i);
-                        if (ItemPassesFilter(item))
-                            remoteItemsFiltered.Add(item);
-
-                    }
-                    else
-                        remoteItemsFiltered.Add(remoteItems.GetItem(i));
-                }
+                    remoteItemsFiltered.Add(remoteItems.GetItem(i));
         }
-        ///<summary>
-        ///Checks whether inventory item meets criteria of filter
-        ///</summary>
-        protected virtual bool ItemPassesFilter(DaggerfallUnityItem item)
-        {
-            bool iterationPass = false;
-
-            if (filterString.Length == 0)
-                return true;
-
-            foreach (string word in filterString.Split(' '))
-            {
-                if (word.Trim().Length > 0)
-                {
-                    if (word[0] == '-')
-                    {
-                        string wordLessFirstChar = word.Remove(0, 1);
-                        iterationPass = true;
-                        if (item.LongName.IndexOf(wordLessFirstChar, StringComparison.OrdinalIgnoreCase) != -1)
-                            iterationPass = false;
-                        else if (itemGroupNames[(int)item.ItemGroup].IndexOf(wordLessFirstChar, StringComparison.OrdinalIgnoreCase) != -1)
-                            iterationPass = false;
-                    }
-                    else
-                    {
-                        iterationPass = false;
-                        if (item.LongName.IndexOf(word, StringComparison.OrdinalIgnoreCase) != -1)
-                            iterationPass = true;
-                        else if (itemGroupNames[(int)item.ItemGroup].IndexOf(word, StringComparison.OrdinalIgnoreCase) != -1)
-                            iterationPass = true;
-                    }
-
-                    if (!iterationPass)
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
-
 
         /// <summary>
         /// Updates accessory items display.
@@ -1067,6 +957,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Private Methods
+
         protected virtual void LoadTextures()
         {
             // Load source textures
@@ -1287,12 +1178,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectTabPage(TabPages.Ingredients);
         }
 
-        private void ClearFilterFields()
-        {
-            filterString = string.Empty;
-            localFilterTextBox.Text = string.Empty;
-        }
-
         #endregion
 
         #region Action Button Event Handlers
@@ -1442,8 +1327,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<DaggerfallUnityItem> unequippedList = playerEntity.ItemEquipTable.EquipItem(item);
             if (unequippedList != null)
             {
-                foreach (DaggerfallUnityItem unequippedItem in unequippedList)
-                {
+                foreach (DaggerfallUnityItem unequippedItem in unequippedList) {
                     playerEntity.UpdateEquippedArmorValues(unequippedItem, false);
                 }
                 playerEntity.UpdateEquippedArmorValues(item, true);
@@ -1500,7 +1384,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return canHold;
         }
 
-        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null,
+        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null, 
                                     bool blockTransport = false, bool equip = false, bool allowSplitting = true)
         {
             // Block transfer of horse or cart (don't allow putting either in wagon)
@@ -1734,7 +1618,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
-
             // Try to handle use with a registered delegate
             ItemHelper.ItemUseHander itemUseHander;
             if (DaggerfallUnity.Instance.ItemHelper.GetItemUseHander(item.TemplateIndex, out itemUseHander))
@@ -1742,6 +1625,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (itemUseHander(item, collection))
                     return;
             }
+
             // Handle normal items
             if (item.ItemGroup == ItemGroups.Books && !item.IsArtifact)
             {
@@ -1855,8 +1739,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int mapTextId = 499;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
 
-            try
-            {
+            try {
                 DFLocation revealedLocation = playerGPS.DiscoverRandomLocation();
 
                 if (string.IsNullOrEmpty(revealedLocation.Name))
@@ -2047,18 +1930,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Dropped items icon selection Event Handlers
 
-
-        private void localFilterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            // If items are being dropped by player, iterate up through drop textures
-            filterString = localFilterTextBox.Text.ToLower();
-            Refresh(false);
-
-        }
-
-
-
-
         private void RemoteTargetIconPanel_OnMiddleMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // If items are being dropped by player, iterate up through drop archives
@@ -2149,7 +2020,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lastMouseOverPaperDollEquipIndex = value;
             }
         }
-
 
         protected virtual void AccessoryItemsButton_OnMouseEnter(BaseScreenComponent sender)
         {
