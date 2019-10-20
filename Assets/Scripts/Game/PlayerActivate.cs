@@ -120,14 +120,21 @@ namespace DaggerfallWorkshop.Game
             if (mainCamera == null)
                 return;
 
-            // Do nothing if player has spell ready to cast as activate button is now used to fire spell
+            // Do nothing further if player has spell ready to cast as activate button is now used to fire spell
+            // The exception is a readied touch spell where player can activate doors, etc.
+            // Touch spells only fire once a target entity is in range
             if (GameManager.Instance.PlayerEffectManager)
             {
                 // Handle pending spell cast
                 if (GameManager.Instance.PlayerEffectManager.HasReadySpell)
                 {
-                    castPending = true;
-                    return;
+                    // Exclude touch spells from this check
+                    MagicAndEffects.EntityEffectBundle spell = GameManager.Instance.PlayerEffectManager.ReadySpell;
+                    if (spell.Settings.TargetType != MagicAndEffects.TargetTypes.ByTouch)
+                    {
+                        castPending = true;
+                        return;
+                    }
                 }
 
                 // Prevents last spell cast click from falling through to normal click handling this frame

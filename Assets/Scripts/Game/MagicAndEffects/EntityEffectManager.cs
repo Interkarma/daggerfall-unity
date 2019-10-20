@@ -383,6 +383,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
+            // Player must be in range to release a touch spell
+            // Enemies use AI to only cast touch spells within range
+            if (IsPlayerEntity && readySpell.Settings.TargetType == TargetTypes.ByTouch)
+            {
+                Vector3 aimPosition = GameManager.Instance.MainCamera.transform.position;
+                Vector3 aimDirection = GameManager.Instance.MainCamera.transform.forward;
+                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection) == null)
+                {
+                    //Debug.Log("Target entity not in range for touch spell.");
+                    return;
+                }
+            }
+
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
             if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
