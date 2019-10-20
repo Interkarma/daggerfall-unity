@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game
         char lastCharacterTyped;
         KeyCode lastKeyCode;
         FadeBehaviour fadeBehaviour = null;
+        bool instantiatePersistentWindowInstances = true;
 
         bool hudSetup = false;
         DaggerfallHUD dfHUD;
@@ -129,6 +130,11 @@ namespace DaggerfallWorkshop.Game
         public Material SDFFontMaterial { get { return sdfFontMaterial; } set { sdfFontMaterial = value; } }
 
         PaperDollRenderer paperDollRenderer;
+
+        public void ReinstantiatePersistentWindowInstances()
+        {
+            instantiatePersistentWindowInstances = true;
+        }
 
         public UserInterfaceRenderTarget CustomRenderTarget
         {
@@ -287,26 +293,6 @@ namespace DaggerfallWorkshop.Game
             dfSongPlayer = GetComponent<DaggerfallSongPlayer>();
             fadeBehaviour = GetComponent<FadeBehaviour>();
 
-            dfPauseOptionsWindow = (DaggerfallPauseOptionsWindow)UIWindowFactory.GetInstance(UIWindowType.PauseOptions, uiManager, null);
-            dfCharacterSheetWindow = (DaggerfallCharacterSheetWindow)UIWindowFactory.GetInstance(UIWindowType.CharacterSheet, uiManager);
-            dfInventoryWindow = (DaggerfallInventoryWindow)UIWindowFactory.GetInstance(UIWindowType.Inventory, uiManager, null);
-            dfControlsWindow = (DaggerfallControlsWindow)UIWindowFactory.GetInstance(UIWindowType.Controls, uiManager, null);
-            dfJoystickControlsWindow = (DaggerfallJoystickControlsWindow)UIWindowFactory.GetInstance(UIWindowType.JoystickControls, uiManager, null);
-            dfUnityMouseControlsWindow = (DaggerfallUnityMouseControlsWindow)UIWindowFactory.GetInstance(UIWindowType.UnityMouseControls, uiManager, null);
-            dfTravelMapWindow = (DaggerfallTravelMapWindow)UIWindowFactory.GetInstance(UIWindowType.TravelMap, uiManager);
-            dfAutomapWindow = (DaggerfallAutomapWindow)UIWindowFactory.GetInstance(UIWindowType.Automap, uiManager);
-            dfBookReaderWindow = (DaggerfallBookReaderWindow)UIWindowFactory.GetInstance(UIWindowType.BookReader, uiManager);
-            dfQuestJournalWindow = (DaggerfallQuestJournalWindow)UIWindowFactory.GetInstance(UIWindowType.QuestJournal, uiManager);
-            dfPlayerHistoryWindow = (DaggerfallPlayerHistoryWindow)UIWindowFactory.GetInstance(UIWindowType.PlayerHistory, uiManager);
-            dfTalkWindow = (DaggerfallTalkWindow)UIWindowFactory.GetInstance(UIWindowType.Talk, uiManager, null);
-            dfSpellBookWindow = (DaggerfallSpellBookWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.SpellBook, new object[] { uiManager, null, false });
-            dfUseMagicItemWindow = (DaggerfallUseMagicItemWindow)UIWindowFactory.GetInstance(UIWindowType.UseMagicItem, uiManager, null);
-            dfSpellMakerWindow = (DaggerfallSpellMakerWindow)UIWindowFactory.GetInstance(UIWindowType.SpellMaker, uiManager, null);
-            dfItemMakerWindow = (DaggerfallItemMakerWindow)UIWindowFactory.GetInstance(UIWindowType.ItemMaker, uiManager, null);
-            dfPotionMakerWindow = (DaggerfallPotionMakerWindow)UIWindowFactory.GetInstance(UIWindowType.PotionMaker, uiManager, null);
-            dfCourtWindow = (DaggerfallCourtWindow)UIWindowFactory.GetInstance(UIWindowType.Court, uiManager, null);
-            dfExteriorAutomapWindow = (DaggerfallExteriorAutomapWindow)UIWindowFactory.GetInstance(UIWindowType.ExteriorAutomap, uiManager);
-
             Questing.Actions.GivePc.OnOfferPending += GivePc_OnOfferPending;
 
             // Create 8x scale paper doll renderer
@@ -347,6 +333,9 @@ namespace DaggerfallWorkshop.Game
             // Route messages to top window or handle locally
             if (uiManager.MessageCount > 0)
             {
+                if (instantiatePersistentWindowInstances)
+                    InstantiatePersistentWindowInstances();
+
                 // Top window has first chance at message
                 if (uiManager.TopWindow != null)
                     uiManager.TopWindow.ProcessMessages();
@@ -408,6 +397,31 @@ namespace DaggerfallWorkshop.Game
                     RenderTexture.active = oldRT;
                 }
             }
+        }
+
+        private void InstantiatePersistentWindowInstances()
+        {
+            dfPauseOptionsWindow = (DaggerfallPauseOptionsWindow)UIWindowFactory.GetInstance(UIWindowType.PauseOptions, uiManager, null);
+            dfCharacterSheetWindow = (DaggerfallCharacterSheetWindow)UIWindowFactory.GetInstance(UIWindowType.CharacterSheet, uiManager);
+            dfInventoryWindow = (DaggerfallInventoryWindow)UIWindowFactory.GetInstance(UIWindowType.Inventory, uiManager, null);
+            dfControlsWindow = (DaggerfallControlsWindow)UIWindowFactory.GetInstance(UIWindowType.Controls, uiManager, null);
+            dfJoystickControlsWindow = (DaggerfallJoystickControlsWindow)UIWindowFactory.GetInstance(UIWindowType.JoystickControls, uiManager, null);
+            dfUnityMouseControlsWindow = (DaggerfallUnityMouseControlsWindow)UIWindowFactory.GetInstance(UIWindowType.UnityMouseControls, uiManager, null);
+            dfTravelMapWindow = (DaggerfallTravelMapWindow)UIWindowFactory.GetInstance(UIWindowType.TravelMap, uiManager);
+            dfAutomapWindow = (DaggerfallAutomapWindow)UIWindowFactory.GetInstance(UIWindowType.Automap, uiManager);
+            dfBookReaderWindow = (DaggerfallBookReaderWindow)UIWindowFactory.GetInstance(UIWindowType.BookReader, uiManager);
+            dfQuestJournalWindow = (DaggerfallQuestJournalWindow)UIWindowFactory.GetInstance(UIWindowType.QuestJournal, uiManager);
+            dfPlayerHistoryWindow = (DaggerfallPlayerHistoryWindow)UIWindowFactory.GetInstance(UIWindowType.PlayerHistory, uiManager);
+            dfTalkWindow = (DaggerfallTalkWindow)UIWindowFactory.GetInstance(UIWindowType.Talk, uiManager, null);
+            dfSpellBookWindow = (DaggerfallSpellBookWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.SpellBook, new object[] { uiManager, null, false });
+            dfUseMagicItemWindow = (DaggerfallUseMagicItemWindow)UIWindowFactory.GetInstance(UIWindowType.UseMagicItem, uiManager, null);
+            dfSpellMakerWindow = (DaggerfallSpellMakerWindow)UIWindowFactory.GetInstance(UIWindowType.SpellMaker, uiManager, null);
+            dfItemMakerWindow = (DaggerfallItemMakerWindow)UIWindowFactory.GetInstance(UIWindowType.ItemMaker, uiManager, null);
+            dfPotionMakerWindow = (DaggerfallPotionMakerWindow)UIWindowFactory.GetInstance(UIWindowType.PotionMaker, uiManager, null);
+            dfCourtWindow = (DaggerfallCourtWindow)UIWindowFactory.GetInstance(UIWindowType.Court, uiManager, null);
+            dfExteriorAutomapWindow = (DaggerfallExteriorAutomapWindow)UIWindowFactory.GetInstance(UIWindowType.ExteriorAutomap, uiManager);
+
+            instantiatePersistentWindowInstances = false;
         }
 
         void ProcessMessages()

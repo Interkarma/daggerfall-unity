@@ -23,24 +23,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
-        const string nativeImgName = "OPTN00I0.IMG";
-        const int strAreYouSure = 1069;
-        const float barMaxLength = 109.1f;
+        protected const string nativeImgName = "OPTN00I0.IMG";
+        protected const int strAreYouSure = 1069;
+        protected const float barMaxLength = 109.1f;
 
-        Texture2D nativeTexture;
-        Panel optionsPanel = new Panel();
-        Panel fullScreenTick;
-        Panel headBobbingTick;
-        Panel musicBar;
-        Panel soundBar;
-        Panel detailBar;
-        DaggerfallHUD hud;
-        TextLabel versionTextLabel;
+        protected Texture2D nativeTexture;
+        protected Panel optionsPanel = new Panel();
+        protected Panel fullScreenTick;
+        protected Panel headBobbingTick;
+        protected Panel musicBar;
+        protected Panel soundBar;
+        protected Panel detailBar;
+        protected DaggerfallHUD hud;
+        protected TextLabel versionTextLabel;
 
-        readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
-        readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
+        protected readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
+        protected readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
 
-        bool saveSettings = false;
+        protected bool saveSettings = false;
 
         #endregion
 

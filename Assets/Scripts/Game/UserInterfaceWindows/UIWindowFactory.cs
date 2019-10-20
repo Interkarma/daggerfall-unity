@@ -111,6 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUnity.LogMessage("RegisterCustomUIWindow: " + windowType, true);
             uiWindowImplementations[windowType] = windowClassType;
+            DaggerfallUI.Instance.ReinstantiatePersistentWindowInstances();
         }
 
         public static IUserInterfaceWindow GetInstance(UIWindowType windowType, IUserInterfaceManager uiManager)

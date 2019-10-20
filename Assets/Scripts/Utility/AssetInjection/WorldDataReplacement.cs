@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string worldDataPath = Path.Combine(Application.streamingAssetsPath, worldData);
 
         // No replacement found indicator structures.
-        static readonly DFRegion noReplacementRegion = new DFRegion() { LocationCount = 0 };    // Use 0 as it's a uint
+        static readonly DFRegion noReplacementRegion = new DFRegion() { LocationCount = 0 };    // Use 0 as it's a uint, and loc count should always be > 0
         static readonly DFLocation noReplacementLocation = new DFLocation() { LocationIndex = noReplacementIndicator };
         static readonly DFBlock noReplacementBlock = new DFBlock() { Index = noReplacementIndicator };
         static readonly BuildingReplacementData noReplacementBuilding = new BuildingReplacementData() { BuildingType = noReplacementIndicator };
@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if added blocks had indices assigned, false otherwise</returns>
         public static bool GetDFRegionAdditionalLocationData(int regionIndex, ref DFRegion dfRegion)
         {
-            if (DaggerfallUnity.Settings.AssetInjection)
+            if (DaggerfallUnity.Settings.AssetInjection && ModManager.Instance != null)
             {
                 // If found, return a previously cached DFRegion
                 if (regions.ContainsKey(regionIndex))
@@ -133,17 +133,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     newBlocksAssigned = AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, dfLocation);
                 }
                 // Seek from mods
-                if (ModManager.Instance != null)
+                string locationExtension = string.Format("-{0}.json", regionIndex);
+                List<TextAsset> assets = ModManager.Instance.FindAssets<TextAsset>(worldData, locationExtension);
+                if (assets != null)
                 {
-                    string locationExtension = string.Format("-{0}.json", regionIndex);
-                    List<TextAsset> assets = ModManager.Instance.FindAssets<TextAsset>(worldData, locationExtension);
-                    if (assets != null)
+                    foreach (TextAsset locationReplacementJsonAsset in assets)
                     {
-                        foreach (TextAsset locationReplacementJsonAsset in assets)
-                        {
-                            DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
-                            newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, dfLocation);
-                        }
+                        DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
+                        newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, dfLocation);
                     }
                 }
                 // If found any new locations for this region,
