@@ -92,7 +92,7 @@
                         },
                         {
                             "id": 16,
-                            "name": "Red Verries"
+                            "name": "Red Berries"
                         },
                         {
                             "id": 14,
