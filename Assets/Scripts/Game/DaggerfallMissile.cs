@@ -403,6 +403,11 @@ namespace DaggerfallWorkshop.Game
         {
             transform.position = caster.transform.position;
 
+            // Touch does not use default missile collider
+            // This prevent touch missile check colliding with self and blocking spell transfer
+            if (myCollider)
+                myCollider.enabled = false;
+
             DaggerfallEntityBehaviour entityBehaviour = GetEntityTargetInTouchRange(GetAimPosition(), GetAimDirection());
             if (entityBehaviour && entityBehaviour != caster)
             {
