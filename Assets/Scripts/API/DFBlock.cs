@@ -23,6 +23,8 @@ namespace DaggerfallConnect
     /// </summary>
     public struct DFBlock
     {
+        public const int RMBTilesPerBlock = 16;
+
         #region Structure Variables
 
         /// <summary>
@@ -249,7 +251,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// Ground data to draw under a city block, such as ground textures, trees, rocks, etc.
         /// </summary>
-        [fsObject(MemberSerialization = fsMemberSerialization.OptIn)]   // FullSerializer can't do 2D arrays out of the box
+        [fsObject(Converter = typeof(RmbGroundDataConverter))]   // FullSerializer can't do 2D arrays out of the box
         public struct RmbFldGroundData
         {
             /// <summary>Header with unknown data.</summary>
@@ -1103,51 +1105,85 @@ namespace DaggerfallConnect
         }
 
         #endregion
-    }
 
-    #region FullSerializer Custom Processors (used when serializing world data structures)
+        #region FullSerializer Custom Processors (used when serializing world data structures)
 
-    public class RdbBlockDescProcessor : fsObjectProcessor
-    {
-        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
-        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        public class RmbGroundDataConverter : fsDirectConverter<RmbFldGroundData>
         {
-            // Truncate ModelReferenceList at the first null entry in array[750].
-            fsData modelRefDict = data.AsDictionary["ModelReferenceList"];
-            if (!modelRefDict.IsNull)
+            protected override fsResult DoSerialize(RmbFldGroundData rmbFldGroundData, Dictionary<string, fsData> serialized)
             {
-                List<fsData> modelRefList = modelRefDict.AsList;
-                for (int i = 0; i < modelRefList.Count; i++)
+                SerializeMember(serialized, null, "Header", rmbFldGroundData.Header);
+
+                // Flatten and serialize the ground data 2D arrays
+                List<RmbGroundTiles> groundTilesFlattened = new List<RmbGroundTiles>(RMBTilesPerBlock*RMBTilesPerBlock);
+                for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
                 {
-                    if (modelRefList[i].AsDictionary["ModelIdNum"].AsInt64 == 0)
+                    for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
                     {
-                        modelRefList.RemoveRange(i, modelRefList.Count - i);
-                        break;
+                        groundTilesFlattened.Add(rmbFldGroundData.GroundTiles[tileX, tileY]);
+                    }
+                }
+                List<RmbGroundScenery> groundSceneryFlattened = new List<RmbGroundScenery>(RMBTilesPerBlock * RMBTilesPerBlock);
+                for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
+                {
+                    for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
+                    {
+                        groundSceneryFlattened.Add(rmbFldGroundData.GroundScenery[tileX, tileY]);
+                    }
+                }
+                SerializeMember(serialized, null, "GroundTiles", groundTilesFlattened.ToArray());
+                SerializeMember(serialized, null, "GroundScenery", groundSceneryFlattened.ToArray());
+
+                return fsResult.Success;
+            }
+
+            protected override fsResult DoDeserialize(Dictionary<string, fsData> data, ref RmbFldGroundData model)
+            {
+                return fsResult.Success;
+            }
+        }
+
+        public class RdbBlockDescProcessor : fsObjectProcessor
+        {
+            // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+            public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+            {
+                // Truncate ModelReferenceList at the first null entry in array[750].
+                fsData modelRefDict = data.AsDictionary["ModelReferenceList"];
+                if (!modelRefDict.IsNull)
+                {
+                    List<fsData> modelRefList = modelRefDict.AsList;
+                    for (int i = 0; i < modelRefList.Count; i++)
+                    {
+                        if (modelRefList[i].AsDictionary["ModelIdNum"].AsInt64 == 0)
+                        {
+                            modelRefList.RemoveRange(i, modelRefList.Count - i);
+                            break;
+                        }
                     }
                 }
             }
         }
-    }
 
-    public class RdbObjectProcessor : fsObjectProcessor
-    {
-        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
-        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        public class RdbObjectProcessor : fsObjectProcessor
         {
-            // Only write relevant type resource data for Rdb Objects.
-            Dictionary<string, fsData> rdbObject = data.AsDictionary;
-            DFBlock.RdbResourceTypes type = (DFBlock.RdbResourceTypes)Enum.Parse(typeof(DFBlock.RdbResourceTypes), rdbObject["Type"].AsString);
-            Dictionary<string, fsData> resources = rdbObject["Resources"].AsDictionary;
+            // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+            public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+            {
+                // Only write relevant type resource data for Rdb Objects.
+                Dictionary<string, fsData> rdbObject = data.AsDictionary;
+                DFBlock.RdbResourceTypes type = (DFBlock.RdbResourceTypes)Enum.Parse(typeof(DFBlock.RdbResourceTypes), rdbObject["Type"].AsString);
+                Dictionary<string, fsData> resources = rdbObject["Resources"].AsDictionary;
 
-            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Light)
-                resources.Remove("ModelResource");
-            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Model)
-                resources.Remove("LightResource");
-            if (type == DFBlock.RdbResourceTypes.Model || type == DFBlock.RdbResourceTypes.Light)
-                resources.Remove("FlatResource");
+                if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Light)
+                    resources.Remove("ModelResource");
+                if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Model)
+                    resources.Remove("LightResource");
+                if (type == DFBlock.RdbResourceTypes.Model || type == DFBlock.RdbResourceTypes.Light)
+                    resources.Remove("FlatResource");
+            }
         }
+
+        #endregion
     }
-
-    #endregion
-
 }
