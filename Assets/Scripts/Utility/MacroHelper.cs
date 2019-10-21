@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Utility
             { "%q11b", Q11b },
             { "%q12b", Q12b },
             { "%qdt", QuestDate }, // Quest date of log entry
-            { "%qdat", null },// Quest date of log entry [2]
+            { "%qdat", QuestDate },// Quest date of log entry [2]
             { "%qot", null }, // The log comment
             { "%qua", Condition }, // Condition
             { "%r1", CommonersRep },  // Commoners rep

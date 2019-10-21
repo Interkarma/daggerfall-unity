@@ -164,8 +164,12 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 QuestMacroHelper macroHelper = new QuestMacroHelper();
 
-                // note Nystul: reveal dialog linked resources here on purpose (quest popups should reveal them: see this issue: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1678&p=22069#p22069)                
+                ParentQuest.CurrentLogMessageId = this.id;
+
+                // note Nystul: reveal dialog linked resources here on purpose (quest popups should reveal them: see this issue: https://forums.dfworkshop.net/viewtopic.php?f=24&t=1678&p=22069#p22069)
                 macroHelper.ExpandQuestMessage(ParentQuest, ref tokens, true);
+
+                ParentQuest.CurrentLogMessageId = -1;
             }
 
             return tokens;
