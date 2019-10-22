@@ -7,15 +7,8 @@
 // Contributors:
 //
 
-using System;
-using System.IO;
 using FullSerializer;
-using UnityEngine;
-using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Serialization;
 using System.Collections.Generic;
-using DaggerfallWorkshop.Game.Utility.ModSupport;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -74,5 +67,39 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
             return NoVariant;
         }
+
+        #region Save, Load & Clear
+
+        public static void Clear()
+        {
+            locationVariants.Clear();
+            blockVariants.Clear();
+        }
+
+        public static WorldVariationData_v1 GetWorldVariationSaveData()
+        {
+            WorldVariationData_v1 data = new WorldVariationData_v1()
+            {
+                locationVariants = locationVariants,
+                blockVariants = blockVariants
+            };
+            return data;
+        }
+
+        public static void RestoreWorldVariationData(WorldVariationData_v1 worldVariationData)
+        {
+            locationVariants = worldVariationData.locationVariants;
+            blockVariants = worldVariationData.blockVariants;
+        }
+
+        [fsObject("v1")]
+        public class WorldVariationData_v1
+        {
+            public Dictionary<int, string> locationVariants;
+
+            public Dictionary<VariantBlockKey, string> blockVariants;
+        }
+
+        #endregion
     }
 }
