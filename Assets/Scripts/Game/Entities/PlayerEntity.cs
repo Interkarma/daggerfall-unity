@@ -27,6 +27,7 @@ using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -772,6 +773,9 @@ namespace DaggerfallWorkshop.Game.Entity
             rentedRooms.Clear();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
+
+            // Clear any world variation this player entity has triggered
+            WorldDataVariants.Clear();
         }
 
         /// <summary>
