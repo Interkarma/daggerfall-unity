@@ -54,8 +54,8 @@ AcceptQuest:  [1002]
 <ce>                              Here it is.
 
 QuestComplete:  [1004]
-<ce>                    I was hoping _questgiver_ would
-<ce>                   be able to get this to me in time.
+<ce>                       I was hoping _questgiver_
+<ce>                would be able to get this to me in time.
 <ce>                      %g has been so busy lately.
 <ce>                 Here is the _gold_ you were promised.
 
