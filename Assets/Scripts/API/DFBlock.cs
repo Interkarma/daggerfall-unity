@@ -1112,66 +1112,76 @@ namespace DaggerfallConnect
         {
             protected override fsResult DoSerialize(RmbFldGroundData rmbFldGroundData, Dictionary<string, fsData> serialized)
             {
-                SerializeMember(serialized, null, "Header", rmbFldGroundData.Header);
-
-                // Flatten and serialize the ground data 2D arrays
-                List<RmbGroundTiles> groundTilesFlattened = new List<RmbGroundTiles>(RMBTilesPerBlock*RMBTilesPerBlock);
-                for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
+                if (rmbFldGroundData.Header == null)
                 {
-                    for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
-                    {
-                        groundTilesFlattened.Add(rmbFldGroundData.GroundTiles[tileX, tileY]);
-                    }
-                }
-                List<RmbGroundScenery> groundSceneryFlattened = new List<RmbGroundScenery>(RMBTilesPerBlock * RMBTilesPerBlock);
-                for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
-                {
-                    for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
-                    {
-                        groundSceneryFlattened.Add(rmbFldGroundData.GroundScenery[tileX, tileY]);
-                    }
-                }
-                SerializeMember(serialized, null, "GroundTiles", groundTilesFlattened.ToArray());
-                SerializeMember(serialized, null, "GroundScenery", groundSceneryFlattened.ToArray());
+                    SerializeMember(serialized, null, "Header", rmbFldGroundData.Header);
 
+                    // Flatten and serialize the ground data 2D arrays
+                    List<RmbGroundTiles> groundTilesFlattened = new List<RmbGroundTiles>(RMBTilesPerBlock * RMBTilesPerBlock);
+                    for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
+                    {
+                        for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
+                        {
+                            groundTilesFlattened.Add(rmbFldGroundData.GroundTiles[tileX, tileY]);
+                        }
+                    }
+                    List<RmbGroundScenery> groundSceneryFlattened = new List<RmbGroundScenery>(RMBTilesPerBlock * RMBTilesPerBlock);
+                    for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
+                    {
+                        for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
+                        {
+                            groundSceneryFlattened.Add(rmbFldGroundData.GroundScenery[tileX, tileY]);
+                        }
+                    }
+                    SerializeMember(serialized, null, "GroundTiles", groundTilesFlattened.ToArray());
+                    SerializeMember(serialized, null, "GroundScenery", groundSceneryFlattened.ToArray());
+                }
                 return fsResult.Success;
             }
 
             protected override fsResult DoDeserialize(Dictionary<string, fsData> data, ref RmbFldGroundData rmbFldGroundData)
             {
-                DeserializeMember(data, null, "Header", out rmbFldGroundData.Header);
-
-                // Un-flatten and deserialize the ground data 2D arrays
-                rmbFldGroundData.GroundTiles = new RmbGroundTiles[RMBTilesPerBlock, RMBTilesPerBlock];
-                List<fsData> groundTilesFlattened = data["GroundTiles"].AsList;
-                int i = 0;
-                for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
+                var result = fsResult.Success;
+                if (data.Count == 3)
                 {
-                    for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
+                    if ((result += DeserializeMember(data, null, "Header", out rmbFldGroundData.Header)).Failed) return result;
+
+                    fsData groundTilesData;
+                    if ((result += CheckKey(data, "GroundTiles", out groundTilesData)).Failed) return result;
+                    fsData groundSceneryData;
+                    if ((result += CheckKey(data, "GroundScenery", out groundSceneryData)).Failed) return result;
+
+                    // Un-flatten and deserialize the ground data 2D arrays
+                    rmbFldGroundData.GroundTiles = new RmbGroundTiles[RMBTilesPerBlock, RMBTilesPerBlock];
+                    List<fsData> groundTilesFlattened = groundTilesData.AsList;
+                    int i = 0;
+                    for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
                     {
-                        Dictionary<string, fsData> groundTile = groundTilesFlattened[i++].AsDictionary;
-                        RmbGroundTiles rmbGroundTile = new RmbGroundTiles();
-                        DeserializeMember(groundTile, null, "TextureRecord", out rmbGroundTile.TextureRecord);
-                        DeserializeMember(groundTile, null, "IsRotated", out rmbGroundTile.IsRotated);
-                        DeserializeMember(groundTile, null, "IsFlipped", out rmbGroundTile.IsFlipped);
-                        rmbFldGroundData.GroundTiles[tileX, tileY] = rmbGroundTile;
+                        for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
+                        {
+                            Dictionary<string, fsData> groundTile = groundTilesFlattened[i++].AsDictionary;
+                            RmbGroundTiles rmbGroundTile = new RmbGroundTiles();
+                            DeserializeMember(groundTile, null, "TextureRecord", out rmbGroundTile.TextureRecord);
+                            DeserializeMember(groundTile, null, "IsRotated", out rmbGroundTile.IsRotated);
+                            DeserializeMember(groundTile, null, "IsFlipped", out rmbGroundTile.IsFlipped);
+                            rmbFldGroundData.GroundTiles[tileX, tileY] = rmbGroundTile;
+                        }
+                    }
+                    rmbFldGroundData.GroundScenery = new RmbGroundScenery[RMBTilesPerBlock, RMBTilesPerBlock];
+                    List<fsData> groundSceneryFlattened = groundSceneryData.AsList;
+                    i = 0;
+                    for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
+                    {
+                        for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
+                        {
+                            Dictionary<string, fsData> groundScenery = groundSceneryFlattened[i++].AsDictionary;
+                            RmbGroundScenery rmbGroundScenery = new RmbGroundScenery();
+                            DeserializeMember(groundScenery, null, "TextureRecord", out rmbGroundScenery.TextureRecord);
+                            rmbFldGroundData.GroundScenery[tileX, tileY] = rmbGroundScenery;
+                        }
                     }
                 }
-                rmbFldGroundData.GroundScenery = new RmbGroundScenery[RMBTilesPerBlock, RMBTilesPerBlock];
-                List<fsData> groundSceneryFlattened = data["GroundScenery"].AsList;
-                i = 0;
-                for (int tileY = 0; tileY < RMBTilesPerBlock; tileY++)
-                {
-                    for (int tileX = 0; tileX < RMBTilesPerBlock; tileX++)
-                    {
-                        Dictionary<string, fsData> groundScenery = groundSceneryFlattened[i++].AsDictionary;
-                        RmbGroundScenery rmbGroundScenery = new RmbGroundScenery();
-                        DeserializeMember(groundScenery, null, "TextureRecord", out rmbGroundScenery.TextureRecord);
-                        rmbFldGroundData.GroundScenery[tileX, tileY] = rmbGroundScenery;
-                    }
-                }
-
-                return fsResult.Success;
+                return result;
             }
         }
 
