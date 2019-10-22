@@ -290,6 +290,12 @@ namespace Wenzil.Console
                                 for (int i = 0; i < args.Length; i++)
                                     if (blockName == args[i])
                                         locs.Add(dfLoc.Name);
+
+                            if (dfLoc.Dungeon.Blocks != null)
+                                foreach (DFLocation.DungeonBlock dBlock in dfLoc.Dungeon.Blocks)
+                                    for (int i = 0; i < args.Length; i++)
+                                        if (dBlock.BlockName == args[i])
+                                            locs.Add(dfLoc.Name);
                         }
                     }
                     string locJson = SaveLoadManager.Serialize(regionLocs.GetType(), regionLocs);
