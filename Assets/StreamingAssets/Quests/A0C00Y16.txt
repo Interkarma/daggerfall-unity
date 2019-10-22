@@ -61,7 +61,7 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>                  I know it wasn't your fault that you
 <ce>                   were unable to find _missingperson_
-<ce>                for me. They found %g2 body in a gutter.
+<ce>                for me. They found %g3 body in a gutter.
 <ce>                         Please just leave me.
 
 QuestLogEntry:  [1010]
