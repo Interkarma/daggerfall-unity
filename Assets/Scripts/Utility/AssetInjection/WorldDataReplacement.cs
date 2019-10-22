@@ -77,19 +77,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return string.Format("region-{0}.json", regionIndex);
         }
 
-        public static string GetDFLocationReplacementFilename(int regionIndex, int locationIndex)
+        public static string GetDFLocationReplacementFilename(int regionIndex, int locationIndex, string variant = WorldDataVariants.NoVariant)
         {
-            return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
+            return string.Format("location-{0}-{1}{2}.json", regionIndex, locationIndex, variant);
         }
 
-        public static string GetDFBlockReplacementFilename(string blockName)
+        public static string GetDFBlockReplacementFilename(string blockName, string variant = WorldDataVariants.NoVariant)
         {
-            return string.Format("{0}.json", blockName);
+            return string.Format("{0}{1}.json", blockName, variant);
         }
 
-        public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
+        public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex, string variant = WorldDataVariants.NoVariant)
         {
-            return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
+            return string.Format("{0}-{1}-building{2}{3}.json", blockName, blockIndex, recordIndex, variant);
         }
 
         #endregion
@@ -177,15 +177,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // If found, return a previously cached DFLocation
+                // If found and no variant, return a previously cached DFLocation 
                 int locationKey = MakeLocationKey(regionIndex, locationIndex);
-                if (locations.ContainsKey(locationKey))
+                string variant = WorldDataVariants.GetLocationVariant(locationKey);
+                if (variant == WorldDataVariants.NoVariant && locations.ContainsKey(locationKey))
                 {
                     dfLocation = locations[locationKey];
                     return dfLocation.LocationIndex != noReplacementLocation.LocationIndex;
                 }
 
-                string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex);
+                string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex, variant);
                 TextAsset locationReplacementJsonAsset;
 
                 // Seek from loose files
@@ -214,7 +215,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     locations[locationKey] = dfLocation;
 #endif
                 }
-                Debug.LogFormat("Found DFLocation override, region:{0}, index:{1}", regionIndex, locationIndex);
+                Debug.LogFormat("Found DFLocation override, region:{0}, index:{1} variant:{2}", regionIndex, locationIndex, variant);
                 return true;
             }
             dfLocation = noReplacementLocation;
@@ -260,14 +261,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // Check the block cache
-                if (blocks.ContainsKey(blockName))
+                // Check the block cache, only if no variant
+                string variant = WorldDataVariants.GetBlockVariant(blockName);
+                if (variant == WorldDataVariants.NoVariant && blocks.ContainsKey(blockName))
                 {
                     dfBlock = blocks[blockName];
                     return dfBlock.Index != noReplacementBlock.Index;
                 }
 
-                string fileName = GetDFBlockReplacementFilename(blockName);
+                string fileName = GetDFBlockReplacementFilename(blockName, variant);
                 TextAsset blockReplacementJsonAsset;
 
                 // Seek from loose files
@@ -351,14 +353,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        #endregion
-
-        #region Private Methods
-
-        static int MakeLocationKey(int regionIndex, int locationIndex)
+        public static int MakeLocationKey(int regionIndex, int locationIndex)
         {
             return (locationIndex * 100) + regionIndex;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private static bool AddLocationToRegion(int regionIndex, ref DFRegion dfRegion, ref List<string> mapNames, ref List<DFRegion.RegionMapTable> mapTable, DFLocation dfLocation)
         {
