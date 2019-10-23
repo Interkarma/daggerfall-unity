@@ -7,9 +7,7 @@
 // Contributors:
 //
 
-using System;
 using System.IO;
-using FullSerializer;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
@@ -19,10 +17,11 @@ using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
-    public struct BlockRecordId
+    public struct BlockRecordKey
     {
         public int blockIndex;
         public int recordIndex;
+        public string variant;
     }
 
     public struct BuildingReplacementData
@@ -56,7 +55,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private static Dictionary<int, DFRegion> regions = new Dictionary<int, DFRegion>();
         private static Dictionary<string, DFLocation> locations = new Dictionary<string, DFLocation>();
         private static Dictionary<string, DFBlock> blocks = new Dictionary<string, DFBlock>();
-        private static Dictionary<BlockRecordId, BuildingReplacementData> buildings = new Dictionary<BlockRecordId, BuildingReplacementData>();
+        private static Dictionary<BlockRecordKey, BuildingReplacementData> buildings = new Dictionary<BlockRecordKey, BuildingReplacementData>();
 
         // New block index/name mappings.
         private static int nextBlockIndex;
@@ -292,7 +291,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             variantLocation.LocationIndex = locationIndex;
             variantLocation.Exterior.RecordElement.Header.Unknown2 = (uint)locationIndex;
-            locations[locationVariantKey] = variantLocation;
+            locations.Add(locationVariantKey, variantLocation);
         }
 
 
@@ -335,7 +334,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // Check the block cache, only if no variant
+                // Check the block cache and return if found or not (variants are not marked as not present)
                 string variant = WorldDataVariants.GetBlockVariant(blockName);
                 string blockKey = blockName + variant;
                 if (blocks.ContainsKey(blockKey))
@@ -360,17 +359,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
                 else
                 {
-//#if !UNITY_EDITOR // Cache that there's no replacement block data, non variant. So only look for replaced blocks once (unless running in editor)
+#if !UNITY_EDITOR // Cache that there's no replacement block data, non variant. So only look for replaced blocks once (unless running in editor)
                     if (variant == WorldDataVariants.NoVariant)
                         blocks[blockName] = noReplacementBlock;
-//#endif
+#endif
                     dfBlock = noReplacementBlock;
                     return false;
                 }
                 dfBlock.Index = block;
-//#if !UNITY_EDITOR   // Cache block data for added/replaced blocks (unless running in editor)
+#if !UNITY_EDITOR   // Cache block data for added/replaced blocks (unless running in editor)
                 blocks[blockKey] = dfBlock;
-//#endif
+#endif
                 Debug.LogFormat("Found DFBlock override: {0} (index: {1})", blockName, block);
                 return true;
             }
@@ -390,15 +389,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                BlockRecordId blockRecordId = new BlockRecordId() { blockIndex = blockIndex, recordIndex = recordIndex };
-                if (buildings.ContainsKey(blockRecordId))
+                BlockRecordKey blockRecordKey = new BlockRecordKey() { blockIndex = blockIndex, recordIndex = recordIndex, variant = WorldDataVariants.NoVariant };
+                string variant = WorldDataVariants.GetBuildingVariant(ref blockRecordKey);
+                if (buildings.ContainsKey(blockRecordKey))
                 {
-                    buildingData = buildings[blockRecordId];
-                    return (buildingData.BuildingType != noReplacementIndicator);
+                    buildingData = buildings[blockRecordKey];
+                    return buildingData.BuildingType != noReplacementIndicator;
                 }
                 else
                 {
-                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
+                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex, variant);
 
                     // Seek from loose files
                     if (File.Exists(Path.Combine(worldDataPath, fileName)))
@@ -406,7 +406,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                         buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
 #if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
-                        buildings.Add(blockRecordId, buildingData);
+                        buildings.Add(blockRecordKey, buildingData);
 #endif
                         return true;
                     }
@@ -416,12 +416,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     {
                         buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJsonAsset.text);
 #if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
-                        buildings.Add(blockRecordId, buildingData);
+                        buildings.Add(blockRecordKey, buildingData);
 #endif
                         return true;
                     }
-#if !UNITY_EDITOR   // Only look for replacement data once, unless running in editor
-                    buildings.Add(blockRecordId, noReplacementBuilding);
+#if !UNITY_EDITOR   // Only look for replacement data once, non variant. So only look for replaced buildings once (unless running in editor)
+                    if (variant == WorldDataVariants.NoVariant)
+                        buildings.Add(blockRecordKey, noReplacementBuilding);
 #endif
                 }
             }

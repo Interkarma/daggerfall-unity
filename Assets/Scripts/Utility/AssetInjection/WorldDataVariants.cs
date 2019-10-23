@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static Dictionary<VariantBlockKey, string> blockVariants = new Dictionary<VariantBlockKey, string>();
 //            { { new VariantBlockKey(WorldDataReplacement.MakeLocationKey(17, 1260), "M0000004.RDB"), "_something" } };
 
+        static Dictionary<BlockRecordKey, string> buildingVariants = new Dictionary<BlockRecordKey, string>();
+//            { { new BlockRecordKey() {blockIndex=543, recordIndex=10}, "_test" } };
 
         #region Setters for variants
 
@@ -129,14 +131,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return NoVariant;
         }
 
+        public static string GetBuildingVariant(ref BlockRecordKey blockRecordKey)
+        {
+            if (blockRecordKey.variant == NoVariant)
+            {
+                // TODO: add location filtering like above!
+                if (buildingVariants.ContainsKey(blockRecordKey))
+                {
+                    string variant = buildingVariants[blockRecordKey];
+                    blockRecordKey.variant = variant;
+                    return variant;
+                }
+            }
+            return NoVariant;
+        }
+
+
         #endregion
 
         #region Save, Load & Clear
 
         public static void Clear()
         {
+            newLocationVariants.Clear();
             locationVariants.Clear();
             blockVariants.Clear();
+            buildingVariants.Clear();
         }
 
         public static WorldVariationData_v1 GetWorldVariationSaveData()
@@ -145,16 +165,25 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 newLocationVariants = newLocationVariants,
                 locationVariants = locationVariants,
-                blockVariants = blockVariants
+                blockVariants = blockVariants,
+                buildingVariants = buildingVariants
             };
             return data;
         }
 
         public static void RestoreWorldVariationData(WorldVariationData_v1 worldVariationData)
         {
-            newLocationVariants = worldVariationData.newLocationVariants;
-            locationVariants = worldVariationData.locationVariants;
-            blockVariants = worldVariationData.blockVariants;
+            if (worldVariationData != null)
+            {
+                if (worldVariationData.newLocationVariants != null)
+                    newLocationVariants = worldVariationData.newLocationVariants;
+                if (worldVariationData.locationVariants != null)
+                    locationVariants = worldVariationData.locationVariants;
+                if (worldVariationData.blockVariants != null)
+                    blockVariants = worldVariationData.blockVariants;
+                if (worldVariationData.buildingVariants != null)
+                    buildingVariants = worldVariationData.buildingVariants;
+            }
         }
 
         [fsObject("v1")]
@@ -165,6 +194,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             public Dictionary<int, string> locationVariants;
 
             public Dictionary<VariantBlockKey, string> blockVariants;
+
+            public Dictionary<BlockRecordKey, string> buildingVariants;
+
         }
 
         #endregion
