@@ -1166,7 +1166,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
-            int percentDamageOrDuration = 0;
+            int percentDamageOrDuration = 100;
             int roll = Dice100.Roll();
 
             if (roll <= savingThrow)
@@ -1177,10 +1177,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 else
                     percentDamageOrDuration = 0;
             }
-            else
-                percentDamageOrDuration = 100;
 
-            return percentDamageOrDuration;
+            return Mathf.Clamp(percentDamageOrDuration, 0, 100);
         }
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)

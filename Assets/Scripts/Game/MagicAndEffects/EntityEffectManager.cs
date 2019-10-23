@@ -383,6 +383,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
+            // Player must be in range to release a touch spell
+            // Enemies use AI to only cast touch spells within range
+            if (IsPlayerEntity && readySpell.Settings.TargetType == TargetTypes.ByTouch)
+            {
+                Vector3 aimPosition = GameManager.Instance.MainCamera.transform.position;
+                Vector3 aimDirection = GameManager.Instance.MainCamera.transform.forward;
+                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection) == null)
+                {
+                    //Debug.Log("Target entity not in range for touch spell.");
+                    return;
+                }
+            }
+
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
             if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
@@ -516,9 +529,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Entity has a chance to save against entire effect using a saving throw
+                // Saving throw handling
+                // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
+                // For effects with magnitude (e.g. most Destruction magic) this is handled later when the effect rolls for magnitude
                 // Self-cast spells (e.g. self heals and buffs) should never be saved against
-                if (!bypassSavingThrows && !effect.BypassSavingThrows && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
+                if (!bypassSavingThrows &&
+                    !effect.BypassSavingThrows &&
+                    !effect.Properties.SupportMagnitude &&
+                    sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
