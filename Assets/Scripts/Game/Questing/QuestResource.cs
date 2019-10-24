@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Resolve info message name back to ID
                 string infoName = match.Groups["infoName"].Value;
-                if (usedMessageID == -1 && !string.IsNullOrEmpty(infoName))
+                if (infoMessageID == -1 && !string.IsNullOrEmpty(infoName))
                 {
                     Table table = QuestMachine.Instance.StaticMessagesTable;
                     infoMessageID = Parser.ParseInt(table.GetValue("id", infoName));
