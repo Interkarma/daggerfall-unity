@@ -13,7 +13,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
-    public class WorldVariant : ActionTemplate
+    public class WorldUpdate : ActionTemplate
     {
         string type;
         int regionIndex;
@@ -27,19 +27,18 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get {
                 return
-                    @"world variant location<type> at (?<locationIndex>\d+) in region (?<regionIndex>\d+) to (?<variant>[a-zA-Z0-9_.-]+)|" +
-                    @"world variant locationnew<type> named (?<locationName>.+) in region (?<regionIndex>\d+) to (?<variant>[a-zA-Z0-9_.-]+)|" +
-                    @"world variant block<type> (?<blockName>[a-zA-Z0-9_.-]+) at (?<locationIndex>\d+) in region (?<regionIndex>\d+) to (?<variant>[a-zA-Z0-9_.-]+)|" +
-                    @"world variant blockAll<type> (?<blockName>[a-zA-Z0-9_.-]+) to (?<variant>[a-zA-Z0-9_.-]+)|" +
-                    @"world variant building<type> (?<blockName>[a-zA-Z0-9_.-]+) (?<recordIndex>\d+) at (?<locationIndex>\d+) in region (?<regionIndex>\d+) to (?<variant>[a-zA-Z0-9_.-]+)|" +
-                    @"world variant buildingAll<type> (?<blockName>[a-zA-Z0-9_.-]+) (?<recordIndex>\d+) to (?<variant>[a-zA-Z0-9_.-]+)|";
+                    @"worldupdate (?<type>location) at (?<locationIndex>\d+) in region (?<regionIndex>\d+) variant (?<variant>[a-zA-Z0-9_.-]+)|" +
+                    @"worldupdate (?<type>locationnew) named (?<locationName>.+) in region (?<regionIndex>\d+) variant (?<variant>[a-zA-Z0-9_.-]+)|" +
+                    @"worldupdate (?<type>block) (?<blockName>[a-zA-Z0-9_.-]+) at (?<locationIndex>\d+) in region (?<regionIndex>\d+) variant (?<variant>[a-zA-Z0-9_.-]+)|" +
+                    @"worldupdate (?<type>blockAll) (?<blockName>[a-zA-Z0-9_.-]+) variant (?<variant>[a-zA-Z0-9_.-]+)|" +
+                    @"worldupdate (?<type>building) (?<blockName>[a-zA-Z0-9_.-]+) (?<recordIndex>\d+) at (?<locationIndex>\d+) in region (?<regionIndex>\d+) variant (?<variant>[a-zA-Z0-9_.-]+)|" +
+                    @"worldupdate (?<type>buildingAll) (?<blockName>[a-zA-Z0-9_.-]+) (?<recordIndex>\d+) variant (?<variant>[a-zA-Z0-9_.-]+)";
             }
         }
 
-        public WorldVariant(Quest parentQuest)
+        public WorldUpdate(Quest parentQuest)
             : base(parentQuest)
         {
-            IsTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -50,8 +49,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            WorldVariant action = new WorldVariant(parentQuest);
+            WorldUpdate action = new WorldUpdate(parentQuest);
             action.type = match.Groups["type"].Value;
+            action.variant = match.Groups["variant"].Value;
 
             Group regionIndexGroup = match.Groups["regionIndex"];
             if (regionIndexGroup.Success)
@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void Update(Task caller)
         {
+            base.Update(caller);
+
             int locationKey;
             switch (type)
             {
@@ -102,6 +104,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     WorldDataVariants.SetBuildingVariant(blockName, recordIndex, variant);
                     break;
             }
+
+            SetComplete();
         }
 
         #region Serialization
