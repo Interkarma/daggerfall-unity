@@ -52,13 +52,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         static List<int> newLocationVariants = new List<int>();
         static Dictionary<int, string> locationVariants = new Dictionary<int, string>();
-//            { { WorldDataReplacement.MakeLocationKey(17, 1331), "_something" } };
 
         static Dictionary<VariantBlockKey, string> blockVariants = new Dictionary<VariantBlockKey, string>();
-//            { { new VariantBlockKey(WorldDataReplacement.MakeLocationKey(17, 1260), "M0000004.RDB"), "_something" } };
 
-        static Dictionary<VariantBuildingKey, string> buildingVariants = new Dictionary<VariantBuildingKey, string>()
-            { { new VariantBuildingKey(AnyLocationKey, "RESIAM10.RMB", 10), "_test" } };
+        static Dictionary<VariantBuildingKey, string> buildingVariants = new Dictionary<VariantBuildingKey, string>();
 
         #region Setters for variants
 
