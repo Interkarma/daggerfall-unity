@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string QuestDate()
             {
-                return parent.QuestStartTime.DateString();
+                return parent.GetCurrentLogMessageTime().DateString();
             }
 
             /// <summary>
