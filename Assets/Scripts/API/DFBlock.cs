@@ -1112,7 +1112,7 @@ namespace DaggerfallConnect
         {
             protected override fsResult DoSerialize(RmbFldGroundData rmbFldGroundData, Dictionary<string, fsData> serialized)
             {
-                if (rmbFldGroundData.Header == null)
+                if (rmbFldGroundData.Header != null)
                 {
                     SerializeMember(serialized, null, "Header", rmbFldGroundData.Header);
 
@@ -1197,7 +1197,7 @@ namespace DaggerfallConnect
                     List<fsData> modelRefList = modelRefDict.AsList;
                     for (int i = 0; i < modelRefList.Count; i++)
                     {
-                        if (modelRefList[i].AsDictionary["ModelIdNum"].AsInt64 == 0)
+                        if (modelRefList[i].AsDictionary["Description"].AsString == "\uFFFD\uFFFD\uFFFD")
                         {
                             modelRefList.RemoveRange(i, modelRefList.Count - i);
                             break;
