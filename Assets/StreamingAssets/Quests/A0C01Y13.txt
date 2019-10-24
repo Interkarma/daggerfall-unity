@@ -196,7 +196,7 @@ Message:  2000
 <ce>             out of here. I've been wandering around these
 <ce>                passages for days, trying to stay alive.
 <ce>                   What is that you say? _sister_ and
-<ce>                    _giver_ are behind all of this!?
+<ce>                      _giver_ are behind all this!?
 <ce>               Well, you get me back to _sistershouse_ in
 <ce>               __sistershouse_ and I'll reward you well.
 <ce>                And then I will take care of those two!
