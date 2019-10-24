@@ -109,7 +109,7 @@ Message:  1024
 <ce>                              %ra, Smiley!
 
 Message:  1031
-<ce>                     _missingperson_? Nah. Haven't
+<ce>                     _missingperson_? Naw. Haven't
 <ce>                     seen %g2 for a couple of days.
 <ce>                     Try asking _friend3_. %g might
 <ce>                                 know.
