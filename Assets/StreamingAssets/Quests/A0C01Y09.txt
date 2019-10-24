@@ -58,7 +58,7 @@ RumorsPostsuccess:  [1007]
 <ce>                   on the eve of %g3 wedding day, too.
 
 QuestorPostsuccess:  [1008]
-<ce>              Ahem. Well, yes. I suppose that since you
+<ce>                 Ahem. Well, yes. I suppose since you
 <ce>                  did get that... item for my sister's
 <ce>                     nuptials, I do owe you a debt.
 
