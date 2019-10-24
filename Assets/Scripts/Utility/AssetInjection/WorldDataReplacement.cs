@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
 #if !UNITY_EDITOR // Cache that there's no replacement location data, for non-variant. So only look for replaced locations once (unless running in editor)
                     if (variant == WorldDataVariants.NoVariant)
-                        locations[locationVariantKey] = noReplacementLocation;
+                        locations.Add(locationVariantKey, noReplacementLocation);
 #endif
                     dfLocation = noReplacementLocation;
                     return false;
@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (AssignBlockIndices(ref dfLocation))
                 {
 #if !UNITY_EDITOR   // Cache location data for replaced locations if new blocks have been assigned indices (unless running in editor)
-                    locations[locationVariantKey] = dfLocation;
+                    locations.Add(locationVariantKey, dfLocation);
 #endif
                 }
                 Debug.LogFormat("Found DFLocation override, region:{0}, index:{1} variant:{2}", regionIndex, locationIndex, variant);
@@ -361,14 +361,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
 #if !UNITY_EDITOR // Cache that there's no replacement block data, non variant. So only look for replaced blocks once (unless running in editor)
                     if (variant == WorldDataVariants.NoVariant)
-                        blocks[blockName] = noReplacementBlock;
+                        blocks.Add(blockName, noReplacementBlock);
 #endif
                     dfBlock = noReplacementBlock;
                     return false;
                 }
                 dfBlock.Index = block;
 #if !UNITY_EDITOR   // Cache block data for added/replaced blocks (unless running in editor)
-                blocks[blockKey] = dfBlock;
+                blocks.Add(blockKey, dfBlock);
 #endif
                 Debug.LogFormat("Found DFBlock override: {0} (index: {1})", blockName, block);
                 return true;
@@ -390,7 +390,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 BlockRecordKey blockRecordKey = new BlockRecordKey() { blockIndex = blockIndex, recordIndex = recordIndex, variant = WorldDataVariants.NoVariant };
-                string variant = WorldDataVariants.GetBuildingVariant(ref blockRecordKey);
+                string variant = WorldDataVariants.GetBuildingVariant(ref blockRecordKey, blockName);
                 if (buildings.ContainsKey(blockRecordKey))
                 {
                     buildingData = buildings[blockRecordKey];
@@ -458,7 +458,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             dfRegion.MapNameLookup.Add(dfLocation.Name, locationIndex);
 
             // Store location replacement/addition
-            locations[MakeLocationKey(regionIndex, locationIndex).ToString()] = dfLocation;
+            locations.Add(MakeLocationKey(regionIndex, locationIndex).ToString(), dfLocation);
 
             // Assign any new blocks in this location a block index if they haven't already been assigned
             return AssignBlockIndices(ref dfLocation);
