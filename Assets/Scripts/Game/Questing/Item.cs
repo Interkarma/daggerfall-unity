@@ -339,9 +339,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (ParentQuest.FactionId != 0)
                 {
                     // If this is a faction quest, playerMod is (player factionrank + 1) rather than level
-                    guild = GameManager.Instance.GuildManager.GetGuild(ParentQuest.FactionId);
-                    if (guild != null)
-                        playerMod = guild.Rank + 1;
+                    GuildManager guildManager = GameManager.Instance.GuildManager;
+                    FactionFile.GuildGroups guildGroup = guildManager.GetGuildGroup(ParentQuest.FactionId);
+                    if (guildGroup != FactionFile.GuildGroups.None)
+                        playerMod = guildManager.GetGuild(guildGroup).Rank + 1;
 
                     // If this is a faction quest, factionMod = faction.power rather than 50
                     FactionFile.FactionData factionData;
