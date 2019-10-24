@@ -458,7 +458,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             dfRegion.MapNameLookup.Add(dfLocation.Name, locationIndex);
 
             // Store location replacement/addition
-            locations.Add(MakeLocationKey(regionIndex, locationIndex).ToString(), dfLocation);
+            locations[MakeLocationKey(regionIndex, locationIndex).ToString()] = dfLocation;
 
             // Assign any new blocks in this location a block index if they haven't already been assigned
             return AssignBlockIndices(ref dfLocation);
