@@ -9,6 +9,7 @@
 
 using FullSerializer;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -22,6 +23,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             this.locationKey = locationKey;
             this.blockName = blockName;
+        }
+    }
+
+    public struct VariantBuildingKey
+    {
+        public int locationKey;
+        public string blockName;
+        public int recordIndex;
+
+        public VariantBuildingKey(int locationKey, string blockName, int recordIndex)
+        {
+            this.locationKey = locationKey;
+            this.blockName = blockName;
+            this.recordIndex = recordIndex;
         }
     }
 
@@ -42,8 +57,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static Dictionary<VariantBlockKey, string> blockVariants = new Dictionary<VariantBlockKey, string>();
 //            { { new VariantBlockKey(WorldDataReplacement.MakeLocationKey(17, 1260), "M0000004.RDB"), "_something" } };
 
-        static Dictionary<BlockRecordKey, string> buildingVariants = new Dictionary<BlockRecordKey, string>();
-//            { { new BlockRecordKey() {blockIndex=543, recordIndex=10}, "_test" } };
+        static Dictionary<VariantBuildingKey, string> buildingVariants = new Dictionary<VariantBuildingKey, string>()
+            { { new VariantBuildingKey(AnyLocationKey, "RESIAM10.RMB", 10), "_test" } };
 
         #region Setters for variants
 
@@ -58,7 +73,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
             bool overwrite = !locationVariants.ContainsKey(locationKey);
-            locationVariants[locationKey] = variant;
+            if (variant == NoVariant)
+                locationVariants.Remove(locationKey);
+            else
+                locationVariants[locationKey] = variant;
+
+            Debug.LogFormat("Set variant \"{0}\" for the location index \"{1}\" in region {2}", variant, locationIndex, regionIndex);
             return overwrite;
         }
 
@@ -76,8 +96,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
                 bool overwrite = !locationVariants.ContainsKey(locationKey);
-                locationVariants[locationKey] = variant;
-                newLocationVariants.Add(locationKey);
+                if (variant == NoVariant)
+                    locationVariants.Remove(locationKey);
+                else
+                    locationVariants[locationKey] = variant;
+                
+                if (!newLocationVariants.Contains(locationKey))
+                    newLocationVariants.Add(locationKey);
+
+                Debug.LogFormat("Set variant \"{0}\" for the new location \"{1}\" in region {2}", variant, locationName, regionIndex);
                 return overwrite;
             }
             DaggerfallUnity.LogMessage("Failed to set a new location variant.", true);
@@ -95,7 +122,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             VariantBlockKey blockKey = new VariantBlockKey(locationKey, blockName);
             bool overwrite = !blockVariants.ContainsKey(blockKey);
-            blockVariants[blockKey] = variant;
+            if (variant == NoVariant)
+                blockVariants.Remove(blockKey);
+            else
+                blockVariants[blockKey] = variant;
+
+            Debug.LogFormat("Set variant \"{0}\" for the block {1} at locationKey {2}", variant, blockName, locationKey);
+            return overwrite;
+        }
+
+        /// <summary>
+        /// Sets a variant for a building. (block record)
+        /// </summary>
+        /// <param name="blockName">Block name</param>
+        /// <param name="variant">Variant name</param>
+        /// <param name="locationKey">Location key if the variant is only for a specific location</param>
+        /// <returns>True if overwriting an existing variant set for this location</returns>
+        public static bool SetBuildingVariant(string blockName, int recordIndex, string variant, int locationKey = AnyLocationKey)
+        {
+            VariantBuildingKey buildingKey = new VariantBuildingKey(locationKey, blockName, recordIndex);
+            bool overwrite = !buildingVariants.ContainsKey(buildingKey);
+            if (variant == NoVariant)
+                buildingVariants.Remove(buildingKey);
+            else
+                buildingVariants[buildingKey] = variant;
+
+            Debug.LogFormat("Set variant \"{0}\" for building {2} of {1} at locationKey {3}", variant, blockName, recordIndex, locationKey);
             return overwrite;
         }
 
@@ -131,16 +183,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return NoVariant;
         }
 
-        public static string GetBuildingVariant(ref BlockRecordKey blockRecordKey)
+        public static string GetBuildingVariant(ref BlockRecordKey blockRecordKey, string blockName)
         {
             if (blockRecordKey.variant == NoVariant)
             {
-                // TODO: add location filtering like above!
-                if (buildingVariants.ContainsKey(blockRecordKey))
+                VariantBuildingKey buildingKey = new VariantBuildingKey(lastLocationKey, blockName, blockRecordKey.recordIndex);
+                if (buildingVariants.ContainsKey(buildingKey))
                 {
-                    string variant = buildingVariants[blockRecordKey];
+                    string variant = buildingVariants[buildingKey];
                     blockRecordKey.variant = variant;
                     return variant;
+                }
+                else
+                {
+                    buildingKey.locationKey = AnyLocationKey;
+                    if (buildingVariants.ContainsKey(buildingKey))
+                    {
+                        string variant = buildingVariants[buildingKey];
+                        blockRecordKey.variant = variant;
+                        return variant;
+                    }
                 }
             }
             return NoVariant;
@@ -195,8 +257,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             public Dictionary<VariantBlockKey, string> blockVariants;
 
-            public Dictionary<BlockRecordKey, string> buildingVariants;
-
+            public Dictionary<VariantBuildingKey, string> buildingVariants;
         }
 
         #endregion
