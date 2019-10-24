@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -8,10 +8,8 @@
 // 
 
 using System.Text.RegularExpressions;
-using DaggerfallWorkshop.Utility;
 using FullSerializer;
 using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -54,21 +52,26 @@ namespace DaggerfallWorkshop.Game.Questing
             // Factory new action
             WorldVariant action = new WorldVariant(parentQuest);
             action.type = match.Groups["type"].Value;
-            action.regionIndex = Parser.ParseInt(match.Groups["regionIndex"].Value);
-            action.locationIndex = Parser.ParseInt(match.Groups["locationIndex"].Value);
-            action.locationName = match.Groups["locationName"].Value;
-            action.blockName = match.Groups["blockName"].Value;
-            action.recordIndex = Parser.ParseInt(match.Groups["recordIndex"].Value);
 
-            /* Resolve new location name to location index
-            if (action.regionIndex >= 0 && !string.IsNullOrEmpty(action.locationName))
-            {
-                DFRegion dfRegion = new DFRegion();
-                if (WorldDataReplacement.GetDFRegionAdditionalLocationData(regionIndex, ref dfRegion))
-                {
-                    dfRegion.MapNameLookup.TryGetValue(action.locationName, out action.locationIndex);
-                }
-            }*/
+            Group regionIndexGroup = match.Groups["regionIndex"];
+            if (regionIndexGroup.Success)
+                action.regionIndex = Parser.ParseInt(regionIndexGroup.Value);
+
+            Group locationIndexGroup = match.Groups["locationIndex"];
+            if (locationIndexGroup.Success)
+                action.locationIndex = Parser.ParseInt(locationIndexGroup.Value);
+
+            Group locationNameGroup = match.Groups["locationName"];
+            if (locationIndexGroup.Success)
+                action.locationName = locationNameGroup.Value;
+
+            Group blockNameGroup = match.Groups["blockName"];
+            if (blockNameGroup.Success)
+                action.blockName = blockNameGroup.Value;
+
+            Group recordIndexGroup = match.Groups["recordIndex"];
+            if (recordIndexGroup.Success)
+                action.recordIndex = Parser.ParseInt(recordIndexGroup.Value);
 
             return action;
         }
