@@ -218,7 +218,7 @@ namespace DaggerfallConnect
         public struct RmbGroundTiles
         {
             /// <summary>Texture and alignment data compressed to a bitfield.</summary>
-            internal Byte TileBitfield;
+            public Byte TileBitfield;
 
             /// <summary>Texture record from bitfield. Used to determine which texture record to load from regional archive.</summary>
             public Int32 TextureRecord;
@@ -1162,6 +1162,7 @@ namespace DaggerfallConnect
                             Dictionary<string, fsData> groundTile = groundTilesFlattened[i++].AsDictionary;
                             RmbGroundTiles rmbGroundTile = new RmbGroundTiles();
                             DeserializeMember(groundTile, null, "TextureRecord", out rmbGroundTile.TextureRecord);
+                            DeserializeMember(groundTile, null, "TileBitfield", out rmbGroundTile.TileBitfield);
                             DeserializeMember(groundTile, null, "IsRotated", out rmbGroundTile.IsRotated);
                             DeserializeMember(groundTile, null, "IsFlipped", out rmbGroundTile.IsFlipped);
                             rmbFldGroundData.GroundTiles[tileX, tileY] = rmbGroundTile;

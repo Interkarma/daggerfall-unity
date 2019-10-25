@@ -481,11 +481,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                             AssignNextIndex(blockName);
 
                     // RDB blocks
-                    foreach (DFLocation.DungeonBlock dungeonBlock in dfLocation.Dungeon.Blocks)
+                    if (dfLocation.Dungeon.Blocks != null)
                     {
-                        string blockName = dungeonBlock.BlockName;
-                        if (blocksFile.GetBlockIndex(blockName) == -1)
-                            AssignNextIndex(blockName);
+                        foreach (DFLocation.DungeonBlock dungeonBlock in dfLocation.Dungeon.Blocks)
+                        {
+                            string blockName = dungeonBlock.BlockName;
+                            if (blocksFile.GetBlockIndex(blockName) == -1)
+                                AssignNextIndex(blockName);
+                        }
                     }
                     return true;
                 }
