@@ -317,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
-            if (!GameManager.Instance.IsPlayingGame())
+            if (SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             if (CurrentHealth <= 0)
