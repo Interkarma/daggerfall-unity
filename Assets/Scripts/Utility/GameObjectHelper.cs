@@ -852,36 +852,44 @@ namespace DaggerfallWorkshop.Utility
                 // Helps ensure a resource is not injected twice
                 QuestResourceBehaviour[] resourceBehaviours = Resources.FindObjectsOfTypeAll<QuestResourceBehaviour>();
 
-                // Get selected marker for this place
-                QuestMarker selectedMarker = place.SiteDetails.selectedMarker;
-                if (selectedMarker.targetResources != null)
+                // Add any resources for the selected marker for this place
+                AddMarkerResourceObjects(siteType, parent, enableNPCs, enableFoes, quest, resourceBehaviours, place.SiteDetails.selectedMarker);
+
+                // Add any resources from other non-selected markers
+                foreach (QuestMarker marker in place.SiteDetails.questSpawnMarkers)
+                    AddMarkerResourceObjects(siteType, parent, enableNPCs, enableFoes, quest, resourceBehaviours, marker);
+            }
+        }
+
+        private static void AddMarkerResourceObjects(SiteTypes siteType, Transform parent, bool enableNPCs, bool enableFoes, Quest quest, QuestResourceBehaviour[] resourceBehaviours, QuestMarker marker)
+        {
+            if (marker.targetResources != null)
+            {
+                foreach (Symbol target in marker.targetResources)
                 {
-                    foreach (Symbol target in selectedMarker.targetResources)
+                    // Get target resource
+                    QuestResource resource = quest.GetResource(target);
+                    if (resource == null)
+                        continue;
+
+                    // Skip resources already injected into scene
+                    if (IsAlreadyInjected(resourceBehaviours, resource))
+                        continue;
+
+                    // Inject to scene based on resource type
+                    if (resource is Person && enableNPCs)
                     {
-                        // Get target resource
-                        QuestResource resource = quest.GetResource(target);
-                        if (resource == null)
-                            continue;
-
-                        // Skip resources already injected into scene
-                        if (IsAlreadyInjected(resourceBehaviours, resource))
-                            continue;
-
-                        // Inject to scene based on resource type
-                        if (resource is Person && enableNPCs)
-                        {
-                            AddQuestNPC(siteType, quest, selectedMarker, (Person)resource, parent);
-                        }
-                        else if (resource is Foe && enableFoes)
-                        {
-                            Foe foe = (Foe)resource;
-                            if (foe.KillCount < foe.SpawnCount)
-                                AddQuestFoe(siteType, quest, selectedMarker, foe, parent);
-                        }
-                        else if (resource is Item)
-                        {
-                            AddQuestItem(siteType, quest, selectedMarker, (Item)resource, parent);
-                        }
+                        AddQuestNPC(siteType, quest, marker, (Person)resource, parent);
+                    }
+                    else if (resource is Foe && enableFoes)
+                    {
+                        Foe foe = (Foe)resource;
+                        if (foe.KillCount < foe.SpawnCount)
+                            AddQuestFoe(siteType, quest, marker, foe, parent);
+                    }
+                    else if (resource is Item)
+                    {
+                        AddQuestItem(siteType, quest, marker, (Item)resource, parent);
                     }
                 }
             }
