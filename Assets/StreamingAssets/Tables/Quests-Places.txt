@@ -162,3 +162,6 @@ Ship_Deck,            0x03de, 1, -1
 Ship_Cabin,           0x03de, 4, -1
 Large_Ship_Deck,      0x03e0, 1, -1
 Large_Ship_Cabin,     0x03e0, 4, -1
+
+-- TEMPORARY: for testing target permanent new locations
+Northrock_Fort,       0x73A1, 1, -1
