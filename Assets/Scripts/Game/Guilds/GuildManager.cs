@@ -246,7 +246,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
         }
 
-        private FactionFile.GuildGroups GetGuildGroup(int factionId)
+        public FactionFile.GuildGroups GetGuildGroup(int factionId)
         {
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.GuildGroups guildGroup = FactionFile.GuildGroups.None;

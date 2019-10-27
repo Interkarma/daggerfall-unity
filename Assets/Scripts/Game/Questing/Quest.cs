@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool questComplete = false;
         bool questSuccess = false;
         Dictionary<int, LogEntry> activeLogMessages = new Dictionary<int, LogEntry>();
+        int currentLogMessageId = -1;
 
         string questName;
         string displayName;
@@ -80,6 +81,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public int stepID;
             public int messageID;
+            public DaggerfallDateTime dateTime;
         }
 
         /// <summary>
@@ -230,6 +232,14 @@ namespace DaggerfallWorkshop.Game.Questing
         public DaggerfallDateTime QuestTombstoneTime
         {
             get { return questTombstoneTime; }
+        }
+
+        /// <summary>
+        /// Current log message ID, used only for expanding %qdt macro properly.
+        /// </summary>
+        public int CurrentLogMessageId
+        {
+            set { currentLogMessageId = value; }
         }
 
         #endregion
@@ -530,6 +540,7 @@ namespace DaggerfallWorkshop.Game.Questing
             LogEntry entry = new LogEntry();
             entry.stepID = stepID;
             entry.messageID = messageID;
+            entry.dateTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
             activeLogMessages.Add(stepID, entry);
         }
 
@@ -568,6 +579,21 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return logs;
+        }
+
+        /// <summary>
+        /// Get the current log entry date time when opening the active quests log.
+        /// </summary>
+        /// <returns>Return the current log entry time if any, otherwise the quest start time.</returns>
+        public DaggerfallDateTime GetCurrentLogMessageTime()
+        {
+            foreach (LogEntry log in activeLogMessages.Values)
+            {
+                if (log.messageID == currentLogMessageId && log.dateTime != null)
+                    return log.dateTime;
+            }
+
+            return questStartTime;
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             base.Start(manager, caster);
 
             UserInterfaceManager uiManager = DaggerfallUI.UIManager as UserInterfaceManager;
-            DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Identify, null });
+            DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Identify, null });
             tradeWindow.UsingIdentifySpell = true;
             uiManager.PushWindow(tradeWindow);
         }

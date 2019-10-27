@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game
         const int poisonMissileArchive = 377;
         const int shockMissileArchive = 378;
 
-        public const float SphereCastRadius = 0.2f;
+        public const float SphereCastRadius = 0.25f;
         public const float TouchRange = 3.0f;
 
         Vector3 direction;
@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop.Game
             RaycastHit hit;
             aimPosition -= aimDirection * 0.1f;
             Ray ray = new Ray(aimPosition, aimDirection);
-            if (Physics.SphereCast(ray, SphereCastRadius, out hit, TouchRange - SphereCastRadius))
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, TouchRange))
                 return hit.transform.GetComponent<DaggerfallEntityBehaviour>();
             else
                 return null;

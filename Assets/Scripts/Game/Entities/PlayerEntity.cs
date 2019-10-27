@@ -317,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
-            if (!GameManager.Instance.IsPlayingGame())
+            if (SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             if (CurrentHealth <= 0)
@@ -531,7 +531,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (timeOfDay < 360 || timeOfDay > 1080)
                     {
                         // In a location area at night
-                        if (UnityEngine.Random.Range(0, 24) == 0)
+                        if (FormulaHelper.RollRandomSpawn_LocationNight() == 0)
                         {
                             GameObjectHelper.CreateFoeSpawner(true, RandomEncounters.ChooseRandomEnemy(false), 1, minLocationDistance);
                             return true;
@@ -543,13 +543,13 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (timeOfDay >= 360 && timeOfDay <= 1080)
                     {
                         // Wilderness during day
-                        if (UnityEngine.Random.Range(0, 36) != 0)
+                        if (FormulaHelper.RollRandomSpawn_WildernessDay() != 0)
                             return false;
                     }
                     else
                     {
                         // Wilderness at night
-                        if (UnityEngine.Random.Range(0, 24) != 0)
+                        if (FormulaHelper.RollRandomSpawn_WildernessNight() != 0)
                             return false;
                     }
 
@@ -566,7 +566,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     if (isResting)
                     {
-                        if (UnityEngine.Random.Range(0, 43) == 0) // Normally (0, 36) - making spawns ~20% less for rested dungeons
+                        if (FormulaHelper.RollRandomSpawn_Dungeon() == 0)
                         {
                             // TODO: Not sure how enemy type is chosen here.
                             GameObjectHelper.CreateFoeSpawner(false, RandomEncounters.ChooseRandomEnemy(false), 1, minDungeonDistance);
