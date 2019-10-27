@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich, Numidium
+// Contributors:    Allofich, Numidium, TheLacus
 // 
 // Notes:
 //
@@ -28,6 +28,19 @@ using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
+    /// <summary>
+    /// Defines a <see cref="MonoBehaviour"/> component that can be activated by player interaction.
+    /// Activation is detected when a ray cast hits a collider or trigger collider on the GameObject on which the component is instantiated.
+    /// </summary>
+    public interface IPlayerActivable
+    {
+        /// <summary>
+        /// Fired when the player activate this object. This method can be called more than once if the collider is not disabled by implementation.
+        /// </summary>
+        /// <param name="hit">The hit that caused the activation.</param>
+        void Activate(RaycastHit hit);
+    }
+
     /// <summary>
     /// Example class to handle activation of doors, switches, etc. from Fire1 input.
     /// </summary>
@@ -107,14 +120,21 @@ namespace DaggerfallWorkshop.Game
             if (mainCamera == null)
                 return;
 
-            // Do nothing if player has spell ready to cast as activate button is now used to fire spell
+            // Do nothing further if player has spell ready to cast as activate button is now used to fire spell
+            // The exception is a readied touch spell where player can activate doors, etc.
+            // Touch spells only fire once a target entity is in range
             if (GameManager.Instance.PlayerEffectManager)
             {
                 // Handle pending spell cast
                 if (GameManager.Instance.PlayerEffectManager.HasReadySpell)
                 {
-                    castPending = true;
-                    return;
+                    // Exclude touch spells from this check
+                    MagicAndEffects.EntityEffectBundle spell = GameManager.Instance.PlayerEffectManager.ReadySpell;
+                    if (spell.Settings.TargetType != MagicAndEffects.TargetTypes.ByTouch)
+                    {
+                        castPending = true;
+                        return;
+                    }
                 }
 
                 // Prevents last spell cast click from falling through to normal click handling this frame
@@ -147,10 +167,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Fire ray into scene
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCenterObject))
             {
-                // TODO: Clean all this up
-
                 // Fire ray into scene for hit tests (excluding player so their ray does not intersect self)
                 Ray ray = new Ray(transform.position + Vector3.up * 0.8f, mainCamera.transform.forward);
                 RaycastHit hit;
@@ -258,11 +276,20 @@ namespace DaggerfallWorkshop.Game
                     ActivateLaddersAndShelves(hit);
 
                     // Invoke any matched custom model activations registered by mods.
+                    string modelName = hit.transform.gameObject.name;
+                    int pos = modelName.IndexOf(']');
+                    if (pos > 0 && pos < modelName.Length - 1)
+                        modelName = modelName.Remove(pos + 1);
                     ModelActivation activation;
-                    if (customModelActivations.TryGetValue(hit.transform.gameObject.name, out activation))
+                    if (customModelActivations.TryGetValue(modelName, out activation))
                     {
                         activation(hit.transform);
                     }
+
+                    // Check for custom activation
+                    var playerActivable = hit.transform.GetComponent<IPlayerActivable>();
+                    if (playerActivable != null)
+                        playerActivable.Activate(hit);
 
                     // Debug for identifying interior furniture model ids.
                     Debug.Log(string.Format("hit='{0}' static={1}", hit.transform, GameObjectHelper.IsStaticGeometry(hit.transform.gameObject)));
@@ -293,10 +320,10 @@ namespace DaggerfallWorkshop.Game
                     if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
                         && buildingType != DFLocation.BuildingTypes.HouseForSale)
                     {
-                        string storeClosedMessage = HardStrings.storeClosed;
-                        storeClosedMessage = storeClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
-                        storeClosedMessage = storeClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
-                        DaggerfallUI.Instance.PopupMessage(storeClosedMessage);
+                        string buildingClosedMessage = (buildingType == DFLocation.BuildingTypes.GuildHall) ? HardStrings.guildClosed : HardStrings.storeClosed;
+                        buildingClosedMessage = buildingClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
+                        buildingClosedMessage = buildingClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
+                        DaggerfallUI.Instance.PopupMessage(buildingClosedMessage);
                     }
                 }
             }
@@ -388,9 +415,14 @@ namespace DaggerfallWorkshop.Game
 
                         DaggerfallMessageBox mb;
 
+                        PlayerGPS.DiscoveredBuilding buildingData;
+                        GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out buildingData);
+
                         if (buildingUnlocked &&
                             buildingType >= DFLocation.BuildingTypes.House1 &&
                             buildingType <= DFLocation.BuildingTypes.House4 &&
+                            buildingData.factionID != (int)FactionFile.FactionIDs.The_Thieves_Guild &&
+                            buildingData.factionID != (int)FactionFile.FactionIDs.The_Dark_Brotherhood &&
                             !DaggerfallBankManager.IsHouseOwned(building.buildingKey))
                         {
                             string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
@@ -485,6 +517,15 @@ namespace DaggerfallWorkshop.Game
 
         void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)
         {
+            // Do not activate static NPCs carrying specific non-dialog actions as these usually have some bespoke task to perform
+            // Note: currently only ShowText and ShowTextWithInput NPCs are excluded
+            // Examples are guard at entrance of Daggerfall Castle and Benefactor and Sheogorath in Mantellan Crux
+            DaggerfallAction action = npc.GetComponent<DaggerfallAction>();
+            if (action &&
+                (action.ActionFlag == DFBlock.RdbActionFlags.ShowTextWithInput ||
+                 action.ActionFlag == DFBlock.RdbActionFlags.ShowText))
+                return;
+
             switch (currentMode)
             {
                 case PlayerActivateModes.Info:
@@ -618,7 +659,7 @@ namespace DaggerfallWorkshop.Game
                     // Open Trade Window if shop is open
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
                     {
-                        DaggerfallTradeWindow tradeWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Buy);
+                        DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow) UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Buy, null });
                         tradeWindow.MerchantItems = loot.Items;
                         uiManager.PushWindow(tradeWindow);
                         return;
@@ -1012,13 +1053,13 @@ namespace DaggerfallWorkshop.Game
             // Handle guild halls
             if (type == DFLocation.BuildingTypes.GuildHall)
             {
-                Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
+                IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
                 unlocked = guild.HallAccessAnytime() ? true : IsBuildingOpen(type);
             }
             // Handle TG/DB houses
             else if (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0)
             {
-                Guild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
+                IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
                 unlocked = guild.IsMember();
             }
             // Handle House1 through House4
@@ -1051,7 +1092,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Check if building is used in an active quest inside current map
-        bool IsActiveQuestBuilding(BuildingSummary buildingSummary, bool residencesOnly = true)
+        public bool IsActiveQuestBuilding(BuildingSummary buildingSummary, bool residencesOnly = true)
         {
             SiteDetails[] siteDetails = QuestMachine.Instance.GetAllActiveQuestSites();
             foreach (SiteDetails site in siteDetails)
@@ -1247,7 +1288,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
                     // Popup guild service menu.
-                    uiManager.PushWindow(new DaggerfallGuildServicePopupWindow(uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.GuildServicePopup, new object[] { uiManager, npc, guildGroup, playerEnterExit.BuildingDiscoveryData.factionID }));
                 }
                 // Check if this NPC is a merchant.
                 else if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
@@ -1256,23 +1297,23 @@ namespace DaggerfallWorkshop.Game
                     if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                     {
                         if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
-                            uiManager.PushWindow(new DaggerfallMerchantRepairPopupWindow(uiManager, npc));
+                            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantRepairPopup, new object[] { uiManager, npc }));
                         else
-                            uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell));
+                            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantServicePopup, new object[] { uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell }));
                     }
                     // Bank?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Bank)
-                        uiManager.PushWindow(new DaggerfallMerchantServicePopupWindow(uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking));
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantServicePopup, new object[] { uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Banking }));
                     // Tavern?
                     else if (playerEnterExit.BuildingDiscoveryData.buildingType == DFLocation.BuildingTypes.Tavern)
-                        uiManager.PushWindow(new DaggerfallTavernWindow(uiManager, npc));
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Tavern, new object[] { uiManager, npc }));
                     else
                         talkManager.TalkToStaticNPC(npc, false);
                 }
                 // Check if this NPC is part of a witches coven.
                 else if ((FactionFile.FactionTypes)factionData.type == FactionFile.FactionTypes.WitchesCoven)
                 {
-                    uiManager.PushWindow(new DaggerfallWitchesCovenPopupWindow(uiManager, npc));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.WitchesCovenPopup, new object[] { uiManager, npc }));
                 }
                 // TODO - more checks for npc social types?
                 else // if no special handling had to be done for npc with social group of type merchant: talk to the static npc
@@ -1282,11 +1323,6 @@ namespace DaggerfallWorkshop.Game
             }
             else // if no special handling had to be done (all remaining npcs of the remaining social groups not handled explicitely above): default is talk to the static npc
             {
-                // with one exception: guards
-                if (npc.Data.billboardArchiveIndex == 183 && npc.Data.billboardRecordIndex == 3) // detect if clicked guard (comment Nystul: didn't find a better mechanism than billboard texture check)
-                    return; // if guard was clicked don't open talk window
-
-                // otherwise open talk window
                 talkManager.TalkToStaticNPC(npc, false);
             }
         }

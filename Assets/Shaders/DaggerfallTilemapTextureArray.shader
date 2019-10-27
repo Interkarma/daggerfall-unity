@@ -85,7 +85,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
 			// Get offset to tile in atlas
-			uint index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex;
+			uint index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
 
 			// Offset to fragment position inside tile
 			float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;

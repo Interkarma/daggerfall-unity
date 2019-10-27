@@ -6,6 +6,7 @@
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Hazelnut
 //                  ifkopifko
+//                  Numidium
 // 
 // Notes:
 //
@@ -640,9 +641,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 DaggerfallUnityItem item = null;
                 if (equippedItems.Length != 0)
                 {
-                    item = IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) ? equippedItems[(int)EquipSlots.Ring0] : equippedItems[(int)EquipSlots.Ring1];
-                    item = IsRingOfNamira(item) ? item : null;
-                    if (item != null)
+                    if (IsRingOfNamira(equippedItems[(int)EquipSlots.Ring0]) || IsRingOfNamira(equippedItems[(int)EquipSlots.Ring1]))
                     {
                         IEntityEffect effectTemplate = GameManager.Instance.EntityEffectBroker.GetEffectTemplate(RingOfNamiraEffect.EffectKey);
                         effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.None,
@@ -1067,6 +1066,28 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
+        public static DFCareer.ToleranceFlags GetToleranceFlag(DFCareer.Tolerance tolerance)
+        {
+            DFCareer.ToleranceFlags flag = DFCareer.ToleranceFlags.Normal;
+            switch (tolerance)
+            {
+                case DFCareer.Tolerance.Immune:
+                    flag = DFCareer.ToleranceFlags.Immune;
+                    break;
+                case DFCareer.Tolerance.Resistant:
+                    flag = DFCareer.ToleranceFlags.Resistant;
+                    break;
+                case DFCareer.Tolerance.LowTolerance:
+                    flag = DFCareer.ToleranceFlags.LowTolerance;
+                    break;
+                case DFCareer.Tolerance.CriticalWeakness:
+                    flag = DFCareer.ToleranceFlags.CriticalWeakness;
+                    break;
+            }
+
+            return flag;
+        }
+
         public static int SavingThrow(DFCareer.Elements elementType, DFCareer.EffectFlags effectFlags, DaggerfallEntity target, int modifier)
         {
             // Handle resistances granted by magical effects
@@ -1079,13 +1100,13 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Magic effect resistances did not stop the effect. Try with career flags and biography modifiers
             int savingThrow = 50;
-            DFCareer.Tolerance toleranceFlags = 0;
+            DFCareer.ToleranceFlags toleranceFlags = DFCareer.ToleranceFlags.Normal;
             int biographyMod = 0;
 
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if ((effectFlags & DFCareer.EffectFlags.Paralysis) != 0)
             {
-                toleranceFlags |= target.Career.Paralysis;
+                toleranceFlags |= GetToleranceFlag(target.Career.Paralysis);
                 // Innate immunity if high elf. Start with 100 saving throw, but can be modified by
                 // tolerance flags. Note this differs from classic, where high elves have 100% immunity
                 // regardless of tolerance flags.
@@ -1094,25 +1115,25 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
             if ((effectFlags & DFCareer.EffectFlags.Magic) != 0)
             {
-                toleranceFlags |= target.Career.Magic;
+                toleranceFlags |= GetToleranceFlag(target.Career.Magic);
                 if (target == playerEntity)
                     biographyMod += playerEntity.BiographyResistMagicMod;
             }
             if ((effectFlags & DFCareer.EffectFlags.Poison) != 0)
             {
-                toleranceFlags |= target.Career.Poison;
+                toleranceFlags |= GetToleranceFlag(target.Career.Poison);
                 if (target == playerEntity)
                     biographyMod += playerEntity.BiographyResistPoisonMod;
             }
             if ((effectFlags & DFCareer.EffectFlags.Fire) != 0)
-                toleranceFlags |= target.Career.Fire;
+                toleranceFlags |= GetToleranceFlag(target.Career.Fire);
             if ((effectFlags & DFCareer.EffectFlags.Frost) != 0)
-                toleranceFlags |= target.Career.Frost;
+                toleranceFlags |= GetToleranceFlag(target.Career.Frost);
             if ((effectFlags & DFCareer.EffectFlags.Shock) != 0)
-                toleranceFlags |= target.Career.Shock;
+                toleranceFlags |= GetToleranceFlag(target.Career.Shock);
             if ((effectFlags & DFCareer.EffectFlags.Disease) != 0)
             {
-                toleranceFlags |= target.Career.Disease;
+                toleranceFlags |= GetToleranceFlag(target.Career.Disease);
                 if (target == playerEntity)
                     biographyMod += playerEntity.BiographyResistDiseaseMod;
             }
@@ -1122,13 +1143,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             // always 0% resistance if there is no immunity. Here we are using
             // a method that allows mixing different tolerance flags, getting
             // rid of related exploits when creating a character class.
-            if ((toleranceFlags & DFCareer.Tolerance.Immune) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.Immune) != 0)
                 savingThrow += 50;
-            if ((toleranceFlags & DFCareer.Tolerance.CriticalWeakness) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.CriticalWeakness) != 0)
                 savingThrow -= 50;
-            if ((toleranceFlags & DFCareer.Tolerance.LowTolerance) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.LowTolerance) != 0)
                 savingThrow -= 25;
-            if ((toleranceFlags & DFCareer.Tolerance.Resistant) != 0)
+            if ((toleranceFlags & DFCareer.ToleranceFlags.Resistant) != 0)
                 savingThrow += 25;
 
             savingThrow += biographyMod + modifier;
@@ -1145,7 +1166,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
-            int percentDamageOrDuration = 0;
+            int percentDamageOrDuration = 100;
             int roll = Dice100.Roll();
 
             if (roll <= savingThrow)
@@ -1156,10 +1177,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 else
                     percentDamageOrDuration = 0;
             }
-            else
-                percentDamageOrDuration = 100;
 
-            return percentDamageOrDuration;
+            return Mathf.Clamp(percentDamageOrDuration, 0, 100);
         }
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
@@ -1347,6 +1366,58 @@ namespace DaggerfallWorkshop.Game.Formulas
             return maxHealth;
         }
 
+        /// <summary>
+        /// Roll for random spawn in location area at night.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_LocationNight()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_LocationNight", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 24);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in wilderness during daylight hours.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_WildernessDay()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_WildernessDay", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 36);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in wilderness at night.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_WildernessNight()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_WildernessNight", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 24);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in dungeons.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_Dungeon()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_Dungeon", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 43);  // Normally (0, 36) - making spawns ~20% less for rested dungeons
+        }
+
         #endregion
 
         #region Holidays
@@ -1426,7 +1497,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
-        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, Guild guild)
+        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, IGuild guild)
         {
             // Don't cost already repaired item
             if (condition == max)
@@ -1452,7 +1523,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Max(repairTime, DaggerfallDateTime.SecondsPerDay);
         }
 
-        public static int CalculateItemIdentifyCost(int baseItemValue, Guild guild)
+        public static int CalculateItemIdentifyCost(int baseItemValue, IGuild guild)
         {
             // Free on Witches Festival
             uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

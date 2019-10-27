@@ -137,6 +137,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Video
         HorizontalSlider resolution;
         Checkbox fullscreen;
+        //Checkbox exclusiveFullscreen;
         HorizontalSlider qualityLevel;
         HorizontalSlider mainFilterMode;
         HorizontalSlider guiFilterMode;
@@ -148,7 +149,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
-        Checkbox useLegacyDeferred;
 
         #endregion
 
@@ -313,7 +313,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 resolutions.Select(x => string.Format("{0}x{1}", x.width, x.height)).ToArray());
             resolution.OnScroll += Resolution_OnScroll;
             fullscreen = AddCheckbox(leftPanel, "fullscreen", DaggerfallUnity.Settings.Fullscreen);
+            //exclusiveFullscreen = AddCheckbox(leftPanel, "exclusiveFullscreen", DaggerfallUnity.Settings.ExclusiveFullscreen);
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
+            //exclusiveFullscreen.OnToggleState += ExclusiveFullscreen_OnToggleState;
             qualityLevel = AddSlider(leftPanel, "qualityLevel", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
             qualityLevel.OnScroll += QualityLevel_OnScroll;
             string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
@@ -332,7 +334,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dungeonLightShadows = AddCheckbox(rightPanel, "dungeonLightShadows", DaggerfallUnity.Settings.DungeonLightShadows);
             interiorLightShadows = AddCheckbox(rightPanel, "interiorLightShadows", DaggerfallUnity.Settings.InteriorLightShadows);
             exteriorLightShadows = AddCheckbox(rightPanel, "exteriorLightShadows", DaggerfallUnity.Settings.ExteriorLightShadows);
-            useLegacyDeferred = AddCheckbox(rightPanel, "useLegacyDeferred", DaggerfallUnity.Settings.UseLegacyDeferred);
             string textureArrayLabel = "Texture Arrays: ";
             if (!SystemInfo.supports2DArrayTextures)
                 textureArrayLabel += "Unsupported";
@@ -417,7 +418,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
                 DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
                 DaggerfallUnity.Settings.Fullscreen = fullscreen.IsChecked;
-                Screen.SetResolution(selectedResolution.width, selectedResolution.height, fullscreen.IsChecked);
+                //DaggerfallUnity.Settings.ExclusiveFullscreen = exclusiveFullscreen.IsChecked;
+
+                if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
+                {
+                    Screen.SetResolution(
+                        selectedResolution.width,
+                        selectedResolution.height,
+                        FullScreenMode.ExclusiveFullScreen);
+                }
+                else
+                {
+                    Screen.SetResolution(
+                        selectedResolution.width,
+                        selectedResolution.height,
+                        fullscreen.IsChecked);
+                }
 
                 DaggerfallUnity.Settings.QualityLevel = qualityLevel.ScrollIndex;
                 QualitySettings.SetQualityLevel(qualityLevel.ScrollIndex);
@@ -432,7 +448,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.DungeonLightShadows = dungeonLightShadows.IsChecked;
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
-            DaggerfallUnity.Settings.UseLegacyDeferred = useLegacyDeferred.IsChecked;
             DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
@@ -706,6 +721,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             applyScreenChanges = true;
         }
+
+        /*
+        private void ExclusiveFullscreen_OnToggleState()
+        {
+            applyScreenChanges = true;
+        }
+        */
 
         private void Resolution_OnScroll()
         {

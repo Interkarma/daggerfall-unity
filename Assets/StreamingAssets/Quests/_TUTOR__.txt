@@ -90,7 +90,7 @@ Message:  1013
 Message:  1015
 <ce>                           Tutorial Lesson 3
 <ce>                                    
-<ce>        To draw your weapon, just press the A key. There is
+<ce>        To draw your weapon, just press the Z key. There is
 <ce>        a short delay after equipping a weapon, so don't panic
 <ce>        if it doesn't draw instantly.
 <ce>                                    
@@ -190,7 +190,7 @@ Message:  1040
 <ce>                            (continued...)
 
 Message:  1041
-<ce>         Fast travel is done by pressing the W key. The region
+<ce>         Fast travel is done by pressing the V key. The region
 <ce>          that you are in (Daggerfall) is highlighted in red.
 <ce>         Click on that region and you get a blow up map. There
 <ce>        are a lot of places on this map! Lets find the city of

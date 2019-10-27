@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -231,22 +232,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
                 else
                 {
+                    string fileName;
+
                     // Use generic NPC face
                     if (!face.isChild)
                     {
                         // Get a racial portrait
-                        if (face.gender == Genders.Male)
-                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
-                        else if (face.gender == Genders.Female)
-                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                        fileName = face.gender == Genders.Male ? raceTemplate.PaperDollHeadsMale : raceTemplate.PaperDollHeadsFemale;
                     }
                     else
                     {
                         // Get a child portrait
-                        faceTexture = DaggerfallUI.GetTextureFromCifRci(factionChildrenFaceFile, face.faceIndex);
+                        fileName = factionChildrenFaceFile;
                     }
 
-                    facePanel.Size = new Vector2(faceTexture.width, faceTexture.height);
+                    ImageData imageData = ImageReader.GetImageData(fileName, face.faceIndex, 0, true, true);
+                    faceTexture = imageData.texture;
+                    facePanel.Size = new Vector2(imageData.width, imageData.height);
                 }
 
                 // Must have a texture by now

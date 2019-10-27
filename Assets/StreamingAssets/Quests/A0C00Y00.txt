@@ -251,12 +251,7 @@ _S.03_ task:
 	dropped _falseletter1_ at _inn_ saying 1015 
 	dropped _falseletter4_ at _inn_ saying 1015 
 	dropped _falseletter2_ at _inn_ saying 1015 
-
-until _S.03_ performed:
-	clicked item _falseletter2_ 
-	clicked item _falseletter3_ 
-	clicked item _falseletter4_ 
-	clicked item _falseletter1_ 
+    clear _S.15_
 
 _S.04_ task:
 	clicked item _treasure_ 
@@ -306,6 +301,7 @@ _S.15_ task:
 	clicked item _falseletter1_ 
 	clicked item _falseletter2_ 
 	clicked item _falseletter3_ 
+	clear _S.03_
 
 _qgclicked_ task:
 	clicked npc _qgiver_

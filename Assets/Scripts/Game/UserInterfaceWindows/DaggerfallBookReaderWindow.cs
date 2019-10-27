@@ -26,22 +26,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector2 pagePanelSize = new Vector2(210, 159);
 
         Texture2D nativeTexture;
-        DaggerfallUnityItem bookTarget;
         LabelFormatter labelFormatter = new LabelFormatter();
         List<TextLabel> bookLabels = new List<TextLabel>();
         Panel pagePanel = new Panel();
         float maxHeight = 0;
         float scrollPosition = 0;
+        int currentPage = 0; // Used for page turn sounds only
+
+        const SoundClips openBook = SoundClips.OpenBook;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
-        }
-
-        public DaggerfallUnityItem BookTarget
-        {
-            get { return bookTarget; }
-            set { OpenBook(value); }
         }
 
         public bool IsBookOpen { get; private set; }
@@ -76,7 +72,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.OnMouseScrollUp += Panel_OnMouseScrollUp;
 
             LayoutBook();
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
+            DaggerfallUI.Instance.PlayOneShot(openBook);
         }
 
         private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -109,7 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (IsSetup)
             {
                 LayoutBook();
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
+                DaggerfallUI.Instance.PlayOneShot(openBook);
             }
         }
 
@@ -118,10 +114,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
-        void OpenBook(DaggerfallUnityItem target)
+        public void OpenBook(int id)
         {
             bookLabels.Clear();
-            bookTarget = target;
+            IsBookOpen = labelFormatter.ReformatBook(id);
+            if (IsBookOpen)
+                bookLabels = labelFormatter.CreateLabels();
+        }
+
+        public void OpenBook(DaggerfallUnityItem target)
+        {
+            bookLabels.Clear();
             if (target == null || target.ItemGroup != ItemGroups.Books || target.IsArtifact)
                 throw new Exception("Item is not a valid book for book reader UI.");
 
@@ -144,7 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 label.Position = new Vector2(x, y);
                 label.MaxWidth = (int)pagePanel.Size.x;
                 label.RectRestrictedRenderArea = pagePanel.RectRestrictedRenderArea;
-                label.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                label.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;
                 pagePanel.Components.Add(label);
                 y += label.Size.y;
                 maxHeight += label.Size.y;
@@ -168,7 +171,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 label.Position = new Vector2(label.Position.x, label.Position.y + amount);
                 label.Enabled = label.Position.y < pagePanel.Size.y && label.Position.y + label.Size.y > 0;
-                    
+            }
+
+            // page displayed at the center of the panel
+            int centerPage = (int)(scrollPosition / pagePanelSize.y + 0.5f);
+            if (currentPage != centerPage)
+            {
+                currentPage = centerPage;
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             }
         }
     }

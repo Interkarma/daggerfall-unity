@@ -332,6 +332,8 @@ _S.00_ task:
 	give pc _magicitem_ 
 	add dialog for location _dirennitower_ 
 	remove log step 0 
+	remove log step 1
+--added additional remove log. directions would linger in journal.
 	reveal _dirennitower_ in province 9 at 204718 
 	repute with _akorithi_ exceeds 0 do _S.16_ 
 	change repute with _lhotun_ by +15 

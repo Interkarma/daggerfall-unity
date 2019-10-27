@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game.Questing
         List<Quest> questsToTombstone = new List<Quest>();
         List<Quest> questsToRemove = new List<Quest>();
         List<Quest> questsToInvoke = new List<Quest>();
+        List<StoredException> storedExceptions = new List<StoredException>();
 
         bool waitingForStartup = true;
         float startupTimer = 0;
@@ -223,7 +224,18 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
-        #region Enums
+        #region Structs & Enums
+
+        /// <summary>
+        /// Stores information about an exception that would result in quest termination.
+        /// This is stored permanently with save data to help with troubleshooting.
+        /// </summary>
+        public struct StoredException
+        {
+            public string questName;
+            public Exception exception;
+            public string stackTrace;
+        }
 
         /// <summary>
         /// Fixed quest message constants.
@@ -420,12 +432,14 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (IsProtectedQuest(quest))
                     {
                         LogFormat(quest, "Exception in protected quest. Logging only.");
+                        StoreQuestException(quest, ex);
                         LogFormat(ex.Message);
                     }
                     else
                     {
                         LogFormat(quest, "Error in quest follows. Terminating quest runtime.");
                         LogFormat(ex.Message);
+                        StoreQuestException(quest, ex);
                         RaiseOnQuestErrorTerminationEvent(quest);
                         questsToRemove.Add(quest);
                     }
@@ -600,9 +614,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Instantiate a new quest from source text array.
         /// </summary>
+        /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <param name="questSource">Array of lines from quest source file.</param>
+        /// <param name="factionId">Faction id of quest giver for guilds.</param>
         /// <returns>Quest.</returns>
-        public Quest ParseQuest(string questName, string[] questSource)
+        public Quest ParseQuest(string questName, string[] questSource, int factionId = 0)
         {
             LogFormat("\r\n\r\nParsing quest {0}", questName);
 
@@ -610,7 +626,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Parse quest
                 Parser parser = new Parser();
-                Quest quest = parser.Parse(questSource);
+                Quest quest = parser.Parse(questSource, factionId);
 
                 return quest;
             }
@@ -1239,7 +1255,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Must have target resources
                 SiteDetails siteDetails = place.SiteDetails;
-                QuestMarker marker = siteDetails.questSpawnMarkers[siteDetails.selectedQuestItemMarker];
+                QuestMarker marker = siteDetails.selectedMarker;
                 if (marker.targetResources == null)
                 {
                     Log(quest, "IsIndividualQuestNPCAtSiteLink() found a SiteLink with no targetResources assigned.");
@@ -1274,15 +1290,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Gets the quest spawn marker in player's current location.
+        /// Gets active marker in player's current location.
         /// </summary>
-        /// <param name="markerType">Get quest spawn or item marker.</param>
-        /// <param name="questMarkerOut">QuestMarker out.</param>
+        /// <param name="markerOut">Active QuestMarker out.</param>
         /// <param name="buildingOriginOut">Building origin in scene, or Vector3.zero if not inside a building.</param>
         /// <returns>True if successful.</returns>
-        public bool GetCurrentLocationQuestMarker(MarkerTypes markerType, out QuestMarker questMarkerOut, out Vector3 buildingOriginOut)
+        public bool GetCurrentLocationQuestMarker(out QuestMarker markerOut, out Vector3 buildingOriginOut)
         {
-            questMarkerOut = new QuestMarker();
+            markerOut = new QuestMarker();
             buildingOriginOut = Vector3.zero;
 
             // Get PlayerEnterExit for world context
@@ -1331,21 +1346,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (place == null)
                     return false;
 
-                // Get spawn marker
-                QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
-                if (markerType == MarkerTypes.QuestSpawn && spawnMarker.targetResources != null)
-                {
-                    questMarkerOut = spawnMarker;
-                    return true;
-                }
-
-                // Get item marker
-                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
-                if (markerType == MarkerTypes.QuestItem && itemMarker.targetResources != null)
-                {
-                    questMarkerOut = itemMarker;
-                    return true;
-                }
+                // Get marker
+                markerOut = place.SiteDetails.selectedMarker;
+                return true;
             }
 
             return false;
@@ -1359,7 +1362,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This needs to be done in a way that does not break resources allocated from other quests.
         /// </summary>
         /// <param name="resource">The resource to cull. No action taken if resource null or not found.</param>
-        public void CullResourceTarget(QuestResource resource)
+        public void CullResourceTarget(QuestResource resource, Symbol newPlace)
         {
             // Do nothing if resource null
             if (resource == null)
@@ -1370,6 +1373,10 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Get link
                 SiteLink link = siteLinks[i];
+
+                // Do nothing if this link not for same quest as resource
+                if (link.questUID != resource.ParentQuest.UID)
+                    continue;
 
                 // Get the Quest object referenced by this link
                 Quest quest = GetQuest(link.questUID);
@@ -1387,52 +1394,75 @@ namespace DaggerfallWorkshop.Game.Questing
                     return;
                 }
 
+                // Do nothing if old Place same as new Place
+                if (place.Symbol.Equals(newPlace))
+                    continue;
+
                 // Modify selected spawn QuestMarker for this Place
-                QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
-                if (spawnMarker.targetResources != null)
+                QuestMarker selectedMarker = place.SiteDetails.selectedMarker;
+                if (selectedMarker.targetResources != null)
                 {
-                    for (int j = 0; j < spawnMarker.targetResources.Count; j++)
+                    for (int j = 0; j < selectedMarker.targetResources.Count; j++)
                     {
                         // Get target resource
-                        QuestResource existingResource = quest.GetResource(spawnMarker.targetResources[j]);
+                        QuestResource existingResource = quest.GetResource(selectedMarker.targetResources[j]);
                         if (existingResource == null)
                             continue;
 
                         // Cull matching resource
                         if (existingResource.Symbol.Equals(resource.Symbol))
                         {
-                            spawnMarker.targetResources.Remove(existingResource.Symbol);
-                            LogFormat(quest, "Removed spawn {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
+                            selectedMarker.targetResources.Remove(existingResource.Symbol);
+                            LogFormat(quest, "Removed resource {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
                             break;
                         }
                     }
                 }
-                place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker] = spawnMarker;
-
-                // Modify selected item QuestMarker for this Place
-                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
-                if (itemMarker.targetResources != null)
-                {
-                    for (int j = 0; j < itemMarker.targetResources.Count; j++)
-                    {
-                        // Get target resource
-                        QuestResource existingResource = quest.GetResource(itemMarker.targetResources[j]);
-                        if (existingResource == null)
-                            continue;
-
-                        // Cull matching resource
-                        if (existingResource.Symbol.Equals(resource.Symbol))
-                        {
-                            itemMarker.targetResources.Remove(existingResource.Symbol);
-                            LogFormat(quest, "Removed item {0} from {1}", existingResource.Symbol.Original, place.Symbol.Original);
-                            break;
-                        }
-                    }
-                }
-                place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker] = itemMarker;
             }
 
             // TODO: Might need to hot-remove items here if timer expires while player inside target site
+        }
+
+        /// <summary>
+        /// Stores a quest exception in save file.
+        /// Should only be used for major quest-ending errors to help diagnose difficult issues.
+        /// Will only store a finite number of exceptions before overwriting oldest.
+        /// </summary>
+        /// <param name="quest">Quest throwing the exception.</param>
+        /// <param name="ex">Exception being thrown.</param>
+        public void StoreQuestException(Quest quest, Exception ex)
+        {
+            const int maxExceptions = 100;
+
+            // Remove oldest exception from list if going over max
+            if (storedExceptions.Count + 1 > maxExceptions)
+                storedExceptions.RemoveRange(0, 1);
+
+            // Store newest exception
+            StoredException storedException = new StoredException()
+            {
+                questName = quest.QuestName,
+                exception = ex,
+                stackTrace = ex.StackTrace,
+            };
+            storedExceptions.Add(storedException);
+        }
+
+        /// <summary>
+        /// Gets array of stored exceptions.
+        /// </summary>
+        public StoredException[] GetStoredExceptions()
+        {   
+            return storedExceptions.ToArray();
+        }
+
+        /// <summary>
+        /// Restores an array of stored exceptions.
+        /// </summary>
+        public void SetStoredExceptions(StoredException[] exceptions)
+        {
+            storedExceptions.Clear();
+            storedExceptions.AddRange(exceptions);
         }
 
         #endregion
@@ -1655,6 +1685,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 Quest quest = new Quest();
                 quest.RestoreSaveData(questData);
                 quests.Add(quest.UID, quest);
+                quest.ReassignLegacyQuestMarkers();
             }
 
             // Remove site links with no matching quest

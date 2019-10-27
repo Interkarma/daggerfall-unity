@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Numidium, Hazelnut
-// 
+//
 // Notes:
 //
 
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
-        public float SphereCastRadius = 0.3f;       // Radius of SphereCast used to target attacks
+        public float SphereCastRadius = 0.25f;      // Radius of SphereCast used to target attacks
         [Range(0, 1)]
         public float AttackThreshold = 0.05f;       // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
@@ -447,25 +447,23 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Set up for use below
-            Transform transform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
-            DaggerfallEntityBehaviour entityBehaviour = transform.GetComponent<DaggerfallEntityBehaviour>();
-            DaggerfallMobileUnit entityMobileUnit = transform.GetComponentInChildren<DaggerfallMobileUnit>();
-            EnemyMotor enemyMotor = transform.GetComponent<EnemyMotor>();
-            EnemySounds enemySounds = transform.GetComponent<EnemySounds>();
+            Transform hitTransform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
+            Vector3 impactPosition = arrowHit ? hitTransform.position : hit.point;
+            DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
+            DaggerfallMobileUnit entityMobileUnit = hitTransform.GetComponentInChildren<DaggerfallMobileUnit>();
+            EnemyMotor enemyMotor = hitTransform.GetComponent<EnemyMotor>();
+            EnemySounds enemySounds = hitTransform.GetComponent<EnemySounds>();
 
             // Check if hit a mobile NPC
-            MobilePersonNPC mobileNpc = transform.GetComponent<MobilePersonNPC>();
+            MobilePersonNPC mobileNpc = hitTransform.GetComponent<MobilePersonNPC>();
             if (mobileNpc)
             {
                 if (!mobileNpc.Billboard.IsUsingGuardTexture)
                 {
-                    EnemyBlood blood = transform.GetComponent<EnemyBlood>();
+                    EnemyBlood blood = hitTransform.GetComponent<EnemyBlood>();
                     if (blood)
                     {
-                        if (!arrowHit)
-                            blood.ShowBloodSplash(0, hit.point);
-                        else
-                            blood.ShowBloodSplash(0, arrowHitCollider.gameObject.transform.position);
+                        blood.ShowBloodSplash(0, impactPosition);
                     }
                     mobileNpc.Motor.gameObject.SetActive(false);
                     playerEntity.TallyCrimeGuildRequirements(false, 5);
@@ -501,7 +499,7 @@ namespace DaggerfallWorkshop.Game
                     EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
                     // Calculate damage
-                    int animTime = (int)(ScreenWeapon.GetAnimTime() * 1000);    // Get animation time, converted to ms. 
+                    int animTime = (int)(ScreenWeapon.GetAnimTime() * 1000);    // Get animation time, converted to ms.
                     int damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, entityMobileUnit.Summary.AnimStateRecord, animTime, strikingWeapon);
 
                     // Break any "normal power" concealment effects on player
@@ -523,10 +521,10 @@ namespace DaggerfallWorkshop.Game
                         else
                             enemySounds.PlayHitSound(currentLeftHandWeapon);
 
-                        EnemyBlood blood = transform.GetComponent<EnemyBlood>();
+                        EnemyBlood blood = hitTransform.GetComponent<EnemyBlood>();
                         if (blood)
                         {
-                            blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
+                            blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, impactPosition);
                         }
 
                         // Knock back enemy based on damage and enemy weight
@@ -799,7 +797,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         void ExecuteAttacks(MouseDirections direction)
-        { 
+        {
             if (ScreenWeapon)
             {
                 // Fire screen weapon animation
@@ -835,7 +833,7 @@ namespace DaggerfallWorkshop.Game
             // Origin point of ray is set back slightly to fix issue where strikes against enemy capsules touching player capsule do not connect
             RaycastHit hit;
             Ray ray = new Ray(mainCamera.transform.position + -mainCamera.transform.forward * 0.1f, mainCamera.transform.forward);
-            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach - SphereCastRadius))
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach))
             {
                 hitEnemy = WeaponDamage(hit, mainCamera.transform.forward);
             }

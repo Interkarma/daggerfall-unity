@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Entity
         MobileEnemy mobileEnemy;
         bool pickpocketByPlayerAttempted = false;
         int questFoeSpellQueueIndex = -1;
+        int questFoeItemQueueIndex = -1;
 
         // From FALL.EXE offset 0x1C0F14
         static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
@@ -79,6 +80,12 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return questFoeSpellQueueIndex; }
             set { questFoeSpellQueueIndex = value; }
+        }
+
+        public int QuestFoeItemQueueIndex
+        {
+            get { return questFoeItemQueueIndex; }
+            set { questFoeItemQueueIndex = value; }
         }
 
         public bool SoulTrapActive { get; set; }

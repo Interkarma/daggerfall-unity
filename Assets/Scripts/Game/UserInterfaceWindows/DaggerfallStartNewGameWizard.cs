@@ -564,9 +564,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUI.Instance.enableVideos)
             {
                 // Create cinematics
-                DaggerfallVidPlayerWindow cinematic1 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic1);
-                DaggerfallVidPlayerWindow cinematic2 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic2);
-                DaggerfallVidPlayerWindow cinematic3 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic3);
+                DaggerfallVidPlayerWindow cinematic1 = (DaggerfallVidPlayerWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { uiManager, newGameCinematic1 });
+                DaggerfallVidPlayerWindow cinematic2 = (DaggerfallVidPlayerWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { uiManager, newGameCinematic2 });
+                DaggerfallVidPlayerWindow cinematic3 = (DaggerfallVidPlayerWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { uiManager, newGameCinematic3 });
 
                 // End of final cinematic will launch game
                 cinematic3.OnVideoFinished += TriggerGame;

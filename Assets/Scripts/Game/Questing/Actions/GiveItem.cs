@@ -66,32 +66,52 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 throw new Exception(string.Format("Could not find target resource symbol {0}", targetSymbol));
             }
 
-            // Target must exist in the world
-            if (!target.QuestResourceBehaviour)
-                return;
-
-            // Must have an Entity to receive item
-            DaggerfallEntityBehaviour entityBehaviour = target.QuestResourceBehaviour.GetComponent<DaggerfallEntityBehaviour>();
-            if (!entityBehaviour)
+            // Add item to Foe resource or generic entity
+            // In practice GiveItem will always be to a Foe resource - NPCs are handled by "get item"
+            // Keeping generic GiveItem behaviour as entity catch-all and reference
+            if (target is Foe)
             {
-                SetComplete();
-                throw new Exception(string.Format("GiveItem target {0} is not an Entity with DaggerfallEntityBehaviour", targetSymbol));
-            }
+                // Add to Foe item queue
+                (target as Foe).QueueItem(item.DaggerfallUnityItem);
 
-            // Assign item for player to find
-            //  * Some quests assign item to Foe at create time, others on injured event
-            //  * It's possible for target enemy to be one-shot or to be killed by other means (such as "killall")
-            //  * This assignment will direct quest loot item either to live enemy or corpse loot container
-            if (entityBehaviour.CorpseLootContainer)
-            {
-                // If enemy is already dead then place item in corpse loot container
-                entityBehaviour.CorpseLootContainer.Items.AddItem(item.DaggerfallUnityItem);
+                // Dequeue items on entity immediately if target already exists in the world
+                // Will also handle placing items to dead enemy loot container
+                if (target.QuestResourceBehaviour)
+                {
+                    DaggerfallEntityBehaviour entityBehaviour = target.QuestResourceBehaviour.GetComponent<DaggerfallEntityBehaviour>();
+                    if (entityBehaviour)
+                        target.QuestResourceBehaviour.AddItemQueue(target as Foe, entityBehaviour);
+                }
             }
             else
             {
-                // Otherwise add quest Item to Entity item collection
-                // It will be transferred to corpse marker loot container when dropped
-                entityBehaviour.Entity.Items.AddItem(item.DaggerfallUnityItem);
+                // Target must exist in the world
+                if (!target.QuestResourceBehaviour)
+                    return;
+
+                // Must have an Entity to receive item
+                DaggerfallEntityBehaviour entityBehaviour = target.QuestResourceBehaviour.GetComponent<DaggerfallEntityBehaviour>();
+                if (!entityBehaviour)
+                {
+                    SetComplete();
+                    throw new Exception(string.Format("GiveItem target {0} is not an Entity with DaggerfallEntityBehaviour", targetSymbol));
+                }
+
+                // Assign item for player to find
+                //  * Some quests assign item to Foe at create time, others on injured event
+                //  * It's possible for target enemy to be one-shot or to be killed by other means (such as "killall")
+                //  * This assignment will direct quest loot item either to live enemy or corpse loot container
+                if (entityBehaviour.CorpseLootContainer)
+                {
+                    // If enemy is already dead then place item in corpse loot container
+                    entityBehaviour.CorpseLootContainer.Items.AddItem(item.DaggerfallUnityItem);
+                }
+                else
+                {
+                    // Otherwise add quest Item to Entity item collection
+                    // It will be transferred to corpse marker loot container when dropped
+                    entityBehaviour.Entity.Items.AddItem(item.DaggerfallUnityItem);
+                }
             }
 
             // Remove item from player inventory if they are holding it

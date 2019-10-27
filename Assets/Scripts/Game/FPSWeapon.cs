@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game
             if (WeaponType == WeaponTypes.Bow)
                 weaponAnimRecordIndex = 0; // Bow has only 1 animation
             else
-                weaponAnimRecordIndex = (int)weaponState;
+                weaponAnimRecordIndex = weaponAnims[(int)weaponState].Record;
 
             try
             {

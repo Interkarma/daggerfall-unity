@@ -283,12 +283,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 SetTalkModeWhereIs();
                 talkCategoryLastUsed = TalkCategory.None; // enforce that function SetTalkCategoryLocation does not skip itself and updated its topic list
                 SetTalkCategoryLocation();
-                panelTone.Position = panelToneNormalPos;
             }
 
             selectedTalkOption = TalkOption.WhereIs;
             selectedTalkCategory = TalkCategory.Location;
-            selectedTalkTone = TalkTone.Normal;
             talkCategoryLastUsed = TalkCategory.None;
             talkOptionLastUsed = TalkOption.None;
             toneLastUsed = -1;
@@ -542,6 +540,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
             listboxTopic.HorizontalScrollMode = ListBox.HorizontalScrollModes.PixelWise;
             listboxTopic.RectRestrictedRenderArea = new Rect(listboxTopic.Position, listboxTopic.Size);
+            listboxTopic.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             //SetListItems(ref listboxTopic, ref listTopicLocation);
             listboxTopic.OnUseSelectedItem += ListboxTopic_OnUseSelectedItem;
             listboxTopic.OnSelectItem += ListboxTopic_OnSelectItem;
@@ -605,6 +604,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxConversation.WrapTextItems = true;
             listboxConversation.WrapWords = true;
             listboxConversation.RectRestrictedRenderArea = new Rect(listboxConversation.Position, listboxConversation.Size);
+            listboxConversation.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             listboxConversation.VerticalScrollMode = ListBox.VerticalScrollModes.PixelWise;
             listboxConversation.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
             mainPanel.Components.Add(listboxConversation);

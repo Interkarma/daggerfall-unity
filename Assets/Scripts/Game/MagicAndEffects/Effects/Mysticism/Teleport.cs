@@ -114,6 +114,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Prompt for outcome
             DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallMessageBox.CommonMessageBoxButtons.AnchorTeleport, teleportOrSetAnchor, DaggerfallUI.Instance.UserInterfaceManager.TopWindow);
+            // QoL, does not match classic. No magicka refund, though
+            mb.AllowCancel = true;
             mb.OnButtonClick += EffectActionPrompt_OnButtonClick;
             mb.Show();
         }
@@ -155,6 +157,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);      // Player is outside
                 else if (playerEnterExit.IsPlayerInsideBuilding)
                     SaveLoadManager.CacheScene(playerEnterExit.Interior.name);                      // Player inside a building
+                else // Player inside a dungeon
+                    playerEnterExit.TransitionDungeonExteriorImmediate();
 
                 // Need to load some other part of the world again - player could be anywhere
                 PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;

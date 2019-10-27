@@ -213,11 +213,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                     Armor armor = (Armor)UnityEngine.Random.Range(102, 108 + 1);
                     rewardArmor.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
                 }
-                flags = flags | ArmorFlagMask;
-                DaggerfallUI.MessageBox(ArmorId);
-                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor);
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(ArmorId);
+                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor, item => flags = flags | ArmorFlagMask);
+                mb.OnClose += ReceiveArmorPopup_OnClose;
             }
+        }
+
+        private void ReceiveArmorPopup_OnClose()
+        {
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
         }
 
         public void ReceiveHouse()
@@ -276,12 +280,12 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Serialization
 
-        internal override GuildMembership_v1 GetGuildData()
+        public override GuildMembership_v1 GetGuildData()
         {
             return new GuildMembership_v1() { rank = rank, lastRankChange = lastRankChange, variant = (int)order, flags = flags };
         }
 
-        internal override void RestoreGuildData(GuildMembership_v1 data)
+        public override void RestoreGuildData(GuildMembership_v1 data)
         {
             base.RestoreGuildData(data);
             order = (Orders)data.variant;

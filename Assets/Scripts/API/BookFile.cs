@@ -109,7 +109,7 @@ namespace DaggerfallConnect.Arena2
         public void OpenBook(byte[] data, string name)
         {
             bookFile.Load(data, name);
-            ReadHeader();
+            ReadHeader(name.StartsWith("BOK", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace DaggerfallConnect.Arena2
 
         #region Private Methods
 
-        void ReadHeader()
+        void ReadHeader(bool randomPrice = true)
         {
             BinaryReader reader = bookFile.GetReader();
 
@@ -150,11 +150,15 @@ namespace DaggerfallConnect.Arena2
             {
                 header.PageOffsets[i] = reader.ReadUInt32();
             }
-            // Overwrite price field using random seeded with first 4 bytes.
-            // (See https://forums.dfworkshop.net/viewtopic.php?f=23&t=1576)
-            reader.BaseStream.Position = 0;
-            DFRandom.Seed = reader.ReadUInt32(); // first 4 bytes of book file as a uint
-            header.Price = (uint)DFRandom.random_range_inclusive(300, 800);
+            
+            if (randomPrice)
+            {
+                // Overwrite price field using random seeded with first 4 bytes.
+                // (See https://forums.dfworkshop.net/viewtopic.php?f=23&t=1576)
+                reader.BaseStream.Position = 0;
+                DFRandom.Seed = reader.ReadUInt32(); // first 4 bytes of book file as a uint
+                header.Price = (uint)DFRandom.random_range_inclusive(300, 800);
+            }
         }
 
         #endregion

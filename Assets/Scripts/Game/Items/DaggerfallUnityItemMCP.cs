@@ -150,10 +150,21 @@ namespace DaggerfallWorkshop.Game.Items
             public override string BookAuthor()
             {   // %ba
                 BookFile bookFile = new BookFile();
-                string name = BookFile.messageToBookFilename(parent.message);
-                if (!BookReplacement.TryImportBook(name, bookFile))
-                    bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
-                return bookFile.Author;
+
+                string name = DaggerfallUnity.Settings.CustomBooksImport ?
+                    GameManager.Instance.ItemHelper.GetBookFileName(parent.message) :
+                    BookFile.messageToBookFilename(parent.message);
+
+                if (name != null)
+                {
+                    if (!BookReplacement.TryImportBook(name, bookFile))
+                        bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name);
+
+                    if (bookFile.Author != null)
+                        return bookFile.Author;
+                }
+
+                return TextManager.Instance.GetText("DaggerfallUI", "unknownAuthor");
             }
 
             public override string PaintingSubject()

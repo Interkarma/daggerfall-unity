@@ -413,9 +413,11 @@ namespace DaggerfallWorkshop.Game.Player
                         while (factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
                             factionData = factionDict[factionData.parent];
 
-                        // Propagate reputation changes for all children of the root
+                        // Propagate reputation changes for all children of the root, or just the sindle faction
                         if (factionData.children != null)
                             PropagateReputationChange(factionData, factionID, amount);
+                        else
+                            ChangeReputation(factionID, amount);
 
                         // If a temple deity faction, also propagate rep for generic temple faction hierarchy
                         if (factionData.type == (int)FactionFile.FactionTypes.God)
@@ -593,13 +595,20 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
-        /// Get faction2 relation to faction1. Returns 1 if faction2 is the parent of faction1, 2 if faction1 and faction2 share the same parent
-        /// 3 if faction2 is a child of faction1, and 0 if none of the above.
+        /// Get faction2 relation to faction1. Returns:
+        ///    -1 if factions are unrelated
+        ///     0 if factions are the same
+        ///     1 if faction2 is the parent of faction1
+        ///     2 if faction1 and faction2 share the same parent
+        ///     3 if faction2 is a child of faction1
         /// </summary>
         public int GetFaction2ARelationToFaction1(int factionID1, int factionID2)
         {
             if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
             {
+                if (factionID1 == factionID2)
+                    return 0;
+
                 FactionFile.FactionData factionData1 = factionDict[factionID1];
 
                 if (factionData1.parent == factionID2)
@@ -616,7 +625,7 @@ namespace DaggerfallWorkshop.Game.Player
                     return 3;
             }
 
-            return 0;
+            return -1;
         }
 
 

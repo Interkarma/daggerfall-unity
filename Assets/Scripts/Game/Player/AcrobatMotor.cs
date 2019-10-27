@@ -11,7 +11,7 @@ namespace DaggerfallWorkshop.Game
         public float jumpSpeed = 8.0f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
-        public float fallingDamageThreshold = 10.0f;
+        public float fallingDamageThreshold = 5.0f;
         public bool airControl = false;
 
         PlayerMotor playerMotor;

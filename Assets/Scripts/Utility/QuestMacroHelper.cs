@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Questing;
@@ -50,6 +51,35 @@ namespace DaggerfallWorkshop.Utility
         #endregion
 
         #region Quests
+
+        /// <summary>
+        /// Gets reference to all QuestResource objects referenced by message macros
+        /// </summary>
+        /// <param name="message">Message to extract resources from.</param>
+        /// <returns>QuestResource array or null.</returns>
+        public QuestResource[] GetMessageResources(Message message)
+        {
+            // Must have a message
+            if (message == null)
+                return null;
+
+            // Get raw message and enumerate resource tokens
+            List<QuestResource> resources = new List<QuestResource>();
+            TextFile.Token[] tokens = message.GetTextTokens(-1, false);
+            for (int token = 0; token < tokens.Length; token++)
+            {
+                string[] words = GetWords(tokens[token].text);
+                for (int word = 0; word < words.Length; word++)
+                {
+                    Macro macro = GetMacro(words[word]);
+                    QuestResource resource = message.ParentQuest.GetResource(macro.symbol);
+                    if (resource != null)
+                        resources.Add(resource);
+                }
+            }
+
+            return resources.ToArray();
+        }
 
         /// <summary>
         /// Expands any macros found inside quest message tokens.

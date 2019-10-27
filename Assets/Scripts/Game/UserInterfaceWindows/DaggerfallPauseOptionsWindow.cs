@@ -23,26 +23,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
-        const string nativeImgName = "OPTN00I0.IMG";
-        const int strAreYouSure = 1069;
-        const float barMaxLength = 109.1f;
+        protected const string nativeImgName = "OPTN00I0.IMG";
+        protected const int strAreYouSure = 1069;
+        protected const float barMaxLength = 109.1f;
 
-        Texture2D nativeTexture;
-        Panel optionsPanel = new Panel();
-#if !UNITY_EDITOR
-        Panel fullScreenTick;
-#endif
-        Panel headBobbingTick;
-        Panel musicBar;
-        Panel soundBar;
-        Panel detailBar;
-        DaggerfallHUD hud;
-        TextLabel versionTextLabel;
+        protected Texture2D nativeTexture;
+        protected Panel optionsPanel = new Panel();
+        protected Panel fullScreenTick;
+        protected Panel headBobbingTick;
+        protected Panel musicBar;
+        protected Panel soundBar;
+        protected Panel detailBar;
+        protected DaggerfallHUD hud;
+        protected TextLabel versionTextLabel;
 
-        readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
-        readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
+        protected readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
+        protected readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
 
-        bool saveSettings = false;
+        protected bool saveSettings = false;
 
         #endregion
 
@@ -116,17 +114,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             controlsButton.OnMouseClick += ControlsButton_OnMouseClick;
 
             // Full screen
-
-#if UNITY_EDITOR
-            //Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
-            //fullScreenButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
-#else
             Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
             fullScreenButton.OnMouseClick += FullScreenButton_OnMouseClick;
             fullScreenTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), fullScreenButton);
             fullScreenTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
-            fullScreenTick.Enabled = DaggerfallUnity.Settings.Fullscreen;
-#endif
+            fullScreenTick.Enabled = DaggerfallUnity.Settings.LargeHUD;
 
             // Head bobbing
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
@@ -159,6 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update pause-persistent HUD elements
             if (hud != null)
             {
+                hud.LargeHUD.Update();
                 hud.ActiveSpells.Update();
                 hud.EscortingFaces.Update();
                 hud.HUDVitals.Update();
@@ -175,6 +168,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Draw pause-persistent HUD elements
             if (hud != null)
             {
+                hud.LargeHUD.Draw();
                 hud.ActiveSpells.Draw();
                 hud.EscortingFaces.Draw();
                 hud.HUDVitals.Draw();
@@ -267,21 +261,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //// TEMP: Quick save
-            //SaveLoadManager.Instance.QuickSave();
-            //CancelWindow();
-
-            DaggerfallUnitySaveGameWindow saveWindow = new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this);
-            uiManager.PushWindow(saveWindow);
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this, false }));
         }
 
         private void LoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TEMP: Show load window
-            //uiManager.PushWindow(new DaggerfallLoadSavedGameWindow(uiManager));
-
-            DaggerfallUnitySaveGameWindow loadWindow = new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, this);
-            uiManager.PushWindow(loadWindow);
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, this, false }));
         }
 
         private void ControlsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -289,14 +274,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenControlsWindow);
         }
 
-#if !UNITY_EDITOR
         private void FullScreenButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            fullScreenTick.Enabled = DaggerfallUnity.Settings.Fullscreen = Screen.fullScreen = !Screen.fullScreen;
+            // Fullscreen button toggles large HUD setting
+            fullScreenTick.Enabled = DaggerfallUnity.Settings.LargeHUD = !DaggerfallUnity.Settings.LargeHUD;
+
             if (!saveSettings)
                 saveSettings = true;
         }
-#endif
 
         private void HeadBobbingButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {

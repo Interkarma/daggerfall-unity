@@ -20,6 +20,9 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 namespace Wenzil.Console
 {
@@ -43,6 +46,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToDungeonDoor.name, TeleportToDungeonDoor.description, TeleportToDungeonDoor.usage, TeleportToDungeonDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestSpawnMarker.name, TeleportToQuestSpawnMarker.description, TeleportToQuestSpawnMarker.usage, TeleportToQuestSpawnMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestItemMarker.name, TeleportToQuestItemMarker.description, TeleportToQuestItemMarker.usage, TeleportToQuestItemMarker.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestMarker.name, TeleportToQuestMarker.description, TeleportToQuestMarker.usage, TeleportToQuestMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetAllQuestItems.name, GetAllQuestItems.description, GetAllQuestItems.usage, GetAllQuestItems.Execute);
             ConsoleCommandsDatabase.RegisterCommand(EndDebugQuest.name, EndDebugQuest.description, EndDebugQuest.usage, EndDebugQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
@@ -84,6 +88,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(AddWeapon.name, AddWeapon.description, AddWeapon.usage, AddWeapon.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddArmor.name, AddArmor.description, AddArmor.usage, AddArmor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddClothing.name, AddClothing.description, AddClothing.usage, AddClothing.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddAllEquip.name, AddAllEquip.description, AddAllEquip.usage, AddAllEquip.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddBook.name, AddBook.description, AddBook.usage, AddBook.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowSpellmakerWindow.name, ShowSpellmakerWindow.description, ShowSpellmakerWindow.usage, ShowSpellmakerWindow.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowItemMakerWindow.name, ShowItemMakerWindow.description, ShowItemMakerWindow.usage, ShowItemMakerWindow.Execute);
@@ -94,6 +100,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(DiseasePlayer.name, DiseasePlayer.usage, DiseasePlayer.description, DiseasePlayer.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PoisonPlayer.name, PoisonPlayer.usage, PoisonPlayer.description, PoisonPlayer.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(DumpRegion.name, DumpRegion.description, DumpRegion.usage, DumpRegion.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(DumpLocation.name, DumpLocation.description, DumpLocation.usage, DumpLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBlock.name, DumpBlock.description, DumpBlock.usage, DumpBlock.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpLocBlocks.name, DumpLocBlocks.description, DumpLocBlocks.usage, DumpLocBlocks.Execute);
             ConsoleCommandsDatabase.RegisterCommand(DumpBuilding.name, DumpBuilding.description, DumpBuilding.usage, DumpBuilding.Execute);
@@ -102,31 +110,110 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PlayVID.name, PlayVID.description, PlayVID.usage, PlayVID.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(UnmuteQuestNPCs.name, UnmuteQuestNPCs.description, UnmuteQuestNPCs.usage, UnmuteQuestNPCs.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ChangeModSettings.name, ChangeModSettings.description, ChangeModSettings.usage, ChangeModSettings.Execute);
+        }
+
+        private static class DumpRegion
+        {
+            public static readonly string name = "dumpregion";
+            public static readonly string error = "Player not in a region, unable to dump";
+            public static readonly string usage = "dumpregion";
+            public static readonly string description = "Dump the current region (from MAPS.BSA) that the player is currently in to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 0)
+                {
+                    return HelpCommand.Execute(DumpRegion.name);
+                }
+                else
+                {
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    if (playerGPS)
+                    {
+                        DFRegion region = playerGPS.CurrentRegion;
+
+                        string regionJson = SaveLoadManager.Serialize(region.GetType(), region);
+                        string fileName = WorldDataReplacement.GetDFRegionReplacementFilename(playerGPS.CurrentRegionIndex);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), regionJson);
+                        return "Region data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    }
+                    return error;
+                }
+            }
+        }
+
+        private static class DumpLocation
+        {
+            public static readonly string name = "dumplocation";
+            public static readonly string error = "Player not at a location, unable to dump";
+            public static readonly string usage = "dumplocation";
+            public static readonly string description = "Dump the current location (from MAPS.BSA) that the player is currently in to json file";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 0)
+                {
+                    return HelpCommand.Execute(DumpLocation.name);
+                }
+                else
+                {
+                    PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
+                    if (playerGPS.HasCurrentLocation)
+                    {
+                        DFLocation location = playerGPS.CurrentLocation;
+
+                        string locJson = SaveLoadManager.Serialize(location.GetType(), location);
+                        string fileName = WorldDataReplacement.GetDFLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), locJson);
+                        return "Location data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    }
+                    return error;
+                }
+            }
         }
 
         private static class DumpBlock
         {
             public static readonly string name = "dumpblock";
             public static readonly string error = "Failed to dump block";
-            public static readonly string usage = "dumpblock blockName";
-            public static readonly string description = "Dump a block to json file";
+            public static readonly string usage = "dumpblock [blockName]";
+            public static readonly string description = "Dump a block to json file, or index if no block name specified";
 
             public static string Execute(params string[] args)
             {
                 if (args.Length == 0)
                 {
-                    return HelpCommand.Execute(DumpBlock.name);
+                    string blockIndex = "";
+                    BsaFile blockBsa = DaggerfallUnity.Instance.ContentReader.BlockFileReader.BsaFile;
+                    for (int b = 0; b < blockBsa.Count; b++)
+                    {
+                        blockIndex += string.Format("{0}: {1}\n", b, blockBsa.GetRecordName(b));
+                    }
+                    string fileName = Path.Combine(Application.persistentDataPath, "BlockIndex.txt");
+                    File.WriteAllText(fileName, blockIndex);
+                    return "Block index data written to " + Path.Combine(Application.persistentDataPath, fileName);
                 }
                 else
                 {
                     DFBlock blockData;
-                    if (RMBLayout.GetBlockData(args[0], out blockData))
+                    if (!RMBLayout.GetBlockData(args[0], out blockData))
+                    {
+                        if (args[0].EndsWith(".RDB", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(args[0]);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(blockData.Name))
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
-                        File.WriteAllText(Path.Combine(Application.persistentDataPath, args[0]), blockJson);
-                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, args[0]);
+                        string fileName = WorldDataReplacement.GetDFBlockReplacementFilename(blockData.Name);
+                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
+                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
                     }
                     return error;
                 }
@@ -137,8 +224,8 @@ namespace Wenzil.Console
         {
             public static readonly string name = "dumplocblocks";
             public static readonly string error = "Failed to dump locations";
-            public static readonly string usage = "dumplocblocks [blockName.RMB]*";
-            public static readonly string description = "Dump the names of blocks for each location, or locations for given block(s), to json file";
+            public static readonly string usage = "dumplocblocks [locindex|(blockName.RMB )*]\nExamples:\ndumplocblocks\ndumplocblocks locindex\ndumplocblocks RESIAM10.RMB GEMSAM02.RMB";
+            public static readonly string description = "Dump the names of blocks for each location, location index or locations for list of given block(s), to json file";
 
             public static string Execute(params string[] args)
             {
@@ -159,6 +246,22 @@ namespace Wenzil.Console
                     string fileName = Path.Combine(Application.persistentDataPath, "LocationBlockNames.json");
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
+                }
+                else if (args.Length == 1 && args[0] == "locindex")
+                {
+                    string locIndex = "";
+                    for (int region = 0; region < mapFileReader.RegionCount; region++)
+                    {
+                        DFRegion dfRegion = mapFileReader.GetRegion(region);
+                        for (int location = 0; location < dfRegion.LocationCount; location++)
+                        {
+                            DFLocation dfLoc = mapFileReader.GetLocation(region, location);
+                            locIndex += string.Format("{0}, {1}: {2}\n", region, dfLoc.LocationIndex, dfLoc.Name);
+                        }
+                    }
+                    string fileName = Path.Combine(Application.persistentDataPath, "LocationIndex.txt");
+                    File.WriteAllText(fileName, locIndex);
+                    return "Location index written to " + fileName;
                 }
                 else
                 {
@@ -651,6 +754,8 @@ namespace Wenzil.Console
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
+                else if (speed < 0)
+                    return "Invalid time scale";
                 else
                 {
                     try
@@ -1071,6 +1176,50 @@ namespace Wenzil.Console
             }
         }
 
+        private static class TeleportToQuestMarker
+        {
+            public static readonly string name = "tele2qmarker";
+            public static readonly string error = "Could not find quest marker at current location";
+            public static readonly string description = "Teleport player to active quest marker (monster, NPC placement, item, etc.)";
+            public static readonly string usage = "tele2qmarker";
+
+            public static string Execute(params string[] args)
+            {
+                QuestMarker spawnMarker;
+                Vector3 buildingOrigin;
+                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(out spawnMarker, out buildingOrigin);
+                if (!result)
+                    return error;
+
+                if (spawnMarker.targetResources == null || spawnMarker.targetResources.Count == 0)
+                    return error;
+
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                {
+                    Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
+                    GameManager.Instance.PlayerObject.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition;
+                }
+                else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                {
+                    // Find active marker type - saves on applying building matrix, etc. to derive position again
+                    Vector3 markerPos;
+                    if (GameManager.Instance.PlayerEnterExit.Interior.FindClosestMarker(
+                        out markerPos,
+                        (DaggerfallInterior.InteriorMarkerTypes)spawnMarker.markerType,
+                        GameManager.Instance.PlayerObject.transform.position))
+                    {
+                        GameManager.Instance.PlayerObject.transform.position = markerPos;
+                    }
+                }
+                else
+                {
+                    return error;
+                }
+                GameManager.Instance.PlayerMotor.FixStanding();
+
+                return "Finished";
+            }
+        }
 
         private static class TeleportToQuestSpawnMarker
         {
@@ -1081,17 +1230,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                QuestMarker spawnMarker;
-                Vector3 buildingOrigin;
-                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestSpawn, out spawnMarker, out buildingOrigin);
-                if (!result)
-                    return error;
-
-                Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
-                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition + buildingOrigin;
-                GameManager.Instance.PlayerMotor.FixStanding();
-
-                return "Finished";
+                return TeleportToQuestMarker.Execute() + "...tele2qspawn is deprecated - please use tele2qmarker";
             }
         }
 
@@ -1104,17 +1243,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                QuestMarker itemMarker;
-                Vector3 buildingOrigin;
-                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestItem, out itemMarker, out buildingOrigin);
-                if (!result)
-                    return error;
-
-                Vector3 dungeonBlockPosition = new Vector3(itemMarker.dungeonX * RDBLayout.RDBSide, 0, itemMarker.dungeonZ * RDBLayout.RDBSide);
-                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + itemMarker.flatPosition + buildingOrigin;
-                GameManager.Instance.PlayerMotor.FixStanding();
-
-                return "Finished";
+                return TeleportToQuestMarker.Execute() + "...tele2qitem is deprecated - please use tele2qmarker";
             }
         }
 
@@ -1545,7 +1674,8 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                if (args.Length < 1) return "see usage";
+                if (args.Length < 1)
+                    return usage;
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
@@ -1559,11 +1689,11 @@ namespace Wenzil.Console
                 }
 
                 if (n < 1)
-                    return "Error - see usage";
+                    return usage;
 
                 if (args[0] == "gold")
                 {
-                    GameManager.Instance.PlayerEntity.GoldPieces += n;
+                    playerEntity.GoldPieces += n;
                     return string.Format("Added {0} gold pieces", n);
                 }
 
@@ -1791,6 +1921,170 @@ namespace Wenzil.Console
                     ItemBuilder.CreateMensClothing(x.Parse<MensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>()) :
                     ItemBuilder.CreateWomensClothing(x.Parse<WomensClothing>(), x.Parse<Races>(), -1, x.Parse<DyeColors>())
                 );
+            }
+        }
+
+        private static class AddAllEquip
+        {
+            public static readonly string name = "add_all_equip";
+            public static readonly string description = "Adds all equippable item types to inventory for the current characters gender & race. (for testing paperdoll images)";
+            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons)";
+
+            public static ArmorMaterialTypes[] armorMaterials = {
+                ArmorMaterialTypes.Leather, ArmorMaterialTypes.Chain, ArmorMaterialTypes.Iron, ArmorMaterialTypes.Steel,
+                ArmorMaterialTypes.Silver, ArmorMaterialTypes.Elven, ArmorMaterialTypes.Dwarven, ArmorMaterialTypes.Mithril,
+                ArmorMaterialTypes.Adamantium, ArmorMaterialTypes.Ebony, ArmorMaterialTypes.Orcish, ArmorMaterialTypes.Daedric
+            };
+            public static WeaponMaterialTypes[] weaponMaterials = {
+                WeaponMaterialTypes.Iron, WeaponMaterialTypes.Steel, WeaponMaterialTypes.Silver, WeaponMaterialTypes.Elven,
+                WeaponMaterialTypes.Dwarven, WeaponMaterialTypes.Mithril, WeaponMaterialTypes.Adamantium, WeaponMaterialTypes.Ebony,
+                WeaponMaterialTypes.Orcish, WeaponMaterialTypes.Daedric
+            };
+
+            public static List<MensClothing> mensUsableClothing = new List<MensClothing>() {
+                MensClothing.Casual_cloak, MensClothing.Formal_cloak, MensClothing.Reversible_tunic, MensClothing.Plain_robes,
+                MensClothing.Short_shirt, MensClothing.Short_shirt_with_belt, MensClothing.Long_shirt, MensClothing.Long_shirt_with_belt,
+                MensClothing.Short_shirt_closed_top, MensClothing.Short_shirt_closed_top2, MensClothing.Long_shirt_closed_top, MensClothing.Long_shirt_closed_top2
+            };
+            public static List<WomensClothing> womensUsableClothing = new List<WomensClothing>() {
+                WomensClothing.Casual_cloak, WomensClothing.Formal_cloak, WomensClothing.Strapless_dress, WomensClothing.Plain_robes,
+                WomensClothing.Short_shirt, WomensClothing.Short_shirt_belt, WomensClothing.Long_shirt, WomensClothing.Long_shirt_belt,
+                WomensClothing.Short_shirt_closed, WomensClothing.Short_shirt_closed_belt, WomensClothing.Long_shirt_closed, WomensClothing.Long_shirt_closed_belt
+            };
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 1)
+                    return usage;
+
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                ItemCollection items = playerEntity.Items;
+                DaggerfallUnityItem newItem = null;
+
+                switch (args[0])
+                {
+                    case "clothing":
+                    case "clothingAllDyes":
+                        DyeColors[] clothingDyes = (args[0] == "clothing") ? new DyeColors[] { DyeColors.White } : ItemBuilder.clothingDyes;
+                        ItemGroups clothing = (playerEntity.Gender == Genders.Male) ? ItemGroups.MensClothing : ItemGroups.WomensClothing;
+                        foreach (DyeColors dye in clothingDyes)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(clothing);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(clothing, i);
+                                if ((playerEntity.Gender == Genders.Male && mensUsableClothing.Contains((MensClothing)enumArray.GetValue(i))) ||
+                                    womensUsableClothing.Contains((WomensClothing)enumArray.GetValue(i)))
+                                    itemTemplate.variants = 1;
+
+                                for (int v = 0; v < itemTemplate.variants; v++)
+                                {
+                                    newItem = new DaggerfallUnityItem(clothing, i);
+                                    ItemBuilder.SetRace(newItem, playerEntity.Race);
+                                    newItem.dyeColor = dye;
+                                    newItem.CurrentVariant = v;
+                                    playerEntity.Items.AddItem(newItem);
+                                }
+                            }
+                        }
+                        return string.Format("Added all clothing types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
+
+                    case "armor":
+                        foreach (ArmorMaterialTypes material in armorMaterials)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Armor);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                Armor armorType = (Armor)enumArray.GetValue(i);
+                                int vs = 0;
+                                int vf = 0;
+                                if (armorType == Armor.Cuirass || armorType == Armor.Left_Pauldron || armorType == Armor.Right_Pauldron)
+                                {
+                                    if (material == ArmorMaterialTypes.Chain)
+                                    {
+                                        vs = 4;
+                                    }
+                                    else if (material >= ArmorMaterialTypes.Iron)
+                                    {
+                                        vs = 1;
+                                        vf = 4;
+                                    }
+                                }
+                                else if (armorType == Armor.Greaves)
+                                {
+                                    if (material == ArmorMaterialTypes.Leather)
+                                    {
+                                        vs = 0;
+                                        vf = 2;
+                                    }
+                                    else if (material == ArmorMaterialTypes.Chain)
+                                    {
+                                        vs = 6;
+                                    }
+                                    else if (material >= ArmorMaterialTypes.Iron)
+                                    {
+                                        vs = 2;
+                                        vf = 6;
+                                    }
+                                }
+                                else if (armorType == Armor.Gauntlets && material != ArmorMaterialTypes.Leather)
+                                {
+                                    vs = 1;
+                                }
+                                else
+                                {
+                                    ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i);
+                                    vf = itemTemplate.variants;
+                                }
+                                if (vf == 0)
+                                    vf = vs + 1;
+
+                                for (int v = vs; v < vf; v++)
+                                {
+                                    newItem = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armorType, material, v);
+                                    playerEntity.Items.AddItem(newItem);
+                                }
+                            }
+                        }
+                        return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
+
+                    case "weapons":
+                        foreach (WeaponMaterialTypes material in weaponMaterials)
+                        {
+                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
+                            for (int i = 0; i < enumArray.Length; i++)
+                            {
+                                newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
+                                playerEntity.Items.AddItem(newItem);
+                            }
+                        }
+                        return string.Format("Added all weapon types for any gender/race.");
+
+                    default:
+                        return "No valid equippable item group specified.";
+                }
+
+            }
+        }
+
+        private static class AddBook
+        {
+            public static readonly string name = "addbook";
+            public static readonly string description = "Gives player the book with the given id or name.";
+            public static readonly string usage = "addbook {id|name}";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length != 1)
+                    return usage;
+
+                int id;
+                DaggerfallUnityItem book = int.TryParse(args[0], out id) ? ItemBuilder.CreateBook(id) : ItemBuilder.CreateBook(args[0]);
+                if (book == null)
+                    return "Failed to create book";
+
+                GameManager.Instance.PlayerEntity.Items.AddItem(book);
+                return string.Format("Added {0} to inventory.", book.ItemName);
             }
         }
 
@@ -2101,15 +2395,15 @@ namespace Wenzil.Console
         private static class PlayFLC
         {
             public static readonly string name = "playflc";
-            public static readonly string description = "Play the specified .FLC file";
-            public static readonly string usage = "playflc {filename.flc} (e.g. playflc azura.flc)";
+            public static readonly string description = "Play the specified .FLC or .CEL file";
+            public static readonly string usage = "playflc {filename.flc|.cel} (e.g. playflc azura.flc | playflc warrior.cel)";
 
             public static string Execute(params string[] args)
             {
                 if (args == null || args.Length < 1)
                     return usage;
 
-                DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow window = new DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                DemoFLCWindow window = new DemoFLCWindow(DaggerfallUI.Instance.UserInterfaceManager);
                 window.Filename = args[0];
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(window);
 
@@ -2193,16 +2487,76 @@ namespace Wenzil.Console
             }
         }
 
-        private static class UnmuteQuestNPCs
+        private static class ClearNegativeLegalRep
         {
-            public static readonly string name = "unmutequestnpcs";
-            public static readonly string description = "Unmutes all quest npcs when 'mute npc' is stuck from a bug. Has no effect on NPCs not muted by an active quest script.";
-            public static readonly string usage = "unmutequestnpcs";
+            public static readonly string name = "clear_negativelegalrep";
+            public static readonly string description = "Negative legal reputation and banishment state for all regions is set back to 0. Does not affect positive legal reputation. Does not change factional reputation.";
+            public static readonly string usage = "clear_negativelegalrep";
 
             public static string Execute(params string[] args)
             {
-                int count = QuestMachine.Instance.UnmuteQuestNPCs();
-                return string.Format("Unmuted {0} active quest NPCs", count);
+                string output = string.Empty;
+                if (GameManager.Instance.PlayerEntity != null && GameManager.Instance.PlayerEntity.RegionData != null)
+                {
+                    for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
+                    {
+                        string regionName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+                        int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
+                        if (rep < 0)
+                        {
+                            GameManager.Instance.PlayerEntity.RegionData[region].LegalRep = 0;
+                            GameManager.Instance.PlayerEntity.RegionData[region].SeverePunishmentFlags = 0;
+                            output += string.Format("Cleared negative legal reputation for '{0}'.\n", regionName);
+                        }
+                    }
+                    output += "Finished";
+                }
+                else
+                {
+                    return "Could not read legal reputation data.";
+                }
+
+                return output;
+            }
+        }
+
+        private static class SummonDaedra
+        {
+            public static readonly string name = "summondaedra";
+            public static readonly string description = "Summons a daedra prince to test quest delivery.";
+            public static readonly string usage = "summondaedra [filename] (note: matches the .VID filename for daedea in /arena2 folder.)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+
+                bool found = false;
+                string validNames = string.Empty;
+                DaggerfallQuestPopupWindow.DaedraData daedraToSummon = new DaggerfallQuestPopupWindow.DaedraData();
+                DaggerfallQuestPopupWindow.DaedraData[] daedraData = DaggerfallQuestPopupWindow.daedraData;
+                foreach (var daedra in daedraData)
+                {
+                    string name = daedra.vidFile.Split('.')[0];
+                    if (string.Compare(args[0], name, true) == 0)
+                    {
+                        daedraToSummon = daedra;
+                        found = true;
+                    }
+                    validNames += name + ", ";
+                }
+
+                if (!found)
+                    return string.Format("Could not find daedra named {0}. Valid names are {1}", args[0], validNames);
+
+                IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
+                Quest quest = GameManager.Instance.QuestListsManager.GetQuest(daedraToSummon.quest);
+                if (quest != null)
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.DaedraSummoned, new object[] { uiManager, daedraToSummon, quest }));
+                else
+                    return string.Format("Could not find quest {0} for deadra {1}", daedraToSummon.quest, args[0]);
+
+                return "Finished";
             }
         }
 
@@ -2227,6 +2581,60 @@ namespace Wenzil.Console
                 return "Finished";
             }
         }
-    }
 
+        private static class ChangeModSettings
+        {
+            static ConsoleController controller;
+
+            public static readonly string name = "change_modsettings";
+            public static readonly string description = "Change mod settings (experimental).";
+            public static readonly string usage = "change_modsettings";
+
+            public static string Execute(params string[] args)
+            {
+                if (!ModManager.Instance)
+                    return "ModManager instance not found.";
+
+                string[] modTitles = ModManager.Instance.Mods.Where(x => x.HasSettings && x.LoadSettingsCallback != null).Select(x => x.Title).ToArray();
+                if (modTitles.Length == 0)
+                    return "There are no mods that support live changes to settings.";
+
+                ModManager.Instance.StartCoroutine(OpenSettingsWindow(modTitles));
+                return string.Format("Found {0} mod(s) that support live changes to settings. Close the console to open settings window.", modTitles.Length);
+            }
+
+            private static IEnumerator OpenSettingsWindow(string[] modTitles)
+            {
+                if (!FindController())
+                    yield break;
+
+                while (controller.ui.isConsoleOpen)
+                    yield return null;
+
+                var userInterfaceManager = DaggerfallUI.Instance.UserInterfaceManager;
+
+                var listPicker = new DaggerfallListPickerWindow(userInterfaceManager);
+                listPicker.ListBox.AddItems(modTitles);
+                listPicker.OnItemPicked += (index, modTitle) =>
+                {
+                    listPicker.PopWindow();
+                    userInterfaceManager.PushWindow(new ModSettingsWindow(userInterfaceManager, ModManager.Instance.GetMod(modTitle), true));
+                };
+                userInterfaceManager.PushWindow(listPicker);
+            }
+
+            private static bool FindController()
+            {
+                if (controller)
+                    return true;
+
+                GameObject console = GameObject.Find("Console");
+                if (console && (controller = console.GetComponent<ConsoleController>()))
+                    return true;
+
+                Debug.LogError("Failed to find console controller.");
+                return false;
+            }
+        }
+    }
 }

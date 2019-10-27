@@ -493,6 +493,7 @@ MonoBehaviour:
   MinWaitTime: 5
   MaxWaitTime: 25
   Presets: 0
+  IsMuted: 0
   doNotPlayInCastle: 1
   PlayLightningEffect: 0
   LightForEffects: {fileID: 0}
@@ -1244,6 +1245,7 @@ MonoBehaviour:
   MinWaitTime: 5
   MaxWaitTime: 28
   Presets: 1
+  IsMuted: 0
   doNotPlayInCastle: 1
   PlayLightningEffect: 0
   LightForEffects: {fileID: 0}
@@ -2084,8 +2086,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40a1801474a7dae4599734df630cd5f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameobjectRotationArrow1: {fileID: 0}
-  gameobjectRotationArrow2: {fileID: 0}
 --- !u!4 &1844948392
 Transform:
   m_ObjectHideFlags: 0

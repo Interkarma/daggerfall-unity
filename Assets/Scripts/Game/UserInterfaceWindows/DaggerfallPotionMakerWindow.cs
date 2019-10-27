@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < playerItems.Count; i++)
                 {
                     DaggerfallUnityItem item = playerItems.GetItem(i);
-                    if (item.IsIngredient)
+                    if (item.IsIngredient && !item.IsEnchanted)
                         ingredients.Add(item);
                     else if (item.IsPotionRecipe)
                         recipeItems.Add(item);
@@ -352,9 +352,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
                 if (!stacked)
+                {
                     GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
+                    GameManager.Instance.PlayerEntity.WagonItems.RemoveItem(item);
+                }
             }
-
             // Empty cauldron and update list displays
             cauldron.Clear();
             ingredientsListScroller.Items = ingredients;

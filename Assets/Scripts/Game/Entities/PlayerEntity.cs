@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public uint TimeOfLastSkillTraining { get { return timeOfLastSkillTraining; } set { timeOfLastSkillTraining = value; } }
         public uint TimeOfLastStealthCheck { get { return timeOfLastStealthCheck; } set { timeOfLastStealthCheck = value; } }
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
-        public int CurrentLevelUpSkillSum { get { return currentLevelUpSkillSum; } }
+        public int CurrentLevelUpSkillSum { get { return currentLevelUpSkillSum; } internal set { currentLevelUpSkillSum = value; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
         public bool OghmaLevelUp { get { return oghmaLevelUp; } set { oghmaLevelUp = value; } }
         public short[] SGroupReputations { get { return sGroupReputations; } set { sGroupReputations = value; } }
@@ -177,6 +177,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Crimes CrimeCommitted { get { return crimeCommitted; } set { SetCrimeCommitted(value); } }
         public bool HaveShownSurrenderToGuardsDialogue { get { return haveShownSurrenderToGuardsDialogue; } set { haveShownSurrenderToGuardsDialogue = value; } }
         public bool Arrested { get { return arrested; } set { arrested = value; } }
+        public bool InPrison { get ; set ; }
         public bool IsInBeastForm { get; set; }
         public List<string> BackStory { get; set; }
         public VampireClans PreviousVampireClan { get; set; }
@@ -530,7 +531,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (timeOfDay < 360 || timeOfDay > 1080)
                     {
                         // In a location area at night
-                        if (UnityEngine.Random.Range(0, 24) == 0)
+                        if (FormulaHelper.RollRandomSpawn_LocationNight() == 0)
                         {
                             GameObjectHelper.CreateFoeSpawner(true, RandomEncounters.ChooseRandomEnemy(false), 1, minLocationDistance);
                             return true;
@@ -542,13 +543,13 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (timeOfDay >= 360 && timeOfDay <= 1080)
                     {
                         // Wilderness during day
-                        if (UnityEngine.Random.Range(0, 36) != 0)
+                        if (FormulaHelper.RollRandomSpawn_WildernessDay() != 0)
                             return false;
                     }
                     else
                     {
                         // Wilderness at night
-                        if (UnityEngine.Random.Range(0, 24) != 0)
+                        if (FormulaHelper.RollRandomSpawn_WildernessNight() != 0)
                             return false;
                     }
 
@@ -565,7 +566,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     if (isResting)
                     {
-                        if (UnityEngine.Random.Range(0, 43) == 0) // Normally (0, 36) - making spawns ~20% less for rested dungeons
+                        if (FormulaHelper.RollRandomSpawn_Dungeon() == 0)
                         {
                             // TODO: Not sure how enemy type is chosen here.
                             GameObjectHelper.CreateFoeSpawner(false, RandomEncounters.ChooseRandomEnemy(false), 1, minDungeonDistance);
@@ -1548,9 +1549,7 @@ namespace DaggerfallWorkshop.Game.Entity
             List<int> keys = new List<int>(factionData.FactionDict.Keys);
             foreach (int key in keys)
             {
-                if (factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Province ||
-                        factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Group ||
-                        factionData.FactionDict[key].type == (int)FactionFile.FactionTypes.Subgroup)
+                if (isFactionValidForRumorMill(factionData.FactionDict[key]))
                 {
                     // Get power mod from allies
                     int[] allies = { factionData.FactionDict[key].ally1, factionData.FactionDict[key].ally2, factionData.FactionDict[key].ally3 };
@@ -1662,20 +1661,17 @@ namespace DaggerfallWorkshop.Game.Entity
                                     keys2.Remove(keys[randomKeyIndex]);
                                     count--;
                                 }
-                                while (random.type != (int)FactionFile.FactionTypes.Province &&
-                                       random.type != (int)FactionFile.FactionTypes.Group &&
-                                       random.type != (int)FactionFile.FactionTypes.Subgroup &&
-                                       count > 0);
+                                while (!isFactionValidForRumorMill(random) && count > 0);
 
-                                if (!factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].id, random.id)
-                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].id, random.id)
-                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally1, random.id)
-                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally2, random.id)
-                                      && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally3, random.id)
-                                      && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id)
-                                      && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id)
-                                      && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id)
-                                      && factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id) == 0)
+                                if (!factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].id, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].id, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally1, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally2, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally3, random.id) &&
+                                    !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id) &&
+                                    !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id) &&
+                                    !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id) &&
+                                    factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id) == -1)
                                 {
                                     int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
                                     if (Dice100.SuccessRoll((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5))
@@ -1798,22 +1794,19 @@ namespace DaggerfallWorkshop.Game.Entity
                                     keys2.Remove(keys[randomKeyIndex]);
                                     count--;
                                 }
-                                while (random.type != (int)FactionFile.FactionTypes.Province &&
-                                       random.type != (int)FactionFile.FactionTypes.Group &&
-                                       random.type != (int)FactionFile.FactionTypes.Subgroup &&
-                                       count > 0);
+                                while (!isFactionValidForRumorMill(random) && count > 0);
 
-                                if (!factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].id, random.id)
-                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].id, random.id)
-                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally1, random.id)
-                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally2, random.id)
-                                    && !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally3, random.id)
-                                    && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id)
-                                    && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id)
-                                    && !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id))
+                                if (!factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].id, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].id, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally1, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally2, random.id) &&
+                                    !factionData.IsFaction2AnEnemyOfFaction1(factionData.FactionDict[key].ally3, random.id) &&
+                                    !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id) &&
+                                    !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id) &&
+                                    !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id))
                                 {
                                     int relation = factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id);
-                                    if (relation != 1 && relation != 3)
+                                    if (relation == -1 || relation == 2)
                                     {
                                         int mod = 0;
                                         if (relation == 2)
@@ -2038,6 +2031,28 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
+        private static bool isFactionValidForRumorMill(FactionFile.FactionData factionData)
+        {
+            // Classic does not do any check on factions included in rumor mill.
+            // Here we exclude all generic factions and those which should clearly not be
+            // included like Oblivion or The Septim Empire.
+            return ((factionData.type == (int) FactionFile.FactionTypes.Province ||
+                     factionData.type == (int) FactionFile.FactionTypes.Group ||
+                     factionData.type == (int) FactionFile.FactionTypes.Subgroup) &&
+                    factionData.id != (int) FactionFile.FactionIDs.Oblivion &&
+                    factionData.id != (int) FactionFile.FactionIDs.Children &&
+                    factionData.id != (int) FactionFile.FactionIDs.Generic_Knightly_Order &&
+                    factionData.id != (int) FactionFile.FactionIDs.Smiths &&
+                    factionData.id != (int) FactionFile.FactionIDs.Questers &&
+                    factionData.id != (int) FactionFile.FactionIDs.Healers &&
+                    factionData.id != (int) FactionFile.FactionIDs.Seneschal &&
+                    factionData.id != (int) FactionFile.FactionIDs.Temple_Missionaries &&
+                    factionData.id != (int) FactionFile.FactionIDs.Temple_Treasurers &&
+                    factionData.id != (int) FactionFile.FactionIDs.Temple_Healers &&
+                    factionData.id != (int) FactionFile.FactionIDs.Temple_Blessers &&
+                    factionData.id != (int) FactionFile.FactionIDs.Random_Ruler &&
+                    factionData.id != (int) FactionFile.FactionIDs.The_Septim_Empire);
+        }
 
         public void TurnOnConditionFlag(int regionID, RegionDataFlags flagID)
         {
@@ -2066,7 +2081,7 @@ namespace DaggerfallWorkshop.Game.Entity
             regionData[regionID].Flags2[flagsToFlags2Map[(int)flagID]] = false;
         }
 
-        public void ResetWarDataForRegion(int factionID)
+        private void ResetWarDataForRegion(int factionID)
         {
             FactionFile.FactionData faction;
             if (FactionData.GetFactionData(factionID, out faction))

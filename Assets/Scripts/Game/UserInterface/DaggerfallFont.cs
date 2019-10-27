@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public float DrawSDFGlyph(SDFGlyphInfo glyph, Vector2 position, Vector2 scale, Color color)
         {
-            float scalingRatio = GlyphHeight / sdfFontInfo.Value.pointSize * scale.y;
+            float scalingRatio = GetSDFGlyphScalingRatio(scale.y);
 
             // Handle space
             if (glyph.code == SpaceCode)
@@ -429,14 +429,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 SDFGlyphInfo glyph = SDFInfo.glyphs[code];
-                float scalingRatio = GlyphHeight / SDFInfo.pointSize * scale.y;
+                float scalingRatio = GetSDFGlyphScalingRatio(scale.y);
                 return glyph.advance * scalingRatio / scale.x + spacing;
             }
         }
 
         public float GetGlyphWidth(SDFGlyphInfo glyph, Vector2 scale, float spacing = 0)
         {
-            float scalingRatio = GlyphHeight / SDFInfo.pointSize * scale.y;
+            float scalingRatio = GetSDFGlyphScalingRatio(scale.y);
             return glyph.advance * scalingRatio / scale.x + spacing;
         }
 
@@ -453,7 +453,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return (IsSDFCapable) ? DaggerfallUI.Instance.SDFFontMaterial : DaggerfallUI.Instance.PixelFontMaterial;
         }
 
-        public void TryLoadSDFFont(string path)
+        /// <summary>
+        /// Load a TextMeshPro 1.3.x asset used for this to use for SDF rendering.
+        /// Mods can use DaggerfallUI.Instance.Font1 through Font4 to access the instances used by other game windows.
+        /// Custom font should be set only during startup.
+        /// </summary>
+        /// <param name="path">Path to a TextMeshPro 1.3.x font asset.</param>
+        public void LoadSDFFontAsset(string path)
         {
             // Attempt to load a TextMeshPro font asset
             TMP_FontAsset tmpFont = Resources.Load<TMP_FontAsset>(path);
@@ -500,6 +506,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
+        float GetSDFGlyphScalingRatio(float localYScale)
+        {
+            return GlyphHeight / SDFInfo.pointSize * localYScale;
+        }
+
         bool LoadFont()
         {
             // Load font
@@ -526,7 +537,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             atlasTexture.filterMode = FilterMode;
 
             // Load an SDF font variant if one is available
-            TryLoadSDFFont(string.Format("Fonts/{0}-SDF", font.ToString()));
+            LoadSDFFontAsset(string.Format("Fonts/{0}-SDF", font.ToString()));
 
             return true;
         }

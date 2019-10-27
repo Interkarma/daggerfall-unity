@@ -129,7 +129,7 @@ Message:  1015
 <ce>                                departs.
 
 Message:  1017
-%dat:
+%qdt:
  I received a
  letter from the Thieves Guild. It
  seems that the kidnappers are not

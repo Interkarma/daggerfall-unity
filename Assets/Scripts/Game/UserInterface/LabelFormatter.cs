@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -148,14 +149,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public bool ReformatBook(int id)
         {
+            if (DaggerfallUnity.Settings.CustomBooksImport)
+                return ReformatBook(DaggerfallUnity.Instance.ItemHelper.GetBookFileName(id));
+
             return ReformatBook(BookFile.messageToBookFilename(id));
         }
 
         public bool ReformatBook(string filename)
         {
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             // Try to open book
             BookFile book = new BookFile();
-            if (!book.OpenBook(DaggerfallUnity.Instance.Arena2Path, filename))
+            if (!BookReplacement.TryImportBook(filename, book) &&
+                !book.OpenBook(DaggerfallUnity.Instance.Arena2Path, filename))
                 return false;
 
             // Clear existing

@@ -22,6 +22,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 using Unity.Jobs;
 
 namespace DaggerfallWorkshop
@@ -105,6 +106,7 @@ namespace DaggerfallWorkshop
 
         DaggerfallLocation currentPlayerLocationObject;
         int playerTilemapIndex = -1;
+        DFPosition prevMapPixel;
 
         private int? travelStartX = null;
         private int? travelStartZ = null;
@@ -228,6 +230,12 @@ namespace DaggerfallWorkshop
 
         #region Unity
 
+        private void Awake()
+        {
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
+
         void Update()
         {
             // Cannot proceed until ready and player is set
@@ -241,6 +249,7 @@ namespace DaggerfallWorkshop
                 init)
             {
                 Debug.Log(string.Format("Entering new map pixel X={0}, Y={1}", curMapPixel.X, curMapPixel.Y));
+                prevMapPixel = new DFPosition(MapPixelX, MapPixelY);
                 MapPixelX = curMapPixel.X;
                 MapPixelY = curMapPixel.Y;
                 UpdateWorld();
@@ -835,7 +844,6 @@ namespace DaggerfallWorkshop
                 if (terrainArray[index].active)
                 {
                     // Terrain already active in scene, nothing to do
-                    return;
                 }
                 else
                 {
@@ -843,6 +851,14 @@ namespace DaggerfallWorkshop
                     terrainArray[index].active = true;
                     terrainArray[index].terrainObject.SetActive(true);
                     terrainArray[index].billboardBatchObject.SetActive(true);
+                }
+                // If any nature model replacements are used then do extra nature updates for any terrains moving into or out of distance 1 or less.
+                if (TerrainHelper.NatureMeshUsed)
+                {
+                    int prevDist = GetTerrainDist(prevMapPixel, terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
+                    int currDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
+                    if ((prevDist == 1 && currDist > 1) || (currDist == 1 && prevDist > 1))
+                        terrainArray[index].updateNature = true;
                 }
                 return;
             }
@@ -1216,10 +1232,11 @@ namespace DaggerfallWorkshop
             DaggerfallBillboardBatch dfBillboardBatch = terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
             if (dfTerrain && dfBillboardBatch)
             {
-                // Get current climate and nature archive
+                // Get current climate and nature archive and terrain distance
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
-                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
+                int terrainDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale, terrainDist);
             }
 
             // Only set active again once complete
@@ -1245,6 +1262,15 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Player Utility Methods
+
+        // Calculate the distance of terrain from given map position
+        private int GetTerrainDist(DFPosition mapPosition, int terrainMapPixelX, int terrainMapPixelY)
+        {
+            DFPosition curMapPixel = LocalPlayerGPS.CurrentMapPixel;
+            int dx = Mathf.Abs(terrainMapPixelX - mapPosition.X);
+            int dy = Mathf.Abs(terrainMapPixelY - mapPosition.Y);
+            return Mathf.Max(dx, dy);
+        }
 
         private DaggerfallTerrain GetPlayerTerrain()
         {
@@ -1400,7 +1426,8 @@ namespace DaggerfallWorkshop
                 width,
                 height,
                 (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity ||
-                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips));
+                currentLocation.Summary.LocationType == DFRegion.LocationTypes.HomeYourShips),
+                currentLocation.Summary.LocationType != DFRegion.LocationTypes.HomeYourShips);
         }
 
         // Sets player to ground level near a location
@@ -1413,7 +1440,8 @@ namespace DaggerfallWorkshop
             Vector3 origin,
             int mapWidth,
             int mapHeight,
-            bool useNearestStartMarker = false)
+            bool useNearestStartMarker = false,
+            bool grounded = true)
         {
             UnityEngine.Random.InitState(DateTime.Now.Millisecond);
 
@@ -1521,14 +1549,14 @@ namespace DaggerfallWorkshop
                 if (closestMarker != -1)
                 {
                     //PositionPlayerToTerrain(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
-                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position, grounded: true);
+                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position, grounded);
                     return;
                 }
             }
 
             // Just position to outside location
             //PositionPlayerToTerrain(mapPixelX, mapPixelY, newPlayerPosition);
-            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition, grounded: true);
+            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition, grounded);
         }
 
         // Align player to ground
@@ -1554,6 +1582,32 @@ namespace DaggerfallWorkshop
             worldX = mapPixelOrigin.X + (playerPos.x * SceneMapRatio);
             worldZ = mapPixelOrigin.Y + (playerPos.z * SceneMapRatio);
             lastPlayerPos = playerPos;
+        }
+
+        // Destroy untracked objects parented to streaming target
+        // This will remove loose enemies, missiles, etc. on load or new game
+        // These dynamically spawned objects are fully untracked in wilderness
+        void CleanupUntrackedObjects()
+        {
+            // Destroy loose enemies
+            EnemyMotor[] enemies = StreamingTarget.GetComponentsInChildren<EnemyMotor>();
+            foreach(EnemyMotor enemy in enemies)
+                GameObject.Destroy(enemy.gameObject);
+
+            // Destroy loose missiles
+            DaggerfallMissile[] missiles = StreamingTarget.GetComponentsInChildren<DaggerfallMissile>();
+            foreach (DaggerfallMissile missile in missiles)
+                GameObject.Destroy(missile.gameObject);
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            CleanupUntrackedObjects();
+        }
+
+        private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
+        {
+            CleanupUntrackedObjects();
         }
 
         #endregion

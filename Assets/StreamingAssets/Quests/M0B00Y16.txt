@@ -140,7 +140,7 @@ Message:  1080
 
 QBN:
 Item _gold_ gold
-Item _harpy_ magic_item
+Item _magic_ magic_item
 
 Person _questgiver_ group Questor male
 Person _dummy_ face 9 group Noble
@@ -153,7 +153,7 @@ Place _store_ remote generalstore
 Clock _qtime_ 00:00 0 flag 17 range 0 2
 
 Foe _giant_ is Giant
-Foe _F.01_ is Giant
+Foe _giantFriends_ is Giant
 
 --	Quest start-up:
 	start timer _qtime_ 
@@ -161,7 +161,7 @@ Foe _F.01_ is Giant
 	log 1020 step 0 
 	pick one of _victim_ _S.09_ _S.09_ 
 	pick one of _map_ _nomap_ _nomap_ 
-	give item _harpy_ to _giant_ 
+	pick one of _magicItem_ _noMagicItem_ _noMagicItem_ _noMagicItem_
 	place foe _giant_ at _mondung_ 
 
 variable _map_
@@ -173,7 +173,6 @@ _S.02_ task:
 
 _S.03_ task:
 	killed 1 _giant_ 
-	make _harpy_ permanent 
 
 _clickqgiver_ task:
 	clicked npc _questgiver_ 
@@ -195,6 +194,11 @@ _duelist_ task:
 
 _victim_ task:
 	place npc _villager_ at _mondung_ 
+
+variable _noMagicItem_
+_magicItem_ task:
+	give item _magic_ to _giant_ 
+	make _magic_ permanent 
 
 _S.09_ task:
 	hide npc _villager_ 
@@ -228,7 +232,7 @@ _S.15_ task:
 	when _success_ and _no_ 
 
 _S.16_ task:
-	when _success_ and _yes_ 
+	when _success_ and _S.09_
 
 _S.17_ task:
 	when _success_ and _S.13_ 
@@ -237,12 +241,8 @@ _S.18_ task:
 	when _qtime_ or _S.15_ or _S.16_ or _S.17_ 
 	end quest 
 
-_S.19_ task:
-	when not _victim_ and _success_
-	end quest
-
 _giantWaveWhileInDungeon_ task:
 	pc at _mondung_ set _spawnGiants_
 
 _spawnGiants_ task:
-	create foe _F.01_ every 4 minutes 6 times with 50% success 
+	create foe _giantFriends_ every 3 minutes 6 times with 50% success 

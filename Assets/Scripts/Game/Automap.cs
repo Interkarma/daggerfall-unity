@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (a.k.a. Nystul)
-// Contributors:    Lypyl, Interkarma
+// Contributors:    Lypyl, Interkarma, Numidium
 // 
 // Notes:
 //
@@ -402,6 +402,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void UpdateAutomapStateOnWindowPush()
         {
+            // create teleport markers (that are not already present on map)
+            // since new teleporters could have been discovered by pc since last time map was open this must be checked here       
+            CreateTeleporterMarkers();
+
             SetActivationStateOfMapObjects(true);
 
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
@@ -416,12 +420,6 @@ namespace DaggerfallWorkshop.Game
             CreateLightsForAutomapGeometry();
 
             UpdateMicroMapTexture();
-
-            // create teleport markers (that are not already present on map)
-            CreateTeleporterMarkers();
-
-            if (gameobjectTeleporterMarkers != null)
-                gameobjectTeleporterMarkers.SetActive(true);
 
             UpdateSlicingPositionY();
         }
@@ -1853,8 +1851,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             int microMapBlockSizeInPixels = 2;
-            int width = 7 * microMapBlockSizeInPixels;
-            int height = 7 * microMapBlockSizeInPixels;
+            int width = 9 * microMapBlockSizeInPixels;
+            int height = 9 * microMapBlockSizeInPixels;
             textureMicroMap = new Texture2D(width, height, TextureFormat.ARGB32, false);
             textureMicroMap.filterMode = FilterMode.Point;
 
@@ -1863,11 +1861,13 @@ namespace DaggerfallWorkshop.Game
                 colors[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
             textureMicroMap.SetPixels(0, 0, width, height, colors);
 
+            const int originX = 5;
+            const int originY = 5;
             DFLocation location = currentLocation.Value;
             foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
             {
-                int xBlockPos = 3 + block.X;
-                int yBlockPos = 3 + block.Z;
+                int xBlockPos = originX + block.X;
+                int yBlockPos = originY + block.Z;
                 for (int y = 0; y < microMapBlockSizeInPixels; y++)
                 {
                     for (int x = 0; x < microMapBlockSizeInPixels; x++)
@@ -1881,8 +1881,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
             float entrancePosX = dungeon.StartMarker.transform.position.x / RDBLayout.RDBSide;
             float entrancePosY = dungeon.StartMarker.transform.position.z / RDBLayout.RDBSide;
-            int xPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosX*2)) * (microMapBlockSizeInPixels / 2);
-            int yPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosY*2)) * (microMapBlockSizeInPixels / 2);
+            int xPosOfBlock = originX * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosX*2)) * (microMapBlockSizeInPixels / 2);
+            int yPosOfBlock = originY * microMapBlockSizeInPixels + (int)(Mathf.Floor(entrancePosY*2)) * (microMapBlockSizeInPixels / 2);
             for (int y = 0; y < microMapBlockSizeInPixels / 2; y++)
             {
                 for (int x = 0; x < microMapBlockSizeInPixels / 2; x++)
@@ -1894,8 +1894,8 @@ namespace DaggerfallWorkshop.Game
             // mark player position on micro map            
             float playerPosX = gameObjectPlayerAdvanced.transform.position.x / RDBLayout.RDBSide;
             float playerPosY = gameObjectPlayerAdvanced.transform.position.z / RDBLayout.RDBSide;
-            xPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosX * 2)) * (microMapBlockSizeInPixels / 2);
-            yPosOfBlock = 3 * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosY * 2)) * (microMapBlockSizeInPixels / 2);
+            xPosOfBlock = originX * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosX * 2)) * (microMapBlockSizeInPixels / 2);
+            yPosOfBlock = originY * microMapBlockSizeInPixels + (int)(Mathf.Floor(playerPosY * 2)) * (microMapBlockSizeInPixels / 2);
             for (int y = 0; y < microMapBlockSizeInPixels / 2; y++)
             {
                 for (int x = 0; x < microMapBlockSizeInPixels / 2; x++)
@@ -2068,6 +2068,7 @@ namespace DaggerfallWorkshop.Game
                 cameraAutomap.renderingPath = RenderingPath.Forward;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 5000.0f;
+                gameObjectCameraAutomap.AddComponent<NoFogCamera>();
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
             }
         }
@@ -2249,11 +2250,6 @@ namespace DaggerfallWorkshop.Game
 
             // store list of teleporter connections
             automapDungeonState.dictTeleporterConnections = new Dictionary<string, TeleporterConnection>(dictTeleporterConnections);
-
-            // delete all user marker notes (in automap gameobject and internal list)
-            DestroyUserMarkerNotes();
-            // delete all teleporter markers (in automap gameobject and internal dict)
-            DestroyTeleporterMarkers();
 
             // replace or add discovery state for current dungeon
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
@@ -2459,16 +2455,15 @@ namespace DaggerfallWorkshop.Game
             if (loadedListUserNoteMarkers != null)
                 listUserNoteMarkers = loadedListUserNoteMarkers; //new SortedList<int, NoteMarker>(loadedListUserNoteMarkers);
 
-            foreach (var userMarkerNote in listUserNoteMarkers)
+            foreach (var userNoteMarker in listUserNoteMarkers)
             {
-                CreateUserMarker(userMarkerNote.Key, userMarkerNote.Value.position);
+                CreateUserMarker(userNoteMarker.Key, userNoteMarker.Value.position);
             }
 
-            // (try to) load teleporter connections
+            // (try to) load teleporter connections (creation of teleporter gameobjects for map is done on map open (UpdateAutomapStateOnWindowPush))
             var loadedDictTeleporterConnections = automapDungeonState.dictTeleporterConnections; // new Dictionary<string, TeleporterConnection>(automapDungeonState.dictTeleporterConnections);
             if (loadedDictTeleporterConnections != null)
                 dictTeleporterConnections = loadedDictTeleporterConnections;
-
         }
 
         /// <summary>

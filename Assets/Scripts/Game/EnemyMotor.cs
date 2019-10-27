@@ -501,7 +501,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         bool DoRangedAttack(Vector3 direction, float moveSpeed, float distance, bool isPlayingOneShot)
         {
-            if ((CanShootBow() || CanCastRangedSpell()) && senses.TargetInSight && senses.DetectedTarget && 360 * MeshReader.GlobalScale < senses.DistanceToTarget && senses.DistanceToTarget < 2048 * MeshReader.GlobalScale)
+            bool inRange = senses.DistanceToTarget > EnemyAttack.minRangedDistance && senses.DistanceToTarget < EnemyAttack.maxRangedDistance;
+            if (inRange && senses.TargetInSight && senses.DetectedTarget && (CanShootBow() || CanCastRangedSpell()))
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
@@ -520,7 +521,7 @@ namespace DaggerfallWorkshop.Game
                         if (hasBowAttack)
                         {
                             // Random chance to shoot bow
-                            if (DFRandom.rand() < 1000)
+                            if (Random.value < 1/32f)
                             {
                                 if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
                                     mobile.ChangeEnemyState(MobileStates.RangedAttack1);
@@ -529,7 +530,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                         // Random chance to shoot spell
-                        else if (DFRandom.rand() % 40 == 0 && entityEffectManager.SetReadySpell(selectedSpell))
+                        else if (Random.value < 1/40f && entityEffectManager.SetReadySpell(selectedSpell))
                         {
                             mobile.ChangeEnemyState(MobileStates.Spell);
                         }

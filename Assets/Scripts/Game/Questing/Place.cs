@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -321,17 +322,73 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Selects a site marker for quest resource.
+        /// Initial selection will be to a fresh Quest or Item marker based on incoming resource.
+        /// Future selection to same site will be to previously selected marker.
+        /// If site has only a single Quest or Item marker, the best available marker will be used.
+        /// </summary>
+        /// <param name="resource">Incoming resource type about to be added.</param>
+        /// <param name="markerIndex">Static index to use. Must be able to find preferred marker type. Used by main quest only.</param>
+        QuestMarker GetSiteMarker(QuestResource resource, int markerIndex = -1)
+        {
+            // Direct to previously selected marker
+            if (siteDetails.selectedMarker.targetResources != null)
+                return siteDetails.selectedMarker;
+
+            // Determine preferred marker type for this resource
+            MarkerTypes preferredMarkerType = MarkerTypes.None;
+            if (resource is Person || resource is Foe)
+                preferredMarkerType = MarkerTypes.QuestSpawn;
+            else if (resource is Item)
+                preferredMarkerType = MarkerTypes.QuestItem;
+
+            // Need to create a site marker - what do we have available?
+            bool hasSpawnMarker = siteDetails.questSpawnMarkers != null && siteDetails.questSpawnMarkers.Length > 0;
+            bool hasItemMarker = siteDetails.questItemMarkers != null && siteDetails.questItemMarkers.Length > 0;
+
+            // Assign to preferred marker if possible
+            if (preferredMarkerType == MarkerTypes.QuestSpawn && hasSpawnMarker)
+            {
+                // Assign to Spawn marker - supports marker index
+                if (markerIndex == -1)
+                    siteDetails.selectedMarker = siteDetails.questSpawnMarkers[UnityEngine.Random.Range(0, siteDetails.questSpawnMarkers.Length)];
+                else
+                    siteDetails.selectedMarker = siteDetails.questSpawnMarkers[markerIndex];
+            }
+            else if (preferredMarkerType == MarkerTypes.QuestItem && hasItemMarker)
+            {
+                // Assign to Item marker - supports marker index
+                if (markerIndex == -1)
+                    siteDetails.selectedMarker = siteDetails.questItemMarkers[UnityEngine.Random.Range(0, siteDetails.questItemMarkers.Length)];
+                else
+                    siteDetails.selectedMarker = siteDetails.questItemMarkers[markerIndex];
+            }
+            else if (hasSpawnMarker)
+            {
+                // Assign to any Spawn marker - does not support marker index
+                siteDetails.selectedMarker = siteDetails.questSpawnMarkers[UnityEngine.Random.Range(0, siteDetails.questSpawnMarkers.Length)];
+            }
+            else if (hasItemMarker)
+            {
+                // Assign to any Item marker - does not support marker index
+                siteDetails.selectedMarker = siteDetails.questItemMarkers[UnityEngine.Random.Range(0, siteDetails.questItemMarkers.Length)];
+            }
+
+            return siteDetails.selectedMarker;
+        }
+
+        /// <summary>
         /// Assigns a quest resource to this Place site.
         /// Supports Persons, Foes, Items from within same quest as Place.
         /// Quest must have previously created SiteLink for layout builders to discover assigned resources.
         /// </summary>
         /// <param name="targetSymbol">Resource symbol of Person, Item, or Foe to assign.</param>
-        /// <param name="marker">Preferred marker index to use instead of random.</param>
-        public void AssignQuestResource(Symbol targetSymbol, int marker = -1)
+        /// <param name="markerIndex">Preferred marker index to use instead of random. Must be able to find preferred marker type. Used by main quest only.</param>
+        public void AssignQuestResource(Symbol targetSymbol, int markerIndex = -1, bool cullExisting = true)
         {
-            // Site must have at least one marker of each type
+            // Site must have at least one marker available
             if (!ValidateQuestMarkers(siteDetails.questSpawnMarkers, siteDetails.questItemMarkers))
-                throw new Exception(string.Format("Tried to assign resource {0} to Place without at least 1x spawn and 1x item marker.", targetSymbol.Name));
+                throw new Exception(string.Format("Tried to assign resource {0} to Place without at least a spawn or item marker.", targetSymbol.Name));
 
             // Attempt to get resource from symbol
             QuestResource resource = ParentQuest.GetResource(targetSymbol);
@@ -341,98 +398,45 @@ namespace DaggerfallWorkshop.Game.Questing
             // Remove this resource if already injected at another Place
             // Sometimes a quest will move a resource part way through quest
             // This ensures resource does not become duplicated in both sites
-            QuestMachine.Instance.CullResourceTarget(resource);
+            if (cullExisting)
+                QuestMachine.Instance.CullResourceTarget(resource, Symbol);
 
-            // Must be a supported resource type
-            MarkerTypes requiredMarkerType = MarkerTypes.None;
-            if (resource is Person || resource is Foe)
-                requiredMarkerType = MarkerTypes.QuestSpawn;
-            else if (resource is Item)
-                requiredMarkerType = MarkerTypes.QuestItem;
-            else
-                throw new Exception(string.Format("Tried to assign incompatible resource symbol {0} to Place", targetSymbol.Name));
-
-            // Use magic number index if one is available and no marker assigned
-            // Magic number is one-based, marker array is zero-based, need to -1 on magic number
-            if (marker == -1 && siteDetails.magicNumberIndex > 0)
-                marker = siteDetails.magicNumberIndex - 1;
-
-            // Assign target resource to marker selected for this quest
-            if (requiredMarkerType == MarkerTypes.QuestSpawn)
-            {
-                // Override selected spawn marker index
-                if (marker >= 0 && marker < siteDetails.questSpawnMarkers.Length)
-                {
-                    siteDetails.selectedQuestSpawnMarker = marker;
-                    Debug.LogFormat("AssignQuestResource() used static spawn marker with index {0}", marker);
-                }
-
-                AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker]);
-            }
-            else if (requiredMarkerType == MarkerTypes.QuestItem)
-            {
-                // Override selected item marker index
-                if (marker >= 0 && marker < siteDetails.questItemMarkers.Length)
-                {
-                    siteDetails.selectedQuestItemMarker = marker;
-                    Debug.LogFormat("AssignQuestResource() used static item marker with index {0}", marker);
-                }
-
-                AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker]);
-            }
-            else
-            {
-                throw new Exception(string.Format("Tried to assign resource symbol _{0}_ to Place {1} but it has an unknown MarkerType {2}", targetSymbol.Name, Symbol.Name, requiredMarkerType.ToString()));
-            }
+            // Get marker for new resource and assign resource to marker
+            QuestMarker selectedMarker = GetSiteMarker(resource, markerIndex);
+            AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.selectedMarker);
 
             // Output debug information
             if (resource is Person)
             {
                 if (siteDetails.siteType == SiteTypes.Building)
-                {
-                    if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned Person {0} to Building {1}", (resource as Person).DisplayName, SiteDetails.buildingName);
-                }
+                    Debug.LogFormat("Assigned Person {0} to Building {1}", (resource as Person).DisplayName, SiteDetails.buildingName);
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
-                {
-                    if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned Person {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
-                }
+                    Debug.LogFormat("Assigned Person {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
             }
             else if (resource is Foe)
             {
                 if (siteDetails.siteType == SiteTypes.Building)
-                {
-                    if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned Foe _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
-                }
+                    Debug.LogFormat("Assigned Foe _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
-                    if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                    {
-                        if (SiteDetails.magicNumberIndex == 0)
-                            Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
-                        else
-                            Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, SiteDetails.magicNumberIndex);
-                    }
+                    if (markerIndex == -1)
+                        Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                    else
+                        Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, markerIndex);
                 }
             }
             else if (resource is Item)
             {
                 if (siteDetails.siteType == SiteTypes.Building)
                 {
-                    if (requiredMarkerType == MarkerTypes.QuestItem)
-                        Debug.LogFormat("Assigned Item _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
+                    Debug.LogFormat("Assigned Item _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
                 }
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
-                    if (requiredMarkerType == MarkerTypes.QuestItem)
-                    {
-                        if (SiteDetails.magicNumberIndex == 0)
-                            Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
-                        else
-                            Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, SiteDetails.magicNumberIndex);
-                    }
+                    if (markerIndex == -1)
+                        Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                    else
+                        Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}, index {2}", resource.Symbol.Name, SiteDetails.locationName, markerIndex);
                 }
             }
 
@@ -482,6 +486,55 @@ namespace DaggerfallWorkshop.Game.Questing
             return result;
         }
 
+        /// <summary>
+        /// Called for each Place resource after Quest has finished loading.
+        /// Required to map old resource marker allocations to new marker resource system.
+        /// </summary>
+        public void ReassignSiteDetailsLegacyMarkers()
+        {
+            if (siteDetails.selectedMarker.targetResources == null)
+            {
+                // Get all prior resource symbols placed by this quest
+                // Clear legacy resource symbols from old markers after collecting them
+                List<Symbol> resources = new List<Symbol>();
+                if (siteDetails.questSpawnMarkers != null && siteDetails.questSpawnMarkers.Length > 0)
+                {
+                    if (siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker].targetResources != null)
+                    {
+                        resources.AddRange(siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker].targetResources.ToArray());
+                        siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker].targetResources.Clear();
+                    }
+                }
+                if (siteDetails.questItemMarkers != null && siteDetails.questItemMarkers.Length > 0)
+                {
+                    if (siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker].targetResources != null)
+                    {
+                        resources.AddRange(siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker].targetResources.ToArray());
+                        siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker].targetResources.Clear();
+                    }
+                }
+
+                // Assign these to new marker setup
+                foreach (Symbol symbol in resources)
+                {
+                    QuestResource resource = ParentQuest.GetResource(symbol);
+                    if (resource != null)
+                    {
+                        // Get previous marker index
+                        int previousMarkerIndex = -1;
+                        if (resource is Person || resource is Foe)
+                            previousMarkerIndex = siteDetails.selectedQuestSpawnMarker;
+                        else if (resource is Item)
+                            previousMarkerIndex = siteDetails.selectedQuestItemMarker;
+
+                        // Reassign to same marker
+                        AssignQuestResource(symbol, previousMarkerIndex, false);
+                        Debug.LogFormat("Reassigned resource {0} to new marker system.", symbol.Original);
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Local Site Methods
@@ -516,6 +569,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
             else
                 foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
+
+            // Do some fallback for house types if nothing found locally
+            // There should almost always be a suitable local house available
+            DFLocation.BuildingTypes requiredBuildingType = (DFLocation.BuildingTypes)p2;
+            if ((foundSites == null || foundSites.Length == 0) &&
+                requiredBuildingType >= DFLocation.BuildingTypes.House1 &&
+                requiredBuildingType <= DFLocation.BuildingTypes.House6)
+            {
+                p2 = -1;
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+            }
 
             // Must have found at least one site
             if (foundSites == null || foundSites.Length == 0)
@@ -596,7 +660,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 if (attempts >= maxAttemptsBeforeFailure)
                 {
-                    Debug.LogErrorFormat("Could not find remote town site with building type {0} within {1} attempts", requiredBuildingType.ToString(), attempts);
+                    Debug.LogWarningFormat("Could not find remote town site with building type {0} within {1} attempts", requiredBuildingType.ToString(), attempts);
                     break;
                 }
 
@@ -685,7 +749,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (!location.Loaded)
                 return false;
 
-            // Dungeon must be a valid quest site
+            // Dungeon must have at least one marker available
             QuestMarker[] questSpawnMarkers, questItemMarkers;
             EnumerateDungeonQuestMarkers(location, out questSpawnMarkers, out questItemMarkers);
             if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
@@ -704,8 +768,6 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = questSpawnMarkers;
             siteDetails.questItemMarkers = questItemMarkers;
-            siteDetails.selectedQuestSpawnMarker = UnityEngine.Random.Range(0, questSpawnMarkers.Length);
-            siteDetails.selectedQuestItemMarker = UnityEngine.Random.Range(0, questItemMarkers.Length);
 
             return true;
         }
@@ -811,7 +873,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else
                 {
-                    // Dungeon must be a valid quest site with both quest spawn and quest item markers
+                    // Dungeon must have at least one marker available
                     if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
                         throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
                 }
@@ -840,12 +902,6 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.questSpawnMarkers = questSpawnMarkers;
             siteDetails.questItemMarkers = questItemMarkers;
             siteDetails.magicNumberIndex = magicNumberIndex;
-
-            // Asssign markers only if available
-            if (questSpawnMarkers != null)
-                siteDetails.selectedQuestSpawnMarker = UnityEngine.Random.Range(0, questSpawnMarkers.Length);
-            if (questItemMarkers != null)
-                siteDetails.selectedQuestItemMarker = UnityEngine.Random.Range(0, questItemMarkers.Length);
         }
 
         #endregion
@@ -897,7 +953,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Valid building types for valid search
             int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
-            int[] validHouseTypes = { 18, 19, 20 };
+            int[] validHouseTypes = { 17, 18, 19, 20 };
 
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
@@ -905,14 +961,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // Need to check our parent quest resources separately as not loaded to quest machine during compile
             SiteDetails[] activeQuestSites = QuestMachine.Instance.GetAllActiveQuestSites();
             QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
-
-            // Convert House4-House5 back to House2 - not sure where these house types even exist?
-            if (buildingType == DFLocation.BuildingTypes.House4 ||
-                buildingType == DFLocation.BuildingTypes.House5)
-            {
-                buildingType = DFLocation.BuildingTypes.House2;
-                p2 = (int)DFLocation.BuildingTypes.House2;
-            }
 
             // Iterate through all blocks
             DFBlock[] blocks;
@@ -976,7 +1024,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             if (IsBuildingAssigned(activeQuestSites, parentQuestPlaceResources, location, buildingSummary[i]))
                                 continue;
 
-                            // Building must be a valid quest site
+                            // Building must have at least one marker available
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
                             EnumerateBuildingQuestMarkers(blocks[index], i, out questSpawnMarkers, out questItemMarkers);
                             if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
@@ -1001,12 +1049,6 @@ namespace DaggerfallWorkshop.Game.Questing
                             site.buildingName = buildingName;
                             site.questSpawnMarkers = questSpawnMarkers;
                             site.questItemMarkers = questItemMarkers;
-
-                            // Asssign markers only if available
-                            if (questSpawnMarkers != null)
-                                siteDetails.selectedQuestSpawnMarker = UnityEngine.Random.Range(0, questSpawnMarkers.Length);
-                            if (questItemMarkers != null)
-                                siteDetails.selectedQuestItemMarker = UnityEngine.Random.Range(0, questItemMarkers.Length);
 
                             foundSites.Add(site);
                         }
@@ -1250,18 +1292,15 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Validate quest marker array to ensure both are non-null and have at least 1 marker each.
+        /// Validate quest marker array to ensure at least one marker type is available for use.
         /// </summary>
-        /// <returns>True if spawn and item marker arrays both valid.</returns>
+        /// <returns>True if at least spawn or item marker present.</returns>
         bool ValidateQuestMarkers(QuestMarker[] questSpawnMarkers, QuestMarker[] questItemMarkers)
         {
-            if (questSpawnMarkers == null || questItemMarkers == null ||
-                questSpawnMarkers.Length == 0 || questItemMarkers.Length == 0)
-            {
-                return false;
-            }
+            bool hasSpawnMarker = questSpawnMarkers != null && questSpawnMarkers.Length > 0;
+            bool hasItemMarker = questItemMarkers != null && questItemMarkers.Length > 0;
 
-            return true;
+            return hasSpawnMarker || hasItemMarker;
         }
 
         /// <summary>

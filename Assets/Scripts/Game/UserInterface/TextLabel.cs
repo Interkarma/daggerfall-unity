@@ -45,13 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float textScale = 1.0f; // scale text
         List<GlyphLayoutData> glyphLayout = new List<GlyphLayoutData>();
         bool previousSDFState;
-
-        public enum RestrictedRenderArea_CoordinateType
-        {
-            ScreenCoordinates = 0,
-            DaggerfallNativeCoordinates = 1
-        };
-        protected RestrictedRenderArea_CoordinateType restrictedRenderAreaCoordinateType = RestrictedRenderArea_CoordinateType.ScreenCoordinates;
+        Vector2 previousLocalScale;
 
         #endregion
 
@@ -189,18 +183,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public float HorzPixelScrollOffset { get; set; }
 
         /// <summary>
-        /// Set a restricted render area for the textlabel - the textlabel's content will only be rendered inside the specified Rect's bounds
-        /// </summary>
-        new public Rect RectRestrictedRenderArea
-        {
-            get { return rectRestrictedRenderArea; }
-            set
-            {
-                ((BaseScreenComponent)this).RectRestrictedRenderArea = value;
-            }
-        }
-
-        /// <summary>
         /// Set text scale factor - 1.0f is default value, 0.5f is half sized text, 2.0f double sized text and so on
         /// </summary>
         public float TextScale
@@ -219,18 +201,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Font = font;
         }
 
-        /// <summary>
-        /// get/set the type of coordinate specification (e.g. absolute) of the restricted render area
-        /// </summary>
-        public RestrictedRenderArea_CoordinateType RestrictedRenderAreaCoordinateType
-        {
-            get { return restrictedRenderAreaCoordinateType; }
-            set
-            {
-                restrictedRenderAreaCoordinateType = value;
-            }
-        }
-
         #endregion
 
         #region Overrides
@@ -238,13 +208,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
-
-            // Need to recalculate layout if SDF state changes
-            if (font != null && font.IsSDFCapable != previousSDFState)
-            {
-                RefreshLayout();
-                previousSDFState = font.IsSDFCapable;
-            }
         }
 
         public override void Draw()
@@ -253,6 +216,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (font == null || string.IsNullOrEmpty(text))
                 return;
+
+            // Need to recalculate layout if SDF state or scale changes (e.g. window resized)
+            // Do this before drawing so that even unparented label get a chance to recalibrate if needed
+            if (font.IsSDFCapable != previousSDFState || previousLocalScale != LocalScale)
+            {
+                RefreshLayout();
+                previousSDFState = font.IsSDFCapable;
+                previousLocalScale = LocalScale;
+            }
 
             DrawLabel();
         }
@@ -265,7 +237,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set render area
             Material material = font.GetMaterial();
-            Vector4 scissorRect = (useRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
+            Vector4 scissorRect = (UseRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
             material.SetVector("_ScissorRect", scissorRect);
 
             // Draw glyphs with classic layout
@@ -333,8 +305,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected Vector4 GetRestrictedRenderScissorRect()
         {
-            Rect myRect = this.Rectangle;
-            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
             float xMinScreen = 0.0f, xMaxScreen = 0.0f, yMinScreen = 0.0f, yMaxScreen = 0.0f;
             if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.ScreenCoordinates)
             {
@@ -343,21 +313,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 yMinScreen = rectRestrictedRenderArea.yMin;
                 yMaxScreen = rectRestrictedRenderArea.yMax;
             }
-            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates)
+            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.ParentCoordinates && Parent != null)
             {
-                Rect rectLabel = new Rect(this.Parent.Position + this.Position, this.Size);
-                float leftCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.xMin - rectLabel.xMin));
-                float rightCut = Mathf.Round(Math.Max(0, rectLabel.xMax - rectRestrictedRenderArea.xMax));
-                float topCut = Mathf.Round(Math.Max(0, rectRestrictedRenderArea.yMin - rectLabel.yMin));
-                float bottomCut = Mathf.Round(Math.Max(0, rectLabel.yMax - rectRestrictedRenderArea.yMax));
-
-                xMinScreen = myRect.xMin + (this.Position.x + leftCut) * this.LocalScale.x;
-                xMaxScreen = myRect.xMax + (this.Position.x - rightCut + font.GlyphSpacing) * this.LocalScale.x;
-                yMinScreen = myRect.yMin + (topCut) * this.LocalScale.y;
-                yMaxScreen = myRect.yMax - (bottomCut) * this.LocalScale.y;
-            } 
+                Rect parentRect = Parent.Rectangle;
+                xMinScreen = parentRect.xMin;
+                xMaxScreen = parentRect.xMax;
+                yMinScreen = parentRect.yMin;
+                yMaxScreen = parentRect.yMax;
+            }
+            else if (restrictedRenderAreaCoordinateType == RestrictedRenderArea_CoordinateType.CustomParent && restrictedRenderAreaCustomParent != null)
+            {
+                Rect customParentRect = restrictedRenderAreaCustomParent.Rectangle;
+                xMinScreen = customParentRect.xMin;
+                xMaxScreen = customParentRect.xMax;
+                yMinScreen = customParentRect.yMin;
+                yMaxScreen = customParentRect.yMax;
+            }
 
             Vector4 scissorRect;
+            Rect myRect = this.Rectangle;
+            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
             scissorRect.x = xMinScreen / screenRect.width;
             scissorRect.y = xMaxScreen / screenRect.width;
             scissorRect.z = 1.0f - yMaxScreen / screenRect.height;

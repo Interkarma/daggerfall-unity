@@ -849,7 +849,7 @@ maxf: 90
 
 		#243
 		type: 3
-		name: Teachers of z'en
+		name: Teachers of Z'en
 		rep: 0
 		summon: -1
 		region: -1
@@ -3228,7 +3228,7 @@ rep: 0
 summon: -1
 region: 22
 power: 60
-flags: 0
+flags: 16
 ruler: 12
 face: -1
 race: 3
@@ -3364,7 +3364,7 @@ rep: 0
 summon: -1
 region: 23
 power: 72
-flags: 0
+flags: 16
 ruler: 9
 face: -1
 race: 2
@@ -5507,6 +5507,7 @@ summon: -1
 region: 27
 power: 65
 flags: 1
+flags: 16
 ruler: 1
 race: 17
 flat: 182 3
@@ -6231,6 +6232,7 @@ rep: 0
 summon: -1
 region: 10
 power: 5
+flags: 16
 flags: 128
 face: -1
 race: 0

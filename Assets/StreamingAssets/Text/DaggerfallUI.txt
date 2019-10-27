@@ -28,6 +28,7 @@ endedQuest,         "ended"
 finishQuestHeader,  "{0} {1} at {2}:"
 quest,              "Quest"
 noteHeader,         "{0} in {1}:"
+houseDeed,          "You obtained the deeds and now own a house in %town of %region."
 
 - Character window:
 
@@ -72,6 +73,7 @@ southern,           "(southern)"
 noWagon,            "You don't own a wagon."
 exitTooFar,         "The exit is too far away for you to access your wagon."
 bookUnavailable,    "The book is ruined and is now unreadable."
+unknownAuthor,      "unknown author"
 
 - Spellbook window:
 

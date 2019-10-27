@@ -221,6 +221,11 @@ Foe _tiger_ is Sabretooth_tiger
 	place foe _tiger_ at _mondung_ 
 	create npc _dummy_ 
 
+_deadbody_ task:
+	clicked item _I.01_
+	take _I.01_ from pc
+--added deadbody task. otherwise body would clog inventory
+
 _qtime_ task:
 	end quest 
 
@@ -245,7 +250,8 @@ _S.05_ task:
 	say 1041 
 	--remove foe action used here instead of attempting to transfer it to another dungeon
 	remove foe _tiger_
-	unset _S.01_ _S.04_ 
+-	unset _S.01_ _S.04_ 
+--prevented quest from giving reward. don't know the purpose of this unset.
 
 _S.06_ task:
 	clicked npc _dummy_ 
@@ -254,6 +260,10 @@ _pcgetsgold_ task:
 	when _S.06_ and _S.05_ 
 	give pc _gold_ 
 	start timer _delay_ 
+	take _I.00_ from pc
+	remove log step 0
+	remove log step 1
+--added take bell and remove log actions. they'd linger until quest end
 
 _S.08_ task:
 	when _S.06_ and _S.03_ 

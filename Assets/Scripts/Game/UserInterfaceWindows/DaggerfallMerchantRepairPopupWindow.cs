@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void RepairButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            uiManager.PushWindow(new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Repair, this));
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Repair, null }));
         }
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -120,8 +120,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            DaggerfallTradeWindow sellWindow = new DaggerfallTradeWindow(uiManager, DaggerfallTradeWindow.WindowModes.Sell, this);
-            uiManager.PushWindow(sellWindow);
+            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Sell, null }));
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

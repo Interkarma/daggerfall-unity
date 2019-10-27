@@ -383,6 +383,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
+            // Player must be in range to release a touch spell
+            // Enemies use AI to only cast touch spells within range
+            if (IsPlayerEntity && readySpell.Settings.TargetType == TargetTypes.ByTouch)
+            {
+                Vector3 aimPosition = GameManager.Instance.MainCamera.transform.position;
+                Vector3 aimDirection = GameManager.Instance.MainCamera.transform.forward;
+                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection) == null)
+                {
+                    //Debug.Log("Target entity not in range for touch spell.");
+                    return;
+                }
+            }
+
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
             if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
@@ -516,10 +529,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Saving throw handling for effects without magnitude
+                // Saving throw handling
                 // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
+                // For effects with magnitude (e.g. most Destruction magic) this is handled later when the effect rolls for magnitude
                 // Self-cast spells (e.g. self heals and buffs) should never be saved against
-                if (!bypassSavingThrows && !effect.BypassSavingThrows && !effect.Properties.SupportMagnitude && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
+                if (!bypassSavingThrows &&
+                    !effect.BypassSavingThrows &&
+                    !effect.Properties.SupportMagnitude &&
+                    sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
@@ -1495,15 +1512,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void DoMagicRound()
         {
-            // Do nothing further if no bundles, entity has perished, or object disabled
-            if (instancedBundles.Count == 0 || entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
-                return;
-
             // Clear direct mods
             Array.Clear(directStatMods, 0, DaggerfallStats.Count);
             Array.Clear(directSkillMods, 0, DaggerfallSkills.Count);
             if (IsPlayerEntity)
                 (entityBehaviour.Entity as PlayerEntity).ClearReactionMods();
+
+            // Do nothing further if no bundles, entity has perished, or object disabled
+            if (instancedBundles.Count == 0 || entityBehaviour.Entity.CurrentHealth <= 0 || !entityBehaviour.enabled)
+                return;
 
             // Run all bundles
             foreach (LiveEffectBundle bundle in instancedBundles)

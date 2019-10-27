@@ -64,13 +64,13 @@ namespace DaggerfallWorkshop.Game
             public override string Name()
             {
                 // Used for greeting messages only: 7215, 7216, 7217
-                if (GameManager.Instance.TalkManager.IsGreeting)
-                    return GameManager.Instance.TalkManager.NameNPC;
+                if (!string.IsNullOrEmpty(GameManager.Instance.TalkManager.GreetingNameNPC))
+                    return GameManager.Instance.TalkManager.GreetingNameNPC;
                 else
                     return null;
             }
 
-            public override string LocationDirection()
+            public override string Direction()
             {
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding || parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
-                    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                    return GameManager.Instance.TalkManager.GetKeySubjectBuildingHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (parent.currentQuestionListItem.questionType == QuestionType.LocalBuilding)
                 {
-                    return GameManager.Instance.TalkManager.GetKeySubjectLocationHint();
+                    return GameManager.Instance.TalkManager.GetKeySubjectBuildingHint();
                 }
                 else if (parent.currentQuestionListItem.questionType == QuestionType.Person)
                 {
@@ -179,6 +179,19 @@ namespace DaggerfallWorkshop.Game
                     return HardStrings.pronounHim;
                 case Game.Entity.Genders.Female:
                     return HardStrings.pronounHer;
+                }
+            }
+
+            // His/Her
+            public override string Pronoun3()
+            {
+                switch (parent.potentialQuestorGender)
+                {
+                    default:
+                    case Game.Entity.Genders.Male:
+                        return HardStrings.pronounHis;
+                    case Game.Entity.Genders.Female:
+                        return HardStrings.pronounHer;
                 }
             }
 

@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public FLCPlayer()
         {
+            Loop = true;
             BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             BackgroundColor = Color.black;
         }
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (flcFile != null && flcFile.ReadyToPlay)
             {
+                flcFile.CurrentFrame = 0;
                 nextFrameTime = Time.realtimeSinceStartup + flcFile.FrameDelay;
                 BackgroundTexture = flcTexture;
                 isPlaying = true;
@@ -66,6 +68,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+
+            // Stop playing if we reach final frame and not looping
+            if (isPlaying && !Loop && flcFile.CurrentFrame >= flcFile.Header.NumOfFrames)
+                isPlaying = false;
 
             if (flcFile == null || !flcTexture || !flcFile.ReadyToPlay || !isPlaying)
                 return;

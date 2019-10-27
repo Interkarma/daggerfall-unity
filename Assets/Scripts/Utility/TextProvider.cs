@@ -109,52 +109,6 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="stat">Stat.</param>
         /// <returns>Text resource ID.</returns>
         int GetStatDescriptionTextID(DFCareer.Stats stat);
-
-        /// <summary>
-        /// Opens a new book based on the internal Daggerfall "message" field, rather than the direct filename
-        /// </summary>
-        /// <param name="message">The int32 message field that encodes the book's ID</param>
-        /// <returns>True if book opened successfully.</returns>
-        bool OpenBook(int message);
-
-        /// <summary>
-        /// Opens a new book.
-        /// </summary>
-        /// <param name="name">Filename of book.</param>
-        /// <returns>True if book opened successfully.</returns>
-        bool OpenBook(string name);
-
-        /// <summary>
-        /// Moves book to next page.
-        /// </summary>
-        /// <returns>True if moved to next page, false if no more pages.</returns>
-        bool MoveNextPage();
-
-        /// <summary>
-        /// Moves book to previous page.
-        /// </summary>
-        /// <returns>True if moved to previous page, false if no earlier pages.</returns>
-        bool MovePreviousPage();
-
-        /// <summary>
-        /// Returns true if a book is currently open.
-        /// </summary>
-        bool IsBookOpen { get; }
-
-        /// <summary>
-        /// Gets or sets current page index.
-        /// </summary>
-        int CurrentPage { get; set; }
-
-        /// <summary>
-        /// Gets total page count in book.
-        /// </summary>
-        int PageCount { get; }
-
-        /// <summary>
-        /// Gets text tokens for current page.
-        /// </summary>
-        TextFile.Token[] PageTokens { get; }
     }
 
     /// <summary>
@@ -164,92 +118,9 @@ namespace DaggerfallWorkshop.Utility
     public abstract class TextProvider : ITextProvider
     {
         TextFile rscFile = new TextFile();
-        BookFile bookFile = new BookFile();
-        int currentPage = -1;
-        bool isBookOpen = false;
 
         public TextProvider()
         {
-        }
-
-        public virtual bool IsBookOpen
-        {
-            get { return isBookOpen; }
-        }
-
-        public virtual int CurrentPage
-        {
-            get { return currentPage; }
-            set { SetPage(value); }
-        }
-
-        public virtual int PageCount
-        {
-            get { return bookFile.PageCount; }
-        }
-
-        public virtual TextFile.Token[] PageTokens
-        {
-            get { return GetPageTokens(currentPage); }
-        }
-
-        public virtual bool OpenBook(int message)
-        {
-            if (DaggerfallUnity.Settings.CustomBooksImport)
-                return OpenBook(DaggerfallUnity.Instance.ItemHelper.GetBookFileNameByMessage(message));
-
-            return OpenBook(BookFile.messageToBookFilename(message));
-        }
-
-        public virtual bool OpenBook(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-                return false;
-
-            if (!BookReplacement.TryImportBook(name, bookFile) &&
-                !bookFile.OpenBook(DaggerfallUnity.Instance.Arena2Path, name))
-                return false;
-
-            isBookOpen = true;
-            currentPage = 0;
-
-            return true;
-        }
-
-        public virtual bool MoveNextPage()
-        {
-            if (currentPage + 1 >= bookFile.PageCount)
-                return false;
-
-            currentPage++;
-
-            return true;
-        }
-
-        public virtual bool MovePreviousPage()
-        {
-            if (currentPage - 1 < 0)
-                return false;
-
-            currentPage--;
-
-            return true;
-        }
-
-        public virtual TextFile.Token[] GetPageTokens(int page)
-        {
-            if (IsBookOpen)
-                return bookFile.GetPageTokens(page);
-            else
-                return null;
-        }
-
-        public virtual void SetPage(int index)
-        {
-            if (index < 0 || index >= bookFile.PageCount)
-                throw new Exception("TextProvider: Page index out of range.");
-
-            currentPage = index;
         }
 
         public virtual TextFile.Token[] GetRSCTokens(int id)

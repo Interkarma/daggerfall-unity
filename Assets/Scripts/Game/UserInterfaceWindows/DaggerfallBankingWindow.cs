@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     List<BuildingSummary> housesForSale = buildingDirectory.GetHousesForSale();
                     // If houses are for sale, show them
                     if (housesForSale.Count > 0)
-                        uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this, housesForSale));
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.BankPurchasePopup, new object[] { uiManager, this, housesForSale }));
                     else
                         GeneratePopup(TransactionResult.NO_HOUSES_FOR_SALE);
                 }
@@ -450,7 +450,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.ExteriorData.PortTownAndUnknown == 0)
                 GeneratePopup(TransactionResult.NOT_PORT_TOWN);
             else    // Show ships for sale
-                uiManager.PushWindow(new DaggerfallBankPurchasePopUp(uiManager, this));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.BankPurchasePopup, new object[] { uiManager, this, null }));
         }
 
         void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -461,7 +461,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
+            if (!transactionInput.Enabled)
+                CloseWindow();
         }
 
         public void OnTransactionEventHandler(TransactionType type, TransactionResult result, int amount)

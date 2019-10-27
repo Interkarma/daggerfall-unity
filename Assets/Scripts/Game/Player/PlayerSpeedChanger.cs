@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
         public const float dfWalkBase = 150f;
         private const float dfCrouchBase = 50f;
         private const float dfRideBase = dfWalkBase + 225f;
-        //private const float dfCartBase = dfWalkBase + 100f;
+        private const float dfCartBase = dfWalkBase + 100f;
 
         public float walkSpeedOverride = 6.0f;
         public bool useWalkSpeedOverride = false;
@@ -37,10 +37,14 @@ namespace DaggerfallWorkshop.Game
         public float runSpeedOverride = 11.0f;
         public bool useRunSpeedOverride = false;
 
+        public delegate bool CanPlayerRun();
+        public CanPlayerRun CanRun { get; set; }
+
         private void Start()
         {
             playerMotor = GameManager.Instance.PlayerMotor;
             levitateMotor = GetComponent<LevitateMotor>();
+            CanRun = CanRunUnlessRiding;
         }
 
         /// <summary>
@@ -51,7 +55,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerMotor.IsGrounded)
             {
-                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && !playerMotor.IsRiding)
+                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && CanRun())
                 {
                     try
                     {
@@ -75,6 +79,12 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public bool CanRunUnlessRiding()
+        {
+            return !playerMotor.IsRiding;
+        }
+
+
         /// <summary>
         /// Get LiveSpeed adjusted for swimming, walking, crouching or riding
         /// </summary>
@@ -90,7 +100,10 @@ namespace DaggerfallWorkshop.Game
             if (playerMotor.IsCrouching && !levitateMotor.IsSwimming)
                 baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
             else if (playerMotor.IsRiding)
-                baseSpeed = (playerSpeed + dfRideBase) / classicToUnitySpeedUnitRatio;
+            {
+                float rideSpeed = (GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart) ? dfCartBase : dfRideBase;
+                baseSpeed = (playerSpeed + rideSpeed) / classicToUnitySpeedUnitRatio;
+            }
             else
                 baseSpeed = GetWalkSpeed(player);
             return baseSpeed;

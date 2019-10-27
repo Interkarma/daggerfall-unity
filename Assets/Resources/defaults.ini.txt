@@ -9,11 +9,11 @@ RetroRenderingMode=0
 UseMipMapsInRetroMode=False
 VSync=True
 Fullscreen=False
+ExclusiveFullscreen=False
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
 ShadowResolutionMode=0
-UseLegacyDeferred=False
 DungeonLightShadows=False
 InteriorLightShadows=True
 ExteriorLightShadows=True
@@ -58,6 +58,8 @@ EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
 IllegalRestWarning=True
 LoiterLimitInHours=3
+LargeHUD=false
+LargeHUDScale=1.0
 
 [Spells]
 EnableSpellLighting=True
@@ -97,7 +99,7 @@ StartInDungeon=True
 TerrainDistance=3
 TerrainHeightmapPixelError=5
 SmallerDungeons=False
-CustomBooksImport=False
+CustomBooksImport=True
 
 [Enhancements]
 LypyL_GameConsole=True

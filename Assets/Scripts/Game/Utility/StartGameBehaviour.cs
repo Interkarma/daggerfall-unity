@@ -165,10 +165,20 @@ namespace DaggerfallWorkshop.Game.Utility
         void ApplyStartSettings()
         {
             // Resolution
-            Screen.SetResolution(
-                DaggerfallUnity.Settings.ResolutionWidth,
-                DaggerfallUnity.Settings.ResolutionHeight,
-                DaggerfallUnity.Settings.Fullscreen);
+            if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    FullScreenMode.ExclusiveFullScreen);
+            }
+            else
+            {
+                Screen.SetResolution(
+                    DaggerfallUnity.Settings.ResolutionWidth,
+                    DaggerfallUnity.Settings.ResolutionHeight,
+                    DaggerfallUnity.Settings.Fullscreen);
+            }
 
             // Camera settings
             GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
@@ -191,10 +201,6 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Set mouse look sensitivity
                 if (mouseLook)
                     mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
-
-                // Set rendering path
-                if (DaggerfallUnity.Settings.UseLegacyDeferred)
-                    camera.renderingPath = RenderingPath.DeferredLighting;
             }
 
             // Set shadow resolution

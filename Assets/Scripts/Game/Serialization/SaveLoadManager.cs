@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string conversationDataFilename = "ConversationData.txt";
         const string notebookDataFilename = "NotebookData.txt";
         const string automapDataFilename = "AutomapData.txt";
+        const string questExceptionsFilename = "QuestExceptions.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string bioFileName = "bio.txt";
         const string notReadyExceptionText = "SaveLoad not ready.";
@@ -307,6 +308,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, screenshotFilename));
             File.Delete(Path.Combine(path, containerDataFilename));
             File.Delete(Path.Combine(path, automapDataFilename));
+            File.Delete(Path.Combine(path, questExceptionsFilename));
             File.Delete(Path.Combine(path, conversationDataFilename));
             File.Delete(Path.Combine(path, discoveryDataFilename));
             File.Delete(Path.Combine(path, factionDataFilename));
@@ -927,6 +929,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveInfo.saveName = saveName;
             saveInfo.characterName = saveData.playerData.playerEntity.name;
             saveInfo.dateAndTime = saveData.dateAndTime;
+            saveInfo.dfuVersion = VersionInfo.DaggerfallUnityVersion;
 
             // Build faction data
             FactionData_v2 factionData = stateManager.GetPlayerFactionData();
@@ -983,6 +986,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, discoveryDataFilename), discoveryDataJson);
             WriteSaveFile(Path.Combine(path, conversationDataFilename), conversationDataJson);
             WriteSaveFile(Path.Combine(path, notebookDataFilename), notebookDataJson);
+
+            // Save quest exceptions
+            QuestMachine.StoredException[] storedExceptions = QuestMachine.Instance.GetStoredExceptions();
+            string questExceptionsJson = Serialize(storedExceptions.GetType(), storedExceptions);
+            WriteSaveFile(Path.Combine(path, questExceptionsFilename), questExceptionsJson);
 
             // Save backstory text
             if (!File.Exists(Path.Combine(path, bioFileName)))
@@ -1062,6 +1070,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
             string conversationDataJson = ReadSaveFile(Path.Combine(path, conversationDataFilename));
             string notebookDataJson = ReadSaveFile(Path.Combine(path, notebookDataFilename));
+
+            // Read quest exceptions
+            if (File.Exists(Path.Combine(path, questExceptionsFilename)))
+            {
+                string questExceptionsJson = ReadSaveFile(Path.Combine(path, questExceptionsFilename));
+                QuestMachine.StoredException[] storedExceptions = Deserialize(typeof(QuestMachine.StoredException[]), questExceptionsJson) as QuestMachine.StoredException[];
+                QuestMachine.Instance.SetStoredExceptions(storedExceptions);
+            }
 
             // Load backstory text
             playerEntity.BackStory = new List<string>();

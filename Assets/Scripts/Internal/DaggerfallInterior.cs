@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Nystul, Hazelnut, Numidium
+// Contributors:    Nystul, Hazelnut, Numidium, Ferital
 // 
 // Notes:
 //
@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop
         const int propModelType = 3;
 
         private const int posMask = 0x3FF;  // 10 bits
+        private const string peopleFlats = "People Flats";
 
         const uint houseContainerObjectGroup = 418;
         const uint containerObjectGroupOffset = 41000;
@@ -147,15 +148,7 @@ namespace DaggerfallWorkshop
             this.entryDoor = door;
             this.doorOwner = doorOwner;
 
-            // Get block data
-            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
-            if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
-
-            // Get record data
-            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
-            if (recordData.Interior.Header.Num3dObjectRecords == 0)
-                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+            AssignBlockData(door);
 
             // Layout interior data
             AddModels(buildingData);
@@ -185,15 +178,7 @@ namespace DaggerfallWorkshop
             this.entryDoor = door;
             this.doorOwner = doorOwner;
 
-            // Get block data
-            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
-            if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
-
-            // Get record data
-            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
-            if (recordData.Interior.Header.Num3dObjectRecords == 0)
-                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+            AssignBlockData(door);
 
             // Layout interior data
             AddModels(mapBD);
@@ -353,7 +338,57 @@ namespace DaggerfallWorkshop
             return true;
         }
 
+        /// <summary>
+        /// Update NPC presence for shops and guilds after resting/idling.
+        /// </summary>
+        public void UpdateNpcPresence()
+        {
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
+            if ((RMBLayout.IsShop(buildingType) && !playerEnterExit.IsPlayerInsideOpenShop) ||
+                (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType)))
+            {
+                Transform npcTransforms = transform.Find(peopleFlats);
+                if (PlayerActivate.IsBuildingOpen(buildingType))
+                {
+                    foreach (Transform npcTransform in npcTransforms)
+                    {
+                        npcTransform.gameObject.SetActive(true);
+                    }
+                    Debug.Log("Updated npcs to be present.");
+                }
+            }
+        }
+
         #region Private Methods
+
+        /// <summary>
+        /// Set block data corresponding to interior.
+        /// </summary>
+        private void AssignBlockData(StaticDoor door)
+        {
+            // Get block data
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            bool foundBlock = false;
+            for (int index = 0; index < blocks.Length && !foundBlock; ++index)
+            {
+                if (blocks[index].Index == door.blockIndex)
+                {
+                    this.blockData = blocks[index];
+                    foundBlock = true;
+                }
+            }
+
+            if (!foundBlock || this.blockData.Type != DFBlock.BlockTypes.Rmb)
+                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
+
+            // Get record data
+            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
+            if (recordData.Interior.Header.Num3dObjectRecords == 0)
+                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+        }
 
         /// <summary>
         /// Add interior models.
@@ -402,7 +437,7 @@ namespace DaggerfallWorkshop
                     stopCombine = true;
 
                 // Get model transform
-                Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
+                Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
                 // Does this model have doors?
@@ -432,8 +467,8 @@ namespace DaggerfallWorkshop
                     }
                 }
 
-                // Make ladder collider convex
-                if (obj.ModelIdNum == ladderModelId)
+                // Make ladder collider convex and ladder functionality, if set up as propModelType
+                if (obj.ModelIdNum == ladderModelId && obj.ObjectType == propModelType)
                 {
                     var meshCollider = go.GetComponent<MeshCollider>();
                     if (meshCollider) meshCollider.convex = true;
@@ -844,7 +879,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void AddPeople(PlayerGPS.DiscoveredBuilding buildingData)
         {
-            GameObject node = new GameObject("People Flats");
+            GameObject node = new GameObject(peopleFlats);
             node.transform.parent = this.transform;
             bool isMemberOfBuildingGuild = GameManager.Instance.GuildManager.GetGuild(buildingData.factionID).IsMember();
 

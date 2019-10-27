@@ -12,6 +12,7 @@
 #region Using Statements
 using FullSerializer;
 using System;
+using System.Collections.Generic;
 #endregion
 
 namespace DaggerfallConnect
@@ -411,8 +412,14 @@ namespace DaggerfallConnect
             /// <summary>Unknown.</summary>
             internal UInt32 NullValue2;
 
+            /// <summary>X rotation.</summary>
+            public Int16 XRotation;
+
             /// <summary>Y rotation.</summary>
             public Int16 YRotation;
+
+            /// <summary>Z rotation.</summary>
+            public Int16 ZRotation;
 
             /// <summary>Unknown.</summary>
             internal UInt16 Unknown4;
@@ -777,6 +784,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// An RDB block has this general structure.
         /// </summary>
+        [fsObject(Processor = typeof(RdbBlockDescProcessor))]
         public struct RdbBlockDesc
         {
             /// <summary>Position in stream to find this data.</summary>
@@ -798,7 +806,7 @@ namespace DaggerfallConnect
             public RdbObjectRoot[] ObjectRootList;
 
             /// <summary>List of unknown objects from RdbObjectHeader.</summary>
-            public RdbUnknownObject[] UnknownObjectList;
+            internal RdbUnknownObject[] UnknownObjectList;
         }
 
         /// <summary>
@@ -900,10 +908,11 @@ namespace DaggerfallConnect
         /// <summary>
         /// A single RDB object has this structure.
         /// </summary>
+        [fsObject(Processor = typeof(RdbObjectProcessor))]
         public struct RdbObject
         {
             /// <summary>Offset of this object from start of RDB record. Not required unless you are extending the block reader.</summary>
-            internal Int32 Position;
+            public Int32 Position;
 
             /// <summary>Offset to next object from start of RDB record. Not required unless you are extending the block reader.</summary>
             internal Int32 Next;
@@ -1095,4 +1104,50 @@ namespace DaggerfallConnect
 
         #endregion
     }
+
+    #region FullSerializer Custom Processors (used when serializing world data structures)
+
+    public class RdbBlockDescProcessor : fsObjectProcessor
+    {
+        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        {
+            // Truncate ModelReferenceList at the first null entry in array[750].
+            fsData modelRefDict = data.AsDictionary["ModelReferenceList"];
+            if (!modelRefDict.IsNull)
+            {
+                List<fsData> modelRefList = modelRefDict.AsList;
+                for (int i = 0; i < modelRefList.Count; i++)
+                {
+                    if (modelRefList[i].AsDictionary["ModelIdNum"].AsInt64 == 0)
+                    {
+                        modelRefList.RemoveRange(i, modelRefList.Count - i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public class RdbObjectProcessor : fsObjectProcessor
+    {
+        // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        {
+            // Only write relevant type resource data for Rdb Objects.
+            Dictionary<string, fsData> rdbObject = data.AsDictionary;
+            DFBlock.RdbResourceTypes type = (DFBlock.RdbResourceTypes)Enum.Parse(typeof(DFBlock.RdbResourceTypes), rdbObject["Type"].AsString);
+            Dictionary<string, fsData> resources = rdbObject["Resources"].AsDictionary;
+
+            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Light)
+                resources.Remove("ModelResource");
+            if (type == DFBlock.RdbResourceTypes.Flat || type == DFBlock.RdbResourceTypes.Model)
+                resources.Remove("LightResource");
+            if (type == DFBlock.RdbResourceTypes.Model || type == DFBlock.RdbResourceTypes.Light)
+                resources.Remove("FlatResource");
+        }
+    }
+
+    #endregion
+
 }

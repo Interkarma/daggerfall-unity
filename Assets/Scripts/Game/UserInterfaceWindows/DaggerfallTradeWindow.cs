@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color repairItemBackgroundColor = new Color(0.17f, 0.32f, 0.7f, 0.6f);
 
         WindowModes windowMode = WindowModes.Inventory;
-        Guild guild;
+        IGuild guild;
 
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             { DFLocation.BuildingTypes.GeneralStore, new List<ItemGroups>()
                 { ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Transportation, ItemGroups.Jewellery, ItemGroups.Weapons, ItemGroups.UselessItems2 } },
             { DFLocation.BuildingTypes.PawnShop, new List<ItemGroups>()
-                { ItemGroups.Armor, ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Gems, ItemGroups.Jewellery, ItemGroups.ReligiousItems, ItemGroups.Weapons, ItemGroups.UselessItems2 } },
+                { ItemGroups.Armor, ItemGroups.Books, ItemGroups.MensClothing, ItemGroups.WomensClothing, ItemGroups.Gems, ItemGroups.Jewellery, ItemGroups.ReligiousItems, ItemGroups.Weapons, ItemGroups.UselessItems2, ItemGroups.Paintings } },
             { DFLocation.BuildingTypes.WeaponSmith, new List<ItemGroups>()
                 { ItemGroups.Armor, ItemGroups.Weapons } },
         };
@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, WindowModes windowMode, DaggerfallBaseWindow previous = null, Guild guild = null)
+        public DaggerfallTradeWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null, WindowModes windowMode = WindowModes.Sell, IGuild guild = null)
             : base(uiManager, previous)
         {
             this.windowMode = windowMode;
@@ -644,7 +644,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnityItem item = localItems.GetItem(i);
                     if (!item.IsEquipped && (
                             (windowMode != WindowModes.Sell && windowMode != WindowModes.SellMagic) ||
-                            (windowMode == WindowModes.Sell && !item.IsEnchanted && itemTypesAccepted.Contains(item.ItemGroup)) ||
+                            (windowMode == WindowModes.Sell && itemTypesAccepted.Contains(item.ItemGroup)) ||
                             (windowMode == WindowModes.SellMagic && item.IsEnchanted) ))
                     {
                         AddLocalItem(item);

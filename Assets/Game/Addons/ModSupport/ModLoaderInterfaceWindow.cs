@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.IO;
 using System.Linq;
 using DaggerfallWorkshop.Game;
@@ -352,6 +353,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         Mod mod = ModManager.Instance.GetMod(ms.modInfo.ModTitle);
 
+        modDFTFUVersionLabel.TextColor = mod.IsGameVersionSatisfied() == false ? Color.red : DaggerfallUI.DaggerfallDefaultTextColor;
+
 #if UNITY_EDITOR
         if (mod.IsVirtual)
             modTitleLabel.Text += " (debug)";
@@ -376,6 +379,42 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             showModDescriptionButton.Position = new Vector2(5, 95);
             extractFilesButton.Position = new Vector2(5, 117);
             refreshButton.Position = new Vector2(5, 139);
+        }
+    }
+
+    private void CleanConfigurationDirectory(Action onPerformed = null)
+    {
+        var unknownDirectories = Directory.GetDirectories(ModManager.Instance.ModDataDirectory)
+            .Select(x => new DirectoryInfo(x))
+            .Where(x => ModManager.Instance.GetModFromGUID(x.Name) == null)
+            .ToArray();
+
+        if (unknownDirectories.Length > 0)
+        {
+            var cleanConfigMessageBox = new DaggerfallMessageBox(uiManager, this);
+            cleanConfigMessageBox.ParentPanel.BackgroundTexture = null;
+            cleanConfigMessageBox.SetText(ModManager.GetText("cleanConfigurationDir"));
+            cleanConfigMessageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            cleanConfigMessageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+            cleanConfigMessageBox.OnButtonClick += (messageBox, messageBoxButton) =>
+            {
+                if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                {
+                    foreach (var directory in unknownDirectories)
+                        directory.Delete(true);
+                }
+
+                messageBox.CancelWindow();
+
+                if (onPerformed != null)
+                    onPerformed();
+            };
+            uiManager.PushWindow(cleanConfigMessageBox);
+        }
+        else
+        {
+            if (onPerformed != null)
+                onPerformed();
         }
     }
 
@@ -445,7 +484,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         //save current mod settings to file
         ModManager.WriteModSettings();
         ModManager.Instance.SortMods();
-        DaggerfallUI.UIManager.PopWindow();
+        CleanConfigurationDirectory(() => DaggerfallUI.UIManager.PopWindow());
     }
 
     void ExtractFilesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

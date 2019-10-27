@@ -102,6 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const SoundClips openSpellBook = SoundClips.OpenBook;
         const SoundClips openSpellBookBuyMode = SoundClips.ButtonClick;
+        const SoundClips editSpellBook = SoundClips.PageTurn;
         const SoundClips closeSpellBook = SoundClips.PageTurn;
 
         bool buyMode = false;
@@ -809,6 +810,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 deleteSpellIndex = -1;
                 RefreshSpellsList(true);
                 UpdateSelection();
+                DaggerfallUI.Instance.PlayOneShot(editSpellBook);
             }
 
             CloseWindow();
@@ -832,6 +834,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Force revealing one item ahead
                 if (spellsListBox.SelectedIndex == spellsListBox.ScrollIndex + spellsListBox.RowsDisplayed - 1)
                     spellsListBox.ScrollDown();
+                DaggerfallUI.Instance.PlayOneShot(editSpellBook);
             }
             else if (sender == upButton && spellsListBox.SelectedIndex > 0)
             {
@@ -841,6 +844,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Force revealing one item ahead
                 if (spellsListBox.SelectedIndex == spellsListBox.ScrollIndex)
                     spellsListBox.ScrollUp();
+                DaggerfallUI.Instance.PlayOneShot(editSpellBook);
             }
         }
 
@@ -857,6 +861,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             RefreshSpellsList(false);
             SetDefaults();
+            DaggerfallUI.Instance.PlayOneShot(editSpellBook);
         }
 
         public void SpellNameLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -882,6 +887,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, renamedSpellSettings);
             RefreshSpellsList(true);
             UpdateSelection();
+            // classic plays edit sound before you enter the new name
+            DaggerfallUI.Instance.PlayOneShot(editSpellBook);
         }
 
         private void SpellIconPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -900,6 +907,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 spellSettings.Icon = iconPicker.SelectedIcon.Value;
                 GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
                 UpdateSelection();
+                DaggerfallUI.Instance.PlayOneShot(editSpellBook);
             }
         }
 

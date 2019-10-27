@@ -492,7 +492,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Creates a new copy of this item.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Cloned item.</returns>
         public DaggerfallUnityItem Clone()
         {
             return new DaggerfallUnityItem(this);
@@ -1528,6 +1528,10 @@ namespace DaggerfallWorkshop.Game.Items
             message = other.message;
             potionRecipeKey = other.potionRecipeKey;
             timeHealthLeechLastUsed = other.timeHealthLeechLastUsed;
+
+            isQuestItem = other.isQuestItem;
+            questUID = other.questUID;
+            questItemSymbol = other.questItemSymbol;
 
             if (other.legacyMagic != null)
                 legacyMagic = (DaggerfallEnchantment[])other.legacyMagic.Clone();

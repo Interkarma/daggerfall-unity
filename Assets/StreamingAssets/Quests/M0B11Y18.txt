@@ -347,9 +347,11 @@ Clock _S.00_ 00:05 0 flag 1 range 0 1
 Clock _patsy_ 30.00:00 0 flag 1 range 0 1
 Clock _S.02_ 3.11:20 13.21:20
 Clock _S.03_ 00:35 0 flag 1 range 0 1
-Clock _S.05_ 02:00 0 flag 1 range 0 1
+Clock _S.05_ 02:00
+--removed flags from S.05, could vary too much
 Clock _gettraitor_ 30.00:00 0 flag 1 range 0 1
-Clock _S.35_ 00:01 0 flag 1 range 0 1
+Clock _S.35_ 00:01
+--removed flags from S.35, needed to be precise
 
 Foe _F.00_ is 3 Archer
 Foe _mages_ is 2 Mage
@@ -386,6 +388,11 @@ _S.04_ task:
 _S.05_ task:
 	place item _I.04_ at _targethouse_ 
 	hide npc _target_ 
+
+_deadbody_ task:
+	clicked item _I.04_
+	take _I.04_ from pc
+--added deadbody task. otherwise body would clog inventory
 
 _S.06_ task:
 	clicked npc _target_ 
@@ -446,6 +453,8 @@ _S.17_ task:
 	say 1061 
 	make _traitorreward_ permanent 
 	change repute with _traitor_ by +15 
+	remove foe _F.03_
+--added remove foe action. K'avar's forces shouldn't try to kill you now
 
 _S.18_ task:
 	give pc _reward_ 

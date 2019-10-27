@@ -911,7 +911,7 @@ namespace DaggerfallWorkshop
                 bool receivedDirectionalHints = false;
                 bool locationWasMarkedOnMapByNPC = false;
                 string overrideBuildingName = string.Empty;
-                if (GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
+                if (GameManager.Instance.TalkManager.IsBuildingQuestResource(CurrentMapID, buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
                 {
                     // if pc learned about building existance (was told the name) and quest building has (override) building name different than current building display name
                     if (pcLearnedAboutExistence && overrideBuildingName != db.displayName)
@@ -1032,11 +1032,6 @@ namespace DaggerfallWorkshop
 
             // Get discovery data for building
             discoveredBuildingOut = dl.discoveredBuildings[buildingKey];
-
-            // Check if name should be overridden (owned house / quest site)
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (DaggerfallBankManager.IsHouseOwned(buildingKey))
-                discoveredBuildingOut.displayName = HardStrings.playerResidence.Replace("%s", playerEntity.Name);
 
             return true;
         }

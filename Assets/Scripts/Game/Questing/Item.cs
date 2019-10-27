@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.FallExe;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Guilds;
 
 /*Example patterns:
  * 
@@ -223,7 +224,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (artifact)
                         textOut = item.shortName;
                     else
-                        textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
+                        textOut = (isGoldPieces) ? item.stackCount.ToString() : GetLongName(item);
                     break;
 
                 default:                                // Macro not supported
@@ -249,6 +250,12 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Private Methods
+
+        // Custom long name getter that prevents plant suffix being displayed in quest text
+        string GetLongName(DaggerfallUnityItem item)
+        {
+            return DaggerfallUnity.Instance.ItemHelper.ResolveItemLongName(item, false);
+        }
 
         // Create by item or artifact name
         // This gets class and subclass values from p1 and p2 of items lookup table
@@ -278,10 +285,10 @@ namespace DaggerfallWorkshop.Game.Questing
             DaggerfallUnityItem result;
 
             // Handle random magic items
-            if (itemClass == (int)ItemGroups.MagicItems && itemSubClass == -1)
+            if (itemClass == (int)ItemGroups.MagicItems)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                result = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, playerEntity.Level, playerEntity.Gender, playerEntity.Race);
             }
             // Handle books
             else if (itemClass == (int)ItemGroups.Books)
@@ -304,7 +311,17 @@ namespace DaggerfallWorkshop.Game.Questing
             // Link item to quest
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
-            return result;
+            string name = result.shortName.Replace("%it", result.ItemTemplate.name);
+            QuestMachine.LogFormat(
+                ParentQuest,
+                "Generated \"{0}\" from Class {1} and Subclass {2} for item {3}",
+                name,
+                itemClass,
+                itemSubClass,
+                Symbol.Original
+            );
+
+             return result;
         }
 
         // Create stack of gold pieces
@@ -314,19 +331,33 @@ namespace DaggerfallWorkshop.Game.Questing
             int amount = 0;
             if (rangeLow == -1 || rangeHigh == -1)
             {
-                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
-                // TODO: If this is a faction quest, playerMod is (player factionrank + 1) rather than level
-                int playerMod = (player.Level / 2) + 1;
+                int playerMod = (playerEntity.Level / 2) + 1;
+                int factionMod = 50;
+                IGuild guild = null;
+                if (ParentQuest.FactionId != 0)
+                {
+                    // If this is a faction quest, playerMod is (player factionrank + 1) rather than level
+                    GuildManager guildManager = GameManager.Instance.GuildManager;
+                    FactionFile.GuildGroups guildGroup = guildManager.GetGuildGroup(ParentQuest.FactionId);
+                    if (guildGroup != FactionFile.GuildGroups.None)
+                        playerMod = guildManager.GetGuild(guildGroup).Rank + 1;
+
+                    // If this is a faction quest, factionMod = faction.power rather than 50
+                    FactionFile.FactionData factionData;
+                    if (playerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out factionData))
+                        factionMod = factionData.power;
+                }
                 if (playerMod > 10)
                     playerMod = 10;
 
-                // TODO: If this is a faction quest, factionMod = faction.power rather than 50
-                int factionMod = 50;
-
                 PlayerGPS gps = GameManager.Instance.PlayerGPS;
-                int regionPriceMod = player.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
+                int regionPriceMod = playerEntity.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
                 amount = UnityEngine.Random.Range(150 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
+
+                if (guild != null)
+                    amount = guild.AlterReward(amount);
             }
             else
                 amount = UnityEngine.Random.Range(rangeLow, rangeHigh + 1);

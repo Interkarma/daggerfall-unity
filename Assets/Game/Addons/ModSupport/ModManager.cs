@@ -10,9 +10,6 @@
 //
 
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -29,6 +26,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public const string MODEXTENSION        = ".dfmod";
         public const string MODINFOEXTENSION    = ".dfmod.json";
         public const string MODCONFIGFILENAME   = "Mod_Settings.json";
+
+#if UNITY_EDITOR
+        const string dataFolder = "EditorData";
+#else
+        const string dataFolder = "GameData";
+#endif
+
         bool alreadyAtStartMenuState            = false;
         static bool alreadyStartedInit          = false;
         [SerializeField]
@@ -74,7 +78,28 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             get { return mods; }
         }
 
+        /// <summary>
+        /// The directory where mods are stored. It's not writable on all platforms.
+        /// </summary>
         public string ModDirectory { get; set; }
+
+        /// <summary>
+        /// The writable directory that holds mods data, separated for build and editor to allow mods
+        /// to be developed and tested without affecting main game installation.
+        /// </summary>
+        internal string ModDataDirectory
+        {
+            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", dataFolder)); }
+        }
+
+        /// <summary>
+        /// The writable directory that holds mods cache, separated for build and editor to allow mods
+        /// to be developed and tested without affecting main game installation.
+        /// </summary>
+        internal string ModCacheDirectory
+        {
+            get { return Path.Combine(Application.temporaryCachePath, Path.Combine("Mods", dataFolder)); }
+        }
 
         public static ModManager Instance { get; private set; }
 
@@ -86,34 +111,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
-            if (!Directory.Exists(ModDirectory))
-            {
-                var di = Directory.CreateDirectory(ModDirectory);
-                if (!di.Exists)
-                {
-                    Debug.LogError(string.Format("Mod Directory doesn't exist {0}", ModDirectory));
-                }
-            }
+        }
 
+        void Start()
+        {
             SetupSingleton();
 
             if (Instance == this)
                 StateManager.OnStateChange += StateManager_OnStateChange;
-        }
 
-        // Use this for initialization
-        void Start()
-        {
             if (!DaggerfallUnity.Settings.LypyL_ModSystem)
             {
                 Debug.Log("Mod System disabled");
                 StateManager.OnStateChange -= StateManager_OnStateChange;
                 Destroy(this);
             }
+
             mods = new List<Mod>();
-            FindModsFromDirectory();
-            LoadModSettings();
-            SortMods();
+
+            if (Directory.Exists(ModDirectory))
+            {
+                FindModsFromDirectory();
+                LoadModSettings();
+                SortMods();
+            }
+            else
+            {
+                Debug.LogWarningFormat("Mod system is enabled but directory {0} doesn't exist.", ModDirectory);
+            }
         }
 
         #endregion
@@ -304,12 +329,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="filter">A filter that accepts or rejects a mod; can be used to check if a contribute is present.</param>
         /// <returns>An enumeration of mods with contributes.</returns>
-        internal IOrderedEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
+        internal IEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
         {
-            return from mod in mods
-                   where mod.ModInfo.Contributes != null && (filter == null || filter(mod.ModInfo.Contributes))
-                   orderby mod.LoadPriority descending
-                   select mod;
+            return EnumerateModsReverse().Where(x => x.Enabled && x.ModInfo.Contributes != null && (filter == null || filter(x.ModInfo.Contributes)));
         }
 
         /// <summary>
@@ -363,8 +385,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool TryGetAsset<T>(string name, bool clone, out T asset) where T : UnityEngine.Object
         {
             var query = from mod in EnumerateModsReverse()
-                        where mod.AssetBundle != null
-                        where mod.AssetBundle.Contains(name)
+#if UNITY_EDITOR
+                        where (mod.AssetBundle != null && mod.AssetBundle.Contains(name)) || (mod.IsVirtual && mod.HasAsset(name))
+#else
+                        where mod.AssetBundle != null && mod.AssetBundle.Contains(name)
+#endif
                         select mod.GetAsset<T>(name, clone);
 
             return (asset = query.FirstOrDefault()) != null;
@@ -385,11 +410,54 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool TryGetAsset<T>(string[] names, bool clone, out T asset) where T : UnityEngine.Object
         {
             var query = from mod in EnumerateModsReverse()
+#if UNITY_EDITOR
+                        where mod.AssetBundle != null || mod.IsVirtual
+                        from name in names where mod.IsVirtual ? mod.HasAsset(name) : mod.AssetBundle.Contains(name)
+#else
                         where mod.AssetBundle != null
                         from name in names where mod.AssetBundle.Contains(name)
+#endif
                         select mod.GetAsset<T>(name, clone);
 
             return (asset = query.FirstOrDefault()) != null;
+        }
+
+        /// <summary>
+        /// Seeks assets inside a directory from all mods with load order. An asset is accepted if its directory ends with the given subdirectory.
+        /// For example "Assets/Textures" matches "Water.png" from "Assets/Game/Mods/Example/Assets/Textures/Water.png".
+        /// </summary>
+        /// <param name="relativeDirectory">A relative directory with forward slashes (i.e. "Assets/Textures").</param>
+        /// <param name="extension">An extension including the dots (i.e ".json") or null.</param>
+        /// <returns>A list of assets or null if there are no matches.</returns>
+        public List<T> FindAssets<T>(string relativeDirectory, string extension = null) where T : UnityEngine.Object
+        {
+            if (relativeDirectory == null)
+                throw new ArgumentNullException("relativeDirectory");
+
+            List<string> names = null;
+            List<T> assets = null;
+
+            foreach (Mod mod in EnumerateModsReverse())
+            {
+                if (names != null)
+                    names.Clear();
+
+                if (mod.FindAssetNames(ref names, relativeDirectory, extension) != 0)
+                {
+                    for (int i = 0; i < names.Count; i++)
+                    {
+                        var asset = mod.GetAsset<T>(names[i]);
+                        if (asset)
+                        {
+                            if (assets == null)
+                                assets = new List<T>();
+                            assets.Add(asset);
+                        }
+                    }
+                }  
+            }
+
+            return assets;
         }
 
         /// <summary>
@@ -687,7 +755,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     return false;
                 }
 
-                File.WriteAllText(Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME), fsJsonPrinter.PrettyJson(sdata));
+                File.WriteAllText(Path.Combine(ModManager.Instance.ModDataDirectory, "Mods.json"), fsJsonPrinter.PrettyJson(sdata));
                 return true;
             }
             catch (Exception ex)
@@ -707,11 +775,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             try
             {
-                string filepath = Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME);
-                if (!File.Exists(filepath))
+                string oldFilepath = Path.Combine(ModManager.Instance.ModDirectory, MODCONFIGFILENAME);
+                string filePath = Path.Combine(ModManager.Instance.ModDataDirectory, "Mods.json");
+
+                Directory.CreateDirectory(ModManager.Instance.ModDataDirectory);
+
+                if (File.Exists(oldFilepath))
+                    MoveOldConfigFile(oldFilepath, filePath);
+
+                if (!File.Exists(filePath))
                     return false;
 
-                var serializedData = File.ReadAllText(filepath);
+                var serializedData = File.ReadAllText(filePath);
                 if (string.IsNullOrEmpty(serializedData))
                     return false;
 
@@ -783,6 +858,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.MessageReceiver(message, data, callback);
         }
 
+        /// <summary>
+        /// Combines an array of strings into a path.
+        /// This is a substitute of an overload of <see cref="Path.Combine(string, string)"/> which is not available with current .NET version.
+        /// </summary>
+        /// <param name="paths">An array of parts of the path.</param>
+        /// <returns>The combined paths.</returns>
+        public static string CombinePaths(params string[] paths)
+        {
+            string path = string.Empty;
+
+            for (int i = 0; i < paths.Length; i++)
+                path = Path.Combine(path, paths[i]);
+
+            return path;
+        }
+
 #if UNITY_EDITOR
         /// <summary>
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
@@ -846,6 +937,61 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         internal static string GetText(string key)
         {
             return TextManager.Instance.GetText("ModSystem", key);
+        }
+
+        /// <summary>
+        /// An helper for moving mod config data from StreamingAssets to PersistentDataPath.
+        /// </summary>
+        internal static void MoveOldConfigFile(string sourceFileName, string destFileName)
+        {
+            try
+            {
+                if (File.Exists(destFileName))
+                    File.Delete(destFileName);
+
+                File.Move(sourceFileName, destFileName);
+                Debug.LogFormat("Moved {0} to {1}.", sourceFileName, destFileName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a given version is lower or equal to another version.
+        /// For example <c>"9.0.8"</c> is lower than <c>"10.0.2"</c>.
+        /// </summary>
+        /// <param name="first">A version with format x.y.z, x.y or just x that is expected to be lower or equal.</param>
+        /// <param name="second">A version with format x.y.z, x.y or just x that is expected to be higher or equal.</param>
+        /// <returns>true if first is lower or equal to second, false is first is higher than second, null if parse failed.</returns>
+        internal static bool? IsVersionLowerOrEqual(string first, string second)
+        {
+            if (string.IsNullOrEmpty(first) || string.IsNullOrEmpty(second))
+                return null;
+
+            string[] firstParts = first.Split('.');
+            if (firstParts.Length < 1 || firstParts.Length > 3)
+                return null;
+
+            string[] secondParts = second.Split('.');
+            if (secondParts.Length < 1 || secondParts.Length > 3)
+                return null;
+
+            for (int i = 0; i < firstParts.Length && i < secondParts.Length; i++)
+            {
+                int firstPart, secondPart;
+                if (!int.TryParse(firstParts[i], out firstPart) || !int.TryParse(secondParts[i], out secondPart))
+                    return null;
+
+                if (firstPart > secondPart)
+                    return false;
+
+                if (firstPart < secondPart)
+                    break;
+            }
+
+            return true;
         }
 
         #endregion

@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int daysInPrison;
         int daysInPrisonLeft;
         int state;
-        bool inPrison;
         bool repositionPlayer;
 
         float prisonUpdateTimer = 0f;
@@ -172,7 +171,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (crimeType == 4 || crimeType == 3) // Assault or murder
                 {
                     // If player is a member of the Dark Brotherhood, they may be rescued for a violent crime
-                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
+                    Guilds.IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
                     if (guild.IsMember())
                     {
                         if (guild.Rank >= UnityEngine.Random.Range(0, 20))
@@ -193,7 +192,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (crimeType <= 2 || crimeType == 11) // Attempted breaking and entering, trespassing, breaking and entering, pickpocketing
                 {
                     // If player is a member of the Thieves Guild, they may be rescued for a thieving crime
-                    Guilds.Guild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Thieves_Guild);
+                    Guilds.IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Thieves_Guild);
                     if (guild.IsMember())
                     {
                         if (guild.Rank >= UnityEngine.Random.Range(0, 20))
@@ -248,7 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (state == 3) // Serve prison sentence
             {
-                inPrison = true;
+                playerEntity.InPrison = true;
                 SwitchToPrisonScreen();
                 daysInPrisonLeft = daysInPrison;
                 playerEntity.RaiseReputationForDoingSentence();
@@ -288,7 +287,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (state == 100) // Done
             {
-                if (inPrison)
+                if (playerEntity.InPrison)
                 {
                     if (Input.GetKey(exitKey)) // Speed up prison day countdown. Not in classic.
                         prisonUpdateInterval = 0.001f;
@@ -427,7 +426,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.Arrested = false;
             state = 0;
             prisonUpdateTimer = 0f;
-            inPrison = false;
+            GameManager.Instance.PlayerEntity.InPrison = false;
             repositionPlayer = false;
             daysUntilFreedomLabel.Text = string.Empty;
 
@@ -466,7 +465,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.PreventNormalizingReputations = true;
                 DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(daysInPrison * 1440 * 60);
                 RaiseOnEndPrisonTimeEvent();
-                inPrison = false;
+                playerEntity.InPrison = false;
                 playerEntity.FillVitalSigns();
             }
         }

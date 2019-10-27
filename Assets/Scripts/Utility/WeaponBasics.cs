@@ -82,6 +82,18 @@ namespace DaggerfallWorkshop.Utility
             new WeaponAnimation() {Record = 6, NumFrames = 5, FramePerSecond = StrikeUpAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
         };
 
+        // Weapon animations for magic battle-axe (some records are flipped around)
+        public static WeaponAnimation[] MagicBattleAxeWeaponAnims = new WeaponAnimation[]
+        {
+            new WeaponAnimation() {Record = 0, NumFrames = 1, FramePerSecond = IdleAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 1, NumFrames = 5, FramePerSecond = StrikeDownAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 2, NumFrames = 5, FramePerSecond = StrikeDownLeftAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 4, NumFrames = 5, FramePerSecond = StrikeLeftAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 5, NumFrames = 5, FramePerSecond = StrikeRightAnimSpeed, Alignment = WeaponAlignment.Left, Offset = 0f},
+            new WeaponAnimation() {Record = 3, NumFrames = 5, FramePerSecond = StrikeDownRightAnimSpeed, Alignment = WeaponAlignment.Left, Offset = 0f},
+            new WeaponAnimation() {Record = 6, NumFrames = 5, FramePerSecond = StrikeUpAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+        };
+
         // Animations for bow
         public static WeaponAnimation[] BowWeaponAnims = new WeaponAnimation[]
         {
@@ -118,6 +130,8 @@ namespace DaggerfallWorkshop.Utility
                 return DaggerWeaponAnims;
             else if (weaponType == WeaponTypes.Staff || weaponType == WeaponTypes.Staff_Magic)
                 return StaffWeaponAnims;
+            else if (weaponType == WeaponTypes.Battleaxe_Magic)
+                return MagicBattleAxeWeaponAnims;
             else if (weaponType == WeaponTypes.Bow)
                 return BowWeaponAnims;
             else if (weaponType == WeaponTypes.Werecreature)

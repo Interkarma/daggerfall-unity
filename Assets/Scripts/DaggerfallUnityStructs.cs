@@ -402,13 +402,12 @@ namespace DaggerfallWorkshop
     ///  * Building - Interior of a specific RMB block record. Random based on building type.
     ///  
     ///  NOTES:
-    ///   * My original design of SiteDetails and QuestMarker would only assign one target resource per marker.
-    ///   * This was incompatible with quests like M0B00Y16 where both Giant and the NPC to rescue will spawn on same marker.
-    ///   * New design is to select a random spawn marker and item marker at time of site generation.
-    ///   * All Foe/Person resources placed at same site will share the one spawn marker.
-    ///   * All Item resources placed at same site will share the one item marker.
-    ///   * This design also solves the problem of over-allocation by multiple quests to same site.
-    ///   * Suspect Daggerfall does something similar but selects a random marker from pool for each spawn/item placed.
+    ///   * All available quest Spawn and Item markers are stored in SiteDetails for lookups.
+    ///   * Only a single marker will be selected based on first resource placed to site and what markers are available.
+    ///   * If an Item resource is placed first it will select a random Item marker.
+    ///   * If a Foe or Person resource is placed first it will select a random Spawn marker.
+    ///   * Future placements will be added to selected marker.
+    ///   * If site has only a Spawn or Item marker available, the best available marker type will be used.
     ///   * Will continue to refine this design as quest system progresses.
     /// </summary>
     [Serializable]
@@ -424,8 +423,9 @@ namespace DaggerfallWorkshop
         public string buildingName;                 // Name of target building, e.g. 'The Odd Blades'
         public QuestMarker[] questSpawnMarkers;     // Array of quest spawn markers (Foe, Person resources) found in site, can be null or empty
         public QuestMarker[] questItemMarkers;      // Array of quest item markers (Item resource) found in site, can be null or empty
-        public int selectedQuestSpawnMarker;        // Quest spawn marker randomly chosen at time of site generation
-        public int selectedQuestItemMarker;         // Quest item marker randomly chosen at time of site generation
+        public int selectedQuestSpawnMarker;        // [DEPRECATED] Quest spawn marker randomly chosen at time of site generation
+        public int selectedQuestItemMarker;         // [DEPRECATED] Quest item marker randomly chosen at time of site generation
+        public QuestMarker selectedMarker;          // The spawn/item marker to which future resources will be placed
         public int magicNumberIndex;                // Static index specified by fixed places only (one-based)
     }
 

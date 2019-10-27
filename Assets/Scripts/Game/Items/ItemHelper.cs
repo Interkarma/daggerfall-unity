@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
@@ -53,22 +54,8 @@ namespace DaggerfallWorkshop.Game.Items
         readonly Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         readonly Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
 
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// The total number of books available.
-        /// These are 1-111, plus custom books (112+), plus 10000.
-        /// </summary>
-        public int BooksCount
-        {
-            get
-            {
-                BookReplacement.AssertCustomBooksImportEnabled();
-                return bookIDNameMapping.Count;
-            }
-        }
+        public delegate bool ItemUseHander(DaggerfallUnityItem item, ItemCollection collection);
+        Dictionary<int, ItemUseHander> itemUseHandlers = new Dictionary<int, ItemUseHander>();
 
         #endregion
 
@@ -84,6 +71,23 @@ namespace DaggerfallWorkshop.Game.Items
         #endregion
 
         #region Public Methods
+
+        public bool RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
+        {
+            DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex={1}" + templateIndex);
+            if (!itemUseHandlers.ContainsKey(templateIndex))
+            {
+                itemUseHandlers.Add(templateIndex, itemUseHander);
+                return true;
+            }
+            return false;
+        }
+
+        public bool GetItemUseHander(int templateIndex, out ItemUseHander itemUseHander)
+        {
+            return itemUseHandlers.TryGetValue(templateIndex, out itemUseHander);
+        }
+
 
         /// <summary>
         /// Gets item template data using group and index.
@@ -168,7 +172,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Books are handled differently
             if (item.ItemGroup == ItemGroups.Books)
-                return DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.shortName);
+                return DaggerfallUnity.Instance.ItemHelper.GetBookTitle(item.message, item.shortName);
 
             // Start with base name
             string result = item.shortName;
@@ -185,7 +189,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Resolves full item name using parameters like %it and material type.
         /// </summary>
-        public string ResolveItemLongName(DaggerfallUnityItem item)
+        public string ResolveItemLongName(DaggerfallUnityItem item, bool differentiatePlantIngredients = true)
         {
             string result = ResolveItemName(item);
 
@@ -194,10 +198,13 @@ namespace DaggerfallWorkshop.Game.Items
                 return result;
 
             // Differentiate plant ingredients with 2 variants
-            if (item.ItemGroup == ItemGroups.PlantIngredients1 && item.TemplateIndex < 18)
-                return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "northern"));
-            if (item.ItemGroup == ItemGroups.PlantIngredients2 && item.TemplateIndex < 18)
-                return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "southern"));
+            if (differentiatePlantIngredients)
+            {
+                if (item.ItemGroup == ItemGroups.PlantIngredients1 && item.TemplateIndex < 18)
+                    return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "northern"));
+                if (item.ItemGroup == ItemGroups.PlantIngredients2 && item.TemplateIndex < 18)
+                    return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "southern"));
+            }
 
             // Resolve weapon material
             if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex != (int)Weapons.Arrow)
@@ -443,7 +450,8 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="id">The book's ID</param>
         /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
         /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
-        public String getBookNameByID(int id, string defaultBookName)
+        [Obsolete("Use GetBookTitle() with standard initial uppercase and less ambiguity between title and filename.")]
+        public string getBookNameByID(int id, string defaultBookName)
         {
             string title = "";
             return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookName;
@@ -456,40 +464,72 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="message">The message field for the book Item, from which the ID is derived</param>
         /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
         /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
-        public String getBookNameByMessage(int message, string defaultBookName)
+        [Obsolete("Masking break support for custom books. Use GetBookTitle() instead.")]
+        public string getBookNameByMessage(int message, string defaultBookName)
         {
             return getBookNameByID(message & 0xFF, defaultBookName);
         }
 
         /// <summary>
+        /// Gets the title of a book from its ID.
+        /// </summary>
+        /// <param name="id">The book's ID</param>
+        /// <param name="defaultBookTitle">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
+        /// <returns>The title of the bookd or defaultBookName if no name was found.</returns>
+        public string GetBookTitle(int id, string defaultBookTitle)
+        {
+            string title;
+            return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookTitle;
+        }
+
+        /// <summary>
         /// Gets the filename for a book (classic or imported).
         /// </summary>
-        /// <param name="message">The message field for the book Item, containing the book ID.</param>
+        /// <param name="id">The book's ID</param>
         /// <returns>The filename of the book or null.</returns>
-        internal string GetBookFileNameByMessage(int message)
+        internal string GetBookFileName(int id)
         {
             BookReplacement.AssertCustomBooksImportEnabled();
 
-            if (message <= 111 || message == 10000)
-                return BookFile.messageToBookFilename(message);
+            if (id <= 111 || id == 10000)
+                return BookFile.messageToBookFilename(id);
 
-            string name;
-            if (BookReplacement.FileNames.TryGetValue(message, out name))
-                return name;
+            BookMappingEntry entry;
+            if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
+                return entry.Name;
 
-            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", message);
+            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
             return null;
         }
 
         /// <summary>
         /// Obtaining a random book ID is useful for generating books in loot drops, store inventories, etc.
+        /// If custom books are available, they are chosen only if specified conditions are met.
         /// </summary>
         /// <returns>A random book ID</returns>
-        public int getRandomBookID()
+        public int GetRandomBookID()
         {
-            List<int> keys = new List<int>(bookIDNameMapping.Keys);
-            int size = bookIDNameMapping.Count;
-            return keys[UnityEngine.Random.Range(0, size)];
+            if (DaggerfallUnity.Settings.CustomBooksImport)
+            {
+                const int attempts = 6;
+
+                int[] keys = bookIDNameMapping.Keys.ToArray();
+
+                for (int i = 0; i < attempts; i++)
+                {
+                    int id = keys[UnityEngine.Random.Range(0, keys.Length)];
+                    if (BookReplacement.BookMeetsConditions(id))
+                        return id;
+                }
+
+                return UnityEngine.Random.Range(0, 112);
+            }
+            else
+            {
+                List<int> keys = new List<int>(bookIDNameMapping.Keys);
+                int size = bookIDNameMapping.Count;
+                return keys[UnityEngine.Random.Range(0, size)];
+            }
         }
 
         /// <summary>
@@ -537,8 +577,17 @@ namespace DaggerfallWorkshop.Game.Items
             if (data.type == ImageTypes.None)
                 throw new Exception("GetCloakBackImage() could not load image data.");
 
-            // Change dye
-            data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
+            Texture2D tex;
+            if (TextureReplacement.TryImportTexture(archive, record, 0, item.dyeColor, TextureMap.Albedo, out tex))
+            {
+                // Assign imported texture
+                data.texture = tex;
+            }
+            else
+            {
+                // Change dye
+                data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
+            }    
 
             return data;
         }
@@ -1190,6 +1239,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 TextAsset templates = Resources.Load<TextAsset>(itemTemplatesFilename);
                 itemTemplates = SaveLoadManager.Deserialize(typeof(List<ItemTemplate>), templates.text) as List<ItemTemplate>;
+                TextAssetReader.Merge(itemTemplates, "ItemTemplates.json", (item, data) => item.index == (int)data["index"].AsInt64);
             }
             catch
             {

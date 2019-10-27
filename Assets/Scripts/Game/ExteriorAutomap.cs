@@ -698,7 +698,7 @@ namespace DaggerfallWorkshop.Game
                                             bool receivedDirectionalHints = false;
                                             bool locationWasMarkedOnMapByNPC = false;
                                             string overrideBuildingName = string.Empty;
-                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.IsBuildingQuestResource(buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
+                                            if (place.SiteDetails.buildingKey == discoveredBuilding.buildingKey && GameManager.Instance.TalkManager.IsBuildingQuestResource(GameManager.Instance.PlayerGPS.CurrentMapID, buildingSummary.buildingKey, ref overrideBuildingName, ref pcLearnedAboutExistence, ref receivedDirectionalHints, ref locationWasMarkedOnMapByNPC))
                                             {
                                                 if (locationWasMarkedOnMapByNPC)
                                                     buildingQuestName = place.SiteDetails.buildingName; // get buildingName if involved in active quest (same as overrideBuildingName)
@@ -1385,17 +1385,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // test if it is a custom location (layouting is different there)
-            isCustomLocation = false;
-            // But some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
-            // Seems to be 1x1 blocks using CUST prefix, but possibly more research needed
-            const int custPrefixIndex = 40;
-            if (locationWidth == 1 && locationHeight == 1)
-            {
-                if (location.Exterior.ExteriorData.BlockIndex[0] == custPrefixIndex)
-                {
-                    isCustomLocation = true;
-                }
-            }
+            isCustomLocation = location.HasCustomLocationPosition();
 
             // Create layout image (texture)
             exteriorLayoutTexture = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
@@ -1405,7 +1395,7 @@ namespace DaggerfallWorkshop.Game
             foreach (var layout in exteriorLayout)
             {
                 DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
-                DaggerfallUnity.Instance.ContentReader.BlockFileReader.LoadBlock(block.Index);
+
                 // Get block automap image
                 DFBitmap dfBitmap = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlockAutoMap(layout.name, removeGroundFlats);
 
