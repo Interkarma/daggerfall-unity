@@ -2395,15 +2395,15 @@ namespace Wenzil.Console
         private static class PlayFLC
         {
             public static readonly string name = "playflc";
-            public static readonly string description = "Play the specified .FLC file";
-            public static readonly string usage = "playflc {filename.flc} (e.g. playflc azura.flc)";
+            public static readonly string description = "Play the specified .FLC or .CEL file";
+            public static readonly string usage = "playflc {filename.flc|.cel} (e.g. playflc azura.flc | playflc warrior.cel)";
 
             public static string Execute(params string[] args)
             {
                 if (args == null || args.Length < 1)
                     return usage;
 
-                DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow window = new DaggerfallWorkshop.Game.UserInterfaceWindows.DemoFLCWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                DemoFLCWindow window = new DemoFLCWindow(DaggerfallUI.Instance.UserInterfaceManager);
                 window.Filename = args[0];
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(window);
 

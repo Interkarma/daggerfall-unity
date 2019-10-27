@@ -17,7 +17,7 @@ using DaggerfallConnect.Utility;
 namespace DaggerfallConnect.Arena2
 {
     /// <summary>
-    /// Connects to a *.FLC file to extract animation frames.
+    /// Connects to a *.FLC or *.CEL file to extract animation frames.
     /// </summary>
     public class FlcFile
     {
@@ -42,7 +42,7 @@ namespace DaggerfallConnect.Arena2
         public Color32[] FrameBuffer { get; private set; }
         public Color32[] Palette { get; private set; }
         public FrameHeader[] FrameHeaders { get; private set; }
-        public int CurrentFrame { get; private set; }
+        public int CurrentFrame { get; set; }
         public int ColorCount { get; private set; }
         public float FrameDelay { get; private set; }
         public bool FLC_HeaderSet { get; private set; }
@@ -79,7 +79,8 @@ namespace DaggerfallConnect.Arena2
 
             // Validate filename
             string fn = Path.GetFileName(filePath);
-            if (!fn.EndsWith(".FLC", StringComparison.InvariantCultureIgnoreCase))
+            if (!fn.EndsWith(".FLC", StringComparison.InvariantCultureIgnoreCase) &&
+                !fn.EndsWith(".CEL", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file
