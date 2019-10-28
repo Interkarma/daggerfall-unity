@@ -81,12 +81,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Internal Methods
 
-        internal static void AssertCustomBooksImportEnabled()
-        {
-            if (!DaggerfallUnity.Settings.CustomBooksImport)
-                throw new InvalidOperationException("Custom books import is disabled.");
-        }
-
         /// <summary>
         /// Read maps data for additional custom books from modding locations.
         /// </summary>
@@ -98,8 +92,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </remarks>
         internal static void FindAdditionalBooks(Dictionary<int, string> bookIDNameMapping)
         {
-            AssertCustomBooksImportEnabled();
-
             if (!customBooksSeeked)
             {
                 foreach (string mapContent in GetBooksMaps())
@@ -129,10 +121,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         }
                     }
                 }
-
-                if (BookMappingEntries.Count > 0)
-                    Debug.LogWarningFormat("Imported {0} custom books. Addition of custom books is EXPERIMENTAL and may introduce bugs! " +
-                        "Breaking changes to this feature can also be expected until is considered stable.", BookMappingEntries.Count);
 
                 customBooksSeeked = true;
             }

@@ -509,27 +509,18 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>A random book ID</returns>
         public int GetRandomBookID()
         {
-            if (DaggerfallUnity.Settings.CustomBooksImport)
+            const int attempts = 6;
+
+            int[] keys = bookIDNameMapping.Keys.ToArray();
+
+            for (int i = 0; i < attempts; i++)
             {
-                const int attempts = 6;
-
-                int[] keys = bookIDNameMapping.Keys.ToArray();
-
-                for (int i = 0; i < attempts; i++)
-                {
-                    int id = keys[UnityEngine.Random.Range(0, keys.Length)];
-                    if (BookReplacement.BookMeetsConditions(id))
-                        return id;
-                }
-
-                return keys.First(x => !BookReplacement.BookMappingEntries.ContainsKey(x));
+                int id = keys[UnityEngine.Random.Range(0, keys.Length)];
+                if (BookReplacement.BookMeetsConditions(id))
+                    return id;
             }
-            else
-            {
-                List<int> keys = new List<int>(bookIDNameMapping.Keys);
-                int size = bookIDNameMapping.Count;
-                return keys[UnityEngine.Random.Range(0, size)];
-            }
+
+            return keys.First(x => !BookReplacement.BookMappingEntries.ContainsKey(x));
         }
 
         /// <summary>
@@ -1293,7 +1284,7 @@ namespace DaggerfallWorkshop.Game.Items
                 Debug.Log("Could not load the BookIDName mapping from Resources. Check file exists and is in correct format.");
             }
 
-            if (DaggerfallUnity.Settings.CustomBooksImport)
+            if (DaggerfallUnity.Settings.AssetInjection)
                 BookReplacement.FindAdditionalBooks(bookIDNameMapping);
         }
 

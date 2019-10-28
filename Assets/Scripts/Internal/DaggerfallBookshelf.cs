@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop
                 books = new List<int>();
                 for (int i=0; i<10; i++)
                 {
-                    int bookNum = DaggerfallUnity.Settings.CustomBooksImport ? DaggerfallUnity.Instance.ItemHelper.GetRandomBookID() : Random.Range(0, 111);
+                    int bookNum = DaggerfallUnity.Instance.ItemHelper.GetRandomBookID();
                     string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
                     if (bookName != string.Empty)
                         books.Add(bookNum);
