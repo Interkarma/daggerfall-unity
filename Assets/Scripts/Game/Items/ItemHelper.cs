@@ -489,14 +489,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The filename of the book or null.</returns>
         internal string GetBookFileName(int id)
         {
-            BookReplacement.AssertCustomBooksImportEnabled();
-
-            if (id <= 111 || id == 10000)
-                return BookFile.messageToBookFilename(id);
-
+            // Get name for custom book
             BookMappingEntry entry;
             if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
                 return entry.Name;
+
+            // Check if classic book and make name from id
+            if (bookIDNameMapping.ContainsKey(id))
+                return BookFile.messageToBookFilename(id);
 
             Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
             return null;
