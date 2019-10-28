@@ -522,7 +522,7 @@ namespace DaggerfallWorkshop.Game.Items
                         return id;
                 }
 
-                return UnityEngine.Random.Range(0, 112);
+                return keys.First(x => !BookReplacement.BookMappingEntries.ContainsKey(x));
             }
             else
             {
