@@ -2034,7 +2034,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int playerGold = GameManager.Instance.PlayerEntity.GoldPieces;
             DaggerfallUnityItem goldPieces = ItemBuilder.CreateGoldPieces(playerGold);
             UpdateItemInfoPanel(goldPieces);
-
         }
 
         protected virtual void StartGameBehaviour_OnNewGame()
