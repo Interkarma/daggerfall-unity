@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
         int questionsAnswered = 0;
         Panel questionScroll = new Panel();
+        Panel textArea = new Panel();
         int scrollFrame = 0;
         bool isScrolling = false;
         bool scrollingDown = false;
@@ -108,6 +109,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questionScroll.Size = new Vector2(scrollTextures[0].width, scrollTextures[0].height);
             questionScroll.BackgroundTexture = scrollTextures[0];
             questionScroll.Parent = NativePanel;
+            textArea.Position = new Vector2(leftTextOffset, 119f + topTextOffset);
+            textArea.Size = new Vector2(scrollTextures[0].width, scrollTextures[0].height - topTextOffset * 2f);
+            textArea.Parent = NativePanel;
+            NativePanel.Components.Add(textArea);
             NativePanel.Components.Add(questionScroll);
 
             // Setup question label
@@ -220,7 +225,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Position = new Vector2(leftTextOffset, topTextOffset),
                 Size = new Vector2(320f, 0f), // make sure it has enough space - allow it to run off the screen
                 TextColor = Color.black,
-                ShadowPosition = new Vector2(0f, 0f)
+                ShadowPosition = new Vector2(0f, 0f),
+                Parent = questionScroll,
+                RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.CustomParent
             };
             string[] lines = questionLibrary[questionIndex].Split("\r\n".ToCharArray()).Where(x => x != string.Empty).ToArray();
             List<TextFile.Token> tokens = new List<TextFile.Token>();
@@ -229,10 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 tokens.Add(TextFile.CreateTextToken(line));
                 tokens.Add(TextFile.CreateFormatToken(TextFile.Formatting.NewLine));
             }
-            questionLabel.RectRestrictedRenderArea = new Rect(
-                new Vector2(leftTextOffset, topTextOffset),
-                new Vector2(questionScroll.Size.x, questionScroll.Size.y - topTextOffset * 2f)
-                );
+            questionLabel.RestrictedRenderAreaCustomParent = textArea;
             questionLabel.SetText(tokens.ToArray());
             questionScroll.Components.Add(questionLabel);
             scrollFrame = 0;

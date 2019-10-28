@@ -37,8 +37,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         HorizontalAlignment textAlignment = HorizontalAlignment.None;
         List<TextLabel> labels = new List<TextLabel>();
         TextLabel lastLabel = new TextLabel();
-        new bool useRestrictedRenderArea = false;
-        new Rect rectRestrictedRenderArea;
 
         int totalWidth = 0;
         int totalHeight = 0;
@@ -148,19 +146,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return labels; }
         }
 
-        /// <summary>
-        /// define a restricted render area so that listbox content (textlabels) are only rendered within these Rect's bounds
-        /// </summary>
-        public new Rect RectRestrictedRenderArea
-        {
-            get { return rectRestrictedRenderArea; }
-            set
-            {
-                rectRestrictedRenderArea = value;
-                useRestrictedRenderArea = true;
-            }
-        }
-
         public override void Draw()
         {
             base.Draw();
@@ -234,10 +219,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (textAlignment != HorizontalAlignment.None)
                 textLabel.HorizontalAlignment = textAlignment;
 
-            if (useRestrictedRenderArea)
+            if (UseRestrictedRenderArea)
             {
-                textLabel.RectRestrictedRenderArea = rectRestrictedRenderArea;
-                textLabel.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.DaggerfallNativeCoordinates;
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
             }
 
             labels.Add(textLabel);
