@@ -58,6 +58,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int questionsAnswered = 0;
         Panel questionScroll = new Panel();
         Panel textArea = new Panel();
+        FLCPlayer rogueAnim = new FLCPlayer();
+        FLCPlayer mageAnim = new FLCPlayer();
+        FLCPlayer warriorAnim = new FLCPlayer();
         int scrollFrame = 0;
         bool isScrolling = false;
         bool scrollingDown = false;
@@ -124,6 +127,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.OnMouseScrollUp += NativePanel_OnMouseScrollUp;
             questionScroll.OnMouseDown += QuestionScroll_OnMouseDown;
             questionScroll.OnMouseUp += QuestionScroll_OnMouseUp;
+
+            // Setup animations
+            rogueAnim.Load("ROGUE.CEL");
+            mageAnim.Load("MAGE.CEL");
+            warriorAnim.Load("WARRIOR.CEL");
+            rogueAnim.Size = new Vector2(rogueAnim.FLCFile.Header.Width, rogueAnim.FLCFile.Header.Height);
+            rogueAnim.Position = new Vector2(0f, 1f);
+            rogueAnim.BackgroundColor = Color.clear;
+            mageAnim.Size = new Vector2(mageAnim.FLCFile.Header.Width, mageAnim.FLCFile.Header.Height);
+            mageAnim.Position = new Vector2(80f, 1f);
+            mageAnim.BackgroundColor = Color.clear;
+            warriorAnim.Size = new Vector2(warriorAnim.FLCFile.Header.Width, warriorAnim.FLCFile.Header.Height);
+            warriorAnim.Position = new Vector2(110f, 1f);
+            warriorAnim.BackgroundColor = Color.clear;
+            rogueAnim.Loop = mageAnim.Loop = warriorAnim.Loop = false;
+            NativePanel.Components.Add(rogueAnim);
+            NativePanel.Components.Add(mageAnim);
+            NativePanel.Components.Add(warriorAnim);
 
             IsSetup = true;
         }
@@ -308,6 +329,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 DisplayQuestion(questionIndices[++questionsAnswered]);
+            }
+
+            switch (GetWeightIndex(questionsAnswered, choice))
+            {
+                case 0:
+                    rogueAnim.Start();
+                    break;
+                case 1:
+                    mageAnim.Start();
+                    break;
+                case 2:
+                    warriorAnim.Start();
+                    break;
             }
         }
 
