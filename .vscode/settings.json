@@ -76,6 +76,12 @@
         },
         {
             "fileMatch": [
+                "**/Presets/*.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/Preset.schema.json"
+        },
+        {
+            "fileMatch": [
                 "**/SpellIcons/*.json",
                 "**/SpellIcons/*.txt"
             ],
