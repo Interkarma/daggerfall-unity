@@ -469,7 +469,7 @@ namespace DaggerfallConnect.Arena2
                 case (int)Climates.MountainWoods:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 102;
-                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_WoodlandHills;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
                     break;
