@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Randomly assign a gender for humanoid foes
-            humanoidGender = (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f) ? Genders.Male : Genders.Female;
+            humanoidGender = (UnityEngine.Random.Range(0.0f, 1.0f) < 0.55f) ? Genders.Male : Genders.Female;
 
             // Create a random display name for humanoid foes
             DFRandom.srand(DateTime.Now.Millisecond);
