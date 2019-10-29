@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game
         DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
         public short blockWaterLevel = 10000;
 
-        DFLocation.BuildingTypes buildingType;
+        DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.None;
         ushort factionID = 0;
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
 
@@ -820,6 +820,8 @@ namespace DaggerfallWorkshop.Game
 
             // Player is now outside building
             isPlayerInside = false;
+            buildingType = DFLocation.BuildingTypes.None;
+            factionID = 0;
 
             // Update serializable state from scene cache for interior->exterior transition
             SaveLoadManager.RestoreCachedScene(world.SceneName);
@@ -1034,8 +1036,14 @@ namespace DaggerfallWorkshop.Game
         {
             if (cleanup)
             {
-                if (interior) Destroy(interior.gameObject);
+                if (interior)
+                {
+                    Destroy(interior.gameObject);
+                    buildingType = DFLocation.BuildingTypes.None;
+                    factionID = 0;
+                }
             }
+
             DisableAllParents(false);
             if (DungeonParent != null) DungeonParent.SetActive(true);
 
