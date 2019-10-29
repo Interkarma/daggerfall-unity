@@ -82,6 +82,12 @@
         },
         {
             "fileMatch": [
+                "**/Books/Mapping/*.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/BookMapping.schema.json"
+        },
+        {
+            "fileMatch": [
                 "**/SpellIcons/*.json",
                 "**/SpellIcons/*.txt"
             ],
