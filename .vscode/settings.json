@@ -65,5 +65,14 @@
         "editor.detectIndentation": false,
         "editor.insertSpaces": true,
         "editor.tabSize": 4
-    }
+    },
+    // Json schemas
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "*.dfmod.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/ModInfo.schema.json"
+        }
+    ]
 }
