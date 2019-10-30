@@ -856,8 +856,9 @@ namespace DaggerfallWorkshop.Utility
                 AddMarkerResourceObjects(siteType, parent, enableNPCs, enableFoes, quest, resourceBehaviours, place.SiteDetails.selectedMarker);
 
                 // Add any resources from other non-selected markers
-                foreach (QuestMarker marker in place.SiteDetails.questSpawnMarkers)
-                    AddMarkerResourceObjects(siteType, parent, enableNPCs, enableFoes, quest, resourceBehaviours, marker);
+                if (place.SiteDetails.questSpawnMarkers != null)
+                    foreach (QuestMarker marker in place.SiteDetails.questSpawnMarkers)
+                        AddMarkerResourceObjects(siteType, parent, enableNPCs, enableFoes, quest, resourceBehaviours, marker);
             }
         }
 
