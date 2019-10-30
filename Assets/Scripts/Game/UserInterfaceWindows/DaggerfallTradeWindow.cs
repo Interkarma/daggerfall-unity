@@ -87,16 +87,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color repairItemBackgroundColor = new Color(0.17f, 0.32f, 0.7f, 0.6f);
 
-        WindowModes windowMode = WindowModes.Inventory;
-        IGuild guild;
+        protected WindowModes windowMode = WindowModes.Inventory;
+        protected IGuild guild;
 
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
-        List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
+        protected List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
 
-        ItemCollection merchantItems = new ItemCollection();
-        ItemCollection basketItems = new ItemCollection();
+        protected ItemCollection merchantItems = new ItemCollection();
+        protected ItemCollection basketItems = new ItemCollection();
 
-        bool usingWagon = false;
+        protected bool usingWagon = false;
         int cost = 0;
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
@@ -462,7 +462,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Repairs
 
-        private void UpdateRepairTimes(bool commit)
+        protected void UpdateRepairTimes(bool commit)
         {
             if (windowMode != WindowModes.Repair || DaggerfallUnity.Settings.InstantRepairs)
                 return;
