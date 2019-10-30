@@ -162,8 +162,3 @@ Ship_Deck,            0x03de, 1, -1
 Ship_Cabin,           0x03de, 4, -1
 Large_Ship_Deck,      0x03e0, 1, -1
 Large_Ship_Cabin,     0x03e0, 4, -1
-
--- TEMPORARY: for testing target permanent new locations
-Aldleigh,             0x3181, 1, -1
-Northrock_Fort_Ext,   0x73A0, 1, -1
-Northrock_Fort,       0x73A1, 1, -1
