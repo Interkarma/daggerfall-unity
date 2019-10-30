@@ -927,7 +927,7 @@ namespace DaggerfallWorkshop.Utility
                 // Individuals are always flat1 no matter gender
                 flatData = FactionFile.GetFlatData(person.FactionData.flat1);
             }
-            if (person.Gender == Genders.Male)
+            else if (person.Gender == Genders.Male)
             {
                 // Male has flat1
                 flatData = FactionFile.GetFlatData(person.FactionData.flat1);
