@@ -73,6 +73,13 @@
                 "*.dfmod.json"
             ],
             "url": "/Assets/Editor/.Schemas/ModInfo.schema.json"
+        },
+        {
+            "fileMatch": [
+                "**/SpellIcons/*.json",
+                "**/SpellIcons/*.txt"
+            ],
+            "url": "/Assets/Editor/.Schemas/SpellIcons.schema.json"
         }
     ]
 }
