@@ -246,7 +246,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         fileName = factionChildrenFaceFile;
                     }
 
-                    ImageData imageData = ImageReader.GetImageData(fileName, face.faceIndex, 0, true, true);
+                    // Allow individual factions from mods to use normal race faces
+                    int faceToUse = (face.factionFaceIndex >= 100) ? face.factionFaceIndex - 100 : face.faceIndex;
+                    ImageData imageData = ImageReader.GetImageData(fileName, faceToUse, 0, true, true);
                     faceTexture = imageData.texture;
                     facePanel.Size = new Vector2(imageData.width, imageData.height);
                 }
