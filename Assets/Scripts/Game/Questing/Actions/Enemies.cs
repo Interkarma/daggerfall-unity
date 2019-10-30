@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Factory new action
             Enemies action = new Enemies(parentQuest);
+            if (match.Groups["action"].Value == "clear")
+                action.clear = true;
 
             return action;
         }
