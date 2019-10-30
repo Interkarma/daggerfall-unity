@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!flcFile.Load(path))
                 return;
 
-            flcTexture = TextureReader.CreateFromSolidColor(flcFile.Header.Width, flcFile.Header.Height, Color.black, false, false);
+            flcTexture = TextureReader.CreateFromSolidColor(flcFile.Header.Width, flcFile.Header.Height, Color.clear, false, false);
             flcTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
         }
 

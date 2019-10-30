@@ -45,15 +45,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const byte noClassIndex = 255;
         const float leftTextOffset = 20f;
         const float topTextOffset = 16f;
+        const int roguePaletteIndex = 160;
+        const int magePaletteIndex = 128;
+        const int warriorPaletteIndex = 192;
+        const byte constellationBrightnessIncrement = 24;
 
+        ImgFile backgroundImg;
+        DFBitmap backgroundBitmap;
         Texture2D nativeTexture;
+        byte rogueBlue = 8;
+        byte mageBlue = 8;
+        byte warriorBlue = 8;
         GfxFile scrollFile0;
         GfxFile scrollFile1;
         List<Texture2D> scrollTextures;
         MultiFormatTextLabel questionLabel = new MultiFormatTextLabel();
         Dictionary<int, string> questionLibrary;
         List<int> questionIndices;
-        byte classIndex = 0;
+        byte classIndex = noClassIndex;
         byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
         int questionsAnswered = 0;
         Panel questionScroll = new Panel();
@@ -79,23 +88,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (IsSetup)
                 return;
-            
-            // Load native texture
-            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
-            if (!nativeTexture)
-                throw new Exception("CreateCharClassQuestions: Could not load native texture.");
 
             // Set background
+            backgroundImg = new ImgFile(Path.Combine(DaggerfallUnity.Arena2Path, nativeImgName), FileUsage.UseMemory, true);
+            backgroundBitmap = backgroundImg.GetDFBitmap(0, 0);
+            nativeTexture = new Texture2D(backgroundBitmap.Width, backgroundBitmap.Height, TextureFormat.ARGB32, false);
+            if (!nativeTexture)
+                throw new Exception("CreateCharClassQuestions: Could not load native texture.");
+            nativeTexture.SetPixels32(backgroundImg.GetColor32(backgroundBitmap, 0));
+            nativeTexture.Apply(false, true);
+            nativeTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Load both scroll images as one contiguous list of textures
-            ImgFile img = new ImgFile(Path.Combine(DaggerfallUnity.Arena2Path, nativeImgName), FileUsage.UseMemory, true);
-            DFBitmap backgroundBitmap = img.GetDFBitmap(0, 0);
-            DFPalette basePalette = backgroundBitmap.Palette;
             scrollFile0 = new GfxFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, scroll0FileName), FileUsage.UseMemory, true);
             scrollFile1 = new GfxFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, scroll1FileName), FileUsage.UseMemory, true);
-            scrollFile0.Palette = basePalette;
-            scrollFile1.Palette = basePalette;
+            scrollFile0.Palette = backgroundBitmap.Palette;
+            scrollFile1.Palette = backgroundBitmap.Palette;
             scrollTextures = new List<Texture2D>();
             for (int i = 0; i < scrollFile0.frames.Length; i++)
             {
@@ -320,12 +329,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (weightIndex)
             {
                 case 0:
+                    rogueBlue += constellationBrightnessIncrement;
                     rogueAnim.Start();
                     break;
                 case 1:
+                    mageBlue += constellationBrightnessIncrement;
                     mageAnim.Start();
                     break;
                 case 2:
+                    warriorBlue += constellationBrightnessIncrement;
                     warriorAnim.Start();
                     break;
             }
@@ -474,7 +486,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (questionsAnswered == questionCount)
                 EndQuestions();
             else
+            {
+                backgroundBitmap.Palette.Set(roguePaletteIndex, 0, 0, rogueBlue);
+                backgroundBitmap.Palette.Set(magePaletteIndex, 0, 0, mageBlue);
+                backgroundBitmap.Palette.Set(warriorPaletteIndex, 0, 0, warriorBlue);
+                nativeTexture = new Texture2D(backgroundBitmap.Width, backgroundBitmap.Height, TextureFormat.ARGB32, false);
+                if (!nativeTexture)
+                    throw new Exception("CreateCharClassQuestions: Could not load native texture.");
+                nativeTexture.SetPixels32(backgroundImg.GetColor32(backgroundBitmap, 0));
+                nativeTexture.Apply(false, true);
+                nativeTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+                NativePanel.BackgroundTexture = nativeTexture;
                 DisplayQuestion(questionIndices[questionsAnswered]);
+            }
         }
         #endregion Event Handlers
 
