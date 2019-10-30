@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int scrollFrame = 0;
         bool isScrolling = false;
         bool scrollingDown = false;
+        bool animPlaying = false;
         int aIndex = 0;
         int bIndex = 0;
         int cIndex = 0;
@@ -108,11 +109,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Position scroll image on screen
-            questionScroll.Position = new Vector2(0, 119f);
+            questionScroll.Position = new Vector2(0, 120f);
             questionScroll.Size = new Vector2(scrollTextures[0].width, scrollTextures[0].height);
             questionScroll.BackgroundTexture = scrollTextures[0];
             questionScroll.Parent = NativePanel;
-            textArea.Position = new Vector2(leftTextOffset, 119f + topTextOffset);
+            textArea.Position = new Vector2(leftTextOffset, 120f + topTextOffset);
             textArea.Size = new Vector2(scrollTextures[0].width, scrollTextures[0].height - topTextOffset * 2f);
             textArea.Parent = NativePanel;
             NativePanel.Components.Add(textArea);
@@ -133,14 +134,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mageAnim.Load("MAGE.CEL");
             warriorAnim.Load("WARRIOR.CEL");
             rogueAnim.Size = new Vector2(rogueAnim.FLCFile.Header.Width, rogueAnim.FLCFile.Header.Height);
-            rogueAnim.Position = new Vector2(0f, 1f);
+            rogueAnim.Position = new Vector2(1f, 1f);
             rogueAnim.BackgroundColor = Color.clear;
+            rogueAnim.OnAnimEnd += CEL_OnAnimEnd;
             mageAnim.Size = new Vector2(mageAnim.FLCFile.Header.Width, mageAnim.FLCFile.Header.Height);
-            mageAnim.Position = new Vector2(80f, 1f);
+            mageAnim.Position = new Vector2(79f, 1f);
             mageAnim.BackgroundColor = Color.clear;
+            mageAnim.OnAnimEnd += CEL_OnAnimEnd;
             warriorAnim.Size = new Vector2(warriorAnim.FLCFile.Header.Width, warriorAnim.FLCFile.Header.Height);
             warriorAnim.Position = new Vector2(110f, 1f);
             warriorAnim.BackgroundColor = Color.clear;
+            warriorAnim.OnAnimEnd += CEL_OnAnimEnd;
             rogueAnim.Loop = mageAnim.Loop = warriorAnim.Loop = false;
             NativePanel.Components.Add(rogueAnim);
             NativePanel.Components.Add(mageAnim);
@@ -155,17 +159,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // User picked an answer with a key
             if (Input.GetKeyDown(KeyCode.A))
-            {
-                AnswerAndContinue(0);
-            }
+                AnswerAndPlayAnim(0);
             else if (Input.GetKeyDown(KeyCode.B))
-            {
-                AnswerAndContinue(1);
-            }
+                AnswerAndPlayAnim(1);
             else if (Input.GetKeyDown(KeyCode.C))
-            {
-                AnswerAndContinue(2);
-            }
+                AnswerAndPlayAnim(2);
 
             // User is scrolling with a mouseclick
             if (isScrolling)
@@ -293,17 +291,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return answerTable[questionIndices[chosenIndex] * 3 + column];
         }
 
-        private void AnswerAndContinue(int choice)
+        private void AnswerAndPlayAnim(int choice)
         {
-            weights[GetWeightIndex(questionsAnswered, choice)]++;
+            if (animPlaying || questionsAnswered == questionCount)
+                return;
+
+            int weightIndex = GetWeightIndex(questionsAnswered, choice);
+            weights[weightIndex]++;
             Debug.Log("CreateCharClassQuestions: Warrior: " + weights[0] + " Rogue: " + weights[1] + " Mage: " + weights[2]);
             if (questionsAnswered == questionCount - 1) // Final question was answered
             {
-                // Blank out the background
-                questionLabel.Clear();
-                NativePanel.BackgroundTexture = null;
-                questionScroll.BackgroundTexture = null;
-
                 // Compute class index
                 FileProxy classFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, classesFileName), FileUsage.UseDisk, true);
                 if (classFile == null)
@@ -317,21 +314,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     throw new Exception("CreateCharClassQuestions: Error reading CLASSES.DAT - could not find a results match. Warrior: " + weights[0] + " Rogue: " + weights[1] + " Mage: " + weights[2]);
                 }
                 classIndex = GetClassIndex(headerIndex, classData);
-
-                // Prompt user to confirm class
-                DaggerfallMessageBox confirmDialog = new DaggerfallMessageBox(uiManager,
-                                                                              DaggerfallMessageBox.CommonMessageBoxButtons.YesNo,
-                                                                              classDescriptionsTokenBase + classIndex,
-                                                                              uiManager.TopWindow);
-                confirmDialog.OnButtonClick += ConfirmDialog_OnButtonClick;
-                uiManager.PushWindow(confirmDialog);
-            }
-            else
-            {
-                DisplayQuestion(questionIndices[++questionsAnswered]);
             }
 
-            switch (GetWeightIndex(questionsAnswered, choice))
+            questionsAnswered++;
+            switch (weightIndex)
             {
                 case 0:
                     rogueAnim.Start();
@@ -343,6 +329,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     warriorAnim.Start();
                     break;
             }
+
+            animPlaying = true;
         }
 
         private int GetHeaderIndex(byte[] classData)
@@ -378,10 +366,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Array used by FALL.EXE is the same as in CLASSES.DAT except bytes 0x04 through 0x11 have their left nibbles zeroed out
             byte r = data[index];
             if (index > 3)
-            {
                 r &= 0x0F;
-            }
+
             return r;
+        }
+
+        private void EndQuestions()
+        {
+            // Blank out the background
+            questionLabel.Clear();
+            NativePanel.BackgroundTexture = null;
+            questionScroll.BackgroundTexture = null;
+            // Prompt user to confirm class
+            DaggerfallMessageBox confirmDialog = new DaggerfallMessageBox(uiManager,
+                                                                          DaggerfallMessageBox.CommonMessageBoxButtons.YesNo,
+                                                                          classDescriptionsTokenBase + classIndex,
+                                                                          uiManager.TopWindow);
+            confirmDialog.OnButtonClick += ConfirmDialog_OnButtonClick;
+            uiManager.PushWindow(confirmDialog);
         }
         #endregion Helper Methods
 
@@ -396,9 +398,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ConfirmDialog_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
-            {
                 classIndex = noClassIndex;
-            }
             sender.CloseWindow();
             CloseWindow();
         }
@@ -455,16 +455,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Determine which answer was picked
             if (labelIndex >= aIndex && labelIndex < bIndex)
-                AnswerAndContinue(0);
+                AnswerAndPlayAnim(0);
             else if (labelIndex >= bIndex && labelIndex < cIndex)
-                AnswerAndContinue(1);
+                AnswerAndPlayAnim(1);
             else if (labelIndex >= cIndex)
-                AnswerAndContinue(2);
+                AnswerAndPlayAnim(2);
         }
 
         private void QuestionScroll_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             isScrolling = false;
+        }
+
+        private void CEL_OnAnimEnd(FLCPlayer player)
+        {
+            player.BackgroundTexture = null;
+            animPlaying = false;
+            if (questionsAnswered == questionCount)
+                EndQuestions();
+            else
+                DisplayQuestion(questionIndices[questionsAnswered]);
         }
         #endregion Event Handlers
 

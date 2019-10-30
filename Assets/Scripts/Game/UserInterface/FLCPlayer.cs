@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (Lypyl@dfworkshop.net), Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -71,7 +71,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Stop playing if we reach final frame and not looping
             if (isPlaying && !Loop && flcFile.CurrentFrame >= flcFile.Header.NumOfFrames)
+            {
                 isPlaying = false;
+                RaiseAnimEnd();
+            }
 
             if (flcFile == null || !flcTexture || !flcFile.ReadyToPlay || !isPlaying)
                 return;
@@ -84,6 +87,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             flcTexture.SetPixels32(flcFile.FrameBuffer);
             flcTexture.Apply(false);
             flcFile.BufferNextFrame();
+        }
+
+        public delegate void OnAnimEndHandler(FLCPlayer player);
+        public event OnAnimEndHandler OnAnimEnd;
+        void RaiseAnimEnd()
+        {
+            if (OnAnimEnd != null)
+                OnAnimEnd(this);
         }
     }
 }
