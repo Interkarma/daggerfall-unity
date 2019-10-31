@@ -339,7 +339,7 @@ namespace DaggerfallWorkshop.Utility
                         int locationId = mapFileReader.ReadLocationIdFast(region, location);
                         locationIdToMapIdDict.Add(locationId, summary.ID);
                     }
-                    catch (ArgumentException e)
+                    catch (ArgumentException)
                     {
                         Debug.LogErrorFormat("Colliding location for MapId:{0} found when enumerating maps! Unable to initialise content reader. ", summary.ID);
                     }

@@ -3391,7 +3391,7 @@ namespace DaggerfallWorkshop.Game
             // Get face for special NPCs here and return in this case
             if (factionData.type == 4)
             {
-                facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
+                facePortraitArchive = (factionData.face > 60) ? DaggerfallTalkWindow.FacePortraitArchive.CommonFaces : DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
                 recordIndex = factionData.face;
                 return;
             }
