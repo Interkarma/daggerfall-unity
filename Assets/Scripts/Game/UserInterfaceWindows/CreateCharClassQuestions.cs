@@ -139,17 +139,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             questionScroll.OnMouseUp += QuestionScroll_OnMouseUp;
 
             // Setup animations
+            rogueAnim.SetTransparentColor(0, 0, 10);
+            rogueAnim.TransparencyEnabled = true;
             rogueAnim.Load("ROGUE.CEL");
-            mageAnim.Load("MAGE.CEL");
-            warriorAnim.Load("WARRIOR.CEL");
             rogueAnim.Size = new Vector2(rogueAnim.FLCFile.Header.Width, rogueAnim.FLCFile.Header.Height);
             rogueAnim.Position = new Vector2(1f, 1f);
             rogueAnim.BackgroundColor = Color.clear;
             rogueAnim.OnAnimEnd += CEL_OnAnimEnd;
+            mageAnim.SetTransparentColor(0, 0, 10);
+            mageAnim.TransparencyEnabled = true;
+            mageAnim.Load("MAGE.CEL");
             mageAnim.Size = new Vector2(mageAnim.FLCFile.Header.Width, mageAnim.FLCFile.Header.Height);
             mageAnim.Position = new Vector2(79f, 1f);
             mageAnim.BackgroundColor = Color.clear;
             mageAnim.OnAnimEnd += CEL_OnAnimEnd;
+            warriorAnim.SetTransparentColor(0, 0, 10);
+            warriorAnim.TransparencyEnabled = true;
+            warriorAnim.Load("WARRIOR.CEL");
             warriorAnim.Size = new Vector2(warriorAnim.FLCFile.Header.Width, warriorAnim.FLCFile.Header.Height);
             warriorAnim.Position = new Vector2(110f, 1f);
             warriorAnim.BackgroundColor = Color.clear;
@@ -343,6 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             animPlaying = true;
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.Ignite);
         }
 
         private int GetHeaderIndex(byte[] classData)

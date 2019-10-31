@@ -23,8 +23,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         float nextFrameTime;
         bool isPlaying = false;
+        byte tRed = 0;
+        byte tGreen = 0;
+        byte tBlue = 0;
 
         public bool Loop { get; set; }
+
+        public bool TransparencyEnabled { get; set; }
         
         public FlcFile FLCFile { get { return flcFile; } }
 
@@ -33,15 +38,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Loop = true;
             BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             BackgroundColor = Color.black;
+            TransparencyEnabled = false;
         }
 
         public void Load(string filename)
         {
+            flcFile.Transparency = TransparencyEnabled;
+            flcFile.TransparentRed = tRed;
+            flcFile.TransparentGreen = tGreen;
+            flcFile.TransparentBlue = tBlue;
+
             string path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename);
             if (!flcFile.Load(path))
                 return;
 
-            flcTexture = TextureReader.CreateFromSolidColor(flcFile.Header.Width, flcFile.Header.Height, Color.clear, false, false);
+            flcTexture = TextureReader.CreateFromSolidColor(flcFile.Header.Width, flcFile.Header.Height, (TransparencyEnabled ? Color.clear : Color.black), false, false);
             flcTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
         }
 
@@ -63,6 +74,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 isPlaying = false;
                 BackgroundTexture = null;
             }
+        }
+
+        public void SetTransparentColor(byte r, byte g, byte b)
+        {
+            tRed = r;
+            tGreen = g;
+            tBlue = b;
         }
 
         public override void Update()

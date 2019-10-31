@@ -48,6 +48,10 @@ namespace DaggerfallConnect.Arena2
         public bool FLC_HeaderSet { get; private set; }
         public bool ReadyToPlay { get; private set; }
         public FLIC_Format FlicType { get; private set; }
+        public bool Transparency { get; set; }
+        public byte TransparentRed { get; set; }
+        public byte TransparentGreen { get; set; }
+        public byte TransparentBlue { get; set; }
 
         #endregion
 
@@ -321,7 +325,10 @@ namespace DaggerfallConnect.Arena2
                     int r = reader.ReadByte() * scale;
                     int g = reader.ReadByte() * scale;
                     int b = reader.ReadByte() * scale;
-                    Palette[colorInd] = new Color32((byte)r, (byte)g, (byte)b, 255);
+                    if (Transparency && r == TransparentRed && g == TransparentGreen && b == TransparentBlue)
+                        Palette[colorInd] = new Color32(0, 0, 0, 0);
+                    else
+                        Palette[colorInd] = new Color32((byte)r, (byte)g, (byte)b, 255);
                     colorInd++;
 
                 }
