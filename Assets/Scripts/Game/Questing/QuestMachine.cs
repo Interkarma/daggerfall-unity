@@ -393,6 +393,9 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DestroyNpc(null));
             RegisterAction(new WorldUpdate(null));
             RegisterAction(new Enemies(null));
+            RegisterAction(new ClickedFoe(null));
+            RegisterAction(new KillFoe(null));
+            RegisterAction(new PayMoney(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();

@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing
         MobileTypes foeType;                // MobileType to spawn
         Genders humanoidGender;             // Foe gender for humanoid foes
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
+        bool deathTrigger;                   // True when enemy should instantly die
         bool restrained;                    // True if enemy restrained by quest
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
         string displayName;                 // Foe display name for quest system macros
@@ -68,6 +69,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool InjuredTrigger
         {
             get { return injuredTrigger; }
+        }
+
+        public bool DeathTrigger
+        {
+            get { return deathTrigger; }
         }
 
         public bool IsRestrained
@@ -213,6 +219,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public void IncrementKills(int amount = 1)
         {
             killCount += amount;
+        }
+
+        public void Kill()
+        {
+            deathTrigger = true;
         }
 
         /// <summary>
