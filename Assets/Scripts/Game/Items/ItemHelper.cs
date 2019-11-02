@@ -445,32 +445,6 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets the Daggerfall name of a book based on its id.
-        /// </summary>
-        /// <param name="id">The book's ID</param>
-        /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
-        /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
-        [Obsolete("Use GetBookTitle() with standard initial uppercase and less ambiguity between title and filename.")]
-        public string getBookNameByID(int id, string defaultBookName)
-        {
-            string title = "";
-            return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookName;
-        }
-
-        /// <summary>
-        /// Gets the Daggerfall name of a book based on its "message" field. The ID is derived from this message using Daggerfall's
-        /// bitmasking (message & 0xFF)
-        /// </summary>
-        /// <param name="message">The message field for the book Item, from which the ID is derived</param>
-        /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
-        /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
-        [Obsolete("Masking break support for custom books. Use GetBookTitle() instead.")]
-        public string getBookNameByMessage(int message, string defaultBookName)
-        {
-            return getBookNameByID(message & 0xFF, defaultBookName);
-        }
-
-        /// <summary>
         /// Gets the title of a book from its ID.
         /// </summary>
         /// <param name="id">The book's ID</param>
@@ -489,14 +463,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The filename of the book or null.</returns>
         internal string GetBookFileName(int id)
         {
-            BookReplacement.AssertCustomBooksImportEnabled();
-
-            if (id <= 111 || id == 10000)
-                return BookFile.messageToBookFilename(id);
-
+            // Get name for custom book
             BookMappingEntry entry;
             if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
                 return entry.Name;
+
+            // Check if classic book and make name from id
+            if (bookIDNameMapping.ContainsKey(id))
+                return BookFile.messageToBookFilename(id);
 
             Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
             return null;
@@ -509,27 +483,18 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>A random book ID</returns>
         public int GetRandomBookID()
         {
-            if (DaggerfallUnity.Settings.CustomBooksImport)
+            const int attempts = 6;
+
+            int[] keys = bookIDNameMapping.Keys.ToArray();
+
+            for (int i = 0; i < attempts; i++)
             {
-                const int attempts = 6;
-
-                int[] keys = bookIDNameMapping.Keys.ToArray();
-
-                for (int i = 0; i < attempts; i++)
-                {
-                    int id = keys[UnityEngine.Random.Range(0, keys.Length)];
-                    if (BookReplacement.BookMeetsConditions(id))
-                        return id;
-                }
-
-                return UnityEngine.Random.Range(0, 112);
+                int id = keys[UnityEngine.Random.Range(0, keys.Length)];
+                if (BookReplacement.BookMeetsConditions(id))
+                    return id;
             }
-            else
-            {
-                List<int> keys = new List<int>(bookIDNameMapping.Keys);
-                int size = bookIDNameMapping.Count;
-                return keys[UnityEngine.Random.Range(0, size)];
-            }
+
+            return keys.First(x => !BookReplacement.BookMappingEntries.ContainsKey(x));
         }
 
         /// <summary>
@@ -1293,7 +1258,7 @@ namespace DaggerfallWorkshop.Game.Items
                 Debug.Log("Could not load the BookIDName mapping from Resources. Check file exists and is in correct format.");
             }
 
-            if (DaggerfallUnity.Settings.CustomBooksImport)
+            if (DaggerfallUnity.Settings.AssetInjection)
                 BookReplacement.FindAdditionalBooks(bookIDNameMapping);
         }
 
