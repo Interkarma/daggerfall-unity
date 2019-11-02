@@ -13,6 +13,12 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
+    /// <summary>
+    /// Updates the world data system to use a specific variant for a given
+    /// place (location, block, building) either for all instances or for a
+    /// particular location.
+    /// Specify a single dash for variant to remove any existing variant.
+    /// </summary>
     public class WorldUpdate : ActionTemplate
     {
         string type;
@@ -80,6 +86,8 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             base.Update(caller);
 
+            if (variant == "-")
+                variant = WorldDataVariants.NoVariant;
             int locationKey;
             switch (type)
             {

@@ -1293,8 +1293,11 @@ namespace DaggerfallWorkshop.Game
                 // Check if this NPC is a merchant.
                 else if ((FactionFile.SocialGroups)factionData.sgroup == FactionFile.SocialGroups.Merchants)
                 {
+                    // Custom merchant service registered?
+                    if (Services.HasCustomMerchantService(npc.Data.factionID))
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantServicePopup, new object[] { uiManager, npc, DaggerfallMerchantServicePopupWindow.Services.Sell }));
                     // Shop?
-                    if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
+                    else if (RMBLayout.IsShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                     {
                         if (RMBLayout.IsRepairShop(playerEnterExit.BuildingDiscoveryData.buildingType))
                             uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.MerchantRepairPopup, new object[] { uiManager, npc }));
