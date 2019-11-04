@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -50,6 +50,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         [SerializeField]
         internal ModContributes Contributes;
 
+        /// <summary>
+        /// A list of mods that this mod depends on or is otherwise compatible with only if certain conditions are met.
+        /// </summary>
+        [SerializeField]
+        internal ModDependency[] Dependencies;
+
         public ModInfo()
         {
             Files = new List<string>();
@@ -80,6 +86,46 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         [SerializeField]
         internal string[] SpellIcons;
+    }
+
+    /// <summary>
+    /// A set of rules that defines the limits within which a mod is required or otherwise compatible with another one.
+    /// </summary>
+    /// <remarks>
+    /// These are all the possible combinations:
+    /// - Dependency: must be available, have higher priority and follow specified criteria.
+    /// - Optional dependency: if is available it must have higher priority and follow specified criteria.
+    /// - Peer dependency: must be available and follow specified criteria but higher priority is not required.
+    /// - Optional peer dependency: if is available it must follow specified criteria but higher priority is not required.
+    /// </summary>
+    [Serializable]
+    internal struct ModDependency
+    {
+        /// <summary>
+        /// Name of target mod.
+        /// </summary>
+        [SerializeField]
+        internal string Name;
+
+        /// <summary>
+        /// If true, target mod doesn't need to be available, but must validate these criteria if it is.
+        /// </summary>
+        [SerializeField]
+        internal bool IsOptional;
+
+        /// <summary>
+        /// If true, target mod can be positioned anywhere in the load order, otherwise must be positioned above.
+        /// </summary>
+        [SerializeField]
+        internal bool IsPeer;
+
+        /// <summary>
+        /// If not null this string is the minimum accepted version with format X.Y.Z.
+        /// Pre-release identifiers following an hyphen are ignored in target version so they must be omitted here.
+        /// For example "1.1.0" is higher than "1.0.12" and equal to "1.0.0-rc.1".
+        /// </summary>
+        [SerializeField]
+        internal string Version;
     }
 
     /// <summary>
