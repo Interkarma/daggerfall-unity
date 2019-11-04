@@ -978,10 +978,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (secondParts.Length < 1 || secondParts.Length > 3)
                 return null;
 
-            for (int i = 0; i < firstParts.Length && i < secondParts.Length; i++)
+            for (int i = 0; i < firstParts.Length || i < secondParts.Length; i++)
             {
-                int firstPart, secondPart;
-                if (!int.TryParse(firstParts[i], out firstPart) || !int.TryParse(secondParts[i], out secondPart))
+                int firstPart = 0;
+                int secondPart = 0;
+
+                if ((i < firstParts.Length && !int.TryParse(firstParts[i], out firstPart)) ||
+                    (i < secondParts.Length && !int.TryParse(secondParts[i], out secondPart)))
                     return null;
 
                 if (firstPart > secondPart)
