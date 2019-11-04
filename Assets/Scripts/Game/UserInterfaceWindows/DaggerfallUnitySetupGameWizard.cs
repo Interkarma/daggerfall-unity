@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -727,8 +728,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
-
             DaggerfallUnity.Settings.SaveSettings();
+
+            if (ModManager.Instance)
+            {
+                foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.Enabled))
+                {
+                    bool? isGameVersionSatisfied = mod.IsGameVersionSatisfied();
+                    if (isGameVersionSatisfied == false)
+                    {
+                        var messageBox = new DaggerfallMessageBox(uiManager, this, true);
+                        messageBox.SetText(GetText("incompatibleMods"));
+                        messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                        messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+                        messageBox.OnButtonClick += (_, messageBoxButton) =>
+                        {
+                            moveNextStage = messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes;
+                            messageBox.CloseWindow();
+                        };
+                        uiManager.PushWindow(messageBox);
+                        return;
+                    }
+                    else if (isGameVersionSatisfied == null)
+                    {
+                        Debug.LogWarningFormat("Unknown format for property \"DFUnity_Version\" of mod {0}. Please use x.y.z version of minimum compatible game build.", mod.Title);
+                    }
+                }
+            }
+
             moveNextStage = true;
         }
 
