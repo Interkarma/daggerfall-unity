@@ -237,6 +237,7 @@ namespace DaggerfallWorkshop.Utility
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
             { "%hrn", HomeRegion },  // Home region (of person)
+            { "%pcl", PlayerLastname }, // Character's last name
         };
 
         // Multi-line macro handlers, returns tokens.
@@ -268,6 +269,12 @@ namespace DaggerfallWorkshop.Utility
         {
             string[] parts = name.Split(' ');
             return (parts != null && parts.Length > 0) ? parts[0] : name;
+        }
+
+        public static string GetLastname(string name)
+        {
+            string[] parts = name.Split(' ');
+            return (parts != null && parts.Length > 1) ? parts[1] : name;
         }
 
         public static NameHelper.BankTypes GetRandomNameBank()
@@ -739,6 +746,11 @@ namespace DaggerfallWorkshop.Utility
         private static string PlayerFirstname(IMacroContextProvider mcp)
         {   // %pcf
             return GetFirstname(GameManager.Instance.PlayerEntity.Name);
+        }
+
+        private static string PlayerLastname(IMacroContextProvider mcp)
+        {   // %pcl
+            return GetLastname(GameManager.Instance.PlayerEntity.Name);
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)

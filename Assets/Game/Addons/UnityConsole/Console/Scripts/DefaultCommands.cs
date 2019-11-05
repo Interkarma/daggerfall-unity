@@ -290,6 +290,12 @@ namespace Wenzil.Console
                                 for (int i = 0; i < args.Length; i++)
                                     if (blockName == args[i])
                                         locs.Add(dfLoc.Name);
+
+                            if (dfLoc.Dungeon.Blocks != null)
+                                foreach (DFLocation.DungeonBlock dBlock in dfLoc.Dungeon.Blocks)
+                                    for (int i = 0; i < args.Length; i++)
+                                        if (dBlock.BlockName == args[i])
+                                            locs.Add(dfLoc.Name);
                         }
                     }
                     string locJson = SaveLoadManager.Serialize(regionLocs.GetType(), regionLocs);
@@ -2201,7 +2207,10 @@ namespace Wenzil.Console
                 if (args == null || args.Length < 1)
                     return usage;
                 UnityEngine.Random.InitState(Time.frameCount);
-                DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
+                Quest quest = GameManager.Instance.QuestListsManager.GetQuest(args[0]);
+                if (quest != null)
+                    QuestMachine.Instance.InstantiateQuest(quest);
+
                 return "Finished";
             }
         }

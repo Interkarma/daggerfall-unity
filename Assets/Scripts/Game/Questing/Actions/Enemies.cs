@@ -16,20 +16,18 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Starts a task when player has a particular item resource in their inventory.
-    /// This task continues to run and will start task when item present
+    /// Converts a quest item into a permanent item.
     /// </summary>
-    public class HaveItem : ActionTemplate
+    public class Enemies : ActionTemplate
     {
-        Symbol targetItem;
-        Symbol targetTask;
+        bool clear = false;
 
         public override string Pattern
         {
-            get { return @"have (?<targetItem>[a-zA-Z0-9_.-]+) set (?<targetTask>[a-zA-Z0-9_.-]+)"; }
+            get { return @"enemies (?<action>makehostile|clear)"; }
         }
 
-        public HaveItem(Quest parentQuest)
+        public Enemies(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -42,26 +40,20 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            HaveItem action = new HaveItem(parentQuest);
-            action.targetItem = new Symbol(match.Groups["targetItem"].Value);
-            action.targetTask = new Symbol(match.Groups["targetTask"].Value);
+            Enemies action = new Enemies(parentQuest);
+            if (match.Groups["action"].Value == "clear")
+                action.clear = true;
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // Attempt to get Item resource
-            Item item = ParentQuest.GetItem(targetItem);
-            if (item == null)
-            {
-                SetComplete();
-                throw new Exception(string.Format("Could not find Item resource symbol {0}", targetItem));
-            }
-
-            // Start target task based on player carrying item
-            if (GameManager.Instance.PlayerEntity.Items.Contains(item))
-                ParentQuest.StartTask(targetTask);
+            if (clear)
+                GameManager.Instance.ClearEnemies();
+            else
+                GameManager.Instance.MakeEnemiesHostile();
+            SetComplete();
         }
 
         #region Serialization
@@ -69,15 +61,13 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public Symbol targetItem;
-            public Symbol targetTask;
+            public bool clear;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.targetItem = targetItem;
-            data.targetTask = targetTask;
+            data.clear = clear;
 
             return data;
         }
@@ -88,8 +78,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            targetItem = data.targetItem;
-            targetTask = data.targetTask;
+            clear = data.clear;
         }
 
         #endregion

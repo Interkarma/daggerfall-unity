@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -47,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string discoveryDataFilename = "DiscoveryData.txt";
         const string conversationDataFilename = "ConversationData.txt";
         const string notebookDataFilename = "NotebookData.txt";
+        const string worldVariationDataFilename = "WorldVariationData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string questExceptionsFilename = "QuestExceptions.txt";
         const string screenshotFilename = "Screenshot.jpg";
@@ -315,6 +317,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, questDataFilename));
             File.Delete(Path.Combine(path, bioFileName));
             File.Delete(Path.Combine(path, notebookDataFilename));
+            File.Delete(Path.Combine(path, worldVariationDataFilename));
             if (ModManager.Instance != null)
             {
                 foreach (Mod mod in ModManager.Instance.GetAllModsWithSaveData())
@@ -946,6 +949,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Get notebook data
             PlayerNotebook.NotebookData_v1 notebookData = GameManager.Instance.PlayerEntity.Notebook.GetNotebookSaveData();
 
+            // Get WorldData Variants data
+            WorldDataVariants.WorldVariationData_v1 worldVariationData = WorldDataVariants.GetWorldVariationSaveData();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
@@ -954,6 +960,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string discoveryDataJson = Serialize(discoveryData.GetType(), discoveryData);
             string conversationDataJson = Serialize(conversationData.GetType(), conversationData);
             string notebookDataJson = Serialize(notebookData.GetType(), notebookData);
+            string worldVariationDataJson = Serialize(worldVariationData.GetType(), worldVariationData);
 
             //// Attempt to hide UI for screenshot
             //bool rawImageEnabled = false;
@@ -986,6 +993,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, discoveryDataFilename), discoveryDataJson);
             WriteSaveFile(Path.Combine(path, conversationDataFilename), conversationDataJson);
             WriteSaveFile(Path.Combine(path, notebookDataFilename), notebookDataJson);
+            WriteSaveFile(Path.Combine(path, worldVariationDataFilename), worldVariationDataJson);
 
             // Save quest exceptions
             QuestMachine.StoredException[] storedExceptions = QuestMachine.Instance.GetStoredExceptions();
@@ -1070,6 +1078,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
             string conversationDataJson = ReadSaveFile(Path.Combine(path, conversationDataFilename));
             string notebookDataJson = ReadSaveFile(Path.Combine(path, notebookDataFilename));
+            string worldVariantsDataJson = ReadSaveFile(Path.Combine(path, worldVariationDataFilename));
 
             // Read quest exceptions
             if (File.Exists(Path.Combine(path, questExceptionsFilename)))
@@ -1169,6 +1178,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 PlayerNotebook.NotebookData_v1 notebookData = Deserialize(typeof(PlayerNotebook.NotebookData_v1), notebookDataJson) as PlayerNotebook.NotebookData_v1;
                 playerEntity.Notebook.RestoreNotebookData(notebookData);
+            }
+
+            // Restore WorldData variants data
+            if (!string.IsNullOrEmpty(worldVariantsDataJson))
+            {
+                WorldDataVariants.WorldVariationData_v1 worldVariantsData = Deserialize(typeof(WorldDataVariants.WorldVariationData_v1), worldVariantsDataJson) as WorldDataVariants.WorldVariationData_v1;
+                WorldDataVariants.RestoreWorldVariationData(worldVariantsData);
             }
 
             // Restore player position to world

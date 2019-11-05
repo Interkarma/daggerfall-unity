@@ -27,10 +27,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     {
         Symbol npcSymbol;
         Symbol placeSymbol;
+        int marker = -1;
 
         public override string Pattern
         {
-            get { return @"place npc (?<anNPC>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+)"; }
+            get {
+                return @"place npc (?<anNPC>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+) marker (?<marker>\d+)|" +
+                       @"place npc (?<anNPC>[a-zA-Z0-9_.-]+) at (?<aPlace>\w+)";
+            }
         }
 
         public PlaceNpc(Quest parentQuest)
@@ -49,6 +53,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             PlaceNpc action = new PlaceNpc(parentQuest);
             action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
             action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
+            // Set custom marker
+            Group markerGroup = match.Groups["marker"];
+            if (markerGroup.Success)
+                action.marker = Parser.ParseInt(markerGroup.Value);
 
             return action;
         }
@@ -96,7 +105,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
 
             // Assign Person to Place
-            place.AssignQuestResource(person.Symbol);
+            place.AssignQuestResource(person.Symbol, marker);
             person.SetAssignedPlaceSymbol(placeSymbol);
 
             // Person is also unhidden when placed
