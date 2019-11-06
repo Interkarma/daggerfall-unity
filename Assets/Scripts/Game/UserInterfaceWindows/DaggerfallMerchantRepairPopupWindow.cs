@@ -76,20 +76,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Repair button
             repairButton = DaggerfallUI.AddButton(repairButtonRect, mainPanel);
             repairButton.OnMouseClick += RepairButton_OnMouseClick;
+            repairButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantRepair);
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
+            talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantTalk);
 
             // Sell button
             sellButton = DaggerfallUI.AddButton(sellButtonRect, mainPanel);
             sellButton.OnMouseClick += SellButton_OnMouseClick;
+            sellButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantSell);
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantExit);
 
             NativePanel.Components.Add(mainPanel);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            mainPanel.KeyboardActivation(keyModifiers);
         }
 
         #endregion

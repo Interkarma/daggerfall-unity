@@ -123,6 +123,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             InventoryGold,
             InventoryExit,
 
+            // Merchant menu
+            MerchantRepair,
+            MerchantTalk,
+            MerchantSell,
+            MerchantExit,
+
             // Trade screen
             TradeWagon,
             TradeInfo,

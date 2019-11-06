@@ -116,6 +116,12 @@ InventoryUse,         U
 InventoryGold,        G
 InventoryExit,        X
 
+-- Merchant menu
+MerchantRepair,       R
+MerchantTalk,         T
+MerchantSell,         S
+MerchantExit,         E
+
 -- Trade screen - keep in sync with inventory?
 TradeWagon,           W
 TradeInfo,            I
