@@ -78,7 +78,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int curingCost = 0;
 
         List<QuestData> questPool;
-        private List<Quest> loadedQuests = new List<Quest>();
 
         #endregion
 
@@ -470,12 +469,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set up a pool of available quests.
             QuestListsManager questListsManager = GameManager.Instance.QuestListsManager;
-            questPool = GameManager.Instance.QuestListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
+            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
 
             // Show the quest selection list if that feature has been enabled.
             if (DaggerfallUnity.Settings.GuildQuestListBox)
             {
-                loadedQuests.Clear();
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.CreateTokens(
                     TextFile.Formatting.JustifyCenter,
                     TextManager.Instance.GetText(textDatabase, "gettingQuests1"),
@@ -521,53 +519,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ShowFailGetQuestMessage();
             }
+            questPool.Clear();
         }
 
         private void GettingQuestsBox_OnClose()
         {
             DaggerfallListPickerWindow questPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
             questPicker.OnItemPicked += QuestPicker_OnItemPicked;
-            questPicker.OnClose += QuestPicker_OnClose;
             // Populate a list with quests that the player can choose from.
+            List<int> failures = new List<int>();
             for (int i = 0; i < questPool.Count; i++)
             {
-                // Fully loading the quest is currently the only way to get the human readable quest name.
-                // @TODO: remove this when the QuestListsManager can get at display names too.
-                Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild());
-                if (quest != null)
+                try
                 {
-                    loadedQuests.Add(quest);
+                    // Partially loading the quest to get the human readable quest name.
+                    Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild(), true);
                     questPicker.ListBox.AddItem(quest.DisplayName ?? quest.QuestName);
+                    quest.Dispose();
                 }
-            }
-            uiManager.PushWindow(questPicker);
-        }
-
-        private void QuestPicker_OnClose()
-        {
-            for (int i = 0; i < loadedQuests.Count; i++)
-            {
-                if (loadedQuests[i] != offeredQuest)
+                catch (Exception)
                 {
-                    // Get rid of all the quest data that was created when loading the quests to get their display name.
-                    // @TODO: remove this when GettingQuestsBox_OnClose doesn't need to load the full quests anymore.  
-                    ulong uid = loadedQuests[i].UID;
-                    // inform TalkManager so that it can remove the quest topics that have been added
-                    GameManager.Instance.TalkManager.RemoveQuestInfoTopicsForSpecificQuest(uid);
-                    // remove quest rumors (rumor mill command) for this quest from talk manager
-                    GameManager.Instance.TalkManager.RemoveQuestRumorsFromRumorMill(uid);
-                    // remove quest progress rumors for this quest from talk manager
-                    GameManager.Instance.TalkManager.RemoveQuestProgressRumorsFromRumorMill(uid);
-                    loadedQuests[i].Dispose();
+                    failures.Add(i);  // Add to list any that fail (partial) parsing
                 }
             }
+            // Remove any quests that failed partial parsing
+            foreach (int i in failures)
+                questPool.RemoveAt(i);
+
+            uiManager.PushWindow(questPicker);
         }
 
         public void QuestPicker_OnItemPicked(int index, string name)
         {
             DaggerfallUI.UIManager.PopWindow();
-            offeredQuest = loadedQuests[index];
-            OfferQuest();
+            if (index < questPool.Count)
+            {
+                offeredQuest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[index], GetFactionIdForGuild());
+                OfferQuest();
+            }
         }
 
         #endregion
