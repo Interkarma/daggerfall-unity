@@ -1160,7 +1160,7 @@ namespace DaggerfallWorkshop.Game
             // Snap player to ground
             RaycastHit hit;
             Ray ray = new Ray(transform.position, Vector3.down);
-            if (Physics.Raycast(ray, out hit, controller.height * 2f))
+            if (Physics.Raycast(ray, out hit, PlayerHeightChanger.controllerStandingHeight * 2f))
             {
                 // Clear falling damage so player doesn't take damage if they transitioned into a dungeon while jumping
                 GameManager.Instance.AcrobatMotor.ClearFallingDamage();
