@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Items
     /// </summary>
     public class ItemHelper
     {
-        public const int wagonKgLimit = 750;
+        public static int wagonKgLimit = 750;
         const string textDatabase = "DaggerfallUI";
 
         #region Fields
