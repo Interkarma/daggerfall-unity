@@ -326,7 +326,6 @@ namespace Wenzil.Console
                     {
                         RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex],
                         BuildingType = (int)blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].BuildingType,
-                        FactionId = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].FactionId,
                         Quality = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].Quality,
                     };
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
