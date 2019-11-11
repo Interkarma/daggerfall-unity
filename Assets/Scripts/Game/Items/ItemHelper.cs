@@ -29,10 +29,9 @@ namespace DaggerfallWorkshop.Game.Items
     /// </summary>
     public class ItemHelper
     {
-        public const int wagonKgLimit = 750;
-        const string textDatabase = "DaggerfallUI";
-
         #region Fields
+
+        const string textDatabase = "DaggerfallUI";
 
         // This array is in order of ItemEnums.ArtifactsSubTypes
         // Each element in array is the texture record index to use for that artifact in TEXTURE.432, TEXTURE.433
@@ -46,6 +45,8 @@ namespace DaggerfallWorkshop.Game.Items
 
         const int artifactMaleTextureArchive = 432;
         const int artifactFemaleTextureArchive = 433;
+
+        public static int WagonKgLimit = 750;
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
         List<MagicItemTemplate> allMagicItemTemplates = new List<MagicItemTemplate>();
