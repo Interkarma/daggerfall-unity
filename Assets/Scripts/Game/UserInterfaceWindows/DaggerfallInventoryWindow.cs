@@ -832,7 +832,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
                 float weight = PlayerEntity.WagonWeight;
-                remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
+                remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.WagonKgLimit);
             }
             else if (dropIconTexture > -1)
             {
@@ -1241,7 +1241,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (usingWagon)
             {
                 // Check wagon weight limit
-                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.wagonKgLimit - remoteItems.GetWeight());
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.WagonKgLimit - remoteItems.GetWeight());
                 if (goldToDrop > wagonCanHold)
                 {
                     goldToDrop = wagonCanHold;
@@ -1368,7 +1368,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.wagonKgLimit - remoteItems.GetWeight());
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.WagonKgLimit - remoteItems.GetWeight());
             if (canCarry <= 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
