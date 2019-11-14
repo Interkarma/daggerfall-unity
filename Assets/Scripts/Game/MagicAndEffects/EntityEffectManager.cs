@@ -1080,9 +1080,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Tests incoming effect for spell reflection.
+        /// Tests incoming spell bundle for reflection.
         /// </summary>
-        /// <param name="casterEntity">Source caster entity behaviour for spell reflect.</param>
+        /// <param name="sourceBundle">Source bundle of spell to reflect.</param>
         /// <returns>True if reflected.</returns>
         bool TryReflection(EntityEffectBundle sourceBundle)
         {
@@ -1094,6 +1094,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Entity must be reflecting
             SpellReflection reflectEffect = FindIncumbentEffect<SpellReflection>() as SpellReflection;
             if (reflectEffect == null)
+                return false;
+
+            // Do not reflect spells from same caster onto self
+            if (sourceBundle.CasterEntityBehaviour == EntityBehaviour)
                 return false;
 
             // Roll for reflection chance
