@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (Lypyl@dfworkshop.net), Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -23,8 +23,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         float nextFrameTime;
         bool isPlaying = false;
+        byte tRed = 0;
+        byte tGreen = 0;
+        byte tBlue = 0;
 
         public bool Loop { get; set; }
+
+        public bool TransparencyEnabled { get; set; }
         
         public FlcFile FLCFile { get { return flcFile; } }
 
@@ -33,15 +38,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Loop = true;
             BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             BackgroundColor = Color.black;
+            TransparencyEnabled = false;
         }
 
         public void Load(string filename)
         {
+            flcFile.Transparency = TransparencyEnabled;
+            flcFile.TransparentRed = tRed;
+            flcFile.TransparentGreen = tGreen;
+            flcFile.TransparentBlue = tBlue;
+
             string path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename);
             if (!flcFile.Load(path))
                 return;
 
-            flcTexture = TextureReader.CreateFromSolidColor(flcFile.Header.Width, flcFile.Header.Height, Color.black, false, false);
+            flcTexture = TextureReader.CreateFromSolidColor(flcFile.Header.Width, flcFile.Header.Height, (TransparencyEnabled ? Color.clear : Color.black), false, false);
             flcTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
         }
 
@@ -65,13 +76,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public void SetTransparentColor(byte r, byte g, byte b)
+        {
+            tRed = r;
+            tGreen = g;
+            tBlue = b;
+        }
+
         public override void Update()
         {
             base.Update();
 
             // Stop playing if we reach final frame and not looping
             if (isPlaying && !Loop && flcFile.CurrentFrame >= flcFile.Header.NumOfFrames)
+            {
                 isPlaying = false;
+                RaiseAnimEnd();
+            }
 
             if (flcFile == null || !flcTexture || !flcFile.ReadyToPlay || !isPlaying)
                 return;
@@ -84,6 +105,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             flcTexture.SetPixels32(flcFile.FrameBuffer);
             flcTexture.Apply(false);
             flcFile.BufferNextFrame();
+        }
+
+        public delegate void OnAnimEndHandler(FLCPlayer player);
+        public event OnAnimEndHandler OnAnimEnd;
+        void RaiseAnimEnd()
+        {
+            if (OnAnimEnd != null)
+                OnAnimEnd(this);
         }
     }
 }
