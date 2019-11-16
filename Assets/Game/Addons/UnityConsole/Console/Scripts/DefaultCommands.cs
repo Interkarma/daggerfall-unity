@@ -2056,8 +2056,10 @@ namespace Wenzil.Console
                             for (int i = 0; i < enumArray.Length-1; i++)
                             {
                                 newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
-                                if (args[0] == "magicWeapons")
+                                if (args[0] == "magicWeapons") {
                                     newItem.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 5 } };
+                                    newItem.IdentifyItem();
+                                }
                                 playerEntity.Items.AddItem(newItem);
                             }
                         }
