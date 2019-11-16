@@ -1928,7 +1928,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add_all_equip";
             public static readonly string description = "Adds all equippable item types to inventory for the current characters gender & race. (for testing paperdoll images)";
-            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons)";
+            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons|magicWeapons)";
 
             public static ArmorMaterialTypes[] armorMaterials = {
                 ArmorMaterialTypes.Leather, ArmorMaterialTypes.Chain, ArmorMaterialTypes.Iron, ArmorMaterialTypes.Steel,
@@ -2049,12 +2049,15 @@ namespace Wenzil.Console
                         return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
 
                     case "weapons":
+                    case "magicWeapons":
                         foreach (WeaponMaterialTypes material in weaponMaterials)
                         {
                             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
-                            for (int i = 0; i < enumArray.Length; i++)
+                            for (int i = 0; i < enumArray.Length-1; i++)
                             {
                                 newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
+                                if (args[0] == "magicWeapons")
+                                    newItem.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 5 } };
                                 playerEntity.Items.AddItem(newItem);
                             }
                         }
