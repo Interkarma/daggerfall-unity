@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-
+            
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
             SelectActionMode((lootTarget != null) ? ActionModes.Remove : ActionModes.Equip);
@@ -1161,21 +1161,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void WeaponsAndArmor_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(TabPages.WeaponsAndArmor);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void MagicItems_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(TabPages.MagicItems);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void ClothingAndMisc_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(TabPages.ClothingAndMisc);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void Ingredients_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(TabPages.Ingredients);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         #endregion
@@ -1190,31 +1194,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
             else
                 ShowWagon(!usingWagon);
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectActionMode(ActionModes.Info);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void EquipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectActionMode(ActionModes.Equip);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void RemoveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectActionMode(ActionModes.Remove);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void UseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectActionMode(ActionModes.Use);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        
         {
             // Show message box
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             const int goldToDropTextId = 25;
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.SetTextTokens(goldToDropTextId);
@@ -1923,7 +1934,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+
         }
 
         #endregion
