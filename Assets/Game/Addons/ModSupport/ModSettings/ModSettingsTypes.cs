@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 string[] args = input.Split(new char[] { ',' }, count);
                 items = new T[args.Length];
                 for (int i = 0; i < args.Length; i++)
-                    items[i] = (T)Convert.ChangeType(args[i], typeof(T));
+                    items[i] = (T)Convert.ChangeType(args[i], typeof(T), CultureInfo.InvariantCulture);
                 return true;
             }
             catch (Exception e)
@@ -544,7 +544,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         protected override void Deserialize(string textValue)
         {
             float value;
-            if (float.TryParse(textValue, out value))
+            if (float.TryParse(textValue, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value))
                 Value = Mathf.Clamp(value, Min, Max);
         }
     }
