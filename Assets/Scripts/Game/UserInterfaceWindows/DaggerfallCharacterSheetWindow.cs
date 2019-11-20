@@ -800,6 +800,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void NameButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             mb.TextBox.Text = nameLabel.Text;
             mb.SetTextBoxLabel(HardStrings.enterNewName);
             mb.OnGotUserInput += EnterName_OnGotUserInput;
@@ -808,6 +809,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LevelButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             float currentLevel = (playerEntity.CurrentLevelUpSkillSum - playerEntity.StartingLevelUpSkillSum + 28f) / 15f;
             int progress = (int)((currentLevel % 1) * 100);
             DaggerfallUI.MessageBox(string.Format(TextManager.Instance.GetText(textDatabase, "levelProgress"), progress));
@@ -815,6 +817,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox bankingStatusBox = DaggerfallBankingWindow.CreateBankingStatusBox(this);
             bankingStatusBox.Show();
         }
@@ -828,52 +831,62 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HealthButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox healthBox = DaggerfallUI.Instance.CreateHealthStatusBox(this);
             healthBox.Show();
         }
 
         private void AffiliationsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ShowAffiliationsDialog();
         }
 
         private void PrimarySkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ShowSkillsDialog(PlayerEntity.GetPrimarySkills());
         }
 
         private void MajorSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ShowSkillsDialog(PlayerEntity.GetMajorSkills());
         }
 
         private void MinorSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ShowSkillsDialog(PlayerEntity.GetMinorSkills());
         }
 
         private void MiscSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ShowSkillsDialog(PlayerEntity.GetMiscSkills(), true);
         }
 
         private void InventoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
         }
 
         private void SpellBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
         }
 
         private void LogBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
         }
 
         void HistoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox advantageTextBox = DaggerfallUI.MessageBox(GetClassSpecials());
             advantageTextBox.OnClose += AdvantageTextBox_OnClose;
         }
@@ -887,6 +900,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!leveling)
             {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens((int)sender.Tag, playerEntity.Stats);
                 messageBox.ClickAnywhereToClose = true;
@@ -900,6 +914,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (CheckIfDoneLeveling())
                 CloseWindow();
         }
