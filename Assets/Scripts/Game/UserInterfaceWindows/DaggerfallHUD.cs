@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
         HUDFlickerController flickerController = new HUDFlickerController();
-        HUDInteractionModeIcon interactionModeIcon = new HUDInteractionModeIcon();
+        HUDInteractionModeIcon interactionModeIcon;
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
@@ -111,6 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {
+            interactionModeIcon = new HUDInteractionModeIcon(crosshair);
             parentPanel.BackgroundColor = Color.clear;
             ShowPopupText = true;
             ShowMidScreenText = true;

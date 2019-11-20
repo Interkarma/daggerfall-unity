@@ -58,9 +58,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         float displayScale;
 
-        public HUDInteractionModeIcon()
+        Texture2D crosshairTexture;
+        Vector2 crosshairSize;
+        bool crosshair = false;
+        HUDCrosshair hudCrosshair;
+
+        public HUDInteractionModeIcon(HUDCrosshair hudCrosshair)
             : base()
         {
+            this.hudCrosshair = hudCrosshair;
             LoadAssets();
         }
 
@@ -68,29 +74,60 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (Enabled)
             {
-                float barWidth = HUDVitals.nativeBarWidth * Scale.x;
-
-                PlayerActivateModes mode = GameManager.Instance.PlayerActivate.CurrentMode;
-                switch (mode)
+                if (crosshair)
                 {
-                    case PlayerActivateModes.Steal:
-                        BackgroundTexture = StealTexture;
-                        Size = stealSize * displayScale;
-                        break;
-                    case PlayerActivateModes.Grab:
-                        BackgroundTexture = GrabTexture;
-                        Size = grabSize * displayScale;
-                        break;
-                    case PlayerActivateModes.Info:
-                        BackgroundTexture = InfoTexture;
-                        Size = infoSize * displayScale;
-                        break;
-                    case PlayerActivateModes.Talk:
-                        BackgroundTexture = TalkTexture;
-                        Size = talkSize * displayScale;
-                        break;
+                    if (crosshairTexture == null) {
+                        crosshairTexture = hudCrosshair.CrosshairTexture;
+                        crosshairSize = hudCrosshair.crosshairSize;
+                    }
+
+                    PlayerActivateModes mode = GameManager.Instance.PlayerActivate.CurrentMode;
+                    switch (mode)
+                    {
+                        case PlayerActivateModes.Steal:
+                            hudCrosshair.CrosshairTexture = StealTexture;
+                            hudCrosshair.crosshairSize = stealSize * displayScale;
+                            break;
+                        case PlayerActivateModes.Grab:
+                            hudCrosshair.CrosshairTexture = crosshairTexture;
+                            hudCrosshair.crosshairSize = crosshairSize;
+                            break;
+                        case PlayerActivateModes.Info:
+                            hudCrosshair.CrosshairTexture = InfoTexture;
+                            hudCrosshair.crosshairSize = infoSize * displayScale;
+                            break;
+                        case PlayerActivateModes.Talk:
+                            hudCrosshair.CrosshairTexture = TalkTexture;
+                            hudCrosshair.crosshairSize = talkSize * displayScale;
+                            break;
+                    }
                 }
-                Position = new Vector2((barWidth * 5) + (HUDVitals.borderSize * 2), Screen.height - HUDVitals.borderSize - Size.y);
+                else
+                {
+                    float barWidth = HUDVitals.nativeBarWidth * Scale.x;
+
+                    PlayerActivateModes mode = GameManager.Instance.PlayerActivate.CurrentMode;
+                    switch (mode)
+                    {
+                        case PlayerActivateModes.Steal:
+                            BackgroundTexture = StealTexture;
+                            Size = stealSize * displayScale;
+                            break;
+                        case PlayerActivateModes.Grab:
+                            BackgroundTexture = GrabTexture;
+                            Size = grabSize * displayScale;
+                            break;
+                        case PlayerActivateModes.Info:
+                            BackgroundTexture = InfoTexture;
+                            Size = infoSize * displayScale;
+                            break;
+                        case PlayerActivateModes.Talk:
+                            BackgroundTexture = TalkTexture;
+                            Size = talkSize * displayScale;
+                            break;
+                    }
+                    Position = new Vector2((barWidth * 5) + (HUDVitals.borderSize * 2), Screen.height - HUDVitals.borderSize - Size.y);
+                }
 
                 base.Update();
             }
@@ -106,6 +143,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             switch (DaggerfallUnity.Settings.InteractionModeIcon.ToLower())
             {
                 case "classic":
+                case "crosshair":
                     stealFilename = classicStealFilename;
                     grabFilename = classicGrabFilename;
                     infoFilename = classicInfoFilename;
@@ -146,6 +184,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GrabTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + grabFilename, out grabSize);
             InfoTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + infoFilename, out infoSize);
             TalkTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + talkFilename, out talkSize);
+
+            crosshair = DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "crosshair";
         }
     }
 }
