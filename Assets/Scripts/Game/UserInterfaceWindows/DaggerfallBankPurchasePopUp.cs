@@ -373,14 +373,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (priceListBox.SelectedIndex < 0)
                 return;
-
             CloseWindow();
             if (housesForSale == null)
                 bankingWindow.GeneratePurchaseShipPopup((ShipType)priceListBox.SelectedIndex);
@@ -409,11 +410,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void PriceUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             priceListBox.ScrollUp();
         }
 
         void PriceDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             priceListBox.ScrollDown();
         }
 
