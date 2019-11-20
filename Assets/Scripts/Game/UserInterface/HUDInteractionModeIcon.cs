@@ -140,10 +140,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             string infoFilename;
             string talkFilename;
 
-            switch (DaggerfallUnity.Settings.InteractionModeIcon.ToLower())
+            string iconSetting = DaggerfallUnity.Settings.InteractionModeIcon.ToLower();
+            switch (iconSetting)
             {
                 case "classic":
-                case "crosshair":
+                case "classicxhair":
                     stealFilename = classicStealFilename;
                     grabFilename = classicGrabFilename;
                     infoFilename = classicInfoFilename;
@@ -160,6 +161,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     break;
 
                 case "colour":
+                case "colourxhair":
                     stealFilename = colourStealFilename;
                     grabFilename = colourGrabFilename;
                     infoFilename = colourInfoFilename;
@@ -185,7 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             InfoTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + infoFilename, out infoSize);
             TalkTexture = DaggerfallUI.GetTextureFromResources(IconsFolder + talkFilename, out talkSize);
 
-            crosshair = DaggerfallUnity.Settings.InteractionModeIcon.ToLower() == "crosshair";
+            crosshair = iconSetting.EndsWith("xhair");
         }
     }
 }
