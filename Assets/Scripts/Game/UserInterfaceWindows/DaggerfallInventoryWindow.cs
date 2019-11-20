@@ -313,9 +313,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
-            
-
-
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
             SelectActionMode((lootTarget != null) ? ActionModes.Remove : ActionModes.Equip);
