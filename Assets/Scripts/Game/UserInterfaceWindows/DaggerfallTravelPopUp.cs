@@ -367,7 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void BeginButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             Refresh();
-
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // Warns player if they have a disease
             if (GameManager.Instance.PlayerEffectManager.DiseaseCount > 0 || GameManager.Instance.PlayerEffectManager.PoisonCount > 0)
             {
@@ -387,6 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void CancelWindow()
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             doFastTravel = false;
             base.CancelWindow();
         }
@@ -396,6 +397,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         void ConfirmTravelPopupDiseasedButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sender.CloseWindow();
 
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -424,24 +426,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             doFastTravel = false;
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
         }
 
         public void SpeedButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             speedCautious = !speedCautious;
             Refresh();
         }
 
         public void TransportModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             travelShip = !travelShip;
             Refresh();
         }
 
         public void SleepModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sleepModeInn = !sleepModeInn;
             Refresh();
         }
