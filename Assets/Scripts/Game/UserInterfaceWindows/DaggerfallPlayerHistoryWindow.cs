@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (MoveNextPage())
             {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
                 LayoutPage();
             }
         }
@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (MovePreviousPage())
             {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
                 LayoutPage();
             }
         }
