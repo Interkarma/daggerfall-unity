@@ -561,7 +561,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Event Handlers
 
         private void WhileButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
+        {       
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallUnity.Settings.IllegalRestWarning && GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true))
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
@@ -586,9 +587,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HealedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallUnity.Settings.IllegalRestWarning && GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true))
             {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "illegalRestWarning"));
                 mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
