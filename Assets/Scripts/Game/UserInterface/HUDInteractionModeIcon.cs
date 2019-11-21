@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using DaggerfallWorkshop.Utility.AssetInjection;
  
 namespace DaggerfallWorkshop.Game.UserInterface
 {

@@ -10,15 +10,8 @@
 //
 
 using UnityEngine;
-using System;
-using System.IO;
-using System.Collections;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
