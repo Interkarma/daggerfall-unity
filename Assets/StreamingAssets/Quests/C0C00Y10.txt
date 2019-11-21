@@ -75,6 +75,7 @@ Message:  1025
 <ce>                    patient's name is _cousin_ and
 <ce>                     %g is in ___cousin_. You have
 <ce>                  =questtime_ days to prove yourself.
+
 --duplicate 1006 removed
 
 QuestLogEntry:  [1010]
