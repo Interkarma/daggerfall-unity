@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -304,6 +304,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void DefaultButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox confirmDefaultsBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, confirmDefaults, this);
             confirmDefaultsBox.OnButtonClick += ConfirmDefaultsBox_OnButtonClick;
             confirmDefaultsBox.Show();
@@ -321,6 +322,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ContinueButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
             if (!AllowCancel)
             {
                 ShowMultipleAssignmentsMessage();
@@ -337,6 +340,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void KeybindButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             Button thisKeybindButton = (Button)sender;
             if (!waitingForInput)
                 InputManager.Instance.StartCoroutine(WaitForKeyPress(thisKeybindButton));
