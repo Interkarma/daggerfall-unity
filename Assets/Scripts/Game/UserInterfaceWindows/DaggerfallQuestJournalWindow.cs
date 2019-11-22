@@ -257,24 +257,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             if (currentMessageIndex - 1 >= 0)
                 currentMessageIndex -= 1;
         }
 
         void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             if (currentMessageIndex + 1 < messageCount)
                 currentMessageIndex += 1;
         }
 
         void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
-            UpArrowButton_OnMouseClick(sender, Vector2.zero);
+            if (currentMessageIndex - 1 >= 0)
+                currentMessageIndex -= 1;
         }
 
         void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
-        {
-            DownArrowButton_OnMouseClick(sender, Vector2.zero);
+         {
+            if (currentMessageIndex + 1 < messageCount)
+                currentMessageIndex += 1;
         }
 
         void TitlePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -284,6 +288,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
