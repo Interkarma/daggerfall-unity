@@ -768,13 +768,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             spellsListBox.SelectPrevious();
         }
 
         private void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             spellsListBox.SelectNext();
         }
 
