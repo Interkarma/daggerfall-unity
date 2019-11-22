@@ -315,6 +315,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.BuyPotions:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantPotions();
@@ -389,6 +390,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.BuySoulgems:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantMagicItems(true);
