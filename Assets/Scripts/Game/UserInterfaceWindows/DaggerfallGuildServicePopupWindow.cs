@@ -284,10 +284,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (service)
             {
                 case GuildServices.Quests:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick); 
                     GetQuest();
                     break;
 
                 case GuildServices.Identify:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Identify, guild }));
                     break;
@@ -298,10 +300,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.Training:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     TrainingService();
                     break;
 
                 case GuildServices.Donate:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     DonationService();
                     break;
 
@@ -317,6 +321,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakePotions:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     MakePotionService();
                     break;
 
@@ -327,6 +332,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakeSpells:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
                         uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
@@ -335,6 +341,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantMagicItems();
@@ -342,6 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakeMagicItems:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfItemMakerWindow);
                     break;
@@ -352,6 +360,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.Teleport:
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
@@ -398,6 +407,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
@@ -407,6 +417,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void JoinButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             guild = guildManager.JoinGuild(guildGroup, buildingFactionId);
             if (guild == null)
@@ -434,6 +445,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void ConfirmJoinGuild_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
@@ -565,6 +577,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void QuestPicker_OnItemPicked(int index, string name)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallUI.UIManager.PopWindow();
             offeredQuest = loadedQuests[index];
             OfferQuest();
@@ -731,6 +744,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CureDiseaseService()
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             int numberOfDiseases = GameManager.Instance.PlayerEffectManager.DiseaseCount;
 
