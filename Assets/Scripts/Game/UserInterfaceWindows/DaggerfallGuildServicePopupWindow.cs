@@ -258,6 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
         }
 
