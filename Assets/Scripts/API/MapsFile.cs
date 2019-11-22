@@ -836,6 +836,34 @@ namespace DaggerfallConnect.Arena2
             return politicPak.GetValue(mapPixelX, mapPixelY);
         }
 
+        /// <summary>
+        /// Sets climate index from CLIMATE.PAK based on world pixel.
+        /// Allows loaded climate data from Pak file to be modified by mods.
+        /// </summary>
+        /// <param name="mapPixelX">Map pixel X position.</param>
+        /// <param name="mapPixelY">Map pixel Y position.</param>
+        /// <param name="value">The climate to set for the specified map pixel.</param>
+        /// <returns>True if climate index was set, false otherwise.</returns>
+        public bool SetClimateIndex(int mapPixelX, int mapPixelY, Climates value)
+        {
+            mapPixelX += 1;
+            return climatePak.SetValue(mapPixelX, mapPixelY, (byte)value);
+        }
+
+        /// <summary>
+        /// Reads politic index from POLITIC.PAK based on world pixel.
+        /// Allows loaded region data from Pak file to be modified by mods.
+        /// </summary>
+        /// <param name="mapPixelX">Map pixel X position.</param>
+        /// <param name="mapPixelY">Map pixel Y position.</param>
+        /// <param name="value">The politic index to set for the specified map pixel.</param>
+        /// <returns>True if politic index was set, false otherwise.</returns>
+        public bool SetPoliticIndex(int mapPixelX, int mapPixelY, byte value)
+        {
+            mapPixelX += 1;
+            return politicPak.SetValue(mapPixelX, mapPixelY, value);
+        }
+
         #endregion
 
         #region Readers
