@@ -125,6 +125,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             int mapId = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
             int buildingKey = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.buildingKey;
+            GameManager.Instance.PlayerEntity.RemoveExpiredRentedRooms();
             rentedRoom = GameManager.Instance.PlayerEntity.GetRentedRoom(mapId, buildingKey);
 
             DaggerfallInputMessageBox inputMessageBox = new DaggerfallInputMessageBox(uiManager, this);
