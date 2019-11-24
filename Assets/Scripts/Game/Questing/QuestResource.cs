@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using System.Text.RegularExpressions;
+using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -24,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         [NonSerialized]
         QuestResourceBehaviour questResourceBehaviour = null;
+
+        protected TalkManager.QuestInfoResourceType talkManagerType = TalkManager.QuestInfoResourceType.NotSet;
 
         /// <summary>
         /// Symbol of this quest resource (if any).
@@ -276,6 +280,39 @@ namespace DaggerfallWorkshop.Game.Questing
         public void RearmPlayerClick()
         {
             hasPlayerClicked = false;
+        }
+        
+        public void AddConversationTopics(TalkManager talkManager)
+        {
+            List<TextFile.Token[]> anyInfoAnswers = null;
+            List<TextFile.Token[]> anyRumorsAnswers = null;
+            if (InfoMessageID != -1)
+            {
+                Message message = ParentQuest.GetMessage(InfoMessageID);
+                anyInfoAnswers = new List<TextFile.Token[]>();
+                if (message != null)
+                {
+                    for (int i = 0; i < message.VariantCount; i++)
+                    {
+                        TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                        anyInfoAnswers.Add(tokens);
+                    }
+                }
+
+                message = ParentQuest.GetMessage(RumorsMessageID);
+                anyRumorsAnswers = new List<TextFile.Token[]>();
+                if (message != null)
+                {
+                    for (int i = 0; i < message.VariantCount; i++)
+                    {
+                        TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                        anyRumorsAnswers.Add(tokens);
+                    }
+                }                
+            }
+
+            string key = Symbol.Name;
+            talkManager.AddQuestTopicWithInfoAndRumors(ParentQuest.UID, this, key, talkManagerType, anyInfoAnswers, anyRumorsAnswers);
         }
 
         #region Serialization

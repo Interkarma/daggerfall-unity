@@ -853,6 +853,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 existingTask.CopyQuestActions(task);
             }
         }
+        
+        /// <summary>
+        /// Add topics from items, persons and places to a talkmanager. 
+        /// </summary>
+        /// <param name="talkManager"></param>
+        public void AddResourceTopics(TalkManager talkManager)
+        {
+            foreach (QuestResource resource in resources.Values)
+            {
+                resource.AddConversationTopics(talkManager);
+            }
+        }
 
         #endregion
 

@@ -666,6 +666,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="quest">Quest.</param>
         public void InstantiateQuest(Quest quest)
         {
+            quest.AddResourceTopics(GameManager.Instance.TalkManager);
             // init quest rumors (note Nystul: did not find a better place to do this since it must happen after quest parsing and should be called exactly one time for each quest)
             quest.initQuestRumors();
 
