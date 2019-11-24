@@ -12,11 +12,8 @@
 using System;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility;
@@ -32,10 +29,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "TRAV0I04.IMG";
 
         const float secondsCountdownTickFastTravel = 0.05f; // time used for fast travel countdown for one tick
-
         TravelTimeCalculator travelTimeCalculator = new TravelTimeCalculator();
 
-        Color32 toggleColor = new Color32(85, 117, 48, 255);
+        Color32 toggleColor = new Color32(68, 255, 0, 255); // Classic: 85, 117, 48
+        Color32 toggleBorderColor = new Color32(58, 217, 0, 255);
+        const int toggleBorderThickness = 1;
 
         Panel travelPanel;
         Panel speedToggleColorPanel;
@@ -59,11 +57,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect innsButtonRect         = new Rect(50, 83, 108, 9);
         Rect campoutButtonRect      = new Rect(163, 83, 108, 9);
 
-        Vector2 colorPanelSize      = new Vector2(4.5f, 5f);
+        Vector2 colorPanelSize      = new Vector2(4.5f, 4.5f);
         Vector2 cautiousPanelPos    = new Vector2(52, 53.25f);
         Vector2 recklessPanelPos    = new Vector2(52, 63.25f);
-        Vector2 innPanelPos         = new Vector2(52, 85.25f);
-        Vector2 campoutPos          = new Vector2(165, 85.25f);
+        Vector2 innPanelPos         = new Vector2(52, 85.5f);
+        Vector2 campoutPos          = new Vector2(165, 85.5f);
         Vector2 footPos             = new Vector2(165, 53.25f);
         Vector2 shipPos             = new Vector2(165, 63.25f);
         DFPosition endPos           = new DFPosition(109, 158);
@@ -126,26 +124,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             availableGoldLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(148, 97), "0", NativePanel);
             availableGoldLabel.MaxCharacters = 12;
 
-            tripCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(117,107), "0", NativePanel);
+            tripCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(117, 107), "0", NativePanel);
             tripCostLabel.MaxCharacters = 18;
 
-            travelTimeLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(129,117), "0", NativePanel);
+            travelTimeLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(129, 117), "0", NativePanel);
             travelTimeLabel.MaxCharacters = 16;
 
             speedToggleColorPanel = DaggerfallUI.AddPanel(new Rect(cautiousPanelPos, colorPanelSize), NativePanel);
-            speedToggleColorPanel.BackgroundColor = toggleColor;
+            SetToggleLook(speedToggleColorPanel);
 
             sleepToggleColorPanel = DaggerfallUI.AddPanel(new Rect(innPanelPos, colorPanelSize), NativePanel);
-            sleepToggleColorPanel.BackgroundColor = toggleColor;
+            SetToggleLook(sleepToggleColorPanel);
 
             transportToggleColorPanel = DaggerfallUI.AddPanel(new Rect(footPos, colorPanelSize), NativePanel);
-            transportToggleColorPanel.BackgroundColor = toggleColor;
+            SetToggleLook(transportToggleColorPanel);
 
             SetupButtons();
             Refresh();
         }
 
+        private void SetToggleLook(Panel toggle)
+        {
+            toggle.BackgroundColor = toggleColor;
+            Texture2D borderColor = ColorTexture(toggleBorderColor);
+            Texture2D fillColor = ColorTexture(toggleColor);
+            toggle.SetBorderTextures(
+                borderColor, borderColor, borderColor,
+                borderColor, fillColor, borderColor,
+                borderColor, borderColor, borderColor,
+                DaggerfallUI.Instance.GlobalFilterMode,
+                new Border<Vector2Int>(new Vector2Int(toggleBorderThickness, toggleBorderThickness)));
+        }
 
+        private Texture2D ColorTexture(Color32 color)
+        {
+            Texture2D colorTexture = new Texture2D(1, 1);
+            colorTexture.SetPixels32(new Color32[] { color });
+            colorTexture.Apply();
+            return colorTexture;
+        }
 
         void SetupButtons()
         {
