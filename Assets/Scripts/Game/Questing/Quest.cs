@@ -52,7 +52,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         string questName;
         string displayName;
-        DaggerfallDateTime questStartTime;
         int factionId = 0;
         IMacroContextProvider mcp = null;
 
@@ -66,6 +65,7 @@ namespace DaggerfallWorkshop.Game.Questing
         List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
+        public bool ReadyToStart { get; set; }
 
         #endregion
 
@@ -178,10 +178,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Gets world time of quest when started.
         /// </summary>
-        public DaggerfallDateTime QuestStartTime
-        {
-            get { return questStartTime; }
-        }
+        public DaggerfallDateTime QuestStartTime { get ; set ; }
 
         /// <summary>
         /// Gets or sets last Place resource encountered during macro expand.
@@ -252,7 +249,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public Quest()
         {
             uid = DaggerfallUnity.NextUID;
-            questStartTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
         }
 
         #endregion
@@ -599,7 +595,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     return log.dateTime;
             }
 
-            return questStartTime;
+            return QuestStartTime;
         }
 
         /// <summary>
@@ -899,7 +895,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questName = questName;
             data.displayName = displayName;
             data.factionId = factionId;
-            data.questStartTime = questStartTime;
+            data.questStartTime = QuestStartTime;
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
 
@@ -951,7 +947,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questName = data.questName;
             displayName = data.displayName;
             factionId = data.factionId;
-            questStartTime = data.questStartTime;
+            QuestStartTime = data.questStartTime;
             questTombstoned = data.questTombstoned;
             questTombstoneTime = data.questTombstoneTime;
 
