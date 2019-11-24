@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (Input.GetKey(KeyCode.Y))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.AcceptQuest);
-                    QuestMachine.Instance.InstantiateQuest(daedraQuest);
+                    QuestMachine.Instance.StartQuest(daedraQuest);
                 }
                 else if (Input.GetKey(KeyCode.N))
                 {

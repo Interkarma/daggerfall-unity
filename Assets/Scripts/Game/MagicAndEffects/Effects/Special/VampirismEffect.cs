@@ -218,7 +218,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (isCureQuest)
             {
                 if (DFRandom.random_range_inclusive(10, 100) < 30)
-                    QuestMachine.Instance.InstantiateQuest("$CUREVAM");
+                    QuestMachine.Instance.StartQuest("$CUREVAM");
             }
             else if (hasStartedInitialVampireQuest)
             {
@@ -237,12 +237,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         reputation,
                         GameManager.Instance.PlayerEntity.Level);
                     if (offeredQuest != null)
-                        QuestMachine.Instance.InstantiateQuest(offeredQuest);
+                        QuestMachine.Instance.StartQuest(offeredQuest);
                 }
             }
             else if (DFRandom.random_range_inclusive(1, 100) < 50)
             {
-                QuestMachine.Instance.InstantiateQuest("P0A01L00");
+                QuestMachine.Instance.StartQuest("P0A01L00");
                 hasStartedInitialVampireQuest = true;
             }
         }
