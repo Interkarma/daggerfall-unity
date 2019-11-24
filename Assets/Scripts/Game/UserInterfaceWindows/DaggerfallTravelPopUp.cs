@@ -31,9 +31,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float secondsCountdownTickFastTravel = 0.05f; // time used for fast travel countdown for one tick
         TravelTimeCalculator travelTimeCalculator = new TravelTimeCalculator();
 
-        Color32 toggleColor = new Color32(68, 255, 0, 255); // Classic: 85, 117, 48
-        Color32 toggleBorderColor = new Color32(58, 217, 0, 255);
-        const int toggleBorderThickness = 1;
+        Color32 toggleColor = new Color32(85, 117, 48, 255);
+        const string greenCheckboxTextureFilename = "GreenCheckbox";
 
         Panel travelPanel;
         Panel speedToggleColorPanel;
@@ -47,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button campOutToggleButton;
         Button innToggleButton;
         Texture2D nativeTexture;
+        Texture2D greenCheckboxTexture;
 
         //rects
         Rect nativePanelRect        = new Rect(49, 28, 223, 97);
@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!nativeTexture)
                 throw new System.Exception("DaggerfallTravelMap: Could not load native texture.");
 
+            greenCheckboxTexture = DaggerfallUI.GetTextureFromResources(greenCheckboxTextureFilename);
+
             ParentPanel.BackgroundColor = Color.clear;
 
             travelPanel = DaggerfallUI.AddPanel(nativePanelRect, NativePanel);
@@ -145,23 +147,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SetToggleLook(Panel toggle)
         {
-            toggle.BackgroundColor = toggleColor;
-            Texture2D borderColor = ColorTexture(toggleBorderColor);
-            Texture2D fillColor = ColorTexture(toggleColor);
-            toggle.SetBorderTextures(
-                borderColor, borderColor, borderColor,
-                borderColor, fillColor, borderColor,
-                borderColor, borderColor, borderColor,
-                DaggerfallUI.Instance.GlobalFilterMode,
-                new Border<Vector2Int>(new Vector2Int(toggleBorderThickness, toggleBorderThickness)));
-        }
-
-        private Texture2D ColorTexture(Color32 color)
-        {
-            Texture2D colorTexture = new Texture2D(1, 1);
-            colorTexture.SetPixels32(new Color32[] { color });
-            colorTexture.Apply();
-            return colorTexture;
+            if (greenCheckboxTexture)
+                toggle.BackgroundTexture = greenCheckboxTexture;
+            else
+                toggle.BackgroundColor = toggleColor;
         }
 
         void SetupButtons()
