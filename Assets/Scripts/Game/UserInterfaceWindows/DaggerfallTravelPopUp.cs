@@ -57,12 +57,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect innsButtonRect         = new Rect(50, 83, 108, 9);
         Rect campoutButtonRect      = new Rect(163, 83, 108, 9);
 
-        Vector2 colorPanelSize      = new Vector2(4.5f, 4.5f);
-        Vector2 cautiousPanelPos    = new Vector2(52, 53.25f);
-        Vector2 recklessPanelPos    = new Vector2(52, 63.25f);
-        Vector2 innPanelPos         = new Vector2(52, 85.5f);
+        Vector2 colorPanelSize      = new Vector2(4.75f, 4.75f);
+
+        Vector2 cautiousPanelPos    = new Vector2(52.25f, 53);
+        Vector2 recklessPanelPos    = new Vector2(52.25f, 63.25f);
+        Vector2 innPanelPos         = new Vector2(52.25f, 85.5f);
         Vector2 campoutPos          = new Vector2(165, 85.5f);
-        Vector2 footPos             = new Vector2(165, 53.25f);
+        Vector2 footPos             = new Vector2(165, 53);
         Vector2 shipPos             = new Vector2(165, 63.25f);
         DFPosition endPos           = new DFPosition(109, 158);
 
