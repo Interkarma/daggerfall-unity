@@ -633,7 +633,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Parse quest
                 Parser parser = new Parser();
                 Quest quest = parser.Parse(questSource, factionId);
-                quest.ReadyToStart = true;
 
                 return quest;
             }
@@ -667,15 +666,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="quest">Quest.</param>
         public void StartQuest(Quest quest)
         {
-            if (!quest.ReadyToStart)
-                throw new Exception("Cannot start quest that is not ready");
+            quest.Start();
             
-            quest.QuestStartTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
+            GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(quest);
             
-            quest.AddResourceTopics(GameManager.Instance.TalkManager);
-            // init quest rumors (note Nystul: did not find a better place to do this since it must happen after quest parsing and should be called exactly one time for each quest)
-            quest.initQuestRumors();
-
             quests.Add(quest.UID, quest);            
 
             RaiseOnQuestStartedEvent(quest);

@@ -122,7 +122,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public Place(Quest parentQuest)
             : base(parentQuest)
         {
-            talkManagerType = TalkManager.QuestInfoResourceType.Location;
         }
 
         /// <summary>
@@ -133,7 +132,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public Place(Quest parentQuest, string line)
             : base(parentQuest)
         {
-            talkManagerType = TalkManager.QuestInfoResourceType.Location;
             SetResource(line);
         }
 

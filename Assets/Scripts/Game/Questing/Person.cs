@@ -165,7 +165,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public Person(Quest parentQuest, string line)
             : base (parentQuest)
         {
-            talkManagerType = TalkManager.QuestInfoResourceType.Person;
             SetResource(line);
         }
 

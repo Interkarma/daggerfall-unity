@@ -11,8 +11,8 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.Questing
         List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
-        public bool ReadyToStart { get; set; }
+        private DaggerfallDateTime questStartTime;
 
         #endregion
 
@@ -178,7 +178,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Gets world time of quest when started.
         /// </summary>
-        public DaggerfallDateTime QuestStartTime { get ; set ; }
+        public DaggerfallDateTime QuestStartTime
+        {
+            get { return questStartTime; }
+        }
 
         /// <summary>
         /// Gets or sets last Place resource encountered during macro expand.
@@ -254,6 +257,15 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Public Methods
+        
+        
+        /// <summary>
+        /// Start the quest.
+        /// </summary>
+        public void Start()
+        {
+            questStartTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
+        }
 
         /// <summary>
         /// Update quest.
@@ -333,21 +345,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 resource.RearmPlayerClick();
             }
             pendingClickRearms.Clear();
-        }
-
-        /// <summary>
-        /// initializes quest rumors
-        /// dictionary must contain the quest's messages (call after messages was initialized correctly)
-        /// </summary>
-        public void initQuestRumors()
-        {
-            // Add RumorsDuringQuest rumor to rumor mill
-            Message message;
-            message = GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
-            if (message != null)
-            {
-                GameManager.Instance.TalkManager.AddOrReplaceQuestProgressRumor(this.UID, message);
-            }
         }
 
         public void EndQuest()
@@ -704,6 +701,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
         }
 
+        public QuestResource[] GetAllResources()
+        {
+            return resources.Values.ToArray();
+        }
+        
         public QuestResource[] GetAllResources(Type resourceType)
         {
             List<QuestResource> foundResources = new List<QuestResource>();
@@ -849,18 +851,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 existingTask.CopyQuestActions(task);
             }
         }
-        
-        /// <summary>
-        /// Add topics from items, persons and places to a talkmanager. 
-        /// </summary>
-        /// <param name="talkManager"></param>
-        public void AddResourceTopics(TalkManager talkManager)
-        {
-            foreach (QuestResource resource in resources.Values)
-            {
-                resource.AddConversationTopics(talkManager);
-            }
-        }
 
         #endregion
 
@@ -947,7 +937,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questName = data.questName;
             displayName = data.displayName;
             factionId = data.factionId;
-            QuestStartTime = data.questStartTime;
+            questStartTime = data.questStartTime;
             questTombstoned = data.questTombstoned;
             questTombstoneTime = data.questTombstoneTime;
 
