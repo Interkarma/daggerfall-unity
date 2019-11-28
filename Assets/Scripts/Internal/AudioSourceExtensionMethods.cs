@@ -49,5 +49,23 @@ namespace UnityEngine
             audioSource.PlayOneShot(audioClip);
         }
 
+        public static void PlayClipAtPointWhenReady(AudioClip audioClip, Vector3 position, float volumeScale)
+        {
+            DaggerfallUnity.Instance.StartCoroutine(PlayClipAtPointWhenReadyCoroutine(audioClip, position, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+        }
+
+        private static IEnumerator PlayClipAtPointWhenReadyCoroutine(AudioClip audioClip, Vector3 position, float volume)
+        {
+            float loadWaitTimer = 0f;
+            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
+                   audioClip.loadState == AudioDataLoadState.Loading)
+            {
+                loadWaitTimer += Time.deltaTime;
+                if (loadWaitTimer > audioClipMaxDelay)
+                    yield break;
+                yield return null;
+            }
+            AudioSource.PlayClipAtPoint(audioClip, position, volume);
+        }
     }
 }
