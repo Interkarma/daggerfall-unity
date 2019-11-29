@@ -603,11 +603,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import custom texture and label settings for buttons
+        /// Import custom texture and label settings for buttons.
+        /// This feature has been deprecated in favor of <see cref="DaggerfallWorkshop.Game.UserInterfaceWindows.UIWindowFactory"/>.
         /// </summary>
         /// <param name="button">Button</param>
         /// <param name="colorName">Name of texture</param>
-        static public bool TryCustomizeButton(ref Button button, string colorName)
+        [Obsolete("This feature has been deprecated in favor of UIWindowFactory.")]
+        public static bool TryCustomizeButton(ref Button button, string colorName)
         {
             Texture2D tex;
             if (!TryImportTexture(colorName, true, out tex))
@@ -631,6 +633,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
             }
 
+            LogLegacyUICustomizationMessage(colorName);
             return true;
         }
 
@@ -853,6 +856,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static int FileNameToArchive(string filename)
         {
             return int.Parse(filename.Substring("TEXTURE.".Length));
+        }
+
+        #endregion
+
+        #region  Internal Methods
+
+        internal static void LogLegacyUICustomizationMessage(string textureName)
+        {
+            Debug.LogWarningFormat("Imported texture {0} for legacy support of UI customization. This feature has been deprecated in favor of UIWindowFactory.", textureName);
         }
 
         #endregion
