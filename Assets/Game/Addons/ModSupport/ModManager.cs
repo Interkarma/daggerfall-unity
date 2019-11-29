@@ -103,6 +103,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public static ModManager Instance { get; private set; }
 
+#if UNITY_EDITOR
+        /// <summary>
+        /// Path to Mods folder inside Unity Editor where source data for mods is stored.
+        /// </summary>
+        public static string EditorModsDirectory
+        {
+            get { return Application.dataPath + "/Game/Mods"; }
+        }
+#endif
+
         #endregion
 
         #region Unity
@@ -564,7 +574,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #if UNITY_EDITOR
             if (LoadVirtualMods)
             {
-                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
+                foreach (string manifestPath in Directory.GetFiles(EditorModsDirectory, "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
                 {
                     var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
                     if (mods.Any(x => x.ModInfo.GUID == modInfo.GUID))

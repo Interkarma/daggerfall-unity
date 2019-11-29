@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     try
                     {
-                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", GetTempModDirPath(), new string[] { "JSON", "dfmod.json"});
+                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", ModManager.EditorModsDirectory, new string[] { "JSON", "dfmod.json"});
 
                         if (!File.Exists(currentFilePath))
                         {
@@ -386,7 +386,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             string directory = "";
 
             if (!supressWindow)
-                path = EditorUtility.SaveFilePanel("Save", GetTempModDirPath(), modInfo.ModTitle, "dfmod.json");
+                path = EditorUtility.SaveFilePanel("Save", ModManager.EditorModsDirectory, modInfo.ModTitle, "dfmod.json");
 
             Debug.Log("save path: " + path);
 
