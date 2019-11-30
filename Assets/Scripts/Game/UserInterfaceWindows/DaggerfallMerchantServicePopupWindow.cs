@@ -12,7 +12,6 @@
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -112,6 +111,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string GetServiceLabelText()
         {
+            if (Guilds.Services.HasCustomMerchantService(merchantNPC.Data.factionID))
+                return Guilds.Services.GetCustomMerchantServiceLabel(merchantNPC.Data.factionID);
+
             switch (currentService)
             {
                 default:
@@ -140,15 +142,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
-            switch (currentService)
+
+            // Use a registered custom service method
+            Guilds.Services.CustomMerchantService customMerchantService;
+            if (Guilds.Services.GetCustomMerchantService(merchantNPC.Data.factionID, out customMerchantService))
+                customMerchantService(this);
+            else
             {
-                default:
-                case Services.Sell:
-                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Sell, null }));
-                    break;
-                case Services.Banking:
-                    uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.Banking, uiManager, this));
-                    break;
+                switch (currentService)
+                {
+                    default:
+                    case Services.Sell:
+                        uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Sell, null }));
+                        break;
+                    case Services.Banking:
+                        uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.Banking, uiManager, this));
+                        break;
+                }
             }
         }
 

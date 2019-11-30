@@ -7,9 +7,7 @@
 // Contributors:
 //
 
-using System;
 using System.IO;
-using FullSerializer;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
@@ -19,10 +17,11 @@ using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
-    public struct BlockRecordId
+    public struct BlockRecordKey
     {
         public int blockIndex;
         public int recordIndex;
+        public string variant;
     }
 
     public struct BuildingReplacementData
@@ -54,9 +53,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         // Replacement world data caches.
         private static Dictionary<int, DFRegion> regions = new Dictionary<int, DFRegion>();
-        private static Dictionary<int, DFLocation> locations = new Dictionary<int, DFLocation>();
+        private static Dictionary<string, DFLocation> locations = new Dictionary<string, DFLocation>();
         private static Dictionary<string, DFBlock> blocks = new Dictionary<string, DFBlock>();
-        private static Dictionary<BlockRecordId, BuildingReplacementData> buildings = new Dictionary<BlockRecordId, BuildingReplacementData>();
+        private static Dictionary<BlockRecordKey, BuildingReplacementData> buildings = new Dictionary<BlockRecordKey, BuildingReplacementData>();
 
         // New block index/name mappings.
         private static int nextBlockIndex;
@@ -77,24 +76,44 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return string.Format("region-{0}.json", regionIndex);
         }
 
-        public static string GetDFLocationReplacementFilename(int regionIndex, int locationIndex)
+        public static string GetDFLocationReplacementFilename(int regionIndex, int locationIndex, string variant = WorldDataVariants.NoVariant)
         {
-            return string.Format("location-{0}-{1}.json", regionIndex, locationIndex);
+            return string.Format("location-{0}-{1}{2}.json", regionIndex, locationIndex, variant);
         }
 
-        public static string GetDFBlockReplacementFilename(string blockName)
+        public static string GetDFBlockReplacementFilename(string blockName, string variant = WorldDataVariants.NoVariant)
         {
-            return string.Format("{0}.json", blockName);
+            return string.Format("{0}{1}.json", blockName, variant);
         }
 
-        public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex)
+        public static string GetBuildingReplacementFilename(string blockName, int blockIndex, int recordIndex, string variant = WorldDataVariants.NoVariant)
         {
-            return string.Format("{0}-{1}-building{2}.json", blockName, blockIndex, recordIndex);
+            return string.Format("{0}-{1}-building{2}{3}.json", blockName, blockIndex, recordIndex, variant);
         }
 
         #endregion
 
         #region Public WorldData Replacement Methods
+
+        /// <summary>
+        /// Gets the index for a new location after region is loaded
+        /// </summary>
+        /// <param name="regionIndex">Region index</param>
+        /// <param name="locationIndex">Location index</param>
+        /// <returns>Location index, or -1 if not found</returns>
+        public static int GetNewDFLocationIndex(int regionIndex, string locationName)
+        {
+            if (regions.ContainsKey(regionIndex))
+            {
+                if (regions[regionIndex].LocationCount != noReplacementRegion.LocationCount)
+                {
+                    int locationIndex;
+                    if (regions[regionIndex].MapNameLookup.TryGetValue(locationName, out locationIndex))
+                        return locationIndex;
+                }
+            }
+            return -1;
+        }
 
         /// <summary>
         /// Checks a region for added location data. (i.e. new locations)
@@ -130,7 +149,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                     DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
-                    newBlocksAssigned = AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, dfLocation);
+                    newBlocksAssigned = AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
                 }
                 // Seek from mods
                 string locationExtension = string.Format("-{0}.json", regionIndex);
@@ -140,7 +159,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     foreach (TextAsset locationReplacementJsonAsset in assets)
                     {
                         DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
-                        newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, dfLocation);
+                        newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
                     }
                 }
                 // If found any new locations for this region,
@@ -177,15 +196,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // If found, return a previously cached DFLocation
                 int locationKey = MakeLocationKey(regionIndex, locationIndex);
-                if (locations.ContainsKey(locationKey))
+                bool newLocation;
+                string variant = WorldDataVariants.GetLocationVariant(locationKey, out newLocation);
+                string locationVariantKey = locationKey.ToString() + variant;
+
+                // If it's a new location variant, pre-load it into cache
+                if (newLocation && !locations.ContainsKey(locationVariantKey))
+                    if (!LoadNewDFLocationVariant(regionIndex, locationIndex, variant))
+                        locationVariantKey = locationKey.ToString();    // Fall back to non-variant if load fails
+
+                // If found, return a previously cached DFLocation 
+                if (locations.ContainsKey(locationVariantKey))
                 {
-                    dfLocation = locations[locationKey];
+                    dfLocation = locations[locationVariantKey];
                     return dfLocation.LocationIndex != noReplacementLocation.LocationIndex;
                 }
 
-                string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex);
+                string fileName = GetDFLocationReplacementFilename(regionIndex, locationIndex, variant);
                 TextAsset locationReplacementJsonAsset;
 
                 // Seek from loose files
@@ -201,25 +229,71 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
                 else
                 {
-#if !UNITY_EDITOR // Cache that there's no replacement location data, so only look for replaced locations once (unless running in editor)
-                    locations[locationKey] = noReplacementLocation;
+#if !UNITY_EDITOR // Cache that there's no replacement location data, for non-variant. So only look for replaced locations once (unless running in editor)
+                    if (variant == WorldDataVariants.NoVariant)
+                        locations.Add(locationVariantKey, noReplacementLocation);
 #endif
                     dfLocation = noReplacementLocation;
                     return false;
                 }
                 // Assign any new blocks in this location a block index if they haven't already been assigned
-                if (AssignBlockIndices(dfLocation))
+                if (AssignBlockIndices(ref dfLocation))
                 {
 #if !UNITY_EDITOR   // Cache location data for replaced locations if new blocks have been assigned indices (unless running in editor)
-                    locations[locationKey] = dfLocation;
+                    locations.Add(locationVariantKey, dfLocation);
 #endif
                 }
-                Debug.LogFormat("Found DFLocation override, region:{0}, index:{1}", regionIndex, locationIndex);
+                Debug.LogFormat("Found DFLocation override, region:{0}, index:{1} variant:{2}", regionIndex, locationIndex, variant);
                 return true;
             }
             dfLocation = noReplacementLocation;
             return false;
         }
+
+        // Note will load ALL of the new location files in the region that have the variant
+        public static bool LoadNewDFLocationVariant(int regionIndex, int locationIndex, string variant)
+        {
+            int locationKey = MakeLocationKey(regionIndex, locationIndex);
+            DFLocation dfLocation;
+            if (locations.TryGetValue(locationKey.ToString(), out dfLocation))
+            {
+                string locationVariantKey = locationKey.ToString() + variant;
+                if (!locations.ContainsKey(locationVariantKey))
+                {
+                    // Seek from loose files
+                    string locationPattern = string.Format("locationnew-*-{0}{1}.json", regionIndex, variant);
+                    string[] fileNames = Directory.GetFiles(worldDataPath, locationPattern);
+                    foreach (string fileName in fileNames)
+                    {
+                        string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
+                        DFLocation variantLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
+                        AddNewDFLocationVariant(locationIndex, locationVariantKey, ref variantLocation);
+                        return true;
+                    }
+                    // Seek from mods
+                    string locationExtension = string.Format("-{0}{1}.json", regionIndex, variant);
+                    List<TextAsset> assets = ModManager.Instance.FindAssets<TextAsset>(worldData, locationExtension);
+                    if (assets != null)
+                    {
+                        foreach (TextAsset locationReplacementJsonAsset in assets)
+                        {
+                            DFLocation variantLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
+                            AddNewDFLocationVariant(locationIndex, locationVariantKey, ref variantLocation);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static void AddNewDFLocationVariant(int locationIndex, string locationVariantKey, ref DFLocation variantLocation)
+        {
+            variantLocation.LocationIndex = locationIndex;
+            variantLocation.Exterior.RecordElement.Header.Unknown2 = (uint)locationIndex;
+            locations.Add(locationVariantKey, variantLocation);
+        }
+
 
         /// <summary>
         /// Gets the index for a new added block
@@ -260,14 +334,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                // Check the block cache
-                if (blocks.ContainsKey(blockName))
+                // Check the block cache and return if found or not (variants are not marked as not present)
+                string variant = WorldDataVariants.GetBlockVariant(blockName);
+                string blockKey = blockName + variant;
+                if (blocks.ContainsKey(blockKey))
                 {
-                    dfBlock = blocks[blockName];
+                    dfBlock = blocks[blockKey];
                     return dfBlock.Index != noReplacementBlock.Index;
                 }
 
-                string fileName = GetDFBlockReplacementFilename(blockName);
+                string fileName = GetDFBlockReplacementFilename(blockName, variant);
                 TextAsset blockReplacementJsonAsset;
 
                 // Seek from loose files
@@ -283,15 +359,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
                 else
                 {
-#if !UNITY_EDITOR // Cache that there's no replacement block data, so only look for replaced blocks once (unless running in editor)
-                    blocks[blockName] = noReplacementBlock;
+#if !UNITY_EDITOR // Cache that there's no replacement block data, non variant. So only look for replaced blocks once (unless running in editor)
+                    if (variant == WorldDataVariants.NoVariant)
+                        blocks.Add(blockName, noReplacementBlock);
 #endif
                     dfBlock = noReplacementBlock;
                     return false;
                 }
                 dfBlock.Index = block;
 #if !UNITY_EDITOR   // Cache block data for added/replaced blocks (unless running in editor)
-                blocks[blockName] = dfBlock;
+                blocks.Add(blockKey, dfBlock);
 #endif
                 Debug.LogFormat("Found DFBlock override: {0} (index: {1})", blockName, block);
                 return true;
@@ -312,15 +389,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
-                BlockRecordId blockRecordId = new BlockRecordId() { blockIndex = blockIndex, recordIndex = recordIndex };
-                if (buildings.ContainsKey(blockRecordId))
+                BlockRecordKey blockRecordKey = new BlockRecordKey() { blockIndex = blockIndex, recordIndex = recordIndex, variant = WorldDataVariants.NoVariant };
+                string variant = WorldDataVariants.GetBuildingVariant(ref blockRecordKey, blockName);
+                if (buildings.ContainsKey(blockRecordKey))
                 {
-                    buildingData = buildings[blockRecordId];
-                    return (buildingData.BuildingType != noReplacementIndicator);
+                    buildingData = buildings[blockRecordKey];
+                    return buildingData.BuildingType != noReplacementIndicator;
                 }
                 else
                 {
-                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex);
+                    string fileName = GetBuildingReplacementFilename(blockName, blockIndex, recordIndex, variant);
 
                     // Seek from loose files
                     if (File.Exists(Path.Combine(worldDataPath, fileName)))
@@ -328,7 +406,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         string buildingReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                         buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJson);
 #if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
-                        buildings.Add(blockRecordId, buildingData);
+                        buildings.Add(blockRecordKey, buildingData);
 #endif
                         return true;
                     }
@@ -338,12 +416,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     {
                         buildingData = (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData), buildingReplacementJsonAsset.text);
 #if !UNITY_EDITOR       // Cache building replacement data, unless running in editor
-                        buildings.Add(blockRecordId, buildingData);
+                        buildings.Add(blockRecordKey, buildingData);
 #endif
                         return true;
                     }
-#if !UNITY_EDITOR   // Only look for replacement data once, unless running in editor
-                    buildings.Add(blockRecordId, noReplacementBuilding);
+#if !UNITY_EDITOR   // Only look for replacement data once, non variant. So only look for replaced buildings once (unless running in editor)
+                    if (variant == WorldDataVariants.NoVariant)
+                        buildings.Add(blockRecordKey, noReplacementBuilding);
 #endif
                 }
             }
@@ -351,16 +430,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        #endregion
-
-        #region Private Methods
-
-        static int MakeLocationKey(int regionIndex, int locationIndex)
+        /// <summary>
+        /// Construct a location key. Note this is not the same as the LocationId in
+        /// the DFLocation struct but may be a good value to use for new locations.
+        /// </summary>
+        public static int MakeLocationKey(int regionIndex, int locationIndex)
         {
             return (locationIndex * 100) + regionIndex;
         }
 
-        private static bool AddLocationToRegion(int regionIndex, ref DFRegion dfRegion, ref List<string> mapNames, ref List<DFRegion.RegionMapTable> mapTable, DFLocation dfLocation)
+        #endregion
+
+        #region Private Methods
+
+        private static bool AddLocationToRegion(int regionIndex, ref DFRegion dfRegion, ref List<string> mapNames, ref List<DFRegion.RegionMapTable> mapTable, ref DFLocation dfLocation)
         {
             // Copy the location id for ReadLocationIdFast() to use instead of peeking the classic data files
             dfLocation.MapTableData.LocationId = dfLocation.Exterior.RecordElement.Header.LocationId;
@@ -375,13 +458,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             dfRegion.MapNameLookup.Add(dfLocation.Name, locationIndex);
 
             // Store location replacement/addition
-            locations[MakeLocationKey(regionIndex, locationIndex)] = dfLocation;
+            locations[MakeLocationKey(regionIndex, locationIndex).ToString()] = dfLocation;
 
             // Assign any new blocks in this location a block index if they haven't already been assigned
-            return AssignBlockIndices(dfLocation);
+            return AssignBlockIndices(ref dfLocation);
         }
 
-        private static bool AssignBlockIndices(DFLocation dfLocation)
+        private static bool AssignBlockIndices(ref DFLocation dfLocation)
         {
             ContentReader reader = DaggerfallUnity.Instance.ContentReader;
             if (reader != null)
@@ -398,11 +481,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                             AssignNextIndex(blockName);
 
                     // RDB blocks
-                    foreach (DFLocation.DungeonBlock dungeonBlock in dfLocation.Dungeon.Blocks)
+                    if (dfLocation.Dungeon.Blocks != null)
                     {
-                        string blockName = dungeonBlock.BlockName;
-                        if (blocksFile.GetBlockIndex(blockName) == -1)
-                            AssignNextIndex(blockName);
+                        foreach (DFLocation.DungeonBlock dungeonBlock in dfLocation.Dungeon.Blocks)
+                        {
+                            string blockName = dungeonBlock.BlockName;
+                            if (blocksFile.GetBlockIndex(blockName) == -1)
+                                AssignNextIndex(blockName);
+                        }
                     }
                     return true;
                 }
