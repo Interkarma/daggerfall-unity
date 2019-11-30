@@ -37,7 +37,7 @@ AcceptQuest:  [1002]
 <ce>                     to a place called __contact_.
 <ce>                %g will pay you =reward_ gold pieces for
 <ce>                     bringing %g2 _foil_. Don't you
-<ce>				  just love these dangerous missions?
+<ce>                  just love these dangerous missions?
 
 QuestFail:  [1003]
 <ce>                  I have nothing to discuss with you.
