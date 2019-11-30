@@ -214,7 +214,7 @@ Message:  1021
 <ce>
 <ce>
 <ce>
-<ce>                               _patsy_
+<ce>                                _patsy_
 
 Message:  1023
 <ce>                       You know immediately that
@@ -232,7 +232,7 @@ I'm going to need some reinforcements if the
  when you arrive.
  
  
- 		 _patsy_
+              _patsy_
 
 Message:  1026
 <ce>                There is a stamp on the piece of _rock_
