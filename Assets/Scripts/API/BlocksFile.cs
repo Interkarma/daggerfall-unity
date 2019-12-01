@@ -211,7 +211,7 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Name of the block.</returns>
         public string GetBlockName(int block)
         {
-            return bsaFile.GetRecordName(block);
+            return WorldDataReplacement.GetNewDFBlockName(block) ?? bsaFile.GetRecordName(block);
         }
 
         /// <summary>
@@ -268,6 +268,11 @@ namespace DaggerfallConnect.Arena2
             // Return known value if already indexed
             if (blockNameLookup.ContainsKey(name))
                 return blockNameLookup[name];
+
+            // Check for any new blocks added next
+            int blockIndex = WorldDataReplacement.GetNewDFBlockIndex(name);
+            if (blockIndex != -1)
+                return blockIndex;
 
             // Otherwise find and store index by searching for name
             for (int i = 0; i < Count; i++)
@@ -375,6 +380,15 @@ namespace DaggerfallConnect.Arena2
         /// <returns>DFBlock object.</returns>
         public DFBlock GetBlock(int block)
         {
+            // Check for replacement block data and use it if found
+            DFBlock dfBlock;
+            if (WorldDataReplacement.GetDFBlockReplacementData(block, GetBlockName(block), out dfBlock))
+            {
+                if (blocks.Length > block)
+                    blocks[block].DFBlock = dfBlock;
+                return dfBlock;
+            }
+            else
             // Load the record
             if (!LoadBlock(block))
                 return new DFBlock();
@@ -854,7 +868,9 @@ namespace DaggerfallConnect.Arena2
                 recordsOut[i].YPos = reader.ReadInt32();
                 recordsOut[i].ZPos = reader.ReadInt32();
                 recordsOut[i].NullValue2 = reader.ReadUInt32();
+                recordsOut[i].XRotation = 0;
                 recordsOut[i].YRotation = reader.ReadInt16();
+                recordsOut[i].ZRotation = 0;
                 recordsOut[i].Unknown4 = reader.ReadUInt16();
                 recordsOut[i].NullValue3 = reader.ReadUInt32();
                 recordsOut[i].Unknown5 = reader.ReadUInt32();

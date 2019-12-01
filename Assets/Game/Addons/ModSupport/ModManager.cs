@@ -103,6 +103,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public static ModManager Instance { get; private set; }
 
+#if UNITY_EDITOR
+        /// <summary>
+        /// Path to Mods folder inside Unity Editor where source data for mods is stored.
+        /// </summary>
+        public static string EditorModsDirectory
+        {
+            get { return Application.dataPath + "/Game/Mods"; }
+        }
+#endif
+
         #endregion
 
         #region Unity
@@ -111,15 +121,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
-
-            SetupSingleton();
-
-            if (Instance == this)
-                StateManager.OnStateChange += StateManager_OnStateChange;
         }
 
         void Start()
         {
+            SetupSingleton();
+
+            if (Instance == this)
+                StateManager.OnStateChange += StateManager_OnStateChange;
+
             if (!DaggerfallUnity.Settings.LypyL_ModSystem)
             {
                 Debug.Log("Mod System disabled");
@@ -329,12 +339,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="filter">A filter that accepts or rejects a mod; can be used to check if a contribute is present.</param>
         /// <returns>An enumeration of mods with contributes.</returns>
-        internal IOrderedEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
+        internal IEnumerable<Mod> GetAllModsWithContributes(Predicate<ModContributes> filter = null)
         {
-            return from mod in mods
-                   where mod.ModInfo.Contributes != null && (filter == null || filter(mod.ModInfo.Contributes))
-                   orderby mod.LoadPriority descending
-                   select mod;
+            return EnumerateModsReverse().Where(x => x.Enabled && x.ModInfo.Contributes != null && (filter == null || filter(x.ModInfo.Contributes)));
         }
 
         /// <summary>
@@ -567,7 +574,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #if UNITY_EDITOR
             if (LoadVirtualMods)
             {
-                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
+                foreach (string manifestPath in Directory.GetFiles(EditorModsDirectory, "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
                 {
                     var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
                     if (mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
@@ -861,6 +868,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.MessageReceiver(message, data, callback);
         }
 
+        /// <summary>
+        /// Combines an array of strings into a path.
+        /// This is a substitute of an overload of <see cref="Path.Combine(string, string)"/> which is not available with current .NET version.
+        /// </summary>
+        /// <param name="paths">An array of parts of the path.</param>
+        /// <returns>The combined paths.</returns>
+        public static string CombinePaths(params string[] paths)
+        {
+            string path = string.Empty;
+
+            for (int i = 0; i < paths.Length; i++)
+                path = Path.Combine(path, paths[i]);
+
+            return path;
+        }
+
 #if UNITY_EDITOR
         /// <summary>
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
@@ -943,6 +966,42 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 Debug.LogException(e);
             }
+        }
+
+        /// <summary>
+        /// Checks if a given version is lower or equal to another version.
+        /// For example <c>"9.0.8"</c> is lower than <c>"10.0.2"</c>.
+        /// </summary>
+        /// <param name="first">A version with format x.y.z, x.y or just x that is expected to be lower or equal.</param>
+        /// <param name="second">A version with format x.y.z, x.y or just x that is expected to be higher or equal.</param>
+        /// <returns>true if first is lower or equal to second, false is first is higher than second, null if parse failed.</returns>
+        internal static bool? IsVersionLowerOrEqual(string first, string second)
+        {
+            if (string.IsNullOrEmpty(first) || string.IsNullOrEmpty(second))
+                return null;
+
+            string[] firstParts = first.Split('.');
+            if (firstParts.Length < 1 || firstParts.Length > 3)
+                return null;
+
+            string[] secondParts = second.Split('.');
+            if (secondParts.Length < 1 || secondParts.Length > 3)
+                return null;
+
+            for (int i = 0; i < firstParts.Length && i < secondParts.Length; i++)
+            {
+                int firstPart, secondPart;
+                if (!int.TryParse(firstParts[i], out firstPart) || !int.TryParse(secondParts[i], out secondPart))
+                    return null;
+
+                if (firstPart > secondPart)
+                    return false;
+
+                if (firstPart < secondPart)
+                    break;
+            }
+
+            return true;
         }
 
         #endregion

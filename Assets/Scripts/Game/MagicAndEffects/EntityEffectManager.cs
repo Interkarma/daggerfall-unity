@@ -383,6 +383,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (readySpell == null || castInProgress)
                 return;
 
+            // Player must be in range to release a touch spell
+            // Enemies use AI to only cast touch spells within range
+            if (IsPlayerEntity && readySpell.Settings.TargetType == TargetTypes.ByTouch)
+            {
+                Vector3 aimPosition = GameManager.Instance.MainCamera.transform.position;
+                Vector3 aimDirection = GameManager.Instance.MainCamera.transform.forward;
+                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection) == null)
+                {
+                    //Debug.Log("Target entity not in range for touch spell.");
+                    return;
+                }
+            }
+
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
             if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
@@ -460,7 +473,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Set parent bundle
                 effect.ParentBundle = instancedBundle;
 
-                // Spell Absorption and Reflection - must have a caster entity set
+                // Spell Absorption, Reflection, Resistance - must have a caster entity set
                 if (sourceBundle.CasterEntityBehaviour)
                 {
                     // Spell Absorption
@@ -479,11 +492,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Spell Reflection
                     if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
                         continue;
-                }
 
-                // Spell Resistance
-                if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
-                    continue;
+                    // Spell Resistance
+                    if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance(sourceBundle))
+                        continue;
+                }
 
                 // Start effect
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
@@ -516,9 +529,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
                 }
 
-                // Entity has a chance to save against entire effect using a saving throw
+                // Saving throw handling
+                // For effects without magnitude (e.g. paralysis) the entity has a chance to save against entire effect using a saving throw
+                // For effects with magnitude (e.g. most Destruction magic) this is handled later when the effect rolls for magnitude
                 // Self-cast spells (e.g. self heals and buffs) should never be saved against
-                if (!bypassSavingThrows && !effect.BypassSavingThrows && sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
+                if (!bypassSavingThrows &&
+                    !effect.BypassSavingThrows &&
+                    !effect.Properties.SupportMagnitude &&
+                    sourceBundle.Settings.TargetType != TargetTypes.CasterOnly)
                 {
                     // Immune if saving throw made
                     if (FormulaHelper.SavingThrow(effect, entityBehaviour.Entity) == 0)
@@ -1062,9 +1080,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Tests incoming effect for spell reflection.
+        /// Tests incoming spell bundle for reflection.
         /// </summary>
-        /// <param name="casterEntity">Source caster entity behaviour for spell reflect.</param>
+        /// <param name="sourceBundle">Source bundle of spell to reflect.</param>
         /// <returns>True if reflected.</returns>
         bool TryReflection(EntityEffectBundle sourceBundle)
         {
@@ -1076,6 +1094,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Entity must be reflecting
             SpellReflection reflectEffect = FindIncumbentEffect<SpellReflection>() as SpellReflection;
             if (reflectEffect == null)
+                return false;
+
+            // Do not reflect spells from same caster onto self
+            if (sourceBundle.CasterEntityBehaviour == EntityBehaviour)
                 return false;
 
             // Roll for reflection chance
@@ -1100,12 +1122,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Tests incoming effect for spell resistance.
         /// </summary>
+        /// <param name="sourceBundle">Source bundle of spell to reflect.</param>
         /// <returns>True if resisted.</returns>
-        bool TryResistance()
+        bool TryResistance(EntityEffectBundle sourceBundle)
         {
             // Entity must be resisting
             SpellResistance resistEffect = FindIncumbentEffect<SpellResistance>() as SpellResistance;
             if (resistEffect == null)
+                return false;
+
+            // Do not resist "caster only" self-cast spells
+            // Allow to resist "other target" spells, e.g. when caught inside own AOE radius or spell reflected
+            if (sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
                 return false;
 
             // Roll for resistance chance

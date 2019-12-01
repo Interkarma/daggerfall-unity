@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -31,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int maxFaces = 3;
         const string factionFaceFile = "FACES.CIF";
         const string factionChildrenFaceFile = "KIDS00I0.CIF";
+        const string factionExtraFaceFile = "TFAC00I0.RCI";
 
         List<FaceDetails> faces = new List<FaceDetails>();
         List<Panel> facePanels = new List<Panel>();
@@ -229,24 +231,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     faceTexture = DaggerfallUI.GetTextureFromCifRci(factionFaceFile, face.factionFaceIndex);
                     facePanel.Size = new Vector2(specialFacePanelWidth, specialFacePanelHeight);
                 }
+                else if (face.factionFaceIndex > 60 && face.factionFaceIndex <= 502)
+                {
+                    // Use special NPC face set by a mod at time face data was added
+                    faceTexture = DaggerfallUI.GetTextureFromCifRci(factionExtraFaceFile, face.factionFaceIndex);
+                    facePanel.Size = new Vector2(specialFacePanelWidth, specialFacePanelHeight);
+                }
                 else
                 {
+                    string fileName;
+
                     // Use generic NPC face
                     if (!face.isChild)
                     {
                         // Get a racial portrait
-                        if (face.gender == Genders.Male)
-                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, face.faceIndex);
-                        else if (face.gender == Genders.Female)
-                            faceTexture = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, face.faceIndex);
+                        fileName = face.gender == Genders.Male ? raceTemplate.PaperDollHeadsMale : raceTemplate.PaperDollHeadsFemale;
                     }
                     else
                     {
                         // Get a child portrait
-                        faceTexture = DaggerfallUI.GetTextureFromCifRci(factionChildrenFaceFile, face.faceIndex);
+                        fileName = factionChildrenFaceFile;
                     }
 
-                    facePanel.Size = new Vector2(faceTexture.width, faceTexture.height);
+                    // Allow individual factions from mods to use normal race faces
+                    ImageData imageData = ImageReader.GetImageData(fileName, face.faceIndex, 0, true, true);
+                    faceTexture = imageData.texture;
+                    facePanel.Size = new Vector2(imageData.width, imageData.height);
                 }
 
                 // Must have a texture by now

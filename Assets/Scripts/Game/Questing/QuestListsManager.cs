@@ -13,6 +13,7 @@ using DaggerfallWorkshop.Utility;
 using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -336,7 +337,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return null;
         }
 
-        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, int rep, int level)
+        public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, Genders gender, int rep, int level)
         {
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
@@ -347,7 +348,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in socialQuests)
                 {
-                    if ((quest.minReq < 10 && quest.minReq <= level) || rep >= quest.minReq)
+                    if (((quest.minReq < 10 && quest.minReq <= level) || rep >= quest.minReq) &&
+                        (quest.membership == 'N' ||
+                         (quest.membership == 'M' && gender == Genders.Male) ||
+                         (quest.membership == 'F' && gender == Genders.Female)))
                     {
                         if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
                             pool.Add(quest);
@@ -394,7 +398,7 @@ namespace DaggerfallWorkshop.Game.Questing
             string questFile = Path.Combine(questData.path, questName);
             if (File.Exists(questFile))
             {
-                quest = QuestMachine.Instance.ParseQuest(questName, File.ReadAllLines(questFile));
+                quest = QuestMachine.Instance.ParseQuest(questName, File.ReadAllLines(questFile), factionId);
                 if (quest == null)
                     return null;
             }
@@ -405,14 +409,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(questName, false, out questAsset))
                 {
                     List<string> lines = ModManager.GetTextAssetLines(questAsset);
-                    quest = QuestMachine.Instance.ParseQuest(questName, lines.ToArray());
+                    quest = QuestMachine.Instance.ParseQuest(questName, lines.ToArray(), factionId);
                     if (quest == null)
                         return null;
                 }
                 else
                     throw new Exception("Quest file " + questFile + " not found.");
             }
-            quest.FactionId = factionId;
             quest.OneTime = questData.oneTime;
             return quest;
         }

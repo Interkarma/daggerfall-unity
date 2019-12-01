@@ -1166,7 +1166,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
-            int percentDamageOrDuration = 0;
+            int percentDamageOrDuration = 100;
             int roll = Dice100.Roll();
 
             if (roll <= savingThrow)
@@ -1177,10 +1177,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 else
                     percentDamageOrDuration = 0;
             }
-            else
-                percentDamageOrDuration = 100;
 
-            return percentDamageOrDuration;
+            return Mathf.Clamp(percentDamageOrDuration, 0, 100);
         }
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
@@ -1368,6 +1366,58 @@ namespace DaggerfallWorkshop.Game.Formulas
             return maxHealth;
         }
 
+        /// <summary>
+        /// Roll for random spawn in location area at night.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_LocationNight()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_LocationNight", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 24);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in wilderness during daylight hours.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_WildernessDay()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_WildernessDay", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 36);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in wilderness at night.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_WildernessNight()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_WildernessNight", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 24);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in dungeons.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_Dungeon()
+        {
+            Formula_NoParams del;
+            if (formula_noparams.TryGetValue("RollRandomSpawn_Dungeon", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 43);  // Normally (0, 36) - making spawns ~20% less for rested dungeons
+        }
+
         #endregion
 
         #region Holidays
@@ -1447,7 +1497,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
-        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, Guild guild)
+        public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, IGuild guild)
         {
             // Don't cost already repaired item
             if (condition == max)
@@ -1473,7 +1523,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Max(repairTime, DaggerfallDateTime.SecondsPerDay);
         }
 
-        public static int CalculateItemIdentifyCost(int baseItemValue, Guild guild)
+        public static int CalculateItemIdentifyCost(int baseItemValue, IGuild guild)
         {
             // Free on Witches Festival
             uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

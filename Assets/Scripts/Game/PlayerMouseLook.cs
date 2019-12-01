@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game
         public bool enableMouseLook = true;
         public bool enableSmoothing = true;
         public bool simpleCursorLock = false;
+        private bool forceHideCursor;
 
         // Assign this if there's a parent object controlling motion, such as a Character Controller.
         // Yaw rotation will affect this object instead of the camera if set.
@@ -75,13 +76,13 @@ namespace DaggerfallWorkshop.Game
         public float PitchMaxLimit
         {
             get { return pitchMax; }
-            set { pitchMax = Mathf.Clamp(value, 0, PitchMax); }
+            set { pitchMax = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
         public float PitchMinLimit
         {
             get { return pitchMin; }
-            set { pitchMin = Mathf.Clamp(value, 0, PitchMin); }
+            set { pitchMin = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
         void Start()
@@ -91,6 +92,13 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (forceHideCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                return;
+            }
+
             bool applyLook = true;
 
             // Cursor activation toggle while game is running
@@ -233,6 +241,11 @@ namespace DaggerfallWorkshop.Game
             Quaternion q = Quaternion.LookRotation(forward);
             Vector3 v = q.eulerAngles;
             SetFacing(v.y, 0f);
+        }
+
+        public void ForceHideCursor(bool hideCursor)
+        {
+            this.forceHideCursor = hideCursor;
         }
     }
 }

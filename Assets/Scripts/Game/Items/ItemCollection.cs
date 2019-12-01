@@ -35,12 +35,12 @@ namespace DaggerfallWorkshop.Game.Items
 
         private static Dictionary<string, Type> customItems = new Dictionary<string, Type>();
 
-        public static bool RegisterCustomItem(string className, Type guildType)
+        public static bool RegisterCustomItem(string itemClassName, Type itemClassType)
         {
-            DaggerfallUnity.LogMessage("RegisterCustomItem: " + className, true);
-            if (!customItems.ContainsKey(className))
+            DaggerfallUnity.LogMessage("RegisterCustomItem: " + itemClassName, true);
+            if (!customItems.ContainsKey(itemClassName))
             {
-                customItems.Add(className, guildType);
+                customItems.Add(itemClassName, itemClassType);
                 return true;
             }
             return false;

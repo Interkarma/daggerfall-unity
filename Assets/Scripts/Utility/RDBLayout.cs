@@ -636,10 +636,11 @@ namespace DaggerfallWorkshop.Utility
 
                         // Get model data
                         ModelData modelData;
-                        dfUnity.MeshReader.GetModelData(modelId, out modelData);
-
-                        // Add to static doors
-                        exitDoorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
+                        if (dfUnity.MeshReader.GetModelData(modelId, out modelData))
+                        {
+                            // Add to static doors
+                            exitDoorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
+                        }
 
                         // Check if model has an action record
                         bool hasAction = HasAction(obj);

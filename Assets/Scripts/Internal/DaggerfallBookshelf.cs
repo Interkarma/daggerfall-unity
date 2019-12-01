@@ -30,8 +30,8 @@ namespace DaggerfallWorkshop
                 books = new List<int>();
                 for (int i=0; i<10; i++)
                 {
-                    int bookNum = DaggerfallUnity.Settings.CustomBooksImport ? DaggerfallUnity.Instance.ItemHelper.GetRandomBookID() : Random.Range(0, 111);
-                    string bookName = DaggerfallUnity.Instance.ItemHelper.getBookNameByID(bookNum, string.Empty);
+                    int bookNum = DaggerfallUnity.Instance.ItemHelper.GetRandomBookID();
+                    string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
                     if (bookName != string.Empty)
                         books.Add(bookNum);
                 }
@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop
             PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
             int factionID = buildingData.factionID;
             Debug.Log("Bookshelf access, Faction ID = " + factionID);
-            Guild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
+            IGuild guild = GameManager.Instance.GuildManager.GetGuild(factionID);
             if ((buildingData.buildingType == DFLocation.BuildingTypes.GuildHall ||
                  buildingData.buildingType == DFLocation.BuildingTypes.Temple) &&
                  !guild.CanAccessLibrary())
@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop
 
                 foreach (int bookNum in books)
                 {
-                    string bookName = DaggerfallUnity.Instance.ItemHelper.getBookNameByID(bookNum, string.Empty);
+                    string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
                     if (bookName != string.Empty)
                         bookPicker.ListBox.AddItem(bookName);
                 }

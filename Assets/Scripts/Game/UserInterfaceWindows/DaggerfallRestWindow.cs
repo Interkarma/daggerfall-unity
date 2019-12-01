@@ -35,58 +35,58 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Button whileButton;
-        Button healedButton;
-        Button loiterButton;
-        Button stopButton;
+        protected Button whileButton;
+        protected Button healedButton;
+        protected Button loiterButton;
+        protected Button stopButton;
 
-        Panel mainPanel = new Panel();
-        Panel counterPanel = new Panel();
+        protected Panel mainPanel = new Panel();
+        protected Panel counterPanel = new Panel();
 
-        TextLabel counterLabel = new TextLabel();
+        protected TextLabel counterLabel = new TextLabel();
 
         #endregion
 
         #region UI Textures
 
-        Texture2D baseTexture;
-        Texture2D hoursPastTexture;
-        Texture2D hoursRemainingTexture;
+        protected Texture2D baseTexture;
+        protected Texture2D hoursPastTexture;
+        protected Texture2D hoursRemainingTexture;
 
         #endregion
 
         #region Fields
 
-        const string baseTextureName = "REST00I0.IMG";              // Rest type
-        const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
-        const string hoursRemainingTextureName = "REST02I0.IMG";    // "Hours remaining"
+        protected const string baseTextureName = "REST00I0.IMG";              // Rest type
+        protected const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
+        protected const string hoursRemainingTextureName = "REST02I0.IMG";    // "Hours remaining"
 
-        const int minutesPerTick = 10;
-        const float restWaitTimePerHour = 0.75f;
-        const float loiterWaitTimePerHour = 1.25f;
-        const int cityCampingIllegal = 17;
+        protected const int minutesPerTick = 10;
+        protected const float restWaitTimePerHour = 0.75f;
+        protected const float loiterWaitTimePerHour = 1.25f;
+        protected const int cityCampingIllegal = 17;
 
-        RestModes currentRestMode = RestModes.Selection;
-        int minutesOfHour = 0;
-        int hoursRemaining = 0;
-        int totalHours = 0;
-        float waitTimer = 0;
-        bool enemyBrokeRest = false;
-        int remainingHoursRented = -1;
-        Vector3 allocatedBed;
-        bool ignoreAllocatedBed = false;
-        bool abortRestForEnemySpawn = false;
+        protected RestModes currentRestMode = RestModes.Selection;
+        protected int minutesOfHour = 0;
+        protected int hoursRemaining = 0;
+        protected int totalHours = 0;
+        protected float waitTimer = 0;
+        protected bool enemyBrokeRest = false;
+        protected int remainingHoursRented = -1;
+        protected Vector3 allocatedBed;
+        protected bool ignoreAllocatedBed = false;
+        protected bool abortRestForEnemySpawn = false;
 
-        PlayerEntity playerEntity;
-        DaggerfallHUD hud;
+        protected PlayerEntity playerEntity;
+        protected DaggerfallHUD hud;
 
-        KeyCode toggleClosedBinding;
+        protected KeyCode toggleClosedBinding;
 
         #endregion
 
         #region Enums
 
-        enum RestModes
+        protected enum RestModes
         {
             Selection,
             TimedRest,
@@ -387,12 +387,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private bool CheckRent()
         {
-            if (remainingHoursRented > -1)
-            {
-                remainingHoursRented--;
-                return (remainingHoursRented == 0);
-            }
-            return false;
+            if (remainingHoursRented == -1)
+                return false;
+
+            remainingHoursRented--;
+            return (remainingHoursRented == 0);
         }
 
         void EndRest()

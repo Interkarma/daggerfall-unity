@@ -13,9 +13,6 @@
 //#define DEBUG_BUTTON_CLICKS
 
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {

@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!TryImportGameObject(modelID, true, out go))
                 return null;
 
-            go.name = string.Format("DaggerfallMesh[Replacement][ID ={0}]", modelID);
+            go.name = GameObjectHelper.GetGoModelName(modelID) + " [Replacement]";
             go.transform.parent = parent;
             go.transform.position = matrix.GetColumn(3);
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
@@ -178,6 +178,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!TryImportGameObject(archive, record, false, out prefab))
                 return false;
 
+            // Store state of random sequence
+            Random.State prevState = Random.state;
+
             // Get instance properties
             Vector3 position = new Vector3(x / (float)tilemapDim, 0.0f, y / (float)tilemapDim);
             float scale = getTreeScaleCallback();
@@ -198,6 +201,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             };
             terrain.AddTreeInstance(treeInstance);
 
+            Random.state = prevState;   // Restore random state
             return true;
         }
 

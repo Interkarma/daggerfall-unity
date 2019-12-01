@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Nystul, Hazelnut, Numidium
+// Contributors:    Nystul, Hazelnut, Numidium, Ferital
 // 
 // Notes:
 //
@@ -148,15 +148,7 @@ namespace DaggerfallWorkshop
             this.entryDoor = door;
             this.doorOwner = doorOwner;
 
-            // Get block data
-            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
-            if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
-
-            // Get record data
-            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
-            if (recordData.Interior.Header.Num3dObjectRecords == 0)
-                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+            AssignBlockData(door);
 
             // Layout interior data
             AddModels(buildingData);
@@ -186,15 +178,7 @@ namespace DaggerfallWorkshop
             this.entryDoor = door;
             this.doorOwner = doorOwner;
 
-            // Get block data
-            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
-            if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
-
-            // Get record data
-            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
-            if (recordData.Interior.Header.Num3dObjectRecords == 0)
-                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+            AssignBlockData(door);
 
             // Layout interior data
             AddModels(mapBD);
@@ -379,6 +363,34 @@ namespace DaggerfallWorkshop
         #region Private Methods
 
         /// <summary>
+        /// Set block data corresponding to interior.
+        /// </summary>
+        private void AssignBlockData(StaticDoor door)
+        {
+            // Get block data
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            bool foundBlock = false;
+            for (int index = 0; index < blocks.Length && !foundBlock; ++index)
+            {
+                if (blocks[index].Index == door.blockIndex)
+                {
+                    this.blockData = blocks[index];
+                    foundBlock = true;
+                }
+            }
+
+            if (!foundBlock || this.blockData.Type != DFBlock.BlockTypes.Rmb)
+                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
+
+            // Get record data
+            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
+            if (recordData.Interior.Header.Num3dObjectRecords == 0)
+                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+        }
+
+        /// <summary>
         /// Add interior models.
         /// </summary>
         private void AddModels(PlayerGPS.DiscoveredBuilding buildingData)
@@ -425,7 +437,7 @@ namespace DaggerfallWorkshop
                     stopCombine = true;
 
                 // Get model transform
-                Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
+                Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
 
                 // Does this model have doors?
@@ -455,8 +467,8 @@ namespace DaggerfallWorkshop
                     }
                 }
 
-                // Make ladder collider convex
-                if (obj.ModelIdNum == ladderModelId)
+                // Make ladder collider convex and ladder functionality, if set up as propModelType
+                if (obj.ModelIdNum == ladderModelId && obj.ObjectType == propModelType)
                 {
                     var meshCollider = go.GetComponent<MeshCollider>();
                     if (meshCollider) meshCollider.convex = true;

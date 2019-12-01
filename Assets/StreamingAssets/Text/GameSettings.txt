@@ -52,11 +52,11 @@ bowDrawback,                                        Bows - draw and release
 bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
 
 toolTips,                                           Tool Tips
-toolTipsInfo,                                       Shows informations about GUI items
+toolTipsInfo,                                       Shows information about GUI items
 toolTipDelayInSeconds,                              Delay
 toolTipDelayInSecondsInfo,                          Tooltip delay in seconds
 toolTipTextColor,                                   Text Color
-toolTipTextColorInfo,                               Font color for tooltips text
+toolTipTextColorInfo,                               Font color for tooltips' text
 toolTipBackgroundColor,                             Background Color
 toolTipBackgroundColorInfo,                         Background color for tooltips
 crosshair,                                          Crosshair
@@ -64,7 +64,7 @@ crosshairInfo,                                      Enable Crosshair on HUD
 vitalsIndicators,                                   Vitals Indicators
 vitalsIndicatorsInfo,                               Show indicators on vitals bars that display changes in vitals
 interactionModeIcon,                                Interaction Mode Icon
-interactionModeIconInfo,                            Style of contex icon for interaction mode
+interactionModeIconInfo,                            Style of context icon for interaction mode
 arrowCounter,                                       Arrow counter
 arrowCounterInfo,                                   Enable an arrow counter on the HUD when using bows
 freeScaling,                                        Free scaling
@@ -86,7 +86,7 @@ dungeonExitWagonPromptInfo,                         Prompt for wagon access on d
 loiterLimitInHours,                                 Maximum loiter time in hours
 loiterLimitInHoursInfo,                             Change default loiter time limit in hours
 guildQuestListBox,                                  Guild quest player selection
-guildQuestListBoxInfo,                              Presents elligible guild quests in a list box
+guildQuestListBoxInfo,                              Presents eligible guild quests in a list box
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
@@ -144,9 +144,7 @@ dungeonLightShadowsInfo,                            Dungeon lights cast shadows
 interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
 exteriorLightShadows,                               Exterior Light Shadows
-exteriorLightShadowsInfo,                           Exterior sunlight cast shadows
-useLegacyDeferred,                                  Use Legacy Deferred
-useLegacyDeferredInfo,                              Legacy rendering path
+exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
 retroRenderingMode,                                 Retro Rendering Mode
 retroRenderingModeInfo,                             3D world rendered at low resolution while UI remains at set resolution
 

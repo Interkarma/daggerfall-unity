@@ -50,10 +50,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Attempts to parse a text source file.
         /// </summary>
         /// <param name="source">Array of text lines from quest source.</param>
-        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
-        public Quest Parse(string[] source)
+        /// <param name="factionId">Faction id of quest giver for guilds.</param>
+        public Quest Parse(string[] source, int factionId)
         {
             Quest quest = new Quest();
+            quest.FactionId = factionId;
             string questName = string.Empty;
             string displayName = string.Empty;
             bool inQRC = false;

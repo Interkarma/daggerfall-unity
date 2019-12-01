@@ -729,7 +729,7 @@ namespace DaggerfallWorkshop.Game
                         targetSenses = targetBehaviour.GetComponent<EnemySenses>();
 
                     // For now, quest AI can't be targeted
-                    if (targetSenses && targetSenses.QuestBehaviour)
+                    if (targetSenses && targetSenses.QuestBehaviour && !targetSenses.QuestBehaviour.IsAttackableByAI)
                         continue;
 
                     Vector3 toTarget = targetBehaviour.transform.position - transform.position;

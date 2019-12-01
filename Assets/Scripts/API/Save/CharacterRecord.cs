@@ -152,6 +152,7 @@ namespace DaggerfallConnect.Save
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.CriticalStrike, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.CriticalStrike) - 30));
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Climbing, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Climbing) - 30));
                 parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.HandToHand, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.HandToHand) - 30));
+                parsedData.skills.SetPermanentSkillValue(DFCareer.Skills.Jumping, (short)(parsedData.skills.GetPermanentSkillValue(DFCareer.Skills.Jumping) - 30));
             }
 
             return liveRace;

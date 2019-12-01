@@ -170,6 +170,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public uint timeOfLastSkillIncreaseCheck;
         public uint[] skillsRecentlyRaised;
         public int startingLevelUpSkillSum;
+        public int currentLevelUpSkillSum;
         public ulong[] equipTable;
         public ItemData_v1[] items;
         public ItemData_v1[] wagonItems;

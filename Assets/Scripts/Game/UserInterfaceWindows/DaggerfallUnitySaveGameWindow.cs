@@ -423,15 +423,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Texture2D tex;
             if (TextureReplacement.TryImportTexture(textureName, true, out tex))
+            {
                 panel.BackgroundTexture = tex;
+                TextureReplacement.LogLegacyUICustomizationMessage(textureName);
+            }
             else
                 panel.BackgroundColor = color;
         }
 
         void SetBackground(Button button, Color color, string textureName)
         {
+#pragma warning disable 0618
             if (!TextureReplacement.TryCustomizeButton(ref button, textureName))
                 button.BackgroundColor = color;
+#pragma warning restore 0618
         }
 
         #endregion
@@ -586,7 +591,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SwitchClassicButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            uiManager.PushWindow(new DaggerfallLoadClassicGameWindow(uiManager));
+            uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.LoadClassicGame, uiManager, null));
         }
 
         private void Picker_OnItemPicked(int index, string itemString)

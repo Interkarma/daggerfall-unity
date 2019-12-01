@@ -10,11 +10,6 @@
 //
 
 using UnityEngine;
-using UnityEngine.Video;
-using System;
-using System.IO;
-using System.Collections;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
@@ -25,6 +20,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallVidPlayerWindow : DaggerfallBaseWindow
     {
+
         DaggerfallVideo video;
         VideoPlayerDrawer customVideo;
         bool useCustomVideo = false;
@@ -57,7 +53,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public bool IsPlaying
         {
-            get { return useCustomVideo ? customVideo.IsPlaying : video.Playing; }
+            get { return useCustomVideo ? (customVideo != null && customVideo.IsPlaying) : (video != null && video.Playing); }
         }
 
         public bool EndOnAnyKey
@@ -84,7 +80,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Play custom video
                 customVideo.Size = new Vector2(Screen.width, Screen.height);
                 NativePanel.Components.Add(customVideo);
+                DoHideCursor(hideCursor);
+
                 customVideo.Play();
+                RaiseOnVideoStartGlobalEvent();
             }
             else
             {
@@ -96,13 +95,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 video.HorizontalAlignment = HorizontalAlignment.Center;
                 video.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
                 NativePanel.Components.Add(video);
+                DoHideCursor(hideCursor);
 
                 // Start playing
                 if (!string.IsNullOrEmpty(PlayOnStart))
                 {
                     video.Open(PlayOnStart);
                     video.Playing = true;
-                    Cursor.visible = false;
                     RaiseOnVideoStartGlobalEvent();
                 }
             }
@@ -122,6 +121,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     customVideo.Stop();
                     customVideo.Dispose();
                     customVideo = null;
+
+                    DoHideCursor(false);
                     RaiseOnVideoFinishedHandler();
                     RaiseOnVideoEndGlobalEvent();
                     CloseWindow();
@@ -135,11 +136,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     video.Playing = false;
                     video.Dispose();
+                    video = null;
+
+                    DoHideCursor(false);
                     RaiseOnVideoFinishedHandler();
                     RaiseOnVideoEndGlobalEvent();
                     CloseWindow();
                 }
             }
+        }
+
+        private void DoHideCursor(bool hide)
+        {
+            PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;
+            if (mLook != null)
+                mLook.ForceHideCursor(hide && hideCursor);
         }
 
         #region Event Handlers

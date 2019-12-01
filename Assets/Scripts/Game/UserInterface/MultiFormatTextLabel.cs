@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -136,6 +136,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Size = new Vector2(totalWidth, newSize);
         }
 
+        public int LineCount
+        {
+            get { return labels.Count; }
+        }
+
+        public List<TextLabel> TextLabels
+        {
+            get { return labels; }
+        }
+
         public override void Draw()
         {
             base.Draw();
@@ -208,6 +218,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (textAlignment != HorizontalAlignment.None)
                 textLabel.HorizontalAlignment = textAlignment;
+
+            if (UseRestrictedRenderArea)
+            {
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
+            }
 
             labels.Add(textLabel);
             lastLabel = textLabel;

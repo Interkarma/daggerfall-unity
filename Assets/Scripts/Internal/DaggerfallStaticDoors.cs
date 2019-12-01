@@ -82,6 +82,11 @@ namespace DaggerfallWorkshop
                 go.transform.position += transform.position;
                 go.transform.rotation = transform.rotation;
 
+                // Sometimes doors injected from mods don't trigger because hit point is not exactly
+                // on the plane calculated from classic door data so we ensure the collider has some depth
+                if (c.size.x < 1)
+                    c.size = new Vector3(1, c.size.y, c.size.z);
+
                 // Check if hit was inside trigger
                 if (c.bounds.Contains(point))
                 {

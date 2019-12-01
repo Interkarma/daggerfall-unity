@@ -205,7 +205,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Set global vars status
             PersistentGlobalVars playerGlovalVars = GameManager.Instance.PlayerEntity.GlobalVars;
-            for (int i = 0; i < globalLabelPoolCount; i++)
+            for (int i = 0; i < globalsLabelPool.Length; i++)
             {
                 if (playerGlovalVars.GetGlobalVar(i))
                     globalsLabelPool[i].TextColor = Color.green;
@@ -218,7 +218,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Set task status
             Quest.TaskState[] states = currentQuest.GetTaskStates();
-            for (int i = 0; i < states.Length; i++)
+            for (int i = 0; i < states.Length && i < taskLabelPool.Length; i++)
             {
                 if (!states[i].set)
                     taskLabelPool[i].TextColor = Color.gray;
@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set timer status
             QuestResource[] clocks = currentQuest.GetAllResources(typeof(Clock));
-            for (int i = 0; i < clocks.Length; i++)
+            for (int i = 0; i < clocks.Length && i < timerLabelPool.Length; i++)
             {
                 Clock clock = (Clock)clocks[i];
                 timerLabelPool[i].Text = string.Format("{0} [{1}]", clock.Symbol.Original, clock.GetTimeString(clock.RemainingTimeInSeconds));
@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Create a pool of labels for output
             int row = 0, col = 0;
-            for (int i = 0; i < taskLabelPoolCount; i++)
+            for (int i = 0; i < taskLabelPool.Length; i++)
             {
                 // Get current position
                 Vector2 position = startPosition + new Vector2(col * taskColWidth, row * rowHeight);
@@ -287,7 +287,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Create a pool of labels for output
             int row = 0, col = 0;
-            for (int i = 0; i < timerLabelPoolCount; i++)
+            for (int i = 0; i < timerLabelPool.Length; i++)
             {
                 // Get current position
                 Vector2 position = startPosition + new Vector2(col * timerColWidth, row * rowHeight);
@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Create a pool of labels for output
             int row = 0, col = 0;
-            for (int i = 0; i < globalLabelPoolCount; i++)
+            for (int i = 0; i < globalsLabelPool.Length; i++)
             {
                 // Get current position
                 Vector2 position = startPosition + new Vector2(col * timerColWidth, row * rowHeight);
@@ -394,7 +394,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set task labels
             Quest.TaskState[] states = currentQuest.GetTaskStates();
-            for (int i = 0; i < states.Length; i++)
+            for (int i = 0; i < states.Length && i < taskLabelPool.Length; i++)
             {
                 taskLabelPool[i].Enabled = true;
                 if (states[i].type == Task.TaskType.Headless)
@@ -410,7 +410,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set timer status
             QuestResource[] clocks = currentQuest.GetAllResources(typeof(Clock));
-            for (int i = 0; i < clocks.Length; i++)
+            for (int i = 0; i < clocks.Length && i < timerLabelPool.Length; i++)
             {
                 timerLabelPool[i].Enabled = true;
             }

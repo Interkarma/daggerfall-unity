@@ -6,7 +6,7 @@
                     "ingredients": [
                         {
                             "id": 59,
-                            "name": "Pure water"
+                            "name": "Pure Water"
                         },
                         {
                             "id": 30,
@@ -14,7 +14,7 @@
                         },
                         {
                             "id": 27,
-                            "name": "Ginkgo leaves"
+                            "name": "Ginkgo Leaves"
                         }
                     ]
                 },
@@ -34,7 +34,7 @@
                         },
                         {
                             "id": 27,
-                            "name": "Ginkgo leaves"
+                            "name": "Ginkgo Leaves"
                         }
                     ]
                 }
@@ -55,7 +55,7 @@
                         },
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         }
                     ]
                 },
@@ -71,11 +71,11 @@
                         },
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         }
                     ]
                 }
@@ -88,19 +88,19 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 16,
-                            "name": "Red berries"
+                            "name": "Red Berries"
                         },
                         {
                             "id": 14,
-                            "name": "Pine branch"
+                            "name": "Pine Branch"
                         },
                         {
                             "id": 37,
-                            "name": "Unicorn horn"
+                            "name": "Unicorn Horn"
                         }
                     ]
                 },
@@ -108,19 +108,19 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 17,
-                            "name": "Yellow berries"
+                            "name": "Yellow Berries"
                         },
                         {
                             "id": 15,
-                            "name": "Green berries"
+                            "name": "Green Berries"
                         },
                         {
                             "id": 37,
-                            "name": "Unicorn horn"
+                            "name": "Unicorn Horn"
                         }
                     ]
                 }
@@ -133,7 +133,7 @@
                     "ingredients": [
                         {
                             "id": 59,
-                            "name": "Pure water"
+                            "name": "Pure Water"
                         },
                         {
                             "id": 29,
@@ -141,7 +141,7 @@
                         },
                         {
                             "id": 20,
-                            "name": "Yellow rose"
+                            "name": "Yellow Rose"
                         },
                         {
                             "id": 69,
@@ -166,7 +166,7 @@
                         },
                         {
                             "id": 33,
-                            "name": "Werewolf's blood"
+                            "name": "Werewolf's Blood"
                         },
                         {
                             "id": 68,
@@ -186,11 +186,11 @@
                         },
                         {
                             "id": 33,
-                            "name": "Werewolf's blood"
+                            "name": "Werewolf's Blood"
                         },
                         {
                             "id": 54,
-                            "name": "Saint's hair"
+                            "name": "Saint's Hair"
                         }
                     ]
                 }
@@ -211,11 +211,11 @@
                         },
                         {
                             "id": 10,
-                            "name": "Red flowers"
+                            "name": "Red Flowers"
                         },
                         {
                             "id": 35,
-                            "name": "Fairy dragon's scales"
+                            "name": "Fairy Dragon's Scales"
                         },
                         {
                             "id": 32,
@@ -231,11 +231,11 @@
                         },
                         {
                             "id": 10,
-                            "name": "Red flowers"
+                            "name": "Red Flowers"
                         },
                         {
                             "id": 35,
-                            "name": "Fairy dragon's scales"
+                            "name": "Fairy Dragon's Scales"
                         },
                         {
                             "id": 32,
@@ -260,11 +260,11 @@
                         },
                         {
                             "id": 14,
-                            "name": "Pine branch"
+                            "name": "Pine Branch"
                         },
                         {
                             "id": 22,
-                            "name": "White rose"
+                            "name": "White Rose"
                         }
                     ]
                 }
@@ -285,7 +285,7 @@
                         },
                         {
                             "id": 16,
-                            "name": "Red berries"
+                            "name": "Red Berries"
                         }
                     ]
                 },
@@ -301,7 +301,7 @@
                         },
                         {
                             "id": 17,
-                            "name": "Yellow berries"
+                            "name": "Yellow Berries"
                         }
                     ]
                 },
@@ -313,7 +313,7 @@
                         },
                         {
                             "id": 41,
-                            "name": "Spider's venom"
+                            "name": "Spider's Venom"
                         },
                         {
                             "id": 8,
@@ -334,7 +334,7 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 31,
@@ -342,7 +342,7 @@
                         },
                         {
                             "id": 56,
-                            "name": "Big tooth"
+                            "name": "Big Tooth"
                         }
                     ]
                 },
@@ -350,7 +350,7 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 31,
@@ -358,7 +358,7 @@
                         },
                         {
                             "id": 36,
-                            "name": "Nymph hair"
+                            "name": "Nymph Hair"
                         }
                     ]
                 }
@@ -371,15 +371,15 @@
                     "ingredients": [
                         {
                             "id": 59,
-                            "name": "Pure water"
+                            "name": "Pure Water"
                         },
                         {
                             "id": 26,
-                            "name": "White poppy"
+                            "name": "White Poppy"
                         },
                         {
                             "id": 24,
-                            "name": "Black poppy"
+                            "name": "Black Poppy"
                         }
                     ]
                 }
@@ -392,11 +392,11 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 76,
@@ -413,19 +413,19 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 16,
-                            "name": "Red berries"
+                            "name": "Red Berries"
                         },
                         {
                             "id": 14,
-                            "name": "Pine branch"
+                            "name": "Pine Branch"
                         },
                         {
                             "id": 37,
-                            "name": "Unicorn horn"
+                            "name": "Unicorn Horn"
                         }
                     ]
                 },
@@ -433,19 +433,19 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 17,
-                            "name": "Yellow berries"
+                            "name": "Yellow Berries"
                         },
                         {
                             "id": 15,
-                            "name": "Green berries"
+                            "name": "Green Berries"
                         },
                         {
                             "id": 37,
-                            "name": "Unicorn horn"
+                            "name": "Unicorn Horn"
                         }
                     ]
                 }
@@ -458,7 +458,7 @@
                     "ingredients": [
                         {
                             "id": 59,
-                            "name": "Pure water"
+                            "name": "Pure Water"
                         },
                         {
                             "id": 63,
@@ -474,11 +474,11 @@
                     "ingredients": [
                         {
                             "id": 61,
-                            "name": "Orc's blood"
+                            "name": "Orc's Blood"
                         },
                         {
                             "id": 59,
-                            "name": "Pure water"
+                            "name": "Pure Water"
                         },
                         {
                             "id": 63,
@@ -503,11 +503,11 @@
                         },
                         {
                             "id": 43,
-                            "name": "Snake venom"
+                            "name": "Snake Venom"
                         },
                         {
                             "id": 25,
-                            "name": "Golden poppy"
+                            "name": "Golden Poppy"
                         }
                     ]
                 },
@@ -519,11 +519,11 @@
                         },
                         {
                             "id": 43,
-                            "name": "Snake venom"
+                            "name": "Snake Venom"
                         },
                         {
                             "id": 25,
-                            "name": "Golden poppy"
+                            "name": "Golden Poppy"
                         }
                     ]
                 }
@@ -540,7 +540,7 @@
                         },
                         {
                             "id": 41,
-                            "name": "Spider's venom"
+                            "name": "Spider's Venom"
                         },
                         {
                             "id": 8,
@@ -565,11 +565,11 @@
                         },
                         {
                             "id": 47,
-                            "name": "Giant scorpion stinger"
+                            "name": "Giant Scorpion Stinger"
                         },
                         {
                             "id": 58,
-                            "name": "Small tooth"
+                            "name": "Small Tooth"
                         },
                         {
                             "id": 77,
@@ -586,7 +586,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -594,15 +594,15 @@
                         },
                         {
                             "id": 9,
-                            "name": "Green leaves"
+                            "name": "Green Leaves"
                         },
                         {
                             "id": 11,
-                            "name": "Yellow flowers"
+                            "name": "Yellow Flowers"
                         },
                         {
                             "id": 15,
-                            "name": "Green berries"
+                            "name": "Green Berries"
                         }
                     ]
                 },
@@ -610,7 +610,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -618,15 +618,15 @@
                         },
                         {
                             "id": 9,
-                            "name": "Green leaves"
+                            "name": "Green Leaves"
                         },
                         {
                             "id": 11,
-                            "name": "Yellow flowers"
+                            "name": "Yellow Flowers"
                         },
                         {
                             "id": 16,
-                            "name": "Red berries"
+                            "name": "Red Berries"
                         }
                     ]
                 },
@@ -634,7 +634,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -642,15 +642,15 @@
                         },
                         {
                             "id": 9,
-                            "name": "Green leaves"
+                            "name": "Green Leaves"
                         },
                         {
                             "id": 15,
-                            "name": "Green berries"
+                            "name": "Green Berries"
                         },
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         }
                     ]
                 }
@@ -663,7 +663,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -675,7 +675,7 @@
                         },
                         {
                             "id": 21,
-                            "name": "Black rose"
+                            "name": "Black Rose"
                         }
                     ]
                 },
@@ -683,7 +683,7 @@
                     "ingredients": [
                         {
                             "id": 59,
-                            "name": "Pure water"
+                            "name": "Pure Water"
                         },
                         {
                             "id": 63,
@@ -695,7 +695,7 @@
                         },
                         {
                             "id": 21,
-                            "name": "Black rose"
+                            "name": "Black Rose"
                         }
                     ]
                 }
@@ -708,7 +708,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -728,7 +728,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -740,7 +740,7 @@
                         },
                         {
                             "id": 21,
-                            "name": "Black rose"
+                            "name": "Black Rose"
                         }
                     ]
                 },
@@ -748,7 +748,7 @@
                     "ingredients": [
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 63,
@@ -764,7 +764,7 @@
                         },
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 31,
@@ -772,11 +772,11 @@
                         },
                         {
                             "id": 36,
-                            "name": "Nymph hair"
+                            "name": "Nymph Hair"
                         },
                         {
                             "id": 49,
-                            "name": "Mummy wrappings"
+                            "name": "Mummy Wrappings"
                         }
                     ]
                 }
@@ -789,7 +789,7 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 63,
@@ -797,7 +797,7 @@
                         },
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 31,
@@ -805,7 +805,7 @@
                         },
                         {
                             "id": 56,
-                            "name": "Big tooth"
+                            "name": "Big Tooth"
                         },
                         {
                             "id": 39,
@@ -817,7 +817,7 @@
                         },
                         {
                             "id": 49,
-                            "name": "Mummy wrappings"
+                            "name": "Mummy Wrappings"
                         }
                     ]
                 },
@@ -825,7 +825,7 @@
                     "ingredients": [
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         },
                         {
                             "id": 63,
@@ -833,7 +833,7 @@
                         },
                         {
                             "id": 60,
-                            "name": "Rain water"
+                            "name": "Rain Water"
                         },
                         {
                             "id": 31,
@@ -841,7 +841,7 @@
                         },
                         {
                             "id": 56,
-                            "name": "Big tooth"
+                            "name": "Big Tooth"
                         },
                         {
                             "id": 39,
@@ -853,11 +853,11 @@
                         },
                         {
                             "id": 49,
-                            "name": "Mummy wrappings"
+                            "name": "Mummy Wrappings"
                         },
                         {
                             "id": 62,
-                            "name": "Elixir vitae"
+                            "name": "Elixir Vitae"
                         }
                     ]
                 }
