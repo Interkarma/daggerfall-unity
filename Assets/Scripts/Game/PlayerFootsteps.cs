@@ -59,7 +59,9 @@ namespace DaggerfallWorkshop.Game
 
         SoundClips currentFootstepSound1 = SoundClips.None;
         SoundClips currentFootstepSound2 = SoundClips.None;
+
         DaggerfallDateTime.Seasons currentSeason = DaggerfallDateTime.Seasons.Summer;
+        int currentClimateIndex;
         bool isInside = false;
         bool isInOutsideWater = false;
 
@@ -90,6 +92,9 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            DaggerfallDateTime.Seasons playerSeason = dfUnity.WorldTime.Now.SeasonValue;
+            int playerClimateIndex = GameManager.Instance.PlayerGPS.CurrentClimateIndex;
+
             // Get player inside flag
             // Can only do this when PlayerEnterExit is available, otherwise default to true
             bool playerInside = (playerEnterExit == null) ? true : playerEnterExit.IsPlayerInside;
@@ -99,13 +104,14 @@ namespace DaggerfallWorkshop.Game
             bool playerOnExteriorWater = (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.WaterWalking);
 
             // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
-            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside || playerOnExteriorWater != isInOutsideWater)
+            if (playerSeason != currentSeason || playerClimateIndex != currentClimateIndex || isInside != playerInside || playerOnExteriorWater != isInOutsideWater)
             {
-                currentSeason = dfUnity.WorldTime.Now.SeasonValue;
+                currentSeason = playerSeason;
+                currentClimateIndex = playerClimateIndex;
                 isInside = playerInside;
                 isInOutsideWater = playerOnExteriorWater;
                 if (!isInside)
-                    if (currentSeason == DaggerfallDateTime.Seasons.Winter)
+                    if (currentSeason == DaggerfallDateTime.Seasons.Winter && !WeatherManager.IsSnowFreeClimate(currentClimateIndex))
                     {
                         currentFootstepSound1 = FootstepSoundSnow1;
                         currentFootstepSound2 = FootstepSoundSnow2;
