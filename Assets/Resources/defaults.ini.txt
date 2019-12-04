@@ -8,6 +8,7 @@ ResolutionHeight=720
 RetroRenderingMode=0
 UseMipMapsInRetroMode=False
 VSync=True
+TargetFrameRate=0
 Fullscreen=False
 ExclusiveFullscreen=False
 FieldOfView=65

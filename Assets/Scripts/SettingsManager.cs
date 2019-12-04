@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop
         public int RetroRenderingMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
+        public int TargetFrameRate { get; set; }
         public bool Fullscreen { get; set; }
         public bool ExclusiveFullscreen { get; set; }
         public int FieldOfView { get; set; }
@@ -199,6 +200,7 @@ namespace DaggerfallWorkshop
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
+            TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
@@ -313,6 +315,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
+            SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
