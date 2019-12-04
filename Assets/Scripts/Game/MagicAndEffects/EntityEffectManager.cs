@@ -613,7 +613,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Gets current racial override effect if one is present.
         /// Racial override is a special case effect that is cached when started/resumed on entity.
-        /// Can still search using FindIncumbentEffect<RacialOverrideEffect>(), but this method will be more efficient.
+        /// While is possible to use <see cref="FindIncumbentEffect{RacialOverrideEffect}()"/>, this method is more efficient.
         /// </summary>
         /// <returns>RacialOverrideEffect or null.</returns>
         public RacialOverrideEffect GetRacialOverrideEffect()

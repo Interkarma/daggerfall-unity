@@ -103,18 +103,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region IEnumerable
+
         /// <summary>
-        /// Gets IEnumerator<BaseComponent> for the component collection
+        /// Gets <see cref="IEnumerator{BaseScreenComponent}"/> for the component collection
         /// for use with foreach.
         /// </summary>
-        /// <returns>IEnumerator<BaseComponent></returns>
+        /// <returns><see cref="IEnumerator"/> of screen components.</returns>
         public IEnumerator<BaseScreenComponent> GetEnumerator()
         {
             return components.GetEnumerator();
         }
 
         /// <summary>
-        /// Gets IEnumerator for the component collection.
+        /// Gets <see cref="IEnumerator"/> for the component collection.
         /// </summary>
         /// <returns>IEnumerator object.</returns>
         IEnumerator IEnumerable.GetEnumerator()

@@ -83,7 +83,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     public static class TextureReplacement
     {
-
         #region Fields
 
         const string extension = ".png";
@@ -853,6 +852,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 rect = xml.GetRect("rect", rect, paperdollScale);
         }
 
+        /// <summary>
+        /// Parses the ID from the name of a texture archive from classic Daggerfall.
+        /// </summary>
+        /// <param name="filename">A name with format <c>"TEXTURE.XXX"</c>.</param>
+        /// <returns>The number parsed from <c>"XXX"</c>.</returns>
+        /// <seealso cref="TextureFile.IndexToFileName(int)"/>
         public static int FileNameToArchive(string filename)
         {
             return int.Parse(filename.Substring("TEXTURE.".Length));

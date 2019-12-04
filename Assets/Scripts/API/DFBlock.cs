@@ -983,7 +983,7 @@ namespace DaggerfallConnect
             /// <summary>Trigger flag and starting lock for doors.</summary>
             internal UInt32 TriggerFlag_StartingLock;
 
-            /// <summary>ID of sound to play when action is executed. Also used for spell & text index.</summary>
+            /// <summary>ID of sound to play when action is executed. Also used for spell and text index.</summary>
             public Byte SoundIndex;
 
             /// <summary>Offset to action resource from start of RDB record. Not required unless you are extending the block reader.</summary>
@@ -1028,14 +1028,14 @@ namespace DaggerfallConnect
             /// <summary>Flags for action, NPC, etc.</summary>
             public UInt16 Flags;
 
-            /// <summary> damage, distance to move etc.</summary>
+            /// <summary>Damage, distance to move etc.</summary>
             public byte Magnitude;
 
-            /// <summary> sound index, also used for spell & text index</summary>
+            /// <summary>Sound index, also used for spell and text index.</summary>
             public byte SoundIndex;
 
             /// <summary>
-            /// FactionID/MobileID bitfield. (ID & 0xFF for mobile ID).
+            /// FactionID/MobileID bitfield. (<c>ID &amp; 0xFF</c> for mobile ID).
             /// Range 0-42 is index to monster in MONSTER.BSA.
             /// Range 128-146 is index to humanoid mobile type.
             /// </summary>

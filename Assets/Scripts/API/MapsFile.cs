@@ -331,7 +331,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets ID of map pixel.
         /// This can be mapped to location IDs and quest IDs.
-        /// MapTableData.MapId & 0x000fffff = WorldPixelID.
+        /// MapTableData.MapId &amp; 0x000fffff = WorldPixelID.
         /// </summary>
         /// <param name="mapPixelX">Map pixel X.</param>
         /// <param name="mapPixelY">Map pixel Y.</param>
@@ -351,7 +351,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets ID of map pixel using latitude and longitude.
         /// This can be mapped to location IDs and quest IDs.
-        /// MapTableData.MapId & 0x000fffff = WorldPixelID.
+        /// MapTableData.MapId &amp; 0x000fffff = WorldPixelID.
         /// </summary>
         /// <param name="longitude">Longitude position.</param>
         /// <param name="latitude">Latitude position.</param>

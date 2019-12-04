@@ -2233,7 +2233,7 @@ namespace DaggerfallWorkshop.Utility
         /// Build a dictionary of enemies keyed by ID.
         /// Use this once and store for faster enemy lookups.
         /// </summary>
-        /// <returns>Dictionary<int, MobileEnemy></returns>
+        /// <returns>Resulting dictionary of mobile enemies.</returns>
         public static Dictionary<int, MobileEnemy> BuildEnemyDict()
         {
             Dictionary<int, MobileEnemy> enemyDict = new Dictionary<int, MobileEnemy>();
