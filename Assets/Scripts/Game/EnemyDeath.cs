@@ -110,6 +110,13 @@ namespace DaggerfallWorkshop.Game
             // This will be in addition to normal random loot table generation
             loot.Items.TransferAll(entityBehaviour.Entity.Items);
 
+            // Lower enemy alert state on player now that enemy is dead
+            // If this is final enemy targeting player then alert state will remain clear
+            // Other enemies still targeting player will continue to raise alert state every update
+            EnemySenses senses = entityBehaviour.GetComponent<EnemySenses>();
+            if (senses && senses.Target == GameManager.Instance.PlayerEntityBehaviour)
+                GameManager.Instance.PlayerEntity.SetEnemyAlert(false);
+
             // Raise static event
             if (OnEnemyDeath != null)
                 OnEnemyDeath(this, null);

@@ -592,13 +592,13 @@ namespace DaggerfallWorkshop.Game
         /// Determines if enemies are nearby. Uses include whether player is able to rest or not.
         /// Based on distance to nearest monster, and if monster can actually sense player.
         /// </summary>
-        /// <param name="initiatingRest">Is player initiating rest?</param>
+        /// <param name="resting">Is player initiating or continuing rest?</param>
         /// <param name="includingPacified">Include pacified enemies in this test?</param>
         /// <returns>True if enemies are nearby.</returns>
-        public bool AreEnemiesNearby(bool initiatingRest = false, bool includingPacified = false)
+        public bool AreEnemiesNearby(bool resting = false, bool includingPacified = false)
         {
             const float spawnDistance = 1024 * MeshReader.GlobalScale;
-            const float initiateRestDistance = 12f;
+            const float restingDistance = 12f;
 
             bool areEnemiesNearby = false;
             DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
@@ -613,8 +613,8 @@ namespace DaggerfallWorkshop.Game
                         // Check if enemy can actively target player
                         bool enemyCanSeePlayer = enemySenses.Target == Instance.PlayerEntityBehaviour && enemySenses.TargetInSight;
 
-                        // Allow for a shorter test distance if enemy is unaware of player while initiating rest
-                        if (initiatingRest && !enemyCanSeePlayer && Vector3.Distance(entityBehaviour.transform.position, PlayerController.transform.position) > initiateRestDistance)
+                        // Allow for a shorter test distance if enemy is unaware of player while resting
+                        if (resting && !enemyCanSeePlayer && Vector3.Distance(entityBehaviour.transform.position, PlayerController.transform.position) > restingDistance)
                             continue;
 
                         // Can enemy see player or is close enough they would be spawned in classic?

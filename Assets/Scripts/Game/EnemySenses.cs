@@ -494,6 +494,12 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+
+            // If target is player and in sight then raise enemy alert on player
+            // This can only be lowered again by killing an enemy or escaping for some amount of time
+            // Any enemies actively targeting player will continue to raise alert state
+            if (Target == GameManager.Instance.PlayerEntityBehaviour && TargetInSight)
+                GameManager.Instance.PlayerEntity.SetEnemyAlert(true);
         }
 
         #region Public Methods

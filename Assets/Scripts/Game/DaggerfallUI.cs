@@ -531,6 +531,9 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
                     if (GameManager.Instance.AreEnemiesNearby(true))
                     {
+                        // Raise enemy alert status when monsters nearby
+                        GameManager.Instance.PlayerEntity.SetEnemyAlert(true);
+
                         // Alert player if monsters nearby
                         const int enemiesNearby = 354;
                         MessageBox(enemiesNearby);
