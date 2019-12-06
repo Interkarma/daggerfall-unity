@@ -529,7 +529,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
-                    if (GameManager.Instance.AreEnemiesNearby())
+                    if (GameManager.Instance.AreEnemiesNearby(true))
                     {
                         // Alert player if monsters nearby
                         const int enemiesNearby = 354;
