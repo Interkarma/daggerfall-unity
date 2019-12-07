@@ -108,7 +108,6 @@ namespace DaggerfallWorkshop.Game
                     if (dfMobile.Summary.Enemy.GlowColor != null)
                     {
                         meshRenderer.receiveShadows = false;
-                        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                         GameObject enemyLightGameObject = Instantiate(LightAura);
                         enemyLightGameObject.transform.parent = dfMobile.transform;
                         enemyLightGameObject.transform.localPosition = new Vector3(0, 0.3f, 0.2f);
