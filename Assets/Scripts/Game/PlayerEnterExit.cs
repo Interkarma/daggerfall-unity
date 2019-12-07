@@ -677,6 +677,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.AddHUDText(HardStrings.thisHouseHasNothingOfValue);
                 Debug.LogException(e);
                 Destroy(newInterior);
+                RaiseOnFailedTransition(TransitionType.ToBuildingInterior);
                 return;
             }
 
@@ -710,6 +711,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Could not find an door or enter marker, probably not a valid interior
                     Destroy(newInterior);
+                    RaiseOnFailedTransition(TransitionType.ToBuildingInterior);
                     return;
                 }
             }
@@ -868,6 +870,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Could not find a start marker
                 Destroy(newDungeon);
+                RaiseOnFailedTransition(TransitionType.ToDungeonInterior);
                 return;
             }
 
@@ -934,6 +937,7 @@ namespace DaggerfallWorkshop.Game
                 // Could not find marker
                 DaggerfallUnity.LogMessage("No start or enter marker found for this dungeon. Aborting load.");
                 Destroy(newDungeon);
+                RaiseOnFailedTransition(TransitionType.ToDungeonInterior);
                 return;
             }
 
@@ -1354,6 +1358,10 @@ namespace DaggerfallWorkshop.Game
 
         // OnPreTransition - Called PRIOR to any transition, other events called AFTER transition.
         public delegate void OnPreTransitionEventHandler(TransitionEventArgs args);
+        /// <summary>
+        /// Unlike other events in this class, this one is raised before the transition has been performed.
+        /// It's always followed by <see cref="OnFailedTransition"/> or one of the other events for success.
+        /// </summary>
         public static event OnPreTransitionEventHandler OnPreTransition;
         protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType)
         {
@@ -1406,6 +1414,18 @@ namespace DaggerfallWorkshop.Game
             TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToDungeonExterior);
             if (OnTransitionDungeonExterior != null)
                 OnTransitionDungeonExterior(args);
+        }
+
+        /// <summary>
+        /// This event is raised when a transition has started being performed and <see cref="OnPreTransition"/>
+        /// was fired but it couldn't be finished correctly due to an unexpected issue (i.e when 
+        /// <see cref="HardStrings.thisHouseHasNothingOfValue"/> is also shown).
+        /// </summary>
+        public static event Action<TransitionEventArgs> OnFailedTransition;
+        protected virtual void RaiseOnFailedTransition(TransitionType transitionType)
+        {
+            if (OnTransitionInterior != null)
+                OnTransitionInterior(new TransitionEventArgs(transitionType));
         }
 
         // OnMovePlayerToDungeonStart
