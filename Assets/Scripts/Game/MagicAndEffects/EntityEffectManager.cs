@@ -671,7 +671,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     int damage = Mathf.Abs(mod);
                     if (remaining > damage)
                     {
-                        effect.HealAttributeDamage(stat, remaining - damage);
+                        effect.HealAttributeDamage(stat, damage);
                         remaining -= damage;
                     }
                     else
