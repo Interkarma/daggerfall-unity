@@ -1414,8 +1414,10 @@ namespace DaggerfallWorkshop.Game.Formulas
             Formula_NoParams del;
             if (formula_noparams.TryGetValue("RollRandomSpawn_Dungeon", out del))
                 return del();
-            else
-                return UnityEngine.Random.Range(0, 43);  // Normally (0, 36) - making spawns ~20% less for rested dungeons
+            else if (GameManager.Instance.PlayerEntity.EnemyAlertActive)
+                return UnityEngine.Random.Range(0, 36);
+
+            return 1; // >0 is do not generate a spawn
         }
 
         #endregion

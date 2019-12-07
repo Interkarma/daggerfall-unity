@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: 2336327e6a5d8ab4bacbb4aa87a499d7
+guid: ccd14fef9bb4fcc4b914de1ff09ea91c
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - LightAura: {instanceID: 0}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -22,6 +22,8 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallEntityBehaviour entityBehaviour;
 
+        public GameObject LightAura;
+
         void Awake()
         {
             // Must have an entity behaviour
@@ -94,6 +96,26 @@ namespace DaggerfallWorkshop.Game
                     enemySounds.MoveSound = (SoundClips)dfMobile.Summary.Enemy.MoveSound;
                     enemySounds.BarkSound = (SoundClips)dfMobile.Summary.Enemy.BarkSound;
                     enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
+                }
+
+                MeshRenderer meshRenderer = dfMobile.GetComponent<MeshRenderer>();
+                if (meshRenderer)
+                {
+                    if (dfMobile.Summary.Enemy.NoShadow)
+                    {
+                        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    }
+                    if (dfMobile.Summary.Enemy.GlowColor != null)
+                    {
+                        meshRenderer.receiveShadows = false;
+                        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        GameObject enemyLightGameObject = Instantiate(LightAura);
+                        enemyLightGameObject.transform.parent = dfMobile.transform;
+                        enemyLightGameObject.transform.localPosition = new Vector3(0, 0.3f, 0.2f);
+                        Light enemyLight = enemyLightGameObject.GetComponent<Light>();
+                        enemyLight.color = (Color)dfMobile.Summary.Enemy.GlowColor;
+                        enemyLight.shadows = DaggerfallUnity.Settings.DungeonLightShadows ? LightShadows.Soft : LightShadows.None;
+                    }
                 }
 
                 // Setup entity
