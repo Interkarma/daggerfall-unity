@@ -595,7 +595,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Searches all effects in all bundles to find incumbent of type T.
         /// </summary>
-        /// <typeparam name="T">Found incumbent effect of type T or null.</typeparam>
+        /// <typeparam name="T">Effect class to search for.</typeparam>
+        /// <returns>Found incumbent effect of type T or null.</returns>
         public IEntityEffect FindIncumbentEffect<T>()
         {
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -608,6 +609,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Searches all effects in all bundles to find all incumbents of type T.
+        /// Useful for finding all effects inheriting from a specific parent effect.
+        /// </summary>
+        /// <typeparam name="T">Effect class to search for.</typeparam>
+        /// <returns>All found incumbent effect of type T. Can be null or empty.</returns>
+        public IEntityEffect[] FindIncumbentEffects<T>()
+        {
+            List<IEntityEffect> effects = new List<IEntityEffect>();
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is T)
+                        effects.Add(effect);
+                }
+            }
+
+            return effects.ToArray();
         }
 
         /// <summary>
@@ -1429,14 +1451,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void CureAllDrainEffects()
         {
             // Cure all drain effects
-            EndIncumbentEffect<DrainStrength>();
-            EndIncumbentEffect<DrainIntelligence>();
-            EndIncumbentEffect<DrainWillpower>();
-            EndIncumbentEffect<DrainAgility>();
-            EndIncumbentEffect<DrainEndurance>();
-            EndIncumbentEffect<DrainPersonality>();
-            EndIncumbentEffect<DrainSpeed>();
-            EndIncumbentEffect<DrainLuck>();
+            IEntityEffect[] effects = FindIncumbentEffects<DrainEffect>();
+            if (effects != null && effects.Length > 0)
+            {
+                foreach (IEntityEffect effect in effects)
+                {
+                    (effect as DrainEffect).CureAttributeDamage();
+                }
+            }
         }
 
         public void CureAll()
