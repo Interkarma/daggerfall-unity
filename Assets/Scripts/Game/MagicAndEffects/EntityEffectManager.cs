@@ -1426,6 +1426,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        public void CureAllDrainEffects()
+        {
+            // Cure all drain effects
+            EndIncumbentEffect<DrainStrength>();
+            EndIncumbentEffect<DrainIntelligence>();
+            EndIncumbentEffect<DrainWillpower>();
+            EndIncumbentEffect<DrainAgility>();
+            EndIncumbentEffect<DrainEndurance>();
+            EndIncumbentEffect<DrainPersonality>();
+            EndIncumbentEffect<DrainSpeed>();
+            EndIncumbentEffect<DrainLuck>();
+        }
+
         public void CureAll()
         {
             DaggerfallEntity entity = entityBehaviour.Entity;
@@ -1434,6 +1447,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entity.CurrentMagicka = entity.MaxMagicka;
             CureAllPoisons();
             CureAllDiseases();
+            CureAllDrainEffects();
         }
 
         public bool HasVampirism()
