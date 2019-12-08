@@ -42,6 +42,35 @@ namespace DaggerfallWorkshop.Game
                 this.gameObject.SetActive(false);
         }
 
+
+        enum ControllerJustification
+        {
+            TOP,
+            CENTER,
+            BOTTOM
+        }
+
+        static void AdjustControllerHeight(CharacterController controller, float newHeight, ControllerJustification justification)
+        {
+            Vector3 newCenter = controller.center;
+            switch (justification)
+            {
+                case ControllerJustification.TOP:
+                    newCenter.y -= (newHeight - controller.height) / 2;
+                    break;
+
+                case ControllerJustification.BOTTOM:
+                    newCenter.y += (newHeight - controller.height) / 2;
+                    break;
+
+                case ControllerJustification.CENTER:
+                    // do nothing, centered is normal CharacterController behavior
+                    break;
+            }
+            controller.height = newHeight;
+            controller.center = newCenter;
+        }
+
         /// <summary>
         /// Sets up enemy based on current settings.
         /// </summary>
@@ -73,18 +102,13 @@ namespace DaggerfallWorkshop.Game
                     // Reduce height of flying creatures as their wing animation makes them taller than desired
                     // This helps them get through doors while aiming for player eye height
                     if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
-                        controller.height /= 2f;
+                        // (in frame 0 wings are in high position, assume body is  the lower half)
+                        AdjustControllerHeight(controller, controller.height / 2, ControllerJustification.BOTTOM);
 
                     // Limit minimum controller height
                     // Stops very short characters like rats from being walked upon
                     if (controller.height < 1.6f)
-                    {
-                        // Adjust center to match new height
-                        Vector3 newCenter = controller.center;
-                        newCenter.y += (1.6f - controller.height) / 2;
-                        controller.center = newCenter;
-                        controller.height = 1.6f;
-                    }
+                        AdjustControllerHeight(controller, 1.6f, ControllerJustification.BOTTOM);
 
                     controller.gameObject.layer = LayerMask.NameToLayer("Enemies");
                 }
