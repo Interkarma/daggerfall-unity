@@ -56,19 +56,21 @@ namespace DaggerfallWorkshop.Game
         PlayerWeather playerWeather;
         PlayerEntity playerEntity;
 
-        PlayerMusicEnvironment currentPlayerMusicEnvironment;
-        PlayerMusicEnvironment lastPlayerMusicEnvironment;
-        PlayerMusicWeather currentPlayerMusicWeather;
-        PlayerMusicWeather lastPlayerMusicWeather;
-        PlayerMusicTime currentPlayerMusicTime;
-        PlayerMusicTime lastPlayerMusicTime;
+        struct PlayerMusicContext
+        {
+            public PlayerMusicEnvironment environment;
+            public PlayerMusicWeather weather;
+            public PlayerMusicTime time;
+            public bool arrested;
+        }
+
+        PlayerMusicContext currentContext;
+        PlayerMusicContext lastContext;
 
         SongFiles[] currentPlaylist;
-        SongFiles[] lastPlaylist;
         SongFiles currentSong;
         int currentSongIndex = 0;
         bool playSong = true;
-        bool playingArrestedMusic = false;
 
         #endregion
 
@@ -144,45 +146,43 @@ namespace DaggerfallWorkshop.Game
                 playerEnterExit = LocalPlayerGPS.GetComponent<PlayerEnterExit>();
                 playerWeather = LocalPlayerGPS.GetComponent<PlayerWeather>();
             }
+
+            PlayerEnterExit.OnTransitionDungeonInterior += PlayerEnterExit_OnTransitionDungeonInterior;
         }
 
         void Update()
         {
+            UpdateSong(false);
+        }
+
+        void UpdateSong(bool forceChange = false)
+        {
             if (!songPlayer)
                 return;
 
-            // Update context
-            UpdatePlayerMusicEnvironment();
-            UpdatePlayerMusicWeather();
-            UpdatePlayerMusicTime();
+            // Play song if no song was playing or if playlist changed
+            // Switch to another random song to prevent fatigue of hearing same song repeatedly
+
+            PlayerMusicUpdateContext();
 
             // Update current playlist if context changed
-            bool overrideSong = false;
-            if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment ||
-                currentPlayerMusicWeather != lastPlayerMusicWeather ||
-                currentPlayerMusicTime != lastPlayerMusicTime ||
-                (!songPlayer.IsPlaying && playSong) ||
-                playingArrestedMusic != playerEntity.Arrested)
+            if (!currentContext.Equals(lastContext) || (!songPlayer.IsPlaying && playSong) || forceChange)
             {
-                lastPlayerMusicEnvironment = currentPlayerMusicEnvironment;
-                lastPlayerMusicWeather = currentPlayerMusicWeather;
-                lastPlayerMusicTime = currentPlayerMusicTime;
-                lastPlaylist = currentPlaylist;
+                lastContext = currentContext;
 
+                SongFiles[] lastPlaylist = currentPlaylist;
                 // Get playlist for current context
                 AssignPlaylist();
 
                 // If current playlist is different from last playlist, pick a song from the current playlist
-                if (currentPlaylist != lastPlaylist)
+                if (currentPlaylist != lastPlaylist || forceChange)
                 {
-                    SelectCurrentSong();
-                    overrideSong = true;
+                    PlayAnotherSong();
+                    return;
                 }
             }
 
-            // Play song if no song was playing or if playlist changed
-            // Switch to another random song to prevent fatigue of hearing same song repeatedly
-            if (!songPlayer.IsPlaying || overrideSong)
+            if (!songPlayer.IsPlaying)
                 PlayCurrentSong();
         }
 
@@ -314,6 +314,12 @@ namespace DaggerfallWorkshop.Game
             currentSongIndex = index;
         }
 
+        void PlayAnotherSong()
+        {
+            SelectCurrentSong();
+            PlayCurrentSong();
+        }
+
         void PlayCurrentSong(bool forcePlay = false)
         {
             // Do nothing if already playing this song or play disabled
@@ -322,6 +328,14 @@ namespace DaggerfallWorkshop.Game
 
             songPlayer.Song = currentSong;
             songPlayer.Play();
+        }
+
+        void PlayerMusicUpdateContext()
+        {
+            UpdatePlayerMusicEnvironment();
+            UpdatePlayerMusicWeather();
+            UpdatePlayerMusicTime();
+            UpdatePlayerMusicArrested();
         }
 
         void UpdatePlayerMusicEnvironment()
@@ -341,10 +355,10 @@ namespace DaggerfallWorkshop.Game
                         case DFRegion.LocationTypes.DungeonRuin:
                         case DFRegion.LocationTypes.Coven:
                         case DFRegion.LocationTypes.HomePoor:
-                            currentPlayerMusicEnvironment = PlayerMusicEnvironment.DungeonExterior;
+                            currentContext.environment = PlayerMusicEnvironment.DungeonExterior;
                             break;
                         case DFRegion.LocationTypes.Graveyard:
-                            currentPlayerMusicEnvironment = PlayerMusicEnvironment.Graveyard;
+                            currentContext.environment = PlayerMusicEnvironment.Graveyard;
                             break;
                         case DFRegion.LocationTypes.HomeFarms:
                         case DFRegion.LocationTypes.HomeWealthy:
@@ -353,16 +367,16 @@ namespace DaggerfallWorkshop.Game
                         case DFRegion.LocationTypes.TownHamlet:
                         case DFRegion.LocationTypes.TownVillage:
                         case DFRegion.LocationTypes.ReligionTemple:
-                            currentPlayerMusicEnvironment = PlayerMusicEnvironment.City;
+                            currentContext.environment = PlayerMusicEnvironment.City;
                             break;
                         default:
-                            currentPlayerMusicEnvironment = PlayerMusicEnvironment.Wilderness;
+                            currentContext.environment = PlayerMusicEnvironment.Wilderness;
                             break;
                     }
                 }
                 else
                 {
-                    currentPlayerMusicEnvironment = PlayerMusicEnvironment.Wilderness;
+                    currentContext.environment = PlayerMusicEnvironment.Wilderness;
                 }
 
                 return;
@@ -372,9 +386,9 @@ namespace DaggerfallWorkshop.Game
             if (playerEnterExit.IsPlayerInsideDungeon)
             {
                 if (playerEnterExit.IsPlayerInsideDungeonCastle)
-                    currentPlayerMusicEnvironment = PlayerMusicEnvironment.Castle;
+                    currentContext.environment = PlayerMusicEnvironment.Castle;
                 else
-                    currentPlayerMusicEnvironment = PlayerMusicEnvironment.DungeonInterior;
+                    currentContext.environment = PlayerMusicEnvironment.DungeonInterior;
 
                 return;
             }
@@ -395,29 +409,29 @@ namespace DaggerfallWorkshop.Game
                     case DFLocation.BuildingTypes.Library:
                     case DFLocation.BuildingTypes.PawnShop:
                     case DFLocation.BuildingTypes.WeaponSmith:
-                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Shop;
+                        currentContext.environment = PlayerMusicEnvironment.Shop;
                         break;
                     case DFLocation.BuildingTypes.Tavern:
-                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Tavern;
+                        currentContext.environment = PlayerMusicEnvironment.Tavern;
                         break;
                     case DFLocation.BuildingTypes.GuildHall:
                         if (playerEnterExit.FactionID == (int)FactionFile.FactionIDs.The_Mages_Guild)
                         {
-                            currentPlayerMusicEnvironment = PlayerMusicEnvironment.MagesGuild;
+                            currentContext.environment = PlayerMusicEnvironment.MagesGuild;
                         }
                         else
                         {
-                            currentPlayerMusicEnvironment = PlayerMusicEnvironment.Interior;
+                            currentContext.environment = PlayerMusicEnvironment.Interior;
                         }
                         break;
                     case DFLocation.BuildingTypes.Palace:
-                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Palace;
+                        currentContext.environment = PlayerMusicEnvironment.Palace;
                         break;
                     case DFLocation.BuildingTypes.Temple:
-                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Temple;
+                        currentContext.environment = PlayerMusicEnvironment.Temple;
                         break;
                     default:
-                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Interior;
+                        currentContext.environment = PlayerMusicEnvironment.Interior;
                         break;
                 }
 
@@ -433,21 +447,21 @@ namespace DaggerfallWorkshop.Game
             switch (playerWeather.WeatherType)
             {
                 case WeatherType.Cloudy:
-                    currentPlayerMusicWeather = PlayerMusicWeather.Cloudy;
+                    currentContext.weather = PlayerMusicWeather.Cloudy;
                     break;
                 case WeatherType.Overcast:
                 case WeatherType.Fog:
-                    currentPlayerMusicWeather = PlayerMusicWeather.Overcast;
+                    currentContext.weather = PlayerMusicWeather.Overcast;
                     break;
                 case WeatherType.Rain:
                 case WeatherType.Thunder:
-                    currentPlayerMusicWeather = PlayerMusicWeather.Rain;
+                    currentContext.weather = PlayerMusicWeather.Rain;
                     break;
                 case WeatherType.Snow:
-                    currentPlayerMusicWeather = PlayerMusicWeather.Snow;
+                    currentContext.weather = PlayerMusicWeather.Snow;
                     break;
                 default:
-                    currentPlayerMusicWeather = PlayerMusicWeather.Sunny;
+                    currentContext.weather = PlayerMusicWeather.Sunny;
                     break;
             }
         }
@@ -455,28 +469,30 @@ namespace DaggerfallWorkshop.Game
         void UpdatePlayerMusicTime()
         {
             if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay)
-                currentPlayerMusicTime = PlayerMusicTime.Day;
+                currentContext.time = PlayerMusicTime.Day;
             else
-                currentPlayerMusicTime = PlayerMusicTime.Night;
+                currentContext.time = PlayerMusicTime.Night;
+        }
+
+        void UpdatePlayerMusicArrested()
+        {
+            currentContext.arrested = playerEntity.Arrested;
         }
 
         void AssignPlaylist()
         {
             // Court window
-            if (playerEntity.Arrested)
+            if (currentContext.arrested)
             {
-                playingArrestedMusic = true;
                 currentPlaylist = CourtSongs;
                 return;
             }
-            else
-                playingArrestedMusic = false;
 
             // Weather music in cities and wilderness at day
             if (!dfUnity.WorldTime.Now.IsNight &&
-                (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City || currentPlayerMusicEnvironment == PlayerMusicEnvironment.Wilderness))
+                (currentContext.environment == PlayerMusicEnvironment.City || currentContext.environment == PlayerMusicEnvironment.Wilderness))
             {
-                switch (currentPlayerMusicWeather)
+                switch (currentContext.weather)
                 {
                     case PlayerMusicWeather.Sunny:
                         currentPlaylist = SunnySongs;
@@ -498,7 +514,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Cities and wilderness
-            if (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City || currentPlayerMusicEnvironment == PlayerMusicEnvironment.Wilderness)
+            if (currentContext.environment == PlayerMusicEnvironment.City || currentContext.environment == PlayerMusicEnvironment.Wilderness)
             {
                 // Night songs
                 if (dfUnity.WorldTime.Now.IsNight)
@@ -507,7 +523,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Environment
-            switch (currentPlayerMusicEnvironment)
+            switch (currentContext.environment)
             {
                 case PlayerMusicEnvironment.Castle:
                     currentPlaylist = CastleSongs;
@@ -539,6 +555,24 @@ namespace DaggerfallWorkshop.Game
                 case PlayerMusicEnvironment.Temple:
                     currentPlaylist = TempleSongs;
                     break;
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+
+        private void PlayerEnterExit_OnTransitionDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            if (!songPlayer)
+                return;
+
+            // Dungeons have a dedicated SongManager and only one play list, so SongManager would never change song
+            if (currentContext.environment == PlayerMusicEnvironment.DungeonInterior)
+            {
+                // Immediately change song (instead of waiting for next Update()) to avoid transitory states
+                UpdateSong(true);
             }
         }
 
