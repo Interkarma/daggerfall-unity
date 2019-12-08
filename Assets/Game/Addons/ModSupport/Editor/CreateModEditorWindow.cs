@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         List<string> Assets { get { return modInfo.Files; } set { modInfo.Files = value; } }         //list of assets to be added
         GUIStyle titleStyle = new GUIStyle();
         GUIStyle fieldStyle = new GUIStyle();
+        GUIContent documentationGUIContent;
 
         void OnEnable()
         {
@@ -72,6 +73,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             titleStyle.fontSize = 15;
             fieldStyle.fontSize = 12;
             minSize = new Vector2(1280, 600);
+
+            documentationGUIContent = new GUIContent(EditorGUIUtility.IconContent("_Help"));
+            documentationGUIContent.text = " Mod System Documentation";
         }
 
         void OnDisable()
@@ -146,7 +150,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     try
                     {
-                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", GetTempModDirPath(), new string[] { "JSON", "dfmod.json"});
+                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", ModManager.EditorModsDirectory, new string[] { "JSON", "dfmod.json"});
 
                         if (!File.Exists(currentFilePath))
                         {
@@ -170,15 +174,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     fileOpen = true;
                 }
+
+                if (GUILayout.Button(documentationGUIContent))
+                    Help.BrowseURL("https://www.dfworkshop.net/projects/daggerfall-unity/modding/");
             });
 
-            if(modInfo == null)
+            if (modInfo == null)
             {
                 fileOpen = false;
                 modInfo = new ModInfo();
             }
+
             if (!fileOpen) // if no fileopen, hide rest of UI
+            {
+                EditorGUILayout.HelpBox("Open a manifest file or create a new one to edit or build a mod.", MessageType.Info);
                 return;
+            }
 
             GUILayoutHelper.Vertical(() =>
             {
@@ -386,7 +397,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             string directory = "";
 
             if (!supressWindow)
-                path = EditorUtility.SaveFilePanel("Save", GetTempModDirPath(), modInfo.ModTitle, "dfmod.json");
+                path = EditorUtility.SaveFilePanel("Save", ModManager.EditorModsDirectory, modInfo.ModTitle, "dfmod.json");
 
             Debug.Log("save path: " + path);
 

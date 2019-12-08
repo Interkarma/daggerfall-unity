@@ -68,6 +68,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         int x = startX;
         int y = startY;
 
+        bool hasChangesFromPresets = false;
+
         #endregion
 
         #region Properties
@@ -212,6 +214,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             foreach (var uiControl in uiControls)
                 uiControl.Key.OnRefreshWindow(uiControl.Value);
+
+            hasChangesFromPresets = true;
         }
 
         /// <summary>
@@ -423,11 +427,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             if (liveChange)
             {
-                var changedSettings = new HashSet<string>();
-                SaveSettings(true, changedSettings);
+                if (hasChangesFromPresets)
+                {
+                    SaveSettings(true);
+                    mod.LoadSettingsCallback(new ModSettings(mod, settings), new ModSettingsChange());
+                }
+                else
+                {
+                    var changedSettings = new HashSet<string>();
+                    SaveSettings(true, changedSettings);
 
-                if (changedSettings.Count > 0)
-                    mod.LoadSettingsCallback(new ModSettings(mod, settings), new ModSettingsChange(changedSettings));
+                    if (changedSettings.Count > 0)
+                        mod.LoadSettingsCallback(new ModSettings(mod, settings), new ModSettingsChange(changedSettings));
+                }
             }
             else
             {

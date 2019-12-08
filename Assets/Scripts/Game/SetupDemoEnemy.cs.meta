@@ -1,10 +1,10 @@
 fileFormatVersion: 2
 guid: 2336327e6a5d8ab4bacbb4aa87a499d7
-timeCreated: 1435450864
-licenseType: Pro
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - LightAura: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

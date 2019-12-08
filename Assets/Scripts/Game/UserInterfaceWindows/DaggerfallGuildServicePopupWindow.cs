@@ -22,6 +22,8 @@ using System;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -62,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int TooGenerousId = 702;
         const int DonationThanksId = 703;
         const int SorcerorMagickaRecharge = 465;
+        const int TempleResetStats = 403;
 
         Texture2D baseTexture;
         PlayerEntity playerEntity;
@@ -168,10 +171,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.Show();
             }
             // Check for free healing (Temple members)
-            if (guild.FreeHealing() && playerEntity.CurrentHealth < playerEntity.MaxHealth)
+            if (guild.FreeHealing())
             {
-                playerEntity.SetHealth(playerEntity.MaxHealth);
-                DaggerfallUI.MessageBox(350);
+                // Free heal
+                if (playerEntity.CurrentHealth < playerEntity.MaxHealth)
+                {
+                    playerEntity.SetHealth(playerEntity.MaxHealth);
+                    DaggerfallUI.MessageBox(350);
+                }
+                // Check for free stat restoration (Temple members)
+                EntityEffectManager playerEffectMgr = playerEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
+                if (playerEffectMgr != null)
+                {
+                    if (playerEffectMgr.HasDamagedAttributes())
+                    {
+                        DaggerfallMessageBox messageBox =
+                            new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, TempleResetStats, uiManager.TopWindow);
+                        messageBox.OnButtonClick += ConfirmStatReset_OnButtonClick;
+                        messageBox.Show();
+                    }
+                }
             }
             // Check for magicka restoration (sorcerers)
             if (guild.FreeMagickaRecharge() && playerEntity.CurrentMagicka < playerEntity.MaxMagicka)
@@ -183,6 +202,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Refill magicka
                 playerEntity.SetMagicka(playerEntity.MaxMagicka);
+            }
+        }
+
+        private void ConfirmStatReset_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            CloseWindow();
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                EntityEffectManager playerEffectMgr = playerEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
+                playerEffectMgr.CureAllAttributes();
             }
         }
 

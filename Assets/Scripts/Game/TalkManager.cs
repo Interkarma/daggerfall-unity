@@ -2074,10 +2074,6 @@ namespace DaggerfallWorkshop.Game
                 if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
                 {
                     instantRebuildTopicListLocation = true;
-
-                    // Undiscover residences when they are a quest resource (named residence) when "add dialog" is done for this quest resource
-                    // Otherwise previously discovered residences will automatically show up on the automap when used in a quest
-                    UndiscoverQuestResidence(questID, resourceName, questResourceInfo);
                 }
                 else if (questResourceInfo.resourceType == QuestInfoResourceType.Person)
                 {
@@ -3391,7 +3387,7 @@ namespace DaggerfallWorkshop.Game
             // Get face for special NPCs here and return in this case
             if (factionData.type == 4)
             {
-                facePortraitArchive = DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
+                facePortraitArchive = (factionData.face > 60) ? DaggerfallTalkWindow.FacePortraitArchive.CommonFaces : DaggerfallTalkWindow.FacePortraitArchive.SpecialFaces;
                 recordIndex = factionData.face;
                 return;
             }

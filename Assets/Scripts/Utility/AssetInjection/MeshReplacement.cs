@@ -44,16 +44,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Properties
 
+        /// <summary>
+        /// Generates the scale for a <see cref="TreeInstance"/> where <c>1</c> is the reference value;
+        /// should return a different value each time for variety.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">This callback must not be set to null.</exception>
         public static Func<float> GetTreeScaleCallback
         {
             set { SetCallback(ref getTreeScaleCallback, value); }
         }
 
+        /// <summary>
+        /// Generates the color for a <see cref="TreeInstance"/>;
+        /// should return a different value each time for variety.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">This callback must not be set to null.</exception>
         public static Func<Color32> GetTreeColorCallback
         {
             set { SetCallback(ref getTreeColorCallback, value); }
         }
 
+        /// <summary>
+        /// Customizes terrain settings, such as tree distance or lod, before instantiating trees.
+        /// Note that many settings only affect objects of type <see cref="Tree"/> created with the
+        /// Unity Tree Editor and not other solutions like SpeedTree.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">This callback must not be set to null.</exception>
         public static Action<Terrain> SetTreesSettingsCallback
         {
             set { SetCallback(ref setTreesSettingsCallback, value); }
@@ -63,6 +79,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #region Public Methods
 
+        /// <summary>
+        /// Clears records of import attempts for assets from loose files and mods.
+        /// </summary>
         public static void RetryAssetImports()
         {
             triedBillboards.Clear();
@@ -136,7 +155,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Ensures that the requested imported model is assigned to the given transform and is positioned correctly.
         /// If archive and record mismatch, the requested prefab is imported while currently loaded gameobject is destroyed.
-        /// This has a similar purpose to <see cref="DaggerfallBillboard.SetMaterial()"/>.
+        /// This has a similar purpose to <see cref="DaggerfallBillboard.SetMaterial(int, int, int)"/>.
         /// </summary>
         /// <param name="archive">Texture archive for original billboard.</param>
         /// <param name="record">Texture record for original billboard.</param>

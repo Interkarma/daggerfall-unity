@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// WORK IN PROGRESS - Not currently implemented by any effects
     /// A custom effect unique to Daggerfall Unity.
-    /// Also a test-case for future effect mod support (e.g. custom text tokens for spellmaker & spellbook).
+    /// Also a test-case for future effect mod support (e.g. custom text tokens for spellmaker and spellbook).
     /// Works like a combined Drain/Fortify effect by draining target and fortifying caster by same amount.
     /// The vampiric link is permanent once establised until target dies or caster leaves the area.
     /// </summary>

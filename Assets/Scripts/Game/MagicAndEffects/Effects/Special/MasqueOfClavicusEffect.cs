@@ -18,7 +18,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     /// <summary>
     /// Used by the Masque of Clavicus. Improves all reaction mods.
-    /// Note: The real behavior of this artifact in Classic is currently unknown.
     /// </summary>
     public class MasqueOfClavicusEffect : BaseEntityEffect
     {
@@ -35,8 +34,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override void MagicRound()
         {
-            const int adjustmentAmount = 30; // TODO: this is a placeholder value, need to determine actual adjustment in classic
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            int adjustmentAmount = playerEntity.Stats.LivePersonality / 5;
 
             // Improve reactions with all social groups
             foreach (FactionFile.SocialGroups group in Enum.GetValues(typeof(FactionFile.SocialGroups)))

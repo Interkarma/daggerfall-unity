@@ -781,7 +781,7 @@ namespace DaggerfallWorkshop.Game.Questing
             for (int i = 0; i < chunks.Count; i++)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-                messageBox.SetTextTokens(chunks[i]);
+                messageBox.SetTextTokens(chunks[i], ExternalMCP);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.AllowCancel = true;
                 messageBox.ParentPanel.BackgroundColor = Color.clear;

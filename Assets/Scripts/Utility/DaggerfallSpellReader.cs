@@ -16,26 +16,25 @@ using System.Collections.Generic;
 using DaggerfallConnect.Save;
 using FullSerializer;
 
-
 namespace DaggerfallWorkshop.Utility
 {
-
     /// <summary>
-    /// Reads & parses spell data from spells.std & classic saves 
+    /// Reads and parses spell data from spells.std and classic saves. 
     /// </summary>
     public static class DaggerfallSpellReader
     {
-        const int SPELLRECORDSIZE               = 0x59;          //byte size of an individual spell record
+        /// <summary> Byte size of an individual spell record. </summary>
+        const int SPELLRECORDSIZE               = 0x59;
         const int EFFECT_DESCR_TEXTINDEX        = 1200;
         const int SPELLMAKER_DESCR_TEXTINDEX    = 1500;
         public const string DEFAULT_FILENAME    = "SPELLS.STD";
 
 
         /// <summary>
-        /// Parses a SPELLS.STD file
+        /// Parses a SPELLS.STD file.
         /// </summary>
-        /// <param name="filePath">if null, looks for SPELLS.STD in Arena2 path</param>
-        /// <returns>List of SpellRecordData structs</returns>
+        /// <param name="filePath">If null, looks for SPELLS.STD in Arena2 path.</param>
+        /// <returns>List of SpellRecordData structs.</returns>
         public static List<SpellRecord.SpellRecordData> ReadSpellsFile(string filePath = null)
         {
             var managedFile = new DaggerfallConnect.Utility.FileProxy();
@@ -82,11 +81,11 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Creates a spell record from byte array
+        /// Creates a spell record from byte array.
         /// </summary>
-        /// <param name="chunk"></param>
-        /// <param name="spellRecord"></param>
-        /// <returns></returns>
+        /// <param name="chunk">Input spell data; this is an array of bytes with length <see cref="SPELLRECORDSIZE"/>.</param>
+        /// <param name="spellRecord">Resulting spell record data.</param>
+        /// <returns>True if succeeded.</returns>
         public static bool ReadSpellData(byte[] chunk, out SpellRecord.SpellRecordData spellRecord)
         {
             spellRecord = new SpellRecord.SpellRecordData();
@@ -94,7 +93,7 @@ namespace DaggerfallWorkshop.Utility
 
             try
             {
-                if (chunk == null ||chunk.Length < SPELLRECORDSIZE)
+                if (chunk == null || chunk.Length < SPELLRECORDSIZE)
                     return succeeded;
 
                 MemoryStream stream = new MemoryStream(chunk);

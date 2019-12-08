@@ -643,11 +643,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", factionTableKey));
 
                 // Set based on parameters
-                if (p1 == 0 && p2 < -2)
+                if (p1 == 0 && p2 < -2 && p2 != -6)
                 {
                     // From usage in the quests it appears -3 and lower are local.
                     // Referencing quest Sx009 where player must locate and click an NPC with only a home location to go by
                     // and K0C00Y04 where two Group_7 npcs are local.
+                    // Interkarma Note: -6 is used by Thieves Guild introduction quest O0A0AL00 and should be a remote NPC. Treating -6 as remote.
                     scope = Place.Scopes.Local;
                 }
                 else if (p1 == 0 && p2 >= 0 && p2 <= 20 && p3 == 0)

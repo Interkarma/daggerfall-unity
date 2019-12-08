@@ -190,7 +190,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     return;
                 }
 
-                // Handle death check
+                // Handle death checks
+                if (!isFoeDead && foe.DeathTrigger)
+                    enemyEntityBehaviour.Entity.CurrentHealth = 0;
+
                 if (enemyEntityBehaviour.Entity.CurrentHealth <= 0 && !isFoeDead)
                 {
                     foe.IncrementKills();

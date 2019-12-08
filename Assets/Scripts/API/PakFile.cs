@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2019 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -166,6 +166,24 @@ namespace DaggerfallConnect.Arena2
             if (y < 0 || y >= PakRowCount) return -1;
 
             return Buffer[(y * PakRowLength) + x];
+        }
+
+        /// <summary>
+        /// Sets value for specified position in world map.
+        /// Allows loaded data from Pak file to be modified at runtime by mods.
+        /// </summary>
+        /// <param name="x">X position in world map. 0 to PakRowLength-1.</param>
+        /// <param name="y">Y position in world map. 0 to PakRowCount-1.</param>
+        /// <param name="value">Value of pak data to set.</param>
+        /// <returns>True if pak data was set, false otherwise.</returns>
+        public bool SetValue(int x, int y, byte value)
+        {
+            // Validate
+            if (x < 0 || x >= PakRowLength) return false;
+            if (y < 0 || y >= PakRowCount) return false;
+
+            Buffer[(y * PakRowLength) + x] = value;
+            return true;
         }
 
         #endregion

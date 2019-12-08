@@ -460,7 +460,8 @@ namespace DaggerfallWorkshop
         // Drops nature flats based on random chance scaled by simple rules
         public static void LayoutNatureBillboards(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int terrainDist)
         {
-            const float maxSteepness = 50f;         // 50
+            const float maxSteepness = 50f;             // 50
+            const float slopeSinkRatio = 70f;           // Sink flats slightly into ground as slope increases to prevent floaty trees.
             const float baseChanceOnDirt = 0.2f;        // 0.2
             const float baseChanceOnGrass = 0.9f;       // 0.4
             const float baseChanceOnStone = 0.05f;      // 0.05
@@ -568,7 +569,7 @@ namespace DaggerfallWorkshop
                     // Sample height and position billboard
                     Vector3 pos = new Vector3(x * scale, 0, y * scale);
                     float height2 = terrain.SampleHeight(pos + terrain.transform.position);
-                    pos.y = height2;
+                    pos.y = height2 - (steepness / slopeSinkRatio);
 
                     // Add to batch unless a mesh replacement is found
                     int record = Random.Range(1, 32);

@@ -28,7 +28,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-    //created with mod builder window, seralized to json, bundled into mod
+    /// <summary>
+    /// The content of a json mod manifest file, created from the Mod Builder and bundled with the mod itself.
+    /// </summary>
     [Serializable]
     public class ModInfo
     {
@@ -80,10 +82,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         internal string[] SpellIcons;
     }
 
+    /// <summary>
+    /// Options for a mod setup intro point, meaning a method with the <see cref="Invoke"/> attribute.
+    /// </summary>
     public struct SetupOptions : IComparable<SetupOptions>
     {
+        /// <summary>
+        /// The priority within invokable methods for the same mod.
+        /// </summary>
         public readonly int priority;
+
+        /// <summary>
+        /// The mod that found target method inside its assemblies.
+        /// </summary>
         public readonly Mod mod;
+
+        /// <summary>
+        /// The method to be invoked.
+        /// </summary>
         public readonly System.Reflection.MethodInfo mi;
 
         public SetupOptions(int priority, Mod mod, System.Reflection.MethodInfo mi)
@@ -93,6 +109,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.mi = mi;
         }
 
+        /// <summary>
+        /// Compares methods for their priority.
+        /// </summary>
         public int CompareTo(SetupOptions other)
         {
             if (other.priority == priority)
@@ -103,13 +122,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-    //passed to mod's Init methods called from ModManager
+    /// <summary>
+    /// Data passed to methods with the <see cref="Invoke"/> attribute when they are invoked by the Mod Manager.
+    /// It contains informations required to initialize custom scripts provided by a mod,
+    /// including the <see cref="Mod"/> instance associated to the class that receives this data.
+    /// </summary>
     public struct InitParams
     {
+        /// <summary>
+        /// The title of the mod.
+        /// </summary>
         public readonly string ModTitle;
+
+        /// <summary>
+        /// The position of the mod inside the mods collection.
+        /// </summary>
         public readonly int ModIndex;
+        
+        /// <summary>
+        /// The position of the mod in the load order.
+        /// </summary>
         public readonly int LoadPriority;
+
+        /// <summary>
+        /// The total number of mods loaded by Mod Manager.
+        /// </summary>
         public readonly int LoadedModsCount;
+
+        /// <summary>
+        /// The associated Mod instance that gives access, among the others, to bundled assets.
+        /// </summary>
         public readonly Mod Mod;
 
         public InitParams(Mod Mod, int ModIndex, int LoadedModsCount)
@@ -120,7 +162,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.ModIndex = ModIndex;
             this.LoadedModsCount = LoadedModsCount;
         }
-
     }
 
     public struct Source

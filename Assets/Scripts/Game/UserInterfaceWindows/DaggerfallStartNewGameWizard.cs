@@ -38,6 +38,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         CreateCharRaceSelect createCharRaceSelectWindow;
         CreateCharGenderSelect createCharGenderSelectWindow;
+        CreateCharChooseClassGen createCharChooseClassGenWindow;
+        CreateCharClassQuestions createCharClassQuestionsWindow;
         CreateCharClassSelect createCharClassSelectWindow;
         CreateCharCustomClass createCharCustomClassWindow;
         CreateCharChooseBio createCharChooseBioWindow;
@@ -58,7 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             SelectRace,
             SelectGender,
-            SelectClassMethod,      // Class questions not implemented, goes straight to SelectClassFromList
+            SelectClassMethod,
+            GenerateClass,
             SelectClassFromList,
             CustomClassBuilder,
             SelectBiographyMethod,
@@ -132,6 +135,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharGenderSelectWindow);
         }
 
+        void SetChooseClassGenWindow()
+        {
+            createCharChooseClassGenWindow = new CreateCharChooseClassGen(uiManager, createCharRaceSelectWindow);
+            createCharChooseClassGenWindow.OnClose += ChooseClassGen_OnClose;
+            wizardStage = WizardStages.SelectClassMethod;
+            uiManager.PushWindow(createCharChooseClassGenWindow);
+        }
+
+        void SetClassQuestionsWindow()
+        {
+            createCharClassQuestionsWindow = new CreateCharClassQuestions(uiManager);
+            createCharClassQuestionsWindow.OnClose += CreateCharClassQuestions_OnClose;
+            wizardStage = WizardStages.GenerateClass;
+            uiManager.PushWindow(createCharClassQuestionsWindow);
+        }
+
         void SetClassSelectWindow()
         {
             if (createCharClassSelectWindow == null)
@@ -163,10 +182,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetBiographyWindow()
         {
-            if (!characterDocument.isCustom)
-            {
-                characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
-            }
             createCharBiographyWindow = new CreateCharBiography(uiManager, characterDocument);
             createCharBiographyWindow.OnClose += CreateCharBiographyWindow_OnClose;
                 
@@ -293,11 +308,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!createCharGenderSelectWindow.Cancelled)
             {
                 characterDocument.gender = createCharGenderSelectWindow.SelectedGender;
-                SetClassSelectWindow();
+                SetChooseClassGenWindow();
             }
             else
             {
                 SetRaceSelectWindow();
+            }
+        }
+
+        void ChooseClassGen_OnClose()
+        {
+            if (createCharChooseClassGenWindow.ChoseGenerate)
+            {
+                SetClassQuestionsWindow();
+            }
+            else
+            {
+                SetClassSelectWindow();
+            }
+        }
+
+        void CreateCharClassQuestions_OnClose()
+        {
+            byte classIndex = createCharClassQuestionsWindow.ClassIndex;
+            if (classIndex != CreateCharClassQuestions.noClassIndex)
+            {
+                string fileName = "CLASS" + classIndex.ToString("00") + ".CFG";
+                string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, fileName);
+                if (files == null)
+                {
+                    throw new Exception("Could not load class file: " + fileName);
+                }
+                ClassFile classFile = new ClassFile(files[0]);
+                characterDocument.career = classFile.Career;
+                characterDocument.classIndex = classIndex;
+                SetChooseBioWindow();
+            }
+            else
+            {
+                SetClassSelectWindow();
             }
         }
 
@@ -366,10 +415,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Choose answers at random
                     System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
-                    if (!characterDocument.isCustom)
-                    {
-                        characterDocument.classIndex = createCharClassSelectWindow.SelectedClassIndex;
-                    }
                     BiogFile autoBiog = new BiogFile(characterDocument);
                     for (int i = 0; i < autoBiog.Questions.Length; i++)
                     {

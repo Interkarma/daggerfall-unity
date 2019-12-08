@@ -24,7 +24,7 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// General purpose pop-up window for displaying a message w/ an input text box
+    /// General purpose pop-up window for displaying a message with an input text box.
     /// </summary>
     public class DaggerfallInputMessageBox : DaggerfallPopupWindow
     {
@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// Handles event from textbox on user finishing entering input
+        /// Handles event from textbox on user finishing entering input.
         /// </summary>
         /// <param name="textBox"></param>
         /// <param name="text"></param>
@@ -250,12 +250,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// Returns player input & closes window
+        /// Signature for listening to the input received by a <see cref="DaggerfallInputMessageBox"/>.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="input"></param>
+        /// <param name="sender">The instance that received the input.</param>
+        /// <param name="input">Content of the input text box.</param>
         public delegate void OnReturnPlayerInputHandler(DaggerfallInputMessageBox sender, string input);
 
+        /// <summary>
+        /// Raised when the <see cref="DaggerfallInputMessageBox"/> window is closed.
+        /// </summary>
         public event OnReturnPlayerInputHandler OnGotUserInput;
 
         private void ReturnPlayerInputEvent(DaggerfallInputMessageBox sender, string userInput)

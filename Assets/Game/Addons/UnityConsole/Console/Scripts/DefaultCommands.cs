@@ -290,6 +290,12 @@ namespace Wenzil.Console
                                 for (int i = 0; i < args.Length; i++)
                                     if (blockName == args[i])
                                         locs.Add(dfLoc.Name);
+
+                            if (dfLoc.Dungeon.Blocks != null)
+                                foreach (DFLocation.DungeonBlock dBlock in dfLoc.Dungeon.Blocks)
+                                    for (int i = 0; i < args.Length; i++)
+                                        if (dBlock.BlockName == args[i])
+                                            locs.Add(dfLoc.Name);
                         }
                     }
                     string locJson = SaveLoadManager.Serialize(regionLocs.GetType(), regionLocs);
@@ -326,7 +332,6 @@ namespace Wenzil.Console
                     {
                         RmbSubRecord = blockData.RmbBlock.SubRecords[recordIndex],
                         BuildingType = (int)blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].BuildingType,
-                        FactionId = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].FactionId,
                         Quality = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].Quality,
                     };
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
@@ -1928,7 +1933,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add_all_equip";
             public static readonly string description = "Adds all equippable item types to inventory for the current characters gender & race. (for testing paperdoll images)";
-            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons)";
+            public static readonly string usage = "add_all_equip (clothing|clothingAllDyes|armor|weapons|magicWeapons)";
 
             public static ArmorMaterialTypes[] armorMaterials = {
                 ArmorMaterialTypes.Leather, ArmorMaterialTypes.Chain, ArmorMaterialTypes.Iron, ArmorMaterialTypes.Steel,
@@ -2049,12 +2054,17 @@ namespace Wenzil.Console
                         return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
 
                     case "weapons":
+                    case "magicWeapons":
                         foreach (WeaponMaterialTypes material in weaponMaterials)
                         {
                             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
-                            for (int i = 0; i < enumArray.Length; i++)
+                            for (int i = 0; i < enumArray.Length-1; i++)
                             {
                                 newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
+                                if (args[0] == "magicWeapons") {
+                                    newItem.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 5 } };
+                                    newItem.IdentifyItem();
+                                }
                                 playerEntity.Items.AddItem(newItem);
                             }
                         }
@@ -2201,7 +2211,10 @@ namespace Wenzil.Console
                 if (args == null || args.Length < 1)
                     return usage;
                 UnityEngine.Random.InitState(Time.frameCount);
-                DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
+                Quest quest = GameManager.Instance.QuestListsManager.GetQuest(args[0]);
+                if (quest != null)
+                    QuestMachine.Instance.InstantiateQuest(quest);
+
                 return "Finished";
             }
         }

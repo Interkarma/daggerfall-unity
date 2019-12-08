@@ -331,7 +331,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets ID of map pixel.
         /// This can be mapped to location IDs and quest IDs.
-        /// MapTableData.MapId & 0x000fffff = WorldPixelID.
+        /// MapTableData.MapId &amp; 0x000fffff = WorldPixelID.
         /// </summary>
         /// <param name="mapPixelX">Map pixel X.</param>
         /// <param name="mapPixelY">Map pixel Y.</param>
@@ -351,7 +351,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets ID of map pixel using latitude and longitude.
         /// This can be mapped to location IDs and quest IDs.
-        /// MapTableData.MapId & 0x000fffff = WorldPixelID.
+        /// MapTableData.MapId &amp; 0x000fffff = WorldPixelID.
         /// </summary>
         /// <param name="longitude">Longitude position.</param>
         /// <param name="latitude">Latitude position.</param>
@@ -834,6 +834,34 @@ namespace DaggerfallConnect.Arena2
         {
             mapPixelX += 1;
             return politicPak.GetValue(mapPixelX, mapPixelY);
+        }
+
+        /// <summary>
+        /// Sets climate index from CLIMATE.PAK based on world pixel.
+        /// Allows loaded climate data from Pak file to be modified by mods.
+        /// </summary>
+        /// <param name="mapPixelX">Map pixel X position.</param>
+        /// <param name="mapPixelY">Map pixel Y position.</param>
+        /// <param name="value">The climate to set for the specified map pixel.</param>
+        /// <returns>True if climate index was set, false otherwise.</returns>
+        public bool SetClimateIndex(int mapPixelX, int mapPixelY, Climates value)
+        {
+            mapPixelX += 1;
+            return climatePak.SetValue(mapPixelX, mapPixelY, (byte)value);
+        }
+
+        /// <summary>
+        /// Reads politic index from POLITIC.PAK based on world pixel.
+        /// Allows loaded region data from Pak file to be modified by mods.
+        /// </summary>
+        /// <param name="mapPixelX">Map pixel X position.</param>
+        /// <param name="mapPixelY">Map pixel Y position.</param>
+        /// <param name="value">The politic index to set for the specified map pixel.</param>
+        /// <returns>True if politic index was set, false otherwise.</returns>
+        public bool SetPoliticIndex(int mapPixelX, int mapPixelY, byte value)
+        {
+            mapPixelX += 1;
+            return politicPak.SetValue(mapPixelX, mapPixelY, value);
         }
 
         #endregion
