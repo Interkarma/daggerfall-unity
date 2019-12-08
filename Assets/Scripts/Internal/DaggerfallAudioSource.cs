@@ -207,6 +207,29 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Plays sound clip once at a specified position without changing clip on AudioSource.
+        /// </summary>
+        public void PlayClipAtPoint(int soundIndex, Vector3 position, float volumeScale = 1f)
+        {
+            if (enabled && ReadyCheck())
+            {
+                AudioClip clip = dfUnity.SoundReader.GetAudioClip(soundIndex);
+                if (clip)
+                {
+                    AudioSourceExtensionMethods.PlayClipAtPointWhenReady(clip, position, volumeScale);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Plays sound clip once at a specified position without changing clip on AudioSource.
+        /// </summary>
+        public void PlayClipAtPoint(SoundClips soundClip, Vector3 position, float volumeScale = 1f)
+        {
+            PlayClipAtPoint((int)soundClip, position, volumeScale);
+        }
+
+        /// <summary>
         /// Plays sound ID once without changing clip on AudioSource.
         /// </summary>
         public void PlayOneShot(uint soundID, float spatialBlend = 1, float volumeScale = 1f)

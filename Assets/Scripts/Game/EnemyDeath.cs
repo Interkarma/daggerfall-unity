@@ -68,13 +68,6 @@ namespace DaggerfallWorkshop.Game
                     return;
             }
 
-            // Play body collapse sound
-            if (DaggerfallUI.Instance.DaggerfallAudioSource)
-            {
-                AudioClip collapseSound = DaggerfallUI.Instance.DaggerfallAudioSource.GetAudioClip((int)SoundClips.BodyFall);
-                AudioSource.PlayClipAtPoint(collapseSound, entityBehaviour.transform.position, 1.05f);
-            }
-
             // Disable enemy gameobject
             // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);
@@ -109,6 +102,12 @@ namespace DaggerfallWorkshop.Game
             // Many quests will stash a reward in enemy inventory for player to find
             // This will be in addition to normal random loot table generation
             loot.Items.TransferAll(entityBehaviour.Entity.Items);
+
+            // Play body collapse sound
+            if (DaggerfallUI.Instance.DaggerfallAudioSource)
+            {
+                DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint(SoundClips.BodyFall, loot.transform.position, 1f);
+            }
 
             // Lower enemy alert state on player now that enemy is dead
             // If this is final enemy targeting player then alert state will remain clear
