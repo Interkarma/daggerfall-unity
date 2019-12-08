@@ -164,3 +164,6 @@ exteriorAutomapToolTipRotateRightButton,	"left click: rotate map to the right (h
 exteriorAutomapToolTipUpstairsButton,		"left click: zoom in (hotkey: {0})\rright click: apply maximum zoom)"
 exteriorAutomapToolTipDownstairsButton,		"left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)"
 exteriorAutomapToolTipPanelCompass,			"left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})"
+
+- Save/Load window
+loading,                                    "Please wait..."

@@ -487,7 +487,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
                 }
 
-                loadingLabel.Text = "Please wait...";
+                loadingLabel.Text = TextManager.Instance.GetText("DaggerfallUI", "loading");
                 loading = true;
             }
         }
