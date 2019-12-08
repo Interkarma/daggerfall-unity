@@ -50,6 +50,7 @@ EnableInventoryInfoPanel=True
 EnableEnhancedItemLists=False
 EnableVitalsIndicators=True
 EnableModernConversationStyleInTalkWindow=False
+IconsPositioningScheme=Classic
 HelmAndShieldMaterialDisplay=0
 InteractionModeIcon = minimal
 EnableArrowCounter=True
