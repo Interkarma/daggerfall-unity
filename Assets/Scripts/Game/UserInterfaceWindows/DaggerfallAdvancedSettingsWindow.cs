@@ -33,7 +33,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        enum InteractionModeIconModes { none, minimal, large, classic, colour, monochrome };
+        enum InteractionModeIconModes { none, minimal, large, classic, colour, monochrome, classicXhair, colourXhair };
+        enum IconsPositioningSchemes { classic, medium, small, smalldeckleft, smalldeckright, smallvertleft, smallvertright, smallhorzbottom };
 
         const string textTable = "GameSettings";
 
@@ -110,6 +111,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox inventoryInfoPanel;
         Checkbox enhancedItemLists;  
         Checkbox enableModernConversationStyleInTalkWindow;
+        HorizontalSlider iconsPositioningScheme;
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox geographicBackgrounds;
         Checkbox dungeonExitWagonPrompt;
@@ -269,6 +271,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             inventoryInfoPanel = AddCheckbox(rightPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
             enhancedItemLists = AddCheckbox(rightPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
             enableModernConversationStyleInTalkWindow = AddCheckbox(rightPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
+            iconsPositioningScheme = AddSlider(rightPanel, "iconsPositioningScheme",
+                Enum.IsDefined(typeof(IconsPositioningSchemes), DaggerfallUnity.Settings.IconsPositioningScheme) ? (int)Enum.Parse(typeof(IconsPositioningSchemes), DaggerfallUnity.Settings.IconsPositioningScheme) : 0,
+                Enum.GetNames(typeof(IconsPositioningSchemes)));
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
@@ -386,6 +391,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
             DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow = enableModernConversationStyleInTalkWindow.IsChecked;
+            DaggerfallUnity.Settings.IconsPositioningScheme = ((IconsPositioningSchemes)iconsPositioningScheme.Value).ToString();
             DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay = helmAndShieldMaterialDisplay.ScrollIndex;
             DaggerfallUnity.Settings.EnableGeographicBackgrounds = geographicBackgrounds.IsChecked;
             DaggerfallUnity.Settings.DungeonExitWagonPrompt = dungeonExitWagonPrompt.IsChecked;

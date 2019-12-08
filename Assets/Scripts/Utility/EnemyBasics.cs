@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -811,6 +812,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 0,
                 SeesThroughInvisibility = true,
                 LootTableKey = "I",
+                NoShadow = true,
                 SoulPts = 30000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3 },
                 SpellAnimFrames = new int[] { 0, 0, 0, 0, 0, 0 },
@@ -987,6 +989,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 0,
                 SeesThroughInvisibility = true,
                 LootTableKey = "I",
+                NoShadow = true,
                 SoulPts = 30000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3 },
                 SpellAnimFrames = new int[] { 0, 0, 0, 0, 0 },
@@ -1059,6 +1062,8 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 800,
                 SeesThroughInvisibility = true,
                 LootTableKey = "J",
+                NoShadow = true,
+                GlowColor = new Color(18, 68, 88) * 0.1f,
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, -1, 4, 5, 0 },
                 ChanceForAttack2 = 50,
@@ -1096,6 +1101,8 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 800,
                 SeesThroughInvisibility = true,
                 LootTableKey = "J",
+                NoShadow = true,
+                GlowColor = new Color(243, 239, 44) * 0.1f,
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, -1, 4 },
                 ChanceForAttack2 = 50,
@@ -1172,6 +1179,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 400,
                 SeesThroughInvisibility = true,
                 LootTableKey = "Q",
+                NoShadow = true,
                 SoulPts = 70000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, -1, 4, 5 },
                 SpellAnimFrames = new int[] { 1, 1, 5, 5 },
@@ -1242,6 +1250,7 @@ namespace DaggerfallWorkshop.Utility
                 Weight = 400,
                 SeesThroughInvisibility = true,
                 LootTableKey = "Q",
+                NoShadow = true,
                 SoulPts = 100000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, -1, 4, 5 },
                 SpellAnimFrames = new int[] { 1, 1, 5, 5 },
@@ -1414,6 +1423,8 @@ namespace DaggerfallWorkshop.Utility
                 ArmorValue = 6,
                 ParrySounds = false,
                 MapChance = 0,
+                NoShadow = true,
+                GlowColor = new Color(243, 150, 44) * 0.05f,
                 Weight = 1000,
                 SoulPts = 30000,
                 PrimaryAttackAnimFrames = new int[] { 0, -1, 1, 2, 3, 4 },
@@ -2222,7 +2233,7 @@ namespace DaggerfallWorkshop.Utility
         /// Build a dictionary of enemies keyed by ID.
         /// Use this once and store for faster enemy lookups.
         /// </summary>
-        /// <returns>Dictionary<int, MobileEnemy></returns>
+        /// <returns>Resulting dictionary of mobile enemies.</returns>
         public static Dictionary<int, MobileEnemy> BuildEnemyDict()
         {
             Dictionary<int, MobileEnemy> enemyDict = new Dictionary<int, MobileEnemy>();

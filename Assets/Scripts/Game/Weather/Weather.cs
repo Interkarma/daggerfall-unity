@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.Weather
     }
 
     /// <summary>
-    /// The weather odds for one climate & season
+    /// The weather odds for one climate and season.
     /// </summary>
     [Serializable]
     public class WeatherClimateSeason
@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.Weather
         /// <p/>
         /// This isn't critical since both methods are constant time and the weather logic is infrequent. But oh well!
         /// </summary>
-        /// <returns>Next weather pattern to move towards</returns>
+        /// <returns>Next weather pattern to move towards.</returns>
         public WeatherType GetWeather()
         {
             CompileOdds();
@@ -128,6 +128,9 @@ namespace DaggerfallWorkshop.Game.Weather
             return WeatherType.Sunny;
         }
 
+        /// <summary>
+        /// Makes a pretty formatted string with all weather odds.
+        /// </summary>
         public override string ToString()
         {
             return string.Format(

@@ -261,6 +261,22 @@ namespace DaggerfallWorkshop.Game
             IsStorming = false;
         }
 
+        public static bool IsSnowFreeClimate(int climateIndex)
+        {
+            var climate = (MapsFile.Climates)climateIndex;
+            switch (climate)
+            {
+                case MapsFile.Climates.Desert:
+                case MapsFile.Climates.Desert2:
+                case MapsFile.Climates.Rainforest:
+                case MapsFile.Climates.Subtropical:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         #endregion
 
         #region Snow

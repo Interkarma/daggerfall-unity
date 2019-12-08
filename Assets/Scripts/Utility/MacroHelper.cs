@@ -20,15 +20,11 @@ using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Utility
 {
-    /**
-     * <summary>
-     * Helper class for context sensitive macros like '%abc' that're used in following Daggerfall files:
-     * arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt
-     * </summary>
-     *
-     * See http://forums.dfworkshop.net/viewtopic.php?f=23&t=673 for details about adding new macro handlers.
-     *
-     */
+    /// <summary>
+    /// Helper class for context sensitive macros, like <c>"%abc"</c>, that are used in following Daggerfall files:
+    /// arena2\text.rsc, fall.exe, arena2\*.qrc, or arena2\bio*.txt.
+    /// See <see href="http://forums.dfworkshop.net/viewtopic.php?f=23%26t=673">this topic</see> for details about adding new macro handlers.
+    /// </summary>
     public static class MacroHelper
     {
         public delegate string MacroHandler(IMacroContextProvider mcp = null);

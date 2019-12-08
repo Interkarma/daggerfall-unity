@@ -352,7 +352,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return false;
 
             // Check if enemies nearby
-            if (GameManager.Instance.AreEnemiesNearby())
+            if (GameManager.Instance.AreEnemiesNearby(true))
             {
                 enemyBrokeRest = true;
                 return true;

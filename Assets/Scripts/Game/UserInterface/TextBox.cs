@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -42,6 +43,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool upperOnly = false;
         bool fixedSize = false;
         bool previousSDFState;
+
+        // Are those guaranteed to be strings of one character?
+        readonly static char minus = CultureInfo.CurrentCulture.NumberFormat.NegativeSign[0];
+        readonly static char dot = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
 
         public int MaxCharacters
         {
@@ -225,9 +230,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 if (numeric)
                 {
-                    const char minus = '-';
-                    const char dot = '.';
-
                     int value = (int)character;
                     if (value < 0x30 || value > 0x39)
                     {

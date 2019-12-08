@@ -10,15 +10,8 @@
 //
 
 using UnityEngine;
-using System;
-using System.IO;
-using System.Collections;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -37,7 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
         HUDFlickerController flickerController = new HUDFlickerController();
-        HUDInteractionModeIcon interactionModeIcon = new HUDInteractionModeIcon();
+        HUDInteractionModeIcon interactionModeIcon;
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
         EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
@@ -111,6 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {
+            interactionModeIcon = new HUDInteractionModeIcon(crosshair);
             parentPanel.BackgroundColor = Color.clear;
             ShowPopupText = true;
             ShowMidScreenText = true;

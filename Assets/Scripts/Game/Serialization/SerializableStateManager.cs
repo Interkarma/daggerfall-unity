@@ -17,9 +17,9 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
-    /// Manages stateful game objects. (implementations of ISerializableGameObject)
-    /// Used by SaveLoadManager to serialize scene state.
-    /// Uses a scene cache to persist building interiors & player owned areas.
+    /// Manages stateful game objects (implementations of <see cref="ISerializableGameObject"/>).
+    /// Used by <see cref="SaveLoadManager"/> to serialize scene state.
+    /// Uses a scene cache to persist building interiors and player owned areas.
     /// </summary>
     public class SerializableStateManager
     {

@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -40,7 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Button prevFaceButton;
         Button nextFaceButton;
         int faceIndex = 0;
-        Texture2D[] faceTextures = new Texture2D[faceCount];
+        ImageData[] faceTextures = new ImageData[faceCount];
         Texture2D currentFaceTexture;
 
         public int FaceIndex
@@ -87,10 +88,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 for (int i = 0; i < faceCount; i++)
                 {
-                    if (raceGender == Genders.Male)
-                        faceTextures[i] = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsMale, i);
-                    else if (raceGender == Genders.Female)
-                        faceTextures[i] = DaggerfallUI.GetTextureFromCifRci(raceTemplate.PaperDollHeadsFemale, i);
+                    String filename = raceGender == Genders.Male ? raceTemplate.PaperDollHeadsMale : raceTemplate.PaperDollHeadsFemale;
+                    faceTextures[i] = ImageReader.GetImageData(filename, i, 0, true, true);
                 }
             }
 
@@ -99,16 +98,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetCurrentFace()
         {
-            currentFaceTexture = faceTextures[faceIndex];
+            currentFaceTexture = faceTextures[faceIndex].texture;
 
             if (currentFaceTexture != null)
             {
-                if (raceGender == Genders.Male)
-                    facePanel.Size = TextureReplacement.GetSize(currentFaceTexture, raceTemplate.PaperDollHeadsMale, faceIndex);
-                else if (raceGender == Genders.Female)
-                    facePanel.Size = TextureReplacement.GetSize(currentFaceTexture, raceTemplate.PaperDollHeadsFemale, faceIndex);
-
                 facePanel.BackgroundTexture = currentFaceTexture;
+                facePanel.Size = new Vector2(faceTextures[faceIndex].width, faceTextures[faceIndex].height);
             }
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DaggerfallWorkshop;
 
@@ -10,44 +11,43 @@ namespace UnityEngine
 
         public static void PlayWhenReady(this AudioSource audioSource, AudioClip audioClip, float volumeScale)
         {
-            DaggerfallUnity.Instance.StartCoroutine(audioSource.PlayWhenReadyCoroutine(audioClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
-        }
-
-        private static IEnumerator PlayWhenReadyCoroutine(this AudioSource audioSource, AudioClip audioClip, float volume)
-        {
-            float loadWaitTimer = 0f;
-            while (audioClip.loadState == AudioDataLoadState.Unloaded ||
-                   audioClip.loadState == AudioDataLoadState.Loading)
-            {
-                loadWaitTimer += Time.deltaTime;
-                if (loadWaitTimer > audioLoopMaxDelay)
-                    yield break;
-                yield return null;
-            }
-            audioSource.clip = audioClip;
-            audioSource.volume = volume;
-            audioSource.Play();
+            DaggerfallUnity.Instance.StartCoroutine(WhenClipReadyCoroutine(audioClip, audioLoopMaxDelay,
+                clip =>
+                {
+                    audioSource.clip = clip;
+                    audioSource.volume = volumeScale * DaggerfallUnity.Settings.SoundVolume;
+                    audioSource.Play();
+                }));
         }
 
         public static void PlayOneShotWhenReady(this AudioSource audioSource, AudioClip audioClip, float volumeScale)
         {
-            DaggerfallUnity.Instance.StartCoroutine(audioSource.PlayOneShotWhenReadyCoroutine(audioClip, volumeScale * DaggerfallUnity.Settings.SoundVolume));
+            DaggerfallUnity.Instance.StartCoroutine(WhenClipReadyCoroutine(audioClip, audioClipMaxDelay,
+                clip =>
+                {
+                    audioSource.volume = volumeScale * DaggerfallUnity.Settings.SoundVolume;
+                    audioSource.PlayOneShot(clip);
+                }));
         }
 
-        private static IEnumerator PlayOneShotWhenReadyCoroutine(this AudioSource audioSource, AudioClip audioClip, float volume)
+        public static void PlayClipAtPointWhenReady(AudioClip audioClip, Vector3 position, float volumeScale)
+        {
+            DaggerfallUnity.Instance.StartCoroutine(WhenClipReadyCoroutine(audioClip, audioClipMaxDelay,
+                clip => AudioSource.PlayClipAtPoint(clip, position, volumeScale * DaggerfallUnity.Settings.SoundVolume)));
+        }
+
+        private static IEnumerator WhenClipReadyCoroutine(AudioClip audioClip, float maxDelay, Action<AudioClip> clipHandler)
         {
             float loadWaitTimer = 0f;
             while (audioClip.loadState == AudioDataLoadState.Unloaded ||
                    audioClip.loadState == AudioDataLoadState.Loading)
             {
-                loadWaitTimer += Time.deltaTime;
-                if (loadWaitTimer > audioClipMaxDelay)
+                loadWaitTimer += Time.unscaledDeltaTime;
+                if (loadWaitTimer > maxDelay)
                     yield break;
                 yield return null;
             }
-            audioSource.volume = volume;
-            audioSource.PlayOneShot(audioClip);
+            clipHandler(audioClip);
         }
-
     }
 }
