@@ -595,7 +595,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Searches all effects in all bundles to find incumbent of type T.
         /// </summary>
-        /// <typeparam name="T">Found incumbent effect of type T or null.</typeparam>
+        /// <typeparam name="T">Effect class to search for.</typeparam>
+        /// <returns>Found incumbent effect of type T or null.</returns>
         public IEntityEffect FindIncumbentEffect<T>()
         {
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -608,6 +609,27 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Searches all effects in all bundles to find all incumbents of type T.
+        /// Useful for finding all effects inheriting from a specific parent effect.
+        /// </summary>
+        /// <typeparam name="T">Effect class to search for.</typeparam>
+        /// <returns>All found incumbent effect of type T. Can be null or empty.</returns>
+        public IEntityEffect[] FindIncumbentEffects<T>()
+        {
+            List<IEntityEffect> effects = new List<IEntityEffect>();
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is T)
+                        effects.Add(effect);
+                }
+            }
+
+            return effects.ToArray();
         }
 
         /// <summary>
@@ -649,7 +671,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     int damage = Mathf.Abs(mod);
                     if (remaining > damage)
                     {
-                        effect.HealAttributeDamage(stat, remaining - damage);
+                        effect.HealAttributeDamage(stat, damage);
                         remaining -= damage;
                     }
                     else
@@ -1426,6 +1448,56 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        public void CureAllAttributes()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    (effect as BaseEntityEffect).CureAttributeDamage();
+                }
+            }
+        }
+
+        public void CureAllSkills()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    (effect as BaseEntityEffect).CureSkillDamage();
+                }
+            }
+        }
+
+        public bool HasDamagedAttributes()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (!(effect as BaseEntityEffect).AllAttributesHealed())
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasDamagedSkills()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (!(effect as BaseEntityEffect).AllSkillsHealed())
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public void CureAll()
         {
             DaggerfallEntity entity = entityBehaviour.Entity;
@@ -1434,6 +1506,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entity.CurrentMagicka = entity.MaxMagicka;
             CureAllPoisons();
             CureAllDiseases();
+            CureAllAttributes();
+            CureAllSkills();
         }
 
         public bool HasVampirism()
