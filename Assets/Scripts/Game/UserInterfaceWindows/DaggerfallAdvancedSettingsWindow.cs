@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        enum InteractionModeIconModes { none, minimal, large, classic, colour, monochrome };
+        enum InteractionModeIconModes { none, minimal, large, classic, colour, monochrome, classicXhair, colourXhair };
         enum IconsPositioningSchemes { classic, medium, small, smalldeckleft, smalldeckright, smallvertleft, smallvertright, smallhorzbottom };
 
         const string textTable = "GameSettings";
