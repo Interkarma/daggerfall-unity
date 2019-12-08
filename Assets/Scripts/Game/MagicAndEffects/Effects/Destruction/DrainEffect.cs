@@ -99,12 +99,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 forcedRoundsRemaining = 0;
         }
 
-        public virtual void CureAttributeDamage()
-        {
-            // Fully heal magnitude of attribute drained by this effect
-            HealAttributeDamage(drainStat, magnitude);
-        }
-
         void ShowPlayerDrained()
         {
             // Output "you feel drained." if the host manager is player

@@ -183,8 +183,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 EntityEffectManager playerEffectMgr = playerEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
                 if (playerEffectMgr != null)
                 {
-                    IEntityEffect drainEffect = playerEffectMgr.FindIncumbentEffect<DrainEffect>();
-                    if (drainEffect != null)
+                    if (playerEffectMgr.HasDamagedAttributes())
                     {
                         DaggerfallMessageBox messageBox =
                             new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, TempleResetStats, uiManager.TopWindow);
@@ -212,7 +211,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 EntityEffectManager playerEffectMgr = playerEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
-                playerEffectMgr.CureAllDrainEffects();
+                playerEffectMgr.CureAllAttributes();
             }
         }
 

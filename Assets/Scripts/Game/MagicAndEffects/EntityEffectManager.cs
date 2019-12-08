@@ -1448,17 +1448,54 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        public void CureAllDrainEffects()
+        public void CureAllAttributes()
         {
-            // Cure all drain effects
-            IEntityEffect[] effects = FindIncumbentEffects<DrainEffect>();
-            if (effects != null && effects.Length > 0)
+            foreach (LiveEffectBundle bundle in instancedBundles)
             {
-                foreach (IEntityEffect effect in effects)
+                foreach (IEntityEffect effect in bundle.liveEffects)
                 {
-                    (effect as DrainEffect).CureAttributeDamage();
+                    (effect as BaseEntityEffect).CureAttributeDamage();
                 }
             }
+        }
+
+        public void CureAllSkills()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    (effect as BaseEntityEffect).CureSkillDamage();
+                }
+            }
+        }
+
+        public bool HasDamagedAttributes()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (!(effect as BaseEntityEffect).AllAttributesHealed())
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasDamagedSkills()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (!(effect as BaseEntityEffect).AllSkillsHealed())
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         public void CureAll()
@@ -1469,7 +1506,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entity.CurrentMagicka = entity.MaxMagicka;
             CureAllPoisons();
             CureAllDiseases();
-            CureAllDrainEffects();
+            CureAllAttributes();
+            CureAllSkills();
         }
 
         public bool HasVampirism()
