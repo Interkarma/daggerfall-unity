@@ -274,7 +274,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateClimbingChance(PlayerEntity player, DaggerfallEntity na, int basePercentSuccess)
         {
             Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateClimbing", out del))
+            if (formula_2de_2i.TryGetValue("CalculateClimbingChance", out del))
                 return del(player, null, basePercentSuccess);
 
             int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
