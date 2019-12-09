@@ -266,6 +266,31 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Clamp(chance, 5, 95);
         }
 
+        public static int CalculateClimbingChance(PlayerEntity player, DaggerfallEntity na, int basePercentSuccess)
+        {
+            Formula_2de_2i del;
+            if (formula_2de_2i.TryGetValue("CalculateClimbing", out del))
+                return del(player, null, basePercentSuccess);
+
+            int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
+            int luck = player.Stats.GetLiveStatValue(DFCareer.Stats.Luck);
+            if (player.Race == Races.Khajiit)
+                skill += 30;
+
+            // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
+            if (player.IsEnhancedClimbing)
+                skill *= 2;
+
+            // Clamp skill range
+            skill = Mathf.Clamp(skill, 5, 95);
+            float luckFactor = Mathf.Lerp(0, 10, luck * 0.01f);
+
+            // Skill Check
+            int chance = (int) (Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor);
+
+            return chance;
+        }
+
         // Calculate how many uses a skill needs before its value will rise.
         public static int CalculateSkillUsesForAdvancement(int skillValue, int skillAdvancementMultiplier, float careerAdvancementMultiplier, int level)
         {

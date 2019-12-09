@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -606,23 +607,9 @@ namespace DaggerfallWorkshop.Game
             if (overrideSkillCheck)
                 return true;
 
-            int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
-            int luck = player.Stats.GetLiveStatValue(DFCareer.Stats.Luck);
-            if (player.Race == Entity.Races.Khajiit)
-                skill += 30;
+            int percentSuccess = FormulaHelper.CalculateClimbingChance(player, null, basePercentSuccess);
 
-            // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
-            if (player.IsEnhancedClimbing)
-                skill *= 2;
-
-            // Clamp skill range
-            skill = Mathf.Clamp(skill, 5, 95);
-            float luckFactor = Mathf.Lerp(0, 10, luck * 0.01f);
-
-            // Skill Check
-            float percentSuccess = Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor;
-
-            if (Dice100.FailedRoll((int)percentSuccess))
+            if (Dice100.FailedRoll(percentSuccess))
             {
                 // Don't allow skill check to break climbing while swimming
                 // Water makes it easier to climb
