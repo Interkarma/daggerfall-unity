@@ -657,6 +657,7 @@ namespace DaggerfallWorkshop
             if (check && !isPlayerInLocationRect)
             {
                 // Player has entered location rect
+                isPlayerInLocationRect = check;
                 RaiseOnEnterLocationRectEvent(CurrentLocation);
 
                 // Perform location discovery
@@ -665,11 +666,9 @@ namespace DaggerfallWorkshop
             else if (!check && isPlayerInLocationRect)
             {
                 // Player has left a location rect
+                isPlayerInLocationRect = check;
                 RaiseOnExitLocationRectEvent();
             }
-
-            // Update last known state
-            isPlayerInLocationRect = check;
         }
 
         public bool ReadyCheck()
