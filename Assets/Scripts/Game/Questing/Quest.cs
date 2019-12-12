@@ -421,9 +421,15 @@ namespace DaggerfallWorkshop.Game.Questing
         public void Dispose()
         {
             // Dispose of quest resources
-            foreach(QuestResource resource in resources.Values)
+            foreach (QuestResource resource in resources.Values)
             {
                 resource.Dispose();
+            }
+
+            // Dispose actions for all quest tasks
+            foreach (Task task in tasks.Values)
+            {
+                task.DisposeActions();
             }
         }
 

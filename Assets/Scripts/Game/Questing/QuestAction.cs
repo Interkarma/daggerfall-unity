@@ -100,6 +100,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Implementor should override this is if special handling needed on rearm.
         /// </summary>
         void RearmAction();
+
+        /// <summary>
+        /// Called to dispose action when quest ends.
+        /// </summary>
+        void Dispose();
     }
 
     /// <summary>
@@ -164,6 +169,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (isComplete && allowRearm)
                 isComplete = false;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
         }
 
         #region Serialization
