@@ -233,7 +233,8 @@ namespace DaggerfallConnect.Save
 
                     // Parse MAPSAVE data for discovered locations
                     DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-                    for (int i = 0; i < regionData.LocationCount; i++)
+                    int locationCount = Math.Min(data.Length, (int)regionData.LocationCount);
+                    for (int i = 0; i < locationCount; i++)
                     {
                         // If a location is marked as discovered in classic but not DF Unity, discover it for DF Unity
                         if ((data[i] & 0x40) != 0 && !regionData.MapTable[i].Discovered)
