@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.ClassicKey = MakeClassicKey(26, 255);
+            properties.ClassicKey = MakeClassicKey(28, 255);
             properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "climbing");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1578);
