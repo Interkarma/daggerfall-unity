@@ -255,22 +255,22 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate chance of being caught shoplifting items
-        public static int CalculateShopliftingChance(PlayerEntity player, DaggerfallEntity na, int shopQuality, int weightAndNumItems)
+        public static int CalculateShopliftingChance(PlayerEntity player, int shopQuality, int weightAndNumItems)
         {
-            Func<PlayerEntity, DaggerfallEntity, int, int, int> del;
+            Func<PlayerEntity, int, int, int> del;
             if (TryGetOverride("CalculateShopliftingChance", out del))
-                return del(player, null, shopQuality, weightAndNumItems);
+                return del(player, shopQuality, weightAndNumItems);
 
             int chance = 100 - player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
             chance += shopQuality + weightAndNumItems;
             return Mathf.Clamp(chance, 5, 95);
         }
 
-        public static int CalculateClimbingChance(PlayerEntity player, DaggerfallEntity na, int basePercentSuccess)
+        public static int CalculateClimbingChance(PlayerEntity player, int basePercentSuccess)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateClimbingChance", out del))
-                return del(player, null, basePercentSuccess);
+            Func<PlayerEntity, int, int> del;
+            if (TryGetOverride("CalculateClimbingChance", out del))
+                return del(player, basePercentSuccess);
 
             int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
             int luck = player.Stats.GetLiveStatValue(DFCareer.Stats.Luck);

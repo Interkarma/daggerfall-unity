@@ -611,7 +611,7 @@ namespace DaggerfallWorkshop.Game
             if (overrideSkillCheck)
                 return true;
 
-            int percentSuccess = FormulaHelper.CalculateClimbingChance(player, null, basePercentSuccess);
+            int percentSuccess = FormulaHelper.CalculateClimbingChance(player, basePercentSuccess);
 
             if (Dice100.FailedRoll(percentSuccess))
             {
