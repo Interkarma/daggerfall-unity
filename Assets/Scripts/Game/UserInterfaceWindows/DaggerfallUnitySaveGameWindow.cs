@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel saveFolderLabel = new TextLabel();
         TextLabel loadingLabel = new TextLabel();
         ListBox savesList = new ListBox();
+        Button renameSaveButton = new Button();
         Button deleteSaveButton = new Button();
         Button goButton = new Button();
         Button switchCharButton = new Button();
@@ -238,6 +239,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gameTimeLabel.Position = new Vector2(0, 9);
             infoPanel.Components.Add(gameTimeLabel);
 
+            // Rename save button
+            renameSaveButton.Position = new Vector2(2, 132);
+            renameSaveButton.Size = new Vector2(48, 8);
+            renameSaveButton.Label.Text = "Rename Save";
+            renameSaveButton.Label.ShadowColor = Color.black;
+            SetBackground(renameSaveButton, namePanelBackgroundColor, "renameSaveButtonBackgroundColor");
+            renameSaveButton.Outline.Enabled = false;
+            renameSaveButton.OnMouseClick += RenameSaveButton_OnMouseClick;
+            savesPanel.Components.Add(renameSaveButton);
+
             // Loading label
             loadingLabel.BackgroundColor = Color.gray;
             loadingLabel.TextColor = Color.white;
@@ -247,9 +258,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(loadingLabel);
 
             // Delete save button
-            deleteSaveButton.Position = new Vector2(0, 132);
-            deleteSaveButton.Size = new Vector2(98, 8);
-            deleteSaveButton.HorizontalAlignment = HorizontalAlignment.Center;
+            deleteSaveButton.Position = new Vector2(51, 132);
+            deleteSaveButton.Size = new Vector2(48, 8);
             deleteSaveButton.Label.Text = "Delete Save";
             deleteSaveButton.Label.ShadowColor = Color.black;
             SetBackground(deleteSaveButton, namePanelBackgroundColor, "deleteSaveButtonBackgroundColor");
@@ -360,6 +370,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 saveFolderLabel.Text = string.Empty;
                 saveTimeLabel.Text = string.Empty;
                 gameTimeLabel.Text = string.Empty;
+                renameSaveButton.BackgroundColor = namePanelBackgroundColor;
                 deleteSaveButton.BackgroundColor = namePanelBackgroundColor;
                 return;
             }
@@ -392,6 +403,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             saveFolderLabel.Text = Path.GetFileName(path);
             saveTimeLabel.Text = DateTime.FromBinary(saveInfo.dateAndTime.realTime).ToLongDateString();
             gameTimeLabel.Text = dfDateTime.MidDateTimeString();
+            renameSaveButton.BackgroundColor = saveButtonBackgroundColor;
             deleteSaveButton.BackgroundColor = cancelButtonBackgroundColor;
         }
 
@@ -530,6 +542,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             saveNameTextBox.Text = savesList.SelectedItem;
             UpdateSelectedSaveInfo();
+        }
+
+        private void RenameSaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Must have a save selected
+            if (savesList.SelectedIndex < 0)
+                return;
+
+            // Input save name
+            DaggerfallInputMessageBox messageBox = new DaggerfallInputMessageBox(uiManager, this);
+            messageBox.SetTextBoxLabel(HardStrings.enterSaveName + ": ");
+            messageBox.TextBox.Text = saveNameTextBox.Text;
+            messageBox.OnGotUserInput += RenameSaveButton_OnGotUserInput;
+            uiManager.PushWindow(messageBox);
+        }
+
+        private void RenameSaveButton_OnGotUserInput(DaggerfallInputMessageBox sender, string saveName)
+        {
+            if (string.IsNullOrEmpty(saveName))
+                return;
+
+            // Get save key
+            int key = GameManager.Instance.SaveLoadManager.FindSaveFolderByNames(currentPlayerName, saveNameTextBox.Text);
+            if (key == -1)
+                return;
+
+            // Rename save
+            GameManager.Instance.SaveLoadManager.Rename(key, saveName);
+            savesList.UpdateItem(savesList.SelectedIndex, saveName);
+            SavesList_OnSelectItem();
         }
 
         private void DeleteSaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
