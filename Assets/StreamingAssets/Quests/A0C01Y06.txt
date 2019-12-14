@@ -46,7 +46,7 @@ RumorsDuringQuest:  [1005]
 RumorsPostfailure:  [1006]
 <ce>                  Did you hear the one about the %ra
 <ce>                 that got teleported to the bottom of
-<ce>                a dungeon? Its really funny! Oh. Sorry.
+<ce>               a dungeon? It's really funny! Oh. Sorry.
 
 RumorsPostsuccess:  [1007]
 <ce>                   Hey! You're that %ra that killed
@@ -54,22 +54,22 @@ RumorsPostsuccess:  [1007]
 
 QuestorPostsuccess:  [1008]
 <ce>                Ok, Ok. I guess I owe you one for that
-<ce>            incident with the orc shaman.  He was magicked
+<ce>             incident with the orc shaman. He was magicked
 <ce>                      to look like a regular guy.
 
 QuestorPostfailure:  [1009]
 <ce>                 Just stay away! I didn't mean to get
 <ce>              anyone hurt. That orc was magicked to look
-<ce>                like a regular guy. Its not my fault he
+<ce>               like a regular guy. It's not my fault he
 <ce>                    teleported you into a dungeon.
 
 QuestLogEntry:  [1010]
 %qdt:
  I met _qgiver_ in ___qgiver_,
- who told me %g3 master
- _master_ would pay _gold_ gold
+ who told me %g3 master,
+ _master_, would pay _gold_ gold
  pieces for an unknown but certainly
- dangerous task.  He is staying in
+ dangerous task. He is staying in
  _meetingplace_ in __meetingplace_.
 
 Message:  1011
@@ -81,38 +81,38 @@ Message:  1011
 
 Message:  1012
 <ce>                Know me for who I really am. I am your
-<ce>                   mortal enemy =mmaster_! I have a
+<ce>                   mortal enemy, =mmaster_! I have a
 <ce>                    special fate in store for you.
 
 Message:  1013
-<ce>                    Don't hurt me, %pcn!  I didn't
-<ce>               know what _master_ was planning.  I ain't
-<ce>               got no beef with you, honest.  %g didn't
+<ce>                    Don't hurt me, %pcn! I didn't
+<ce>               know what _master_ was planning. I ain't
+<ce>               got no beef with you, honest. %g didn't
 <ce>                   tell me nothin', I swear, %g just
-<ce>                 paid me to send you to %g2.  It's %g2
-<ce>                   you want, not me, right?  I hear
+<ce>                 paid me to send you to %g2. It's %g2
+<ce>                   you want, not me, right? I hear
 <ce>                     %g's moved to __hidingplace_.
 <ce>                          Look for %g2 there.
 
 Message:  1014
 <ce>                   I don't know how you escaped from
-<ce>                   ___dungeon_ %pcf. It won't do you
-<ce>                   much good though. Prepare to die!
+<ce>                   ___dungeon_, %pcf. It won't do you
+<ce>                   much good, though. Prepare to die!
 
 Message:  1020
-<ce>                   _master_?  No, I don't think %g's
+<ce>                   _master_? No, I don't think %g's
 <ce>                           from around here.
                                      <--->
-<ce>                   _master_ is new in town.  I'm not
+<ce>                   _master_ is new in town. I'm not
 <ce>                         sure where %g's from.
 
 Message:  1021
 <ce>                 _master_ has been asking around about
 <ce>                               some %ra.
                                      <--->
-<ce>               _master_ is staying here in town.  I hear
+<ce>               _master_ is staying here in town. I hear
 <ce>               %g's been asking a lot of questions about
-<ce>               a %ra.  You're a %ra, aren't you?  Maybe
+<ce>               a %ra. You're a %ra, aren't you? Maybe
 <ce>                        %g was looking for you?
 
 Message:  1030
@@ -121,7 +121,7 @@ Message:  1030
  is now hiding out in __hidingplace_.
 
 Message:  1035
-The orc shaman's chanting rises 
+The orc shaman's chanting rises.
 
 
 -- Symbols used in the QRC file:

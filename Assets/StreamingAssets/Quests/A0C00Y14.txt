@@ -62,11 +62,11 @@ RumorsPostfailure:  [1006]
 <ce>                 I hear the queen is having an affair!
 
 RumorsPostsuccess:  [1007]
-<ce>                    Are all %ra people this nosey?
+<ce>                     Are all %ra people this nosy?
 
 QuestorPostsuccess:  [1008]
 <ce>                 Thank you for delivering that package
-<ce>                              for me %pcf.
+<ce>                              for me, %pcf.
 
 QuestorPostfailure:  [1009]
 <ce>                    Thief! You took my package and
@@ -78,7 +78,7 @@ QuestLogEntry:  [1010]
  ___questgiver_ has charged
  me with the task of delivering
  a package to _pickuplocal_,
- also of ___pickuplocal_
+ also of ___pickuplocal_.
  I have to have it there by this
  time tomorrow.
 

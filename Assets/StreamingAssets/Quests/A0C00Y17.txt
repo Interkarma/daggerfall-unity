@@ -32,7 +32,7 @@ RefuseQuest:  [1001]
 <ce>                            Heartless oaf!
 
 AcceptQuest:  [1002]
-<ce>                       Blessings upon you %pcn.
+<ce>                       Blessings upon you, %pcn.
 <ce>                  I travel light, so I'm ready to go.
 <ce>                    I know you don't work for free.
 <ce>                      Take me to _destination_ in
@@ -84,7 +84,7 @@ QuestLogEntry:  [1010]
  in ___questgiver_. %g
  will pay me to escort %g2 to
  _destination_ in __destination_.
- In particular %g needs to get to _destination_
+ In particular, %g needs to get to _destination_
  within =traveltime_ days.
 
 Message:  1019
@@ -108,7 +108,7 @@ Message:  1021
 <ce>                     us and you can be on your way.
 
 Message:  1022
-<ce>                      Out of the way %ra. We want
+<ce>                      Out of the way, %ra. We want
 <ce>                         _questgiver_, and you
 <ce>                   can't stop us. Just turn %g2 over.
 <ce>                         Hey, _questgiver_. You
@@ -118,7 +118,7 @@ Message:  1022
 Message:  1023
 <ce>                           Stand aside, %ra.
 <ce>                       _questgiver_ is wanted by
-<ce>                       the Dark Brotherhood.  You
+<ce>                       the Dark Brotherhood. You
 <ce>                      aren't such a fool as to try
 <ce>                        to protect %g2, are you?
 
@@ -127,7 +127,7 @@ Message:  1030
 <ce>                        right before your eyes.
 
 Message:  1040
-<ce>                  Have it your way.  Kill them both!
+<ce>                  Have it your way. Kill them both!
 
 Message:  1050
 <ce>                          Are you lost, %pcn?
