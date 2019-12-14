@@ -212,6 +212,14 @@ namespace DaggerfallWorkshop.Game.Utility
             else
                 QualitySettings.vSyncCount = 0;
 
+            // Target frame rate settings
+            // Does nothing if VSync enabled
+            // Default is 0 but anything below 30 is ignored and treated as disabled
+            if (DaggerfallUnity.Settings.TargetFrameRate >= 30 && !DaggerfallUnity.Settings.VSync)
+            {
+                Application.targetFrameRate = DaggerfallUnity.Settings.TargetFrameRate;
+            }
+
             // Filter settings
             DaggerfallUnity.Instance.MaterialReader.MainFilterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
             DaggerfallUnity.Instance.MaterialReader.CompressModdedTextures = DaggerfallUnity.Settings.CompressModdedTextures;

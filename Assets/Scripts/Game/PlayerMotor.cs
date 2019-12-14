@@ -273,12 +273,17 @@ namespace DaggerfallWorkshop.Game
 
             playerScanner.FindHeadHit(new Ray(controller.transform.position, Vector3.up));
             playerScanner.SetHitSomethingInFront();
-            // Check if should hang
-            //hangingMotor.HangingChecks();
-            // Handle Rappeling
-            rappelMotor.RappelChecks();
-            // Handle climbing
-            climbingMotor.ClimbingCheck();
+
+            // Can only engage climbing/rappel mode when on foot
+            if (GameManager.Instance.TransportManager.IsOnFoot)
+            {
+                // Check if should hang
+                //hangingMotor.HangingChecks();
+                // Handle Rappeling
+                rappelMotor.RappelChecks();
+                // Handle climbing
+                climbingMotor.ClimbingCheck();
+            }
 
             // Do nothing if player levitating/swimming or climbing - replacement motor will take over movement for levitating/swimming
             if (levitateMotor && (levitateMotor.IsLevitating || levitateMotor.IsSwimming) || climbingMotor.IsClimbing /*|| hangingMotor.IsHanging*/)

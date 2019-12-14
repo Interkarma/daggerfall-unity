@@ -14,6 +14,8 @@ using System.Text.RegularExpressions;
 using FullSerializer;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -34,8 +36,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             : base(parentQuest)
         {
             IsTriggerCondition = true;
-            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
-            PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -72,6 +72,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                     action.currentLocationType = playerGPS.CurrentLocation.MapTableData.LocationType;
             }
 
+            // Register events when creating action
+            action.RegisterEvents();
+
             return action;
         }
 
@@ -82,6 +85,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return true;
 
             return false;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            // Unregister events when quest ends
+            UnregisterEvents();
         }
 
         #region Private Methods
@@ -120,6 +131,24 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             return false;
         }
 
+        private void RegisterEvents()
+        {
+            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
+
+            SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
+
+        private void UnregisterEvents()
+        {
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            PlayerGPS.OnExitLocationRect -= PlayerGPS_OnExitLocationRect;
+
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
         #endregion
 
         #region Events Handlers
@@ -137,6 +166,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             previousLocationType = currentLocationType;
             currentLocationType = DFRegion.LocationTypes.None;
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            UnregisterEvents();
+        }
+
+        private void SaveLoadManager_OnStartLoad(Serialization.SaveData_v1 saveData)
+        {
+            UnregisterEvents();
         }
 
         #endregion
@@ -176,6 +215,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             indexExteriorType = data.indexExteriorType;
             currentLocationType = data.currentLocationType;
             previousLocationType = data.previousLocationType;
+
+            // Register events when restoring action
+            RegisterEvents();
         }
 
         #endregion

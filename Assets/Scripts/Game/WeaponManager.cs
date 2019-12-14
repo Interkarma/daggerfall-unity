@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
-        public float SphereCastRadius = 0.3f;       // Radius of SphereCast used to target attacks
+        public float SphereCastRadius = 0.25f;      // Radius of SphereCast used to target attacks
         [Range(0, 1)]
         public float AttackThreshold = 0.05f;       // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
@@ -833,7 +833,7 @@ namespace DaggerfallWorkshop.Game
             // Origin point of ray is set back slightly to fix issue where strikes against enemy capsules touching player capsule do not connect
             RaycastHit hit;
             Ray ray = new Ray(mainCamera.transform.position + -mainCamera.transform.forward * 0.1f, mainCamera.transform.forward);
-            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach - SphereCastRadius))
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach))
             {
                 hitEnemy = WeaponDamage(hit, mainCamera.transform.forward);
             }

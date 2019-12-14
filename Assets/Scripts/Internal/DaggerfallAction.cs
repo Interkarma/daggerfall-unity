@@ -672,10 +672,8 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// 21
-        /// Damages players health, uses random range & activates sporadically
+        /// Damages players health, uses random range and activates sporadically.
         /// </summary>
-        /// <param name="prevObj"></param>
-        /// <param name="thisAction"></param>
         public static void DrainHealth21(GameObject triggerObj, DaggerfallAction thisAction)
         {
             //action type 21 activates every ~20 times for some reason.  Might be better to rand instead

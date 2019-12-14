@@ -19,6 +19,10 @@ using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
+    /// <summary>
+    /// Handles setup and execution of mods and provides support for features related to modding support.
+    /// Mods can also use this singleton to find and interact with other mods. 
+    /// </summary>
     public class ModManager : MonoBehaviour
     {
         #region Fields
@@ -102,6 +106,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         public static ModManager Instance { get; private set; }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Path to Mods folder inside Unity Editor where source data for mods is stored.
+        /// </summary>
+        public static string EditorModsDirectory
+        {
+            get { return Application.dataPath + "/Game/Mods"; }
+        }
+#endif
 
         #endregion
 
@@ -564,7 +578,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #if UNITY_EDITOR
             if (LoadVirtualMods)
             {
-                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
+                foreach (string manifestPath in Directory.GetFiles(EditorModsDirectory, "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
                 {
                     var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
                     if (mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
@@ -704,7 +718,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Mod Source Loading/Compiling
 
         /// <summary>
-        /// Compile source files in mod bundle to assembly
+        /// Compiles source files in mod bundle to assembly.
         /// </summary>
         /// <param name="source">The content of source files.</param>
         /// <returns>The compiled assembly or null.</returns>
@@ -735,7 +749,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Public Helpers
 
         /// <summary>
-        /// Writes mod settings (title, priority, enabled) to file
+        /// Writes mod settings (title, priority, enabled) to file.
         /// </summary>
         /// <returns>True if settings written successfully.</returns>
         public static bool WriteModSettings()
@@ -841,7 +855,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Send data to a mod that has a valid DFModMessageReceiver delegate.
+        /// Send data to a mod that has a valid <see cref="DFModMessageReceiver"/> delegate.
         /// </summary>
         /// <param name="modTitle">The title of the target mod.</param>
         /// <param name="message">A string to be sent to the target mod.</param>
@@ -1032,10 +1046,29 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         //public delegate void NewModRegistered(IModController newModController);
         //public static event NewModRegistered OnNewModControllerRegistered;
 
+        /// <summary>
+        /// Signature for an event related to an asset from a mod.
+        /// </summary>
+        /// <param name="ModTitle">The title of a mod.</param>
+        /// <param name="AssetName">The name of the asset without relative path, as a lowercase text.</param>
+        /// <param name="assetType">The Type of target asset.</param>
         public delegate void AssetUpdate(string ModTitle, string AssetName, Type assetType);
+
+        /// <summary>
+        /// An event that is raised when an asset is loaded from an <see cref="AssetBundle"/> and is cached.
+        /// It's not raised again if the asset is cloned and instantiated multiple times.
+        /// </summary>
         public static event AssetUpdate OnLoadAssetEvent;
 
+        /// <summary>
+        /// Signature for an event related to a mod.
+        /// </summary>
+        /// <param name="ModTitle">The title of target mod.</param>
         public delegate void ModUpdate(string ModTitle);
+
+        /// <summary>
+        /// An event that is raised when a mod is removed and its AssetBundle is unloaded.
+        /// </summary>
         public static event ModUpdate OnUnloadModEvent;
 
         private void OnUnloadMod(string ModTitle)
@@ -1044,7 +1077,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 OnUnloadModEvent(ModTitle);
         }
 
-        public static void OnLoadAsset(string ModTitle, string assetName, Type assetType)
+        internal static void OnLoadAsset(string ModTitle, string assetName, Type assetType)
         {
             if (OnLoadAssetEvent != null)
                 OnLoadAssetEvent(ModTitle, assetName, assetType);

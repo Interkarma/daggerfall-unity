@@ -136,6 +136,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
         readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
         readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
+        readonly string goldAmount = TextManager.Instance.GetText(textDatabase, "goldAmount");
+        readonly string goldWeight = TextManager.Instance.GetText(textDatabase, "goldWeight");
         readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
 
         const string baseTextureName = "INVE00I0.IMG";
@@ -485,6 +487,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            if (itemInfoPanel != null)
+                goldButton.OnMouseEnter += GoldButton_OnMouseEnter;
         }
 
         protected void SetupAccessoryElements()
@@ -832,7 +836,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
                 float weight = PlayerEntity.WagonWeight;
-                remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.wagonKgLimit);
+                remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.WagonKgLimit);
             }
             else if (dropIconTexture > -1)
             {
@@ -1094,6 +1098,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.ItemGroup == ItemGroups.Paintings)
                 tokens = new TextFile.Token[] { new TextFile.Token() { formatting = TextFile.Formatting.Text, text = tokens[tokens.Length - 1].text.Trim() } };
 
+            UpdateItemInfoPanel(tokens);
+        }
+
+        private void UpdateItemInfoPanel(TextFile.Token[] tokens)
+        {
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
@@ -1241,7 +1250,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (usingWagon)
             {
                 // Check wagon weight limit
-                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.wagonKgLimit - remoteItems.GetWeight());
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.WagonKgLimit - remoteItems.GetWeight());
                 if (goldToDrop > wagonCanHold)
                 {
                     goldToDrop = wagonCanHold;
@@ -1257,6 +1266,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.GoldPieces -= goldToDrop;
 
             Refresh(false);
+            UpdateItemInfoPanelGold();
         }
 
         #endregion
@@ -1368,7 +1378,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.wagonKgLimit - remoteItems.GetWeight());
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.WagonKgLimit - remoteItems.GetWeight());
             if (canCarry <= 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
@@ -2034,6 +2044,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
         {
             UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            UpdateItemInfoPanelGold();
+        }
+
+        private void UpdateItemInfoPanelGold()
+        {
+            int gold = GameManager.Instance.PlayerEntity.GoldPieces;
+            float weight = gold * DaggerfallBankManager.goldUnitWeightInKg;
+            TextFile.Token[] tokens = {
+                TextFile.CreateTextToken(string.Format(goldAmount, gold)),
+                TextFile.NewLineToken,
+                TextFile.CreateTextToken(string.Format(goldWeight, weight.ToString(weight % 1 == 0 ? "F0" : "F2")))
+            };
+            UpdateItemInfoPanel(tokens);
         }
 
         protected virtual void StartGameBehaviour_OnNewGame()

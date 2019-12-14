@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel gameTimeLabel = new TextLabel();
         TextLabel saveVersionLabel = new TextLabel();
         TextLabel saveFolderLabel = new TextLabel();
+        TextLabel loadingLabel = new TextLabel();
         ListBox savesList = new ListBox();
         Button renameSaveButton = new Button();
         Button deleteSaveButton = new Button();
@@ -69,6 +70,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Modes mode = Modes.SaveGame;
         string currentPlayerName;
         bool displayMostRecentChar;
+        bool loading = false;
+        int loadingCountdown = 2;
 
         #endregion
 
@@ -246,6 +249,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             renameSaveButton.OnMouseClick += RenameSaveButton_OnMouseClick;
             savesPanel.Components.Add(renameSaveButton);
 
+            // Loading label
+            loadingLabel.BackgroundColor = Color.gray;
+            loadingLabel.TextColor = Color.white;
+            loadingLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            loadingLabel.VerticalAlignment = VerticalAlignment.Middle;
+            loadingLabel.Position = new Vector2(mainPanel.Size.x / 2f, mainPanel.Size.y / 2f);
+            mainPanel.Components.Add(loadingLabel);
+
             // Delete save button
             deleteSaveButton.Position = new Vector2(51, 132);
             deleteSaveButton.Size = new Vector2(48, 8);
@@ -290,6 +301,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (Input.GetKeyDown(KeyCode.Return))
                 SaveLoadEventHandler(null, Vector2.zero);
+            if (loading && --loadingCountdown == 0) // Allow loading text to draw before loading
+                LoadGame();
         }
 
         #endregion
@@ -435,15 +448,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Texture2D tex;
             if (TextureReplacement.TryImportTexture(textureName, true, out tex))
+            {
                 panel.BackgroundTexture = tex;
+                TextureReplacement.LogLegacyUICustomizationMessage(textureName);
+            }
             else
                 panel.BackgroundColor = color;
         }
 
         void SetBackground(Button button, Color color, string textureName)
         {
+#pragma warning disable 0618
             if (!TextureReplacement.TryCustomizeButton(ref button, textureName))
                 button.BackgroundColor = color;
+#pragma warning restore 0618
         }
 
         #endregion
@@ -486,7 +504,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
                 }
 
-                LoadGame();
+                loadingLabel.Text = TextManager.Instance.GetText("DaggerfallUI", "loading");
+                loading = true;
             }
         }
 

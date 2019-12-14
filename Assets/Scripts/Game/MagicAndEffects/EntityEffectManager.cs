@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Set parent bundle
                 effect.ParentBundle = instancedBundle;
 
-                // Spell Absorption and Reflection - must have a caster entity set
+                // Spell Absorption, Reflection, Resistance - must have a caster entity set
                 if (sourceBundle.CasterEntityBehaviour)
                 {
                     // Spell Absorption
@@ -492,11 +492,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // Spell Reflection
                     if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
                         continue;
-                }
 
-                // Spell Resistance
-                if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance())
-                    continue;
+                    // Spell Resistance
+                    if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance(sourceBundle))
+                        continue;
+                }
 
                 // Start effect
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
@@ -595,7 +595,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Searches all effects in all bundles to find incumbent of type T.
         /// </summary>
-        /// <typeparam name="T">Found incumbent effect of type T or null.</typeparam>
+        /// <typeparam name="T">Effect class to search for.</typeparam>
+        /// <returns>Found incumbent effect of type T or null.</returns>
         public IEntityEffect FindIncumbentEffect<T>()
         {
             foreach (LiveEffectBundle bundle in instancedBundles)
@@ -611,9 +612,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Searches all effects in all bundles to find all incumbents of type T.
+        /// Useful for finding all effects inheriting from a specific parent effect.
+        /// </summary>
+        /// <typeparam name="T">Effect class to search for.</typeparam>
+        /// <returns>All found incumbent effect of type T. Can be null or empty.</returns>
+        public IEntityEffect[] FindIncumbentEffects<T>()
+        {
+            List<IEntityEffect> effects = new List<IEntityEffect>();
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (effect is T)
+                        effects.Add(effect);
+                }
+            }
+
+            return effects.ToArray();
+        }
+
+        /// <summary>
         /// Gets current racial override effect if one is present.
         /// Racial override is a special case effect that is cached when started/resumed on entity.
-        /// Can still search using FindIncumbentEffect<RacialOverrideEffect>(), but this method will be more efficient.
+        /// While is possible to use <see cref="FindIncumbentEffect{RacialOverrideEffect}()"/>, this method is more efficient.
         /// </summary>
         /// <returns>RacialOverrideEffect or null.</returns>
         public RacialOverrideEffect GetRacialOverrideEffect()
@@ -649,7 +671,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     int damage = Mathf.Abs(mod);
                     if (remaining > damage)
                     {
-                        effect.HealAttributeDamage(stat, remaining - damage);
+                        effect.HealAttributeDamage(stat, damage);
                         remaining -= damage;
                     }
                     else
@@ -1080,9 +1102,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Tests incoming effect for spell reflection.
+        /// Tests incoming spell bundle for reflection.
         /// </summary>
-        /// <param name="casterEntity">Source caster entity behaviour for spell reflect.</param>
+        /// <param name="sourceBundle">Source bundle of spell to reflect.</param>
         /// <returns>True if reflected.</returns>
         bool TryReflection(EntityEffectBundle sourceBundle)
         {
@@ -1094,6 +1116,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Entity must be reflecting
             SpellReflection reflectEffect = FindIncumbentEffect<SpellReflection>() as SpellReflection;
             if (reflectEffect == null)
+                return false;
+
+            // Do not reflect spells from same caster onto self
+            if (sourceBundle.CasterEntityBehaviour == EntityBehaviour)
                 return false;
 
             // Roll for reflection chance
@@ -1118,12 +1144,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Tests incoming effect for spell resistance.
         /// </summary>
+        /// <param name="sourceBundle">Source bundle of spell to reflect.</param>
         /// <returns>True if resisted.</returns>
-        bool TryResistance()
+        bool TryResistance(EntityEffectBundle sourceBundle)
         {
             // Entity must be resisting
             SpellResistance resistEffect = FindIncumbentEffect<SpellResistance>() as SpellResistance;
             if (resistEffect == null)
+                return false;
+
+            // Do not resist "caster only" self-cast spells
+            // Allow to resist "other target" spells, e.g. when caught inside own AOE radius or spell reflected
+            if (sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
                 return false;
 
             // Roll for resistance chance
@@ -1416,6 +1448,56 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
+        public void CureAllAttributes()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    (effect as BaseEntityEffect).CureAttributeDamage();
+                }
+            }
+        }
+
+        public void CureAllSkills()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    (effect as BaseEntityEffect).CureSkillDamage();
+                }
+            }
+        }
+
+        public bool HasDamagedAttributes()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (!(effect as BaseEntityEffect).AllAttributesHealed())
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasDamagedSkills()
+        {
+            foreach (LiveEffectBundle bundle in instancedBundles)
+            {
+                foreach (IEntityEffect effect in bundle.liveEffects)
+                {
+                    if (!(effect as BaseEntityEffect).AllSkillsHealed())
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public void CureAll()
         {
             DaggerfallEntity entity = entityBehaviour.Entity;
@@ -1424,6 +1506,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entity.CurrentMagicka = entity.MaxMagicka;
             CureAllPoisons();
             CureAllDiseases();
+            CureAllAttributes();
+            CureAllSkills();
         }
 
         public bool HasVampirism()

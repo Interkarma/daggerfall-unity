@@ -15,7 +15,7 @@ using System;
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// Item scroller UI panel component composed of scrollbar, scroll buttons & items list.
+    /// Item scroller UI panel component composed of scrollbar, scroll buttons and items list.
     /// </summary>
     public class ItemListScroller : Panel
     {
@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="listCols">Number of items displayed per row.</param>
         /// <param name="itemListRect">Item list coordinate rect, excluding scrollbar.</param>
         /// <param name="itemsRects">Individual items display coordinate rects. (1 per width*height)</param>
-        /// <param name="miscLabelTemplate">Template for misc label: relative position, font, horiz & vert alignment, text scale. (defaults: Vector2.zero, Font4, Left, Top, 1)</param>
+        /// <param name="miscLabelTemplate">Template for misc label: relative position, font, horizontal and vertical alignment, text scale. (defaults: Vector2.zero, Font4, Left, Top, 1)</param>
         /// <param name="toolTip">Tool tip class to use if items should display tooltips.</param>
         /// <param name="itemMarginSize">Individual item display margin size.</param>
         /// <param name="textScale">Text scale factor for stack labels.</param>

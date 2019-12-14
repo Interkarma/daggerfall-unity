@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop
         public int RetroRenderingMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
+        public int TargetFrameRate { get; set; }
         public bool Fullscreen { get; set; }
         public bool ExclusiveFullscreen { get; set; }
         public int FieldOfView { get; set; }
@@ -110,6 +111,7 @@ namespace DaggerfallWorkshop
         public bool EnableInventoryInfoPanel { get; set; }
         public bool EnableEnhancedItemLists { get; set; }
         public bool EnableModernConversationStyleInTalkWindow { get; set; }
+        public string IconsPositioningScheme { get; set; }
         public int HelmAndShieldMaterialDisplay { get; set; }
         public bool AccelerateUICopyTexture { get; set; }
         public bool EnableVitalsIndicators { get; set; }
@@ -158,10 +160,8 @@ namespace DaggerfallWorkshop
 
         // [Experimental]
         public int TerrainDistance { get; set; }
-
         public float TerrainHeightmapPixelError { get; set; }
         public bool SmallerDungeons { get; set; }
-        public bool CustomBooksImport { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -201,6 +201,7 @@ namespace DaggerfallWorkshop
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
+            TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
@@ -235,6 +236,7 @@ namespace DaggerfallWorkshop
             EnableInventoryInfoPanel = GetBool(sectionGUI, "EnableInventoryInfoPanel");
             EnableEnhancedItemLists = GetBool(sectionGUI, "EnableEnhancedItemLists");
             EnableModernConversationStyleInTalkWindow = GetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow");
+            IconsPositioningScheme = GetString(sectionGUI, "IconsPositioningScheme");
             HelmAndShieldMaterialDisplay = GetInt(sectionGUI, "HelmAndShieldMaterialDisplay", 0, 3);            
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
@@ -283,7 +285,6 @@ namespace DaggerfallWorkshop
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
-            CustomBooksImport = GetBool(sectionExperimental, "CustomBooksImport");
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -316,6 +317,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
+            SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
@@ -350,6 +352,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableInventoryInfoPanel", EnableInventoryInfoPanel);
             SetBool(sectionGUI, "EnableEnhancedItemLists", EnableEnhancedItemLists);
             SetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow", EnableModernConversationStyleInTalkWindow);
+            SetString(sectionGUI, "IconsPositioningScheme", IconsPositioningScheme);
             SetInt(sectionGUI, "HelmAndShieldMaterialDisplay", HelmAndShieldMaterialDisplay);
             SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
@@ -392,7 +395,6 @@ namespace DaggerfallWorkshop
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
             SetBool(sectionExperimental, "SmallerDungeons", SmallerDungeons);
-            SetBool(sectionExperimental, "CustomBooksImport", CustomBooksImport);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);

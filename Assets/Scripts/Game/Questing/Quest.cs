@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool questComplete = false;
         bool questSuccess = false;
         Dictionary<int, LogEntry> activeLogMessages = new Dictionary<int, LogEntry>();
+        int currentLogMessageId = -1;
 
         string questName;
         string displayName;
@@ -80,6 +81,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             public int stepID;
             public int messageID;
+            public DaggerfallDateTime dateTime;
         }
 
         /// <summary>
@@ -230,6 +232,14 @@ namespace DaggerfallWorkshop.Game.Questing
         public DaggerfallDateTime QuestTombstoneTime
         {
             get { return questTombstoneTime; }
+        }
+
+        /// <summary>
+        /// Current log message ID, used only for expanding %qdt macro properly.
+        /// </summary>
+        public int CurrentLogMessageId
+        {
+            set { currentLogMessageId = value; }
         }
 
         #endregion
@@ -411,9 +421,15 @@ namespace DaggerfallWorkshop.Game.Questing
         public void Dispose()
         {
             // Dispose of quest resources
-            foreach(QuestResource resource in resources.Values)
+            foreach (QuestResource resource in resources.Values)
             {
                 resource.Dispose();
+            }
+
+            // Dispose actions for all quest tasks
+            foreach (Task task in tasks.Values)
+            {
+                task.DisposeActions();
             }
         }
 
@@ -442,7 +458,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
             }
 
-            // Create new questor
+            // Set person as questor
+            person.IsQuestor = true;
+
+            // Create new questor symbol
             string key = personSymbol.Name;
             QuestorData qd = new QuestorData();
             qd.symbol = personSymbol.Clone();
@@ -487,10 +506,14 @@ namespace DaggerfallWorkshop.Game.Questing
                 questors.Remove(key);
             }
 
+            // Unset questor flag
+            Person personResource = GetPerson(personSymbol);
+            if (personResource != null)
+                personResource.IsQuestor = false;
+
             // Destroy QuestResourceBehaviour from target object if present in scene and not an individual NPC
             // If target object not present in scene then QuestResourceBehaviour simply wont be added next time as Person is no longer a questor
             // Individual NPCs have a permanent QuestResourceBehaviour attached as they have special usage in long-running quests - it must not be removed
-            Person personResource = GetPerson(personSymbol);
             if (personResource != null && personResource.QuestResourceBehaviour != null && !personResource.IsIndividualNPC)
                 MonoBehaviour.Destroy(personResource.QuestResourceBehaviour);
         }
@@ -530,6 +553,7 @@ namespace DaggerfallWorkshop.Game.Questing
             LogEntry entry = new LogEntry();
             entry.stepID = stepID;
             entry.messageID = messageID;
+            entry.dateTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
             activeLogMessages.Add(stepID, entry);
         }
 
@@ -568,6 +592,21 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return logs;
+        }
+
+        /// <summary>
+        /// Get the current log entry date time when opening the active quests log.
+        /// </summary>
+        /// <returns>Return the current log entry time if any, otherwise the quest start time.</returns>
+        public DaggerfallDateTime GetCurrentLogMessageTime()
+        {
+            foreach (LogEntry log in activeLogMessages.Values)
+            {
+                if (log.messageID == currentLogMessageId && log.dateTime != null)
+                    return log.dateTime;
+            }
+
+            return questStartTime;
         }
 
         /// <summary>
@@ -755,7 +794,7 @@ namespace DaggerfallWorkshop.Game.Questing
             for (int i = 0; i < chunks.Count; i++)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-                messageBox.SetTextTokens(chunks[i]);
+                messageBox.SetTextTokens(chunks[i], ExternalMCP);
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.AllowCancel = true;
                 messageBox.ParentPanel.BackgroundColor = Color.clear;

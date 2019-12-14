@@ -48,6 +48,8 @@ repairDays,         "%d days"
 interruptRepair,    "Take back that item before it's repaired?"
 repairNote,         "Left my {0} for repair at {1}."
 doesntNeedIdentify, "This does not need to be identified."
+goldAmount,         "{0} gold pieces"
+goldWeight,         "Weight: {0} kg"
 letterOfCredit,     "You are paid with a letter of credit."
 stealSuccess,       "You are successful."
 stealFailure,       "You are not successful..."
@@ -164,3 +166,6 @@ exteriorAutomapToolTipRotateRightButton,	"left click: rotate map to the right (h
 exteriorAutomapToolTipUpstairsButton,		"left click: zoom in (hotkey: {0})\rright click: apply maximum zoom)"
 exteriorAutomapToolTipDownstairsButton,		"left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)"
 exteriorAutomapToolTipPanelCompass,			"left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})"
+
+- Save/Load window
+loading,                                    "Please wait..."

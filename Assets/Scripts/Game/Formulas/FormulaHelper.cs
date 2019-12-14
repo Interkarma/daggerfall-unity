@@ -4,9 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut
-//                  ifkopifko
-//                  Numidium
+// Contributors:    Hazelnut, ifkopifko, Numidium, TheLacus
 // 
 // Notes:
 //
@@ -24,6 +22,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -35,23 +34,19 @@ namespace DaggerfallWorkshop.Game.Formulas
     /// </summary>
     public static class FormulaHelper
     {
-        // Delegate method signatures for overriding default formula
-        public delegate int Formula_NoParams();
-        public delegate int Formula_1i(int a);
-        public delegate int Formula_2i(int a, int b);
-        public delegate int Formula_3i(int a, int b, int c);
-        public delegate int Formula_1i_1f(int a, float b);
-        public delegate int Formula_2de_2i(DaggerfallEntity de1, DaggerfallEntity de2 = null, int a = 0, int b = 0, DaggerfallUnityItem item = null);
-        public delegate bool Formula_1pe_1sk(PlayerEntity pe, DFCareer.Skills sk);
+        private struct FormulaOverride
+        {
+            internal readonly Delegate Formula;
+            internal readonly Mod Provider;
 
-        // Registries for overridden formula
-        public static Dictionary<string, Formula_NoParams>  formula_noparams = new Dictionary<string, Formula_NoParams>();
-        public static Dictionary<string, Formula_1i>        formula_1i = new Dictionary<string, Formula_1i>();
-        public static Dictionary<string, Formula_2i>        formula_2i = new Dictionary<string, Formula_2i>();
-        public static Dictionary<string, Formula_3i>        formula_3i = new Dictionary<string, Formula_3i>();
-        public static Dictionary<string, Formula_1i_1f>     formula_1i_1f = new Dictionary<string, Formula_1i_1f>();
-        public static Dictionary<string, Formula_2de_2i>    formula_2de_2i = new Dictionary<string, Formula_2de_2i>();
-        public static Dictionary<string, Formula_1pe_1sk>   formula_1pe_1sk = new Dictionary<string, Formula_1pe_1sk>();
+            internal FormulaOverride(Delegate formula, Mod provider)
+            {
+                Formula = formula;
+                Provider = provider;
+            }
+        }
+
+        readonly static Dictionary<string, FormulaOverride> overrides = new Dictionary<string, FormulaOverride>();
 
         public static float specialInfectionChance = 0.6f;
 
@@ -59,8 +54,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int DamageModifier(int strength)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("DamageModifier", out del))
+            Func<int, int> del;
+            if (TryGetOverride("DamageModifier", out del))
                 return del(strength);
 
             return (int)Mathf.Floor((float)(strength - 50) / 5f);
@@ -68,8 +63,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int MaxEncumbrance(int strength)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("MaxEncumbrance", out del))
+            Func<int, int> del;
+            if (TryGetOverride("MaxEncumbrance", out del))
                 return del(strength);
 
             return (int)Mathf.Floor((float)strength * 1.5f);
@@ -77,8 +72,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int SpellPoints(int intelligence, float multiplier)
         {
-            Formula_1i_1f del;
-            if (formula_1i_1f.TryGetValue("SpellPoints", out del))
+            Func<int, float, int> del;
+            if (TryGetOverride("SpellPoints", out del))
                 return del(intelligence, multiplier);
 
             return (int)Mathf.Floor((float)intelligence * multiplier);
@@ -86,8 +81,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int MagicResist(int willpower)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("MagicResist", out del))
+            Func<int, int> del;
+            if (TryGetOverride("MagicResist", out del))
                 return del(willpower);
 
             return (int)Mathf.Floor((float)willpower / 10f);
@@ -95,8 +90,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int ToHitModifier(int agility)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("ToHitModifier", out del))
+            Func<int, int> del;
+            if (TryGetOverride("ToHitModifier", out del))
                 return del(agility);
 
             return (int)Mathf.Floor((float)agility / 10f) - 5;
@@ -104,8 +99,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int HitPointsModifier(int endurance)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("HitPointsModifier", out del))
+            Func<int, int> del;
+            if (TryGetOverride("HitPointsModifier", out del))
                 return del(endurance);
 
             return (int)Mathf.Floor((float)endurance / 10f) - 5;
@@ -113,8 +108,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int HealingRateModifier(int endurance)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("HealingRateModifier", out del))
+            Func<int, int> del;
+            if (TryGetOverride("HealingRateModifier", out del))
                 return del(endurance);
 
             // Original Daggerfall seems to have a bug where negative endurance modifiers on healing rate
@@ -124,8 +119,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int MaxStatValue()
         {
-            Formula_NoParams del;
-            if (formula_noparams.TryGetValue("MaxStatValue", out del))
+            Func<int> del;
+            if (TryGetOverride("MaxStatValue", out del))
                 return del();
             else
                 return 100;
@@ -133,8 +128,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int BonusPool()
         {
-            Formula_NoParams del;
-            if (formula_noparams.TryGetValue("BonusPool", out del))
+            Func<int> del;
+            if (TryGetOverride("BonusPool", out del))
                 return del();
 
             const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
@@ -152,9 +147,9 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Generates player health based on level and career hit points per level
         public static int RollMaxHealth(PlayerEntity player)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("RollMaxHealth", out del))
-                return del(player.Level, player.Career.HitPointsPerLevel);
+            Func<PlayerEntity, int> del;
+            if (TryGetOverride("RollMaxHealth", out del))
+                return del(player);
 
             const int baseHealth = 25;
             int maxHealth = baseHealth + player.Career.HitPointsPerLevel;
@@ -170,8 +165,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how much health the player should recover per hour of rest
         public static int CalculateHealthRecoveryRate(PlayerEntity player)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateHealthRecoveryRate", out del))
+            Func<PlayerEntity, int> del;
+            if (TryGetOverride("CalculateHealthRecoveryRate", out del))
                 return del(player);
 
             short medical = player.Skills.GetLiveSkillValue(DFCareer.Skills.Medical);
@@ -201,8 +196,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how much fatigue the player should recover per hour of rest
         public static int CalculateFatigueRecoveryRate(int maxFatigue)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("HealingRateModifier", out del))
+            Func<int, int> del;
+            if (TryGetOverride("HealingRateModifier", out del))
                 return del(maxFatigue);
 
             return Mathf.Max((int)Mathf.Floor(maxFatigue / 8), 1);
@@ -211,9 +206,9 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how many spell points the player should recover per hour of rest
         public static int CalculateSpellPointRecoveryRate(PlayerEntity player)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("HealingRateModifier", out del))
-                return del(player.MaxMagicka);
+            Func<PlayerEntity, int> del;
+            if (TryGetOverride("HealingRateModifier", out del))
+                return del(player);
 
             if (player.Career.NoRegenSpellPoints)
                 return 0;
@@ -224,8 +219,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of successfully lockpicking a door in an interior (an animating door). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
         public static int CalculateInteriorLockpickingChance(int level, int lockvalue, int lockpickingSkill)
         {
-            Formula_3i del;
-            if (formula_3i.TryGetValue("CalculateInteriorLockpickingChance", out del))
+            Func<int, int, int, int> del;
+            if (TryGetOverride("CalculateInteriorLockpickingChance", out del))
                 return del(level, lockvalue, lockpickingSkill);
 
             int chance = (5 * (level - lockvalue) + lockpickingSkill);
@@ -235,8 +230,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of successfully lockpicking a door in an exterior (a door that leads to an interior). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
         public static int CalculateExteriorLockpickingChance(int lockvalue, int lockpickingSkill)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("CalculateExteriorLockpickingChance", out del))
+            Func<int, int, int> del;
+            if (TryGetOverride("CalculateExteriorLockpickingChance", out del))
                 return del(lockvalue, lockpickingSkill);
 
             int chance = lockpickingSkill - (5 * lockvalue);
@@ -246,8 +241,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of successfully pickpocketing a target
         public static int CalculatePickpocketingChance(PlayerEntity player, EnemyEntity target)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculatePickpocketingChance", out del))
+            Func<PlayerEntity, EnemyEntity, int> del;
+            if (TryGetOverride("CalculatePickpocketingChance", out del))
                 return del(player, target);
 
             int chance = player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
@@ -262,8 +257,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of being caught shoplifting items
         public static int CalculateShopliftingChance(PlayerEntity player, DaggerfallEntity na, int shopQuality, int weightAndNumItems)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateShopliftingChance", out del))
+            Func<PlayerEntity, DaggerfallEntity, int, int, int> del;
+            if (TryGetOverride("CalculateShopliftingChance", out del))
                 return del(player, null, shopQuality, weightAndNumItems);
 
             int chance = 100 - player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
@@ -281,8 +276,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate player level.
         public static int CalculatePlayerLevel(int startingLevelUpSkillsSum, int currentLevelUpSkillsSum)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("CalculatePlayerLevel", out del))
+            Func<int, int, int> del;
+            if (TryGetOverride("CalculatePlayerLevel", out del))
                 return del(startingLevelUpSkillsSum, currentLevelUpSkillsSum);
 
             return (int)Mathf.Floor((currentLevelUpSkillsSum - startingLevelUpSkillsSum + 28) / 15);
@@ -291,8 +286,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate hit points player gains per level.
         public static int CalculateHitPointsPerLevelUp(PlayerEntity player)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateHitPointsPerLevelUp", out del))
+            Func<PlayerEntity, int> del;
+            if (TryGetOverride("CalculateHitPointsPerLevelUp", out del))
                 return del(player);
 
             int minRoll = player.Career.HitPointsPerLevel / 2;
@@ -307,8 +302,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate whether the player is successful at pacifying an enemy.
         public static bool CalculateEnemyPacification(PlayerEntity player, DFCareer.Skills languageSkill)
         {
-            Formula_1pe_1sk del;
-            if (formula_1pe_1sk.TryGetValue("CalculateEnemyPacification", out del))
+            Func<PlayerEntity, DFCareer.Skills, bool> del;
+            if (TryGetOverride("CalculateEnemyPacification", out del))
                 return del(player, languageSkill);
 
             double chance = 0;
@@ -384,8 +379,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateHandToHandMinDamage(int handToHandSkill)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("CalculateHandToHandMinDamage", out del))
+            Func<int, int> del;
+            if (TryGetOverride("CalculateHandToHandMinDamage", out del))
                 return del(handToHandSkill);
 
             return (handToHandSkill / 10) + 1;
@@ -393,8 +388,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateHandToHandMaxDamage(int handToHandSkill)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("CalculateHandToHandMaxDamage", out del))
+            Func<int, int> del;
+            if (TryGetOverride("CalculateHandToHandMaxDamage", out del))
                 return del(handToHandSkill);
 
             // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
@@ -417,8 +412,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (attacker == null || target == null)
                 return 0;
 
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateAttackDamage", out del))
+            Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
+            if (TryGetOverride("CalculateAttackDamage", out del))
                 return del(attacker, target, enemyAnimStateRecord, weaponAnimTime, weapon);
 
             int minBaseDamage = 0;
@@ -663,9 +658,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         private static int CalculateStruckBodyPart()
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("CalculateStruckBodyPart", out del))
-                return del(0);
+            Func<int> del;
+            if (TryGetOverride("CalculateStruckBodyPart", out del))
+                return del();
 
             int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
             return bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
@@ -673,9 +668,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         private static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateBackstabChance", out del))
-                return del(player, null, enemyAnimStateRecord);
+            Func<PlayerEntity, DaggerfallEntity, int, int> del;
+            if (TryGetOverride("CalculateBackstabChance", out del))
+                return del(player, target, enemyAnimStateRecord);
 
             // If enemy is facing away from player
             if (enemyAnimStateRecord % 5 > 2)
@@ -689,8 +684,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         private static int CalculateBackstabDamage(int damage, int backstabbingLevel)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("CalculateBackstabDamage", out del))
+            Func<int, int, int> del;
+            if (TryGetOverride("CalculateBackstabDamage", out del))
                 return del(damage, backstabbingLevel);
 
             if (backstabbingLevel > 1 && Dice100.SuccessRoll(backstabbingLevel))
@@ -704,8 +699,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         private static int CalculateWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateWeaponAttackDamage", out del))
+            Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
+            if (TryGetOverride("CalculateWeaponAttackDamage", out del))
                 return del(attacker, target, damageModifier, weaponAnimTime, weapon);
 
             int damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1) + damageModifier;
@@ -747,8 +742,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         private static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("AdjustWeaponHitChanceMod", out del))
+            Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
+            if (TryGetOverride("AdjustWeaponHitChanceMod", out del))
                 return del(attacker, target, hitChanceMod, weaponAnimTime, weapon);
 
             return hitChanceMod;
@@ -756,8 +751,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         private static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("AdjustWeaponAttackDamage", out del))
+            Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
+            if (TryGetOverride("AdjustWeaponAttackDamage", out del))
                 return del(attacker, target, damage, weaponAnimTime, weapon);
 
             return damage;
@@ -897,8 +892,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (attacker == null || target == null)
                 return 0;
 
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("CalculateSuccessfulHit", out del))
+            Func<DaggerfallEntity, DaggerfallEntity, int, int, int> del;
+            if (TryGetOverride("CalculateSuccessfulHit", out del))
                 return del(attacker, target, chanceToHitMod, struckBodyPart);
 
             int chanceToHit = chanceToHitMod;
@@ -973,8 +968,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
         {
-            Formula_2de_2i del;
-            if (formula_2de_2i.TryGetValue("GetBonusOrPenaltyByEnemyType", out del))
+            Func<DaggerfallEntity, EnemyEntity, int> del;
+            if (TryGetOverride("GetBonusOrPenaltyByEnemyType", out del))
                 return del(attacker, AITarget);
 
             if (attacker == null || AITarget == null)
@@ -1352,8 +1347,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Generates health for enemy classes based on level and class
         public static int RollEnemyClassMaxHealth(int level, int hitPointsPerLevel)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("RollEnemyClassMaxHealth", out del))
+            Func<int, int, int> del;
+            if (TryGetOverride("RollEnemyClassMaxHealth", out del))
                 return del(level, hitPointsPerLevel);
 
             const int baseHealth = 10;
@@ -1364,6 +1359,60 @@ namespace DaggerfallWorkshop.Game.Formulas
                 maxHealth += UnityEngine.Random.Range(1, hitPointsPerLevel + 1);
             }
             return maxHealth;
+        }
+
+        /// <summary>
+        /// Roll for random spawn in location area at night.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_LocationNight()
+        {
+            Func<int> del;
+            if (TryGetOverride("RollRandomSpawn_LocationNight", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 24);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in wilderness during daylight hours.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_WildernessDay()
+        {
+            Func<int> del;
+            if (TryGetOverride("RollRandomSpawn_WildernessDay", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 36);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in wilderness at night.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_WildernessNight()
+        {
+            Func<int> del;
+            if (TryGetOverride("RollRandomSpawn_WildernessNight", out del))
+                return del();
+            else
+                return UnityEngine.Random.Range(0, 24);
+        }
+
+        /// <summary>
+        /// Roll for random spawn in dungeons.
+        /// </summary>
+        /// <returns>0 to generate a spawn. >0 to not generate a spawn.</returns>
+        public static int RollRandomSpawn_Dungeon()
+        {
+            Func<int> del;
+            if (TryGetOverride("RollRandomSpawn_Dungeon", out del))
+                return del();
+            else if (GameManager.Instance.PlayerEntity.EnemyAlertActive)
+                return UnityEngine.Random.Range(0, 36);
+
+            return 1; // >0 is do not generate a spawn
         }
 
         #endregion
@@ -1411,8 +1460,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateRoomCost(int daysToRent)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("CalculateRoomCost", out del))
+            Func<int, int> del;
+            if (TryGetOverride("CalculateRoomCost", out del))
                 return del(daysToRent);
 
             int cost = 0;
@@ -1430,8 +1479,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateCost(int baseItemValue, int shopQuality)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("CalculateCost", out del))
+            Func<int, int, int> del;
+            if (TryGetOverride("CalculateCost", out del))
                 return del(baseItemValue, shopQuality);
 
             int cost = baseItemValue;
@@ -1492,8 +1541,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateDaedraSummoningCost(int npcRep)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("CalculateDaedraSummoningCost", out del))
+            Func<int, int> del;
+            if (TryGetOverride("CalculateDaedraSummoningCost", out del))
                 return del(npcRep);
 
             return 200000 - (npcRep * 1000);
@@ -1501,8 +1550,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateDaedraSummoningChance(int daedraRep, int bonus)
         {
-            Formula_2i del;
-            if (formula_2i.TryGetValue("CalculateDaedraSummoningChance", out del))
+            Func<int, int, int> del;
+            if (TryGetOverride("CalculateDaedraSummoningChance", out del))
                 return del(daedraRep, bonus);
 
             int chance = 30 + daedraRep + bonus;
@@ -1511,9 +1560,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
         {
-            Formula_3i del;
-            if (formula_3i.TryGetValue("CalculateTradePrice", out del))
-                return del(cost, shopQuality, selling ? 1 : 0);
+            Func<int, int, bool, int> del;
+            if (TryGetOverride("CalculateTradePrice", out del))
+                return del(cost, shopQuality, selling);
 
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             int merchant_mercantile_level = 5 * (shopQuality - 10) + 50;
@@ -1541,8 +1590,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int ApplyRegionalPriceAdjustment(int cost)
         {
-            Formula_1i del;
-            if (formula_1i.TryGetValue("ApplyRegionalPriceAdjustment", out del))
+            Func<int, int> del;
+            if (TryGetOverride("ApplyRegionalPriceAdjustment", out del))
                 return del(cost);
 
             int adjustedCost;
@@ -2171,6 +2220,66 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Final enchantment power is basePower + basePower*multiplier (rounded down)
             int basePower = item.ItemTemplate.enchantmentPoints;
             return basePower + Mathf.FloorToInt(basePower * multiplier);
+        }
+
+        #endregion
+
+        #region Formula Overrides
+
+        /// <summary>
+        /// Registers an override for a formula using a generic `System.Func{T}` callback
+        /// with the same signature as the method it overrides
+        /// (i.e. `RegisterOverride{Func{int, int, float}}("FormulaName", (a, b) => (float)a / b);`).
+        /// The invocation will fail if signature is not correct, meaning if the delegate
+        /// is not one of the variation of `Func` with the expected arguments.
+        /// </summary>
+        /// <param name="provider">The mod that provides this override; used to enforce load order.</param>
+        /// <param name="formulaName">The name of the method that provides the formula.</param>
+        /// <param name="formula">A callback that implements the formula.</param>
+        /// <typeparam name="TDelegate">One of the available generic Func delegates.</typeparam>
+        /// <exception cref="ArgumentNullException">`formulaName` or `formula` is null.</exception>
+        /// <exception cref="InvalidCastException">Type is not a delegate.</exception>
+        public static void RegisterOverride<TDelegate>(Mod provider, string formulaName, TDelegate formula)
+            where TDelegate : class
+        {
+            if (formulaName == null)
+                throw new ArgumentNullException("formulaName");
+
+            if (formula == null)
+                throw new ArgumentNullException("formula");
+
+            var del = formula as Delegate;
+            if (del == null)
+                throw new InvalidCastException("formula is not a delegate.");
+
+            FormulaOverride formulaOverride;
+            if (!overrides.TryGetValue(formulaName, out formulaOverride) || formulaOverride.Provider.LoadPriority < provider.LoadPriority)
+                overrides[formulaName] = new FormulaOverride(del, provider);
+        }
+
+        /// <summary>
+        /// Gets an override for a formula.
+        /// </summary>
+        /// <param name="formulaName">The name of the method that provides the formula.</param>
+        /// <param name="formula">A callback that implements the formula.</param>
+        /// <typeparam name="TDelegate">One of the available generic Func delegates.</typeparam>
+        /// <returns>True if formula is found.</returns>
+        private static bool TryGetOverride<TDelegate>(string formulaName, out TDelegate formula)
+            where TDelegate : class
+        {
+            FormulaOverride formulaOverride;
+            if (overrides.TryGetValue(formulaName, out formulaOverride))
+            {
+                if ((formula = formulaOverride.Formula as TDelegate) != null)
+                    return true;
+
+                const string errorMessage = "Removed override for formula {0} provided by {1} because signature doesn't match (expected {2} and got {3}).";
+                Debug.LogErrorFormat(errorMessage, formulaName, formulaOverride.Provider.Title, typeof(TDelegate), formulaOverride.Formula.GetType());
+                overrides.Remove(formulaName);
+            }
+
+            formula = default(TDelegate);
+            return false;
         }
 
         #endregion

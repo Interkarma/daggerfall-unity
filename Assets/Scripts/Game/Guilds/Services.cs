@@ -141,6 +141,49 @@ namespace DaggerfallWorkshop.Game.Guilds
 
     public static class Services
     {
+        #region Merchant service registration
+
+        public delegate void CustomMerchantService(IUserInterfaceWindow window);
+
+        private static Dictionary<int, string> customMerchantServiceNames = new Dictionary<int, string>();
+        private static Dictionary<int, CustomMerchantService> customMerchantServices = new Dictionary<int, CustomMerchantService>();
+
+        public static bool HasCustomMerchantService(int npcFactionId)
+        {
+            return customMerchantServices.ContainsKey(npcFactionId);
+        }
+
+        public static bool RegisterMerchantService(int npcFactionId, CustomMerchantService service, string serviceName)
+        {
+            DaggerfallUnity.LogMessage("RegisterMerchantService: " + npcFactionId + " with service: " + serviceName, true);
+            if (!customMerchantServices.ContainsKey(npcFactionId))
+            {
+                customMerchantServices.Add(npcFactionId, service);
+                customMerchantServiceNames.Add(npcFactionId, serviceName);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool GetCustomMerchantService(int npcFactionId, out CustomMerchantService customMerchantService)
+        {
+            return customMerchantServices.TryGetValue(npcFactionId, out customMerchantService);
+        }
+
+        public static string GetCustomMerchantServiceLabel(int npcFactionId)
+        {
+            string serviceLabel;
+            if (customMerchantServiceNames.TryGetValue(npcFactionId, out serviceLabel))
+                return serviceLabel;
+            else
+                return "?";
+        }
+
+
+        #endregion
+
+        #region Guild service registration
+
         public delegate void CustomGuildService(IUserInterfaceWindow window);
 
         // Store for extra guild NPC services (i.e. from mods)
@@ -347,5 +390,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                         return "?";
             }
         }
+
+        #endregion
     }
 }

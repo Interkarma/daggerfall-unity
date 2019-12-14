@@ -852,7 +852,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Returns a list of any valid mod setup functions
+        /// Returns a list of any valid mod setup functions.
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>

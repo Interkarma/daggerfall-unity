@@ -450,7 +450,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.ExteriorData.PortTownAndUnknown == 0)
                 GeneratePopup(TransactionResult.NOT_PORT_TOWN);
             else    // Show ships for sale
-                uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.BankPurchasePopup, uiManager, this));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.BankPurchasePopup, new object[] { uiManager, this, null }));
         }
 
         void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

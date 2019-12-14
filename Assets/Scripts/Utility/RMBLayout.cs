@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Utility
 
         #region Structures
 
-        struct BuildingPoolItem
+        class BuildingPoolItem
         {
             public DFLocation.BuildingData buildingData;
             public bool used;
@@ -528,7 +528,7 @@ namespace DaggerfallWorkshop.Utility
                     {
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
                         if (IsNamedBuilding(building.BuildingType))
-                        {                       
+                        {
                             // Try to find next building and merge data
                             BuildingPoolItem item;
                             if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
@@ -536,28 +536,31 @@ namespace DaggerfallWorkshop.Utility
                                 Debug.LogFormat("End of city building list reached without finding building type {0} in location {1}.{2}", building.BuildingType, location.RegionName, location.Name);
                             }
 
-                            // Always copy nameSeed, LocationID and Sector found city building data to block level    
+                            // Copy found city building data to block level
                             building.NameSeed = item.buildingData.NameSeed;
-                            building.LocationId = item.buildingData.LocationId;
+                            building.FactionId = item.buildingData.FactionId;
                             building.Sector = item.buildingData.Sector;
+                            building.LocationId = item.buildingData.LocationId;
+                            building.Quality = item.buildingData.Quality;
 
                             // Check for replacement building data and use it if found
                             if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
-                            { 
-                                // Use custom building values from replacement data, don't use pool or maps file                                
-                                building.FactionId = buildingReplacementData.FactionId;
-                                building.BuildingType = (DFLocation.BuildingTypes) buildingReplacementData.BuildingType;
+                            {
+                                // Use custom building values from replacement data, but only use up pool item if factionId is zero
+                                if (buildingReplacementData.FactionId != 0)
+                                {
+                                    // Don't use up pool item and set factionId from replacement data
+                                    item.used = false;
+                                    building.FactionId = buildingReplacementData.FactionId;
+                                }
+                                // Always override type and quality
+                                building.BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
                                 building.Quality = buildingReplacementData.Quality;
                             }
-                            else
-                            {
-                                // Copy remaining found city building data to block level                                   
-                                building.FactionId = item.buildingData.FactionId;
-                                building.Quality = item.buildingData.Quality;
-                            }
-                            
+
                             // Matched to classic: special handling for some Order of the Raven buildings
-                            if (block.RmbBlock.FldHeader.OtherNames[i] == "KRAVE01.HS2")
+                            if (block.RmbBlock.FldHeader.OtherNames != null &&
+                                block.RmbBlock.FldHeader.OtherNames[i] == "KRAVE01.HS2")
                             {
                                 building.BuildingType = DFLocation.BuildingTypes.GuildHall;
                                 building.FactionId = 414;
@@ -588,14 +591,11 @@ namespace DaggerfallWorkshop.Utility
             {
                 if (!namedBuildingPool[i].used && namedBuildingPool[i].buildingData.BuildingType == buildingType)
                 {
-                    BuildingPoolItem item = namedBuildingPool[i];
-                    item.used = true;
-                    namedBuildingPool[i] = item;
-                    itemOut = item;
+                    itemOut = namedBuildingPool[i];
+                    itemOut.used = true;
                     return true;
                 }
             }
-
             return false;
         }
 

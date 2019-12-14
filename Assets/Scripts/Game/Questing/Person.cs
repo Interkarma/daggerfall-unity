@@ -84,6 +84,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool IsQuestor
         {
             get { return isQuestor; }
+            set { SetQuestorStatus(value); }
         }
 
         public bool IsIndividualNPC
@@ -484,6 +485,17 @@ namespace DaggerfallWorkshop.Game.Questing
             isDestroyed = true;
         }
 
+        /// <summary>
+        /// Set Person as questor and assign questor data if needed.
+        /// Uses last clicked NPC data so has to be called after talking to the actual questor.
+        /// </summary>
+        private void SetQuestorStatus(bool status)
+        {
+            isQuestor = status;
+            if (isQuestor)
+                questorData = QuestMachine.Instance.LastNPCClicked.Data;
+        }
+
         #endregion
 
         #region Private Methods
@@ -643,11 +655,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", factionTableKey));
 
                 // Set based on parameters
-                if (p1 == 0 && p2 < -2)
+                if (p1 == 0 && p2 < -2 && p2 != -6)
                 {
                     // From usage in the quests it appears -3 and lower are local.
                     // Referencing quest Sx009 where player must locate and click an NPC with only a home location to go by
                     // and K0C00Y04 where two Group_7 npcs are local.
+                    // Interkarma Note: -6 is used by Thieves Guild introduction quest O0A0AL00 and should be a remote NPC. Treating -6 as remote.
                     scope = Place.Scopes.Local;
                 }
                 else if (p1 == 0 && p2 >= 0 && p2 <= 20 && p3 == 0)
@@ -874,9 +887,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 return false;
             }
 
-            // Set questor data
-            questorData = QuestMachine.Instance.LastNPCClicked.Data;
-            isQuestor = true;
+            // Set as questor
+            IsQuestor = true;
 
             // Setup Person resource
             FactionFile.FactionData factionData = GetFactionData(questorData.factionID);

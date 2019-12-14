@@ -151,10 +151,7 @@ namespace DaggerfallWorkshop.Game.Items
             {   // %ba
                 BookFile bookFile = new BookFile();
 
-                string name = DaggerfallUnity.Settings.CustomBooksImport ?
-                    GameManager.Instance.ItemHelper.GetBookFileName(parent.message) :
-                    BookFile.messageToBookFilename(parent.message);
-
+                string name = GameManager.Instance.ItemHelper.GetBookFileName(parent.message);
                 if (name != null)
                 {
                     if (!BookReplacement.TryImportBook(name, bookFile))

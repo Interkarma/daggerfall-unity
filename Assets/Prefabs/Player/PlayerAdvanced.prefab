@@ -707,7 +707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ScreenWeapon: {fileID: 11400020}
   Sheathed: 1
-  SphereCastRadius: 0.35
+  SphereCastRadius: 0.25
   AttackThreshold: 0.05
   ChanceToBeParried: 0.1
   ArrowMissilePrefab: {fileID: 114624404217668130, guid: 0fdc5fb41ee669e49b44322b7db26e9e,
@@ -1337,6 +1337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RidingVolumeScale: 0.45
+  DrawHorse: 1
 --- !u!114 &114807000041290672
 MonoBehaviour:
   m_ObjectHideFlags: 1

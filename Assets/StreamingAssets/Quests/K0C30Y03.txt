@@ -137,8 +137,8 @@ Message:  1014
 <ce>                        No jellyfish this one.
 <ce> 
 <ce>
- 			 _patsy_
---eliminating unmarked white spaces. this problem was patched out in previous versions but i still prefer to have lines with blank spaces filled just in case.			
+             _patsy_
+--eliminating unmarked white spaces. this problem was patched out in previous versions but i still prefer to have lines with blank spaces filled just in case.
 
 Message:  1015
 _banker_ works over at _bank_ in __bank_. Perfectly respectable sort.
@@ -232,7 +232,7 @@ I'm going to need some reinforcements if the
  when you arrive.
  
  
- 		 _patsy_
+          _patsy_
 
 Message:  1026
 <ce>                There is a stamp on the piece of _rock_
@@ -276,7 +276,7 @@ Message:  1031
  
  
  
- 		 The Brotherhood
+             The Brotherhood
 
 Message:  1032
 <ce>         You do not even realize that the young boy is next to

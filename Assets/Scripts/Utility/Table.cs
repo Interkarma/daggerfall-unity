@@ -109,6 +109,36 @@ namespace DaggerfallWorkshop.Utility
         #region Public Methods
 
         /// <summary>
+        /// Adds extra rows to a data table from an array lines.
+        /// </summary>
+        /// <param name="lines"></param>
+        public void AddIntoTable(string[] lines)
+        {
+            // Iterate over lines
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // Skip comment lines
+                string text = lines[i].Trim();
+                if (text.StartsWith("-"))
+                    continue;
+
+                // Skip empty lines
+                if (string.IsNullOrEmpty(text))
+                    continue;
+
+                // Exclude anything to right of inline comment
+                string[] parts = text.Split(inlineCommentSeparator, StringSplitOptions.None);
+                if (parts == null || parts.Length < 1)
+                    continue;
+                else
+                    text = parts[0];
+
+                // Load row data
+                LoadRow(text, i);
+            }
+        }
+
+        /// <summary>
         /// Loads a data table from an array lines.
         /// </summary>
         /// <param name="lines"></param>

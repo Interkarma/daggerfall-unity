@@ -917,6 +917,60 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 210, record = 28 },
             new DaggerfallTextureIndex() { archive = 210, record = 29 },
 
+            // Statue
+            new DaggerfallTextureIndex() { archive = 202, record = 2 },
+
+            // Fire daedra
+            new DaggerfallTextureIndex() { archive = 281, record = 0 },
+            new DaggerfallTextureIndex() { archive = 281, record = 1 },
+            new DaggerfallTextureIndex() { archive = 281, record = 2 },
+            new DaggerfallTextureIndex() { archive = 281, record = 3 },
+            new DaggerfallTextureIndex() { archive = 281, record = 4 },
+            new DaggerfallTextureIndex() { archive = 281, record = 5 },
+            new DaggerfallTextureIndex() { archive = 281, record = 6 },
+            new DaggerfallTextureIndex() { archive = 281, record = 7 },
+            new DaggerfallTextureIndex() { archive = 281, record = 8 },
+            new DaggerfallTextureIndex() { archive = 281, record = 9 },
+            new DaggerfallTextureIndex() { archive = 281, record = 10 },
+            new DaggerfallTextureIndex() { archive = 281, record = 11 },
+            new DaggerfallTextureIndex() { archive = 281, record = 12 },
+            new DaggerfallTextureIndex() { archive = 281, record = 13 },
+            new DaggerfallTextureIndex() { archive = 281, record = 14 },
+            new DaggerfallTextureIndex() { archive = 281, record = 15 },
+            new DaggerfallTextureIndex() { archive = 281, record = 16 },
+            new DaggerfallTextureIndex() { archive = 281, record = 17 },
+            new DaggerfallTextureIndex() { archive = 281, record = 18 },
+            new DaggerfallTextureIndex() { archive = 281, record = 19 },
+            // new DaggerfallTextureIndex() { archive = 400, record = 2 }, // corpse
+
+            // Fire atronach
+            new DaggerfallTextureIndex() { archive = 290, record = 0 },
+            new DaggerfallTextureIndex() { archive = 290, record = 1 },
+            new DaggerfallTextureIndex() { archive = 290, record = 2 },
+            new DaggerfallTextureIndex() { archive = 290, record = 3 },
+            new DaggerfallTextureIndex() { archive = 290, record = 4 },
+            new DaggerfallTextureIndex() { archive = 290, record = 5 },
+            new DaggerfallTextureIndex() { archive = 290, record = 6 },
+            new DaggerfallTextureIndex() { archive = 290, record = 7 },
+            new DaggerfallTextureIndex() { archive = 290, record = 8 },
+            new DaggerfallTextureIndex() { archive = 290, record = 9 },
+            new DaggerfallTextureIndex() { archive = 290, record = 10 },
+            new DaggerfallTextureIndex() { archive = 290, record = 11 },
+            new DaggerfallTextureIndex() { archive = 290, record = 12 },
+            new DaggerfallTextureIndex() { archive = 290, record = 13 },
+            new DaggerfallTextureIndex() { archive = 290, record = 14 },
+            new DaggerfallTextureIndex() { archive = 290, record = 15 },
+            new DaggerfallTextureIndex() { archive = 290, record = 16 },
+            new DaggerfallTextureIndex() { archive = 290, record = 17 },
+            new DaggerfallTextureIndex() { archive = 290, record = 18 },
+            new DaggerfallTextureIndex() { archive = 290, record = 19 },
+            // new DaggerfallTextureIndex() { archive = 405, record = 2 }, // corpse?
+
+            // Fire walls
+            new DaggerfallTextureIndex() { archive = 356, record = 0 },
+            new DaggerfallTextureIndex() { archive = 356, record = 2 },
+            new DaggerfallTextureIndex() { archive = 356, record = 3 },
+
             // Spell missiles
             new DaggerfallTextureIndex() { archive = 375, record = 0 },
             new DaggerfallTextureIndex() { archive = 375, record = 1 },
@@ -928,6 +982,10 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 378, record = 1 },
             new DaggerfallTextureIndex() { archive = 379, record = 0 },
             new DaggerfallTextureIndex() { archive = 379, record = 1 },
+
+            // Magic effects
+            new DaggerfallTextureIndex() { archive = 434, record = 3 },
+            // new DaggerfallTextureIndex() { archive = 434, record = 5 }, // UI
         };
 
         public bool IsEmissive(int archive, int record)

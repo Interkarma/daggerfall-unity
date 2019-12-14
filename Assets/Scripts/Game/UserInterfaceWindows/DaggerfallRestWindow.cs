@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return false;
 
             // Check if enemies nearby
-            if (GameManager.Instance.AreEnemiesNearby())
+            if (GameManager.Instance.AreEnemiesNearby(true))
             {
                 enemyBrokeRest = true;
                 return true;
@@ -376,12 +376,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private bool CheckRent()
         {
-            if (remainingHoursRented > -1)
-            {
-                remainingHoursRented--;
-                return (remainingHoursRented == 0);
-            }
-            return false;
+            if (remainingHoursRented == -1)
+                return false;
+
+            remainingHoursRented--;
+            return (remainingHoursRented == 0);
         }
 
         void EndRest()

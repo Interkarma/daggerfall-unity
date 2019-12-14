@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Get a remote site in same region quest was issued
                     SetupRemoteSite(line);
                 }
-                else if (scope == Scopes.Fixed && p1 > 0x4500)
+                else if (scope == Scopes.Fixed && p1 > 0x300)
                 {
                     // Get a fixed site, such as a capital city or dungeon
                     SetupFixedLocation();
@@ -329,11 +329,22 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="resource">Incoming resource type about to be added.</param>
         /// <param name="markerIndex">Static index to use. Must be able to find preferred marker type. Used by main quest only.</param>
-        QuestMarker GetSiteMarker(QuestResource resource, int markerIndex = -1)
+        bool GetSiteMarker(QuestResource resource, int markerIndex = -1)
         {
-            // Direct to previously selected marker
+            // Direct to previously selected marker, unless specific index specified
             if (siteDetails.selectedMarker.targetResources != null)
-                return siteDetails.selectedMarker;
+            {
+                if (markerIndex > -1)
+                {
+                    // Specific index specified and already got the main selected marker, so just assign directly to marker list
+                    if (resource is Person || resource is Foe)
+                        AssignResourceToMarker(resource.Symbol.Clone(), ref siteDetails.questSpawnMarkers[markerIndex]);
+                    else if (resource is Item)
+                        AssignResourceToMarker(resource.Symbol.Clone(), ref siteDetails.questItemMarkers[markerIndex]);
+                    return false;
+                }
+                return true;
+            }
 
             // Determine preferred marker type for this resource
             MarkerTypes preferredMarkerType = MarkerTypes.None;
@@ -374,7 +385,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 siteDetails.selectedMarker = siteDetails.questItemMarkers[UnityEngine.Random.Range(0, siteDetails.questItemMarkers.Length)];
             }
 
-            return siteDetails.selectedMarker;
+            return true;
         }
 
         /// <summary>
@@ -402,8 +413,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 QuestMachine.Instance.CullResourceTarget(resource, Symbol);
 
             // Get marker for new resource and assign resource to marker
-            QuestMarker selectedMarker = GetSiteMarker(resource, markerIndex);
-            AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.selectedMarker);
+            if (GetSiteMarker(resource, markerIndex))
+                AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.selectedMarker);
 
             // Output debug information
             if (resource is Person)
@@ -831,6 +842,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Attempt to get locationId by p1 - try p1 first then p1-1
             // This should work out dungeon or exterior loctionId as needed
+            int buildingKey = 0;
             SiteTypes siteType;
             DFLocation location;
             if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(p1, out location))
@@ -841,10 +853,14 @@ namespace DaggerfallWorkshop.Game.Questing
                     // p1 is a completely unknown locationId
                     throw new Exception(string.Format("Could not find locationId from p1 using: '{0}' or '{1}'", p1, p1 - 1));
                 }
-                else
+                else if (location.HasDungeon == true)
                 {
                     // If p1-1 resolves then dungeon is referenced
                     siteType = SiteTypes.Dungeon;
+                }
+                else
+                {
+                    siteType = SiteTypes.Building;
                 }
             }
             else if (p1 == 50000)
@@ -878,6 +894,34 @@ namespace DaggerfallWorkshop.Game.Questing
                         throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
                 }
             }
+            else if (siteType == SiteTypes.Building)
+            {
+                foreach (DFLocation.BuildingData locBuilding in location.Exterior.Buildings)
+                {
+                    if (locBuilding.LocationId == p1)
+                    {
+                        string blockName = location.Exterior.ExteriorData.BlockNames[locBuilding.Sector];
+                        DFBlock blockData;
+                        if (DaggerfallUnity.Instance.ContentReader.GetBlock(blockName, out blockData))
+                        {
+                            int width = location.Exterior.ExteriorData.Width;
+                            int x = locBuilding.Sector % width;
+                            int y = locBuilding.Sector / width;
+                            for (int recordIndex = 0; recordIndex < blockData.RmbBlock.FldHeader.BuildingDataList.Length; recordIndex++)
+                            {
+                                DFLocation.BuildingData building = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex];
+                                if (building.LocationId == locBuilding.LocationId)
+                                {
+                                    // Enumerate markers and calculate building key
+                                    EnumerateBuildingQuestMarkers(blockData, recordIndex, out questSpawnMarkers, out questItemMarkers);
+                                    buildingKey = BuildingDirectory.MakeBuildingKey((byte)x, (byte)y, (byte)recordIndex);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
 
             // Configure magic number index for fixed dungeons
             int magicNumberIndex = 0;
@@ -899,6 +943,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
+            siteDetails.buildingKey = buildingKey;
             siteDetails.questSpawnMarkers = questSpawnMarkers;
             siteDetails.questItemMarkers = questItemMarkers;
             siteDetails.magicNumberIndex = magicNumberIndex;

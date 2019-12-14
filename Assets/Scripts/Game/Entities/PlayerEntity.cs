@@ -27,6 +27,7 @@ using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -126,6 +127,9 @@ namespace DaggerfallWorkshop.Game.Entity
         const int socialGroupCount = 11;
         int[] reactionMods = new int[socialGroupCount];     // Indices map to FactionFile.SocialGroups 0-10 - do not serialize, set by live effects
 
+        bool enemyAlertActive = false;
+        uint lastEnemyAlertTime;
+
         #endregion
 
         #region Properties
@@ -181,6 +185,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsInBeastForm { get; set; }
         public List<string> BackStory { get; set; }
         public VampireClans PreviousVampireClan { get; set; }
+        public bool EnemyAlertActive { get { return enemyAlertActive; } }
 
         #endregion
 
@@ -272,6 +277,17 @@ namespace DaggerfallWorkshop.Game.Entity
                 return 0;
         }
 
+        /// <summary>
+        /// Enemy alert is raised by hostile enemies or attempting to rest near hostile enemies.
+        /// Enemy alert is lowered when killing a hostile enemy or after some time has passed.
+        /// </summary>
+        public void SetEnemyAlert(bool alert)
+        {
+            enemyAlertActive = alert;
+            if (alert)
+                lastEnemyAlertTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+        }
+
         public override void FixedUpdate()
         {
             // Handle events that are called by classic's update loop
@@ -317,7 +333,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public override void Update(DaggerfallEntityBehaviour sender)
         {
-            if (!GameManager.Instance.IsPlayingGame())
+            if (SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             if (CurrentHealth <= 0)
@@ -336,6 +352,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 climbingMotor = GameManager.Instance.ClimbingMotor;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
             // Wait until game has started and the game time has been set.
             // If the game time is taken before then "30" is returned, which causes an initial player fatigue loss
             // after loading or starting a game with a non-30 minute.
@@ -343,6 +360,12 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
             else if (!gameStarted)
                 gameStarted = true;
+
+            // Lower active enemy alert if more than 8 hours have passed since alert was raised
+            const int alertDecayMinutes = 8 * DaggerfallDateTime.MinutesPerHour;
+            if (enemyAlertActive && (gameMinutes - lastEnemyAlertTime) > alertDecayMinutes)
+                SetEnemyAlert(false);
+
             if (playerMotor != null)
             {
                 // Values are < 1 so fatigue loss is slower
@@ -531,7 +554,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (timeOfDay < 360 || timeOfDay > 1080)
                     {
                         // In a location area at night
-                        if (UnityEngine.Random.Range(0, 24) == 0)
+                        if (FormulaHelper.RollRandomSpawn_LocationNight() == 0)
                         {
                             GameObjectHelper.CreateFoeSpawner(true, RandomEncounters.ChooseRandomEnemy(false), 1, minLocationDistance);
                             return true;
@@ -543,13 +566,13 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (timeOfDay >= 360 && timeOfDay <= 1080)
                     {
                         // Wilderness during day
-                        if (UnityEngine.Random.Range(0, 36) != 0)
+                        if (FormulaHelper.RollRandomSpawn_WildernessDay() != 0)
                             return false;
                     }
                     else
                     {
                         // Wilderness at night
-                        if (UnityEngine.Random.Range(0, 24) != 0)
+                        if (FormulaHelper.RollRandomSpawn_WildernessNight() != 0)
                             return false;
                     }
 
@@ -566,7 +589,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     if (isResting)
                     {
-                        if (UnityEngine.Random.Range(0, 43) == 0) // Normally (0, 36) - making spawns ~20% less for rested dungeons
+                        if (FormulaHelper.RollRandomSpawn_Dungeon() == 0)
                         {
                             // TODO: Not sure how enemy type is chosen here.
                             GameObjectHelper.CreateFoeSpawner(false, RandomEncounters.ChooseRandomEnemy(false), 1, minDungeonDistance);
@@ -772,6 +795,9 @@ namespace DaggerfallWorkshop.Game.Entity
             rentedRooms.Clear();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
+
+            // Clear any world variation this player entity has triggered
+            WorldDataVariants.Clear();
         }
 
         /// <summary>
