@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static float specialInfectionChance = 0.6f;
 
         // Approximation of classic frame updates
-        private const int classicFrameUpdate = 980;
+        public const int classicFrameUpdate = 980;
 
         #region Basic Formulas
 
@@ -1054,6 +1054,26 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        public static float GetMeleeWeaponAnimTime(PlayerEntity player, WeaponTypes weaponType, ItemHands weaponHands)
+        {
+            Func<PlayerEntity, WeaponTypes, ItemHands, float> del;
+            if (TryGetOverride("GetMeleeWeaponAnimTime", out del))
+                return del(player, weaponType, weaponHands);
+
+            float speed = 3 * (115 - player.Stats.LiveSpeed);
+            return speed / classicFrameUpdate;
+        }
+
+        public static float GetBowCooldownTime(PlayerEntity player)
+        {
+            Func<PlayerEntity, float> del;
+            if (TryGetOverride("GetBowCooldownTime", out del))
+                return del(player);
+
+            float cooldown = 10 * (100 - player.Stats.LiveSpeed) + 800;
+            return cooldown / classicFrameUpdate;
+        }
+
         public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
         {
             // Target must have an entity behaviour and effect manager
@@ -1313,42 +1333,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                 result = target.Resistances.LiveMagic;
 
             return result;
-        }
-
-        public static float GetMeleeWeaponAnimTime(PlayerEntity player, WeaponTypes weaponType, ItemHands weaponHands)
-        {
-            float spdRatio = 0.8f;
-            float strRatio = 0.2f;
-            float capRatio = 0.08f;
-            if (weaponHands == ItemHands.Both) {
-                spdRatio = 0.5f;
-                strRatio = 0.5f;
-                capRatio = 0.15f;
-            } else if (weaponType == WeaponTypes.Dagger || weaponType == WeaponTypes.Dagger_Magic) {
-                spdRatio = 0.9f;
-                strRatio = 0.1f;
-                capRatio = 0.03f;
-            } else if (weaponType == WeaponTypes.Melee) {
-                spdRatio = 1f;
-                strRatio = 0f;
-                capRatio = 0f;
-            }
-            float speed = player.Stats.LiveSpeed;
-            float strength = player.Stats.LiveStrength;
-            if (speed > 70)
-                spdRatio -= capRatio;
-            if (strength > 70)
-                strRatio -= capRatio;
-
-            float frameSpeed = 3 * (115 - ((speed * spdRatio) + (strength * strRatio)));
-            Debug.LogFormat("anim= {0}ms/frame, speed={1} strength={2}", frameSpeed / classicFrameUpdate, speed * spdRatio, strength * strRatio);
-            return frameSpeed / classicFrameUpdate;
-        }
-
-        public static float GetBowCooldownTime(PlayerEntity player)
-        {
-            float cooldown = 10 * (100 - player.Stats.LiveSpeed) + 800;
-            return cooldown / classicFrameUpdate;
         }
 
         #endregion
