@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -442,6 +443,13 @@ namespace DaggerfallWorkshop.Game
                 // Check if player hit a static exterior door
                 if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
                 {
+                    return false;
+                }
+
+                // Make walls do a clinging sound (not in classic)
+                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
+                {
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.Parry6);
                     return false;
                 }
             }
