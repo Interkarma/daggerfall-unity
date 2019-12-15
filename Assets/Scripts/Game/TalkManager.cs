@@ -515,19 +515,14 @@ namespace DaggerfallWorkshop.Game
             rebuildTopicLists = true;
         }
 
-        public int GetReactionToPlayer(FactionFile.SocialGroups socialGroup)
+        public int GetReactionToPlayer(FactionFile.FactionData factionData)
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-        
-            // Get NPC faction
-            // TODO: Factor in adjustments for children of regional factions
-            FactionFile.FactionData NPCfaction;
-            player.FactionData.GetRegionFaction(GameManager.Instance.PlayerGPS.CurrentRegionIndex, out NPCfaction, false);
-            
-            int reaction = NPCfaction.rep + player.BiographyReactionMod + player.GetReactionMod(socialGroup);
 
-            if (socialGroup >= 0 && (int)socialGroup < player.SGroupReputations.Length)
-                reaction += player.SGroupReputations[(int)socialGroup];
+            int reaction = factionData.rep + player.BiographyReactionMod + player.GetReactionMod((FactionFile.SocialGroups)factionData.sgroup);
+
+            if (factionData.sgroup >= 0 && factionData.sgroup < player.SGroupReputations.Length)
+                reaction += player.SGroupReputations[factionData.sgroup];
 
             return reaction;
         }
@@ -624,11 +619,16 @@ namespace DaggerfallWorkshop.Game
         {
             currentNPCType = NPCType.Mobile;
 
+            // All mobile NPCs use "People of" current region faction
+            int npcFactionId = GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
+            FactionFile.FactionData npcFactionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionId, out npcFactionData);
+
             // Get reaction to player
-            reactionToPlayer = GetReactionToPlayer(FactionFile.SocialGroups.Commoners); // All mobile NPCs are commoners
+            reactionToPlayer = GetReactionToPlayer(npcFactionData);
 
             sameTalkTargetAsBefore = false;
-            SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
+            SetTargetNPC(targetNPC, npcFactionData, ref sameTalkTargetAsBefore);
 
             npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will give one correct answer if NPC knows about topic (as implemented in classic)
 
@@ -639,27 +639,49 @@ namespace DaggerfallWorkshop.Game
         public void TalkToStaticNPC(StaticNPC targetNPC, bool menu = true, bool isSpyMaster = false)
         {
             // Populate NPC faction data
-            FactionFile.FactionData targetFactionData;
-            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(targetNPC.Data.factionID, out targetFactionData);
+            FactionFile.FactionData npcFactionData;
+            GetStaticNPCFactionData(targetNPC.Data.factionID, GameManager.Instance.PlayerEnterExit.BuildingType, out npcFactionData);
+
             IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
 
             if (IsNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer, new object[] { uiManager, npcsWithWork[targetNPC.Data.nameSeed].npc, npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu }));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer,
+                    new object[]
+                    {
+                        uiManager, npcsWithWork[targetNPC.Data.nameSeed].npc,
+                        npcsWithWork[targetNPC.Data.nameSeed].socialGroup, menu
+                    }));
                 return;
             }
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
-                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer, new object[] { uiManager, targetNPC.Data, (FactionFile.SocialGroups)targetFactionData.sgroup, menu }));
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer,
+                    new object[] {uiManager, targetNPC.Data, (FactionFile.SocialGroups)npcFactionData.sgroup, menu}));
                 return;
             }
             currentNPCType = NPCType.Static;
 
+            // Matched to classic for NPCs that are not of type 2 (Group), 7 (Province) or 9 (Temple): use their first parent if such a parent exists
+            // Change from classic: do the same for Courts, People and Individual since they have their own reputation. Moreover
+            // classic already uses people and courts factions to get greetings and answers so it add more consistency
+            while (npcFactionData.parent != 0 &&
+                   npcFactionData.type != (int)FactionFile.FactionTypes.Group && // Avoid using the group leader faction (e.g. Mobar and "The Royal Guard")
+                   npcFactionData.type != (int)FactionFile.FactionTypes.Province && // Avoid using "Daggerfall" for "Betony"
+                   npcFactionData.type != (int)FactionFile.FactionTypes.Temple && // Avoid using the parent god faction
+                   npcFactionData.type != (int)FactionFile.FactionTypes.People && // Avoid using the parent province faction
+                   npcFactionData.type != (int)FactionFile.FactionTypes.Courts && // Avoid using the parent province faction
+                   npcFactionData.type != (int)FactionFile.FactionTypes.Individual // Always use an individual faction when available
+                   )
+            {
+                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionData.parent, out npcFactionData);
+            }
+
             // Get reaction to player
-            reactionToPlayer = GetReactionToPlayer((FactionFile.SocialGroups)targetFactionData.sgroup);
+            reactionToPlayer = GetReactionToPlayer(npcFactionData);
 
             sameTalkTargetAsBefore = false;
-            SetTargetNPC(targetNPC, ref sameTalkTargetAsBefore);
+            SetTargetNPC(targetNPC, npcFactionData, ref sameTalkTargetAsBefore);
 
             npcData.numAnswersGivenTellMeAboutOrRumors = 0; // Important to reset this here so even if NPCs is the same as previous talk session PC will can one correct answer if NPC knows about topic (as implemented in classic)
             npcData.isSpyMaster = isSpyMaster;
@@ -668,7 +690,7 @@ namespace DaggerfallWorkshop.Game
             TalkToNpc();
         }
 
-        public void SetTargetNPC(MobilePersonNPC targetMobileNPC, ref bool sameTalkTargetAsBefore)
+        public void SetTargetNPC(MobilePersonNPC targetMobileNPC, FactionFile.FactionData factionData, ref bool sameTalkTargetAsBefore)
         {
             sameTalkTargetAsBefore = false;
 
@@ -689,8 +711,7 @@ namespace DaggerfallWorkshop.Game
             npcData = new NPCData();
             npcData.socialGroup = FactionFile.SocialGroups.Commoners;
             npcData.guildGroup = FactionFile.GuildGroups.None;
-            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(
-                GameManager.Instance.PlayerGPS.CurrentRegionIndex, out npcData.factionData, false);
+            npcData.factionData = factionData;
             npcData.race = targetMobileNPC.Race;
             npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs + FormulaHelper.BonusChanceToKnowWhereIs();
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
@@ -700,7 +721,7 @@ namespace DaggerfallWorkshop.Game
             AssembleTopicListPerson(); // Update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
 
-        public void SetTargetNPC(StaticNPC targetNPC, ref bool sameTalkTargetAsBefore)
+        public void SetTargetNPC(StaticNPC targetNPC, FactionFile.FactionData factionData, ref bool sameTalkTargetAsBefore)
         {
             sameTalkTargetAsBefore = false;
 
@@ -723,30 +744,9 @@ namespace DaggerfallWorkshop.Game
             nameNPC = targetNPC.DisplayName;
             DaggerfallUI.Instance.TalkWindow.UpdateNameNPC();
 
-            int npcFactionID = targetStaticNPC.Data.factionID;
-
-            // Matched to classic: an NPC with a null faction id is assigned to court or people of current region
-            if (npcFactionID == 0)
-            {
-                BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
-                if (currentBuilding.buildingType == DFLocation.BuildingTypes.Palace)
-                    npcFactionID = GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();
-                else
-                    npcFactionID = GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
-            }
-
-            FactionFile.FactionData factionData;
-            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionID, out factionData);
-            int factionType = factionData.type;
-
-            // Matched to classic. For dialog, NPCs that are not of type 2, 7 or 9 use their first parent that is, if such a parent exists
-            while (factionData.parent != 0 && factionData.type != 2 && factionData.type != 7 && factionData.type != 9)
-            {
-                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionData.parent, out factionData);
-            }
-
             npcData = new NPCData();
-            npcData.socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
+            // Social group assignment. Matched to classic.
+            npcData.socialGroup = factionData.sgroup < 5 ? (FactionFile.SocialGroups)factionData.sgroup : FactionFile.SocialGroups.Merchants;
             npcData.guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
             npcData.factionData = factionData;
             npcData.race = Races.Breton; // TODO: find a way to get race for static npc
@@ -754,20 +754,6 @@ namespace DaggerfallWorkshop.Game
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC;
             npcData.isSpyMaster = false;
-
-            // Social group assignment. Matched to classic.
-            if (factionType == 14)
-            {
-                npcData.socialGroup = FactionFile.SocialGroups.Nobility;
-            }
-            else if (factionType == 15)
-            {
-                npcData.socialGroup = FactionFile.SocialGroups.Commoners;
-            }
-            else if (factionData.sgroup >= 5)
-            {
-                npcData.socialGroup = FactionFile.SocialGroups.Merchants;
-            }
 
             AssembleTopicListPerson(); // Update "Where Is" -> "Person" list since this list may hide the questor (if talking to the questor)
         }
@@ -783,6 +769,35 @@ namespace DaggerfallWorkshop.Game
                 rebuildTopicLists = false;
             }
             SetupRumorMill();
+        }
+
+        /// <summary>
+        /// Get a static NPC faction data from his faction ID. Handles special cases
+        /// for NPCs with a faction ID equal to 0 and NPCs from generic nobility.
+        /// </summary>
+        /// <param name="factionId">The NPC faction ID.</param>
+        /// <param name="buildingType">The NPC location building type.</param>
+        /// <param name="factionData">The NPC faction data.</param>
+        private void GetStaticNPCFactionData(int factionId, DFLocation.BuildingTypes buildingType, out FactionFile.FactionData factionData)
+        {
+            if (factionId == 0)
+            {
+                // Matched to classic: an NPC with a null faction id is assigned to court or people of current region
+                if (buildingType == DFLocation.BuildingTypes.Palace)
+                    factionId = GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();
+                else
+                    factionId = GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
+            }
+            else if (factionId == (int)FactionFile.FactionIDs.Random_Ruler ||
+                     factionId == (int)FactionFile.FactionIDs.Random_Noble ||
+                     factionId == (int)FactionFile.FactionIDs.Random_Knight)
+            {
+                // Change from classic: use "Court of" current region for Random Ruler, Random Noble
+                // and Random Knight because these generic factions have no use at all
+                factionId = GameManager.Instance.PlayerGPS.GetCourtOfCurrentRegion();
+            }
+
+            GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionId, out factionData);
         }
 
         private string GetNPCQuestGreeting()
@@ -820,14 +835,17 @@ namespace DaggerfallWorkshop.Game
 
         private int GetNPCGreetingRecord()
         {
+            FactionFile.FactionData parentFactionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetParentGroupFaction(npcData.factionData, out parentFactionData);
+
             // Almost matched to classic: avoid faction related greetings for children of
             // a province. In classic, this is the case only for people or court of the
             // current region. DFU also blocks it for court related unique NPCs, to avoid
             // weird greetings like "As a member of Sentinel...".
-            if (npcData.factionData.type != 7)
+            if (parentFactionData.type != (int)FactionFile.FactionTypes.Province)
             {
                 int reputation = npcData.factionData.rep;
-                int greetingIndex = GetGreetingIndex(ref reputation);
+                int greetingIndex = GetGreetingIndex(ref reputation, parentFactionData);
 
                 if (npcData.factionData.sgroup < 5)
                     reputation += GameManager.Instance.PlayerEntity.SGroupReputations[npcData.factionData.sgroup];
@@ -836,7 +854,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (reputation >= reaction)
                 {
-                    // Improvment over classic: in classic, if greeting index is
+                    // Improvement over classic: in classic, if greeting index is
                     // equal to 8, NPC will always meet the player with text entry
                     // 8570 i.e. "Well met, stranger.", that even if PC reputation
                     // with NPC is very good. In DFU, the player is now considered
@@ -868,11 +886,12 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Get an NPC greeting index based on player guild affiliations.
+        /// Get an NPC greeting index based on player guild affiliations and NPC group membership.
         /// </summary>
         /// <param name="reputation">Player overall reputation with NPC based on guild memberships.</param>
+        /// <param name="npcGroupFaction">Faction group to which NPC belongs to.</param>
         /// <returns>The greeting index.</returns>
-        private int GetGreetingIndex(ref int reputation)
+        private int GetGreetingIndex(ref int reputation, FactionFile.FactionData npcGroupFaction)
         {
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
 
@@ -883,17 +902,17 @@ namespace DaggerfallWorkshop.Game
                 FactionFile.FactionData guildFactionData;
                 persistentFactionData.GetFactionData(guild.GetFactionId(), out guildFactionData);
 
-                if (npcData.factionData.id == guildFactionData.id)
+                if (npcGroupFaction.id == guildFactionData.id)
                 {
                     npcData.pcFactionName = guildFactionData.name;
                     return 0;
                 }
 
                 // Check if guild and NPC have the same parent or if one is parent of the other
-                if ((guildFactionData.parent != 0 && npcData.factionData.parent != 0 &&
-                    guildFactionData.parent == npcData.factionData.parent ||
-                    guildFactionData.parent == npcData.factionData.id ||
-                    npcData.factionData.parent == guildFactionData.id) &&
+                if ((guildFactionData.parent != 0 && npcGroupFaction.parent != 0 &&
+                    guildFactionData.parent == npcGroupFaction.parent ||
+                    guildFactionData.parent == npcGroupFaction.id ||
+                    npcGroupFaction.parent == guildFactionData.id) &&
                     greetingIndex > 1)
                 {
                     npcData.pcFactionName = guildFactionData.name;
@@ -902,8 +921,8 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Check if guild and NPC are allies
-                if (FactionFile.IsAlly(ref guildFactionData, ref npcData.factionData) ||
-                    FactionFile.IsAlly(ref npcData.factionData, ref guildFactionData)
+                if (FactionFile.IsAlly(ref guildFactionData, ref npcGroupFaction) ||
+                    FactionFile.IsAlly(ref npcGroupFaction, ref guildFactionData)
                   && greetingIndex > 2)
                 {
                     npcData.pcFactionName = guildFactionData.name;
@@ -912,8 +931,8 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Check if guild and NPC are enemies
-                if (FactionFile.IsEnemy(ref guildFactionData, ref npcData.factionData) ||
-                    FactionFile.IsEnemy(ref npcData.factionData, ref guildFactionData)
+                if (FactionFile.IsEnemy(ref guildFactionData, ref npcGroupFaction) ||
+                    FactionFile.IsEnemy(ref npcGroupFaction, ref guildFactionData)
                   && greetingIndex > 3)
                 {
                     npcData.pcFactionName = guildFactionData.name;
@@ -924,7 +943,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Check if guild and NPC have enemies in common
                 int[] guildEnemies = { guildFactionData.enemy1, guildFactionData.enemy2, guildFactionData.enemy3 };
-                int[] npcEnemies = { npcData.factionData.enemy1, npcData.factionData.enemy2, npcData.factionData.enemy3 };
+                int[] npcEnemies = { npcGroupFaction.enemy1, npcGroupFaction.enemy2, npcGroupFaction.enemy3 };
                 for (int i = 0; i < 3; ++i)
                 {
                     for (int j = 0; j < 3; ++j)
@@ -943,7 +962,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Check if guild and NPC have allies in common
                 int[] guildAllies = { guildFactionData.ally1, guildFactionData.ally2, guildFactionData.ally3 };
-                int[] npcAllies = { npcData.factionData.ally1, npcData.factionData.ally2, npcData.factionData.ally3 };
+                int[] npcAllies = { npcGroupFaction.ally1, npcGroupFaction.ally2, npcGroupFaction.ally3 };
                 for (int i = 0; i < 3; ++i)
                 {
                     for (int j = 0; j < 3; ++j)
@@ -2638,7 +2657,7 @@ namespace DaggerfallWorkshop.Game
                             DaggerfallUnity.LogMessage(exceptionMessage, true);
                         }
 
-                        // Populate potential merchant questors in this building
+                        // Populate potential questors in this building
                         if (populateQuestors)
                         {
                             PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
@@ -2646,22 +2665,8 @@ namespace DaggerfallWorkshop.Game
                             for (int p = 0; p < buildingNpcs.Length; p++)
                             {
                                 FactionFile.FactionData factionData;
-                                // Assuming commoners (people of region) are NPCs with have faction IDs of zero.
-                                if (buildingNpcs[p].FactionID == 0)
-                                {
-                                    // Get regional people faction ID
-                                    FactionFile.FactionData[] factionsData = factions.FindFactions(
-                                        (int)FactionFile.FactionTypes.People, (int)FactionFile.SocialGroups.Commoners,
-                                        -1, GameManager.Instance.PlayerGPS.CurrentRegionIndex);
-                                    if (factionsData.Length == 1)
-                                        factionData = factionsData[0];
-                                    else
-                                        continue;
-                                }
-                                else
-                                {
-                                    factions.GetFactionData(buildingNpcs[p].FactionID, out factionData);
-                                }
+                                GetStaticNPCFactionData(buildingNpcs[p].FactionID, buildingSummary.BuildingType, out factionData);
+
                                 FactionFile.SocialGroups socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
                                 if (socialGroup == FactionFile.SocialGroups.Merchants ||
                                     socialGroup == FactionFile.SocialGroups.Commoners ||
