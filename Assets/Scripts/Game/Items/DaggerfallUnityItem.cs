@@ -1181,18 +1181,6 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public void DamageThroughPhysicalHit(int damage, DaggerfallEntity owner)
-        {
-            int amount = (10 * damage + 50) / 100;
-            if ((amount == 0) && Dice100.SuccessRoll(20))
-                amount = 1;
-            currentCondition -= amount;
-            if (currentCondition <= 0)
-            {
-                ItemBreaks(owner);
-            }
-        }
-
         public void LowerCondition(int amount, DaggerfallEntity unequipFromOwner = null, ItemCollection removeFromCollectionWhenBreaks = null)
         {
             currentCondition -= amount;

@@ -786,15 +786,23 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        /// <summary>
+        /// Allocate any equipment damage from a strike, and reduce item condition.
+        /// </summary>
         private static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
         {
+            Func<DaggerfallEntity, DaggerfallEntity, int, DaggerfallUnityItem, int, bool> del;
+            if (TryGetOverride("DamageEquipment", out del))
+                if (del(attacker, target, damage, weapon, struckBodyPart))
+                    return; // Only return if override returns true
+
             // If damage was done by a weapon, damage the weapon and armor of the hit body part.
             // In classic, shields are never damaged, only armor specific to the hitbody part is.
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
             if (weapon != null && damage > 0)
             {
                 // TODO: If attacker is AI, apply Ring of Namira effect
-                weapon.DamageThroughPhysicalHit(damage, attacker);
+                ApplyConditionDamageThroughPhysicalHit(weapon, attacker, damage);
 
                 DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 bool shieldTakesDamage = false;
@@ -810,15 +818,32 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
 
                 if (shieldTakesDamage)
-                    shield.DamageThroughPhysicalHit(damage, target);
+                    ApplyConditionDamageThroughPhysicalHit(shield, target, damage);
                 else
                 {
                     EquipSlots hitSlot = DaggerfallUnityItem.GetEquipSlotForBodyPart((BodyParts)struckBodyPart);
                     DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(hitSlot);
                     if (armor != null)
-                        armor.DamageThroughPhysicalHit(damage, target);
+                        ApplyConditionDamageThroughPhysicalHit(armor, target, damage);
                 }
             }
+        }
+
+        /// <summary>
+        /// Applies condition damage to an item based on physical hit damage.
+        /// </summary>
+        private static void ApplyConditionDamageThroughPhysicalHit(DaggerfallUnityItem item, DaggerfallEntity owner, int damage)
+        {
+            Func<DaggerfallUnityItem, DaggerfallEntity, int, bool> del;
+            if (TryGetOverride("ApplyConditionDamageThroughPhysicalHit", out del))
+                if (del(item, owner, damage))
+                    return; // Only return if override returns true
+
+            int amount = (10 * damage + 50) / 100;
+            if ((amount == 0) && Dice100.SuccessRoll(20))
+                amount = 1;
+
+            item.LowerCondition(amount, owner);
         }
 
         public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target, int damage)
