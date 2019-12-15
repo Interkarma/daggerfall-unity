@@ -649,7 +649,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         if (directionToMobile.magnitude <= 77.5f)
                         {
                             // Spawn from guard mobile NPCs first
-                            if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                            if (populationManager.PopulationPool[i].npc.IsGuard)
                             {
                                 SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
                                 populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
@@ -705,7 +705,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
                                 if (entity == GameManager.Instance.PlayerEntityBehaviour)
                                     seen = true;
-                                if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                                if (populationManager.PopulationPool[i].npc.IsGuard)
                                     seenByGuard = true;
                             }
                         }
@@ -763,7 +763,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         continue;
 
                     // Spawn from guard mobile NPCs
-                    if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                    if (populationManager.PopulationPool[i].npc.IsGuard)
                     {
                         SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
                         populationManager.PopulationPool[i].npc.gameObject.SetActive(false);

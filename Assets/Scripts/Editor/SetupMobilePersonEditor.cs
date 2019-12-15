@@ -42,10 +42,10 @@ namespace DaggerfallWorkshop
             }
             if (GUILayout.Button("Align To Ground"))
             {
-                MobilePersonBillboard mobilePerson = setupMobilePerson.GetComponentInChildren<MobilePersonBillboard>();
+                var mobilePerson = setupMobilePerson.GetComponentInChildren<MobilePersonAsset>();
                 if (mobilePerson)
                 {
-                    Vector3 billboardSize = mobilePerson.GetBillboardSize();
+                    Vector3 billboardSize = mobilePerson.GetSize();
                     GameObjectHelper.AlignBillboardToGround(setupMobilePerson.gameObject, billboardSize);
                 }
             }

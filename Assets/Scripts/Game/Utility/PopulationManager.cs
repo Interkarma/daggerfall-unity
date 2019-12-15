@@ -196,9 +196,9 @@ namespace DaggerfallWorkshop.Game.Utility
                     poolItem.npc.Motor.InitMotor();
 
                     // Adjust billboard position for actual size
-                    Vector2 size = poolItem.npc.Billboard.GetBillboardSize();
+                    Vector2 size = poolItem.npc.Asset.GetSize();
                     if (Mathf.Abs(size.y - 2f) > 0.1f)
-                        poolItem.npc.Billboard.transform.Translate(0, (size.y - 2f) * 0.52f, 0);
+                        poolItem.npc.Asset.transform.Translate(0, (size.y - 2f) * 0.52f, 0);
                 }
 
                 // Mark for recycling
@@ -216,17 +216,17 @@ namespace DaggerfallWorkshop.Game.Utility
                     poolItem.active = false;
                     poolItem.scheduleEnable = false;
                     poolItem.scheduleRecycle = false;
-                    if (poolItem.npc.Billboard)
-                        poolItem.npc.Billboard.transform.localPosition = Vector3.zero;
+                    if (poolItem.npc.Asset)
+                        poolItem.npc.Asset.transform.localPosition = Vector3.zero;
                 }
 
                 populationPool[i] = poolItem;
 
                 // Do not render active mobile until it has made at least 1 full tile move
                 // This hides skating effect while unit aligning to navigation grid
-                if (poolItem.active && poolItem.npc.Billboard)
+                if (poolItem.active && poolItem.npc.Asset)
                 {
-                    MeshRenderer billboardRenderer = poolItem.npc.Billboard.GetComponent<MeshRenderer>();
+                    MeshRenderer billboardRenderer = poolItem.npc.Asset.GetComponent<MeshRenderer>();
                     if (billboardRenderer)
                         billboardRenderer.enabled = (poolItem.npc.Motor.MoveCount > 0) ? true : false;
                 }
