@@ -623,8 +623,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <param name="questSource">Array of lines from quest source file.</param>
         /// <param name="factionId">Faction id of quest giver for guilds.</param>
+        /// <param name="partialParse">If true the QRC & QBN sections will not be parsed</param>
         /// <returns>Quest.</returns>
-        public Quest ParseQuest(string questName, string[] questSource, int factionId = 0)
+        public Quest ParseQuest(string questName, string[] questSource, int factionId = 0, bool partialParse = false)
         {
             LogFormat("\r\n\r\nParsing quest {0}", questName);
 
@@ -632,7 +633,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Parse quest
                 Parser parser = new Parser();
-                Quest quest = parser.Parse(questSource, factionId);
+                Quest quest = parser.Parse(questSource, factionId, partialParse);
 
                 return quest;
             }
