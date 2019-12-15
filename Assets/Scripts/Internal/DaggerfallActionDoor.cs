@@ -178,31 +178,33 @@ namespace DaggerfallWorkshop
 
         public void AttemptBash(bool byPlayer)
         {
-            if (!IsOpen)
+            // Play bash sound if flagged and ready
+            if (PlaySounds && BashSound > 0 && audioSource)
             {
-                // Play bash sound if flagged and ready
-                if (PlaySounds && BashSound > 0 && audioSource)
-                {
-                    DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                    if (dfAudioSource != null)
-                        dfAudioSource.PlayOneShot(BashSound);
-                }
-
-                // Cannot bash magically held doors
-                if (!IsMagicallyHeld)
-                {
-                    // Roll for chance to open
-                    int chance = 20 - CurrentLockValue;
-                    if (Dice100.SuccessRoll(chance))
-                    {
-                        CurrentLockValue = 0;
-                        ToggleDoor(true);
-                    }
-                }
-
-                if (byPlayer && Game.GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)
-                    Game.GameManager.Instance.MakeEnemiesHostile();
+                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                if (dfAudioSource != null)
+                    dfAudioSource.PlayOneShot(BashSound);
             }
+
+            if (IsOpen)
+            {
+                // Bash-close the door
+                ToggleDoor(true);
+            }
+            // Cannot bash magically held doors
+            else if (!IsMagicallyHeld)
+            {
+                // Roll for chance to open
+                int chance = 20 - CurrentLockValue;
+                if (Dice100.SuccessRoll(chance))
+                {
+                    CurrentLockValue = 0;
+                    ToggleDoor(true);
+                }
+            }
+
+            if (byPlayer && Game.GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)
+                Game.GameManager.Instance.MakeEnemiesHostile();
         }
 
         public void SetInteriorDoorSounds()
