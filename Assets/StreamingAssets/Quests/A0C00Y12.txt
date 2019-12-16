@@ -19,7 +19,7 @@ QuestorOffer:  [1000]
 <ce>            returns it to me. Do you think you can find it?
 
 RefuseQuest:  [1001]
-<ce>               Too bad, I really need to find that book.
+<ce>               Too bad. I really need to find that book.
 
 AcceptQuest:  [1002]
 <ce>           Great! It is very important to me, being a first
@@ -27,7 +27,7 @@ AcceptQuest:  [1002]
 <ce>             who took it. You may try to ask around town.
 
 QuestComplete:  [1004]
-<ce>             Splendid! My copy of _book_! Well done %pcn.
+<ce>             Splendid! My copy of _book_! Well done, %pcn.
 <ce>                Here is the _gold_ gold I promised you.
 
 RumorsDuringQuest:  [1005]
@@ -64,9 +64,9 @@ QuestLogEntry:  [1010]
  gold to find %g3 book, _book_.
 
 Message:  1014
-<ce>                  You may want to try _informant_, in
-<ce>               _informant1_. %g seems to know everything
-<ce>                 that goes on around in __informant1_.
+<ce>                  You may want to try _informant_ in
+<ce>              _informant1_. %g seems to know everything
+<ce>                 that goes on around __informant1_.
                                      <--->
 <ce>                   You should ask at the local inns.
 <ce>                       They are full of gossip.
@@ -83,16 +83,16 @@ Message:  1014
 <ce>                 You should probably visit a library.
 
 Message:  1015
-<ce>         This must be the book, which was stolen from _giver_.
+<ce>         This must be the book that was stolen from _giver_.
 
 Message:  1025
 <ce>                   Hello, %pcn. Word is that you've
-<ce>                 been asking about me. I should know,
-<ce>                   all of __informant1_'s news comes
+<ce>                 been asking about me. I should know.
+<ce>                   All of __informant1_'s news comes
 <ce>                          through these ears.
 <ce>              Enough about me. I did hear something about
 <ce>                _giver_'s misfortunes. You want to find
-<ce>                     _thief_, %g has been looking
+<ce>                     _thief_. %g has been looking
 <ce>                    for a first printing of _book_
 <ce>                for some time. And %g is also the type
 <ce>                   who takes things without asking,
@@ -109,21 +109,21 @@ Message:  1035
 Message:  1027
 _thief_ lives at _house_ in __house_.
 <--->
-_thief_ does live in __house_.
+_thief_ lives in __house_.
 <--->
-_thief_ spends %g3 nights at __house_.
+_thief_ spends %g3 nights at _house_.
 <--->
-You should try to find _thief_ at home, %g does live in __house_.
+You should try to find _thief_ at %g3 home. %g lives in __house_.
 <--->
 _thief_ does a lot of trading at _store_.
 <--->
-You may want to start shopping at _store_, _thief_ does.
+You may want to start shopping at _store_. _thief_ does.
 <--->
 _store_ is a popular place to trade stolen goods, which _thief_ has a lot of.
 <--->
 _thief_ has been seen at _store_.
 <--->
-_inn_ is a hang out for many thieves.
+_inn_ is a hangout for many thieves.
 <--->
 _thief_ likes to drink at _inn_.
 <--->

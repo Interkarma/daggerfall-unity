@@ -216,7 +216,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                         else
                         {
-                            if (!mobileNpc.Billboard.IsUsingGuardTexture)
+                            if (!mobileNpc.IsGuard)
                             {
                                 playerEntity.TallyCrimeGuildRequirements(false, 5);
                                 playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;

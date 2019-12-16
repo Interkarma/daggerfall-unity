@@ -303,6 +303,17 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Called by parent quest when it ends so that all actions of this task can dispose themselves.
+        /// </summary>
+        public void DisposeActions()
+        {
+            foreach (IQuestAction action in actions)
+            {
+                action.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Add action to task
         /// </summary>
         /// <param name="questAction">Action</param>

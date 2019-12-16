@@ -20,13 +20,13 @@ QuestorOffer:  [1000]
 <ce>               You find me in desperate straits, my dear
 <ce>                  %ra. I have received word from some
 <ce>                 %cn thugs that they intend to ransack
-<ce>                my house tonight.  I don't suppose you'd
+<ce>                my house tonight. I don't suppose you'd
 <ce>                  be available to do a little creative
 <ce>                 facial rearrangement on these fellows?
 
 RefuseQuest:  [1001]
 <ce>                    Fear not for my safety, %pcn. I
-<ce>                shall find another protector...somehow.
+<ce>                shall find another protector... somehow.
 
 AcceptQuest:  [1002]
 <ce>             Thank you and bless you! They will strike at
@@ -54,7 +54,7 @@ RumorsPostsuccess:  [1007]
 <ce>                           beat up _qgiver_?
 
 QuestorPostsuccess:  [1008]
-<ce>                 I still remember what you did for me
+<ce>                 I still remember what you did for me,
 <ce>                     %pcf. Chasing off those thugs
 <ce>                        leaves me in your debt.
 

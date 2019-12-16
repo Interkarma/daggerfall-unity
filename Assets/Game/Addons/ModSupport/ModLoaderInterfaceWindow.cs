@@ -65,6 +65,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     int currentSelection = -1;
 
     ModSettings[] modSettings;
+    bool closeIfTopWindow;
 
     #endregion
 
@@ -290,6 +291,9 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modListScrollBar.ScrollIndex = modList.ScrollIndex;
         }
 
+        if (closeIfTopWindow && uiManager.TopWindow == this)
+            uiManager.PopWindow();
+
         HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
         if (!NativePanel.KeyboardActivation(keyModifiers))
             if (!ModPanel.KeyboardActivation(keyModifiers))
@@ -390,7 +394,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         }
     }
 
-    private void CleanConfigurationDirectory(Action onPerformed = null)
+    private void CleanConfigurationDirectory()
     {
         var unknownDirectories = Directory.GetDirectories(ModManager.Instance.ModDataDirectory)
             .Select(x => new DirectoryInfo(x))
@@ -413,16 +417,37 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
                 }
 
                 messageBox.CancelWindow();
-
-                if (onPerformed != null)
-                    onPerformed();
             };
             uiManager.PushWindow(cleanConfigMessageBox);
         }
-        else
+    }
+
+    private void CheckDependencies()
+    {
+        foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.Enabled))
         {
-            if (onPerformed != null)
-                onPerformed();
+            string errorMessage = ModManager.Instance.CheckModDependencies(mod);
+            if (errorMessage != null)
+            {
+                string message = string.Format(ModManager.GetText("dependencyErrorMessage"), mod.Title, errorMessage);
+                var messageBox = new DaggerfallMessageBox(uiManager, this, true);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.SetText(message);
+                messageBox.SetText(new[] { message, ModManager.GetText("sortModsQuestion") });
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+                messageBox.OnButtonClick += (_, button) =>
+                {
+                    if (button == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                    {
+                        ModManager.Instance.AutoSortMods();
+                        ModManager.WriteModSettings();
+                        Debug.Log("Mods have been sorted automatically");
+                    }
+                };
+                uiManager.PushWindow(messageBox);
+                Debug.LogError(message);
+            }
         }
     }
 
@@ -492,7 +517,11 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         //save current mod settings to file
         ModManager.WriteModSettings();
         ModManager.Instance.SortMods();
-        CleanConfigurationDirectory(() => DaggerfallUI.UIManager.PopWindow());
+
+        // Show info popups and close
+        closeIfTopWindow = true;
+        CleanConfigurationDirectory();
+        CheckDependencies();
     }
 
     void ExtractFilesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

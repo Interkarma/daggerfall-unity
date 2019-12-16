@@ -1512,7 +1512,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Vector3 rotationPoint = rotationPivotAxisPositionView3D;
                 cameraAutomap.transform.RotateAround(rotationPoint, cameraAutomap.transform.right, -rotationAmount * Time.unscaledDeltaTime);
-                UpdateAutomapView();
+                // Prevent the map from being seen upside-down
+                Vector3 transformedUp = cameraAutomap.transform.TransformDirection(Vector3.up);
+                if (transformedUp.y < 0)
+                {
+                    float rotateBack = Vector3.SignedAngle(transformedUp, Vector3.ProjectOnPlane(transformedUp, Vector3.up), cameraAutomap.transform.right);
+                    cameraAutomap.transform.RotateAround(rotationPoint, cameraAutomap.transform.right, rotateBack);
+                }
+                UpdateAutomapView(); 
             }
         }
 

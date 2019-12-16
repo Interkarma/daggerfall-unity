@@ -1,0 +1,55 @@
+{
+    "title": "Mod Settings Preset",
+    "description": "A group of settings values for a mod.",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "Title": {
+            "type": "string",
+            "description": "A readable and descriptive title shown on UI."
+        },
+        "Author": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "description": "The name of the author of this preset (optional)."
+        },
+        "Description": {
+            "type": "string",
+            "description": "A short description shown on UI."
+        },
+        "SettingsVersion": {
+            "type": "string",
+            "description": "The revision of mod settings that is targeted by this preset. This is not the version of the preset! If different, a compatibility warning is displayed.",
+            "default": "1"
+        },
+        "Values": {
+            "type": "object",
+            "description": "Values provided by this preset. This is a dictionary of sections of mod settings.",
+            "additionalProperties": {
+                "type": "object",
+                "description": "The name of a section with its content.",
+                "additionalProperties": {
+                    "type": "string",
+                    "description": "The name of a key with its serialized value."
+                }
+            }
+        },
+        "$version": {
+            "type": "string",
+            "description": "Version of type managed by serializer.",
+            "const": "v1",
+            "default": "v1",
+            "readOnly": true
+        }
+    },
+    "required": [
+        "Title",
+        "Description",
+        "SettingsVersion",
+        "Values",
+        "$version"
+    ],
+    "additionalProperties": false
+}

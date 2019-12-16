@@ -254,7 +254,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public virtual void Dispose()
         {
-            RaiseOnDisposeEvent();
         }
 
         /// <summary>
@@ -345,19 +344,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // Set hidden flag
             // NOTE: Foes are a one-to-many resource - hiding a Foe will remove ALL spawned instances of that Foe
             isHidden = value;
-        }
-
-        #endregion
-
-        #region Events
-
-        // OnDispose
-        public delegate void OnDisposeEventHandler();
-        public event OnDisposeEventHandler OnDispose;
-        protected virtual void RaiseOnDisposeEvent()
-        {
-            if (OnDispose != null)
-                OnDispose();
         }
 
         #endregion

@@ -1,0 +1,66 @@
+{
+    "title": "Daggerfall Unity Mod Manifest File",
+    "description": "Manifest file, tipically with .dfmod.json extension, for a mod.",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "ModTitle": {
+            "type": "string",
+            "description": "A readable title for the mod."
+        },
+        "ModVersion": {
+            "type": "string",
+            "description": "Version number for the mod.",
+            "default": "0.1.0"
+        },
+        "ModAuthor": {
+            "type": "string",
+            "description": "Name of the author of the mod."
+        },
+        "ContactInfo": {
+            "type": "string",
+            "description": "Contact informations, like an email address or the url of a page on Nexus Mods or other websites.",
+            "anyOf": [
+                {
+                    "format": "uri"
+                },
+                {
+                    "format": "email"
+                }
+            ]
+        },
+        "DFUnity_Version": {
+            "type": "string",
+            "description": "The minimum supported version of the game, compared automatically with local game version.",
+            "pattern": "^[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?$"
+        },
+        "ModDescription": {
+            "type": "string",
+            "description": "A short description of the mod. Line endings are supported."
+        },
+        "GUID": {
+            "type": "string",
+            "description": "A GUID associated to the mod that shouldn't be altered manually.",
+            "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        },
+        "Files": {
+            "type": "array",
+            "description": "Assets associated to this mod. They are included with assetbundle during mod creation.",
+            "items": {
+                "type": "string",
+                "description": "Relative path from project root of an asset.",
+                "pattern": "^Assets/"
+            }
+        }
+    },
+    "required": [
+        "ModTitle",
+        "ModVersion",
+        "ModAuthor",
+        "ContactInfo",
+        "DFUnity_Version",
+        "ModDescription",
+        "GUID"
+    ],
+    "additionalProperties": true
+}

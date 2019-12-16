@@ -435,6 +435,24 @@ namespace DaggerfallWorkshop.Game.Serialization
             return key != -1;
         }
 
+        public void Rename(int key, string newSaveName)
+        {
+            if (!enumeratedSaveFolders.ContainsKey(key))
+                return;
+
+            // Get save info
+            SaveInfo_v1 saveInfo = GetSaveInfo(key);
+
+            // Write save info only if save name has been modified
+            if (newSaveName != saveInfo.saveName)
+            {
+                saveInfo.saveName = newSaveName;
+                string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
+                string path = GetSaveFolder(key);
+                WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
+            }
+        }
+
         #endregion
 
         #region Public Static Methods

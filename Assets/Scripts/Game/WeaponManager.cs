@@ -458,7 +458,7 @@ namespace DaggerfallWorkshop.Game
             MobilePersonNPC mobileNpc = hitTransform.GetComponent<MobilePersonNPC>();
             if (mobileNpc)
             {
-                if (!mobileNpc.Billboard.IsUsingGuardTexture)
+                if (!mobileNpc.IsGuard)
                 {
                     EnemyBlood blood = hitTransform.GetComponent<EnemyBlood>();
                     if (blood)

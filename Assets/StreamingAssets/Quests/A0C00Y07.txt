@@ -30,7 +30,7 @@ QuestComplete:  [1004]
 <ce>                Here is the _gold_ gold that I promised.
 
 RumorsDuringQuest:  [1005]
-<ce>                   I think its hilarious! _qgiver_'s
+<ce>                   I think it's hilarious! _qgiver_'s
 <ce>                  _house_ is overrun with giant bugs!
                                      <--->
 <ce>                    I feel sorry for _qgiver_. %g3

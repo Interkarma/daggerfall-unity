@@ -580,7 +580,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 foreach (string manifestPath in Directory.GetFiles(EditorModsDirectory, "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
                 {
-                    var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
+                    ModInfo modInfo = null;
+                    if (ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(manifestPath)), ref modInfo).Failed)
+                    {
+                        Debug.LogErrorFormat("Failed to deserialize manifest file {0}", manifestPath);
+                        continue;
+                    }
+
                     if (mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
                     {
                         Debug.LogWarningFormat("Ignoring virtual mod {0} because release mod is already loaded.", modInfo.ModTitle);
@@ -946,6 +952,81 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Automatically assigns load priority from relationships defined by <see cref="ModInfo.Dependencies"/>.
+        /// </summary>
+        internal void AutoSortMods()
+        {
+            try
+            {
+                mods = TopologicalSort(mods, mod =>
+                {
+                    if (mod.ModInfo.Dependencies == null)
+                        return Enumerable.Empty<Mod>();
+
+                    var query = from dependency in mod.ModInfo.Dependencies
+                                where !dependency.IsPeer
+                                select GetModFromName(dependency.Name);
+
+                    return query.Where(x => x != null);
+                });
+
+                for (int i = 0; i < mods.Count; i++)
+                    mods[i].LoadPriority = i;
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("Failed to auto sort mods: {0}", e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Checks if all conditions defined in Dependency section of a mod are satisfied.
+        /// </summary>
+        /// <param name="mod">A mod that should be validated.</param>
+        /// <returns>A readable error message or null.</returns>
+        internal string CheckModDependencies(Mod mod)
+        {
+            if (mod.ModInfo.Dependencies != null)
+            {
+                foreach (ModDependency dependency in mod.ModInfo.Dependencies)
+                {
+                    // Check if dependency is available
+                    Mod target = GetModFromName(dependency.Name);
+                    if (target == null)
+                    {
+                        if (dependency.IsOptional)
+                            continue;
+
+                        return string.Format(ModManager.GetText("dependencyIsMissing"), dependency.Name);
+                    }
+
+                    // Check load order priority
+                    if (!dependency.IsPeer && mod.LoadPriority < target.LoadPriority)
+                        return string.Format(ModManager.GetText("dependencyWithIncorrectPosition"), target.Title);
+
+                    // Check minimum version (ignore pre-release identifiers after hyphen).
+                    if (dependency.Version != null)
+                    {
+                        if (target.ModInfo.ModVersion == null)
+                            return string.Format(ModManager.GetText("dependencyWithIncompatibleVersion"), target.Title, "<undefined>", dependency.Version);
+
+                        int index = target.ModInfo.ModVersion.IndexOf('-');
+                        string referenceVersion = index != -1 ? target.ModInfo.ModVersion.Remove(index) : target.ModInfo.ModVersion;
+                        if (IsVersionLowerOrEqual(dependency.Version, referenceVersion) != true)
+                            return string.Format(ModManager.GetText("dependencyWithIncompatibleVersion"), target.Title, target.ModInfo.ModVersion, dependency.Version);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        internal Mod GetModFromName(string name)
+        {
+            return mods.FirstOrDefault(x => x.FileName.Equals(name, StringComparison.Ordinal));
+        }
+
+        /// <summary>
         /// Gets a localized string for a mod system text.
         /// </summary>
         internal static string GetText(string key)
@@ -992,10 +1073,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (secondParts.Length < 1 || secondParts.Length > 3)
                 return null;
 
-            for (int i = 0; i < firstParts.Length && i < secondParts.Length; i++)
+            for (int i = 0; i < firstParts.Length || i < secondParts.Length; i++)
             {
-                int firstPart, secondPart;
-                if (!int.TryParse(firstParts[i], out firstPart) || !int.TryParse(secondParts[i], out secondPart))
+                int firstPart = 0;
+                int secondPart = 0;
+
+                if ((i < firstParts.Length && !int.TryParse(firstParts[i], out firstPart)) ||
+                    (i < secondParts.Length && !int.TryParse(secondParts[i], out secondPart)))
                     return null;
 
                 if (firstPart > secondPart)
@@ -1033,6 +1117,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     DaggerfallUnity.LogMessage("Multiple ModManager instances detected in scene!", true);
                     Destroy(this);
                 }
+            }
+        }
+
+        // Adapted from https://stackoverflow.com/questions/4106862/how-to-sort-depended-objects-by-dependency
+        private static List<T> TopologicalSort<T>(IEnumerable<T> source, Func<T, IEnumerable<T>> dependencies)
+        {
+            var sorted = new List<T>();
+            var visited = new HashSet<T>();
+
+            foreach (var item in source)
+                Visit(item, visited, sorted, dependencies);
+
+            return sorted;
+        }
+
+        private static void Visit<T>(T item, HashSet<T> visited, List<T> sorted, Func<T, IEnumerable<T>> dependencies)
+        {
+            if (!visited.Contains(item))
+            {
+                visited.Add(item);
+
+                foreach (var dependency in dependencies(item))
+                    Visit(dependency, visited, sorted, dependencies);
+
+                sorted.Add(item);
+            }
+            else
+            {
+                if (!sorted.Contains(item))
+                    throw new Exception("Cyclic dependency found");
             }
         }
 

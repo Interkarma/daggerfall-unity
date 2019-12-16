@@ -15,6 +15,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -53,7 +54,7 @@ namespace DaggerfallWorkshop.Game
 
         // References
         DaggerfallEntityBehaviour entityBehaviour;
-        MobilePersonBillboard mobileBillboard;
+        MobilePersonAsset mobileAsset;
 
         #endregion
 
@@ -161,7 +162,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Cache references
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
-            mobileBillboard = GetComponentInChildren<MobilePersonBillboard>();
+            mobileAsset = FindMobilePersonAsset();
 
             // Need to repath if floating origin ticks while in range
             FloatingOrigin.OnPositionUpdate += FloatingOrigin_OnPositionUpdate;
@@ -182,7 +183,7 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if paralyzed
             if (entityBehaviour.Entity.IsParalyzed)
             {
-                mobileBillboard.IsIdle = false;
+                mobileAsset.IsIdle = false;
                 return;
             }
 
@@ -223,16 +224,16 @@ namespace DaggerfallWorkshop.Game
             else
                 wantsToStop = false;
 
-            if (!wantsToStop && mobileBillboard.IsIdle)
+            if (!wantsToStop && mobileAsset.IsIdle)
             {
                 // Switch animation state back to moving
-                mobileBillboard.IsIdle = false;
+                mobileAsset.IsIdle = false;
                 currentMobileState = MobileStates.MovingForward;
             }
-            else if (wantsToStop && !mobileBillboard.IsIdle)
+            else if (wantsToStop && !mobileAsset.IsIdle)
             {
                 // Switch animation state to idle
-                mobileBillboard.IsIdle = true;
+                mobileAsset.IsIdle = true;
                 currentMobileState = MobileStates.Idle;
             }
 
@@ -378,6 +379,30 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
+        private MobilePersonAsset FindMobilePersonAsset()
+        {
+            var mobilePersonAsset = GetComponentInChildren<MobilePersonAsset>();
+
+            GameObject customMobilePersonAssetGo;
+            if (ModManager.Instance && ModManager.Instance.TryGetAsset<GameObject>("MobilePersonAsset", true, out customMobilePersonAssetGo))
+            {
+                var customMobilePersonAsset = customMobilePersonAssetGo.GetComponent<MobilePersonAsset>();
+                if (customMobilePersonAsset)
+                {
+                    GameObject.Destroy(mobilePersonAsset.gameObject);
+                    customMobilePersonAssetGo.transform.SetParent(gameObject.transform);
+                    mobilePersonAsset = customMobilePersonAsset;
+                    mobilePersonAsset.Trigger = GetComponent<CapsuleCollider>();
+                }
+                else
+                {
+                    Debug.LogError("Failed to retrieve MobilePersonAsset component from GameObject.");
+                }
+            }
+
+            return mobilePersonAsset;
+        }
 
         void SetTargetPosition()
         {
