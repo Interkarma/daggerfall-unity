@@ -60,10 +60,10 @@ It is nice to see Queen Aubk-i happy at last. She has a very pretty smile.
 Queen Aubk-i seems more than happy lately. She seems almost ... relieved.
 
 QuestorPostsuccess:  [1008]
-Ah, %pcn. The %ra that refused visit my dead husband's grandmother.
+Thank you once again for taking that dangerous trip to Shedungent to look in on Nulfaga for me.
 
 QuestorPostfailure:  [1009]
-Thank you once again for taking that dangerous trip to Shedungent to look in on Nulfaga for me.
+Ah, %pcn. The %ra that refused to visit my husband's grandmother.
 
 QuestLogEntry:  [1010]
 %qdt:

@@ -17,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>        will only take =traveltime_ days of your time. I cannot
 <ce>             tell you more unless you accept this mission.
                                      <--->
-<ce>            Hullo there, young %ra. How'd you like to make
+<ce>            Hullo there, young %ra. How would you like to make
 <ce>          _gold_ gold pieces just by performing what I'm told
 <ce>          is called in mercenary circles "the old switcheroo"?
 
@@ -31,11 +31,11 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                        Go to _inn_ in __inn_.
-<ce>            Lodged there is a courier bearing a letter, take
+<ce>            Lodged there is a courier bearing a letter. Take
 <ce>            it and leave this false one in its place. Do not
 <ce>             disturb any of his belongings. If he finds out
 <ce>              that the letter has been switched, all of my
-<ce>             plans will be ruined. If you are caught don't
+<ce>             plans will be ruined. If you are caught, don't
 <ce>                       bother trying to find me.
 
 QuestFail:  [1003]
@@ -134,7 +134,7 @@ Honorable _npc1_,
     I have decided to cast my
  vote for you when the guild
  ballots for treasurer. Of
- course I expect to be treated
+ course, I expect to be treated
  well in the near future.
                    _npc2_
 

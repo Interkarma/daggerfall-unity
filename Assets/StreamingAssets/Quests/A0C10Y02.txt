@@ -59,7 +59,7 @@ RumorsPostfailure:  [1006]
 <ce>                   I don't think that _qgiver_ will
 <ce>                   survive the season. %g'll probably
 <ce>                 commit suicide. You did hear that the
-<ce>         Dark Brotherhood kidnapped and slew %g3 child _child_?
+<ce>         Dark Brotherhood kidnapped and slew %g3 child, _child_?
 
 
 RumorsPostsuccess:  [1007]
@@ -90,9 +90,9 @@ Message:  1012
 On %qdt, _qgiver_
  told me of the heartbreaking kidnapping of
  %g3 child _child_ by the Dark
- Brotherhood.  I immediately agreed to
+ Brotherhood. I immediately agreed to
  rescue %g2 from _dbguild_ in
- __dbguild_.  %g3 family will wait
+ __dbguild_. %g3 family will wait
  =timeforq_ days for my return to
  __qgiver_ in ___qgiver_.
 

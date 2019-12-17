@@ -1,0 +1,97 @@
+{
+    "title": "Item Templates for Daggerfall Unity",
+    "description": "A list of template data used by items.",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "description": "Template data for an item.",
+        "properties": {
+            "index": {
+                "type": "integer",
+                "description": "A number that identifies this item.",
+                "minimum": 0
+            },
+            "name": {
+                "type": "string",
+                "description": "A readable name for this item."
+            },
+            "baseWeight": {
+                "type": "number",
+                "description": "Base weight in kilograms before material and other modifiers are applied."
+            },
+            "hitPoints": {
+                "type": "integer",
+                "description": "Maximum and starting condition of the item."
+            },
+            "capacityOrTarget": {
+                "type": "integer",
+                "description": "Capacity of container or target of effect."
+            },
+            "basePrice": {
+                "type": "integer",
+                "description": "Base price before material, mercantile and other modifiers are applied."
+            },
+            "enchantmentPoints": {
+                "type": "integer",
+                "description": "Base enchantment points before material and other modifiers are applied."
+            },
+            "rarity": {
+                "$ref": "#/definitions/byte",
+                "description": "Rarity of item appearing in buildings. Building quality must be at least equal this for item to appear."
+            },
+            "variants": {
+                "$ref": "#/definitions/byte",
+                "description": "Only for wearable items, this is the number of variants."
+            },
+            "drawOrderOrEffect": {
+                "$ref": "#/definitions/byte",
+                "description": "Ordering of items on paper doll (sort lowest to highest) or effect for ingredients."
+            },
+            "isBluntWeapon": {
+                "type": "boolean",
+                "description": "Defines if this is a blunt weapon."
+            },
+            "isLiquid": {
+                "type": "boolean",
+                "description": "Defines if this item is liquid."
+            },
+            "isOneHanded": {
+                "type": "boolean",
+                "description": "Defines if this item or weapon is one-handed."
+            },
+            "isIngredient": {
+                "type": "boolean",
+                "description": "Defines if this item is an ingredient."
+            },
+            "worldTextureArchive": {
+                "type": "integer",
+                "description": "Archive index of world texture, meaning the generic texture shown when item is used in world by itself, typically for quests."
+            },
+            "worldTextureRecord": {
+                "type": "integer",
+                "description": "Record index of world texture, meaning the generic texture shown when item is used in world by itself, typically for quests."
+            },
+            "playerTextureArchive": {
+                "type": "integer",
+                "description": "Archive index of player inventory texture; an offset for specific body morphology is added to this value during item creation."
+            },
+            "playerTextureRecord": {
+                "type": "integer",
+                "description": "Record index of player inventory texture."
+            }
+        },
+        "required": [
+            "index"
+        ],
+        "additionalProperties": false
+    },
+    "additionalItems": false,
+    "definitions": {
+        "byte": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+        }
+    }
+}

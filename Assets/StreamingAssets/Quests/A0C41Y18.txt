@@ -12,20 +12,20 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                  I need someone to deliver something
 <ce>                  for me, and I'm willing to pay very
-<ce>              generously.  _gold1_ gold up front, _gold2_
+<ce>              generously. _gold1_ gold up front, _gold2_
 <ce>                       more when the job is done.
 <ce>                         Will you help me out?
 
 RefuseQuest:  [1001]
 <ce>                    %oth, I'll never be rid of this
-<ce>                    thing!  Why will no one help me?
+<ce>                    thing! Why will no one help me?
 
 AcceptQuest:  [1002]
-<ce>                 Thank %god!  You don't know how much
-<ce>                  this means to me.  Here's your gold.
-<ce>                Now, take this to _dummy_ in ___dummy_,
-<ce>                 %g'll pay you the rest.  I really must
-<ce>                   be going now.  Thank you so much!
+<ce>                 Thank %god! You don't know how much
+<ce>                  this means to me. Here's your gold.
+<ce>                Now, take this to _dummy_ in ___dummy_.
+<ce>                 %g'll pay you the rest. I really must
+<ce>                   be going now. Thank you so much!
 
 QuestComplete:   [1004]
 <ce>                  _giver_ hands you a letter wrapped
@@ -57,13 +57,13 @@ QuestLogEntry:  [1010]
  to a _dummy_ of ___dummy_.
  My mysterious employer paid me _gold1_
  gold and promised _gold2_ more when I
- complete my assignment.  No time frame
+ complete my assignment. No time frame
  was specified, but my employer seemed
  very anxious for me to be on my way.
 
 Message:  1011
 %qdt:
- I have been tricked.  The supposed
+ I have been tricked. The supposed
  delivery to _dummy_ was actually
  a cursed mummy finger.
 
@@ -103,7 +103,7 @@ Message:  1016
                                      <--->
 <ce>                       My _finger_, my _finger_.
                                      <--->
-<ce>            You have my _finger_. Without it I cannot rest.
+<ce>            You have my _finger_. Without it, I cannot rest.
                                      <--->
 <ce>          You may destroy me this night, but I shall return.
                                      <--->
@@ -138,14 +138,14 @@ Message:  1040
 Dear Stranger,
  
  I hope you will forgive me for what I have
- done, but I had no choice.  The mummy has
+ done, but I had no choice. The mummy has
  haunted me every night since I found this
- cursed finger.  I've tried throwing it away,
- but it did no good.  A learned sage advised me
+ cursed finger. I've tried throwing it away,
+ but it did no good. A learned sage advised me
  that only by finding the mummy's tomb or by giving
  the finger away could I be rid of its hateful
- curse.  I am no warrior, and who would knowingly
- take up this burden for me?  You looked brave
+ curse. I am no warrior, and who would knowingly
+ take up this burden for me? You looked brave
  enough to endure the curse and perhaps solve it.
  Please understand, I meant you no harm, but I
  would have been killed or driven mad otherwise!

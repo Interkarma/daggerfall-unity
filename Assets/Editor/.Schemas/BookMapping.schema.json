@@ -1,0 +1,51 @@
+{
+    "title": "Book Mapping for Daggerfall Unity",
+    "description": "A list of metadata for custom books added to the game.",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "description": "Metadata for a custom book.",
+        "properties": {
+            "Name": {
+                "type": "string",
+                "description": "The file name with the extension; for example `example-book.TXT` for `StreamingAssets/Books/example-book.TXT`",
+                "pattern": "\\.TXT$"
+            },
+            "Title": {
+                "type": "string",
+                "description": "A readable book title. Should be the same title defined in the book asset."
+            },
+            "ID": {
+                "type": "integer",
+                "description": "An unique ID used for serialization, lower than 2147483647. Use any random generation tool available online to pick one number. For example, search \"random number between 1 and 2147483647\" with a search engine.",
+                "minimum": 0,
+                "maximum": 2147483647
+            },
+            "IsUnique": {
+                "type": "boolean",
+                "description": "If true this book is not found inside random loots or bookshelves and must be made available directly by mods. If omitted, fall back to false."
+            },
+            "WhenVarSet": {
+                "description": "If not null, book is available only when this global variable is set.",
+                "anyOf": [
+                    {
+                        "type": "null"
+                    },
+                    {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 63
+                    }
+                ]
+            }
+        },
+        "required": [
+            "Name",
+            "Title",
+            "ID"
+        ],
+        "additionalProperties": false
+    },
+    "additionalItems": false
+}

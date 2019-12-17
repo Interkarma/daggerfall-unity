@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         GUIStyle titleStyle = new GUIStyle();
         GUIStyle fieldStyle = new GUIStyle();
         GUIContent documentationGUIContent;
+        bool isSupportedEditorVersion;
 
         void OnEnable()
         {
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             documentationGUIContent = new GUIContent(EditorGUIUtility.IconContent("_Help"));
             documentationGUIContent.text = " Mod System Documentation";
+            isSupportedEditorVersion = IsSupportedEditorVersion();
         }
 
         void OnDisable()
@@ -178,6 +180,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (GUILayout.Button(documentationGUIContent))
                     Help.BrowseURL("https://www.dfworkshop.net/projects/daggerfall-unity/modding/");
             });
+
+            if (!isSupportedEditorVersion)
+                EditorGUILayout.HelpBox("Unsupported version of Unity Editor: generated mods may not be compatible with release builds!", MessageType.Warning);
 
             if (modInfo == null)
             {
@@ -670,6 +675,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 default:
                     return UnityEditor.BuildAssetBundleOptions.None;
             }
+        }
+
+        private static bool IsSupportedEditorVersion()
+        {
+#if UNITY_EDITOR_WIN || UNITY_EDITOR_OSX
+            return Application.unityVersion.Equals("2018.2.21f1", StringComparison.Ordinal);
+#elif UNITY_EDITOR_LINUX
+            return true;
+#else
+            return false;
+#endif
         }
     }
 }

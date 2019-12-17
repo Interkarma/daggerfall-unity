@@ -809,5 +809,26 @@ namespace DaggerfallWorkshop.Game.Player
 
         #endregion
 
+        #region Parent Group
+
+        /// <summary>
+        /// Find the top-level parent group of a given faction. This parent can be a Group, a Province or a Temple.
+        /// </summary>
+        /// <param name="faction">The faction to get the parent of.</param>
+        /// <param name="parentFaction">The parent group faction.</param>
+        public void GetParentGroupFaction(FactionFile.FactionData faction, out FactionFile.FactionData parentFaction)
+        {
+            parentFaction = faction;
+            while (parentFaction.parent != 0 &&
+                   parentFaction.type != (int)FactionFile.FactionTypes.Group &&
+                   parentFaction.type != (int)FactionFile.FactionTypes.Province &&
+                   parentFaction.type != (int)FactionFile.FactionTypes.Temple)
+            {
+                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(parentFaction.parent, out parentFaction);
+            }
+        }
+
+        #endregion
+
     }
 }

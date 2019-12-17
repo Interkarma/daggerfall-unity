@@ -1,0 +1,103 @@
+{
+    // File exclusions created by Unity
+    "files.exclude": {
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.gitignore": true,
+        "**/.gitmodules": true,
+        "**/*.booproj": true,
+        "**/*.pidb": true,
+        "**/*.suo": true,
+        "**/*.user": true,
+        "**/*.userprefs": true,
+        "**/*.unityproj": true,
+        "**/*.dll": true,
+        "**/*.exe": true,
+        "**/*.pdf": true,
+        "**/*.mid": true,
+        "**/*.midi": true,
+        "**/*.wav": true,
+        "**/*.gif": true,
+        "**/*.ico": true,
+        "**/*.jpg": true,
+        "**/*.jpeg": true,
+        "**/*.png": true,
+        "**/*.psd": true,
+        "**/*.tga": true,
+        "**/*.tif": true,
+        "**/*.tiff": true,
+        "**/*.3ds": true,
+        "**/*.3DS": true,
+        "**/*.fbx": true,
+        "**/*.FBX": true,
+        "**/*.lxo": true,
+        "**/*.LXO": true,
+        "**/*.ma": true,
+        "**/*.MA": true,
+        "**/*.obj": true,
+        "**/*.OBJ": true,
+        "**/*.asset": true,
+        "**/*.cubemap": true,
+        "**/*.flare": true,
+        "**/*.mat": true,
+        "**/*.meta": true,
+        "**/*.prefab": true,
+        "**/*.unity": true,
+        "build/": true,
+        "Build/": true,
+        "Library/": true,
+        "library/": true,
+        "obj/": true,
+        "Obj/": true,
+        "ProjectSettings/": true,
+        "temp/": true,
+        "Temp/": true
+    },
+    // File associations for TEMPLATE quests
+    // Fall back to plaintext if language extension is not installed
+    "files.associations": {
+        "**/Assets/StreamingAssets/Quests/*.txt": "dftemplate",
+        "**/Assets/StreamingAssets/QuestPacks/[a-zA-Z]*/**/*.txt": "dftemplate",
+        "**/Assets/Game/Mods/**/Quests/*.txt": "dftemplate"
+    },
+    // Settings for C# scripts
+    "[csharp]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    // Json schemas
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "*.dfmod.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/ModInfo.schema.json"
+        },
+        {
+            "fileMatch": [
+                "**/Presets/*.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/Preset.schema.json"
+        },
+        {
+            "fileMatch": [
+                "**/Books/Mapping/*.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/BookMapping.schema.json"
+        },
+        {
+            "fileMatch": [
+                "ItemTemplates.json"
+            ],
+            "url": "/Assets/Editor/.Schemas/ItemTemplates.schema.json"
+        },
+        {
+            "fileMatch": [
+                "**/SpellIcons/*.json",
+                "**/SpellIcons/*.txt"
+            ],
+            "url": "/Assets/Editor/.Schemas/SpellIcons.schema.json"
+        }
+    ]
+}
