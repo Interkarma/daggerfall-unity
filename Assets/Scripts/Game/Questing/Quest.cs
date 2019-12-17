@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         string questName;
         string displayName;
+        DaggerfallDateTime questStartTime;
         int factionId = 0;
         IMacroContextProvider mcp = null;
 
@@ -65,7 +66,6 @@ namespace DaggerfallWorkshop.Game.Questing
         List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
-        private DaggerfallDateTime questStartTime;
 
         #endregion
 
@@ -592,7 +592,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     return log.dateTime;
             }
 
-            return QuestStartTime;
+            return questStartTime;
         }
 
         /// <summary>
@@ -885,7 +885,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questName = questName;
             data.displayName = displayName;
             data.factionId = factionId;
-            data.questStartTime = QuestStartTime;
+            data.questStartTime = questStartTime;
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
 
