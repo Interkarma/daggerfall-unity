@@ -269,6 +269,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Clamp(chance, 5, 95);
         }
 
+        // Calculate chance of successfully climbing - checked repeatedly while climbing
         public static int CalculateClimbingChance(PlayerEntity player, int basePercentSuccess)
         {
             Func<PlayerEntity, int, int> del;
@@ -403,7 +404,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #endregion
 
-        #region Damage
+        #region Combat & Damage
 
         public static int CalculateHandToHandMinDamage(int handToHandSkill)
         {
@@ -1490,7 +1491,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #endregion
 
-        #region Holidays
+        #region Holidays & Conversation
 
         public static int GetHolidayId(uint gameMinutes, int regionIndex)
         {
@@ -1525,6 +1526,29 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Not a holiday
             return 0;
+        }
+
+        public static float BonusChanceToKnowWhereIs(float bonusPerBlockLess = 0.0078f)
+        {
+            const int maxArea = 64;
+
+            // Must be in a location
+            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
+                return 0;
+
+            // Get area of current location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            int locationArea = location.Exterior.ExteriorData.Width * location.Exterior.ExteriorData.Height;
+
+            // The largest possible location has an area of 64 (e.g. Daggerfall/Wayrest/Sentinel)
+            // The smallest possible location has an area of 1 (e.g. a tavern town)
+            // In a big city NPCs could be ignorant of all buildings, but in a small town it's unlikely they don't know the local tavern or smith
+            // So we apply a bonus that INCREASES the more city area size DECREASES
+            // With default inputs, a tiny 1x1 town NPC will get a +0.4914 to the default 0.5 chance for a total of 0.9914 chance to know building
+            // This is a big help as small towns also have less NPCs, and it gets frustrating when multiple NPCs don't knows where something is
+            float bonus = (maxArea - locationArea) * bonusPerBlockLess;
+
+            return bonus;
         }
 
         #endregion
@@ -1727,27 +1751,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static float BonusChanceToKnowWhereIs(float bonusPerBlockLess = 0.0078f)
+        #endregion
+
+        #region Items
+
+        public static bool IsItemStackable(DaggerfallUnityItem item)
         {
-            const int maxArea = 64;
+            Func<DaggerfallUnityItem, bool> del;
+            if (TryGetOverride("IsItemStackable", out del))
+                if (del(item))
+                    return true; // Only return if override returns true
 
-            // Must be in a location
-            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
-                return 0;
-
-            // Get area of current location
-            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            int locationArea = location.Exterior.ExteriorData.Width * location.Exterior.ExteriorData.Height;
-
-            // The largest possible location has an area of 64 (e.g. Daggerfall/Wayrest/Sentinel)
-            // The smallest possible location has an area of 1 (e.g. a tavern town)
-            // In a big city NPCs could be ignorant of all buildings, but in a small town it's unlikely they don't know the local tavern or smith
-            // So we apply a bonus that INCREASES the more city area size DECREASES
-            // With default inputs, a tiny 1x1 town NPC will get a +0.4914 to the default 0.5 chance for a total of 0.9914 chance to know building
-            // This is a big help as small towns also have less NPCs, and it gets frustrating when multiple NPCs don't knows where something is
-            float bonus = (maxArea - locationArea) * bonusPerBlockLess;
-
-            return bonus;
+            if (item.IsIngredient || item.IsPotion ||
+                item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) ||
+                item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow) ||
+                item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
+                return true;
+            else
+                return false;
         }
 
         #endregion

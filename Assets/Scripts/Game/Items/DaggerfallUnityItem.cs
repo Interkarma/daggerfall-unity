@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -654,16 +655,11 @@ namespace DaggerfallWorkshop.Game.Items
                 if (!IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
                     return false;
             }
-
+            // Equipped, quest and enchanted items cannot stack.
             if (IsEquipped || IsQuestItem || IsEnchanted)
                 return false;
-            if (IsIngredient || IsPotion ||
-                IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) ||
-                IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow) ||
-                IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
-                return true;
-            else
-                return false;
+
+            return FormulaHelper.IsItemStackable(this);
         }
 
         /// <summary>
