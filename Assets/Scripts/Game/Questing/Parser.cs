@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="source">Array of text lines from quest source.</param>
         /// <param name="factionId">Faction id of quest giver for guilds.</param>
-        /// <param name="partialParse">If true the QRC & QBN sections will not be parsed</param>
+        /// <param name="partialParse">If true the QRC and QBN sections will not be parsed.</param>
         public Quest Parse(string[] source, int factionId, bool partialParse = false)
         {
             Quest quest = new Quest();
