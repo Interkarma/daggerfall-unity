@@ -53,24 +53,24 @@ N0B00Y04, MagesGuild, M, 0, 0, Passed
 N0B00Y06, MagesGuild, M, 0, 0, Passed
 N0B00Y08, MagesGuild, M, 0, 0, Passed
 N0B00Y09, MagesGuild, M, 0, 0, Passed
-N0B00Y16, MagesGuild, M, 0, 0, Passed. https://github.com/Interkarma/daggerfall-unity/issues/1369
+N0B00Y16, MagesGuild, M, 0, 0, Passed
 N0B00Y17, MagesGuild, M, 0, 0, Passed
 N0B10Y01, MagesGuild, M, 1, 0, Passed
-N0B10Y03, MagesGuild, M, 1, 0, Passed. Repute tasks not yet existent. Corpses do not disappear at quest end.
-N0B11Y18, MagesGuild, M, 1, 1, Passed. Sequel quests not yet tested.
-N0B20Y02, MagesGuild, M, 2, 0, Passed. Corpses don't disappear at the end of the quest. Sleeping mage is sometimes female (not classic?). Enemies don't show up as a bunch. Enemies may not appear while loitering.
-N0B20Y05, MagesGuild, M, 2, 0, Passed. Lacks text variables in intro
+N0B10Y03, MagesGuild, M, 1, 0, Passed
+N0B11Y18, MagesGuild, M, 1, 1, Passed. Sequel quest disabled until tested.
+N0B20Y02, MagesGuild, M, 2, 0, Passed
+N0B20Y05, MagesGuild, M, 2, 0, Passed
 N0B21Y14, MagesGuild, M, 2, 1, Passed
-N0B30Y15, MagesGuild, M, 3, 0, Passed. Lacks spells on imp
+N0B30Y15, MagesGuild, M, 3, 0, Passed
 N0B40Y07, MagesGuild, M, 4, 0, Passed
 
 -- Classic: Temples (general)
 C0C00Y10, HolyOrder, N, 0, 0, Passed
 C0C00Y11, HolyOrder, N, 0, 0, Passed
-C0C00Y12, HolyOrder, N, 0, 0, Passed. Needs rumor dialogue links.
+C0C00Y12, HolyOrder, N, 0, 0, Passed
 C0C00Y13, HolyOrder, N, 0, 0, Passed
 C0B00Y00, HolyOrder, M, 0, 0, Passed
--C0B00Y01, HolyOrder, M, 0, 0, FAILED. PLayer log says "Exception during quest compile: An element with the same key already exists in the dictionary."
+C0B00Y01, HolyOrder, M, 0, 0, Passed
 -C0B00Y02, HolyOrder, M, 0, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
 C0B00Y03, HolyOrder, M, 0, 0, Passed
 C0B00Y04, HolyOrder, M, 0, 0, Passed
@@ -78,8 +78,8 @@ C0B00Y14, HolyOrder, M, 0, 0, Passed
 C0B10Y05, HolyOrder, M, 1, 0, Passed
 C0B10Y06, HolyOrder, M, 1, 0, Passed
 C0B10Y07, HolyOrder, M, 1, 0, Passed
-C0B10Y15, HolyOrder, M, 1, 0, Passed. Lich and object spawn far apart.
-C0B20Y08, HolyOrder, M, 2, 0, Identical to C0B10Y06.
+C0B10Y15, HolyOrder, M, 1, 0, Passed
+C0B20Y08, HolyOrder, M, 2, 0, Passed
 C0B3XY09, HolyOrder, M, 3, X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches.
 
 -- Classic: Temples (specific)

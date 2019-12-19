@@ -219,7 +219,8 @@ _clearclick_ task:
 	clear _qgclicked_ _clearclick_ 
 
 _S.02_ task:
-	start quest 502 502 
+--	start quest 502 502 
+-- disabling followup quest until it can be assured working
 	log 1021 step 1 
 	get item _letter_ 
 	say 1031 
