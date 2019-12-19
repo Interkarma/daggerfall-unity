@@ -474,7 +474,11 @@ namespace DaggerfallWorkshop
 
         public void ClearStatefulLooseObjects()
         {
-            looseObjectsList.RemoveAll(x => x.statefulObj);
+            looseObjectsList.RemoveAll(x => {
+                if (x.statefulObj)
+                    Destroy(x.gameObject);
+                return x.statefulObj;
+            });
         }
 
         /// <summary>
@@ -597,7 +601,7 @@ namespace DaggerfallWorkshop
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 #endif
 
-            CollectLooseObjects(true);
+            CollectLooseObjects();
             int playerTerrainIndex = terrainIndexDict[TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY)];
 
             UpdateTerrainData(terrainArray[playerTerrainIndex]);
