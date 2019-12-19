@@ -124,11 +124,22 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
             else
             {
+                // Copy any permanent scenes (sans corpses) into a new cache and replace existing
                 Dictionary<string, List<object[]>> newSceneDataCache = new Dictionary<string, List<object[]>>();
                 List<object[]> sceneData;
                 foreach (string sceneName in permanentScenes)
+                {
                     if (sceneDataCache.TryGetValue(sceneName, out sceneData))
-                        newSceneDataCache[sceneName] = sceneDataCache[sceneName];
+                    {
+                        object[] lootContainers = sceneData[(int)StatefulGameObjectTypes.LootContainer];
+                        List<LootContainerData_v1> lootNoCorpses = new List<LootContainerData_v1>();
+                        foreach (LootContainerData_v1 loot in lootContainers)
+                            if (loot.containerType != LootContainerTypes.CorpseMarker)
+                                lootNoCorpses.Add(loot);
+                        sceneData[(int)StatefulGameObjectTypes.LootContainer] = lootNoCorpses.ToArray();
+                    }
+                    newSceneDataCache[sceneName] = sceneData;
+                }
                 sceneDataCache = newSceneDataCache;
             }
         }
