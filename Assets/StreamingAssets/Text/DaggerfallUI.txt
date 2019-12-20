@@ -168,4 +168,20 @@ exteriorAutomapToolTipDownstairsButton,		"left click: zoom out (hotkey: {0}\rrig
 exteriorAutomapToolTipPanelCompass,			"left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})"
 
 - Save/Load window
-loading,                                    "Please wait..."
+loading,                "Please wait..."
+classicSave,            "Classic"
+cancel,                 "Cancel"
+renameSave,             "Rename"
+deleteSave,             "Delete"
+switchChar,             "Switch Char"
+savePrompt,             "Save Game"
+loadPrompt,             "Load Game"
+saveButton,             "Save"
+loadButton,             "Load"
+enterSaveName,          "Enter save name"
+selectSaveName,         "Select a save"
+confirmDeleteSave,      "Are you sure you want to delete save?"
+confirmOverwriteSave,   "Overwrite this save?";
+youMustEnterASaveName,  "You must enter a save name."
+youMustSelectASaveName, "You must select a save name."
+noSavesFound,           "No saves found. Load a Classic save?"
