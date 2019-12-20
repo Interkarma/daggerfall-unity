@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop.Game
             data.factionID = factionId;
             data.billboardArchiveIndex = archive;
             data.billboardRecordIndex = record;
-            data.nameSeed = (int)position ^ buildingKey;
+            data.nameSeed = (int)position ^ buildingKey + GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex;
             data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
             data.buildingKey = buildingKey;
         }
