@@ -142,12 +142,13 @@ _traveltime_ task:
 
 _S.01_ task:
 	clicked item _evilfocus_ 
+	place foe _guardian_ at _dungeon_ 
 	prompt 1011 yes _yes_ no _no_ 
 	take _evilfocus_ from pc
-	place foe _guardian_ at _dungeon_ 
 
 _yes_ task:
-	restrain foe _guardian_
+	remove foe _guardian_
+--better to just remove the daedra and avoid confusion
 	get item _magicitem_ 
 	make _magicitem_ permanent 
 	change repute with _qgiver_ by -10 
