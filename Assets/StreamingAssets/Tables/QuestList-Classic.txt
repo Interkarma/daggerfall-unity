@@ -80,10 +80,10 @@ C0B10Y06, HolyOrder, M, 1, 0, Passed
 C0B10Y07, HolyOrder, M, 1, 0, Passed
 C0B10Y15, HolyOrder, M, 1, 0, Passed
 C0B20Y08, HolyOrder, M, 2, 0, Passed
-C0B3XY09, HolyOrder, M, 3, X, Passed. Seducer spawn is problematic sometimes far away or inaccessible. Diety name mismatches.
+C0B3XY09, HolyOrder, M, 3, X, Passed
 
 -- Classic: Temples (specific)
-00B00Y00, HolyOrder, J, 0, 0, Passed. Undefined enemy name.
+00B00Y00, HolyOrder, J, 0, 0, Passed.
 D0B00Y00, HolyOrder, T, 0, 0, Passed.
 E0B00Y00, HolyOrder, A, 0, 0, Passed.
 F0B00Y00, HolyOrder, D, 0, 0, Passed.
@@ -93,14 +93,14 @@ I0B00Y00, HolyOrder, S, 0, 0, Passed.
 J0B00Y00, HolyOrder, Z, 0, 0, Passed.
 
 -- Classic: Thieves Guild
-O0A0AL00, GeneralPopulace, P, 0, 0, Passed. Set guild member to spawn in remote random; not sure if classic.
-O0B00Y00, GeneralPopulace, M, 0, 0, Apparently an exact copy of O0B10Y00.
+O0A0AL00, GeneralPopulace, P, 0, 0, Passed
+O0B00Y00, GeneralPopulace, M, 0, 0, Passed
 O0B00Y01, GeneralPopulace, M, 0, 0, Passed
 -O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Can't find any city containing its local house.
 O0B00Y12, GeneralPopulace, M, 0, 0, Passed
 O0B10Y00, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y03, GeneralPopulace, M, 1, 0, Passed.
-O0B10Y05, GeneralPopulace, M, 1, 0, Passed. Changed house4 to house1.
+O0B10Y05, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y06, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y07, GeneralPopulace, M, 1, 0, Passed.
 O0B20Y02, GeneralPopulace, M, 2, 0, Passed.
@@ -113,10 +113,10 @@ O0B2XY10, GeneralPopulace, M, 2, X, Passed.
 L0A01L00, DarkBrotherHood, P, 0, 1, Passed.
 L0B00Y00, DarkBrotherHood, M, 0, 0, Passed
 L0B00Y01, DarkBrotherHood, M, 0, 0, Passed
-L0B00Y02, DarkBrotherHood, M, 0, 0, Passed. Various undefined names. Quest timer is tight due to multiple remote locations.
-L0B00Y03, DarkBrotherHood, M, 0, 0, Passed. Enemy mage has no defined name.
-L0B10Y01, DarkBrotherHood, M, 1, 0, Passed. Enemy bard has no defined name.
-L0B10Y03, DarkBrotherHood, M, 1, 0, Passed. Quest timer is tight due to multiple remote locations.
+L0B00Y02, DarkBrotherHood, M, 0, 0, Passed
+L0B00Y03, DarkBrotherHood, M, 0, 0, Passed
+L0B10Y01, DarkBrotherHood, M, 1, 0, Passed
+L0B10Y03, DarkBrotherHood, M, 1, 0, Passed
 L0B20Y02, DarkBrotherHood, M, 2, 0, Passed
 L0B30Y03, DarkBrotherHood, M, 3, 0, Passed
 L0B30Y09, DarkBrotherHood, M, 3, 0, Passed
@@ -125,12 +125,12 @@ L0B50Y11, DarkBrotherHood, M, 5, 0, Passed
 L0B60Y10, DarkBrotherHood, M, 6, 0, Passed
 
 -- Classic: Knightly Orders
-B0C00Y05, KnightlyOrder, N, 0, 0, Passed. Undefined enemy name.
+B0C00Y05, KnightlyOrder, N, 0, 0, Passed.
 B0C00Y06, KnightlyOrder, N, 0, 0, Passed.
 B0C00Y10, KnightlyOrder, N, 0, 0, Passed.
 B0C00Y13, KnightlyOrder, N, 0, 0, Passed.
 B0B00Y00, KnightlyOrder, M, 0, 0, Passed.
-B0B00Y01, KnightlyOrder, M, 0, 0, Passed. Undefined enemy name.
+B0B00Y01, KnightlyOrder, M, 0, 0, Passed.
 B0B10Y04, KnightlyOrder, M, 1, 0, Passed.
 B0B20Y07, KnightlyOrder, M, 2, 0, Passed.
 B0B40Y08, KnightlyOrder, M, 4, 0, Passed.
