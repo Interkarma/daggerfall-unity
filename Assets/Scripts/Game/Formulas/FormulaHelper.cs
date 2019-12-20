@@ -50,6 +50,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static float specialInfectionChance = 0.6f;
 
+        // Approximation of classic frame updates
+        public const int classicFrameUpdate = 980;
+
         #region Basic Formulas
 
         public static int DamageModifier(int strength)
@@ -255,15 +258,41 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate chance of being caught shoplifting items
-        public static int CalculateShopliftingChance(PlayerEntity player, DaggerfallEntity na, int shopQuality, int weightAndNumItems)
+        public static int CalculateShopliftingChance(PlayerEntity player, int shopQuality, int weightAndNumItems)
         {
-            Func<PlayerEntity, DaggerfallEntity, int, int, int> del;
+            Func<PlayerEntity, int, int, int> del;
             if (TryGetOverride("CalculateShopliftingChance", out del))
-                return del(player, null, shopQuality, weightAndNumItems);
+                return del(player, shopQuality, weightAndNumItems);
 
             int chance = 100 - player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
             chance += shopQuality + weightAndNumItems;
             return Mathf.Clamp(chance, 5, 95);
+        }
+
+        // Calculate chance of successfully climbing - checked repeatedly while climbing
+        public static int CalculateClimbingChance(PlayerEntity player, int basePercentSuccess)
+        {
+            Func<PlayerEntity, int, int> del;
+            if (TryGetOverride("CalculateClimbingChance", out del))
+                return del(player, basePercentSuccess);
+
+            int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
+            int luck = player.Stats.GetLiveStatValue(DFCareer.Stats.Luck);
+            if (player.Race == Races.Khajiit)
+                skill += 30;
+
+            // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
+            if (player.IsEnhancedClimbing)
+                skill *= 2;
+
+            // Clamp skill range
+            skill = Mathf.Clamp(skill, 5, 95);
+            float luckFactor = Mathf.Lerp(0, 10, luck * 0.01f);
+
+            // Skill Check
+            int chance = (int) (Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor);
+
+            return chance;
         }
 
         // Calculate how many uses a skill needs before its value will rise.
@@ -375,7 +404,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #endregion
 
-        #region Damage
+        #region Combat & Damage
 
         public static int CalculateHandToHandMinDamage(int handToHandSkill)
         {
@@ -758,15 +787,23 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        /// <summary>
+        /// Allocate any equipment damage from a strike, and reduce item condition.
+        /// </summary>
         private static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
         {
+            Func<DaggerfallEntity, DaggerfallEntity, int, DaggerfallUnityItem, int, bool> del;
+            if (TryGetOverride("DamageEquipment", out del))
+                if (del(attacker, target, damage, weapon, struckBodyPart))
+                    return; // Only return if override returns true
+
             // If damage was done by a weapon, damage the weapon and armor of the hit body part.
             // In classic, shields are never damaged, only armor specific to the hitbody part is.
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
             if (weapon != null && damage > 0)
             {
                 // TODO: If attacker is AI, apply Ring of Namira effect
-                weapon.DamageThroughPhysicalHit(damage, attacker);
+                ApplyConditionDamageThroughPhysicalHit(weapon, attacker, damage);
 
                 DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 bool shieldTakesDamage = false;
@@ -782,15 +819,32 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
 
                 if (shieldTakesDamage)
-                    shield.DamageThroughPhysicalHit(damage, target);
+                    ApplyConditionDamageThroughPhysicalHit(shield, target, damage);
                 else
                 {
                     EquipSlots hitSlot = DaggerfallUnityItem.GetEquipSlotForBodyPart((BodyParts)struckBodyPart);
                     DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(hitSlot);
                     if (armor != null)
-                        armor.DamageThroughPhysicalHit(damage, target);
+                        ApplyConditionDamageThroughPhysicalHit(armor, target, damage);
                 }
             }
+        }
+
+        /// <summary>
+        /// Applies condition damage to an item based on physical hit damage.
+        /// </summary>
+        private static void ApplyConditionDamageThroughPhysicalHit(DaggerfallUnityItem item, DaggerfallEntity owner, int damage)
+        {
+            Func<DaggerfallUnityItem, DaggerfallEntity, int, bool> del;
+            if (TryGetOverride("ApplyConditionDamageThroughPhysicalHit", out del))
+                if (del(item, owner, damage))
+                    return; // Only return if override returns true
+
+            int amount = (10 * damage + 50) / 100;
+            if ((amount == 0) && Dice100.SuccessRoll(20))
+                amount = 1;
+
+            item.LowerCondition(amount, owner);
         }
 
         public static void OnMonsterHit(EnemyEntity attacker, DaggerfallEntity target, int damage)
@@ -1024,6 +1078,26 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return damage;
+        }
+
+        public static float GetMeleeWeaponAnimTime(PlayerEntity player, WeaponTypes weaponType, ItemHands weaponHands)
+        {
+            Func<PlayerEntity, WeaponTypes, ItemHands, float> del;
+            if (TryGetOverride("GetMeleeWeaponAnimTime", out del))
+                return del(player, weaponType, weaponHands);
+
+            float speed = 3 * (115 - player.Stats.LiveSpeed);
+            return speed / classicFrameUpdate;
+        }
+
+        public static float GetBowCooldownTime(PlayerEntity player)
+        {
+            Func<PlayerEntity, float> del;
+            if (TryGetOverride("GetBowCooldownTime", out del))
+                return del(player);
+
+            float cooldown = 10 * (100 - player.Stats.LiveSpeed) + 800;
+            return cooldown / classicFrameUpdate;
         }
 
         public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
@@ -1417,7 +1491,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #endregion
 
-        #region Holidays
+        #region Holidays & Conversation
 
         public static int GetHolidayId(uint gameMinutes, int regionIndex)
         {
@@ -1452,6 +1526,29 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Not a holiday
             return 0;
+        }
+
+        public static float BonusChanceToKnowWhereIs(float bonusPerBlockLess = 0.0078f)
+        {
+            const int maxArea = 64;
+
+            // Must be in a location
+            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
+                return 0;
+
+            // Get area of current location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            int locationArea = location.Exterior.ExteriorData.Width * location.Exterior.ExteriorData.Height;
+
+            // The largest possible location has an area of 64 (e.g. Daggerfall/Wayrest/Sentinel)
+            // The smallest possible location has an area of 1 (e.g. a tavern town)
+            // In a big city NPCs could be ignorant of all buildings, but in a small town it's unlikely they don't know the local tavern or smith
+            // So we apply a bonus that INCREASES the more city area size DECREASES
+            // With default inputs, a tiny 1x1 town NPC will get a +0.4914 to the default 0.5 chance for a total of 0.9914 chance to know building
+            // This is a big help as small towns also have less NPCs, and it gets frustrating when multiple NPCs don't knows where something is
+            float bonus = (maxArea - locationArea) * bonusPerBlockLess;
+
+            return bonus;
         }
 
         #endregion
@@ -1654,27 +1751,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static float BonusChanceToKnowWhereIs(float bonusPerBlockLess = 0.0078f)
+        #endregion
+
+        #region Items
+
+        public static bool IsItemStackable(DaggerfallUnityItem item)
         {
-            const int maxArea = 64;
+            Func<DaggerfallUnityItem, bool> del;
+            if (TryGetOverride("IsItemStackable", out del))
+                if (del(item))
+                    return true; // Only return if override returns true
 
-            // Must be in a location
-            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
-                return 0;
-
-            // Get area of current location
-            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            int locationArea = location.Exterior.ExteriorData.Width * location.Exterior.ExteriorData.Height;
-
-            // The largest possible location has an area of 64 (e.g. Daggerfall/Wayrest/Sentinel)
-            // The smallest possible location has an area of 1 (e.g. a tavern town)
-            // In a big city NPCs could be ignorant of all buildings, but in a small town it's unlikely they don't know the local tavern or smith
-            // So we apply a bonus that INCREASES the more city area size DECREASES
-            // With default inputs, a tiny 1x1 town NPC will get a +0.4914 to the default 0.5 chance for a total of 0.9914 chance to know building
-            // This is a big help as small towns also have less NPCs, and it gets frustrating when multiple NPCs don't knows where something is
-            float bonus = (maxArea - locationArea) * bonusPerBlockLess;
-
-            return bonus;
+            if (item.IsIngredient || item.IsPotion ||
+                item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) ||
+                item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow) ||
+                item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
+                return true;
+            else
+                return false;
         }
 
         #endregion

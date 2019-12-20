@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -70,9 +71,12 @@ namespace DaggerfallWorkshop.Game
         private readonly float regainHoldSkillCheckFrequency = 5; 
         // minimum percent chance to regain hold per skill check if slipping, gets closer to 100 with higher skill
         private const int regainHoldMinChance = 20;
+        // minimum percent chance to start climbing
+        private const int startClimbMinChance = 70;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
-        private const int continueClimbMinChance = 70;
-        private const int graspWallMinChance = 50;
+        private const int continueClimbMinChance = 50;
+        // minimum percent chance to grab a wall while falling
+        private const int graspWallMinChance = 40;
 
         public bool IsClimbing
         {
@@ -197,7 +201,7 @@ namespace DaggerfallWorkshop.Game
                     climbingStartTimer += Time.deltaTime;
                 // Begin Climbing
                 else if (!isClimbing)
-                {   
+                {
                     //if (hangingMotor.IsHanging)
                     //{   // grab wall from ceiling
                     //    overrideSkillCheck = true;
@@ -206,7 +210,8 @@ namespace DaggerfallWorkshop.Game
 
                     // automatic success if not falling
                     if ((!airborneGraspWall /*&& !hangingMotor.IsHanging*/) || releasedFromCeiling)
-                        StartClimbing();
+                        if (ClimbingSkillCheck(startClimbMinChance))
+                            StartClimbing();
                     // skill check to see if we catch the wall 
                     else if (ClimbingSkillCheck(graspWallMinChance))
                         StartClimbing();
@@ -606,23 +611,9 @@ namespace DaggerfallWorkshop.Game
             if (overrideSkillCheck)
                 return true;
 
-            int skill = player.Skills.GetLiveSkillValue(DFCareer.Skills.Climbing);
-            int luck = player.Stats.GetLiveStatValue(DFCareer.Stats.Luck);
-            if (player.Race == Entity.Races.Khajiit)
-                skill += 30;
+            int percentSuccess = FormulaHelper.CalculateClimbingChance(player, basePercentSuccess);
 
-            // Climbing effect states "target can climb twice as well" - doubling effective skill after racial applied
-            if (player.IsEnhancedClimbing)
-                skill *= 2;
-
-            // Clamp skill range
-            skill = Mathf.Clamp(skill, 5, 95);
-            float luckFactor = Mathf.Lerp(0, 10, luck * 0.01f);
-
-            // Skill Check
-            float percentSuccess = Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor;
-
-            if (Dice100.FailedRoll((int)percentSuccess))
+            if (Dice100.FailedRoll(percentSuccess))
             {
                 // Don't allow skill check to break climbing while swimming
                 // Water makes it easier to climb

@@ -1776,7 +1776,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
             PlayerGPS.DiscoveredBuilding buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
             int weightAndNumItems = (int)theftBasket.GetWeight() + theftBasket.Count;
-            int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(playerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
+            int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(playerEntity, buildingDiscoveryData.quality, weightAndNumItems);
             // Send the guards if detected
             if (!Dice100.FailedRoll(chanceBeingDetected))
             {

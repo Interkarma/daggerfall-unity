@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             if (ModManager.Instance)
             {
-                foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.HasAsset(name)))
+                foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.Enabled && x.HasAsset(name)))
                 {
                     var textAsset = mod.GetAsset<TextAsset>(name);
                     if (textAsset)
