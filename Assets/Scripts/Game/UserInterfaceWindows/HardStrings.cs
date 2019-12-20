@@ -38,15 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string cannotFloat = "You are carrying too much to stay afloat.";
         public const string youHaveNoArrows = "You have no arrows.";
 
-        public const string enterSaveName = "Enter save name";
-        public const string selectSaveName = "Select a save";
-        public const string confirmDeleteSave = "Are you sure you want to delete save?";
-        public const string confirmOverwriteSave = "Overwrite this save?";
-        public const string youMustEnterASaveName = "You must enter a save name.";
-        public const string youMustSelectASaveName = "You must select a save name.";
-        public const string noSavesFound = "No saves found. Load a Classic save?";
         public const string oldSaveNoTrade = "Old indoor save loaded, trade window will not work please exit and re-enter building.";
-
         public const string theBodyHasNoTreasure = "The body has no treasure.";
         public const string youAreTooFarAway = "You are too far away...";
         public const string youSeeAn = "You see an %s.";
