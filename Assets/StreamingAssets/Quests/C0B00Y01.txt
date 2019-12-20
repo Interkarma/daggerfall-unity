@@ -476,7 +476,8 @@ Place _mondung_ remote dungeon4
 Place _tavern_ remote tavern
 Place _prophouse_ remote tavern
 
-Clock _queston_ 26.09:20 0 flag 1 range 0 1
+Clock _queston_ 00:00 flag 1 range 0 1
+--quest timer was too short, edited to more generous
 Clock _S.04_ 2.02:00 20.20:00
 Clock _S.06_ 03:20 11:40
 Clock _S.14_ 2.02:00 20.20:00
@@ -572,8 +573,12 @@ _S.15_ task:
 	say 1025 
 
 _S.16_ task:
-	log 1036 step 5 
+	have _letter_ set _S.16a_
 	give pc _letter_ notify 1015 
+
+_S.16a_ task:
+	log 1036 step 5 
+--this log was getting written too soon
 
 _S.17_ task:
 	clicked item _finger_ 

@@ -78,7 +78,7 @@ Message:  1011
 <ce>                   As you reach for the _evilfocus_
 <ce>                 it transforms into a beautiful woman.
 <ce>                                    
-<ce>                      What a tasty young mortal!
+<ce>                      "What a tasty young mortal!
 <ce>                       I see you came to destroy
 <ce>                        the _evilfocus_. I have
 <ce>                       a better idea. If I give
@@ -88,15 +88,18 @@ Message:  1011
 <ce>                    couldn't find the _evilfocus_.
 <ce>                      They can hardly blame you,
 <ce>                        and you get to keep the
-<ce>                             _magicitem_.
+<ce>                             _magicitem_."
 
 Message:  1012
-<ce>                        Then die like the pious
-<ce>                            mortal you are!
+<ce>                        "Then die like the pious
+<ce>                            mortal you are!"
 
 Message:  1013
 <ce>  The curse is lifted. You should report to _qgiver_.
 
+Message:  1014
+<ce>  __qgiver_'s wrath will not
+<ce> be easily placated for this betrayal.
 
 -- Symbols used in the QRC file:
 --
@@ -139,21 +142,20 @@ _traveltime_ task:
 
 _S.01_ task:
 	clicked item _evilfocus_ 
+	place foe _guardian_ at _dungeon_ 
 	prompt 1011 yes _yes_ no _no_ 
-	take _evilfocus_ from pc 
---replaced place foe command with create foe. Place foe would locate the monster far away.
-	clear _S.01_ 
+	take _evilfocus_ from pc
 
 _yes_ task:
+	remove foe _guardian_
+--better to just remove the daedra and avoid confusion
 	get item _magicitem_ 
 	make _magicitem_ permanent 
 	change repute with _qgiver_ by -10 
+	say 1014
 	end quest 
 
 _no_ task:
-	injured _guardian_
-	create foe _guardian_ every 1 minutes 1 times with 100% success
---moved create guardian down to here due to S.01 clearing itself
 	create foe _F.02_ every 5 minutes 1 times with 100% success 
 	create foe _spiders_ every 9 minutes 1 times with 100% success 
 	create foe _lesserdaedra_ every 7 minutes 1 times with 100% success 

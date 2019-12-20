@@ -401,8 +401,7 @@ _S.14_ task:
 
 _S.15_ task:
 	when _S.01_ and not _S.13_ and _S.00_ 
-	reveal _dungeon2_ 
-	drop _child_ face 
+	reveal _dungeon2_
 	clear _S.01_ 
 
 _S.16_ task:
@@ -413,18 +412,24 @@ _S.17_ task:
 	place item _aurielsbow_ at _dungeon2_ 
 	log 1050 step 2 
 	say 1031 
+	drop _child_ face
+--moved "drop face" here, was not cooperating in S.15
 
 _S.18_ task:
 	when _artifact2_ and _S.15_ 
 	place item _aurielshield_ at _dungeon2_ 
 	log 1051 step 2 
 	say 1032 
+	drop _child_ face
+--moved "drop face" here, was not cooperating in S.15
 
 _S.19_ task:
 	when _artifact3_ and _S.15_ 
 	place item _lordsmail_ at _dungeon2_ 
 	log 1052 step 2 
 	say 1033 
+	drop _child_ face
+--moved "drop face" here, was not cooperating in S.15
 
 _S.20_ task:
 	clicked item _aurielsbow_ 
