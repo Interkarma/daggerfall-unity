@@ -1102,7 +1102,7 @@ namespace DaggerfallWorkshop.Utility
                 SeesThroughInvisibility = true,
                 LootTableKey = "J",
                 NoShadow = true,
-                GlowColor = new Color(243, 239, 44) * 0.1f,
+                GlowColor = new Color(243, 239, 44) * 0.05f,
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, -1, 4 },
                 ChanceForAttack2 = 50,
