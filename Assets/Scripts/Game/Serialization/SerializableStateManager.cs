@@ -131,12 +131,15 @@ namespace DaggerfallWorkshop.Game.Serialization
                 {
                     if (sceneDataCache.TryGetValue(sceneName, out sceneData))
                     {
-                        object[] lootContainers = sceneData[(int)StatefulGameObjectTypes.LootContainer];
-                        List<LootContainerData_v1> lootNoCorpses = new List<LootContainerData_v1>();
-                        foreach (LootContainerData_v1 loot in lootContainers)
-                            if (loot.containerType != LootContainerTypes.CorpseMarker)
-                                lootNoCorpses.Add(loot);
-                        sceneData[(int)StatefulGameObjectTypes.LootContainer] = lootNoCorpses.ToArray();
+                        if (sceneData != null)
+                        {
+                            object[] lootContainers = sceneData[(int)StatefulGameObjectTypes.LootContainer];
+                            List<LootContainerData_v1> lootNoCorpses = new List<LootContainerData_v1>();
+                            foreach (LootContainerData_v1 loot in lootContainers)
+                                if (loot.containerType != LootContainerTypes.CorpseMarker)
+                                    lootNoCorpses.Add(loot);
+                            sceneData[(int)StatefulGameObjectTypes.LootContainer] = lootNoCorpses.ToArray();
+                        }
                     }
                     newSceneDataCache[sceneName] = sceneData;
                 }
