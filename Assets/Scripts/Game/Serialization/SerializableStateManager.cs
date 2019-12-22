@@ -141,7 +141,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                             sceneData[(int)StatefulGameObjectTypes.LootContainer] = lootNoCorpses.ToArray();
                         }
                     }
-                    newSceneDataCache[sceneName] = sceneData;
+                    if (sceneData != null && sceneData.Count > 0)
+                        newSceneDataCache[sceneName] = sceneData;
                 }
                 sceneDataCache = newSceneDataCache;
             }
