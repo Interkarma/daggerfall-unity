@@ -443,10 +443,10 @@ namespace DaggerfallWorkshop.Game
                     return false;
                 }
 
-                // Make walls do a clinging sound (not in classic)
+                // Make hitting walls do a thud or clinging sound (not in classic)
                 if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
                 {
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.Parry6);
+                    DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
                     return false;
                 }
             }
