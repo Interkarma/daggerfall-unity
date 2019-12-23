@@ -209,10 +209,10 @@ namespace DaggerfallWorkshop.Game
                     //}
 
                     // automatic success if not falling
-                    if ((!airborneGraspWall /*&& !hangingMotor.IsHanging*/) || releasedFromCeiling)
+                    if ((!airborneGraspWall /*&& !hangingMotor.IsHanging*/) || releasedFromCeiling) {
                         if (ClimbingSkillCheck(startClimbMinChance))
                             StartClimbing();
-                    // skill check to see if we catch the wall 
+                    } // skill check to see if we catch the wall 
                     else if (ClimbingSkillCheck(graspWallMinChance))
                         StartClimbing();
                     else
