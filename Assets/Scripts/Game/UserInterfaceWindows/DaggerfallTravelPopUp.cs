@@ -238,10 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
             else
-            {
-                HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-                NativePanel.KeyboardActivation(keyModifiers);
-            }
+                DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         #endregion

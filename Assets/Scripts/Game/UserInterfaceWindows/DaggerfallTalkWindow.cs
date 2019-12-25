@@ -329,9 +329,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            if (!mainPanel.KeyboardActivation(keyModifiers))
-                NativePanel.KeyboardActivation(keyModifiers);
+            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         public void UpdateListboxTopic()

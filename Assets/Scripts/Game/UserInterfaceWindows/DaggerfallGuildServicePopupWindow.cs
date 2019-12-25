@@ -212,8 +212,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            mainPanel.KeyboardActivation(keyModifiers);
+            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         private void ConfirmStatReset_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)

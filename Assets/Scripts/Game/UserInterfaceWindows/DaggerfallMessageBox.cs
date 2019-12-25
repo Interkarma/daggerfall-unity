@@ -295,7 +295,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     CloseWindow();
                 }
             }
-            else if (buttonPanel.KeyboardActivation(HotkeySequence.GetKeyboardKeyModifiers()))
+            else if (DaggerfallUI.Instance.ProcessHotKeySequences())
             {
                 // if there is a nested next message box show it
                 if (nextMessageBox != null)

@@ -181,12 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             ShowStatus();
 
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            if (currentRestMode == RestModes.Selection)
-            {
-                mainPanel.KeyboardActivation(keyModifiers);
-            }
-            else
+            if (currentRestMode != RestModes.Selection)
             {
                 if ((currentRestMode == RestModes.FullRest) && IsPlayerFullyHealed())
                     EndRest();
@@ -194,9 +189,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     EndRest();
                 else if (TickRest())
                     EndRest();
-                else 
-                    counterPanel.KeyboardActivation(keyModifiers);
             }
+
+            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         public override void Draw()

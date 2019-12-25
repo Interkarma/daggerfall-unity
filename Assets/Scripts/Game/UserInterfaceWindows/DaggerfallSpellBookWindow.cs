@@ -204,8 +204,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (Input.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
 
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            mainPanel.KeyboardActivation(keyModifiers);
+            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         void RefreshSpellsList(bool preservePosition)

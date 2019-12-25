@@ -203,8 +203,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            NativePanel.KeyboardActivation(keyModifiers);
+            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         void SetDefaults()

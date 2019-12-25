@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.Draw();
         }
 
-        new public bool KeyboardActivation(HotkeySequence.KeyModifiers keyModifiers)
+        new public bool ProcessHotkeySequences(HotkeySequence.KeyModifiers keyModifiers)
         {
             bool isActivated = shortcutKey.IsUpWith(keyModifiers);
             if (isActivated)

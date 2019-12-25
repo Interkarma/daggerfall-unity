@@ -187,18 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 moveNextStage = false;
             }
 
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            if (!NativePanel.KeyboardActivation(keyModifiers))
-                switch (currentStage)
-                {
-                    case SetupStages.GameFolder:
-                        break;
-                    case SetupStages.Resolution:
-                        break;
-                    case SetupStages.Options:
-                        optionsPanel.KeyboardActivation(keyModifiers);
-                        break;
-                }
+            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         void ShowGameFolderStage()

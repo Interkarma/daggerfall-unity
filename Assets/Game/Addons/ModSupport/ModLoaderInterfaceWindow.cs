@@ -294,10 +294,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         if (closeIfTopWindow && uiManager.TopWindow == this)
             uiManager.PopWindow();
 
-        HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-        if (!NativePanel.KeyboardActivation(keyModifiers))
-            if (!ModPanel.KeyboardActivation(keyModifiers))
-                ModListPanel.KeyboardActivation(keyModifiers);
+        DaggerfallUI.Instance.ProcessHotKeySequences();
     }
 
     bool GetModSettings(ref ModSettings ms)

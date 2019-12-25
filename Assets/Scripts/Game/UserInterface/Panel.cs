@@ -210,14 +210,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        public bool KeyboardActivation(HotkeySequence.KeyModifiers keyModifiers)
+        public bool ProcessHotkeySequences(HotkeySequence.KeyModifiers keyModifiers)
         {
             foreach (BaseScreenComponent component in components)
             {
                 if (component.Enabled && component is Button)
                 {
                     Button buttonComponent = (Button)component;
-                    if (buttonComponent.KeyboardActivation(keyModifiers))
+                    if (buttonComponent.ProcessHotkeySequences(keyModifiers))
+                        return true;
+                }
+            }
+            foreach (BaseScreenComponent component in components)
+            {
+                if (component.Enabled && component is Panel)
+                {
+                    Panel panelComponent = (Panel)component;
+                    if (panelComponent.ProcessHotkeySequences(keyModifiers))
                         return true;
                 }
             }
