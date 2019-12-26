@@ -579,6 +579,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ConfirmIllegalRestForAWhile_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
+            sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 DoRestForAWhile(true);
@@ -602,6 +603,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ConfirmIllegalRestUntilHealed_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
+            sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 DoRestUntilHealed(true);
