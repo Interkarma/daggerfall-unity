@@ -176,7 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!buyMode)
                 DaggerfallUI.Instance.PlayOneShot(closeSpellBook);
             else
-                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         void SetDefaults()
@@ -918,7 +918,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {   
+        {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;

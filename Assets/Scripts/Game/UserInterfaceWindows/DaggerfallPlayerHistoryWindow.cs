@@ -86,17 +86,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 LayoutPage();
             }
         }
-        
-        
+
         private void NativePanel_OnMouseScrollDown(BaseScreenComponent sender)
-         {
+        {
             if (MoveNextPage())
             {
                 LayoutPage();
             }
         }
+
         private void NativePanel_OnMouseScrollUp(BaseScreenComponent sender)
-         {
+        {
             if (MovePreviousPage())
             {
                 LayoutPage();

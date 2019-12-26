@@ -382,6 +382,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (priceListBox.SelectedIndex < 0)
                 return;
+
             CloseWindow();
             if (housesForSale == null)
                 bankingWindow.GeneratePurchaseShipPopup((ShipType)priceListBox.SelectedIndex);

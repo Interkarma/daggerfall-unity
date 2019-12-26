@@ -285,7 +285,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (service)
             {
                 case GuildServices.Quests:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick); 
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     GetQuest();
                     break;
 

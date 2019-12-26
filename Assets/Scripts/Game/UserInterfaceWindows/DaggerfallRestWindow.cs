@@ -149,7 +149,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Stop button
             stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
             stopButton.OnMouseClick += StopButton_OnMouseClick;
-            
 
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);
@@ -561,8 +560,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Event Handlers
 
         private void WhileButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {       
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallUnity.Settings.IllegalRestWarning && GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true))
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
@@ -587,7 +586,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HealedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallUnity.Settings.IllegalRestWarning && GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true))
             {
                 DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "illegalRestWarning"));

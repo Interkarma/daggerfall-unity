@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
-         {
+        {
             if (currentMessageIndex + 1 < messageCount)
                 currentMessageIndex += 1;
         }

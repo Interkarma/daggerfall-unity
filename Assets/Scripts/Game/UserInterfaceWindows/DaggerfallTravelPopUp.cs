@@ -367,6 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void BeginButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             Refresh();
+
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // Warns player if they have a disease
             if (GameManager.Instance.PlayerEffectManager.DiseaseCount > 0 || GameManager.Instance.PlayerEffectManager.PoisonCount > 0)

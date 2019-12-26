@@ -296,8 +296,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void OnPop()
         {
             base.OnPop();
-           
-           // Send any copied conversation text to notebook
+
+            // Send any copied conversation text to notebook
             copyIndexes.Sort();
             List<TextFile.Token> copiedEntries = new List<TextFile.Token>(copyIndexes.Count);
             int prev = -1;
@@ -870,21 +870,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.Update();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
-            
 
             if (listTopic.Count <= 0)
                 return;
-                
+
             if (listTopic[0].listParentItems != null) // first entry is "previous" item
             {
                 listboxTopic.SelectIndex(1);
-                
-                }
+            }
             else
             {
                 listboxTopic.SelectIndex(0);
-                
-                
                 //listboxTopic.SelectNone();
                 //UpdateQuestion(-1); // important since it might have selected question from last double-click action when changing level of topic tree
             }
@@ -1229,7 +1225,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
             else
                 currentQuestion = "";
-             textlabelPlayerSays.Text = currentQuestion;
+
+            textlabelPlayerSays.Text = currentQuestion;
         }
 
         void SetQuestionAnswerPairInConversationListbox(string question, string answer)
@@ -1295,8 +1292,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (listItem.listParentItems != null)
                 {
                     selectionIndexLastUsed = -1;
-                    SetListboxTopics(ref listboxTopic, listItem.listParentItems); 
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);       
+                    SetListboxTopics(ref listboxTopic, listItem.listParentItems);
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 }
             }
             else if (listItem.type == TalkManager.ListItemType.ItemGroup)
@@ -1304,8 +1301,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (listItem.listChildItems != null)
                 {
                     selectionIndexLastUsed = -1;
-                    SetListboxTopics(ref listboxTopic, listItem.listChildItems); 
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);               
+                    SetListboxTopics(ref listboxTopic, listItem.listChildItems);
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 }
             }
             else if (listItem.type == TalkManager.ListItemType.Item)
@@ -1443,13 +1440,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonWhereIs_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            
             SetTalkModeWhereIs();
         }
 
         private void ButtonCategoryLocation_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-             
             if (selectedTalkOption == TalkOption.WhereIs)
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);

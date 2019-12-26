@@ -312,8 +312,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-           
-           // Setup initial state
+
+            // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
             SelectActionMode((lootTarget != null) ? ActionModes.Remove : ActionModes.Equip);
             CheckWagonAccess();
@@ -1194,7 +1194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
             else
                 ShowWagon(!usingWagon);
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -1222,7 +1222,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        
         {
             // Show message box
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);

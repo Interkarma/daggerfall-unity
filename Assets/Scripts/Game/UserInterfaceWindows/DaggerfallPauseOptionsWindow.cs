@@ -76,25 +76,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit game
             Button exitButton = DaggerfallUI.AddButton(new Rect(101, 4, 45, 16), optionsPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
-            
 
             // Continue
             Button continueButton = DaggerfallUI.AddButton(new Rect(76, 60, 70, 17), optionsPanel);
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
-            
 
             // Save game
             Button saveButton = DaggerfallUI.AddButton(new Rect(4, 4, 45, 16), optionsPanel);
             //saveButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             saveButton.OnMouseClick += SaveButton_OnMouseClick;
-            
 
             // Load game
             Button loadButton = DaggerfallUI.AddButton(new Rect(52, 4, 46, 16), optionsPanel);
             //loadButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             loadButton.OnMouseClick += LoadButton_OnMouseClick;
-            
-            
 
             // Sound Bar
             Button soundPanel = DaggerfallUI.AddButton(new Rect(6.15f, 23.20f, barMaxLength, 5.5f), optionsPanel);
@@ -244,8 +239,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-           DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-           DaggerfallMessageBox confirmExitBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strAreYouSure, this);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DaggerfallMessageBox confirmExitBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strAreYouSure, this);
             confirmExitBox.OnButtonClick += ConfirmExitBox_OnButtonClick;
             confirmExitBox.Show();
         }
