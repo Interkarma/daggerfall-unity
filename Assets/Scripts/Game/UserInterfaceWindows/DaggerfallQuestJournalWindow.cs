@@ -116,6 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dialogButton.Position           = new Vector2(32, 187);
             dialogButton.Size               = new Vector2(68, 10);
             dialogButton.OnMouseClick       += DialogButton_OnMouseClick;
+            dialogButton.Hotkey             = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalNextCategory);
             dialogButton.Name               = "dialog_button";
             dialogButton.ToolTip            = defaultToolTip;
             dialogButton.ToolTipText        = TextManager.Instance.GetText(textDatabase, "dialogButtonInfo");
@@ -125,6 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upArrowButton.Position          = new Vector2(181, 188);
             upArrowButton.Size              = new Vector2(13, 7);
             upArrowButton.OnMouseClick      += UpArrowButton_OnMouseClick;
+            upArrowButton.Hotkey            = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalPreviousPage);
             upArrowButton.Name              = "uparrow_button";
             mainPanel.Components.Add(upArrowButton);
 
@@ -132,6 +134,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downArrowButton.Position        = new Vector2(209, 188);
             downArrowButton.Size            = new Vector2(13, 7);
             downArrowButton.OnMouseClick    += DownArrowButton_OnMouseClick;
+            downArrowButton.Hotkey          = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalNextPage);
             downArrowButton.Name            = "downarrow_button";
             mainPanel.Components.Add(downArrowButton);
 
@@ -139,6 +142,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.Position             = new Vector2(278, 187);
             exitButton.Size                 = new Vector2(30, 9);
             exitButton.OnMouseClick         += ExitButton_OnMouseClick;
+            exitButton.Hotkey               = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalExit);
             exitButton.Name                 = "exit_button";
             mainPanel.Components.Add(exitButton);
 

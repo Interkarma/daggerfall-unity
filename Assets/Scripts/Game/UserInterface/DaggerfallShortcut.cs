@@ -126,6 +126,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             CharacterSheetHistory,
             CharacterSheetExit,
 
+            // Quest Journal Screen
+            JournalNextCategory,
+            JournalNextPage,
+            JournalPreviousPage,
+            JournalExit,
+
             // Inventory screen
             InventoryWeapons,
             InventoryMagic,

@@ -103,7 +103,7 @@ TravelTransportModeToggle, T
 - N for Nights?
 TravelInnCampOutToggle,    N
 
--- CharacterSheet screen
+-- Character Sheet screen
 CharacterSheetName,            N
 - Conflict with Logbook
 CharacterSheetLevel,           V
@@ -120,6 +120,12 @@ CharacterSheetLogbook,         L
 - Conflict with Health
 CharacterSheetHistory,         T
 CharacterSheetExit,            E
+
+-- Quest Journal screen
+JournalNextCategory,           N
+JournalNextPage,               DownArrow
+JournalPreviousPage,           UpArrow
+JournalExit,                   E
 
 -- Inventory screen
 InventoryWeapons,     F1
