@@ -127,6 +127,11 @@ JournalNextPage,               DownArrow
 JournalPreviousPage,           UpArrow
 JournalExit,                   E
 
+-- Player History screen
+HistoryNextPage,               DownArrow
+HistoryPreviousPage,           UpArrow
+HistoryExit,                   E
+
 -- Inventory screen
 InventoryWeapons,     F1
 InventoryMagic,       F2

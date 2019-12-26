@@ -126,6 +126,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             CharacterSheetHistory,
             CharacterSheetExit,
 
+            // Player History screen
+            HistoryNextPage,
+            HistoryPreviousPage,
+            HistoryExit,
+
             // Quest Journal Screen
             JournalNextCategory,
             JournalNextPage,
