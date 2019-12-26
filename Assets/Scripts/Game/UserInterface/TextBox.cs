@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -42,6 +43,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool upperOnly = false;
         bool fixedSize = false;
         bool previousSDFState;
+
+        // Are those guaranteed to be strings of one character?
+        readonly static char minus = CultureInfo.CurrentCulture.NumberFormat.NegativeSign[0];
+        readonly static char dot = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
 
         public int MaxCharacters
         {
@@ -225,18 +230,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 if (numeric)
                 {
-                    const char minus = '-';
-                    const char dot = '.';
-
                     int value = (int)character;
                     if (value < 0x30 || value > 0x39)
                     {
-                        if (character == minus)
+                        // Allow negative numbers only if not natural
+                        if (character == minus && numericMode != NumericMode.Natural)
                         {
-                            // Allow negative numbers only if not natural
-                            if (numericMode == NumericMode.Natural)
-                                return;
-
                             if (cursorPosition != 0 || (text.Length > 0 && text[0] == minus))
                                 return;
                         }
@@ -248,8 +247,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         }
                         else
                         {
-                            // For numeric only accept characters 0 - 9
-                            return;
+                            // Also accept numeric keys, even when not shifted
+                            KeyCode keyCode = DaggerfallUI.Instance.LastKeyCode;
+                            if (numericMode == NumericMode.Natural && keyCode >= KeyCode.Alpha0 && keyCode <= KeyCode.Alpha9)
+                                character = (char)(keyCode - KeyCode.Alpha0 + 0x30);
+                            else
+                                // For numeric only accept characters 0 - 9
+                                return;
                         }
                     }
                 }

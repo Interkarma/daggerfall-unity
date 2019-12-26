@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -28,7 +28,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-    //created with mod builder window, seralized to json, bundled into mod
+    /// <summary>
+    /// The content of a json mod manifest file, created from the Mod Builder and bundled with the mod itself.
+    /// </summary>
     [Serializable]
     public class ModInfo
     {
@@ -47,6 +49,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         [SerializeField]
         internal ModContributes Contributes;
+
+        /// <summary>
+        /// A list of mods that this mod depends on or is otherwise compatible with only if certain conditions are met.
+        /// </summary>
+        [SerializeField]
+        internal ModDependency[] Dependencies;
 
         public ModInfo()
         {
@@ -80,10 +88,64 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         internal string[] SpellIcons;
     }
 
+    /// <summary>
+    /// A set of rules that defines the limits within which a mod is required or otherwise compatible with another one.
+    /// </summary>
+    /// <remarks>
+    /// These are all the possible combinations:
+    /// - Dependency: must be available, have higher priority and follow specified criteria.
+    /// - Optional dependency: if is available it must have higher priority and follow specified criteria.
+    /// - Peer dependency: must be available and follow specified criteria but higher priority is not required.
+    /// - Optional peer dependency: if is available it must follow specified criteria but higher priority is not required.
+    /// </summary>
+    [Serializable]
+    internal struct ModDependency
+    {
+        /// <summary>
+        /// Name of target mod.
+        /// </summary>
+        [SerializeField]
+        internal string Name;
+
+        /// <summary>
+        /// If true, target mod doesn't need to be available, but must validate these criteria if it is.
+        /// </summary>
+        [SerializeField]
+        internal bool IsOptional;
+
+        /// <summary>
+        /// If true, target mod can be positioned anywhere in the load order, otherwise must be positioned above.
+        /// </summary>
+        [SerializeField]
+        internal bool IsPeer;
+
+        /// <summary>
+        /// If not null this string is the minimum accepted version with format X.Y.Z.
+        /// Pre-release identifiers following an hyphen are ignored in target version so they must be omitted here.
+        /// For example "1.1.0" is higher than "1.0.12" and equal to "1.0.0-rc.1".
+        /// </summary>
+        [SerializeField]
+        internal string Version;
+    }
+
+    /// <summary>
+    /// Options for a mod setup intro point, meaning a method with the <see cref="Invoke"/> attribute.
+    /// </summary>
     public struct SetupOptions : IComparable<SetupOptions>
     {
+        /// <summary>
+        /// The priority within invokable methods for the same mod.
+        /// </summary>
         public readonly int priority;
+
+        /// <summary>
+        /// The mod that found target method inside its assemblies.
+        /// </summary>
         public readonly Mod mod;
+
+        /// <summary>
+        /// The method to be invoked.
+        /// </summary>
         public readonly System.Reflection.MethodInfo mi;
 
         public SetupOptions(int priority, Mod mod, System.Reflection.MethodInfo mi)
@@ -93,6 +155,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.mi = mi;
         }
 
+        /// <summary>
+        /// Compares methods for their priority.
+        /// </summary>
         public int CompareTo(SetupOptions other)
         {
             if (other.priority == priority)
@@ -103,13 +168,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-    //passed to mod's Init methods called from ModManager
+    /// <summary>
+    /// Data passed to methods with the <see cref="Invoke"/> attribute when they are invoked by the Mod Manager.
+    /// It contains informations required to initialize custom scripts provided by a mod,
+    /// including the <see cref="Mod"/> instance associated to the class that receives this data.
+    /// </summary>
     public struct InitParams
     {
+        /// <summary>
+        /// The title of the mod.
+        /// </summary>
         public readonly string ModTitle;
+
+        /// <summary>
+        /// The position of the mod inside the mods collection.
+        /// </summary>
         public readonly int ModIndex;
+        
+        /// <summary>
+        /// The position of the mod in the load order.
+        /// </summary>
         public readonly int LoadPriority;
+
+        /// <summary>
+        /// The total number of mods loaded by Mod Manager.
+        /// </summary>
         public readonly int LoadedModsCount;
+
+        /// <summary>
+        /// The associated Mod instance that gives access, among the others, to bundled assets.
+        /// </summary>
         public readonly Mod Mod;
 
         public InitParams(Mod Mod, int ModIndex, int LoadedModsCount)
@@ -120,7 +208,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.ModIndex = ModIndex;
             this.LoadedModsCount = LoadedModsCount;
         }
-
     }
 
     public struct Source

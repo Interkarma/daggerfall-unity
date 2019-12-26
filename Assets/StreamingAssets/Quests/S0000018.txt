@@ -73,7 +73,6 @@ Message:  1020
  empire, and win respect for my people.
  
 <ce>                                Gortwog
-                                     <--->
 <ce>                                Warl...
 
 Message:  1030

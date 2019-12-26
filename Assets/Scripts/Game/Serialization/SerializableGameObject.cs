@@ -23,12 +23,12 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
-    /// Enum of stateful game object types that implement ISerializableGameObject.
+    /// Enum of stateful game object types that implement <see cref="ISerializableGameObject"/>.
     /// To add a new type of stateful game object:
     ///     - add type name here
     ///     - add a condition to SerializableStateManager.GetStatefulGameObjectType()
     ///     - add serializer methods
-    ///     - add to SerializableStateManager.CacheScene() & RestoreCachedScene()
+    ///     - add to SerializableStateManager.CacheScene() and RestoreCachedScene()
     /// </summary>
     public enum StatefulGameObjectTypes
     {

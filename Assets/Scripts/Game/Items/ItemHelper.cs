@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         public bool RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
         {
-            DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex={1}" + templateIndex);
+            DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex=" + templateIndex);
             if (!itemUseHandlers.ContainsKey(templateIndex))
             {
                 itemUseHandlers.Add(templateIndex, itemUseHander);

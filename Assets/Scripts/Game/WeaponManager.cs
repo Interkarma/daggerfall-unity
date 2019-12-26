@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -204,10 +205,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // If an attack with a bow just finished, set cooldown
                 if (ScreenWeapon.WeaponType == WeaponTypes.Bow && isAttacking)
-                {
-                    float cooldown = 10 * (100 - playerEntity.Stats.LiveSpeed) + 800;
-                    cooldownTime = Time.time + (cooldown / 980); // Approximates classic frame update
-                }
+                    cooldownTime = Time.time + FormulaHelper.GetBowCooldownTime(playerEntity);
 
                 isAttacking = false;
                 isDamageFinished = false;
@@ -444,6 +442,13 @@ namespace DaggerfallWorkshop.Game
                 {
                     return false;
                 }
+
+                // Make hitting walls do a thud or clinging sound (not in classic)
+                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
+                {
+                    DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
+                    return false;
+                }
             }
 
             // Set up for use below
@@ -458,7 +463,7 @@ namespace DaggerfallWorkshop.Game
             MobilePersonNPC mobileNpc = hitTransform.GetComponent<MobilePersonNPC>();
             if (mobileNpc)
             {
-                if (!mobileNpc.Billboard.IsUsingGuardTexture)
+                if (!mobileNpc.IsGuard)
                 {
                     EnemyBlood blood = hitTransform.GetComponent<EnemyBlood>();
                     if (blood)
@@ -721,6 +726,7 @@ namespace DaggerfallWorkshop.Game
             // Setup target
             target.WeaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
+            target.WeaponHands = ItemEquipTable.GetItemHands(weapon);
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
         }

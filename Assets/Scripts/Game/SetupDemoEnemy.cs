@@ -22,6 +22,8 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallEntityBehaviour entityBehaviour;
 
+        public GameObject LightAura;
+
         void Awake()
         {
             // Must have an entity behaviour
@@ -38,6 +40,35 @@ namespace DaggerfallWorkshop.Game
                 this.gameObject.SetActive(false);
             if (!dfMobile.Summary.IsSetup)
                 this.gameObject.SetActive(false);
+        }
+
+
+        enum ControllerJustification
+        {
+            TOP,
+            CENTER,
+            BOTTOM
+        }
+
+        static void AdjustControllerHeight(CharacterController controller, float newHeight, ControllerJustification justification)
+        {
+            Vector3 newCenter = controller.center;
+            switch (justification)
+            {
+                case ControllerJustification.TOP:
+                    newCenter.y -= (newHeight - controller.height) / 2;
+                    break;
+
+                case ControllerJustification.BOTTOM:
+                    newCenter.y += (newHeight - controller.height) / 2;
+                    break;
+
+                case ControllerJustification.CENTER:
+                    // do nothing, centered is normal CharacterController behavior
+                    break;
+            }
+            controller.height = newHeight;
+            controller.center = newCenter;
         }
 
         /// <summary>
@@ -71,18 +102,13 @@ namespace DaggerfallWorkshop.Game
                     // Reduce height of flying creatures as their wing animation makes them taller than desired
                     // This helps them get through doors while aiming for player eye height
                     if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
-                        controller.height /= 2f;
+                        // (in frame 0 wings are in high position, assume body is  the lower half)
+                        AdjustControllerHeight(controller, controller.height / 2, ControllerJustification.BOTTOM);
 
                     // Limit minimum controller height
                     // Stops very short characters like rats from being walked upon
                     if (controller.height < 1.6f)
-                    {
-                        // Adjust center to match new height
-                        Vector3 newCenter = controller.center;
-                        newCenter.y += (1.6f - controller.height) / 2;
-                        controller.center = newCenter;
-                        controller.height = 1.6f;
-                    }
+                        AdjustControllerHeight(controller, 1.6f, ControllerJustification.BOTTOM);
 
                     controller.gameObject.layer = LayerMask.NameToLayer("Enemies");
                 }
@@ -94,6 +120,25 @@ namespace DaggerfallWorkshop.Game
                     enemySounds.MoveSound = (SoundClips)dfMobile.Summary.Enemy.MoveSound;
                     enemySounds.BarkSound = (SoundClips)dfMobile.Summary.Enemy.BarkSound;
                     enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
+                }
+
+                MeshRenderer meshRenderer = dfMobile.GetComponent<MeshRenderer>();
+                if (meshRenderer)
+                {
+                    if (dfMobile.Summary.Enemy.NoShadow)
+                    {
+                        meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    }
+                    if (dfMobile.Summary.Enemy.GlowColor != null)
+                    {
+                        meshRenderer.receiveShadows = false;
+                        GameObject enemyLightGameObject = Instantiate(LightAura);
+                        enemyLightGameObject.transform.parent = dfMobile.transform;
+                        enemyLightGameObject.transform.localPosition = new Vector3(0, 0.3f, 0.2f);
+                        Light enemyLight = enemyLightGameObject.GetComponent<Light>();
+                        enemyLight.color = (Color)dfMobile.Summary.Enemy.GlowColor;
+                        enemyLight.shadows = DaggerfallUnity.Settings.DungeonLightShadows ? LightShadows.Soft : LightShadows.None;
+                    }
                 }
 
                 // Setup entity

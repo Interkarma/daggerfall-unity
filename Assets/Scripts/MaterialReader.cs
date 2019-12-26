@@ -458,8 +458,7 @@ namespace DaggerfallWorkshop
         /// Gets Unity Material atlas from Daggerfall texture archive.
         /// </summary>
         /// <param name="archive">Archive index to create atlas from.</param>
-        /// <param name="alphaIndex">Index to receive transparent alpha.</param>
-        /// <param name="rectsOut">Array of rects, one for each record sub-texture and frame.</param>
+        /// <param name="alphaIndex">Index to receive transparent alpha.</param>        
         /// <param name="padding">Number of pixels each sub-texture.</param>
         /// <param name="maxAtlasSize">Max size of atlas.</param>
         /// <param name="rectsOut">Array of rects, one for each record sub-texture and frame.</param>
@@ -468,7 +467,6 @@ namespace DaggerfallWorkshop
         /// <param name="dilate">Blend texture into surrounding empty pixels.</param>
         /// <param name="shrinkUVs">Number of pixels to shrink UV rect.</param>
         /// <param name="copyToOppositeBorder">Copy texture edges to opposite border. Requires border, will overwrite dilate.</param>
-        /// <param name="shader">Shader for material. If null, DefaultShaderName will be applied.</param>
         /// <param name="isBillboard">Set true when creating atlas material for simple billboards.</param>
         /// <returns>Material or null.</returns>
         public Material GetMaterialAtlas(

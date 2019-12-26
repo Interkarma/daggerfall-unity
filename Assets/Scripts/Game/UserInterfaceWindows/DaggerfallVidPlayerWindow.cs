@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public bool IsPlaying
         {
-            get { return useCustomVideo ? customVideo.IsPlaying : video.Playing; }
+            get { return useCustomVideo ? (customVideo != null && customVideo.IsPlaying) : (video != null && video.Playing); }
         }
 
         public bool EndOnAnyKey
@@ -136,6 +136,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     video.Playing = false;
                     video.Dispose();
+                    video = null;
+
                     DoHideCursor(false);
                     RaiseOnVideoFinishedHandler();
                     RaiseOnVideoEndGlobalEvent();

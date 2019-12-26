@@ -53,10 +53,7 @@ namespace DaggerfallWorkshop.Game
         private int personOutfitVariant;                        // which basic outfit does the person wear
         private int personFaceRecordId;                         // used for portrait in talk window
         private bool pickpocketByPlayerAttempted = false;       // player can only attempt pickpocket on a mobile NPC once
-        private bool isGuard = false;                           // is a city watch guard
-
-        private MobilePersonBillboard billboard;    // billboard for npc
-        private MobilePersonMotor motor;            // motor for npc
+        private MobilePersonMotor motor;                        // motor for npc
 
         // these public fields are used for setting person attributes through Unity Inspector Window with function ApplyPersonSettings
         // (properties not available) as fields are randomized (e.g. name and face variant)
@@ -105,10 +102,15 @@ namespace DaggerfallWorkshop.Game
             set { pickpocketByPlayerAttempted = value; }
         }
 
-        public MobilePersonBillboard Billboard
-        {
-            get { return (billboard); }
-        }
+        /// <summary>
+        /// True if this npc is a city watch guard.
+        /// </summary>
+        public bool IsGuard { get; private set; }
+
+        /// <summary>
+        /// Billboard or custom asset for npc.
+        /// </summary>
+        public MobilePersonAsset Asset { get; private set; }
 
         public MobilePersonMotor Motor
         {
@@ -131,7 +133,7 @@ namespace DaggerfallWorkshop.Game
             {
                 gender = Genders.Male;
                 personOutfitVariant = 0;
-                isGuard = true;
+                IsGuard = true;
             }
             else
             {
@@ -139,7 +141,7 @@ namespace DaggerfallWorkshop.Game
                 gender = (Random.Range(0, 2) == 1) ? Genders.Female : Genders.Male;
                 // Set outfit variant for npc
                 personOutfitVariant = Random.Range(0, numPersonOutfitVariants);
-                isGuard = false;
+                IsGuard = false;
             }
             // Set race (set current race before calling this function with property Race)
             SetRace(race);
@@ -206,8 +208,8 @@ namespace DaggerfallWorkshop.Game
             this.personFaceRecordId = recordIndices[personOutfitVariant] + personFaceVariant;
 
             // set billboard to correct race, gender and outfit variant
-            billboard = GetComponentInChildren<MobilePersonBillboard>();
-            billboard.SetPerson(race, gender, personOutfitVariant, isGuard);
+            Asset = GetComponentInChildren<MobilePersonAsset>();
+            Asset.SetPerson(race, gender, personOutfitVariant, IsGuard);
         }
 
         /// <summary>

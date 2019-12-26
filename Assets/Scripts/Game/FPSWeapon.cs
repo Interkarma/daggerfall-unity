@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -36,6 +37,7 @@ namespace DaggerfallWorkshop.Game
         public bool FlipHorizontal = false;
         public WeaponTypes WeaponType = WeaponTypes.None;
         public MetalTypes MetalType = MetalTypes.None;
+        public ItemHands WeaponHands = ItemHands.None;
         public float Reach = 2.5f;
         public float AttackSpeedScale = 1.0f;
         public float Cooldown = 0.0f;
@@ -65,6 +67,7 @@ namespace DaggerfallWorkshop.Game
         WeaponStates weaponState = WeaponStates.Idle;
         int currentFrame = 0;
         int animTicks = 0;
+        float animTickTime;
         Rect curAnimRect;
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
@@ -97,8 +100,8 @@ namespace DaggerfallWorkshop.Game
                 LoadWeaponAtlas();
                 if (weaponAtlas == null)
                     return;
+                UpdateWeapon();
             }
-            UpdateWeapon();
 
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
@@ -172,7 +175,7 @@ namespace DaggerfallWorkshop.Game
 
         public float GetAnimTime()
         {
-            return animTicks * GetAnimTickTime();
+            return animTicks * animTickTime;
         }
 
         public void PlayActivateSound()
@@ -305,6 +308,8 @@ namespace DaggerfallWorkshop.Game
                         AlignRight(anim, width, height);
                         break;
                 }
+                // Set the frame time (attack speed)
+                animTickTime = GetAnimTickTime();
             }
             catch (IndexOutOfRangeException)
             {
@@ -362,17 +367,6 @@ namespace DaggerfallWorkshop.Game
                 cifFile.Palette.Load(Path.Combine(dfUnity.Arena2Path, cifFile.PaletteName));
             }
 
-            //// Must have weapon texture atlas
-            //if (weaponAtlas == null ||
-            //    WeaponType != lastWeaponType ||
-            //    MetalType != lastMetalType)
-            //{
-            //    LoadWeaponAtlas();
-            //    if (weaponAtlas == null)
-            //        return false;
-            //    UpdateWeapon();
-            //}
-
             return true;
         }
 
@@ -380,8 +374,6 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                float time = GetAnimTickTime();
-
                 if (weaponAnims != null && ShowWeapon)
                 {
                     int frameBeforeStepping = currentFrame;
@@ -426,26 +418,22 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
 
-                    // Only update if the frame actually changed
+                    // Only update if the frame actually changed & weapon drawn
                     if (frameBeforeStepping != currentFrame)
                         UpdateWeapon();
                 }
 
-                yield return new WaitForSeconds(time);
+                yield return new WaitForSeconds(animTickTime);
             }
         }
 
         private float GetAnimTickTime()
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float speed = 0;
             if (WeaponType == WeaponTypes.Bow || player == null)
                 return GameManager.classicUpdateInterval;
             else
-            {
-                speed = 3 * (115 - player.Stats.LiveSpeed);
-                return speed / 980; // Approximation of classic frame update
-            }
+                return FormulaHelper.GetMeleeWeaponAnimTime(player, WeaponType, WeaponHands);
         }
 
         private void LoadWeaponAtlas()
@@ -465,6 +453,7 @@ namespace DaggerfallWorkshop.Game
             // Store current weapon
             currentWeaponType = WeaponType;
             currentMetalType = MetalType;
+            animTickTime = GetAnimTickTime();
         }
 
         #endregion

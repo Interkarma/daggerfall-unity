@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -25,6 +25,46 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 namespace DaggerfallWorkshop
 {
     /// <summary>
+    /// The component that handles graphics for a mobile person.
+    /// </summary>
+    /// <remarks>
+    /// Implementations should be added to a prefab named "MobilePersonAsset" bundled with a mod.
+    /// This prefab acts as a provider for all custom npcs graphics. This allows mods to replace classic
+    /// <see cref="MobilePersonBillboard"/> with 3d models or other alternatives.
+    /// The actual graphic asset for specific npc should be loaded when requested by <see cref="SetPerson"/>.
+    /// </remarks>
+    public abstract class MobilePersonAsset : MonoBehaviour
+    {
+        /// <summary>
+        /// Trigger collider used for interaction with player. The collider should be altered to enclose the entire npc mesh when
+        /// <see cref="SetPerson"/> is called. A sign of badly setup collider is misbehaviour of idle state and talk functionalities.
+        /// </summary>
+        protected internal CapsuleCollider Trigger { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets idle state. Daggerfall NPCs are either in or motion or idle facing player.
+        /// This only controls animation state, actual motion is handled by <see cref="MobilePersonMotor"/>.
+        /// </summary>
+        public abstract bool IsIdle { get; set; }
+
+        /// <summary>
+        /// Setup this person based on race, gender and outfit variant. Enitities in a npcs pool can be recycled
+        /// when out of range, meaning that this method can be called more than once with different parameters.
+        /// </summary>
+        /// <param name="race">Race of target npc.</param>
+        /// <param name="gender">Gender of target npc.</param>
+        /// <param name="personVariant">Which basic outfit does the person wear.</param>
+        /// <param name="isGuard">True if this npc is a city watch guard.</param>
+        public abstract void SetPerson(Races race, Genders gender, int personVariant, bool isGuard);
+
+        /// <summary>
+        /// Gets size of asset used by this person (i.e size of bounds). Used to adjust position on terrain.
+        /// </summary>
+        /// <returns>Size of npc.</returns>
+        public abstract Vector3 GetSize();
+    }
+
+    /// <summary>
     /// Billboard class for classic wandering NPCs found in town environments.
     /// </summary>
 #if UNITY_EDITOR
@@ -32,7 +72,7 @@ namespace DaggerfallWorkshop
 #endif
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public class MobilePersonBillboard : MonoBehaviour
+    public class MobilePersonBillboard : MobilePersonAsset
     {
         #region Fields
 
@@ -118,15 +158,10 @@ namespace DaggerfallWorkshop
         /// Daggerfall NPCs are either in or motion or idle facing player.
         /// This only controls anim state, actual motion is handled by MobilePersonMotor.
         /// </summary>
-        public bool IsIdle
+        public sealed override bool IsIdle
         {
             get { return (currentAnimState == AnimStates.Idle); }
             set { SetIdle(value); }
-        }
-
-        public bool IsUsingGuardTexture
-        {
-            get { return isUsingGuardTexture; }
         }
 
         #endregion
@@ -176,7 +211,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public void SetPerson(Races race, Genders gender, int personVariant, bool isGuard)
+        public override void SetPerson(Races race, Genders gender, int personVariant, bool isGuard)
         {
             // Must specify a race
             if (race == Races.None)
@@ -226,7 +261,7 @@ namespace DaggerfallWorkshop
         /// Gets billboard size.
         /// </summary>
         /// <returns>Vector2 of billboard width and height.</returns>
-        public Vector2 GetBillboardSize()
+        public sealed override Vector3 GetSize()
         {
             if (recordSizes == null || recordSizes.Length == 0)
                 return Vector2.zero;

@@ -1,0 +1,74 @@
+{
+    "title": "Spell Icons Pack for Daggerfall Unity",
+    "description": "Metadata for a spell icons pack.",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "displayName": {
+            "type": "string",
+            "description": "A readable name for this icons pack, shown in game UI."
+        },
+        "rowCount": {
+            "type": "integer",
+            "description": "Total number of icons per row in atlas."
+        },
+        "iconCount": {
+            "type": "integer",
+            "description": "Total number of icons in entire atlas."
+        },
+        "filterMode": {
+            "type": "string",
+            "description": "Preferred filter mode of loaded icon textures.",
+            "enum": [
+                "Point",
+                "Bilinear",
+                "Trilinear"
+            ],
+            "default": "Point"
+        },
+        "icons": {
+            "type": "array",
+            "description": "Settings for individual icons.",
+            "items": {
+                "type": "object",
+                "description": "Settings for an icon in atlas.",
+                "properties": {
+                    "index": {
+                        "type": "integer",
+                        "description": "Index of icon for human readability.",
+                        "minimum": 0
+                    },
+                    "suggestedEffects": {
+                        "description": "List of effect keys this icon could be suggested for or null (currently unused).",
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "description": "The name of an effect."
+                                },
+                                "minLength": 1
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "index"
+                ],
+                "additionalProperties": false
+            },
+            "minLength": 1,
+            "additionalItems": false
+        }
+    },
+    "required": [
+        "displayName",
+        "rowCount",
+        "iconCount",
+        "icons"
+    ],
+    "additionalProperties": false
+}

@@ -136,6 +136,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
         readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
         readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
+        readonly string goldAmount = TextManager.Instance.GetText(textDatabase, "goldAmount");
+        readonly string goldWeight = TextManager.Instance.GetText(textDatabase, "goldWeight");
         readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
 
         const string baseTextureName = "INVE00I0.IMG";
@@ -485,6 +487,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            if (itemInfoPanel != null)
+                goldButton.OnMouseEnter += GoldButton_OnMouseEnter;
         }
 
         protected void SetupAccessoryElements()
@@ -1094,6 +1098,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.ItemGroup == ItemGroups.Paintings)
                 tokens = new TextFile.Token[] { new TextFile.Token() { formatting = TextFile.Formatting.Text, text = tokens[tokens.Length - 1].text.Trim() } };
 
+            UpdateItemInfoPanel(tokens);
+        }
+
+        private void UpdateItemInfoPanel(TextFile.Token[] tokens)
+        {
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 if (tokens[tokenIdx].formatting == TextFile.Formatting.JustifyCenter)
@@ -1267,6 +1276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.GoldPieces -= goldToDrop;
 
             Refresh(false);
+            UpdateItemInfoPanelGold();
         }
 
         #endregion
@@ -1777,7 +1787,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
             PlayerGPS.DiscoveredBuilding buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
             int weightAndNumItems = (int)theftBasket.GetWeight() + theftBasket.Count;
-            int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(playerEntity, null, buildingDiscoveryData.quality, weightAndNumItems);
+            int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(playerEntity, buildingDiscoveryData.quality, weightAndNumItems);
             // Send the guards if detected
             if (!Dice100.FailedRoll(chanceBeingDetected))
             {
@@ -2051,6 +2061,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
         {
             UpdateItemInfoPanel(item);
+        }
+
+        protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)
+        {
+            UpdateItemInfoPanelGold();
+        }
+
+        private void UpdateItemInfoPanelGold()
+        {
+            int gold = GameManager.Instance.PlayerEntity.GoldPieces;
+            float weight = gold * DaggerfallBankManager.goldUnitWeightInKg;
+            TextFile.Token[] tokens = {
+                TextFile.CreateTextToken(string.Format(goldAmount, gold)),
+                TextFile.NewLineToken,
+                TextFile.CreateTextToken(string.Format(goldWeight, weight.ToString(weight % 1 == 0 ? "F0" : "F2")))
+            };
+            UpdateItemInfoPanel(tokens);
         }
 
         protected virtual void StartGameBehaviour_OnNewGame()

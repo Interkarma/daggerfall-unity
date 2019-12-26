@@ -11,16 +11,10 @@
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Player;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Formulas;
+using System.Collections;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -37,6 +31,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int defaultHpPerLevel = 8;
         const int minDifficultyPoints = -12;
         const int maxDifficultyPoints = 40;
+
+        const float daggerTrailLingerTime = 1.0f;
 
         const int strNameYourClass = 301;
         const int strSetSkills = 300;
@@ -475,7 +471,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 daggerY = Math.Min(maxDaggerY, (int)(defaultDaggerY + (41 * (-difficultyPoints / 12f))));
             }
+
+            DaggerfallUI.Instance.StartCoroutine(AnimateDagger());
             daggerPanel.Position = new Vector2(defaultDaggerX, daggerY);
+        }
+
+        IEnumerator AnimateDagger()
+        {
+            Panel daggerTrailPanel = new Panel();
+            daggerTrailPanel.Position = daggerPanel.Position;
+            daggerTrailPanel.Size = daggerPanel.Size;
+            daggerTrailPanel.BackgroundColorTexture = nativeDaggerTexture;
+            daggerTrailPanel.BackgroundColor = new Color32(255, 255, 255, 255);
+            NativePanel.Components.Add(daggerTrailPanel);
+            float daggerTrailTime = daggerTrailLingerTime;
+
+            while ((daggerTrailTime -= Time.unscaledDeltaTime) >= 0f)
+            {
+                daggerTrailPanel.BackgroundColor = new Color32(255, 255, 255, (byte)(255 * daggerTrailTime / daggerTrailLingerTime));
+                yield return new WaitForEndOfFrame();
+            }
+            NativePanel.Components.Remove(daggerTrailPanel);
+            daggerTrailPanel.Dispose();
         }
 
         #endregion

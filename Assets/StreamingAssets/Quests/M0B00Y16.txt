@@ -218,14 +218,16 @@ _no_ task:
 	say 1043 
 	change repute with _villager_ by -10 
 
+variable _escortComplete_
 _S.13_ task:
 	say 1044 
 	drop _villager_ face 
 	change repute with _villager_ by +15 
 	place npc _villager_ at _store_ 
+	start task _escortComplete_
 
 _S.14_ task:
-	when _yes_ and not _S.13_ and _qtime_ 
+	when _yes_ and not _escortComplete_ and _qtime_ 
 	say 1042 
 
 _S.15_ task:
@@ -235,7 +237,7 @@ _S.16_ task:
 	when _success_ and _S.09_
 
 _S.17_ task:
-	when _success_ and _S.13_ 
+	when _success_ and _escortComplete_ 
 
 _S.18_ task:
 	when _qtime_ or _S.15_ or _S.16_ or _S.17_ 

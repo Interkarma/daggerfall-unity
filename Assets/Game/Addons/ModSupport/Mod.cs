@@ -51,6 +51,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// The name of the mod file on disk without extension.
         /// </summary>
+        /// <remarks>
+        /// While GUID can be used behind the scenes, a short, unique and readable name for the mod is needed
+        /// when it surface to users or other mod developers (for example for presets and dependencies).
+        /// Filename is the best candidate because it can't contain invalid path chars.
+        /// A good name should be lowercase and without spaces (i.e "example-mod").
+        /// A new "Name" property may be created to allow filename to be changed.
+        /// </remarks>
         [SerializeField]
         public string FileName { get; private set; }
 
@@ -235,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             types = modInfo.Files.Where(x => x.EndsWith(".cs"))
                 .Select(x => AssetDatabase.LoadAssetAtPath<MonoScript>(x))
                 .Where(x => x != null).Select(x => x.GetClass()).Where(x => x != null).ToArray();
-            FileName = Path.GetFileName(manifestPath.Remove(manifestPath.IndexOf(ModManager.MODINFOEXTENSION)));
+            FileName = Path.GetFileName(manifestPath.Remove(manifestPath.IndexOf(ModManager.MODINFOEXTENSION))).ToLower();
             DirPath = ModManager.Instance.ModDirectory;
             HasSettings = ModSettings.ModSettingsData.HasSettings(this);
         }
@@ -754,9 +761,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (modInfoAsset == null)
                     return false;
 
-                string modInfo = modInfoAsset.ToString();
-                this.ModInfo = (ModInfo)JsonUtility.FromJson(modInfo, typeof(ModInfo));
-                return ModInfo != null;
+
+                ModInfo modInfo = null;
+                if (ModManager._serializer.TryDeserialize(fsJsonParser.Parse(modInfoAsset.text), ref modInfo).Succeeded)
+                {
+                    this.ModInfo = modInfo;
+                    return true;
+                }
+
+                Debug.LogErrorFormat("Failed to deserialize manifest file for mod {0}", Title);
+                return false;
             }
             catch (Exception ex)
             {
@@ -852,7 +866,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Returns a list of any valid mod setup functions
+        /// Returns a list of any valid mod setup functions.
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>

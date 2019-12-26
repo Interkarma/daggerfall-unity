@@ -386,7 +386,14 @@ namespace DaggerfallWorkshop.Game.Questing
             return LoadQuest(new QuestData() { name = questName, path = questPath }, factionId);
         }
 
-        public Quest LoadQuest(QuestData questData, int factionId)
+        /// <summary>
+        /// Loads a quest script from the quest data.
+        /// </summary>
+        /// <param name="questData">The quest data object of the quest to load.</param>
+        /// <param name="factionId">Faction id that should get the rep change for quest success/failure.</param>
+        /// <param name="partialParse">If true the quest will only be partially parsed and cannot be instantiated.</param>
+        /// <returns></returns>
+        public Quest LoadQuest(QuestData questData, int factionId, bool partialParse = false)
         {
             // Append extension if not present
             string questName = questData.name;
@@ -398,7 +405,7 @@ namespace DaggerfallWorkshop.Game.Questing
             string questFile = Path.Combine(questData.path, questName);
             if (File.Exists(questFile))
             {
-                quest = QuestMachine.Instance.ParseQuest(questName, File.ReadAllLines(questFile), factionId);
+                quest = QuestMachine.Instance.ParseQuest(questName, File.ReadAllLines(questFile), factionId, partialParse);
                 if (quest == null)
                     return null;
             }
@@ -409,7 +416,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(questName, false, out questAsset))
                 {
                     List<string> lines = ModManager.GetTextAssetLines(questAsset);
-                    quest = QuestMachine.Instance.ParseQuest(questName, lines.ToArray(), factionId);
+                    quest = QuestMachine.Instance.ParseQuest(questName, lines.ToArray(), factionId, partialParse);
                     if (quest == null)
                         return null;
                 }

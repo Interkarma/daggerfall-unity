@@ -115,7 +115,8 @@ Item _gold_ gold
 
 Person _qgiver_ group Questor male
 
-Place _townhouse_ remote house1
+Place _townhouse_ remote house4
+--reverted to house4 as original
 
 Clock _traveltime_ 00:00 0 flag 17 range 0 2
 
@@ -134,7 +135,11 @@ _traveltime_ task:
 	end quest 
 
 _S.01_ task:
+	start task _S.01a_
+
+_S.01a_ task:
 	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+--set this apart to a permanent task, previous setup would randomly pick again upon re-entering the house
 
 _questdone_ task:
 	toting _painting_ and _qgiver_ clicked 

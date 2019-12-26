@@ -47,7 +47,7 @@ Message:  1011
 
 Message:  1012
 <ce>                       Know me for who I really
-<ce>                      am. I am your mortal enemy
+<ce>                      am. I am your mortal enemy,
 <ce>                          _traitor_! I have a
 <ce>                       special fate in store for
 <ce>                                 you.
@@ -62,9 +62,9 @@ Message:  1013
 
 Message:  1014
 <ce>                         I don't know how you
-<ce>                       escaped from ___dungeon_
+<ce>                       escaped from ___dungeon_,
 <ce>                         %pcf. It won't do you
-<ce>                       much good though. Prepare
+<ce>                       much good, though. Prepare
 <ce>                                to die!
 
 

@@ -618,6 +618,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
+        /// Cure all attribute damage by this effect.
+        /// </summary>
+        public virtual void CureAttributeDamage()
+        {
+            for (int i = 0; i < DaggerfallStats.Count; i++)
+            {
+                int amount = GetAttributeMod((DFCareer.Stats)i);
+                if (amount < 0)
+                    HealAttributeDamage((DFCareer.Stats)i, Mathf.Abs(amount));
+            }
+        }
+
+        /// <summary>
         /// Heal skill damage by amount.
         /// Does nothing if this effect does not damage skills.
         /// Skill will not heal past 0.
@@ -638,6 +651,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             SetSkillMod(skill, result);
             Debug.LogFormat("Healed {0}'s {1} by {2} points", GetPeeredEntityBehaviour(manager).name, skill.ToString(), amount);
+        }
+
+        /// <summary>
+        /// Cure all skill damage by this effect.
+        /// </summary>
+        public virtual void CureSkillDamage()
+        {
+            for (int i = 0; i < DaggerfallSkills.Count; i++)
+            {
+                int amount = GetSkillMod((DFCareer.Skills)i);
+                if (amount < 0)
+                    HealSkillDamage((DFCareer.Skills)i, Mathf.Abs(amount));
+            }
         }
 
         /// <summary>

@@ -27,6 +27,7 @@ using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -126,6 +127,9 @@ namespace DaggerfallWorkshop.Game.Entity
         const int socialGroupCount = 11;
         int[] reactionMods = new int[socialGroupCount];     // Indices map to FactionFile.SocialGroups 0-10 - do not serialize, set by live effects
 
+        bool enemyAlertActive = false;
+        uint lastEnemyAlertTime;
+
         #endregion
 
         #region Properties
@@ -181,6 +185,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool IsInBeastForm { get; set; }
         public List<string> BackStory { get; set; }
         public VampireClans PreviousVampireClan { get; set; }
+        public bool EnemyAlertActive { get { return enemyAlertActive; } }
 
         #endregion
 
@@ -272,6 +277,17 @@ namespace DaggerfallWorkshop.Game.Entity
                 return 0;
         }
 
+        /// <summary>
+        /// Enemy alert is raised by hostile enemies or attempting to rest near hostile enemies.
+        /// Enemy alert is lowered when killing a hostile enemy or after some time has passed.
+        /// </summary>
+        public void SetEnemyAlert(bool alert)
+        {
+            enemyAlertActive = alert;
+            if (alert)
+                lastEnemyAlertTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+        }
+
         public override void FixedUpdate()
         {
             // Handle events that are called by classic's update loop
@@ -336,6 +352,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 climbingMotor = GameManager.Instance.ClimbingMotor;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
             // Wait until game has started and the game time has been set.
             // If the game time is taken before then "30" is returned, which causes an initial player fatigue loss
             // after loading or starting a game with a non-30 minute.
@@ -343,6 +360,12 @@ namespace DaggerfallWorkshop.Game.Entity
                 return;
             else if (!gameStarted)
                 gameStarted = true;
+
+            // Lower active enemy alert if more than 8 hours have passed since alert was raised
+            const int alertDecayMinutes = 8 * DaggerfallDateTime.MinutesPerHour;
+            if (enemyAlertActive && (gameMinutes - lastEnemyAlertTime) > alertDecayMinutes)
+                SetEnemyAlert(false);
+
             if (playerMotor != null)
             {
                 // Values are < 1 so fatigue loss is slower
@@ -626,7 +649,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         if (directionToMobile.magnitude <= 77.5f)
                         {
                             // Spawn from guard mobile NPCs first
-                            if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                            if (populationManager.PopulationPool[i].npc.IsGuard)
                             {
                                 SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
                                 populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
@@ -682,7 +705,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                 DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
                                 if (entity == GameManager.Instance.PlayerEntityBehaviour)
                                     seen = true;
-                                if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                                if (populationManager.PopulationPool[i].npc.IsGuard)
                                     seenByGuard = true;
                             }
                         }
@@ -740,7 +763,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         continue;
 
                     // Spawn from guard mobile NPCs
-                    if (populationManager.PopulationPool[i].npc.Billboard.IsUsingGuardTexture)
+                    if (populationManager.PopulationPool[i].npc.IsGuard)
                     {
                         SpawnCityGuard(populationManager.PopulationPool[i].npc.transform.position, populationManager.PopulationPool[i].npc.transform.forward);
                         populationManager.PopulationPool[i].npc.gameObject.SetActive(false);
@@ -772,6 +795,9 @@ namespace DaggerfallWorkshop.Game.Entity
             rentedRooms.Clear();
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
+
+            // Clear any world variation this player entity has triggered
+            WorldDataVariants.Clear();
         }
 
         /// <summary>

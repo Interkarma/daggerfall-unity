@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -58,6 +58,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         List<string> Assets { get { return modInfo.Files; } set { modInfo.Files = value; } }         //list of assets to be added
         GUIStyle titleStyle = new GUIStyle();
         GUIStyle fieldStyle = new GUIStyle();
+        GUIContent documentationGUIContent;
+        bool isSupportedEditorVersion;
 
         void OnEnable()
         {
@@ -72,6 +74,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             titleStyle.fontSize = 15;
             fieldStyle.fontSize = 12;
             minSize = new Vector2(1280, 600);
+
+            documentationGUIContent = new GUIContent(EditorGUIUtility.IconContent("_Help"));
+            documentationGUIContent.text = " Mod System Documentation";
+            isSupportedEditorVersion = IsSupportedEditorVersion();
         }
 
         void OnDisable()
@@ -146,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     try
                     {
-                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", GetTempModDirPath(), new string[] { "JSON", "dfmod.json"});
+                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", ModManager.EditorModsDirectory, new string[] { "JSON", "dfmod.json"});
 
                         if (!File.Exists(currentFilePath))
                         {
@@ -170,15 +176,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     fileOpen = true;
                 }
+
+                if (GUILayout.Button(documentationGUIContent))
+                    Help.BrowseURL("https://www.dfworkshop.net/projects/daggerfall-unity/modding/");
             });
 
-            if(modInfo == null)
+            if (!isSupportedEditorVersion)
+                EditorGUILayout.HelpBox("Unsupported version of Unity Editor: generated mods may not be compatible with release builds!", MessageType.Warning);
+
+            if (modInfo == null)
             {
                 fileOpen = false;
                 modInfo = new ModInfo();
             }
+
             if (!fileOpen) // if no fileopen, hide rest of UI
+            {
+                EditorGUILayout.HelpBox("Open a manifest file or create a new one to edit or build a mod.", MessageType.Info);
                 return;
+            }
 
             GUILayoutHelper.Vertical(() =>
             {
@@ -386,7 +402,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             string directory = "";
 
             if (!supressWindow)
-                path = EditorUtility.SaveFilePanel("Save", GetTempModDirPath(), modInfo.ModTitle, "dfmod.json");
+                path = EditorUtility.SaveFilePanel("Save", ModManager.EditorModsDirectory, modInfo.ModTitle, "dfmod.json");
 
             Debug.Log("save path: " + path);
 
@@ -659,6 +675,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 default:
                     return UnityEditor.BuildAssetBundleOptions.None;
             }
+        }
+
+        private static bool IsSupportedEditorVersion()
+        {
+#if UNITY_EDITOR_WIN || UNITY_EDITOR_OSX
+            return Application.unityVersion.Equals("2018.2.21f1", StringComparison.Ordinal);
+#elif UNITY_EDITOR_LINUX
+            return true;
+#else
+            return false;
+#endif
         }
     }
 }

@@ -19,6 +19,10 @@ using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
+    /// <summary>
+    /// Handles setup and execution of mods and provides support for features related to modding support.
+    /// Mods can also use this singleton to find and interact with other mods. 
+    /// </summary>
     public class ModManager : MonoBehaviour
     {
         #region Fields
@@ -102,6 +106,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         public static ModManager Instance { get; private set; }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Path to Mods folder inside Unity Editor where source data for mods is stored.
+        /// </summary>
+        public static string EditorModsDirectory
+        {
+            get { return Application.dataPath + "/Game/Mods"; }
+        }
+#endif
 
         #endregion
 
@@ -564,9 +578,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #if UNITY_EDITOR
             if (LoadVirtualMods)
             {
-                foreach (string manifestPath in Directory.GetFiles(Application.dataPath + "/Game/Mods", "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
+                foreach (string manifestPath in Directory.GetFiles(EditorModsDirectory, "*" + MODINFOEXTENSION, SearchOption.AllDirectories))
                 {
-                    var modInfo = JsonUtility.FromJson<ModInfo>(File.ReadAllText(manifestPath));
+                    ModInfo modInfo = null;
+                    if (ModManager._serializer.TryDeserialize(fsJsonParser.Parse(File.ReadAllText(manifestPath)), ref modInfo).Failed)
+                    {
+                        Debug.LogErrorFormat("Failed to deserialize manifest file {0}", manifestPath);
+                        continue;
+                    }
+
                     if (mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
                     {
                         Debug.LogWarningFormat("Ignoring virtual mod {0} because release mod is already loaded.", modInfo.ModTitle);
@@ -704,7 +724,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Mod Source Loading/Compiling
 
         /// <summary>
-        /// Compile source files in mod bundle to assembly
+        /// Compiles source files in mod bundle to assembly.
         /// </summary>
         /// <param name="source">The content of source files.</param>
         /// <returns>The compiled assembly or null.</returns>
@@ -735,7 +755,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Public Helpers
 
         /// <summary>
-        /// Writes mod settings (title, priority, enabled) to file
+        /// Writes mod settings (title, priority, enabled) to file.
         /// </summary>
         /// <returns>True if settings written successfully.</returns>
         public static bool WriteModSettings()
@@ -841,7 +861,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Send data to a mod that has a valid DFModMessageReceiver delegate.
+        /// Send data to a mod that has a valid <see cref="DFModMessageReceiver"/> delegate.
         /// </summary>
         /// <param name="modTitle">The title of the target mod.</param>
         /// <param name="message">A string to be sent to the target mod.</param>
@@ -932,6 +952,81 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Automatically assigns load priority from relationships defined by <see cref="ModInfo.Dependencies"/>.
+        /// </summary>
+        internal void AutoSortMods()
+        {
+            try
+            {
+                mods = TopologicalSort(mods, mod =>
+                {
+                    if (mod.ModInfo.Dependencies == null)
+                        return Enumerable.Empty<Mod>();
+
+                    var query = from dependency in mod.ModInfo.Dependencies
+                                where !dependency.IsPeer
+                                select GetModFromName(dependency.Name);
+
+                    return query.Where(x => x != null);
+                });
+
+                for (int i = 0; i < mods.Count; i++)
+                    mods[i].LoadPriority = i;
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("Failed to auto sort mods: {0}", e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Checks if all conditions defined in Dependency section of a mod are satisfied.
+        /// </summary>
+        /// <param name="mod">A mod that should be validated.</param>
+        /// <returns>A readable error message or null.</returns>
+        internal string CheckModDependencies(Mod mod)
+        {
+            if (mod.ModInfo.Dependencies != null)
+            {
+                foreach (ModDependency dependency in mod.ModInfo.Dependencies)
+                {
+                    // Check if dependency is available
+                    Mod target = GetModFromName(dependency.Name);
+                    if (target == null)
+                    {
+                        if (dependency.IsOptional)
+                            continue;
+
+                        return string.Format(ModManager.GetText("dependencyIsMissing"), dependency.Name);
+                    }
+
+                    // Check load order priority
+                    if (!dependency.IsPeer && mod.LoadPriority < target.LoadPriority)
+                        return string.Format(ModManager.GetText("dependencyWithIncorrectPosition"), target.Title);
+
+                    // Check minimum version (ignore pre-release identifiers after hyphen).
+                    if (dependency.Version != null)
+                    {
+                        if (target.ModInfo.ModVersion == null)
+                            return string.Format(ModManager.GetText("dependencyWithIncompatibleVersion"), target.Title, "<undefined>", dependency.Version);
+
+                        int index = target.ModInfo.ModVersion.IndexOf('-');
+                        string referenceVersion = index != -1 ? target.ModInfo.ModVersion.Remove(index) : target.ModInfo.ModVersion;
+                        if (IsVersionLowerOrEqual(dependency.Version, referenceVersion) != true)
+                            return string.Format(ModManager.GetText("dependencyWithIncompatibleVersion"), target.Title, target.ModInfo.ModVersion, dependency.Version);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        internal Mod GetModFromName(string name)
+        {
+            return mods.FirstOrDefault(x => x.FileName.Equals(name, StringComparison.Ordinal));
+        }
+
+        /// <summary>
         /// Gets a localized string for a mod system text.
         /// </summary>
         internal static string GetText(string key)
@@ -978,10 +1073,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (secondParts.Length < 1 || secondParts.Length > 3)
                 return null;
 
-            for (int i = 0; i < firstParts.Length && i < secondParts.Length; i++)
+            for (int i = 0; i < firstParts.Length || i < secondParts.Length; i++)
             {
-                int firstPart, secondPart;
-                if (!int.TryParse(firstParts[i], out firstPart) || !int.TryParse(secondParts[i], out secondPart))
+                int firstPart = 0;
+                int secondPart = 0;
+
+                if ((i < firstParts.Length && !int.TryParse(firstParts[i], out firstPart)) ||
+                    (i < secondParts.Length && !int.TryParse(secondParts[i], out secondPart)))
                     return null;
 
                 if (firstPart > secondPart)
@@ -1022,6 +1120,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
+        // Adapted from https://stackoverflow.com/questions/4106862/how-to-sort-depended-objects-by-dependency
+        private static List<T> TopologicalSort<T>(IEnumerable<T> source, Func<T, IEnumerable<T>> dependencies)
+        {
+            var sorted = new List<T>();
+            var visited = new HashSet<T>();
+
+            foreach (var item in source)
+                Visit(item, visited, sorted, dependencies);
+
+            return sorted;
+        }
+
+        private static void Visit<T>(T item, HashSet<T> visited, List<T> sorted, Func<T, IEnumerable<T>> dependencies)
+        {
+            if (!visited.Contains(item))
+            {
+                visited.Add(item);
+
+                foreach (var dependency in dependencies(item))
+                    Visit(dependency, visited, sorted, dependencies);
+
+                sorted.Add(item);
+            }
+            else
+            {
+                if (!sorted.Contains(item))
+                    throw new Exception("Cyclic dependency found");
+            }
+        }
+
         #endregion
 
         #region Events
@@ -1032,10 +1160,29 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         //public delegate void NewModRegistered(IModController newModController);
         //public static event NewModRegistered OnNewModControllerRegistered;
 
+        /// <summary>
+        /// Signature for an event related to an asset from a mod.
+        /// </summary>
+        /// <param name="ModTitle">The title of a mod.</param>
+        /// <param name="AssetName">The name of the asset without relative path, as a lowercase text.</param>
+        /// <param name="assetType">The Type of target asset.</param>
         public delegate void AssetUpdate(string ModTitle, string AssetName, Type assetType);
+
+        /// <summary>
+        /// An event that is raised when an asset is loaded from an <see cref="AssetBundle"/> and is cached.
+        /// It's not raised again if the asset is cloned and instantiated multiple times.
+        /// </summary>
         public static event AssetUpdate OnLoadAssetEvent;
 
+        /// <summary>
+        /// Signature for an event related to a mod.
+        /// </summary>
+        /// <param name="ModTitle">The title of target mod.</param>
         public delegate void ModUpdate(string ModTitle);
+
+        /// <summary>
+        /// An event that is raised when a mod is removed and its AssetBundle is unloaded.
+        /// </summary>
         public static event ModUpdate OnUnloadModEvent;
 
         private void OnUnloadMod(string ModTitle)
@@ -1044,7 +1191,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 OnUnloadModEvent(ModTitle);
         }
 
-        public static void OnLoadAsset(string ModTitle, string assetName, Type assetType)
+        internal static void OnLoadAsset(string ModTitle, string assetName, Type assetType)
         {
             if (OnLoadAssetEvent != null)
                 OnLoadAssetEvent(ModTitle, assetName, assetType);

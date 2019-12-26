@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int maxFaces = 3;
         const string factionFaceFile = "FACES.CIF";
         const string factionChildrenFaceFile = "KIDS00I0.CIF";
+        const string factionExtraFaceFile = "TFAC00I0.RCI";
 
         List<FaceDetails> faces = new List<FaceDetails>();
         List<Panel> facePanels = new List<Panel>();
@@ -230,6 +231,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     faceTexture = DaggerfallUI.GetTextureFromCifRci(factionFaceFile, face.factionFaceIndex);
                     facePanel.Size = new Vector2(specialFacePanelWidth, specialFacePanelHeight);
                 }
+                else if (face.factionFaceIndex > 60 && face.factionFaceIndex <= 502)
+                {
+                    // Use special NPC face set by a mod at time face data was added
+                    faceTexture = DaggerfallUI.GetTextureFromCifRci(factionExtraFaceFile, face.factionFaceIndex);
+                    facePanel.Size = new Vector2(specialFacePanelWidth, specialFacePanelHeight);
+                }
                 else
                 {
                     string fileName;
@@ -246,6 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         fileName = factionChildrenFaceFile;
                     }
 
+                    // Allow individual factions from mods to use normal race faces
                     ImageData imageData = ImageReader.GetImageData(fileName, face.faceIndex, 0, true, true);
                     faceTexture = imageData.texture;
                     facePanel.Size = new Vector2(imageData.width, imageData.height);

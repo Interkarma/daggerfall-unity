@@ -147,8 +147,6 @@ Place _agentplace_ remote house2
 Place _lysandustomb_ permanent LysandusTomb2
 
 Clock _S.04_ 6.23:20 0 flag 1 range 0 1
-Clock _S.10_ 30.00:00
---removed flags from S.10 to make it 30 exact days
 Clock _itemindung_ 00:00 0 flag 17 range 0 2
 
 Foe _F.00_ is Wraith
@@ -181,14 +179,12 @@ _no_ task:
 
 _S.04_ task:
 	add dialog for location _agentplace_ person _agentuk_ 
-	start timer _S.10_ 
 	give pc letter14 notify 1022 
 	create npc at _agentplace_ 
 	place npc _agentuk_ at _agentplace_ 
 
 _S.05_ task:
 	clicked npc _agentuk_ 
-	stop timer _S.10_ 
 	prompt QuestorOffer yes yes no _no_ 
 
 _S.06_ task:
@@ -201,9 +197,6 @@ _S.08_ task:
 _S.09_ task:
 	when _S.07_ and _S.08_ 
 	start timer _S.04_ 
-
-_S.10_ task:
-	end quest 
 
 _itemindung_ task:
 	end quest 

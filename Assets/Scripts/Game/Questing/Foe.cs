@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing
         MobileTypes foeType;                // MobileType to spawn
         Genders humanoidGender;             // Foe gender for humanoid foes
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
+        bool deathTrigger;                   // True when enemy should instantly die
         bool restrained;                    // True if enemy restrained by quest
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
         string displayName;                 // Foe display name for quest system macros
@@ -68,6 +69,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool InjuredTrigger
         {
             get { return injuredTrigger; }
+        }
+
+        public bool DeathTrigger
+        {
+            get { return deathTrigger; }
         }
 
         public bool IsRestrained
@@ -215,6 +221,11 @@ namespace DaggerfallWorkshop.Game.Questing
             killCount += amount;
         }
 
+        public void Kill()
+        {
+            deathTrigger = true;
+        }
+
         /// <summary>
         /// Queues a spell to cast on this Foe.
         /// </summary>
@@ -276,7 +287,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Randomly assign a gender for humanoid foes
-            humanoidGender = (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f) ? Genders.Male : Genders.Female;
+            humanoidGender = (UnityEngine.Random.Range(0.0f, 1.0f) < 0.55f) ? Genders.Male : Genders.Female;
 
             // Create a random display name for humanoid foes
             DFRandom.srand(DateTime.Now.Millisecond);
