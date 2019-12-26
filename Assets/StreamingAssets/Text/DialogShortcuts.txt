@@ -103,6 +103,24 @@ TravelTransportModeToggle, T
 - N for Nights?
 TravelInnCampOutToggle,    N
 
+-- CharacterSheet screen
+CharacterSheetName,            N
+- Conflict with Logbook
+CharacterSheetLevel,           V
+CharacterSheetGold,            G
+CharacterSheetHealth,          H
+CharacterSheetAffiliations,    A
+CharacterSheetPrimarySkills,   F1
+CharacterSheetMajorSkills,     F2
+CharacterSheetMinorSkills,     F3
+CharacterSheetMiscSkills,      F4
+CharacterSheetInventory,       I
+CharacterSheetSpellbook,       S
+CharacterSheetLogbook,         L
+- Conflict with Health
+CharacterSheetHistory,         T
+CharacterSheetExit,            E
+
 -- Inventory screen
 InventoryWeapons,     F1
 InventoryMagic,       F2

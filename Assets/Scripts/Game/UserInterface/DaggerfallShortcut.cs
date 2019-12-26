@@ -110,6 +110,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             TravelTransportModeToggle,
             TravelInnCampOutToggle,
 
+            // Charactersheet Screen
+            CharacterSheetName,
+            CharacterSheetLevel,
+            CharacterSheetGold,
+            CharacterSheetHealth,
+            CharacterSheetAffiliations,
+            CharacterSheetPrimarySkills,
+            CharacterSheetMajorSkills,
+            CharacterSheetMinorSkills,
+            CharacterSheetMiscSkills,
+            CharacterSheetInventory,
+            CharacterSheetSpellbook,
+            CharacterSheetLogbook,
+            CharacterSheetHistory,
+            CharacterSheetExit,
+
             // Inventory screen
             InventoryWeapons,
             InventoryMagic,
