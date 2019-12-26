@@ -271,7 +271,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyUp(extraProceedBinding))
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed &&
+                (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyUp(extraProceedBinding)))
             {
                 // Special handling for message boxes with buttons
                 if (buttons.Count > 0)

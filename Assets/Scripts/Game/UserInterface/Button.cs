@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         new public bool ProcessHotkeySequences(HotkeySequence.KeyModifiers keyModifiers)
         {
-            bool isActivated = shortcutKey.IsDownWith(keyModifiers);
+            bool isActivated = shortcutKey.IsUpWith(keyModifiers);
             if (isActivated)
                 TriggerMouseClick();
             return isActivated;

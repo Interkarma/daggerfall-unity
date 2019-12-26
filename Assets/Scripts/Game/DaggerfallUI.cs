@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game
         char lastCharacterTyped;
         KeyCode lastKeyCode;
         HotkeySequence.KeyModifiers lastKeyModifiers;
+        bool hotkeySequenceProcessed = false;
         FadeBehaviour fadeBehaviour = null;
         bool instantiatePersistentWindowInstances = true;
 
@@ -188,6 +189,11 @@ namespace DaggerfallWorkshop.Game
         public HotkeySequence.KeyModifiers LastKeyModifiers
         {
             get { return lastKeyModifiers; }
+        }
+
+        public bool HotkeySequenceProcessed
+        {
+            get { return hotkeySequenceProcessed; }
         }
 
         public DaggerfallHUD DaggerfallHUD
@@ -382,8 +388,12 @@ namespace DaggerfallWorkshop.Game
 
                 if (lastCharacterTyped > 255)
                     lastCharacterTyped = (char)0;
+            }
 
-                ProcessHotKeySequences();
+            hotkeySequenceProcessed = false;
+            if (Event.current.type == EventType.KeyUp)
+            {
+                hotkeySequenceProcessed = ProcessHotKeySequences();
             }
 
             if (Event.current.type == EventType.Repaint)
