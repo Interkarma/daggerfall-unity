@@ -208,13 +208,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public override void Update()
-        {
-            base.Update();
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
-        }
-
         private void ConfirmStatReset_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             CloseWindow();

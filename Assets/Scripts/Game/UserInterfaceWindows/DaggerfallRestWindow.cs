@@ -190,8 +190,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (TickRest())
                     EndRest();
             }
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         public override void Draw()

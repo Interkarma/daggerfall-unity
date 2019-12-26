@@ -186,8 +186,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ShowNextStage();
                 moveNextStage = false;
             }
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         void ShowGameFolderStage()

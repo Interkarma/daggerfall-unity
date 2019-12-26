@@ -328,8 +328,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     DaggerfallUI.MessageBox(suppressTalkMessage);
                 return;
             }
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         public void UpdateListboxTopic()

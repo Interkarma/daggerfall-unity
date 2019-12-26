@@ -293,8 +293,6 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         if (closeIfTopWindow && uiManager.TopWindow == this)
             uiManager.PopWindow();
-
-        DaggerfallUI.Instance.ProcessHotKeySequences();
     }
 
     bool GetModSettings(ref ModSettings ms)

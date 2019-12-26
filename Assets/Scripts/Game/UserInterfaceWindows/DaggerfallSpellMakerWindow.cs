@@ -199,13 +199,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetDefaults();
         }
 
-        public override void Update()
-        {
-            base.Update();
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
-        }
-
         void SetDefaults()
         {
             allowedTargets = defaultTargetFlags;

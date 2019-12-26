@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<Button> buttons = new List<Button>();
         int buttonSpacing = 32;
         int buttonTextDistance = 4;
+        bool buttonClicked = false;
         MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
         bool clickAnywhereToClose = false;
         DaggerfallMessageBox nextMessageBox;
@@ -295,7 +296,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     CloseWindow();
                 }
             }
-            else if (DaggerfallUI.Instance.ProcessHotKeySequences())
+            else if (buttonClicked)
             {
                 // if there is a nested next message box show it
                 if (nextMessageBox != null)
@@ -412,6 +413,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            buttonClicked = true;
             selectedButton = (MessageBoxButtons)sender.Tag;
             RaiseOnButtonClickEvent(this, selectedButton);
         }

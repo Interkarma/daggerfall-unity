@@ -237,8 +237,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     performFastTravel();
                 }
             }
-            else
-                DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         #endregion

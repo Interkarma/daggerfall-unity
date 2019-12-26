@@ -383,6 +383,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             lastKeyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            ProcessHotKeySequences();
 
             if (Event.current.type == EventType.Repaint)
             {

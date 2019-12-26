@@ -116,13 +116,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(mainPanel);
         }
 
-        public override void Update()
-        {
-            base.Update();
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
-        }
-
         #endregion
 
         #region Event Handlers

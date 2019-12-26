@@ -351,8 +351,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUI.MessageBox(suppressInventoryMessage);
                 return;
             }
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         public override void OnPush()

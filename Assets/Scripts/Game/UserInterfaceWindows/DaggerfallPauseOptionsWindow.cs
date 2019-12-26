@@ -166,8 +166,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Scale version text based on native panel scaling
             versionTextLabel.TextScale = NativePanel.LocalScale.x * 0.75f;
-
-            DaggerfallUI.Instance.ProcessHotKeySequences();
         }
 
         public override void Draw()
