@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Dictionary<string, Texture2D> regionTextures = new Dictionary<string, Texture2D>();
         readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
 
-        private readonly int maxMatchingResults = 20;
+        private readonly int maxMatchingResults = 1000;
         private string distanceRegionName = null;
         private IDistance distance;
 
