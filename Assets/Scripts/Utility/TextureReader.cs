@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Utility
         // Special texture indices
         public const int EditorFlatsTextureArchive = 199;
         public const int AnimalsTextureArchive = 201;
+        public const int StatueTextureArchive = 202;
         public const int LightsTextureArchive = 210;
         public const int FixedTreasureFlatsArchive = 216;
         //public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
@@ -279,7 +280,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Lights need special handling as this archive contains a mix of emissive and non-emissive flats
                 // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
-                if ((settings.createEmissionMap || settings.autoEmission) && settings.archive == LightsTextureArchive)
+                if ((settings.createEmissionMap || settings.autoEmission) && (settings.archive == LightsTextureArchive || settings.archive == StatueTextureArchive))
                 {
                     // For the unlit flats we create a null-emissive black texture
                     if (!isEmissive)
