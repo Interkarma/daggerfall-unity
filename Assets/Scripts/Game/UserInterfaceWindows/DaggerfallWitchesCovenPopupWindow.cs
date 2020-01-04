@@ -76,18 +76,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
+            talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesTalk);
 
             // Summon button
             summonButton = DaggerfallUI.AddButton(summonButtonRect, mainPanel);
             summonButton.OnMouseClick += SummonButton_OnMouseClick;
+            summonButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesDaedraSummon);
 
             // Quest button
             questButton = DaggerfallUI.AddButton(questButtonRect, mainPanel);
             questButton.OnMouseClick += QuestButton_OnMouseClick;
+            questButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesQuest);
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesExit);
 
             NativePanel.Components.Add(mainPanel);
         }

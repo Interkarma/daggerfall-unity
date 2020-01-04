@@ -86,10 +86,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Yes button
             yesButton = DaggerfallUI.AddButton(yesButtonRect, mainPanel);
             yesButton.OnMouseClick += YesButton_OnMouseClick;
+            yesButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Yes);
 
             // No button
             noButton = DaggerfallUI.AddButton(noButtonRect, mainPanel);
             noButton.OnMouseClick += NoButton_OnMouseClick;
+            noButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.No);
 
             NativePanel.Components.Add(mainPanel);
         }

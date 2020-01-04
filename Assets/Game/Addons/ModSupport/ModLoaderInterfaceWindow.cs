@@ -132,6 +132,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         backButton.VerticalAlignment = VerticalAlignment.Top;
         backButton.HorizontalAlignment = HorizontalAlignment.Left;
         backButton.OnMouseClick +=  BackButton_OnMouseClick;
+        backButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupBackToOptions);
         ModListPanel.Components.Add(backButton);
 
         increaseLoadOrderButton.Size = new Vector2(40, 12);
@@ -229,6 +230,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         refreshButton.Label.Text = ModManager.GetText("refresh");
         refreshButton.Label.ToolTipText = ModManager.GetText("RrefreshInfo");
         refreshButton.OnMouseClick += RefreshButton_OnMouseClick;
+        refreshButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupRefresh);
         ModPanel.Components.Add(refreshButton);
 
         saveAndCloseButton.Size = new Vector2(70, 12);
@@ -239,6 +241,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         saveAndCloseButton.Label.Text = ModManager.GetText("saveClose");
         saveAndCloseButton.Label.ToolTipText = ModManager.GetText("saveCloseInfo");
         saveAndCloseButton.OnMouseClick += SaveAndCloseButton_OnMouseClick;
+        saveAndCloseButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupSaveAndClose);
         ModPanel.Components.Add(saveAndCloseButton);
 
         extractFilesButton.Size = new Vector2(60, 12);

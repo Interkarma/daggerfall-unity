@@ -96,18 +96,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Room button
             roomButton = DaggerfallUI.AddButton(roomButtonRect, mainPanel);
             roomButton.OnMouseClick += RoomButton_OnMouseClick;
+            roomButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernRoom);
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
+            talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernTalk);
 
             // Food button
             foodButton = DaggerfallUI.AddButton(foodButtonRect, mainPanel);
             foodButton.OnMouseClick += FoodButton_OnMouseClick;
+            foodButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernFood);
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernExit);
 
             NativePanel.Components.Add(mainPanel);
         }

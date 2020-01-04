@@ -314,6 +314,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit buttons
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryExit);
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -337,9 +338,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            // Toggle window closed with same hotkey used to open it
-            if (Input.GetKeyUp(toggleClosedBinding))
-                CloseWindow();
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            {
+                // Toggle window closed with same hotkey used to open it
+                if (Input.GetKeyUp(toggleClosedBinding))
+                    CloseWindow();
+            }
 
             // Close window immediately if inventory suppressed
             if (suppressInventory)
@@ -457,36 +461,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             weaponsAndArmorButton = DaggerfallUI.AddButton(weaponsAndArmorRect, NativePanel);
             weaponsAndArmorButton.OnMouseClick += WeaponsAndArmor_OnMouseClick;
+            weaponsAndArmorButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryWeapons);
 
             magicItemsButton = DaggerfallUI.AddButton(magicItemsRect, NativePanel);
             magicItemsButton.OnMouseClick += MagicItems_OnMouseClick;
+            magicItemsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryMagic);
 
             clothingAndMiscButton = DaggerfallUI.AddButton(clothingAndMiscRect, NativePanel);
             clothingAndMiscButton.OnMouseClick += ClothingAndMisc_OnMouseClick;
+            clothingAndMiscButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryClothing);
 
             ingredientsButton = DaggerfallUI.AddButton(ingredientsRect, NativePanel);
             ingredientsButton.OnMouseClick += Ingredients_OnMouseClick;
+            ingredientsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryIngredients);
         }
 
         protected virtual void SetupActionButtons()
         {
             wagonButton = DaggerfallUI.AddButton(wagonButtonRect, NativePanel);
             wagonButton.OnMouseClick += WagonButton_OnMouseClick;
+            wagonButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryWagon);
 
             infoButton = DaggerfallUI.AddButton(infoButtonRect, NativePanel);
             infoButton.OnMouseClick += InfoButton_OnMouseClick;
+            infoButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryInfo);
 
             equipButton = DaggerfallUI.AddButton(equipButtonRect, NativePanel);
             equipButton.OnMouseClick += EquipButton_OnMouseClick;
+            equipButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryEquip);
 
             removeButton = DaggerfallUI.AddButton(removeButtonRect, NativePanel);
             removeButton.OnMouseClick += RemoveButton_OnMouseClick;
+            removeButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryRemove);
 
             useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
             useButton.OnMouseClick += UseButton_OnMouseClick;
+            useButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryUse);
 
             goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            goldButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryGold);
+
             if (itemInfoPanel != null)
                 goldButton.OnMouseEnter += GoldButton_OnMouseEnter;
         }

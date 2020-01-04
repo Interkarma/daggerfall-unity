@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Dictionary<string, Texture2D> regionTextures = new Dictionary<string, Texture2D>();
         readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
 
-        private readonly int maxMatchingResults = 20;
+        private readonly int maxMatchingResults = 1000;
         private string distanceRegionName = null;
         private IDistance distance;
 
@@ -349,6 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Input handling
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             Vector2 currentMousePos = new Vector2((NativePanel.ScaledMousePosition.x), (NativePanel.ScaledMousePosition.y));
 
             if (currentMousePos != lastMousePos)
@@ -377,7 +378,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     zoomPosition = currentMousePos;
                     ZoomMapTextures();
                 }
-                if (Input.GetKeyDown(KeyCode.L))
+                if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelMapList).IsUpWith(keyModifiers))
                 {
 
                     if (!RegionSelected || currentDFRegion.LocationCount < 1)
@@ -386,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
                     ShowLocationPicker(locations, true);
                 }
-                else if (Input.GetKeyDown(KeyCode.F))
+                else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelMapFind).IsUpWith(keyModifiers))
                     FindlocationButtonClickHandler(null, Vector2.zero);
             }
             else
