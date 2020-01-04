@@ -33,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                 Wilt thou truly? If thou wilt, a fine
 <ce>                        _mitem_ will be crafted
 <ce>                for thee. Now, journey thou to farthest
-<ce>                     __tavern_ and seek %g who has
+<ce>                     __tavern_ and seek the one who has
 <ce>                    betrayed us, a villianous =man_
 <ce>                       who calls %g2-self _man_.
 <ce>                Give to %g2 this _jewelry_, tell %g2 it
@@ -46,6 +46,8 @@ AcceptQuest:  [1002]
 <ce>                        ==daedra_ smile on thy
 <ce>                             sacred quest.
 
+--needed to change %g on line 36 due to gender mismatches
+
 QuestComplete:  [1004]
 <ce>                       Good %pcf, thy promise to
 <ce>                      the ==qgiver_ is fulfilled.
@@ -55,7 +57,7 @@ QuestComplete:  [1004]
 <ce>                      before %g is put to death.
 
 RumorsDuringQuest:  [1005]
-_man_ is a true example of self-made man. A marvel to behold.
+_man_ is a true example of self-made =man_. A marvel to behold.
 <--->
 ==qgiver_ can be extremely vengeful.
 
@@ -135,7 +137,8 @@ Item _mitem_ magic_item
 
 Person _qgiver_ group Questor male
 Person _daedra_ face 1 factiontype Daedra
-Person _man_ face 5 group Group_7.0
+Person _man_ faction Dancers
+--Group 7.0 wouldn't work, needed a local site. Dancers is sufficient for the quest
 
 Place _tavern_ remote tavern
 

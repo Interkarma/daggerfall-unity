@@ -38,15 +38,15 @@ M0B21Y19, FightersGuild, M, 2, 1, Passed
 M0B30Y03, FightersGuild, M, 3, 0, Passed
 M0B30Y04, FightersGuild, M, 3, 0, Passed
 M0B30Y08, FightersGuild, M, 3, 0, Passed
--M0B40Y04, FightersGuild, M, 4, 0, BROKEN. QBN file is missing in DF+DFQFIX.
+-M0B40Y04, FightersGuild, M, 4, 0, BROKEN. QBN file is missing in DF+DFQFIX. Duplicate of m0b30y04.
 M0B40Y05, FightersGuild, M, 4, 0, Passed. Possible to break if one-shotting spriggan
 M0B50Y09, FightersGuild, M, 5, 0, Passed
 M0B60Y10, FightersGuild, M, 6, 0, Passed
 
 -- Classic: Mages Guild
--N0C00Y01, MagesGuild, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX.
-N0C00Y10, MagesGuild, N, 0, 0, Passed after fixing duplicate RumorsPostfailure entry
-N0C00Y11, MagesGuild, N, 0, 0, Passed but no message shown when revealing dungeon: reveal _newdung_ saying 1080
+-N0C00Y01, MagesGuild, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX. Intended to be a "Banish Daedra" quest for non-members.
+N0C00Y10, MagesGuild, N, 0, 0, Passed
+N0C00Y11, MagesGuild, N, 0, 0, Passed
 N0C00Y12, MagesGuild, N, 0, 0, Passed
 N0C00Y13, MagesGuild, N, 0, 0, Passed
 N0B00Y04, MagesGuild, M, 0, 0, Passed
@@ -96,7 +96,7 @@ J0B00Y00, HolyOrder, Z, 0, 0, Passed.
 O0A0AL00, GeneralPopulace, P, 0, 0, Passed
 O0B00Y00, GeneralPopulace, M, 0, 0, Passed
 O0B00Y01, GeneralPopulace, M, 0, 0, Passed
--O0B00Y11, GeneralPopulace, M, 0, 0, FAILED. Can't find any city containing its local house.
+O0B00Y11, GeneralPopulace, M, 0, 0, Passed
 O0B00Y12, GeneralPopulace, M, 0, 0, Passed
 O0B10Y00, GeneralPopulace, M, 1, 0, Passed.
 O0B10Y03, GeneralPopulace, M, 1, 0, Passed.
@@ -145,25 +145,25 @@ B0B81Y02, KnightlyOrder, M, 8, 1, Passed
 
 -- Witches Covens
 Q0C00Y01, Witches, N, 0, 0, Passed.
-Q0C00Y03, Witches, N, 0, 0,
-Q0C00Y04, Witches, N, 0, 0,
-Q0C00Y06, Witches, N, 0, 0,
-Q0C00Y07, Witches, N, 0, 0,
+Q0C00Y03, Witches, N, 0, 0, Passed
+Q0C00Y04, Witches, N, 0, 0, Passed
+Q0C00Y06, Witches, N, 0, 0, Passed
+Q0C00Y07, Witches, N, 0, 0, Passed
 Q0C00Y08, Witches, N, 0, 0, Passed
-Q0C0XY02, Witches, N, 0, X,
-Q0C10Y00, Witches, N, 10, 0,
-Q0C20Y02, Witches, N, 20, 0,
-Q0C4XY04, Witches, N, 40, X,
+Q0C0XY02, Witches, N, 0, X, Passed
+Q0C10Y00, Witches, N, 10, 0, Passed
+Q0C20Y02, Witches, N, 20, 0, Passed
+Q0C4XY04, Witches, N, 40, X, Passed
 
 -- Commoners
 A0C00Y00, Commoners, N, 0, 0, Passed
--A0C00Y04, Commoners, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX
+-A0C00Y04, Commoners, N, 0, 0, BROKEN. QRC file is missing in DF+DFQFIX. Duplicate of a0c0xy04.
 A0C00Y06, Commoners, M, 0, 0, Passed
 A0C00Y07, Commoners, M, 0, 0, Passed
-A0C00Y08, Commoners, M, 0, 0, Passed. questgiver name is incorrect (almost like a codename)
+A0C00Y08, Commoners, M, 0, 0, Passed
 A0C00Y10, Commoners, N, 0, 0,
-A0C00Y11, Commoners, M, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
-A0C00Y12, Commoners, M, 0, 0, Passed in quest debugger. Some quest NPCs do not appear in "where is.../people" dialog.
+A0C00Y11, Commoners, M, 0, 0, Passed
+A0C00Y12, Commoners, M, 0, 0, Passed
 A0C00Y14, Commoners, N, 0, 0,
 A0C00Y15, Commoners, N, 0, 0,
 A0C00Y16, Commoners, M, 0, 0,
@@ -201,7 +201,7 @@ P0B00L04, Vampires, M, 0, 0, Passed
 P0B00L06, Vampires, M, 0, 0, Passed
 P0B01L02, Vampires, M, 0, 1, Passed
 P0B10L07, Vampires, M, 1, 0, Passed
-P0B10L08, Vampires, M, 1, 0, Passed. Needs support for ==daedra_
+P0B10L08, Vampires, M, 1, 0, Passed
 P0B10L10, Vampires, M, 1, 0, Passed
 P0B20L09, Vampires, M, 2, 0, Passed
 
@@ -233,7 +233,7 @@ R0C11Y28, Nobility, M, 1, 1, Needs %vcn macro implementation to get vamp clan of
 R0C20Y07, Nobility, N, 2, 0,
 R0C20Y22, Nobility, M, 2, 0,
 -R0C30Y25, Nobility, N, 3, 0, Needs support for: reveal totambuCoven in province 46 at 423290
--R0C40Y23, Nobility, N, 4, 0, BROKEN. QRC file is missing in DF+DFQFIX
+-R0C40Y23, Nobility, N, 4, 0, BROKEN. QRC file is missing in DF+DFQFIX. Duplicate of r0c4xy23.
 -R0C4XY23, Nobility, M, 4, X, Needs support for: until _thing_ performed: & reveal _skeffingcoven_ in province 38 at 5531
 -R0C60Y24, Nobility, M, 6, 0, Needs support for: reveal kykosCoven in province 11 at 484567
 
