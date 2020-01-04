@@ -880,15 +880,34 @@ namespace DaggerfallWorkshop.Utility
         // TODO: Consider setting this from an external list
         DaggerfallTextureIndex[] emissiveTextures = new DaggerfallTextureIndex[]
         {
-            // Mantellan Crux fire textures
-            new DaggerfallTextureIndex() { archive = 356, record = 0 },
-            new DaggerfallTextureIndex() { archive = 356, record = 2 },
-            new DaggerfallTextureIndex() { archive = 356, record = 3 },
-
             // Fireplace
             new DaggerfallTextureIndex() { archive = 87, record = 0 },
 
             // Lights (which are on/lit)
+            new DaggerfallTextureIndex() { archive = 101, record = 2 },
+            new DaggerfallTextureIndex() { archive = 101, record = 3 },
+            new DaggerfallTextureIndex() { archive = 101, record = 5 },
+            new DaggerfallTextureIndex() { archive = 101, record = 6 },
+            new DaggerfallTextureIndex() { archive = 101, record = 7 },
+            new DaggerfallTextureIndex() { archive = 101, record = 8 },
+            new DaggerfallTextureIndex() { archive = 101, record = 9 },
+            // new DaggerfallTextureIndex() { archive = 101, record = 10 }, // is glass globe a light source?
+            new DaggerfallTextureIndex() { archive = 101, record = 11 },
+            new DaggerfallTextureIndex() { archive = 101, record = 12 },
+            new DaggerfallTextureIndex() { archive = 190, record = 3 },
+            new DaggerfallTextureIndex() { archive = 190, record = 4 },
+            new DaggerfallTextureIndex() { archive = 190, record = 5 },
+            new DaggerfallTextureIndex() { archive = 200, record = 7 },
+            new DaggerfallTextureIndex() { archive = 200, record = 8 },
+            new DaggerfallTextureIndex() { archive = 200, record = 9 },
+            new DaggerfallTextureIndex() { archive = 200, record = 10 },
+
+            // Statue
+            new DaggerfallTextureIndex() { archive = 202, record = 2 },
+
+            // Brewing potion
+            new DaggerfallTextureIndex() { archive = 208, record = 2 },
+
             new DaggerfallTextureIndex() { archive = 210, record = 0 },
             new DaggerfallTextureIndex() { archive = 210, record = 1 },
             new DaggerfallTextureIndex() { archive = 210, record = 2 },
@@ -916,9 +935,6 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 210, record = 27 },
             new DaggerfallTextureIndex() { archive = 210, record = 28 },
             new DaggerfallTextureIndex() { archive = 210, record = 29 },
-
-            // Statue
-            new DaggerfallTextureIndex() { archive = 202, record = 2 },
 
             // Fire daedra
             new DaggerfallTextureIndex() { archive = 281, record = 0 },
@@ -966,7 +982,7 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 290, record = 19 },
             new DaggerfallTextureIndex() { archive = 405, record = 2 }, // corpse
 
-            // Fire walls
+            // Mantellan Crux fire textures
             new DaggerfallTextureIndex() { archive = 356, record = 0 },
             new DaggerfallTextureIndex() { archive = 356, record = 2 },
             new DaggerfallTextureIndex() { archive = 356, record = 3 },
@@ -988,9 +1004,6 @@ namespace DaggerfallWorkshop.Utility
             // new DaggerfallTextureIndex() { archive = 380, record = 5 }, // UI
             new DaggerfallTextureIndex() { archive = 434, record = 3 },
             // new DaggerfallTextureIndex() { archive = 434, record = 5 }, // UI
-
-            // Brewing potion
-            new DaggerfallTextureIndex() { archive = 208, record = 2 },
         };
 
         HashSet<int> emissiveArchives = null;
