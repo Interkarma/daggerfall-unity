@@ -20,7 +20,7 @@ using System.Text.RegularExpressions;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class DaggerfallPlayerHistoryWindow : DaggerfallBaseWindow
+    public class DaggerfallPlayerHistoryWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "LGBK00I0.IMG";
         const int extraLeading = 0;
@@ -55,12 +55,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add buttons
             Button nextPageButton = DaggerfallUI.AddButton(new Rect(208, 188, 14, 8), NativePanel);
             nextPageButton.OnMouseClick += NextPageButton_OnMouseClick;
+            nextPageButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HistoryNextPage);
 
             Button previousPageButton = DaggerfallUI.AddButton(new Rect(181, 188, 14, 48), NativePanel);
             previousPageButton.OnMouseClick += PreviousPageButton_OnMouseClick;
+            previousPageButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HistoryPreviousPage);
 
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HistoryExit);
 
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);

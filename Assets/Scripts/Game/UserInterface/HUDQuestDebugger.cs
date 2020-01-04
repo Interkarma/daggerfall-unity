@@ -148,9 +148,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (displayState < DisplayState.Nothing || displayState > DisplayState.QuestStateFull)
                 displayState = DisplayState.Nothing;
 
-            if (Input.GetKeyDown(KeyCode.LeftBracket))
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerPrevQuest).IsDownWith(keyModifiers))
                 MovePreviousQuest();
-            else if (Input.GetKeyDown(KeyCode.RightBracket))
+            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerNextQuest).IsDownWith(keyModifiers))
                 MoveNextQuest();
         }
 

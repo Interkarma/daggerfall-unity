@@ -189,6 +189,7 @@ namespace DaggerfallWorkshop.Game.Guilds
         // Store for extra guild NPC services (i.e. from mods)
         private static Dictionary<int, GuildServices> guildNpcServices = new Dictionary<int, GuildServices>();
         private static Dictionary<int, string> customNpcServiceNames = new Dictionary<int, string>();
+        private static Dictionary<int, DaggerfallShortcut.Buttons> customNpcServiceButtons = new Dictionary<int, DaggerfallShortcut.Buttons>();
         private static Dictionary<int, CustomGuildService> customNpcServices = new Dictionary<int, CustomGuildService>();
 
         public static bool HasGuildService(int npcFactionId)
@@ -209,13 +210,14 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
-        public static bool RegisterGuildService(int npcFactionId, CustomGuildService service, string serviceName)
+        public static bool RegisterGuildService(int npcFactionId, CustomGuildService service, string serviceName, DaggerfallShortcut.Buttons serviceButton = DaggerfallShortcut.Buttons.None)
         {
             DaggerfallUnity.LogMessage("RegisterGuildService: " + npcFactionId + " with service: " + serviceName, true);
             if (!customNpcServices.ContainsKey(npcFactionId))
             {
                 customNpcServices.Add(npcFactionId, service);
                 customNpcServiceNames.Add(npcFactionId, serviceName);
+                customNpcServiceButtons.Add(npcFactionId, serviceButton);
                 return true;
             }
             return false;
@@ -388,6 +390,59 @@ namespace DaggerfallWorkshop.Game.Guilds
                         return serviceName;
                     else
                         return "?";
+            }
+        }
+
+        public static DaggerfallShortcut.Buttons GetServiceShortcutButton(GuildServices service)
+        {
+            switch (service)
+            {
+                case GuildServices.Training:
+                    return DaggerfallShortcut.Buttons.GuildsTraining;
+                case GuildServices.Quests:
+                    return DaggerfallShortcut.Buttons.GuildsGetQuest;
+                case GuildServices.Repair:
+                    return DaggerfallShortcut.Buttons.GuildsRepair;
+                case GuildServices.Identify:
+                    return DaggerfallShortcut.Buttons.GuildsIdentify;
+                case GuildServices.Donate:
+                    return DaggerfallShortcut.Buttons.GuildsDonate;
+                case GuildServices.CureDisease:
+                    return DaggerfallShortcut.Buttons.GuildsCure;
+                case GuildServices.BuyPotions:
+                    return DaggerfallShortcut.Buttons.GuildsBuyPotions;
+                case GuildServices.MakePotions:
+                    return DaggerfallShortcut.Buttons.GuildsMakePotions;
+                case GuildServices.BuySpells:
+                case GuildServices.BuySpellsMages:
+                    return DaggerfallShortcut.Buttons.GuildsBuySpells;
+                case GuildServices.MakeSpells:
+                    return DaggerfallShortcut.Buttons.GuildsMakeSpells;
+                case GuildServices.BuyMagicItems:
+                    return DaggerfallShortcut.Buttons.GuildsBuyMagicItems;
+                case GuildServices.MakeMagicItems:
+                    return DaggerfallShortcut.Buttons.GuildsMakeMagicItems;
+                case GuildServices.SellMagicItems:
+                    return DaggerfallShortcut.Buttons.GuildsSellMagicItems;
+                case GuildServices.Teleport:
+                    return DaggerfallShortcut.Buttons.GuildsTeleport;
+                case GuildServices.DaedraSummoning:
+                    return DaggerfallShortcut.Buttons.GuildsDaedraSummon;
+                case GuildServices.Spymaster:
+                    return DaggerfallShortcut.Buttons.GuildsSpymaster;
+                case GuildServices.BuySoulgems:
+                    return DaggerfallShortcut.Buttons.GuildsBuySoulgems;
+                case GuildServices.ReceiveArmor:
+                    return DaggerfallShortcut.Buttons.GuildsReceiveArmor;
+                case GuildServices.ReceiveHouse:
+                    return DaggerfallShortcut.Buttons.GuildsReceiveHouse;
+
+                default:
+                    DaggerfallShortcut.Buttons serviceButton;
+                    if (customNpcServiceButtons.TryGetValue((int)service, out serviceButton))
+                        return serviceButton;
+                    else
+                        return DaggerfallShortcut.Buttons.None;
             }
         }
 

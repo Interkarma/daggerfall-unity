@@ -657,6 +657,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonTellMeAbout.Size = new Vector2(107, 10);
             buttonTellMeAbout.Name = "button_tellmeabout";
             buttonTellMeAbout.OnMouseClick += ButtonTellMeAbout_OnMouseClick;
+            buttonTellMeAbout.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkTellMeAbout);
             mainPanel.Components.Add(buttonTellMeAbout);
 
             buttonWhereIs = new Button();
@@ -664,6 +665,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonWhereIs.Size = new Vector2(107, 10);
             buttonWhereIs.Name = "button_whereis";
             buttonWhereIs.OnMouseClick += ButtonWhereIs_OnMouseClick;
+            buttonWhereIs.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkWhereIs);
             mainPanel.Components.Add(buttonWhereIs);
 
             buttonCategoryLocation = new Button();
@@ -671,6 +673,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryLocation.Size = new Vector2(107, 10);
             buttonCategoryLocation.Name = "button_categoryLocation";
             buttonCategoryLocation.OnMouseClick += ButtonCategoryLocation_OnMouseClick;
+            buttonCategoryLocation.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkCategoryLocation);
             mainPanel.Components.Add(buttonCategoryLocation);
 
             buttonCategoryPerson = new Button();
@@ -678,6 +681,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryPerson.Size = new Vector2(107, 10);
             buttonCategoryPerson.Name = "button_categoryPeople";
             buttonCategoryPerson.OnMouseClick += ButtonCategoryPeople_OnMouseClick;
+            buttonCategoryPerson.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkCategoryPeople);
             mainPanel.Components.Add(buttonCategoryPerson);
 
             buttonCategoryThings = new Button();
@@ -685,6 +689,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryThings.Size = new Vector2(107, 10);
             buttonCategoryThings.Name = "button_categoryThings";
             buttonCategoryThings.OnMouseClick += ButtonCategoryThings_OnMouseClick;
+            buttonCategoryThings.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkCategoryThings);
             mainPanel.Components.Add(buttonCategoryThings);
 
             buttonCategoryWork = new Button();
@@ -692,6 +697,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonCategoryWork.Size = new Vector2(107, 10);
             buttonCategoryWork.Name = "button_categoryWork";
             buttonCategoryWork.OnMouseClick += ButtonCategoryWork_OnMouseClick;
+            buttonCategoryWork.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkCategoryWork);
             mainPanel.Components.Add(buttonCategoryWork);
 
             buttonOkay = new Button();
@@ -699,6 +705,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonOkay.Size = new Vector2(107, 10);
             buttonOkay.Name = "button_okay";
             buttonOkay.OnMouseClick += ButtonOkay_OnMouseClick;
+            buttonOkay.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkAsk);
             mainPanel.Components.Add(buttonOkay);
 
             buttonGoodbye = new Button();
@@ -706,6 +713,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonGoodbye.Size = new Vector2(67, 10);
             buttonGoodbye.Name = "button_goodbye";
             buttonGoodbye.OnMouseClick += ButtonGoodbye_OnMouseClick;
+            buttonGoodbye.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkExit);
             mainPanel.Components.Add(buttonGoodbye);
 
             buttonLogbook = new Button {
@@ -718,6 +726,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 buttonLogbook.ToolTip.ToolTipDelay = 1;
             buttonLogbook.OnMouseClick += ButtonLogbook_OnMouseClick;
             buttonLogbook.OnRightMouseClick += ButtonLogbook_OnRightMouseClick;
+            // Can only assign one hotkey :(
+            buttonLogbook.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkCopy);
             mainPanel.Components.Add(buttonLogbook);
         }
 
@@ -725,10 +735,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             buttonCheckboxTonePolite = DaggerfallUI.AddButton(rectButtonTonePolite, NativePanel);
             buttonCheckboxTonePolite.OnMouseClick += ButtonTonePolite_OnClickHandler;
+            buttonCheckboxTonePolite.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkTonePolite);
             buttonCheckboxToneNormal = DaggerfallUI.AddButton(rectButtonToneNormal, NativePanel);
             buttonCheckboxToneNormal.OnMouseClick += ButtonToneNormal_OnClickHandler;
+            buttonCheckboxToneNormal.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkToneNormal);
             buttonCheckboxToneBlunt = DaggerfallUI.AddButton(rectButtonToneBlunt, NativePanel);
             buttonCheckboxToneBlunt.OnMouseClick += ButtonToneBlunt_OnClickHandler;
+            buttonCheckboxToneBlunt.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkToneBlunt);
 
             panelTone = DaggerfallUI.AddPanel(new Rect(panelTonePolitePos, panelToneSize), NativePanel);
             panelTone.BackgroundColor = toggleColor;

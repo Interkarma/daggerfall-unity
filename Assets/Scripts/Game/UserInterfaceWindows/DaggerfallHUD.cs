@@ -239,14 +239,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             // Cycle quest debugger state
-            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Tab))
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerToggle).IsDownWith(keyModifiers))
             {
                 questDebugger.NextState();
             }
 
             // Toggle HUD rendering
-            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F10))
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HUDToggle).IsDownWith(keyModifiers))
             {
                 renderHUD = !renderHUD;
             }

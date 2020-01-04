@@ -127,61 +127,72 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Name button
             Button nameButton = DaggerfallUI.AddButton(new Rect(4, 3, 132, 8), NativePanel);
             nameButton.OnMouseClick += NameButton_OnMouseClick;
+            nameButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetName);
 
             // Level button
             Button levelButton = DaggerfallUI.AddButton(new Rect(4, 33, 132, 8), NativePanel);
             levelButton.OnMouseClick += LevelButton_OnMouseClick;
+            levelButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetLevel);
 
             // Gold button
             Button goldButton = DaggerfallUI.AddButton(new Rect(4, 43, 132, 8), NativePanel);
             goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            goldButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetGold);
 
             // Health button
             Button healthButton = DaggerfallUI.AddButton(new Rect(4, 63, 128, 8), NativePanel);
             healthButton.OnMouseClick += HealthButton_OnMouseClick;
+            healthButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetHealth);
 
             // Affiliations button
             Button affiliationsButton = DaggerfallUI.AddButton(new Rect(3, 84, 130, 8), NativePanel);
             affiliationsButton.OnMouseClick += AffiliationsButton_OnMouseClick;
+            affiliationsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetAffiliations);
 
             // Primary skills button
             Button primarySkillsButton = DaggerfallUI.AddButton(new Rect(11, 106, 115, 8), NativePanel);
             primarySkillsButton.OnMouseClick += PrimarySkillsButton_OnMouseClick;
+            primarySkillsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetPrimarySkills);
 
             // Major skills button
             Button majorSkillsButton = DaggerfallUI.AddButton(new Rect(11, 116, 115, 8), NativePanel);
             majorSkillsButton.OnMouseClick += MajorSkillsButton_OnMouseClick;
+            majorSkillsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetMajorSkills);
 
             // Minor skills button
             Button minorSkillsButton = DaggerfallUI.AddButton(new Rect(11, 126, 115, 8), NativePanel);
             minorSkillsButton.OnMouseClick += MinorSkillsButton_OnMouseClick;
+            minorSkillsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetMinorSkills);
 
             // Miscellaneous skills button
             Button miscSkillsButton = DaggerfallUI.AddButton(new Rect(11, 136, 115, 8), NativePanel);
             miscSkillsButton.OnMouseClick += MiscSkillsButton_OnMouseClick;
+            miscSkillsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetMiscSkills);
 
             // Inventory button
             Button inventoryButton = DaggerfallUI.AddButton(new Rect(3, 151, 65, 12), NativePanel);
             inventoryButton.OnMouseClick += InventoryButton_OnMouseClick;
-            //inventoryButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            inventoryButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetInventory);
 
             // Spellbook button
             Button spellBookButton = DaggerfallUI.AddButton(new Rect(69, 151, 65, 12), NativePanel);
             spellBookButton.OnMouseClick += SpellBookButton_OnMouseClick;
-            //spellBookButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            spellBookButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetSpellbook);
 
             // Logbook button
             Button logBookButton = DaggerfallUI.AddButton(new Rect(3, 165, 65, 12), NativePanel);
             logBookButton.OnMouseClick += LogBookButton_OnMouseClick;
-            //logBookButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            logBookButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetLogbook);
 
             // History button
             Button historyButton = DaggerfallUI.AddButton(new Rect(69, 165, 65, 12), NativePanel);
             historyButton.OnMouseClick += HistoryButton_OnMouseClick;
+            historyButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetHistory);
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(50, 179, 39, 19), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetExit);
 
             // Attribute popup text
             Vector2 pos = new Vector2(141, 6);
@@ -211,10 +222,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            // Toggle window closed with same hotkey used to open it
-            if (Input.GetKeyUp(toggleClosedBinding))
-                if (CheckIfDoneLeveling())
-                    CloseWindow();
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            {
+                // Toggle window closed with same hotkey used to open it
+                if (Input.GetKeyUp(toggleClosedBinding))
+                    if (CheckIfDoneLeveling())
+                        CloseWindow();
+            }
         }
 
         public override void OnPush()

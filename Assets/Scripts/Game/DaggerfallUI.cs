@@ -81,6 +81,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
+        HotkeySequence.KeyModifiers lastKeyModifiers;
+        bool hotkeySequenceProcessed = false;
         FadeBehaviour fadeBehaviour = null;
         bool instantiatePersistentWindowInstances = true;
 
@@ -182,6 +184,16 @@ namespace DaggerfallWorkshop.Game
         public KeyCode LastKeyCode
         {
             get { return lastKeyCode; }
+        }
+
+        public HotkeySequence.KeyModifiers LastKeyModifiers
+        {
+            get { return lastKeyModifiers; }
+        }
+
+        public bool HotkeySequenceProcessed
+        {
+            get { return hotkeySequenceProcessed; }
         }
 
         public DaggerfallHUD DaggerfallHUD
@@ -364,6 +376,8 @@ namespace DaggerfallWorkshop.Game
             // Store key downs for alternate input (e.g. text box input)
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
+            lastKeyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+
             if (Event.current.type == EventType.KeyDown)
             {
                 if (Event.current.character != (char)0)
@@ -374,6 +388,12 @@ namespace DaggerfallWorkshop.Game
 
                 if (lastCharacterTyped > 255)
                     lastCharacterTyped = (char)0;
+            }
+
+            hotkeySequenceProcessed = false;
+            if (Event.current.type == EventType.KeyUp)
+            {
+                hotkeySequenceProcessed = ProcessHotKeySequences();
             }
 
             if (Event.current.type == EventType.Repaint)
@@ -597,6 +617,15 @@ namespace DaggerfallWorkshop.Game
 #endif
                     break;
             }
+        }
+
+        public bool ProcessHotKeySequences()
+        {
+            if (uiManager.TopWindow != null && uiManager.TopWindow.ParentPanel != null)
+            {
+                return uiManager.TopWindow.ParentPanel.ProcessHotkeySequences(lastKeyModifiers);
+            }
+            return false;
         }
 
         #region Helpers

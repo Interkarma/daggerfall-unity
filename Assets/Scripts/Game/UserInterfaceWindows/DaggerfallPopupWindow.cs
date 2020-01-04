@@ -67,8 +67,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             cancelled = false;
-            if (allowCancel && Input.GetKeyDown(exitKey))
-                CancelWindow();
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            {
+                if (allowCancel && Input.GetKeyDown(exitKey))
+                    CancelWindow();
+            }
         }
 
         public override void Draw()

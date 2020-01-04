@@ -132,11 +132,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
                 joinButton.OnMouseClick += JoinButton_OnMouseClick;
+                joinButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GuildsJoin);
             }
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
+            talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GuildsTalk);
 
             // Service button
             serviceLabel.Position = new Vector2(0, 1);
@@ -146,10 +148,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             serviceButton = DaggerfallUI.AddButton(serviceButtonRect, mainPanel);
             serviceButton.Components.Add(serviceLabel);
             serviceButton.OnMouseClick += ServiceButton_OnMouseClick;
+            serviceButton.Hotkey = DaggerfallShortcut.GetBinding(Services.GetServiceShortcutButton(service));
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GuildsExit);
 
             NativePanel.Components.Add(mainPanel);
         }
