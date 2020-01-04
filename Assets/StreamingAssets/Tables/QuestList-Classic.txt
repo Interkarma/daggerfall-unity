@@ -166,7 +166,7 @@ A0C00Y11, Commoners, M, 0, 0, Passed
 A0C00Y12, Commoners, M, 0, 0, Passed
 A0C00Y14, Commoners, N, 0, 0,
 A0C00Y15, Commoners, N, 0, 0,
-A0C00Y16, Commoners, M, 0, 0,
+-A0C00Y16, Commoners, M, 0, 0, FAILED. _hidingplace_ not marked on map when player asks about _missingperson_. Can be found from debug marker.
 A0C00Y17, Commoners, M, 0, 0,
 A0C01Y01, Commoners, N, 0, 1,
 A0C01Y03, Commoners, M, 0, 1,
