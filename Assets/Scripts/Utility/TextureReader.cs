@@ -31,7 +31,6 @@ namespace DaggerfallWorkshop.Utility
         // Special texture indices
         public const int EditorFlatsTextureArchive = 199;
         public const int AnimalsTextureArchive = 201;
-        public const int StatueTextureArchive = 202;
         public const int LightsTextureArchive = 210;
         public const int FixedTreasureFlatsArchive = 216;
         //public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
@@ -278,12 +277,12 @@ namespace DaggerfallWorkshop.Utility
                     resultEmissive = true;
                 }
 
-                // Lights need special handling as this archive contains a mix of emissive and non-emissive flats
+                // Some archives need special handling as they contains a mix of emissive and non-emissive flats
                 // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
-                if ((settings.createEmissionMap || settings.autoEmission) && (settings.archive == LightsTextureArchive || settings.archive == StatueTextureArchive))
+                if ((settings.createEmissionMap || settings.autoEmission) && IsEmissiveArchive(settings.archive))
                 {
                     // For the unlit flats we create a null-emissive black texture
-                    if (!isEmissive)
+                    if (!resultEmissive)
                     {
                         Color32[] emissionColors = new Color32[albedoMap.width * albedoMap.height];
                         emissionMap = new Texture2D(albedoMap.width, albedoMap.height, ParseTextureFormat(alphaTextureFormat), MipMaps);
@@ -942,7 +941,7 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 281, record = 17 },
             new DaggerfallTextureIndex() { archive = 281, record = 18 },
             new DaggerfallTextureIndex() { archive = 281, record = 19 },
-            // new DaggerfallTextureIndex() { archive = 400, record = 2 }, // corpse
+            new DaggerfallTextureIndex() { archive = 400, record = 2 }, // corpse
 
             // Fire atronach
             new DaggerfallTextureIndex() { archive = 290, record = 0 },
@@ -965,7 +964,7 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 290, record = 17 },
             new DaggerfallTextureIndex() { archive = 290, record = 18 },
             new DaggerfallTextureIndex() { archive = 290, record = 19 },
-            // new DaggerfallTextureIndex() { archive = 405, record = 2 }, // corpse?
+            new DaggerfallTextureIndex() { archive = 405, record = 2 }, // corpse
 
             // Fire walls
             new DaggerfallTextureIndex() { archive = 356, record = 0 },
@@ -984,26 +983,44 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 379, record = 0 },
             new DaggerfallTextureIndex() { archive = 379, record = 1 },
 
-            // Magic effects
+            // Magic decorative effects
+            new DaggerfallTextureIndex() { archive = 380, record = 3 },
+            // new DaggerfallTextureIndex() { archive = 380, record = 5 }, // UI
             new DaggerfallTextureIndex() { archive = 434, record = 3 },
             // new DaggerfallTextureIndex() { archive = 434, record = 5 }, // UI
+
+            // Brewing potion
+            new DaggerfallTextureIndex() { archive = 208, record = 2 },
         };
+
+        HashSet<int> emissiveArchives = null;
+
+        public bool IsEmissiveArchive(int archive)
+        {
+            if (emissiveArchives == null)
+            {
+                emissiveArchives = new HashSet<int>();
+                for (int i = 0; i < emissiveTextures.Length; i++)
+                    emissiveArchives.Add(emissiveTextures[i].archive);
+            }
+
+            return emissiveArchives.Contains(archive);
+        }
 
         public bool IsEmissive(int archive, int record)
         {
+            // fast path
+            if (!IsEmissiveArchive(archive))
+                return false;
+
             // Check emissive list for this texture
             // TODO: Replace this with a dictionary/hash lookup
-            bool emissiveFound = false;
             for (int i = 0; i < emissiveTextures.Length; i++)
             {
                 if (emissiveTextures[i].archive == archive && emissiveTextures[i].record == record)
-                {
-                    emissiveFound = true;
-                    break;
-                }
+                    return true;
             }
-
-            return emissiveFound;
+            return false;
         }
 
 #if UNITY_EDITOR && !UNITY_WEBPLAYER
