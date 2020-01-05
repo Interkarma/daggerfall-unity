@@ -35,16 +35,19 @@ namespace DaggerfallWorkshop
             //// Debug trigger placement at start
             //for (int i = 0; i < Doors.Length; i++)
             //{
+            //    Quaternion buildingRotation = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix);
+            //    Vector3 doorNormal = buildingRotation * Doors[i].normal;
+            //    Quaternion facingRotation = Quaternion.LookRotation(doorNormal, Vector3.up);
+
             //    GameObject go = new GameObject();
             //    go.name = "DoorTrigger";
+
+            //    BoxCollider c = go.AddComponent<BoxCollider>();
+            //    c.size = Doors[i].size;
             //    go.transform.parent = transform;
             //    go.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
             //    go.transform.position += transform.position;
-            //    go.transform.rotation = transform.rotation;
-
-            //    BoxCollider c = go.AddComponent<BoxCollider>();
-            //    c.size = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix) * Doors[i].size;
-            //    c.size = new Vector3(Mathf.Abs(c.size.x), Mathf.Abs(c.size.y), Mathf.Abs(c.size.z)); // Abs size components so not negative for collider
+            //    go.transform.rotation = facingRotation;
             //    c.isTrigger = true;
             //}
             //Debug.LogFormat("Added {0} door triggers to scene", Doors.Length);
@@ -75,12 +78,17 @@ namespace DaggerfallWorkshop
             bool found = false;
             for (int i = 0; i < Doors.Length; i++)
             {
+                Quaternion buildingRotation = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix);
+                Vector3 doorNormal = buildingRotation * Doors[i].normal;
+                Quaternion facingRotation = Quaternion.LookRotation(doorNormal, Vector3.up);
+
                 // Setup single trigger position and size over each door in turn
                 // This method plays nice with transforms
-                c.size = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix) * Doors[i].size;
+                c.size = Doors[i].size;
+                go.transform.parent = transform;
                 go.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
                 go.transform.position += transform.position;
-                go.transform.rotation = transform.rotation;
+                go.transform.rotation = facingRotation;
 
                 // Check if hit was inside trigger
                 if (c.bounds.Contains(point))

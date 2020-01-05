@@ -1375,12 +1375,11 @@ namespace DaggerfallWorkshop.Utility
                 Vector3 v0 = door.Vert0;
                 Vector3 v2 = door.Vert2;
 
-                // Get door size
-
-                // Sometimes doors injected from mods don't trigger because hit point is not exactly
-                // on the plane calculated from classic door data so we ensure the collider has some depth
-                const float thickness = 0.3f;
-                Vector3 size = new Vector3(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z) + door.Normal * thickness;
+                // Get absolute door size and make thickness uniform from largest width or depth
+                float width = Mathf.Abs(v2.x - v0.x);
+                float height = Mathf.Abs(v2.y - v0.y);
+                float depth = Mathf.Abs(v2.z - v0.z);
+                Vector3 size = (width > depth) ? new Vector3(width, height, width) : new Vector3(depth, height, depth);
 
                 // Add door to array
                 StaticDoor newDoor = new StaticDoor()
