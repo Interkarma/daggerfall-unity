@@ -145,6 +145,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Init classic game startup time at startup
             // This will also be modified when deserializing save game data
             DaggerfallUnity.Instance.WorldTime.Now.SetClassicGameStartTime();
+
+            // Update save game enumerations
+            GameManager.Instance.SaveLoadManager.EnumerateSaves();
         }
 
         static bool sceneUnloaded = false;
@@ -190,7 +193,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// Gets array of save keys for the specified character.
         /// </summary>
         /// <param name="characterName">Name of character.</param>
-        /// <returns>Array of save keys, excluding </returns>
+        /// <returns>Array of save keys</returns>
         public int[] GetCharacterSaveKeys(string characterName)
         {
             if (!enumeratedCharacterSaves.ContainsKey(characterName))
