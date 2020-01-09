@@ -205,6 +205,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SoundBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // make it easier to max out or mute volume
             if ((position.x / barMaxLength) > 0.99f)
                 position.x = barMaxLength;
@@ -218,6 +219,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
         private void MusicBar_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // make it easier to max out or mute volume
             if ((position.x / barMaxLength) > 0.99f)
                 position.x = barMaxLength;
@@ -232,6 +234,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void DetailButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             int value = Mathf.RoundToInt(Mathf.Lerp(0, QualitySettings.names.Length - 1, position.x / sender.Size.x));
             detailBar.Size = new Vector2(GetDetailBarWidth(value), detailBar.Size.y);
             QualitySettings.SetQualityLevel(DaggerfallUnity.Settings.QualityLevel = value);
@@ -243,6 +246,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox confirmExitBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strAreYouSure, this);
             confirmExitBox.OnButtonClick += ConfirmExitBox_OnButtonClick;
             confirmExitBox.Show();
@@ -263,26 +267,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ContinueButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CancelWindow();
         }
 
         private void SaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this, false }));
         }
 
         private void LoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, this, false }));
         }
 
         private void ControlsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenControlsWindow);
         }
 
         private void FullScreenButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // Fullscreen button toggles large HUD setting
             fullScreenTick.Enabled = DaggerfallUnity.Settings.LargeHUD = !DaggerfallUnity.Settings.LargeHUD;
 
@@ -292,6 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HeadBobbingButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             //Debug.Log("Head Bobbing clicked, position: x: " + position.x + ", y: " + position.y);
             DaggerfallUnity.Settings.HeadBobbing = !DaggerfallUnity.Settings.HeadBobbing;
             headBobbingTick.Enabled = DaggerfallUnity.Settings.HeadBobbing;

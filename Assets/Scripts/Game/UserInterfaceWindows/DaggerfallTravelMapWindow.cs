@@ -878,6 +878,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ExitButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseTravelWindows();
         }
 
@@ -894,6 +895,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Open find location pop-up
             if (RegionSelected)
             {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallInputMessageBox findPopUp = new DaggerfallInputMessageBox(uiManager, null, 31, HardStrings.findLocationPrompt, true, this);
                 findPopUp.TextPanelDistanceY = 5;
                 findPopUp.TextBox.WidthOverride = 308;
@@ -908,6 +910,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         void ConfirmTravelPopupButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
                 CreatePopUpWindow();
@@ -1002,6 +1005,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Set selected region and open region panel
         void OpenRegionPanel(int region)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             string[] mapNames = GetRegionMapNames(region);
             if (mapNames == null || mapNames.Length == 0)
                 return;

@@ -122,11 +122,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
         private void RoomButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             int mapId = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
             int buildingKey = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData.buildingKey;
             GameManager.Instance.PlayerEntity.RemoveExpiredRentedRooms();
@@ -235,12 +237,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
         private void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
@@ -262,6 +266,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void FoodAndDrink_OnItemPicked(int index, string foodOrDrinkName)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             int price = tavernFoodAndDrinkPrices[index];
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

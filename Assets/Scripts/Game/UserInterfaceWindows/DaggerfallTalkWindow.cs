@@ -1244,6 +1244,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetQuestionAnswerPairInConversationListbox(string question, string answer)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ListBox.ListItem textLabelQuestion;
             ListBox.ListItem textLabelAnswer;
             listboxConversation.AddItem(question, out textLabelQuestion);
@@ -1304,7 +1305,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (listItem.listParentItems != null)
                 {
                     selectionIndexLastUsed = -1;
-                    SetListboxTopics(ref listboxTopic, listItem.listParentItems);                    
+                    SetListboxTopics(ref listboxTopic, listItem.listParentItems);
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 }
             }
             else if (listItem.type == TalkManager.ListItemType.ItemGroup)
@@ -1312,7 +1314,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (listItem.listChildItems != null)
                 {
                     selectionIndexLastUsed = -1;
-                    SetListboxTopics(ref listboxTopic, listItem.listChildItems);                    
+                    SetListboxTopics(ref listboxTopic, listItem.listChildItems);
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 }
             }
             else if (listItem.type == TalkManager.ListItemType.Item)
@@ -1408,36 +1411,43 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonTopicUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             verticalScrollBarTopic.ScrollIndex -=5;
         }
 
         private void ButtonTopicDown_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             verticalScrollBarTopic.ScrollIndex +=5;
         }
 
         private void ButtonTopicLeft_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             horizontalSliderTopic.ScrollIndex--;
         }
 
         private void ButtonTopicRight_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             horizontalSliderTopic.ScrollIndex++;
         }
 
         private void ButtonConversationUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             verticalScrollBarConversation.ScrollIndex -= 5;
         }
 
         private void ButtonConversationDown_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             verticalScrollBarConversation.ScrollIndex += 5;
         }
 
         private void ButtonTellMeAbout_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SetTalkModeTellMeAbout();
         }
 
@@ -1450,6 +1460,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 SetTalkCategoryLocation();
             }
         }
@@ -1458,6 +1469,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 SetTalkCategoryPeople();
             }
         }
@@ -1466,6 +1478,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 SetTalkCategoryThings();
             }
         }
@@ -1474,12 +1487,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedTalkOption == TalkOption.WhereIs)
             {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 SetTalkCategoryWork();
             }
         }
 
         private void ButtonTonePolite_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             selectedTalkTone = TalkTone.Polite;
             if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
                 return;
@@ -1490,6 +1505,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonToneNormal_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             selectedTalkTone = TalkTone.Normal;
             if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
                 return;
@@ -1500,6 +1516,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonToneBlunt_OnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             selectedTalkTone = TalkTone.Blunt;
             if (TalkToneToIndex(selectedTalkTone) == toneLastUsed)
                 return;
@@ -1527,6 +1544,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonLogbook_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (listboxConversation.SelectedIndex < 0)
                 return;
 
@@ -1544,6 +1562,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonLogbook_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             copyIndexes.Clear();
             for (int idx = 0; idx < listboxConversation.Count; idx++)
             {
@@ -1554,6 +1573,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void MarkCopiedListItem(ListBox.ListItem item, bool unmark = false)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (unmark)
             {
                 item.shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
@@ -1568,6 +1588,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void ButtonGoodbye_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 

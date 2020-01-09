@@ -869,6 +869,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
             {
                 SelectWagon(!UsingWagon);
@@ -878,16 +879,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectActionMode(ActionModes.Info);
         }
 
         private void SelectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectActionMode(ActionModes.Select);
         }
 
         private void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (WindowMode == WindowModes.Buy && cost > 0)
             {
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
@@ -915,6 +919,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (usingIdentifySpell)
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
@@ -927,6 +932,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ClearSelectedItems();
             Refresh();
         }

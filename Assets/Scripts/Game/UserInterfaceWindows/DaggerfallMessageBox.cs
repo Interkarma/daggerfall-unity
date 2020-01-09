@@ -535,6 +535,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnButtonClick != null)
                 OnButtonClick(sender, messageBoxButton);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         #endregion

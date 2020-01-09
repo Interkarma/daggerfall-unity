@@ -1343,6 +1343,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode())
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ActionSwitchToNextExteriorAutomapViewMode();
         }
 
@@ -1350,6 +1351,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (InDragMode())
                 return;
+
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         private void ForwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
@@ -1357,6 +1360,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             forwardButton.SuppressToolTip = true;
 
             leftMouseDownOnForwardButton = true;
@@ -1376,6 +1380,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInRightMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             forwardButton.SuppressToolTip = true;
 
             rightMouseDownOnForwardButton = true;
@@ -1395,6 +1400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             backwardButton.SuppressToolTip = true;
 
             leftMouseDownOnBackwardButton = true;
@@ -1414,6 +1420,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInRightMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             backwardButton.SuppressToolTip = true;
 
             rightMouseDownOnBackwardButton = true;
@@ -1433,6 +1440,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             leftButton.SuppressToolTip = true;
 
             leftMouseDownOnLeftButton = true;
@@ -1452,6 +1460,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInRightMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             leftButton.SuppressToolTip = true;
 
             rightMouseDownOnLeftButton = true;
@@ -1471,6 +1480,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             rightButton.SuppressToolTip = true;
 
             leftMouseDownOnRightButton = true;
@@ -1490,6 +1500,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInRightMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             rightButton.SuppressToolTip = true;
 
             rightMouseDownOnRightButton = true;
@@ -1509,6 +1520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             rotateLeftButton.SuppressToolTip = true;
 
             leftMouseDownOnRotateLeftButton = true;
@@ -1528,6 +1540,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             rotateLeftButton.SuppressToolTip = true;
 
             rightMouseDownOnRotateLeftButton = true;
@@ -1547,6 +1560,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             rotateRightButton.SuppressToolTip = true;
 
             leftMouseDownOnRotateRightButton = true;
@@ -1566,6 +1580,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             rotateRightButton.SuppressToolTip = true;
 
             rightMouseDownOnRotateRightButton = true;
@@ -1585,6 +1600,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             upstairsButton.SuppressToolTip = true;
 
             leftMouseDownOnUpstairsButton = true;
@@ -1605,6 +1621,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             downstairsButton.SuppressToolTip = true;
 
             leftMouseDownOnDownstairsButton = true;
@@ -1624,6 +1641,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInRightMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             upstairsButton.SuppressToolTip = true;
 
             rightMouseDownOnUpstairsButton = true;
@@ -1644,6 +1662,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode() || alreadyInRightMouseDown)
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             downstairsButton.SuppressToolTip = true;
 
             rightMouseDownOnDownstairsButton = true;
@@ -1663,6 +1682,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode())
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
@@ -1671,6 +1691,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode())
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ActionFocusPlayerPosition();
         }
 
@@ -1679,6 +1700,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InDragMode())
                 return;
 
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ActionResetView();
         }
 

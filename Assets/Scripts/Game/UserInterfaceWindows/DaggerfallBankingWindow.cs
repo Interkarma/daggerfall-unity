@@ -367,31 +367,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
         //bank window button handlers
         void DepoGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Depositing_gold);
         }
 
         void DrawGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Withdrawing_gold);
         }
 
         void DepoLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             GeneratePopup(TransactionResult.DEPOSIT_LOC);
         }
 
         void DrawLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Withdrawing_Letter);
         }
 
         void LoanRepayButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Repaying_loan);
         }
 
         void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.HasDefaulted(regionIndex))
             {
                 GeneratePopup(TransactionResult.ALREADY_DEFAULTED);
@@ -410,6 +416,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void BuyHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsHouse)
                 GeneratePopup(TransactionResult.ALREADY_OWN_HOUSE);
             else
@@ -431,6 +438,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsHouse)
             {
                 BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
@@ -445,6 +453,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void BuyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.ALREADY_OWN_SHIP);
             else if (GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.ExteriorData.PortTownAndUnknown == 0)
@@ -455,12 +464,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.SELL_SHIP_OFFER, DaggerfallBankManager.GetShipSellPrice(DaggerfallBankManager.OwnedShip));
         }
 
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (!transactionInput.Enabled)
                 CloseWindow();
         }

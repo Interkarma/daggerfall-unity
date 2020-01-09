@@ -212,16 +212,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LoadGameButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             OpenSelectedSaveGame();
         }
 
         private void SaveGame_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectSaveGame((int)sender.Tag);
         }
 
         private void SaveGame_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectSaveGame((int)sender.Tag);
             OpenSelectedSaveGame();
         }

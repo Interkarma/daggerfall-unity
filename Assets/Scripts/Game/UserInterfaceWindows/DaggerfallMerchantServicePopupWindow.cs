@@ -135,12 +135,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
 
             // Use a registered custom service method
@@ -164,6 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
