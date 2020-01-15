@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsRunning
         {
-            get { return speed == speedChanger.GetRunSpeed(speedChanger.GetBaseSpeed()); }
+            get { return speedChanger.isRunning; }
         }
 
         public bool IsStandingStill

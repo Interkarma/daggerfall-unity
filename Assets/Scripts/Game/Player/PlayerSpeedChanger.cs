@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game
 
         public delegate bool CanPlayerRun();
         public CanPlayerRun CanRun { get; set; }
+        public bool isRunning = false;
 
         private void Start()
         {
@@ -55,28 +56,30 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerMotor.IsGrounded)
             {
-                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && CanRun())
-                {
-                    try
-                    {
-                        // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
-                        if (!toggleRun)
-                            speed = GetRunSpeed(speed);
-                        else
-                            speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
-                    }
-                    catch
-                    {
-                        speed = GetRunSpeed(speed);
-                    }
-                }
+                if (!CanRun())
+                    isRunning = false;
+                else if (!toggleRun)
+                    isRunning = InputManager.Instance.HasAction(InputManager.Actions.Run);
+                else
+                    isRunning = playerMotor.IsRunning ^ InputManager.Instance.ActionStarted(InputManager.Actions.Run);
+
                 // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                else if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
+                if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
                 {
+                    isRunning = false;
                     speed /= 2;
                     speed -= (1 / classicToUnitySpeedUnitRatio);
                 }
             }
+            else
+            {
+                if (!CanRun())
+                    isRunning = false;
+                // you can't switch running on/off while in mid air
+            }
+
+            if (isRunning)
+                speed = GetRunSpeed(speed);
         }
 
         public bool CanRunUnlessRiding()
