@@ -211,9 +211,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
             // Check if this item is gold pieces
-            bool isGoldPieces = false;
-            if (item.ItemGroup == ItemGroups.Currency && item.GroupIndex == 0)
-                isGoldPieces = true;
+            bool isGoldPieces = item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces);
 
             textOut = string.Empty;
             bool result = true;
