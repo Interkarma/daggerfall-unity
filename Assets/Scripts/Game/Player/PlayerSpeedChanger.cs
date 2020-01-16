@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game
         public bool sneakingMode = false;
 
         public bool isRunning = false;
+        public bool isSneaking = false;
 
         private void Start()
         {
@@ -60,7 +61,7 @@ namespace DaggerfallWorkshop.Game
         /// Record player input for speed adjustment
         /// </summary>
         public void CaptureInputSpeedAdjustment()
-        { 
+        {
             if (!toggleRun)
                 runningMode = InputManager.Instance.HasAction(InputManager.Actions.Run);
             else
@@ -80,18 +81,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerMotor.IsGrounded)
             {
-                if (!CanRun())
-                    isRunning = false;
-                else
-                    isRunning = runningMode;
-
-                // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                if (sneakingMode)
-                {
-                    isRunning = false;
-                    speed /= 2;
-                    speed -= (1 / classicToUnitySpeedUnitRatio);
-                }
+                isRunning = CanRun() && runningMode && !sneakingMode;
+                isSneaking = sneakingMode;
             }
             else
             {
@@ -102,6 +93,12 @@ namespace DaggerfallWorkshop.Game
 
             if (isRunning)
                 speed = GetRunSpeed(speed);
+            else if (isSneaking)
+            {
+                // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
+                speed /= 2;
+                speed -= (1 / classicToUnitySpeedUnitRatio);
+            }
 
             if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 speed = GetSwimSpeed(speed);
