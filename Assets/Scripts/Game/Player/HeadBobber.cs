@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.PlayerEntity.CurrentHealth < 1 ||
                 GameManager.IsGamePaused ||
                 climbingMotor.IsClimbing ||
-				!playerMotor.IsGrounded)
+			    !playerMotor.IsGrounded)
                 return;
 
             GetBobbingStyle();
