@@ -50,7 +50,6 @@ namespace DaggerfallWorkshop.Game
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
         private PlayerGroundMotor groundMotor;
-        private PlayerEnterExit playerEnterExit;
         private PlayerMoveScanner playerScanner;
 
         private CollisionFlags collisionFlags = 0;
@@ -235,7 +234,6 @@ namespace DaggerfallWorkshop.Game
             frictionMotor = GetComponent<FrictionMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             playerScanner = GetComponent<PlayerMoveScanner>();
-            playerEnterExit = GameManager.Instance.PlayerEnterExit;
             rappelMotor = GetComponent<RappelMotor>();
             //hangingMotor = GetComponent<HangingMotor>();
 
@@ -339,8 +337,6 @@ namespace DaggerfallWorkshop.Game
 
             speed = speedChanger.GetBaseSpeed();
             speedChanger.HandleInputSpeedAdjustment(ref speed);
-            if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
-                speed = speedChanger.GetSwimSpeed(speed);
 
             UpdateSmoothFollower();
         }
