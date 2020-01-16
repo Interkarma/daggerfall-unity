@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
             RaycastHit hit;
             if (Physics.SphereCast(controller.transform.position, scanner.HeadHitRadius, controller.transform.up,  out hit, 2f))
             {
-                float playerspeed = speedChanger.GetClimbingSpeed();
+                float playerspeed = speedChanger.GetClimbingSpeed(playerMotor.Speed);
                 Vector3 moveVector = Vector3.zero;
                 if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
                     moveVector += controller.transform.forward;
