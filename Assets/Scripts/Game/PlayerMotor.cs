@@ -296,6 +296,9 @@ namespace DaggerfallWorkshop.Game
                 grounded = true;
             }
 
+            speed = speedChanger.GetBaseSpeed();
+            speedChanger.ApplyInputSpeedAdjustment(ref speed);
+
             if (grounded)
             {
                 acrobatMotor.Jumping = false;
@@ -335,8 +338,7 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && levitateMotor.IsLevitating)
                 return;
 
-            speed = speedChanger.GetBaseSpeed();
-            speedChanger.HandleInputSpeedAdjustment(ref speed);
+            speedChanger.CaptureInputSpeedAdjustment();
 
             UpdateSmoothFollower();
         }

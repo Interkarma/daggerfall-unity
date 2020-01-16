@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
         // There must be a button set up in the Input Manager called "Run"
         public bool toggleRun = false;
+        public bool toggleSneak = false;
 
         // Daggerfall base speed constants. (courtesy Allofich)
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
@@ -40,6 +41,9 @@ namespace DaggerfallWorkshop.Game
 
         public delegate bool CanPlayerRun();
         public CanPlayerRun CanRun { get; set; }
+        public bool runningMode = false;
+        public bool sneakingMode = false;
+
         public bool isRunning = false;
 
         private void Start()
@@ -51,23 +55,38 @@ namespace DaggerfallWorkshop.Game
         }
 
 
+
+        /// <summary>
+        /// Record player input for speed adjustment
+        /// </summary>
+        public void CaptureInputSpeedAdjustment()
+        { 
+            if (!toggleRun)
+                runningMode = InputManager.Instance.HasAction(InputManager.Actions.Run);
+            else
+                runningMode = runningMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Run);
+
+            if (!toggleSneak)
+                sneakingMode = InputManager.Instance.HasAction(InputManager.Actions.Sneak);
+            else
+                sneakingMode = sneakingMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Sneak);
+        }
+
         /// <summary>
         /// Determines how speed should be changed based on player's input
         /// </summary>
         /// <param name="speed"></param>
-        public void HandleInputSpeedAdjustment(ref float speed)
+        public void ApplyInputSpeedAdjustment(ref float speed)
         {
             if (playerMotor.IsGrounded)
             {
                 if (!CanRun())
                     isRunning = false;
-                else if (!toggleRun)
-                    isRunning = InputManager.Instance.HasAction(InputManager.Actions.Run);
                 else
-                    isRunning = playerMotor.IsRunning ^ InputManager.Instance.ActionStarted(InputManager.Actions.Run);
+                    isRunning = runningMode;
 
                 // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
+                if (sneakingMode)
                 {
                     isRunning = false;
                     speed /= 2;
