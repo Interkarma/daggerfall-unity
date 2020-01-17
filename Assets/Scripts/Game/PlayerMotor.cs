@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
+        private PlayerEnterExit playerEnterExit;
         private PlayerGroundMotor groundMotor;
         private PlayerMoveScanner playerScanner;
 
@@ -239,6 +240,7 @@ namespace DaggerfallWorkshop.Game
             frictionMotor = GetComponent<FrictionMotor>();
             acrobatMotor = GetComponent<AcrobatMotor>();
             playerScanner = GetComponent<PlayerMoveScanner>();
+            playerEnterExit = GameManager.Instance.PlayerEnterExit;
             rappelMotor = GetComponent<RappelMotor>();
             //hangingMotor = GetComponent<HangingMotor>();
 
@@ -301,8 +303,7 @@ namespace DaggerfallWorkshop.Game
                 grounded = true;
             }
 
-            speed = speedChanger.GetBaseSpeed();
-            speedChanger.ApplyInputSpeedAdjustment(ref speed);
+            UpdateSpeed();
 
             if (grounded)
             {
@@ -323,7 +324,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             playerScanner.FindStep(moveDirection);
-            
+
             acrobatMotor.ApplyGravity(ref moveDirection);
 
             acrobatMotor.HitHead(ref moveDirection);
@@ -346,6 +347,14 @@ namespace DaggerfallWorkshop.Game
             speedChanger.CaptureInputSpeedAdjustment();
 
             UpdateSmoothFollower();
+        }
+
+        private void UpdateSpeed()
+        {
+            speed = speedChanger.GetBaseSpeed();
+            speedChanger.ApplyInputSpeedAdjustment(ref speed);
+            if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
+                speed = speedChanger.GetSwimSpeed(speed);
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed

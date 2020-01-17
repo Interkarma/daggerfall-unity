@@ -18,7 +18,6 @@ namespace DaggerfallWorkshop.Game
     public class PlayerSpeedChanger : MonoBehaviour
     {
         private PlayerMotor playerMotor;
-        private PlayerEnterExit playerEnterExit;
         private LevitateMotor levitateMotor;
 
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
@@ -50,7 +49,6 @@ namespace DaggerfallWorkshop.Game
         private void Start()
         {
             playerMotor = GameManager.Instance.PlayerMotor;
-            playerEnterExit = GameManager.Instance.PlayerEnterExit;
             levitateMotor = GetComponent<LevitateMotor>();
             CanRun = CanRunUnlessRiding;
         }
@@ -99,9 +97,6 @@ namespace DaggerfallWorkshop.Game
                 speed /= 2;
                 speed -= (1 / classicToUnitySpeedUnitRatio);
             }
-
-            if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
-                speed = GetSwimSpeed(speed);
         }
 
         public bool CanRunUnlessRiding()
