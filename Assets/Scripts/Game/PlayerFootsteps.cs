@@ -233,10 +233,14 @@ namespace DaggerfallWorkshop.Game
             // Play sound if over distance threshold
             if (distance > threshold && customAudioSource && clip1 && clip2)
             {
+                float volumeScale = FootstepVolumeScale;
+                if (playerMotor.IsSneaking)
+                    volumeScale *= 0.35f;
+
                 if (!alternateStep)
-                    customAudioSource.PlayOneShot(clip1, FootstepVolumeScale * DaggerfallUnity.Settings.SoundVolume);
+                    customAudioSource.PlayOneShot(clip1, volumeScale * DaggerfallUnity.Settings.SoundVolume);
                 else
-                    customAudioSource.PlayOneShot(clip2, FootstepVolumeScale * DaggerfallUnity.Settings.SoundVolume);
+                    customAudioSource.PlayOneShot(clip2, volumeScale * DaggerfallUnity.Settings.SoundVolume);
 
                 alternateStep = (!alternateStep);
                 distance = 0f;
