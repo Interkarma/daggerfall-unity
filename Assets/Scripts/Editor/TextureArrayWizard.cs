@@ -10,10 +10,14 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -57,11 +61,17 @@ namespace DaggerfallWorkshop
         [MenuItem("Daggerfall Tools/Texture Array Creator")]
         static void CreateWizard()
         {
-            DisplayWizard<TextureArrayWizard>("Create Texture Array", "Create");
+            DisplayWizard<TextureArrayWizard>("Create Texture Array", "Create", "Add from selection");
         }
 
         void OnWizardCreate()
         {
+            if (string.IsNullOrEmpty(Name) || Textures == null || Textures.Length == 0)
+            {
+                Debug.LogError("No name or textures assigned to texture array.");
+                return;
+            }
+
             if (!SystemInfo.supports2DArrayTextures)
             {
                 Debug.LogError("Array textures are not supported!");
@@ -94,10 +104,56 @@ namespace DaggerfallWorkshop
             AssetDatabase.CreateAsset(textureArray, Path.Combine(Directory, Name + ".asset"));
         }
 
+        void OnWizardOtherButton()
+        {
+            var selection = Selection.objects;
+            if (selection.Length == 0)
+                return;
+
+            var regex = new Regex("(?<archive>[0-9]+)_(?<record>[0-9]+)-(?<frame>[0-9]+)(_[A-Za-z]+)?");
+            if (!regex.IsMatch(selection[0].name))
+            {
+                SetTextures(selection.Select(x => x as Texture2D));
+                return;
+            }
+
+            var layers = new List<Tuple<Texture2D, DaggerfallTextureIndex>>();
+
+            foreach (var tex in selection)
+            {
+                Match match = regex.Match(tex.name);
+                if (match.Groups.Count == 0)
+                {
+                    Debug.LogErrorFormat("Failed to parse {0}", tex.name);
+                    return;
+                }
+
+                layers.Add(new Tuple<Texture2D, DaggerfallTextureIndex>(tex as Texture2D, new DaggerfallTextureIndex
+                {
+                    archive = int.Parse(match.Groups["archive"].Value),
+                    record = int.Parse(match.Groups["record"].Value),
+                    frame = int.Parse(match.Groups["frame"].Value)
+                }));
+            }
+
+            layers.Sort((a, b) =>
+            {
+                int value = a.Second.archive - b.Second.archive;
+                if (value == 0)
+                {
+                    value = a.Second.record - b.Second.record;
+                    if (value == 0)
+                        value = a.Second.frame - b.Second.frame;
+                }
+
+                return value;
+            });
+
+            SetTextures(layers.Select(x => x.First));
+        }
+
         void OnWizardUpdate()
         {
-            isValid = !string.IsNullOrEmpty(Name) && Textures != null && Textures.Length > 0;
-
             helpString = "Create a texture array from individual textures with the same size, format and mipmaps state.";
             if (Textures != null && Textures.Length > 0)
             {
@@ -115,6 +171,24 @@ namespace DaggerfallWorkshop
                         Directory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(tex));
                 }
             }
+        }
+
+        private void SetTextures(IEnumerable<Texture2D> textures)
+        {
+            Textures = textures.ToArray();
+            Texture2D tex = Textures[0];
+            
+            Advanced.WrapMode = tex.wrapMode;
+            Advanced.FilterMode = tex.filterMode;
+            Advanced.AnisoLevel = tex.anisoLevel;
+
+            string path = AssetDatabase.GetAssetPath(tex);
+
+            var textureImporter = (TextureImporter)TextureImporter.GetAtPath(path);
+            Advanced.ReadWriteEnabled = textureImporter.isReadable;
+
+            if (string.IsNullOrEmpty(Directory))
+                Directory = Path.GetDirectoryName(path);
         }
     }
 }
