@@ -134,7 +134,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         if (casterManager.IsPlayerEntity)
                             casterManager.PlayCastSound(sourceEntity, casterManager.GetCastSoundID(bundle.Settings.ElementType));
 
-                        // TODO: Apply durability loss to equipped item on equip and over time
+                        // TODO: Apply durability loss to equipped item on equip
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                     }
                 }

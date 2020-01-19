@@ -430,6 +430,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     currentRestMode = RestModes.Selection;
                 }
             }
+
+            GameManager.Instance.PlayerEntity.IsResting = false;
         }
 
         bool TickVitals()

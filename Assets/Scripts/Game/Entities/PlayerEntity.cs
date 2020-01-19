@@ -509,10 +509,6 @@ namespace DaggerfallWorkshop.Game.Entity
             if (preventNormalizingReputations)
                 preventNormalizingReputations = false;
 
-            // Reset isResting flag. If still resting DaggerfallRestWindow will set it to true again for the next update.
-            if (isResting)
-                isResting = false;
-
             HandleStartingCrimeGuildQuests();
 
             // Reset surrender to guards dialogue if no guards are nearby
