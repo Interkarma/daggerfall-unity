@@ -529,6 +529,40 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Internal Methods
 
         /// <summary>
+        /// Used internally when the game seeks assets from all mods and handles a global cache.
+        /// This method allows to load directly from bundle without mod cache to avoid
+        /// references that would prevents garbage collection to be performed.
+        /// Shouldn't be used for prefabs because <see cref="ImportedComponentAttribute"/> is currently unsupported.
+        /// </summary>
+        internal T LoadAsset<T>(string assetName)
+            where T : UnityEngine.Object
+        {
+            assetName = ModManager.GetAssetName(assetName);
+
+            T asset = null;
+            bool isVirtual = false;
+
+#if UNITY_EDITOR
+            if (isVirtual = IsVirtual)
+                asset = LoadAssetFromResources<T>(assetName);
+#endif
+
+            if (!isVirtual)
+            {
+                if (!AssetBundle)
+                    LoadAssetBundle();
+
+                asset = AssetBundle.LoadAsset<T>(assetName);
+            }
+
+            if (asset)
+                return asset;
+
+            Debug.LogErrorFormat("Failed to load asset: {0}", assetName);
+            return null;
+        }
+
+        /// <summary>
         /// Checks if this mod is expected to run on current version of Daggerfall Unity.
         /// </summary>
         /// <returns>True if game version is satisfied, false if is not, null if unknown.</returns>

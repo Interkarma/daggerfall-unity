@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -99,6 +100,7 @@ namespace DaggerfallWorkshop
         public bool MipMaps = true;
         public bool ReadableTextures = false;
         public SupportedAlphaTextureFormats AlphaTextureFormat = SupportedAlphaTextureFormats.ARGB32;
+        public int AssetCacheThreshold;
 
         // Window settings
         public Color DayWindowColor = new Color32(89, 154, 178, 0xff);
@@ -347,7 +349,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
             if (materialDict.ContainsKey(key))
             {
-                CachedMaterial cm = materialDict[key];
+                CachedMaterial cm = GetMaterialFromCache(key);
                 rectOut = cm.singleRect;
                 return cm.material;
             }
@@ -493,7 +495,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)0, (byte)0, AtlasKeyGroup);
             if (materialDict.ContainsKey(key))
             {
-                CachedMaterial cm = materialDict[key];
+                CachedMaterial cm = GetMaterialFromCache(key);
                 if (cm.filterMode == MainFilterMode)
                 {
                     // Properties are the same
@@ -588,7 +590,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)0, (byte)0, TileMapKeyGroup);
             if (materialDict.ContainsKey(key))
             {
-                CachedMaterial cm = materialDict[key];
+                CachedMaterial cm = GetMaterialFromCache(key);
                 if (cm.filterMode == MainFilterMode)
                 {
                     // Properties are the same
@@ -644,7 +646,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)0, (byte)0, TileMapKeyGroup);
             if (materialDict.ContainsKey(key))
             {
-                CachedMaterial cm = materialDict[key];
+                CachedMaterial cm = GetMaterialFromCache(key);
                 if (cm.filterMode == MainFilterMode)
                 {
                     // Properties are the same
@@ -711,7 +713,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
             if (materialDict.ContainsKey(key))
             {
-                cachedMaterialOut = materialDict[key];
+                cachedMaterialOut = GetMaterialFromCache(key);
                 return true;
             }
             else
@@ -764,7 +766,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)0, (byte)0, AtlasKeyGroup);
             if (materialDict.ContainsKey(key))
             {
-                cachedMaterialOut = materialDict[key];
+                cachedMaterialOut = GetMaterialFromCache(key);
                 return true;
             }
 
@@ -784,7 +786,7 @@ namespace DaggerfallWorkshop
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame, CustomBillboardKeyGroup);
             if (materialDict.ContainsKey(key))
             {
-                cachedMaterialOut = materialDict[key];
+                cachedMaterialOut = GetMaterialFromCache(key);
                 return true;
             }
 
@@ -865,6 +867,21 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Removes from cache all materials that have not been accessed from the time in minutes defined
+        /// by <see cref="AssetCacheThreshold"/>. If equals to <c>0</c> assets are never removed from cache.
+        /// </summary>
+        internal void PruneCache()
+        {
+            if (AssetCacheThreshold == 0)
+                return;
+
+            float time = Time.realtimeSinceStartup;
+            float threshold = AssetCacheThreshold * 60;
+            foreach (var item in materialDict.Where(x => time - x.Value.timeStamp > threshold).ToList())
+                materialDict.Remove(item.Key);
+        }
+
+        /// <summary>
         /// Clears material cache dictionary, forcing material to reload.
         /// </summary>
         public void ClearCache()
@@ -931,7 +948,23 @@ namespace DaggerfallWorkshop
             materialOut = GetMaterial(archive, record);
             int key = MakeTextureKey((short)archive, (byte)record);
 
-            return materialDict[key];
+            return GetMaterialFromCache(key);
+        }
+
+        private CachedMaterial GetMaterialFromCache(int key)
+        {
+            CachedMaterial cachedMaterial = materialDict[key];
+
+            // Update timestamp of last access, but only if difference is
+            // significant to limit the number of reassignment to dictionary.
+            float time = Time.realtimeSinceStartup;
+            if (time - cachedMaterial.timeStamp > 59)
+            {
+                cachedMaterial.timeStamp = time;
+                materialDict[key] = cachedMaterial;
+            }
+
+            return cachedMaterial;
         }
 
         private bool ReadyCheck()

@@ -307,7 +307,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // If the first match is a texture array, is returned successfully.
                 // If the first match is the first texture in the archive, an array is created at runtime.
                 Texture texture;
-                if (ModManager.Instance.TryGetAsset(names, false, out texture) && texture.dimension == TextureDimension.Tex2DArray)
+                if (ModManager.Instance.TryGetAsset(names, null, out texture) && texture.dimension == TextureDimension.Tex2DArray)
                 {
                     if ((textureArray = texture as Texture2DArray).depth == depth)
                         return true;
@@ -888,7 +888,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 // Seek from mods
                 if (ModManager.Instance != null)
-                    return ModManager.Instance.TryGetAsset(name, false, out material);
+                    return ModManager.Instance.TryGetAsset(name, null, out material);
             }
 
             material = null;
@@ -917,7 +917,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 // Seek from mods
                 if (ModManager.Instance != null)
-                    return ModManager.Instance.TryGetAsset(name, false, out tex);
+                    return ModManager.Instance.TryGetAsset(name, null, out tex);
             }
 
             tex = null;
