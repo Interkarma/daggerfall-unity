@@ -133,6 +133,14 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Static constructor
+        /// </summary>
+        static TextureReader()
+        {
+            FastEmissiveTexturesInit();
+        }
+
+        /// <summary>
         /// Constructor to set Arena2Path.
         /// </summary>
         /// <param name="arena2Path">Path to Arena2 folder.</param>
@@ -878,7 +886,7 @@ namespace DaggerfallWorkshop.Utility
 
         // Textures that should receive emission map
         // TODO: Consider setting this from an external list
-        DaggerfallTextureIndex[] emissiveTextures = new DaggerfallTextureIndex[]
+        static DaggerfallTextureIndex[] emissiveTextures = new DaggerfallTextureIndex[]
         {
             // Fireplace
             new DaggerfallTextureIndex() { archive = 87, record = 0 },
@@ -935,6 +943,20 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 210, record = 27 },
             new DaggerfallTextureIndex() { archive = 210, record = 28 },
             new DaggerfallTextureIndex() { archive = 210, record = 29 },
+
+            new DaggerfallTextureIndex() { archive = 253, record = 10 },
+            new DaggerfallTextureIndex() { archive = 253, record = 17 },
+            new DaggerfallTextureIndex() { archive = 253, record = 18 },
+            new DaggerfallTextureIndex() { archive = 253, record = 19 },
+            new DaggerfallTextureIndex() { archive = 253, record = 22 },
+            new DaggerfallTextureIndex() { archive = 253, record = 41 },
+            new DaggerfallTextureIndex() { archive = 253, record = 48 },
+            new DaggerfallTextureIndex() { archive = 253, record = 49 },
+            new DaggerfallTextureIndex() { archive = 253, record = 50 },
+            new DaggerfallTextureIndex() { archive = 253, record = 51 },
+            new DaggerfallTextureIndex() { archive = 253, record = 52 },
+            new DaggerfallTextureIndex() { archive = 253, record = 75 },
+            new DaggerfallTextureIndex() { archive = 253, record = 77 },
 
             // Fire daedra
             new DaggerfallTextureIndex() { archive = 281, record = 0 },
@@ -1006,32 +1028,39 @@ namespace DaggerfallWorkshop.Utility
             // new DaggerfallTextureIndex() { archive = 434, record = 5 }, // UI
         };
 
-        HashSet<int> emissiveArchives = null;
+        static Dictionary<int, List<int>> fastEmissiveTextures = null;
+
+        private static void FastEmissiveTexturesInit()
+        {
+            fastEmissiveTextures = new Dictionary<int, List<int>>();
+            foreach (DaggerfallTextureIndex emissiveTexture in emissiveTextures)
+            {
+                List<int> textureRecords;
+                if (!fastEmissiveTextures.TryGetValue(emissiveTexture.archive, out textureRecords))
+                {
+                    textureRecords = new List<int>();
+                    fastEmissiveTextures.Add(emissiveTexture.archive, textureRecords);
+                }
+                textureRecords.Add(emissiveTexture.record);
+            }
+        }
 
         public bool IsEmissiveArchive(int archive)
         {
-            if (emissiveArchives == null)
-            {
-                emissiveArchives = new HashSet<int>();
-                for (int i = 0; i < emissiveTextures.Length; i++)
-                    emissiveArchives.Add(emissiveTextures[i].archive);
-            }
-
-            return emissiveArchives.Contains(archive);
+            return fastEmissiveTextures.ContainsKey(archive);
         }
 
         public bool IsEmissive(int archive, int record)
         {
-            // fast path
-            if (!IsEmissiveArchive(archive))
-                return false;
-
-            // Check emissive list for this texture
-            // TODO: Replace this with a dictionary/hash lookup
-            for (int i = 0; i < emissiveTextures.Length; i++)
+            List<int> textureRecords;
+            if (fastEmissiveTextures.TryGetValue(archive, out textureRecords))
             {
-                if (emissiveTextures[i].archive == archive && emissiveTextures[i].record == record)
-                    return true;
+                // Check emissive list for this texture
+                foreach (int textureRecord in textureRecords)
+                {
+                    if (textureRecord == record)
+                        return true;
+                }
             }
             return false;
         }
