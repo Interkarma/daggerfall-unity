@@ -98,11 +98,6 @@ namespace DaggerfallWorkshop.Game
             get { return speedChanger.isRunning; }
         }
 
-        public bool IsSneaking
-        {
-            get { return speedChanger.isSneaking; }
-        }
-
         public bool IsStandingStill
         {
             get

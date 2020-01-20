@@ -234,7 +234,7 @@ namespace DaggerfallWorkshop.Game
             if (distance > threshold && customAudioSource && clip1 && clip2)
             {
                 float volumeScale = FootstepVolumeScale;
-                if (playerMotor.IsSneaking)
+                if (playerMotor.IsMovingLessThanHalfSpeed)
                     volumeScale *= 0.35f;
 
                 if (!alternateStep)

@@ -241,7 +241,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     // refresh audio volume to reflect global changes
                     float volumeScale = RidingVolumeScale;
-                    if (playerMotor.IsSneaking)
+                    if (playerMotor.IsMovingLessThanHalfSpeed)
                         volumeScale *= 0.35f;
 
                     ridingAudioSource.volume = volumeScale * DaggerfallUnity.Settings.SoundVolume;
