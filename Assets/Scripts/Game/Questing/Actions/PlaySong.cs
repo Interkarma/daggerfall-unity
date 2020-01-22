@@ -4,29 +4,31 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    DFIronman, Hazelnut
 // 
 // Notes:
 //
 
+using UnityEngine;
 using System.Text.RegularExpressions;
+using System;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Makes all foes hostile, or clears (removes) them all.
+    /// Plays a song from MIDI.BSA using SongFiles enum.
     /// </summary>
-    public class Enemies : ActionTemplate
+    public class PlaySong : ActionTemplate
     {
-        bool clear = false;
+        SongFiles songFile;
 
         public override string Pattern
         {
-            get { return @"enemies (?<action>makehostile|clear)"; }
+            get { return @"play song (?<song>[a-zA-Z0-9_-]+)"; }
         }
 
-        public Enemies(Quest parentQuest)
+        public PlaySong(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -38,20 +40,34 @@ namespace DaggerfallWorkshop.Game.Questing
             if (!match.Success)
                 return null;
 
+            // Trim source end or trailing white space will be split to an empty symbol at end of array
+            source = source.TrimEnd();
+
             // Factory new action
-            Enemies action = new Enemies(parentQuest);
-            if (match.Groups["action"].Value == "clear")
-                action.clear = true;
+            PlaySong action = new PlaySong(parentQuest);
+            string song = match.Groups["song"].Value;
+            if (!Enum.IsDefined(typeof(SongFiles), song))
+            {
+                SetComplete();
+                throw new Exception(string.Format("PlaySong: Song file {0} is not a known song from MIDI.BSA", song));
+            }
+            action.songFile = (SongFiles)Enum.Parse(typeof(SongFiles), song);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            if (clear)
-                GameManager.Instance.ClearEnemies();
-            else
-                GameManager.Instance.MakeEnemiesHostile();
+            base.Update(caller);
+
+            GameObject go = GameObject.Find("SongPlayer");
+            if (go != null)
+            {
+                DaggerfallSongPlayer player = go.GetComponent<DaggerfallSongPlayer>();
+                if (player != null)
+                    player.Play(songFile);
+            }
+
             SetComplete();
         }
 
@@ -60,13 +76,13 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public bool clear;
+            public SongFiles song;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.clear = clear;
+            data.song = songFile;
 
             return data;
         }
@@ -77,7 +93,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            clear = data.clear;
+            songFile = data.song;
         }
 
         #endregion
