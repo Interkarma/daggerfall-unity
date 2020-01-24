@@ -1379,7 +1379,8 @@ namespace DaggerfallWorkshop.Utility
                 float width = Mathf.Abs(v2.x - v0.x);
                 float height = Mathf.Abs(v2.y - v0.y);
                 float depth = Mathf.Abs(v2.z - v0.z);
-                Vector3 size = (width > depth) ? new Vector3(width, height, width) : new Vector3(depth, height, depth);
+                float thickness = Mathf.Max(width, depth);
+                Vector3 size = new Vector3(thickness, Mathf.Max(height, thickness), Mathf.Min(height, thickness));
 
                 // Add door to array
                 StaticDoor newDoor = new StaticDoor()
