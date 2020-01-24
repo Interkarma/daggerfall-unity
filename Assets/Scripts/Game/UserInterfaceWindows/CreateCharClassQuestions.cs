@@ -335,16 +335,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (weightIndex)
             {
                 case 0:
+                    warriorBlue += constellationBrightnessIncrement;
+                    warriorAnim.Start();
+                    break;
+                case 1:
                     rogueBlue += constellationBrightnessIncrement;
                     rogueAnim.Start();
                     break;
-                case 1:
+                case 2:
                     mageBlue += constellationBrightnessIncrement;
                     mageAnim.Start();
-                    break;
-                case 2:
-                    warriorBlue += constellationBrightnessIncrement;
-                    warriorAnim.Start();
                     break;
             }
 
