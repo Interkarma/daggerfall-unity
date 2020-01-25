@@ -658,6 +658,8 @@ namespace DaggerfallWorkshop.Utility
                     return HardStrings.Theft;
                 case 14:
                     return HardStrings.Treason;
+                case 15:
+                    return HardStrings.Loan_Default;
                 default:
                     return "None";
             }
