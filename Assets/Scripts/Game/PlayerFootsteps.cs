@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float volumeScale = FootstepVolumeScale;
                 if (playerMotor.IsMovingLessThanHalfSpeed)
-                    volumeScale *= 0.35f;
+                    volumeScale *= 0.5f;
 
                 if (!alternateStep)
                     customAudioSource.PlayOneShot(clip1, volumeScale * DaggerfallUnity.Settings.SoundVolume);
