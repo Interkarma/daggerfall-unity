@@ -10,7 +10,6 @@
 // 
 
 using System.Text.RegularExpressions;
-using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Entity;
 using FullSerializer;
 using System;
@@ -29,8 +28,8 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get
             {
-                return @"change foe (?<anNPC>[a-zA-Z0-9_.-]+) team (?<teamName>\w+)|" +
-                       @"change foe (?<anNPC>[a-zA-Z0-9_.-]+) team (?<teamNumber>\d+)";
+                return @"change foe (?<anNPC>[a-zA-Z0-9_.-]+) team (?<teamNumber>\d+)|" +
+                       @"change foe (?<anNPC>[a-zA-Z0-9_.-]+) team (?<teamName>\w+)";
             }
         }
 
@@ -52,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Questing
             action.teamNumber = Parser.ParseInt(match.Groups["teamNumber"].Value);
 
             // Resolve static message back to ID
-            string teamName = match.Groups["teamName"].Value.ToLower();
+            string teamName = match.Groups["teamName"].Value;
             if (teamName != "")
             {
                 if (!Enum.IsDefined(typeof(MobileTeams), teamName))
