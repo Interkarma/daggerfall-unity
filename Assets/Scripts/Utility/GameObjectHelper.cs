@@ -67,6 +67,8 @@ namespace DaggerfallWorkshop.Utility
                     // Assign animation properties
                     c.TargetMaterial = cm.material;
                     c.AnimationFrames = materials;
+                    if (cm.framesPerSecond > 0)
+                        c.FramesPerSecond = cm.framesPerSecond;
                 }
             }
         }

@@ -87,6 +87,9 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
+        // Constants
+        public const int FireWallsArchive = 356;
+
         // General settings
         public bool AtlasTextures = true;
         public bool CompressSkyTextures = false;
@@ -448,6 +451,7 @@ namespace DaggerfallWorkshop
                 recordScales = recordScales,
                 recordOffsets = recordOffsets,
                 singleFrameCount = results.textureFile.GetFrameCount(record),
+                framesPerSecond = archive == FireWallsArchive ? 5 : 0, // Slow down fire walls
             };
             materialDict.Add(key, newcm);
 
