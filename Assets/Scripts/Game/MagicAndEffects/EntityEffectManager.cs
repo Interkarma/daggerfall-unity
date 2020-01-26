@@ -584,14 +584,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Checks if peered entity is globally immune to paralysis from career or effect system.
+        /// Checks if peered entity is globally immune to paralysis from career, race or effect system.
         /// </summary>
         /// <returns>True if entity immune to paralysis.</returns>
         public bool IsEntityImmuneToParalysis()
         {
             if (entityBehaviour.Entity.Career.Paralysis == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToParalysis)
                 return true;
-            return IsPlayerEntity && (((PlayerEntity) entityBehaviour.Entity).GetLiveRaceTemplate().ImmunityFlags & DFCareer.EffectFlags.Paralysis) != 0;
+            // Players with racial immunity are immune unless they have a specific weakness.
+            if (IsPlayerEntity && (((PlayerEntity) entityBehaviour.Entity).GetLiveRaceTemplate().ImmunityFlags & DFCareer.EffectFlags.Paralysis) != 0)
+            {
+                return entityBehaviour.Entity.Career.Paralysis != DFCareer.Tolerance.LowTolerance &&
+                       entityBehaviour.Entity.Career.Paralysis != DFCareer.Tolerance.CriticalWeakness;
+            }
+
+            return false;
         }
 
         /// <summary>
