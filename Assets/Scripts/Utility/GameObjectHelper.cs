@@ -96,13 +96,15 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="makeStatic">Flag to set object static flag.</param>
         /// <param name="useExistingObject">Add mesh to existing object rather than create new.</param>
         /// <param name="ignoreCollider">Force disable collider.</param>
+        /// <param name="convexCollider">Make collider convex.</param>
         /// <returns>GameObject.</returns>
         public static GameObject CreateDaggerfallMeshGameObject(
             uint modelID,
             Transform parent,
             bool makeStatic = false,
             GameObject useExistingObject = null,
-            bool ignoreCollider = false)
+            bool ignoreCollider = false,
+            bool convexCollider = false)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
@@ -152,6 +154,10 @@ namespace DaggerfallWorkshop.Utility
                 MeshCollider collider = go.GetComponent<MeshCollider>();
                 if (collider == null) collider = go.AddComponent<MeshCollider>();
                 collider.sharedMesh = mesh;
+
+                // Enable convex collider if specified
+                if (convexCollider)
+                    collider.convex = true;
             }
 
             // Assign static

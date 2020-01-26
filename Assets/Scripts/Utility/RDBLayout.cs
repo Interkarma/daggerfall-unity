@@ -650,6 +650,16 @@ namespace DaggerfallWorkshop.Utility
                         GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, parent, modelMatrix);
                         if (standaloneObject == null)
                         {
+                            // Special handling for dungeon exit quads
+                            // These have a one-sided quad for a mesh so end up with a one-sided mesh collider
+                            // This allows enemies to traverse and shoot player from behind exit quad
+                            // Change this to a convex collider that will always be two-sided
+                            if (modelId == exitDoorModelID)
+                            {
+                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, false, true);
+                                continue;
+                            }
+
                             // Special handling for tapestries and banners
                             // Some of these are so far out from wall player can become stuck behind them
                             // Adding model invidually without collider to avoid problem
@@ -715,14 +725,15 @@ namespace DaggerfallWorkshop.Utility
             Matrix4x4 matrix,
             Transform parent,
             bool overrideStatic = false,
-            bool ignoreCollider = false)
+            bool ignoreCollider = false,
+            bool convexCollider = false)
         {
             // Determine static flag
             bool makeStatic = (dfUnity.Option_SetStaticFlags && !overrideStatic) ? true : false;
 
             // Add GameObject
             uint modelID = (uint)modelData.DFMesh.ObjectId;
-            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, makeStatic, null, ignoreCollider);
+            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, makeStatic, null, ignoreCollider, convexCollider);
             go.transform.position = matrix.GetColumn(3);
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
 
