@@ -1174,14 +1174,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if ((effectFlags & DFCareer.EffectFlags.Paralysis) != 0)
-            {
                 toleranceFlags |= GetToleranceFlag(target.Career.Paralysis);
-                // Innate immunity if high elf. Start with 100 saving throw, but can be modified by
-                // tolerance flags. Note this differs from classic, where high elves have 100% immunity
-                // regardless of tolerance flags.
-                if (target == playerEntity && playerEntity.Race == Races.HighElf)
-                    savingThrow = 100;
-            }
             if ((effectFlags & DFCareer.EffectFlags.Magic) != 0)
             {
                 toleranceFlags |= GetToleranceFlag(target.Career.Magic);

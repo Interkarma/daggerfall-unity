@@ -589,7 +589,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>True if entity immune to paralysis.</returns>
         public bool IsEntityImmuneToParalysis()
         {
-            return entityBehaviour.Entity.Career.Paralysis == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToParalysis;
+            if (entityBehaviour.Entity.Career.Paralysis == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToParalysis)
+                return true;
+            return IsPlayerEntity && (((PlayerEntity) entityBehaviour.Entity).GetLiveRaceTemplate().ImmunityFlags & DFCareer.EffectFlags.Paralysis) != 0;
         }
 
         /// <summary>
