@@ -2131,6 +2131,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     effect.EnchantmentParam = effectData.enchantmentParam;
                     effect.Resume(effectData, this, instancedBundle.caster);
                     effect.RestoreSaveData(effectData.effectSpecific);
+                    // Make constant effects go in effect immediately rather than next update.
+                    effect.ConstantEffect();
                     instancedBundle.liveEffects.Add(effect);
 
                     // Cache racial override effect
