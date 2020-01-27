@@ -650,13 +650,10 @@ namespace DaggerfallWorkshop.Utility
                         GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, parent, modelMatrix);
                         if (standaloneObject == null)
                         {
-                            // Special handling for dungeon exit quads
-                            // These have a one-sided quad for a mesh so end up with a one-sided mesh collider
-                            // This allows enemies to traverse and shoot player from behind exit quad
-                            // Change this to a convex collider that will always be two-sided
+                            // Special handling for dungeon exits - collider handled as a special case in DaggerfallStaticDoors startup
                             if (modelId == exitDoorModelID)
                             {
-                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, false, true);
+                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
                                 continue;
                             }
 

@@ -51,6 +51,40 @@ namespace DaggerfallWorkshop
             //    c.isTrigger = true;
             //}
             //Debug.LogFormat("Added {0} door triggers to scene", Doors.Length);
+
+            // Promote dungeon exit doors to full physical colliders rather than just virtual trigger volumes
+            // This step is based on the following:
+            //  * Daggerfall uses a mixture of discrete exit quads (modelid 70300) and exits baked into surrounding geometry (e.g. modelid 58051)
+            //  * During asset import it's simple to add colliders to a specific model ID, but not so much when exit is just one texture face in larger model
+            //  * In all cases, the exit is a single-sided quad that doesn't play nice with mesh colliders (allows traversal from behind in areas blocked by exit)
+            //  * Work around this by always placing a fully physical BoxCollider in position of virtual trigger volume
+            // NOTES:
+            //  * Unlike virtual door triggers that use a symmetric volume shape, this door trigger is physical and needs to be nicely sized
+            //  * Collider size uses DF units, is scaled based on MeshReader.GlobalScale, then rotated into position
+            Vector3 exitColliderSize = new Vector3(50f, 90f, 2f);
+            for (int i = 0; i < Doors.Length; i++)
+            {
+                if (Doors[i].doorType == DoorTypes.DungeonExit)
+                {
+                    // Get correct facing of exit
+                    Quaternion buildingRotation = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix);
+                    Vector3 doorNormal = buildingRotation * Doors[i].normal;
+                    Quaternion facingRotation = Quaternion.LookRotation(doorNormal, Vector3.up);
+
+                    // Create object
+                    GameObject exitObject = new GameObject();
+                    exitObject.name = "DungeonExit";
+
+                    // Add collider
+                    BoxCollider exitCollider = exitObject.AddComponent<BoxCollider>();
+                    exitCollider.center = Vector3.zero;
+                    exitCollider.size = exitColliderSize * MeshReader.GlobalScale;
+                    exitObject.transform.parent = transform;
+                    exitObject.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
+                    exitObject.transform.position += transform.position;
+                    exitObject.transform.rotation = facingRotation;
+                }
+            }
         }
 
         /// <summary>
