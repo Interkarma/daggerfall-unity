@@ -405,6 +405,9 @@ namespace DaggerfallConnect.Arena2
 
         public static void ApplyEffects(List<string> effects, PlayerEntity playerEntity)
         {
+            if (effects == null)
+                return;
+
             foreach (string effect in effects)
             {
                 ApplyPlayerEffect(playerEntity, effect);
