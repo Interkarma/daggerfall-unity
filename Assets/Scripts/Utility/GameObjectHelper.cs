@@ -96,13 +96,15 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="makeStatic">Flag to set object static flag.</param>
         /// <param name="useExistingObject">Add mesh to existing object rather than create new.</param>
         /// <param name="ignoreCollider">Force disable collider.</param>
+        /// <param name="convexCollider">Make collider convex.</param>
         /// <returns>GameObject.</returns>
         public static GameObject CreateDaggerfallMeshGameObject(
             uint modelID,
             Transform parent,
             bool makeStatic = false,
             GameObject useExistingObject = null,
-            bool ignoreCollider = false)
+            bool ignoreCollider = false,
+            bool convexCollider = false)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
@@ -152,6 +154,10 @@ namespace DaggerfallWorkshop.Utility
                 MeshCollider collider = go.GetComponent<MeshCollider>();
                 if (collider == null) collider = go.AddComponent<MeshCollider>();
                 collider.sharedMesh = mesh;
+
+                // Enable convex collider if specified
+                if (convexCollider)
+                    collider.convex = true;
             }
 
             // Assign static
@@ -1379,7 +1385,8 @@ namespace DaggerfallWorkshop.Utility
                 float width = Mathf.Abs(v2.x - v0.x);
                 float height = Mathf.Abs(v2.y - v0.y);
                 float depth = Mathf.Abs(v2.z - v0.z);
-                Vector3 size = (width > depth) ? new Vector3(width, height, width) : new Vector3(depth, height, depth);
+                float thickness = Mathf.Max(width, depth);
+                Vector3 size = new Vector3(thickness, Mathf.Max(height, thickness), Mathf.Min(height, thickness));
 
                 // Add door to array
                 StaticDoor newDoor = new StaticDoor()
