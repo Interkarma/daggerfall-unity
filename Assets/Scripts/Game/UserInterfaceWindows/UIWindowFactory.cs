@@ -133,10 +133,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return GetInstance(windowType, args);
         }
 
-        public static UIWindowType? GetWindowType(Type windowType)
+        public static UIWindowType? GetWindowType(Type type)
         {
-            var pair = uiWindowImplementations.FirstOrDefault(x => x.Value == windowType);
-            return pair.Key;
+            var pair = uiWindowImplementations.FirstOrDefault(x => x.Value == type);
+            if (pair.Value != null)
+                return pair.Key;
+
+            return null;
         }
 
         private static IUserInterfaceWindow GetInstance(UIWindowType windowType, object[] args)
