@@ -12,6 +12,7 @@
 using DaggerfallWorkshop.Game.UserInterface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -56,7 +57,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         UseMagicItem,
         VidPlayer,
         WitchesCovenPopup,
-        NotFound,
     }
 
     public static class UIWindowFactory
@@ -101,7 +101,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             { UIWindowType.UseMagicItem, typeof(DaggerfallUseMagicItemWindow) },
             { UIWindowType.VidPlayer, typeof(DaggerfallVidPlayerWindow) },
             { UIWindowType.WitchesCovenPopup, typeof(DaggerfallWitchesCovenPopupWindow) },
-            { UIWindowType.NotFound, typeof(DaggerfallHUD) },
         };
 
         /// <summary>
@@ -134,14 +133,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return GetInstance(windowType, args);
         }
 
-        public static UIWindowType GetType(Type windowType)
+        public static UIWindowType? GetWindowType(Type windowType)
         {
-            foreach (var pair in uiWindowImplementations)
-            {
-                if (pair.Value == windowType)
-                    return pair.Key;
-            }
-            return UIWindowType.NotFound;
+            var pair = uiWindowImplementations.FirstOrDefault(x => x.Value == windowType);
+            return pair.Key;
         }
 
         private static IUserInterfaceWindow GetInstance(UIWindowType windowType, object[] args)
