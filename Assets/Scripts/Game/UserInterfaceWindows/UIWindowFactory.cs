@@ -12,6 +12,7 @@
 using DaggerfallWorkshop.Game.UserInterface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -130,6 +131,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
 
             return GetInstance(windowType, args);
+        }
+
+        public static UIWindowType? GetWindowType(Type type)
+        {
+            var pair = uiWindowImplementations.FirstOrDefault(x => x.Value == type);
+            if (pair.Value != null)
+                return pair.Key;
+
+            return null;
         }
 
         private static IUserInterfaceWindow GetInstance(UIWindowType windowType, object[] args)
