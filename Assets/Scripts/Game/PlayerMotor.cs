@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         LevitateMotor levitateMotor;
         float freezeMotor = 0;
         OnExteriorWaterMethod onExteriorWaterMethod = OnExteriorWaterMethod.None;
+        bool onExteriorPathMethod = false;
 
         #endregion
 
@@ -219,6 +220,14 @@ namespace DaggerfallWorkshop.Game
             get { return onExteriorWaterMethod; }
         }
 
+        /// <summary>
+        /// The method by which player is standing on outdoor path.
+        /// </summary>
+        public bool OnExteriorPath
+        {
+            get { return onExteriorPathMethod; }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -331,6 +340,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Update on water check
             onExteriorWaterMethod = GetOnExteriorWaterMethod();
+            onExteriorPathMethod = GetOnExteriorPathMethod();
 
             heightChanger.DecideHeightAction();
 
@@ -455,6 +465,36 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor)
                 levitateMotor.IsLevitating = false;
         }
+
+        /// <summary>
+        /// Check if player is really standing on an outdoor tile, not just positioned above one.
+        /// For example when player is on their ship they are standing above water but should not be swimming.
+        /// Same when player is levitating above water they should not hear splash sounds.
+        /// </summary>
+        /// <returns>True if player is physically in range of an outdoor tile.</returns>
+        bool GetOnExteriorGroundMethod()
+        {
+            const float walkingRayDistance = 1.0f;
+            const float ridingRayDistance = 2.0f;
+
+            float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
+
+            // Must be outside and actually be standing on a terrain object not some other object (e.g. player ship)
+            RaycastHit hit;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
+            {
+                return false;
+            }
+            else
+            {
+                DaggerfallTerrain terrain = hit.transform.GetComponent<DaggerfallTerrain>();
+                if (!terrain)
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Check if player is really standing on an shallow water tile, determined by if the water design takes up the majority of the texture.
         /// </summary>
@@ -473,6 +513,16 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Check if player is really standing on a path tile.
+        /// </summary>
+        /// <returns>True if player is is on a path tile.</returns>
+        bool OnPathTile(){
+            return GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 46
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 47
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 55;
+        }
+
+        /// <summary>
         /// Check if player is really standing on an outdoor water tile, not just positioned above one.
         /// For example when player is on their ship they are standing above water but should not be swimming.
         /// Same when player is levitating above water they should not hear splash sounds.
@@ -480,34 +530,25 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if player is physically in range of an outdoor water tile.</returns>
         OnExteriorWaterMethod GetOnExteriorWaterMethod()
         {
-            const float walkingRayDistance = 1.0f;
-            const float ridingRayDistance = 2.0f;
-
-            float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
-
-            // Must be outside and over a water tile
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside
-            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && !OnShallowWaterTile()))
-                return OnExteriorWaterMethod.None;
-            // Must actually be standing on a terrain object not some other object (e.g. player ship)
-            RaycastHit hit;
-            if (!Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
-            {
-                return OnExteriorWaterMethod.None;
-            }
-            else
-            {
-                DaggerfallTerrain terrain = hit.transform.GetComponent<DaggerfallTerrain>();
-                if (!terrain)
-                    return OnExteriorWaterMethod.None;
-            }
+            bool onShallowWaterTile = OnShallowWaterTile();
+            if(!GetOnExteriorGroundMethod()
+            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && !onShallowWaterTile))
+               return OnExteriorWaterMethod.None;
 
             // Handle swimming/waterwalking
-            if (GameManager.Instance.PlayerEntity.IsWaterWalking
-            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && OnShallowWaterTile()))
+            if (GameManager.Instance.PlayerEntity.IsWaterWalking || onShallowWaterTile)
                 return OnExteriorWaterMethod.WaterWalking;
             else
                 return OnExteriorWaterMethod.Swimming;
+        }
+
+        /// <summary>
+        /// Check if player is really standing on an outdoor path tile, not just positioned above one.
+        /// </summary>
+        /// <returns>True if player is physically in range of an outdoor path tile.</returns>
+        bool GetOnExteriorPathMethod()
+        {
+            return GetOnExteriorGroundMethod() && OnPathTile();
         }
 
         #endregion
