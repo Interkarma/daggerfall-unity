@@ -347,7 +347,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             Items.DaggerfallUnityItem[] equipTable = entity.ItemEquipTable.EquipTable;
             for (int i = 0; i < equipTable.Length; i++)
             {
-                if (equipTable[i] != null && (equipTable[i].ItemGroup == Items.ItemGroups.Armor))
+                if (equipTable[i] != null)
                 {
                     entity.UpdateEquippedArmorValues(equipTable[i], true);
                 }
