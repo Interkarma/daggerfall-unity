@@ -352,6 +352,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 climbingMotor = GameManager.Instance.ClimbingMotor;
 
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            if (gameMinutes < lastGameMinutes)
+            {
+                throw new Exception(string.Format("lastGameMinutes {0} greater than gameMinutes: {1}", lastGameMinutes, gameMinutes));
+            }
 
             // Wait until game has started and the game time has been set.
             // If the game time is taken before then "30" is returned, which causes an initial player fatigue loss

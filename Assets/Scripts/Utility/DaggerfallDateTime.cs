@@ -343,6 +343,10 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="seconds">Amount in seconds to raise time values.</param>
         public void RaiseTime(float seconds)
         {
+            if (seconds < 0f)
+            {
+                throw new InvalidOperationException(string.Format("Time increases should always be positive. Got {0}", seconds));
+            }
             // Increment seconds by any amount
             Second += seconds;
 
