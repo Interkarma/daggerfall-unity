@@ -127,7 +127,10 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 // Attempt soul trap and allow entity to die based on outcome
                 if (AttemptSoulTrap())
+                {
+                    SoulTrapActive = false;
                     return base.SetHealth(amount, restoreMode);
+                }
             }
 
             return currentHealth;
