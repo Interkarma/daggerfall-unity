@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop
         // Keys
         public int key;                             // Key of this material
         public int keyGroup;                        // Group of this material
+        public float timeStamp;                     // Time in seconds from startup during last access
 
         // Textures
         public Texture2D albedoMap;                 // Albedo texture of material
