@@ -455,6 +455,22 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor)
                 levitateMotor.IsLevitating = false;
         }
+        /// <summary>
+        /// Check if player is really standing on an shallow water tile, determined by if the water design takes up the majority of the texture.
+        /// </summary>
+        /// <returns>True if player is is on a shallow water tile.</returns>
+        bool OnShallowWaterTile(){
+            return GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 5
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 6
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 8
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 20
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 21
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 23
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 30
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 31
+            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex >= 33 && GameManager.Instance.StreamingWorld.PlayerTileMapIndex <= 36)
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 49;
+        }
 
         /// <summary>
         /// Check if player is really standing on an outdoor water tile, not just positioned above one.
@@ -471,11 +487,7 @@ namespace DaggerfallWorkshop.Game
 
             // Must be outside and over a water tile
             if (GameManager.Instance.PlayerEnterExit.IsPlayerInside
-            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0
-            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 20
-            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 21
-            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 22
-            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 23))
+            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && !OnShallowWaterTile()))
                 return OnExteriorWaterMethod.None;
             // Must actually be standing on a terrain object not some other object (e.g. player ship)
             RaycastHit hit;
@@ -492,10 +504,7 @@ namespace DaggerfallWorkshop.Game
 
             // Handle swimming/waterwalking
             if (GameManager.Instance.PlayerEntity.IsWaterWalking
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 20
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 21
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 22
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 23)
+            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && OnShallowWaterTile()))
                 return OnExteriorWaterMethod.WaterWalking;
             else
                 return OnExteriorWaterMethod.Swimming;
