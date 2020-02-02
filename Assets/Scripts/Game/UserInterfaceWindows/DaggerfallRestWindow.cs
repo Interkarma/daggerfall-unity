@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut
+// Contributors:    Hazelnut, Numidium
 // 
 // Notes:
 //
@@ -430,6 +430,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     currentRestMode = RestModes.Selection;
                 }
             }
+
+            GameManager.Instance.PlayerEntity.IsResting = false;
         }
 
         bool TickVitals()

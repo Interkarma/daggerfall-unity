@@ -79,6 +79,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         RacialOverrideEffect racialOverrideEffect;
         PassiveSpecialsEffect passiveSpecialsEffect;
 
+        const int normalMagicItemDegradeRate = 4;
+        const int restingMagicItemDegradeRate = 60;
+
         #endregion
 
         #region Properties
@@ -1622,13 +1625,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
                 }
 
-                // If bundle has an item source keep it alive until item breaks or is unequipped
                 if (bundle.fromEquippedItem != null)
                 {
-                    hasRemainingEffectRounds = true;
+                    hasRemainingEffectRounds = true; // If bundle has an item source keep it alive until item breaks or is unequipped
 
-                    // TODO: Manage item damage the longer it is equipped
-                    // See http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+                    // Degrade item at an average of 1 point per 4 rounds when awake and not travelling and 1 point hourly when resting/loitering
+                    if (!GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease)
+                    {
+                        int degradeRate = GameManager.Instance.PlayerEntity.IsResting ? restingMagicItemDegradeRate : normalMagicItemDegradeRate;
+
+                        if (UnityEngine.Random.Range(0, degradeRate) == 0)
+                            bundle.fromEquippedItem.LowerCondition(1, entityBehaviour.Entity, entityBehaviour.Entity.Items);
+                    }
                 }
 
                 // Expire this bundle once all effects have 0 rounds remaining
