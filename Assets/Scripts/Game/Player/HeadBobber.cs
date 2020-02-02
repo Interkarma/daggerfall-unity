@@ -81,7 +81,8 @@ namespace DaggerfallWorkshop.Game
             if (!DaggerfallUnity.Settings.HeadBobbing ||
                 GameManager.Instance.PlayerEntity.CurrentHealth < 1 ||
                 GameManager.IsGamePaused ||
-                climbingMotor.IsClimbing)
+                climbingMotor.IsClimbing ||
+			    !playerMotor.IsGrounded)
                 return;
 
             GetBobbingStyle();
