@@ -49,8 +49,8 @@ namespace DaggerfallWorkshop.Game
         private PlayerSpeedChanger speedChanger;
         private FrictionMotor frictionMotor;
         private AcrobatMotor acrobatMotor;
-        private PlayerGroundMotor groundMotor;
         private PlayerEnterExit playerEnterExit;
+        private PlayerGroundMotor groundMotor;
         private PlayerMoveScanner playerScanner;
 
         private CollisionFlags collisionFlags = 0;
@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsRunning
         {
-            get { return speed == speedChanger.GetRunSpeed(speedChanger.GetBaseSpeed()); }
+            get { return speedChanger.isRunning; }
         }
 
         public bool IsStandingStill
@@ -298,6 +298,8 @@ namespace DaggerfallWorkshop.Game
                 grounded = true;
             }
 
+            UpdateSpeed();
+
             if (grounded)
             {
                 acrobatMotor.Jumping = false;
@@ -317,7 +319,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             playerScanner.FindStep(moveDirection);
-            
+
             acrobatMotor.ApplyGravity(ref moveDirection);
 
             acrobatMotor.HitHead(ref moveDirection);
@@ -337,12 +339,17 @@ namespace DaggerfallWorkshop.Game
             if (levitateMotor && levitateMotor.IsLevitating)
                 return;
 
-            speed = speedChanger.GetBaseSpeed();
-            speedChanger.HandleInputSpeedAdjustment(ref speed);
-            if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
-                speed = speedChanger.GetSwimSpeed(speed);
+            speedChanger.CaptureInputSpeedAdjustment();
 
             UpdateSmoothFollower();
+        }
+
+        private void UpdateSpeed()
+        {
+            speed = speedChanger.GetBaseSpeed();
+            speedChanger.ApplyInputSpeedAdjustment(ref speed);
+            if (playerEnterExit.IsPlayerSwimming && !GameManager.Instance.PlayerEntity.IsWaterWalking)
+                speed = speedChanger.GetSwimSpeed(speed);
         }
 
         // Store point that we're in contact with for use in FixedUpdate if needed

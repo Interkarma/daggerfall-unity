@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game
 
             if (!isSlipping)
             {
-                float climbScalar = speedChanger.GetClimbingSpeed();
+                float climbScalar = speedChanger.GetClimbingSpeed(playerMotor.Speed);
                 moveDirection = Vector3.zero;
                 bool movedForward = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
                 bool movedBackward = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);

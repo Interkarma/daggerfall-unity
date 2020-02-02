@@ -23,6 +23,7 @@ namespace DaggerfallWorkshop.Game
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
         // There must be a button set up in the Input Manager called "Run"
         public bool toggleRun = false;
+        public bool toggleSneak = false;
 
         // Daggerfall base speed constants. (courtesy Allofich)
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
@@ -39,6 +40,11 @@ namespace DaggerfallWorkshop.Game
 
         public delegate bool CanPlayerRun();
         public CanPlayerRun CanRun { get; set; }
+        public bool runningMode = false;
+        public bool sneakingMode = false;
+
+        public bool isRunning = false;
+        public bool isSneaking = false;
 
         private void Start()
         {
@@ -47,35 +53,49 @@ namespace DaggerfallWorkshop.Game
             CanRun = CanRunUnlessRiding;
         }
 
+
+
+        /// <summary>
+        /// Record player input for speed adjustment
+        /// </summary>
+        public void CaptureInputSpeedAdjustment()
+        {
+            if (!toggleRun)
+                runningMode = InputManager.Instance.HasAction(InputManager.Actions.Run);
+            else
+                runningMode = runningMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Run);
+
+            if (!toggleSneak)
+                sneakingMode = InputManager.Instance.HasAction(InputManager.Actions.Sneak);
+            else
+                sneakingMode = sneakingMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Sneak);
+        }
+
         /// <summary>
         /// Determines how speed should be changed based on player's input
         /// </summary>
         /// <param name="speed"></param>
-        public void HandleInputSpeedAdjustment(ref float speed)
+        public void ApplyInputSpeedAdjustment(ref float speed)
         {
             if (playerMotor.IsGrounded)
             {
-                if (InputManager.Instance.HasAction(InputManager.Actions.Run) && CanRun())
-                {
-                    try
-                    {
-                        // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
-                        if (!toggleRun)
-                            speed = GetRunSpeed(speed);
-                        else
-                            speed = (speed == GetBaseSpeed() ? GetRunSpeed(speed) : GetBaseSpeed());
-                    }
-                    catch
-                    {
-                        speed = GetRunSpeed(speed);
-                    }
-                }
+                isRunning = CanRun() && runningMode && !sneakingMode;
+                isSneaking = sneakingMode;
+            }
+            else
+            {
+                if (!CanRun())
+                    isRunning = false;
+                // you can't switch running on/off while in mid air
+            }
+
+            if (isRunning)
+                speed = GetRunSpeed(speed);
+            else if (isSneaking)
+            {
                 // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
-                else if (InputManager.Instance.HasAction(InputManager.Actions.Sneak))
-                {
-                    speed /= 2;
-                    speed -= (1 / classicToUnitySpeedUnitRatio);
-                }
+                speed /= 2;
+                speed -= (1 / classicToUnitySpeedUnitRatio);
             }
         }
 
@@ -146,12 +166,12 @@ namespace DaggerfallWorkshop.Game
             return (baseSpeed * (player.Skills.GetLiveSkillValue(DFCareer.Skills.Swimming) / 200f)) + (baseSpeed / 4);
         }
 
-        public float GetClimbingSpeed()
+        public float GetClimbingSpeed(float baseSpeed)
         {
             // Climbing effect states "target can climb twice as well" - doubling climbing speed
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
             float climbingBoost = player.IsEnhancedClimbing ? 2f : 1f;
-            return (playerMotor.Speed / 3) * climbingBoost;
+            return (baseSpeed / 3) * climbingBoost;
         }
     }
 }
