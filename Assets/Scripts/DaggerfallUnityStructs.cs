@@ -117,6 +117,7 @@ namespace DaggerfallWorkshop
         public FilterMode filterMode;               // Filter mode of this material
         public int singleFrameCount;                // Number of frames in single animated material
         public int[] atlasFrameCounts;              // Array of frame counts for animated materials
+        public int framesPerSecond;                 // Number of frames per second in single animated material
 
         // Windows
         public bool isWindow;                       // True if this is a window material

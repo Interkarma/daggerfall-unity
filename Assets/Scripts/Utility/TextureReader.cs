@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Utility
         public const int AnimalsTextureArchive = 201;
         public const int LightsTextureArchive = 210;
         public const int FixedTreasureFlatsArchive = 216;
+        public const int FireWallsArchive = 356;
         //public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
 
         /// <summary>
@@ -269,8 +270,20 @@ namespace DaggerfallWorkshop.Utility
             {
                 if (settings.createEmissionMap || (settings.autoEmission && isEmissive) && !isWindow)
                 {
-                    // Just reuse albedo map for basic colour emission
-                    emissionMap = albedoMap;
+                    if (settings.archive != FireWallsArchive)
+                        // Just reuse albedo map for basic colour emission
+                        emissionMap = albedoMap;
+                    else
+                    {
+                        // Mantellan Crux fire walls - lessen stroboscopic effect
+                        Color fireColor = new Color(0.706f, 0.271f, 0.086f); // Average of dim frame (0)
+                        // Color fireColor = new Color(0.773f, 0.38f, 0.122f); // Average of average frames (1 and 3)
+                        // Color fireColor = new Color(0.851f, 0.506f, 0.165f); // Average of bright frame (2)
+                        Color32[] firewallEmissionColors = textureFile.GetFireWallColors32(ref albedoColors, sz.Width, sz.Height, fireColor, 0.3f);
+                        emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
+                        emissionMap.SetPixels32(firewallEmissionColors);
+                        emissionMap.Apply(true, !settings.stayReadable);
+                    }
                     resultEmissive = true;
                 }
 

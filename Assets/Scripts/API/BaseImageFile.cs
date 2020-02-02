@@ -298,6 +298,16 @@ namespace DaggerfallConnect.Arena2
             return emissionColors;
         }
 
+        public Color32[] GetFireWallColors32(ref Color32[] srcTexture, int width, int height, Color neutralColor, float scale)
+        {
+            Color32[] emissionColors = new Color32[width * height];
+
+            for (int i = 0; i < emissionColors.Length; i++)
+                emissionColors[i] = Color32.Lerp(neutralColor, srcTexture[i], scale);
+
+            return emissionColors;
+        }
+
         #endregion
 
         #region Protected Methods
