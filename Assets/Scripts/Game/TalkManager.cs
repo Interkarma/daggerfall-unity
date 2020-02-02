@@ -1920,7 +1920,9 @@ namespace DaggerfallWorkshop.Game
         public void AddQuestTopicWithInfoAndRumors(Quest quest)
         {
             // Add RumorsDuringQuest rumor to rumor mill
-            AddOrReplaceQuestProgressRumor(quest.UID, quest.GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest));
+            Message message = quest.GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
+            if (message != null)
+                AddOrReplaceQuestProgressRumor(quest.UID, message);
             
             // Add topics for the places to see, people to meet and items to handle.
             foreach (QuestResource resource in quest.GetAllResources())
