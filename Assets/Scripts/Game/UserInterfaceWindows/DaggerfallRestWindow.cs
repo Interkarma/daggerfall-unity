@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect counterPanelRect = new Rect(0, 50, 105, 41);
         Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
         Rect stopButtonRect = new Rect(33, 26, 40, 10);
+        Rect clockTextPanelRect = new Rect(6, 3, 16, 8);
 
         #endregion
 
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Panel counterPanel = new Panel();
 
         protected TextLabel counterLabel = new TextLabel();
+        protected TextLabel clockLabel = new TextLabel();
 
         #endregion
 
@@ -52,6 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Texture2D baseTexture;
         protected Texture2D hoursPastTexture;
         protected Texture2D hoursRemainingTexture;
+        protected Texture2D clockTexture;
 
         #endregion
 
@@ -147,6 +150,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             counterLabel.Position = new Vector2(0, 2);
             counterLabel.HorizontalAlignment = HorizontalAlignment.Center;
             counterTextPanel.Components.Add(counterLabel);
+
+            // Setup clock text (not in classic)
+            Panel clockTextPanel = DaggerfallUI.AddPanel(clockTextPanelRect, mainPanel);
+            clockLabel.Position = new Vector2(0, 2);
+            clockLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            clockLabel.Enabled = true;
+            clockTextPanel.Components.Add(clockLabel);
+
+            TickClockLabel();
 
             // Stop button
             stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
@@ -264,6 +276,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemainingTexture = ImageReader.GetTexture(hoursRemainingTextureName);
         }
 
+        void TickClockLabel()
+        {
+            clockLabel.Text = DaggerfallUnity.Instance.WorldTime.Now.MinTimeString();
+        }
+
         void ShowStatus()
         {
             // Display status based on current rest state
@@ -278,6 +295,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 counterPanel.Enabled = true;
                 counterPanel.BackgroundTexture = hoursPastTexture;
                 counterLabel.Text = totalHours.ToString();
+                TickClockLabel();
             }
             else if (currentRestMode == RestModes.TimedRest)
             {
@@ -285,6 +303,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 counterPanel.Enabled = true;
                 counterPanel.BackgroundTexture = hoursRemainingTexture;
                 counterLabel.Text = hoursRemaining.ToString();
+                TickClockLabel();
             }
             else if (currentRestMode == RestModes.Loiter)
             {
@@ -292,6 +311,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 counterPanel.Enabled = true;
                 counterPanel.BackgroundTexture = hoursRemainingTexture;
                 counterLabel.Text = hoursRemaining.ToString();
+                TickClockLabel();
             }
         }
 
