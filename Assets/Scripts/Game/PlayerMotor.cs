@@ -470,9 +470,13 @@ namespace DaggerfallWorkshop.Game
             float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
 
             // Must be outside and over a water tile
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0)
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside
+            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0
+            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 20
+            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 21
+            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 22
+            && GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 23))
                 return OnExteriorWaterMethod.None;
-
             // Must actually be standing on a terrain object not some other object (e.g. player ship)
             RaycastHit hit;
             if (!Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
@@ -487,7 +491,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Handle swimming/waterwalking
-            if (GameManager.Instance.PlayerEntity.IsWaterWalking)
+            if (GameManager.Instance.PlayerEntity.IsWaterWalking
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 20
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 21
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 22
+            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 23)
                 return OnExteriorWaterMethod.WaterWalking;
             else
                 return OnExteriorWaterMethod.Swimming;
