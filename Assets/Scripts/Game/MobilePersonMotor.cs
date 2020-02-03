@@ -409,7 +409,7 @@ namespace DaggerfallWorkshop.Game
         {
             Vector3 tempTargetScenePosition = cityNavigation.WorldToScenePosition(cityNavigation.NavGridToWorldPosition(GetNextNavPosition(direction)));
             // Aim low to better detect stairs
-            tempTargetScenePosition.y += 0.5f;
+            tempTargetScenePosition.y += 0.1f;
             Ray ray = new Ray(transform.position, tempTargetScenePosition - transform.position);
             bool collision = Physics.Raycast(transform.position, tempTargetScenePosition - transform.position, Vector3.Distance(transform.position, tempTargetScenePosition));
             // Debug.DrawRay(transform.position, tempTargetScenePosition - transform.position, collision ? Color.red : Color.green, 1f);
