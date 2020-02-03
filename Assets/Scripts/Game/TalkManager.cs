@@ -814,7 +814,9 @@ namespace DaggerfallWorkshop.Game
                         continue;
                     foreach (Person person in quest.GetAllResources(typeof(Person)))
                     {
-                        if (GameManager.Instance.QuestMachine.IsNPCDataEqual(person.QuestorData, lastTargetStaticNPC.Data))
+                        if (person.IsQuestor &&
+                            (GameManager.Instance.QuestMachine.IsNPCDataEqual(person.QuestorData, lastTargetStaticNPC.Data) ||
+                             person.IsIndividualNPC && person.FactionData.id == lastTargetStaticNPC.Data.factionID))
                         {
                             TextFile.Token[] tokens = dictQuestorPostQuestMessage[questID];
 

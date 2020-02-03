@@ -506,14 +506,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 questors.Remove(key);
             }
 
-            // Unset questor flag
-            Person personResource = GetPerson(personSymbol);
-            if (personResource != null)
-                personResource.IsQuestor = false;
-
             // Destroy QuestResourceBehaviour from target object if present in scene and not an individual NPC
             // If target object not present in scene then QuestResourceBehaviour simply wont be added next time as Person is no longer a questor
             // Individual NPCs have a permanent QuestResourceBehaviour attached as they have special usage in long-running quests - it must not be removed
+            Person personResource = GetPerson(personSymbol);
             if (personResource != null && personResource.QuestResourceBehaviour != null && !personResource.IsIndividualNPC)
                 MonoBehaviour.Destroy(personResource.QuestResourceBehaviour);
         }
