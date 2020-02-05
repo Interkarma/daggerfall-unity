@@ -191,8 +191,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void Update()
         {
-            // Don't tick if lastGameMinute not set (pre-init)
-            if (lastGameMinute == 0)
+            // Don't tick if lastGameMinute not set (pre-init) or the game is inactive.
+            if (lastGameMinute == 0 || GameManager.Instance.IsPlayingGame() == false)
                 return;
 
             // Every game minute passing is another magic round, so work out how many minutes have passed
