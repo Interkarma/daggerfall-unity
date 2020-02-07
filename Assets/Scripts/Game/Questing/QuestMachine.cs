@@ -416,8 +416,15 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 if (quest != null)
                 {
-                    StartQuest(quest);
-                    RaiseOnQuestStartedEvent(quest);
+                    try
+                    {
+                        StartQuest(quest);
+                        RaiseOnQuestStartedEvent(quest);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFormat("QuestMachine encountered an exception while starting quest {0}. Quest will not be started. Exception message: '{1}'", quest.QuestName, ex.Message);
+                    }
                 }
             }
             questsToInvoke.Clear();

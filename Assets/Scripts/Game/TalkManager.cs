@@ -1369,6 +1369,9 @@ namespace DaggerfallWorkshop.Game
 
         public void AddQuestRumorToRumorMill(ulong questID, Message message)
         {
+            if (message == null)
+                throw new NullReferenceException("AddQuestRumorToRumorMill(): Message cannot be null.");
+
             if (listRumorMill == null || listRumorMill.Count == 0)
                 SetupRumorMill();
 
@@ -1403,6 +1406,9 @@ namespace DaggerfallWorkshop.Game
 
         public void AddOrReplaceQuestProgressRumor(ulong questID, Message message)
         {
+            if (message == null)
+                throw new NullReferenceException("AddOrReplaceQuestProgressRumor(): Message cannot be null.");
+
             if (listRumorMill == null || listRumorMill.Count == 0)
                 SetupRumorMill();
 
@@ -1481,6 +1487,9 @@ namespace DaggerfallWorkshop.Game
 
         public void AddQuestorPostQuestMessage(ulong questID, Message message)
         {
+            if (message == null)
+                throw new NullReferenceException("AddQuestorPostQuestMessage(): Message cannot be null.");
+
             dictQuestorPostQuestMessage[questID] = message.GetTextTokens(0, false); // Do not expand macros
         }
 
