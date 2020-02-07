@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (quest == null)
                     continue;
 
-                QuestMachine.Instance.InstantiateQuest(quest);
+                QuestMachine.Instance.StartQuest(quest);
             }
         }
 

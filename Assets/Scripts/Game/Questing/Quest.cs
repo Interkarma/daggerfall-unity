@@ -11,8 +11,8 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -252,12 +252,20 @@ namespace DaggerfallWorkshop.Game.Questing
         public Quest()
         {
             uid = DaggerfallUnity.NextUID;
-            questStartTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
         }
 
         #endregion
 
         #region Public Methods
+        
+        
+        /// <summary>
+        /// Start the quest.
+        /// </summary>
+        public void Start()
+        {
+            questStartTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
+        }
 
         /// <summary>
         /// Update quest.
@@ -337,21 +345,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 resource.RearmPlayerClick();
             }
             pendingClickRearms.Clear();
-        }
-
-        /// <summary>
-        /// initializes quest rumors
-        /// dictionary must contain the quest's messages (call after messages was initialized correctly)
-        /// </summary>
-        public void initQuestRumors()
-        {
-            // Add RumorsDuringQuest rumor to rumor mill
-            Message message;
-            message = GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
-            if (message != null)
-            {
-                GameManager.Instance.TalkManager.AddOrReplaceQuestProgressRumor(this.UID, message);
-            }
         }
 
         public void EndQuest()
@@ -715,6 +708,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
         }
 
+        public QuestResource[] GetAllResources()
+        {
+            return resources.Values.ToArray();
+        }
+        
         public QuestResource[] GetAllResources(Type resourceType)
         {
             List<QuestResource> foundResources = new List<QuestResource>();

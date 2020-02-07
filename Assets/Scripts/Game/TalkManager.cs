@@ -1935,6 +1935,38 @@ namespace DaggerfallWorkshop.Game
         {
             AssembleTopicLists();
         }
+        
+        public void AddQuestTopicWithInfoAndRumors(Quest quest)
+        {
+            // Add RumorsDuringQuest rumor to rumor mill
+            Message message = quest.GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
+            if (message != null)
+                AddOrReplaceQuestProgressRumor(quest.UID, message);
+            
+            // Add topics for the places to see, people to meet and items to handle.
+            foreach (QuestResource resource in quest.GetAllResources())
+            {
+                QuestInfoResourceType type = GetQuestInfoResourceType(resource);
+                List<TextFile.Token[]> anyInfoAnswers = resource.GetMessage(resource.InfoMessageID);
+                List<TextFile.Token[]> rumorsAnswers = resource.GetMessage(resource.RumorsMessageID);
+
+                AddQuestTopicWithInfoAndRumors(quest.UID, resource, resource.Symbol.Name, type, anyInfoAnswers, rumorsAnswers);
+            }
+        }
+
+        private static QuestInfoResourceType GetQuestInfoResourceType(QuestResource questResource)
+        {
+            QuestInfoResourceType type;
+            if (questResource is Person)
+                type = QuestInfoResourceType.Person;
+            else if (questResource is Place)
+                type = QuestInfoResourceType.Location;
+            else if (questResource is Item)
+                type = QuestInfoResourceType.Thing;
+            else
+                type = QuestInfoResourceType.NotSet;
+            return type;
+        }
 
         public void AddQuestTopicWithInfoAndRumors(ulong questID, QuestResource questResource, string resourceName, QuestInfoResourceType resourceType, List<TextFile.Token[]> anyInfoAnswers, List<TextFile.Token[]> rumorsAnswers)
         {

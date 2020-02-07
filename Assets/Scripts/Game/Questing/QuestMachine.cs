@@ -416,7 +416,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 if (quest != null)
                 {
-                    InstantiateQuest(quest);
+                    StartQuest(quest);
                     RaiseOnQuestStartedEvent(quest);
                 }
             }
@@ -646,30 +646,31 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Parse and instantiate a quest from quest name.
+        /// Parse and start a quest from quest name.
         /// </summary>
         /// <param name="questName">Quest name.</param>
         /// <param name="factionId">Faction id. (optional)</param>
         /// <returns>Quest.</returns>
-        public void InstantiateQuest(string questName, int factionId = 0)
+        public void StartQuest(string questName, int factionId = 0)
         {
             Quest quest = ParseQuest(questName);
             if (quest != null)
             {
                 quest.FactionId = factionId;
-                InstantiateQuest(quest);
+                StartQuest(quest);
             }
         }
 
         /// <summary>
-        /// Instantiate quest from a parsed quest object.
+        /// Start a parsed quest.
         /// </summary>
         /// <param name="quest">Quest.</param>
-        public void InstantiateQuest(Quest quest)
+        public void StartQuest(Quest quest)
         {
-            // init quest rumors (note Nystul: did not find a better place to do this since it must happen after quest parsing and should be called exactly one time for each quest)
-            quest.initQuestRumors();
-
+            quest.Start();
+            
+            GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(quest);
+            
             quests.Add(quest.UID, quest);            
 
             RaiseOnQuestStartedEvent(quest);
