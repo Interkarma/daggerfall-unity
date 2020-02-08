@@ -398,14 +398,22 @@ namespace DaggerfallWorkshop
             summary.AnimStateRecord = record;
             Vector2 size = summary.RecordSizes[record];
 
+            // Post-fix female spellsword scale while casting spells
+            // The scale read from Daggerfall's files is too small 
+            if ((MobileTypes)summary.Enemy.ID == MobileTypes.Spellsword &&
+                summary.Enemy.Gender == MobileGender.Female &&
+                record >= 20 && record <= 24)
+            {
+                size *= 1.35f;
+            }
+
             // Ensure walking enemies keep their feet aligned between states
             if (summary.Enemy.Behaviour != MobileBehaviour.Flying &&
                 summary.Enemy.Behaviour != MobileBehaviour.Aquatic &&
                 summary.EnemyState != MobileStates.Idle)
             {
                 Vector2 idleSize = summary.RecordSizes[0];
-                Vector2 stateSize = summary.RecordSizes[record];
-                transform.localPosition = new Vector3(0f, (stateSize.y - idleSize.y) * 0.5f, 0f);
+                transform.localPosition = new Vector3(0f, (size.y - idleSize.y) * 0.5f, 0f);
             }
             else
             {
