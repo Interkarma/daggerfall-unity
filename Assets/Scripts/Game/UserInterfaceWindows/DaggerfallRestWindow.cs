@@ -57,6 +57,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
+        const string textDatabase = "DaggerfallUI";
+
         protected const string baseTextureName = "REST00I0.IMG";              // Rest type
         protected const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
         protected const string hoursRemainingTextureName = "REST02I0.IMG";    // "Hours remaining"
@@ -573,7 +575,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUnity.Settings.IllegalRestWarning && GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true))
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "illegalRestWarning"));
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "illegalRestWarning"));
                 mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 mb.OnButtonClick += ConfirmIllegalRestForAWhile_OnButtonClick;
@@ -598,7 +600,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallUnity.Settings.IllegalRestWarning && GameManager.Instance.PlayerGPS.IsPlayerInTown(true, true))
             {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "illegalRestWarning"));
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "illegalRestWarning"));
                 mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 mb.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 mb.OnButtonClick += ConfirmIllegalRestUntilHealed_OnButtonClick;
@@ -678,8 +680,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LoiterPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
-            const int cannotLoiterMoreThan3HoursTextId = 27;
-
             // Validate input
             int time = 0;
             bool result = int.TryParse(input, out time);
@@ -693,7 +693,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (time > DaggerfallUnity.Settings.LoiterLimitInHours)
             {
-                DaggerfallUI.MessageBox(cannotLoiterMoreThan3HoursTextId);
+                DaggerfallUI.MessageBox(new string[] { 
+                    TextManager.Instance.GetText(textDatabase, "cannotLoiterMoreThanXHours1"), 
+                    string.Format(TextManager.Instance.GetText(textDatabase, "cannotLoiterMoreThanXHours2"), DaggerfallUnity.Settings.LoiterLimitInHours) });
                 return;
             }
 
