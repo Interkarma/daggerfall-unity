@@ -64,6 +64,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return enchantments.ToArray();
         }
 
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+
+            ConstantEffect();
+        }
+
         #region Payloads
 
         /// <summary>
