@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool IsQuestor
         {
             get { return isQuestor; }
-            set { SetQuestorStatus(value); }
+            set { isQuestor = value; }
         }
 
         public bool IsIndividualNPC
@@ -482,17 +482,6 @@ namespace DaggerfallWorkshop.Game.Questing
             isDestroyed = true;
         }
 
-        /// <summary>
-        /// Set Person as questor and assign questor data if needed.
-        /// Uses last clicked NPC data so has to be called after talking to the actual questor.
-        /// </summary>
-        private void SetQuestorStatus(bool status)
-        {
-            isQuestor = status;
-            if (isQuestor)
-                questorData = QuestMachine.Instance.LastNPCClicked.Data;
-        }
-
         #endregion
 
         #region Private Methods
@@ -851,8 +840,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 return false;
             }
 
-            // Set as questor
-            IsQuestor = true;
+            // Set questor data
+            questorData = QuestMachine.Instance.LastNPCClicked.Data;
+            isQuestor = true;
 
             // Setup Person resource
             FactionFile.FactionData factionData = GetFactionData(questorData.factionID);
