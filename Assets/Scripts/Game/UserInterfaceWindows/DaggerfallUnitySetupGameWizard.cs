@@ -149,7 +149,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(exitButton);
 
             // If actually validated and we just want to see settings then move direct to settings page
-            if (DaggerfallUnity.Instance.IsPathValidated && DaggerfallUnity.Settings.ShowOptionsAtStart)
+            if (DaggerfallUnity.Instance.IsPathValidated && (DaggerfallUnity.Settings.ShowOptionsAtStart || Input.anyKey))
             {
                 currentStage = SetupStages.Options - 1;
             }
@@ -724,6 +724,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         private void OptionsConfirmButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (DaggerfallUnity.Settings.ShowOptionsAtStart && !alwayShowOptions.IsChecked)
+            {
+                var messageBox = new DaggerfallMessageBox(uiManager, this, true);
+                messageBox.SetText(GetText("showOptionsAgain"));
+                messageBox.AllowCancel = true;
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.OnClose += () => {
+                    SaveOptionsAndContinue();
+                };
+                uiManager.PushWindow(messageBox);
+                return;
+            }
+
+            SaveOptionsAndContinue();
+        }
+
+        private void SaveOptionsAndContinue()
         {
             DaggerfallUnity.Settings.ShowOptionsAtStart = alwayShowOptions.IsChecked;
             DaggerfallUnity.Settings.VSync = vsync.IsChecked;

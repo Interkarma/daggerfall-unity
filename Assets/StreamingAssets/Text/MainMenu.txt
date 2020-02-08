@@ -47,3 +47,4 @@ testText,                   Test
 okText,                     OK
 keepSetting,                Keep this setting? Changes will revert in 8 seconds.
 incompatibleMods,           One or more mods are incompatible with current version of the game. Please check mods window for details. Do you wish to continue anyway?
+showOptionsAgain,           Hold the Shift key when starting Daggerfall Unity to show the launcher again
