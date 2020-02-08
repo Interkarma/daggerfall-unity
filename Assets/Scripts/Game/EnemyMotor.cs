@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(CharacterController))]
     public class EnemyMotor : MonoBehaviour
     {
+
         #region Member Variables
 
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
@@ -66,7 +67,9 @@ namespace DaggerfallWorkshop.Game
         int searchMult;
         int ignoreMaskForShooting;
         bool canAct;
+        bool falls;
         bool flyerFalls;
+        float lastGroundedY;                        // Used for fall damage
         float originalHeight;
 
         EnemySenses senses;
@@ -75,6 +78,7 @@ namespace DaggerfallWorkshop.Game
         CharacterController controller;
         DaggerfallMobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
+        EnemyBlood entityBlood;
         EntityEffectManager entityEffectManager;
         EntityEffectBundle selectedSpell;
         EnemyAttack attack;
@@ -103,6 +107,7 @@ namespace DaggerfallWorkshop.Game
                     mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            entityBlood = GetComponent<EnemyBlood>();
             entityEffectManager = GetComponent<EntityEffectManager>();
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
@@ -112,6 +117,8 @@ namespace DaggerfallWorkshop.Game
 
             // Add things AI should ignore when checking for a clear path to shoot.
             ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
+
+            lastGroundedY = transform.position.y;
 
             // Get original height, before any height adjustments
             originalHeight = controller.height;
@@ -124,6 +131,7 @@ namespace DaggerfallWorkshop.Game
 
             canAct = true;
             flyerFalls = false;
+            falls = false;
 
             HandleParalysis();
             KnockbackMovement();
@@ -133,6 +141,7 @@ namespace DaggerfallWorkshop.Game
             UpdateTimers();
             if (canAct)
                 TakeAction();
+            ApplyFallDamage();
             UpdateToIdleOrMoveAnim();
             OpenDoors();
             HeightAdjust();
@@ -276,6 +285,7 @@ namespace DaggerfallWorkshop.Game
             if (!flies && !swims && !IsLevitating && !controller.isGrounded)
             {
                 controller.SimpleMove(Vector3.zero);
+                falls = true;
 
                 // Only cancel movement if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
                 // Allowing them to continue and attempt a Move() frees them, but we don't want to allow that if we can avoid it so they aren't moving
@@ -285,7 +295,10 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (flyerFalls && flies && !IsLevitating)
+            {
                 controller.SimpleMove(Vector3.zero);
+                falls = true;
+            }
         }
 
         /// <summary>
@@ -1276,6 +1289,39 @@ namespace DaggerfallWorkshop.Game
             }
 
             lastPosition = transform.position;
+        }
+
+        void ApplyFallDamage()
+        {
+            // Assuming the same formula is used for the player and enemies
+            const float fallingDamageThreshold = 5.0f;
+            const float HPPerMetre = 5f;
+
+            if (controller.isGrounded)
+            {
+                // did enemy just land?
+                if (falls)
+                {
+                    float fallDistance = lastGroundedY - transform.position.y;
+                    if (fallDistance > fallingDamageThreshold)
+                    {
+                        int damage = (int)(HPPerMetre * (fallDistance - fallingDamageThreshold));
+
+                        EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
+                        enemyEntity.DecreaseHealth(damage);
+
+                        if (entityBlood)
+                        {
+                            // Like in classic, falling enemies bleed at the center. It must hurt the center of mass ;)
+                            entityBlood.ShowBloodSplash(0, transform.position);
+                        }
+
+                        DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint((int)SoundClips.FallDamage, FindGroundPosition());
+                    }
+                }
+
+                lastGroundedY = transform.position.y;
+            }
         }
 
         /// <summary>
