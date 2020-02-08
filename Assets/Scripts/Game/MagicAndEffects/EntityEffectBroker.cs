@@ -191,8 +191,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void Update()
         {
-            // Don't tick if lastGameMinute not set (pre-init)
-            if (lastGameMinute == 0)
+            // Don't tick if lastGameMinute not set (pre-init) or game loading
+            // Note: Effect system must be able to update while game is paused but game time still passes, e.g. rest or fast travel
+            if (lastGameMinute == 0 || SaveLoadManager.Instance.LoadInProgress)
                 return;
 
             // Every game minute passing is another magic round, so work out how many minutes have passed
