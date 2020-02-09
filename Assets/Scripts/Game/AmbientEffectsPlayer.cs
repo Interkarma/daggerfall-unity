@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game
                 StartWaiting();
             }
 
-            if (IsCemeteryNearby)
+            if (IsCemeteryNearby && !playerEnterExit.IsPlayerInside)
             {
                 cemeteryWaitCounter += Time.deltaTime;
                 if (cemeteryWaitCounter > cemeteryWaitTime)
