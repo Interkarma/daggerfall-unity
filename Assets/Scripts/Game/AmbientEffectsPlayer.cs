@@ -25,6 +25,8 @@ namespace DaggerfallWorkshop.Game
     {
         public int MinWaitTime = 4;             // Min wait time in seconds before next sound
         public int MaxWaitTime = 35;            // Max wait time in seconds before next sound
+        public int CemeteryMinWaitTime = 1;     // Min wait time in seconds before next sound
+        public int CemeteryMaxWaitTime = 120;   // Max wait time in seconds before next sound
         public AmbientSoundPresets Presets;     // Ambient sound preset
         public bool IsMuted = false;
         public bool doNotPlayInCastle = true;   // Do not play ambient effects in castle blocks
@@ -40,11 +42,25 @@ namespace DaggerfallWorkshop.Game
         //private Coroutine relativePositionCoroutine = null;
 
         SoundClips[] ambientSounds;
+        SoundClips[] cemeteryAmbientSounds = new SoundClips[]
+            {
+                SoundClips.AmbientDistantHowl,
+                SoundClips.AmbientCreepyBirdCall,
+                SoundClips.AmbientCreepyBirdCall,
+                SoundClips.AmbientCreepyBirdCall
+            };
         AudioClip rainLoop;
         AudioClip cricketsLoop;
+
         float waitTime;
         float waitCounter;
+
+        bool IsCemeteryNearby;
+        float cemeteryWaitTime;
+        float cemeteryWaitCounter;
+
         float waterWaitCounter;
+
         AmbientSoundPresets lastPresets;
         Entity.DaggerfallEntityBehaviour playerBehaviour;
         PlayerEnterExit playerEnterExit;
@@ -70,6 +86,9 @@ namespace DaggerfallWorkshop.Game
             StartWaiting();
             playerBehaviour = GameManager.Instance.PlayerEntityBehaviour;
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
+            PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
 
             DaggerfallVidPlayerWindow.OnVideoStart += AmbientEffectsPlayer_OnVideoStart;
             DaggerfallVidPlayerWindow.OnVideoEnd += AmbientEffectsPlayer_OnVideoEnd;
@@ -131,6 +150,16 @@ namespace DaggerfallWorkshop.Game
             {
                 PlayEffects();
                 StartWaiting();
+            }
+
+            if (IsCemeteryNearby)
+            {
+                cemeteryWaitCounter += Time.deltaTime;
+                if (cemeteryWaitCounter > cemeteryWaitTime)
+                {
+                    PlayCemeteryEffects();
+                    StartCemeteryWaiting();
+                }
             }
 
             // Play water sound effects. Timing based on classic.
@@ -277,6 +306,20 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void PlayCemeteryEffects()
+        {
+            // Do nothing if audio not setup
+            if (ambientAudioSource == null)
+                return;
+
+            // Get next sound index
+            int index = random.Next(0, cemeteryAmbientSounds.Length);
+
+            // Play ambient sound as a one-shot 3D sound
+            SoundClips clip = cemeteryAmbientSounds[index];
+            PlaySomewhereAround(clip, 1f);
+        }
+
         private IEnumerator PlayLightningEffects(int index)
         {
             //Debug.Log(string.Format("Playing index {0}", index));
@@ -359,6 +402,15 @@ namespace DaggerfallWorkshop.Game
             // Reset countdown to next sound
             waitTime = random.Next(MinWaitTime, MaxWaitTime);
             waitCounter = 0;
+        }
+
+        private void StartCemeteryWaiting()
+        {
+            // Reset countdown to next sound
+            // Poisson process https://preshing.com/20111007/how-to-generate-random-timings-for-a-poisson-process/
+            float rateParameter = (CemeteryMinWaitTime + CemeteryMaxWaitTime - 1) / 2f;
+            cemeteryWaitTime = Mathf.Clamp(-Mathf.Log(Random.Range(0f, 1f)) * rateParameter, CemeteryMinWaitTime, CemeteryMaxWaitTime);
+            cemeteryWaitCounter = 0;
         }
 
         private void ApplyPresets()
@@ -466,6 +518,23 @@ namespace DaggerfallWorkshop.Game
                 OnPlayEffect(args);
         }
 
+        void PlayerGPS_OnEnterLocationRect(DaggerfallConnect.DFLocation location)
+        {
+            IsCemeteryNearby = false;
+            bool isPlayerInside = playerEnterExit.IsPlayerInside;
+
+            if (!isPlayerInside)
+            {
+                IsCemeteryNearby = (location.MapTableData.LocationType == DaggerfallConnect.DFRegion.LocationTypes.Graveyard);
+                if (IsCemeteryNearby)
+                    StartCemeteryWaiting();
+            }
+        }
+
+        void PlayerGPS_OnExitLocationRect()
+        {
+            IsCemeteryNearby = false;
+        }
 
         private void AmbientEffectsPlayer_OnVideoStart()
         {
