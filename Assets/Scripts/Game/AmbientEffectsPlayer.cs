@@ -363,49 +363,53 @@ namespace DaggerfallWorkshop.Game
 
         private void ApplyPresets()
         {
-            if (Presets == AmbientSoundPresets.Dungeon)
+            switch (Presets)
             {
-                // Set dungeon one-shots
-                ambientSounds = new SoundClips[] {
-                    SoundClips.AmbientDripShort,
-                    SoundClips.AmbientDripLong,
-                    SoundClips.AmbientWindMoan,
-                    SoundClips.AmbientWindMoanDeep,
-                    SoundClips.AmbientDoorOpen,
-                    SoundClips.AmbientGrind,
-                    SoundClips.AmbientStrumming,
-                    SoundClips.AmbientWindBlow1,
-                    SoundClips.AmbientWindBlow1a,
-                    SoundClips.AmbientWindBlow1b,
-                    SoundClips.AmbientMonsterRoar,
-                    SoundClips.AmbientGoldPieces,
-                    SoundClips.AmbientBirdCall,
-                    SoundClips.AmbientDoorClose,
-                };
-                AmbientInteriorPresets();
-            }
-            else if (Presets == AmbientSoundPresets.Storm)
-            {
-                // Set storm one-shots
-                ambientSounds = new SoundClips[] {
-                    SoundClips.StormLightningShort,
-                    SoundClips.StormLightningThunder,
-                    SoundClips.StormThunderRoll,
-                };
-                AmbientExteriorPresets();
-            }
-            else if (Presets == AmbientSoundPresets.SunnyDay)
-            {
-                ambientSounds = new SoundClips[]
-                {
-                    SoundClips.BirdCall1,
-                    SoundClips.BirdCall2,
-                };
-                AmbientExteriorPresets();
-            }
-            else
-            {
-                ambientSounds = null;
+                case AmbientSoundPresets.Dungeon:
+                    // Set dungeon one-shots
+                    ambientSounds = new SoundClips[] {
+                        SoundClips.AmbientDripShort,
+                        SoundClips.AmbientDripLong,
+                        SoundClips.AmbientWindMoan,
+                        SoundClips.AmbientWindMoanDeep,
+                        SoundClips.AmbientDoorOpen,
+                        SoundClips.AmbientGrind,
+                        SoundClips.AmbientStrumming,
+                        SoundClips.AmbientWindBlow1,
+                        SoundClips.AmbientWindBlow1a,
+                        SoundClips.AmbientWindBlow1b,
+                        SoundClips.AmbientMonsterRoar,
+                        SoundClips.AmbientGoldPieces,
+                        SoundClips.AmbientBirdCall,
+                        SoundClips.AmbientDoorClose,
+                    };
+                    AmbientInteriorPresets();
+                    break;
+
+                case AmbientSoundPresets.Storm:
+                    // Set storm one-shots
+                    ambientSounds = new SoundClips[] {
+                        SoundClips.StormLightningShort,
+                        SoundClips.StormLightningThunder,
+                        SoundClips.StormThunderRoll,
+                    };
+                    AmbientExteriorPresets();
+                    break;
+
+                case AmbientSoundPresets.SunnyDay:
+                    ambientSounds = new SoundClips[]
+                    {
+                        SoundClips.BirdCall1,
+                        SoundClips.BirdCall2,
+                    };
+                    AmbientExteriorPresets();
+                    break;
+
+                case AmbientSoundPresets.ClearNight:
+                case AmbientSoundPresets.Rain:
+                case AmbientSoundPresets.None:
+                    ambientSounds = null;
+                    break;
             }
 
             lastPresets = Presets;
