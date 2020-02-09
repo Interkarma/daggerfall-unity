@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game
         public int MinWaitTime = 4;             // Min wait time in seconds before next sound
         public int MaxWaitTime = 35;            // Max wait time in seconds before next sound
         public int CemeteryMinWaitTime = 1;     // Min wait time in seconds before next sound
-        public int CemeteryMaxWaitTime = 120;   // Max wait time in seconds before next sound
+        public int CemeteryMaxWaitTime = 80;   // Max wait time in seconds before next sound
         public AmbientSoundPresets Presets;     // Ambient sound preset
         public bool IsMuted = false;
         public bool doNotPlayInCastle = true;   // Do not play ambient effects in castle blocks
@@ -45,7 +45,6 @@ namespace DaggerfallWorkshop.Game
         SoundClips[] cemeteryAmbientSounds = new SoundClips[]
             {
                 SoundClips.AmbientDistantHowl,
-                SoundClips.AmbientCreepyBirdCall,
                 SoundClips.AmbientCreepyBirdCall,
                 SoundClips.AmbientCreepyBirdCall
             };
@@ -407,9 +406,7 @@ namespace DaggerfallWorkshop.Game
         private void StartCemeteryWaiting()
         {
             // Reset countdown to next sound
-            // Poisson process https://preshing.com/20111007/how-to-generate-random-timings-for-a-poisson-process/
-            float rateParameter = (CemeteryMinWaitTime + CemeteryMaxWaitTime - 1) / 2f;
-            cemeteryWaitTime = Mathf.Clamp(-Mathf.Log(Random.Range(0f, 1f)) * rateParameter, CemeteryMinWaitTime, CemeteryMaxWaitTime);
+            cemeteryWaitTime = random.Next(CemeteryMinWaitTime, CemeteryMaxWaitTime);
             cemeteryWaitCounter = 0;
         }
 
