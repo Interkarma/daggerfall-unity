@@ -86,6 +86,8 @@ namespace DaggerfallWorkshop.Game.Questing
         StaticNPC lastNPCClicked;
         Dictionary<int, IQuestAction> factionListeners = new Dictionary<int, IQuestAction>();
 
+        System.Random internalSeed = new System.Random();
+
         #endregion
 
         #region Properties
@@ -635,6 +637,8 @@ namespace DaggerfallWorkshop.Game.Questing
         public Quest ParseQuest(string questName, string[] questSource, int factionId = 0, bool partialParse = false)
         {
             LogFormat("\r\n\r\nParsing quest {0}", questName);
+
+            UnityEngine.Random.InitState(internalSeed.Next());
 
             try
             {
