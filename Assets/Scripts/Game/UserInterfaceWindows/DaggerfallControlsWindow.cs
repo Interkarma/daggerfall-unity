@@ -365,7 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (Input.GetKeyDown(code))
                 {
-                    if (code.ToString() != "Escape")
+                    if (code.ToString() != "Escape" && code != KeyCode.SysReq)
                     {
                         button.Label.Text = code.ToString();
                         CheckDuplicates();
