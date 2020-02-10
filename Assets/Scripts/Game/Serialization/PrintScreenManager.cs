@@ -31,55 +31,56 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class PrintScreenManager : MonoBehaviour
     {
 
-		const string rootScreenshotsFolder = "Screenshots";
-		
-		private string unityScreenshotsPath;
-		public string UnityScreenshotsPath
-		{ 
-			get { return GetUnityScreenshotsPath(); } 
-		}
-		
-		private KeyCode prtscrBinding;
-		
-		void Awake()
-		{
-			prtscrBinding = InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen);
-		}
-		
-		// Update is called once per frame
-		void Update ()
-		{
-			if (!DaggerfallUI.Instance.HotkeySequenceProcessed){
-                // Toggle window closed with same hotkey used to open it
-                if (Input.GetKeyUp(InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen))){
+       const string rootScreenshotsFolder = "Screenshots";
+
+        private string unityScreenshotsPath;
+        public string UnityScreenshotsPath
+        {
+            get { return GetUnityScreenshotsPath(); } 
+        }
+
+        private KeyCode prtscrBinding = KeyCode.None;
+
+
+        void Update ()
+        {
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            {
+                //Trying to set 'prtscrBinding' on Start() or Awake() will set it to 'None'
+                //This 'if' statement avoids calling GetBinding() every Update() for when I GetKeyUp()
+                if(prtscrBinding == KeyCode.None
+                    && InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen) != KeyCode.None)
+                    prtscrBinding = InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen);
+
+                if (Input.GetKeyUp(prtscrBinding))
                     StartCoroutine(TakeScreenshot());
-				}
-			}
-		}
-		
-		IEnumerator TakeScreenshot(){
-			string name = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
-			int inc = 1;
-			
-			if(File.Exists(Path.Combine(UnityScreenshotsPath, name + ".png"))){
-				while(File.Exists(Path.Combine(UnityScreenshotsPath, name + "_" + inc + ".png"))){
-					inc++;
-				}
-				name += "_" + inc;
-			}
-			
-			string path = Path.Combine(UnityScreenshotsPath, name + ".png");
-			
-			//this is an async function
-			ScreenCapture.CaptureScreenshot(path);
-			
-			//prevent the HUD text below from appearing on the screenshot
-			while(!File.Exists(path))
-				yield return new WaitForSeconds(0.1f);
-			
-			DaggerfallUI.AddHUDText("Screenshot captured as '" + name + ".png'");
-		}
-		
+            }
+        }
+
+        IEnumerator TakeScreenshot()
+        {
+            string name = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
+            int inc = 1;
+
+            if(File.Exists(Path.Combine(UnityScreenshotsPath, name + ".png")))
+            {
+                while(File.Exists(Path.Combine(UnityScreenshotsPath, name + "_" + inc + ".png")))
+                    inc++;
+                name += "_" + inc;
+            }
+
+            string path = Path.Combine(UnityScreenshotsPath, name + ".png");
+
+            //this is an async function
+            ScreenCapture.CaptureScreenshot(path);
+
+            //prevent the HUD text below from appearing on the screenshot
+            while(!File.Exists(path))
+                yield return new WaitForSeconds(0.1f);
+
+            DaggerfallUI.AddHUDText("Screenshot captured as '" + name + ".png'");
+        }
+
         string GetUnityScreenshotsPath()
         {
             if (!string.IsNullOrEmpty(unityScreenshotsPath))
@@ -110,6 +111,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             return result;
         }
-	}
+    }
 
 }
