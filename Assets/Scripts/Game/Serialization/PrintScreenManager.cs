@@ -39,11 +39,21 @@ namespace DaggerfallWorkshop.Game.Serialization
 			get { return GetUnityScreenshotsPath(); } 
 		}
 		
+		private KeyCode prtscrBinding;
+		
+		void Awake()
+		{
+			prtscrBinding = InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen);
+		}
+		
 		// Update is called once per frame
 		void Update ()
 		{
-			if(InputManager.Instance.ActionStarted(InputManager.Actions.PrintScreen)){
-				StartCoroutine(TakeScreenshot());
+			if (!DaggerfallUI.Instance.HotkeySequenceProcessed){
+                // Toggle window closed with same hotkey used to open it
+                if (Input.GetKeyUp(InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen))){
+                    StartCoroutine(TakeScreenshot());
+				}
 			}
 		}
 		
