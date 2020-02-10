@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop
         // [Daggerfall]
         public string MyDaggerfallPath { get; set; }
         public string MyDaggerfallUnitySavePath { get; set; }
+        public string MyDaggerfallUnityScreenshotsPath { get; set; }
 
         // [Video]
         public int ResolutionWidth { get; set; }
@@ -196,6 +197,7 @@ namespace DaggerfallWorkshop
             // Read ini data to property cache
             MyDaggerfallPath = GetString(sectionDaggerfall, "MyDaggerfallPath");
             MyDaggerfallUnitySavePath = GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath");
+            MyDaggerfallUnityScreenshotsPath = GetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath");
 
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
@@ -313,6 +315,7 @@ namespace DaggerfallWorkshop
             // Write property cache to ini data
             SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
             SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
+            SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", MyDaggerfallUnityScreenshotsPath);
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);

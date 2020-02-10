@@ -187,6 +187,8 @@ namespace DaggerfallWorkshop.Game
 
             QuickSave,
             QuickLoad,
+
+            PrintScreen
         }
 
         #endregion
@@ -518,6 +520,8 @@ namespace DaggerfallWorkshop.Game
 
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
+
+            SetBinding(KeyCode.SysReq, Actions.PrintScreen);
         }
 
         #endregion
@@ -623,6 +627,8 @@ namespace DaggerfallWorkshop.Game
 
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
+
+            TestSetBinding(KeyCode.SysReq, Actions.PrintScreen);
         }
 
         // Apply force to horizontal axis
