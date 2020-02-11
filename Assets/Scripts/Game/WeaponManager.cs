@@ -842,6 +842,11 @@ namespace DaggerfallWorkshop.Game
                 {
                     hitEnemy = WeaponDamage(mainCamera.transform.forward, false, strikingWeapon, hit.transform, hit.point);
                 }
+                // Fall back to simple ray for narrow cages https://forums.dfworkshop.net/viewtopic.php?f=5&t=2195#p39524
+                else if (Physics.Raycast(ray, out hit, weapon.Reach, playerLayerMask))
+                {
+                    hitEnemy = WeaponDamage(mainCamera.transform.forward, false, strikingWeapon, hit.transform, hit.point);
+                }
             }
         }
 
