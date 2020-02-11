@@ -415,7 +415,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit the environment
-        public bool WeaponEnvDamage(DaggerfallUnityItem strikingWeapon, RaycastHit hit, Vector3 direction)
+        public bool WeaponEnvDamage(DaggerfallUnityItem strikingWeapon, RaycastHit hit)
         {
             // Check if hit has an DaggerfallAction component
             DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
@@ -449,7 +449,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit an enemy entity
-        public bool WeaponDamage(Vector3 direction, bool arrowHit, DaggerfallUnityItem strikingWeapon, Transform hitTransform, Vector3 impactPosition)
+        public bool WeaponDamage(DaggerfallUnityItem strikingWeapon, bool arrowHit, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
         {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
             DaggerfallMobileUnit entityMobileUnit = hitTransform.GetComponentInChildren<DaggerfallMobileUnit>();
@@ -838,14 +838,14 @@ namespace DaggerfallWorkshop.Game
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
                 DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
-                if(!WeaponEnvDamage(strikingWeapon, hit, mainCamera.transform.forward))
+                if(!WeaponEnvDamage(strikingWeapon, hit))
                 {
-                    hitEnemy = WeaponDamage(mainCamera.transform.forward, false, strikingWeapon, hit.transform, hit.point);
+                    hitEnemy = WeaponDamage(strikingWeapon, false, hit.transform, hit.point, mainCamera.transform.forward);
                 }
                 // Fall back to simple ray for narrow cages https://forums.dfworkshop.net/viewtopic.php?f=5&t=2195#p39524
                 else if (Physics.Raycast(ray, out hit, weapon.Reach, playerLayerMask))
                 {
-                    hitEnemy = WeaponDamage(mainCamera.transform.forward, false, strikingWeapon, hit.transform, hit.point);
+                    hitEnemy = WeaponDamage(strikingWeapon, false, hit.transform, hit.point, mainCamera.transform.forward);
                 }
             }
         }

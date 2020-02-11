@@ -596,7 +596,7 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 Transform hitTransform = arrowHitCollider.gameObject.transform;
-                GameManager.Instance.WeaponManager.WeaponDamage(goModel.transform.forward, true, GameManager.Instance.WeaponManager.LastBowUsed, hitTransform, hitTransform.position);
+                GameManager.Instance.WeaponManager.WeaponDamage(GameManager.Instance.WeaponManager.LastBowUsed, true, hitTransform, hitTransform.position, goModel.transform.forward);
             }
         }
 
