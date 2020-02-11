@@ -838,12 +838,9 @@ namespace DaggerfallWorkshop.Game
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
                 DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
-                if(!WeaponEnvDamage(strikingWeapon, hit))
-                {
-                    hitEnemy = WeaponDamage(strikingWeapon, false, hit.transform, hit.point, mainCamera.transform.forward);
-                }
-                // Fall back to simple ray for narrow cages https://forums.dfworkshop.net/viewtopic.php?f=5&t=2195#p39524
-                else if (Physics.Raycast(ray, out hit, weapon.Reach, playerLayerMask))
+                if(!WeaponEnvDamage(strikingWeapon, hit)
+                   // Fall back to simple ray for narrow cages https://forums.dfworkshop.net/viewtopic.php?f=5&t=2195#p39524
+                   || Physics.Raycast(ray, out hit, weapon.Reach, playerLayerMask))
                 {
                     hitEnemy = WeaponDamage(strikingWeapon, false, hit.transform, hit.point, mainCamera.transform.forward);
                 }
