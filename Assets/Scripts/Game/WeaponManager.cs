@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game
             SheathWeapons();
         }
 
-        // Returns true if hit an enemy entity
+        // Returns true if hit the environment
         public bool WeaponEnvDamage(DaggerfallUnityItem strikingWeapon, RaycastHit hit, Vector3 direction)
         {
             // Check if hit has an DaggerfallAction component
@@ -429,26 +429,26 @@ namespace DaggerfallWorkshop.Game
             if (actionDoor)
             {
                 actionDoor.AttemptBash(true);
-                return false;
+                return true;
             }
 
             // Check if player hit a static exterior door
             if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
             {
-                return false;
+                return true;
             }
 
             // Make hitting walls do a thud or clinging sound (not in classic)
             if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
             {
                 DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
-                return false;
+                return true;
             }
 
-            // Set up for use below
-            return WeaponDamage(direction, false, strikingWeapon, hit.transform, hit.point);
+            return false;
         }
 
+        // Returns true if hit an enemy entity
         public bool WeaponDamage(Vector3 direction, bool arrowHit, DaggerfallUnityItem strikingWeapon, Transform hitTransform, Vector3 impactPosition)
         {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
@@ -838,7 +838,10 @@ namespace DaggerfallWorkshop.Game
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
                 DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
-                hitEnemy = WeaponEnvDamage(strikingWeapon, hit, mainCamera.transform.forward);
+                if(!WeaponEnvDamage(strikingWeapon, hit, mainCamera.transform.forward))
+                {
+                    hitEnemy = WeaponDamage(mainCamera.transform.forward, false, strikingWeapon, hit.transform, hit.point);
+                }
             }
         }
 
