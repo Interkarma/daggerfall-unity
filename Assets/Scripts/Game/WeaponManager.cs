@@ -415,10 +415,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit an enemy entity
-        public bool WeaponEnvDamage(RaycastHit hit, Vector3 direction)
+        public bool WeaponEnvDamage(DaggerfallUnityItem strikingWeapon, RaycastHit hit, Vector3 direction)
         {
-            DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
-
             // Check if hit has an DaggerfallAction component
             DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
             if (action)
@@ -839,7 +837,8 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
-                hitEnemy = WeaponEnvDamage(hit, mainCamera.transform.forward);
+                DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
+                hitEnemy = WeaponEnvDamage(strikingWeapon, hit, mainCamera.transform.forward);
             }
         }
 
