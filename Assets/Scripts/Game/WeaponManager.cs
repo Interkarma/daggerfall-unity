@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
+        public DaggerfallUnityItem LastBowUsed { get { return lastBowUsed; } }
         public bool UsingRightHand { get { return usingRightHand; } set { usingRightHand = value; } }
 
         #endregion
@@ -414,52 +415,43 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit an enemy entity
-        public bool WeaponEnvDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
+        public bool WeaponEnvDamage(RaycastHit hit, Vector3 direction)
         {
             DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
 
-            if (arrowHit)
+            // Check if hit has an DaggerfallAction component
+            DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
+            if (action)
             {
-                strikingWeapon = lastBowUsed;
+                action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
             }
-            else
+
+            // Check if hit has an DaggerfallActionDoor component
+            DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
+            if (actionDoor)
             {
-                // Check if hit has an DaggerfallAction component
-                DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
-                if (action)
-                {
-                    action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
-                }
+                actionDoor.AttemptBash(true);
+                return false;
+            }
 
-                // Check if hit has an DaggerfallActionDoor component
-                DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-                if (actionDoor)
-                {
-                    actionDoor.AttemptBash(true);
-                    return false;
-                }
+            // Check if player hit a static exterior door
+            if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
+            {
+                return false;
+            }
 
-                // Check if player hit a static exterior door
-                if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
-                {
-                    return false;
-                }
-
-                // Make hitting walls do a thud or clinging sound (not in classic)
-                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
-                {
-                    DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
-                    return false;
-                }
+            // Make hitting walls do a thud or clinging sound (not in classic)
+            if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
+            {
+                DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
+                return false;
             }
 
             // Set up for use below
-            Transform hitTransform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
-            Vector3 impactPosition = arrowHit ? hitTransform.position : hit.point;
-            return WeaponDamage(direction, arrowHit, strikingWeapon, hitTransform, impactPosition);
+            return WeaponDamage(direction, false, strikingWeapon, hit.transform, hit.point);
         }
 
-        private bool WeaponDamage(Vector3 direction, bool arrowHit, DaggerfallUnityItem strikingWeapon, Transform hitTransform, Vector3 impactPosition)
+        public bool WeaponDamage(Vector3 direction, bool arrowHit, DaggerfallUnityItem strikingWeapon, Transform hitTransform, Vector3 impactPosition)
         {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
             DaggerfallMobileUnit entityMobileUnit = hitTransform.GetComponentInChildren<DaggerfallMobileUnit>();
