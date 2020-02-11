@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit an enemy entity
-        public bool WeaponDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
+        public bool WeaponEnvDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
         {
             DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
 
@@ -456,6 +456,11 @@ namespace DaggerfallWorkshop.Game
             // Set up for use below
             Transform hitTransform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
             Vector3 impactPosition = arrowHit ? hitTransform.position : hit.point;
+            return WeaponDamage(direction, arrowHit, strikingWeapon, hitTransform, impactPosition);
+        }
+
+        private bool WeaponDamage(Vector3 direction, bool arrowHit, DaggerfallUnityItem strikingWeapon, Transform hitTransform, Vector3 impactPosition)
+        {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
             DaggerfallMobileUnit entityMobileUnit = hitTransform.GetComponentInChildren<DaggerfallMobileUnit>();
             EnemyMotor enemyMotor = hitTransform.GetComponent<EnemyMotor>();
@@ -842,7 +847,7 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
-                hitEnemy = WeaponDamage(hit, mainCamera.transform.forward);
+                hitEnemy = WeaponEnvDamage(hit, mainCamera.transform.forward);
             }
         }
 
