@@ -411,13 +411,13 @@ namespace DaggerfallConnect
             /// <summary>Z position in 3D space.</summary>
             public Int32 ZPos;
 
-            /// <summary>X position in 3D space.</summary>
+            /// <summary>X scale</summary>
             public float XScale;
 
-            /// <summary>Y position in 3D space.</summary>
+            /// <summary>Y scale</summary>
             public float YScale;
 
-            /// <summary>Z position in 3D space.</summary>
+            /// <summary>Z scale</summary>
             public float ZScale;
 
             /// <summary>Unknown.</summary>
