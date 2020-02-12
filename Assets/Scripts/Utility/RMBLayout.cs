@@ -710,7 +710,8 @@ namespace DaggerfallWorkshop.Utility
                     // Get model transform
                     Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                     Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
-                    Matrix4x4 modelMatrix = subRecordMatrix * Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
+                    Vector3 modelScale = new Vector3(obj.XScale, obj.YScale, obj.ZScale);
+                    Matrix4x4 modelMatrix = subRecordMatrix * Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
                     // Get model data
                     ModelData modelData;
@@ -781,7 +782,8 @@ namespace DaggerfallWorkshop.Utility
                 // Get model transform
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos + propsOffsetY, obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
                 Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
-                Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
+                Vector3 modelScale = new Vector3(obj.XScale, obj.YScale, obj.ZScale);
+                Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
                 // Get model data
                 ModelData modelData;
@@ -815,7 +817,8 @@ namespace DaggerfallWorkshop.Utility
             // Add GameObject
             GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, dfUnity.Option_SetStaticFlags);
             go.transform.position = matrix.GetColumn(3);
-            go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
+            go.transform.rotation = matrix.rotation;
+            go.transform.localScale = matrix.lossyScale;
 
             // Is this a city gate?
             if (IsCityGate(modelID))
