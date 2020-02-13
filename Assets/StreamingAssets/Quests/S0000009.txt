@@ -254,6 +254,10 @@ _S.13_ task:
 	when _clickedElysana_ and _giveLetter_ 
 	prompt QuestorOffer yes _yes_ no _no_ 
 
+_clearclick_ task:
+	when _clickedElysana_ and not _giveLetter_
+	clear _clickedElysana_ _clearclick_ 
+
 _S.14_ task:
 	end quest 
 

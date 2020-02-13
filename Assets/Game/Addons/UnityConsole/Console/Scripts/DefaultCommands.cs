@@ -2213,7 +2213,7 @@ namespace Wenzil.Console
                 UnityEngine.Random.InitState(Time.frameCount);
                 Quest quest = GameManager.Instance.QuestListsManager.GetQuest(args[0]);
                 if (quest != null)
-                    QuestMachine.Instance.InstantiateQuest(quest);
+                    QuestMachine.Instance.StartQuest(quest);
 
                 return "Finished";
             }

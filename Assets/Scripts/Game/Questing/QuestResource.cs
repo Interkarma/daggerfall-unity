@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using System.Text.RegularExpressions;
+using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -277,6 +279,24 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             hasPlayerClicked = false;
         }
+
+        public List<TextFile.Token[]> GetMessage(int messageId)
+        {
+            Message message = ParentQuest.GetMessage(messageId);
+            return message == null ? null : TokenizeMessage(message);
+        }
+
+        private static List<TextFile.Token[]> TokenizeMessage(Message message)
+        {
+            var tokenList = new List<TextFile.Token[]>();
+            for (int i = 0; i < message.VariantCount; i++)
+            {
+                TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
+                tokenList.Add(tokens);
+            }
+
+            return tokenList;
+        } 
 
         #region Serialization
 

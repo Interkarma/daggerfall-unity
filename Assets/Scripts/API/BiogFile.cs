@@ -16,6 +16,7 @@ using System.IO;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using UnityEngine;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Utility;
@@ -176,6 +177,7 @@ namespace DaggerfallConnect.Arena2
             }
             #endregion
 
+            GameManager.Instance.PlayerEntity.BirthRaceTemplate = characterDocument.raceTemplate; // Need correct race set when parsing %ra macro
             List<string> backStory = new List<string>();
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokensStart + classIndex);
             MacroHelper.ExpandMacros(ref tokens, (IMacroContextProvider)this);
@@ -405,6 +407,9 @@ namespace DaggerfallConnect.Arena2
 
         public static void ApplyEffects(List<string> effects, PlayerEntity playerEntity)
         {
+            if (effects == null)
+                return;
+
             foreach (string effect in effects)
             {
                 ApplyPlayerEffect(playerEntity, effect);

@@ -311,7 +311,7 @@ namespace DaggerfallWorkshop.Game
 
             // Get current and target weights
             int currentWeight = GetCurrentNavPositionWeight();
-            int targetWeight = localWeights[(int)currentDirection];
+            int targetWeight = IsDirectionClear(currentDirection) ? localWeights[(int)currentDirection] : 0;
 
             // A small chance to randomly change direction - this keeps the movement shuffled
             if (Random.Range(0f, 1f) < randomChangeChance)
@@ -322,7 +322,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Try to move in any valid random direction
                 int randomDirection = Random.Range(0, localWeights.Length);
-                if (localWeights[randomDirection] == 0)
+                if (localWeights[randomDirection] == 0 || !IsDirectionClear((MobileDirection)randomDirection))
                     return;
 
                 SetFacing((MobileDirection)randomDirection);
@@ -340,7 +340,7 @@ namespace DaggerfallWorkshop.Game
                 System.Random rand = new System.Random();
                 foreach (int i in Enumerable.Range(0, 3).OrderBy(x => rand.Next(3)))
                 {
-                    if (localWeights[i] > bestWeight)
+                    if (localWeights[i] > bestWeight && IsDirectionClear((MobileDirection)i))
                     {
                         bestWeight = localWeights[i];
                         bestDirection = (MobileDirection)i;
@@ -402,6 +402,18 @@ namespace DaggerfallWorkshop.Game
             }
 
             return mobilePersonAsset;
+        }
+
+        // Check for geometry in the way (stairs,...)
+        bool IsDirectionClear(MobileDirection direction)
+        {
+            Vector3 tempTargetScenePosition = cityNavigation.WorldToScenePosition(cityNavigation.NavGridToWorldPosition(GetNextNavPosition(direction)));
+            // Aim low to better detect stairs
+            tempTargetScenePosition.y += 0.1f;
+            Ray ray = new Ray(transform.position, tempTargetScenePosition - transform.position);
+            bool collision = Physics.Raycast(transform.position, tempTargetScenePosition - transform.position, Vector3.Distance(transform.position, tempTargetScenePosition));
+            // Debug.DrawRay(transform.position, tempTargetScenePosition - transform.position, collision ? Color.red : Color.green, 1f);
+            return !collision;
         }
 
         void SetTargetPosition()

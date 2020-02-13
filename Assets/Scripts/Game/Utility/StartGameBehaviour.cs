@@ -411,13 +411,13 @@ namespace DaggerfallWorkshop.Game.Utility
             lastStartMethod = StartMethods.NewCharacter;
 
             // Start main quest
-            QuestMachine.Instance.InstantiateQuest("_TUTOR__");
-            QuestMachine.Instance.InstantiateQuest("_BRISIEN");
+            QuestMachine.Instance.StartQuest("_TUTOR__");
+            QuestMachine.Instance.StartQuest("_BRISIEN");
 
             // Launch startup optional quest
             if (!string.IsNullOrEmpty(LaunchQuest))
             {
-                QuestMachine.Instance.InstantiateQuest(LaunchQuest);
+                QuestMachine.Instance.StartQuest(LaunchQuest);
                 LaunchQuest = string.Empty;
             }
             // Launch any InitAtGameStart quests
@@ -828,7 +828,7 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             if (!string.IsNullOrEmpty(LaunchQuest))
             {
-                QuestMachine.Instance.InstantiateQuest(LaunchQuest);
+                QuestMachine.Instance.StartQuest(LaunchQuest);
                 LaunchQuest = string.Empty;
             }
         }

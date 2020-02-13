@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     return;
 
                 // Start the cure quest
-                QuestMachine.Instance.InstantiateQuest(cureQuestName);
+                QuestMachine.Instance.StartQuest(cureQuestName);
             }
         }
 

@@ -217,8 +217,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception("Invalid placeType in line: " + line);
                 }
 
-                // add conversation topics from anyInfo command tag
-                AddConversationTopics();
             }
         }
 
@@ -1276,43 +1274,6 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundLocationIndices.ToArray();
-        }
-
-        void AddConversationTopics()
-        {
-            List<TextFile.Token[]> anyInfoAnswers = null;
-            List<TextFile.Token[]> anyRumorsAnswers = null;
-            if (this.InfoMessageID != -1)
-            {
-                Message message = this.ParentQuest.GetMessage(this.InfoMessageID);
-                anyInfoAnswers = new List<TextFile.Token[]>();                
-                if (message != null)
-                {
-                    for (int i = 0; i < message.VariantCount; i++)
-                    {
-                        TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
-                        anyInfoAnswers.Add(tokens);
-                    }
-                }
-
-                message = this.ParentQuest.GetMessage(this.RumorsMessageID);
-                anyRumorsAnswers = new List<TextFile.Token[]>();
-                if (message != null)
-                {                    
-                    for (int i = 0; i < message.VariantCount; i++)
-                    {
-                        TextFile.Token[] tokens = message.GetTextTokensByVariant(i, false); // do not expand macros here (they will be expanded just in time by TalkManager class)
-                        anyRumorsAnswers.Add(tokens);
-                    }
-                }
-            }
-
-            string captionString;
-            this.ExpandMacro(MacroTypes.NameMacro1, out captionString); // first try to resolve building name (if this fails it is a dungeon...)
-            if (captionString == null) // if building name resolving failed
-                this.ExpandMacro(MacroTypes.NameMacro3, out captionString); // resolve dungeon name
-            string key = this.Symbol.Name;
-            GameManager.Instance.TalkManager.AddQuestTopicWithInfoAndRumors(this.ParentQuest.UID, this, key, TalkManager.QuestInfoResourceType.Location, anyInfoAnswers, anyRumorsAnswers);
         }
 
         #endregion
