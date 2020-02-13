@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Yes).IsUpWith(keyModifiers))
                 {
                     HandleAnswer(QuestMachine.QuestMessages.AcceptQuest);
-                    QuestMachine.Instance.InstantiateQuest(daedraQuest);
+                    QuestMachine.Instance.StartQuest(daedraQuest);
                 }
                 else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.No).IsUpWith(keyModifiers))
                 {

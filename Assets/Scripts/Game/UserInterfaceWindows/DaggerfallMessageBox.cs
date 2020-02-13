@@ -232,12 +232,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
             parentPanel.OnMouseClick += ParentPanel_OnMouseClick;
+            parentPanel.OnRightMouseClick += ParentPanel_OnMouseClick;
+            parentPanel.OnMiddleMouseClick += ParentPanel_OnMouseClick;
         }
 
         public override void OnPop()
         {
             base.OnPop();
             parentPanel.OnMouseClick -= ParentPanel_OnMouseClick;
+            parentPanel.OnRightMouseClick -= ParentPanel_OnMouseClick;
+            parentPanel.OnMiddleMouseClick -= ParentPanel_OnMouseClick;
 
             // Check if any previous message boxes need to be closed as well.
             DaggerfallMessageBox prevWindow = PreviousWindow as DaggerfallMessageBox;
@@ -513,6 +517,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Must be presented for minimum time before allowing to click through
             // This prevents capturing parent-level click events and closing immediately
             if (Time.realtimeSinceStartup - presentationTime < minTimePresented)
+                return;
+
+            // Filter out (mouse) fighting activity
+            if (Input.GetKey(InputManager.Instance.GetBinding(InputManager.Actions.SwingWeapon)))
                 return;
 
             if (uiManager.TopWindow == this)
