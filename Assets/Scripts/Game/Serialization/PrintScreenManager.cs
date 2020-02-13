@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string name = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
             int inc = 1;
 
-            if(File.Exists(Path.Combine(UnityScreenshotsPath, name + ".png")))
+            if (File.Exists(Path.Combine(UnityScreenshotsPath, name + ".png")))
             {
                 while(File.Exists(Path.Combine(UnityScreenshotsPath, name + "_" + inc + ".png")))
                     inc++;
@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             ScreenCapture.CaptureScreenshot(path);
 
             //prevent the HUD text below from appearing on the screenshot
-            while(!File.Exists(path))
+            while (!File.Exists(path))
                 yield return new WaitForSeconds(0.1f);
 
             DaggerfallUI.AddHUDText("Screenshot captured as '" + name + ".png'");
