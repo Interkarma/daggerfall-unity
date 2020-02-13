@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
 
-        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
+        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote, KeyCode.SysReq };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
