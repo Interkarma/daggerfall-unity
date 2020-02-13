@@ -31,11 +31,33 @@ namespace DaggerfallWorkshop.Game
         public const float minAcceleration = 1.0f;
         public const float maxAcceleration = 10.0f;
 
+		Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>()
+		{
+			{5000, "JoystickTrigger1"},
+			{5001, "JoystickTrigger2"},
+			{5002, "JoystickDPadUp"},
+			{5003, "JoystickDPadDown"},
+			{5004, "JoystickDPadLeft"},
+			{5005, "JoystickDPadRight"},
+			
+		};
+		
+		Dictionary<int, System.Func<float>> axisKeyCodeFloats = new Dictionary<int, System.Func<float>>()
+		{
+			{5000, () => Input.GetAxis("Left Trigger")},
+			{5001, () => Input.GetAxis("Right Trigger")},
+			{5002, () => { return Input.GetAxis("Vertical D-Pad") > 0 ? 1 : 0; } },
+			{5003, () => { return Input.GetAxis("Vertical D-Pad") < 0 ? -1 : 0; } },
+			{5004, () => { return Input.GetAxis("Horizontal D-Pad") < 0 ? -1 : 0; } },
+			{5005, () => { return Input.GetAxis("Horizontal D-Pad") > 0 ? 1 : 0; } }
+		};
+
         const string keyBindsFilename = "KeyBinds.txt";
 
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
 
+        IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         List<Actions> currentActions = new List<Actions>();
@@ -64,7 +86,7 @@ namespace DaggerfallWorkshop.Game
         [fsObject("v1")]
         public class KeyBindData_v1
         {
-            public Dictionary<KeyCode, Actions> actionKeyBinds;
+            public Dictionary<int, Actions> actionKeyBinds;
         }
 
         #endregion
@@ -76,6 +98,10 @@ namespace DaggerfallWorkshop.Game
             get { return isPaused; }
             set { isPaused = value; }
         }
+		
+		public IList KeyCodeList {
+			get { return GetKeyCodeList(); }
+		}
 
         public KeyCode[] ReservedKeys
         {
@@ -283,7 +309,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.PlayerObject && GameManager.Instance.PlayerDeath.DeathInProgress)
                 {
                     KeyCode quickLoadBinding = GetBinding(Actions.QuickLoad);
-                    if (Input.GetKey(quickLoadBinding))
+                    if (GetKey(quickLoadBinding))
                     {
                         currentActions.Add(Actions.QuickLoad);
                     }
@@ -308,13 +334,19 @@ namespace DaggerfallWorkshop.Game
 
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
+            if(mouseX == 0F)
+                mouseX = Input.GetAxis("Joy X");
+
             mouseY = Input.GetAxisRaw("Mouse Y");
+            if(mouseY == 0F)
+                mouseY = Input.GetAxis("Joy Y");
 
             // Update look impulse
             UpdateLook();
 
             // Process actions from input sources
             FindKeyboardActions();
+            FindInputAxisActions();
 
             // Apply friction to movement force
             ApplyFriction();
@@ -452,7 +484,7 @@ namespace DaggerfallWorkshop.Game
             string path = GetKeyBindsSavePath();
 
             KeyBindData_v1 keyBindsData = new KeyBindData_v1();
-            keyBindsData.actionKeyBinds = actionKeyDict;
+            keyBindsData.actionKeyBinds = actionKeyDict.Select(x => x).ToDictionary(entry => (int)entry.Key, entry => (Actions)entry.Value);
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
             RaiseSavedKeyBindsEvent();
@@ -697,6 +729,79 @@ namespace DaggerfallWorkshop.Game
             lookY = (invertLookY) ? -lookY : lookY;
         }
 
+        IList GetKeyCodeList()
+        {
+            if (keyCodeList != null){
+                return keyCodeList;
+            }
+
+            List<KeyCode> list = new List<KeyCode>();
+
+            foreach (var e in Enum.GetValues(typeof(KeyCode)))
+                list.Add((KeyCode)e);
+
+            foreach (var k in axisKeyCodeFloats.Keys)
+                list.Add((KeyCode)k);
+
+            keyCodeList = list;
+
+            return keyCodeList;
+        }
+
+        public bool GetKey(KeyCode key)
+        {
+            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKey(key)) || GetAxisKey((int)key);
+        }
+
+        public bool GetKeyDown(KeyCode key)
+        {
+            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKeyDown(key)) || GetAxisKey((int)key);
+        }
+
+        public bool GetKeyUp(KeyCode key)
+        {
+            //TODO: create a "GetAxisKeyUp"
+            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKeyUp(key)) || GetAxisKey((int)key);
+        }
+
+        public bool AnyKeyDown {
+            get { return Input.anyKeyDown || AnyAxisKeyDown; }
+        }
+
+        public String GetKeyString(KeyCode key)
+        {
+            if (axisKeyCodeStrings.ContainsKey((int)key))
+                return axisKeyCodeStrings[(int)key];
+            else
+                return key.ToString();
+        }
+
+        public KeyCode ParseKeyCodeString(String s){
+            try
+            {
+                return (KeyCode)Enum.Parse(typeof(KeyCode), s);
+            }
+            catch
+            {
+                return (KeyCode)axisKeyCodeStrings.FirstOrDefault(x => x.Value == s).Key;
+            }
+        }
+
+        bool GetAxisKey(int key)
+        {
+            return axisKeyCodeFloats.ContainsKey(key) && axisKeyCodeFloats[key]() != 0;
+        }
+
+        bool AnyAxisKeyDown
+        {
+            get
+            {
+                foreach (var f in axisKeyCodeFloats.Values)
+                    if (f() != 0) return true;
+                return false;
+            }
+        }
+
         // Enumerate all keyboard actions in progress
         void FindKeyboardActions()
         {
@@ -704,7 +809,7 @@ namespace DaggerfallWorkshop.Game
             while (enumerator.MoveNext())
             {
                 var element = enumerator.Current;
-                if (Input.GetKey(element.Key))
+                if (GetKey(element.Key))
                 {
                     // Add current action to list
                     currentActions.Add(element.Value);
@@ -726,6 +831,26 @@ namespace DaggerfallWorkshop.Game
                             break;
                     }
                 }
+            }
+        }
+
+        void FindInputAxisActions()
+        {
+            float horiz = Input.GetAxis("HorizontalJ");
+            float vert = Input.GetAxis("VerticalJ");
+            float threshold = 0.5F;
+            if (horiz != 0 || vert != 0)
+            {
+                horiz = horiz > threshold ? 1
+                        : horiz < -threshold ? -1
+                        : horiz;
+
+                vert = vert > threshold ? 1
+                        : vert < -threshold ? -1
+                        : vert;
+
+                ApplyHorizontalForce(horiz);
+                ApplyVerticalForce(vert);
             }
         }
 
@@ -754,8 +879,8 @@ namespace DaggerfallWorkshop.Game
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
             foreach(var item in keyBindsData.actionKeyBinds)
             {
-                if (!actionKeyDict.ContainsKey(item.Key))
-                    actionKeyDict.Add(item.Key, item.Value);
+                if (!actionKeyDict.ContainsKey((KeyCode)item.Key))
+                    actionKeyDict.Add((KeyCode)item.Key, item.Value);
             }
             RaiseLoadedKeyBindsEvent();
         }

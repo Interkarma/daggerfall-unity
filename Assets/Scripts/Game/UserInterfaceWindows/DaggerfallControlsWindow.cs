@@ -192,7 +192,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
 
-                buttonGroup[j].Label.Text = InputManager.Instance.GetBinding(key).ToString();
+                buttonGroup[j].Label.Text = InputManager.Instance.GetKeyString(InputManager.Instance.GetBinding(key));
                 buttonGroup[j].Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             }
         }
@@ -204,14 +204,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get action and code for this button
                 int j = i - startPoint;
                 InputManager.Actions action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), actions[i]);
-                KeyCode code = (KeyCode)Enum.Parse(typeof(KeyCode), buttonGroup[j].Label.Text);
+                KeyCode code = InputManager.Instance.ParseKeyCodeString(buttonGroup[j].Label.Text);
 
                 // Rebind only if new code is different
                 KeyCode curCode = InputManager.Instance.GetBinding(action);
                 if (curCode != code)
                 {
                     InputManager.Instance.SetBinding(code, action);
-                    Debug.LogFormat("Bound Action {0} with Code {1}", action, code.ToString());
+                    Debug.LogFormat("Bound Action {0} with Code {1}", action, InputManager.Instance.GetKeyString(code));
                 }
             }
         }
@@ -354,20 +354,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while(!Input.anyKeyDown)
+            while (!InputManager.Instance.AnyKeyDown)
             {
                 waitingForInput = true;
                 yield return null;
             }
             waitingForInput = false;
 
-            foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
+            foreach (KeyCode code in InputManager.Instance.KeyCodeList)
             {
-                if (Input.GetKeyDown(code))
+                if (InputManager.Instance.GetKeyDown(code))
                 {
-                    if (code.ToString() != "Escape")
+                    String toString = InputManager.Instance.GetKeyString(code);
+                    if (toString != "Escape")
                     {
-                        button.Label.Text = code.ToString();
+                        button.Label.Text = toString;
                         CheckDuplicates();
                     }
                     else

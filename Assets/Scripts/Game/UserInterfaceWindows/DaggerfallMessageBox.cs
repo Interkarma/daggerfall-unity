@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed &&
-                (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyUp(extraProceedBinding)))
+                (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyUp(extraProceedBinding)))
             {
                 // Special handling for message boxes with buttons
                 if (buttons.Count > 0)
@@ -520,7 +520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Filter out (mouse) fighting activity
-            if (Input.GetKey(InputManager.Instance.GetBinding(InputManager.Actions.SwingWeapon)))
+            if (InputManager.Instance.GetKey(InputManager.Instance.GetBinding(InputManager.Actions.SwingWeapon)))
                 return;
 
             if (uiManager.TopWindow == this)
