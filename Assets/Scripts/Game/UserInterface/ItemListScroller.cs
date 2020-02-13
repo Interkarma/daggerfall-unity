@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Get item and raise item click event
             DaggerfallUnityItem item = items[index];
 
-            if(!rightClick && item != null && OnItemClick != null)
+            if (!rightClick && item != null && OnItemClick != null)
                     OnItemClick(item);
             else if (item != null && OnItemRightClick != null)
                     OnItemRightClick(item);
