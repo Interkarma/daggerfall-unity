@@ -388,6 +388,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public void ChangeMaxMagickaModifier(int amount)
         {
             MaxMagickaModifier += amount;
+            if (currentMagicka > MaxMagicka)
+                currentMagicka = MaxMagicka;
         }
 
         public void SetIncreasedWeightAllowanceMultiplier(float amount)
@@ -456,9 +458,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
         int GetCurrentMagicka()
         {
-            if (currentMagicka > MaxMagicka)
-                currentMagicka = MaxMagicka;
-
             return currentMagicka;
         }
 

@@ -77,7 +77,7 @@ enhancedItemLists,                                  Enhanced Item Lists
 enhancedItemListsInfo,                              Inventory 16x item grid
 enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
 enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
-iconsPositioningScheme,                             Buff Icons
+iconsPositioningScheme,                             Buff Icons Layout
 iconsPositioningSchemeInfo,                         Size and position of onscreen (de)buff icons
 helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
 helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
