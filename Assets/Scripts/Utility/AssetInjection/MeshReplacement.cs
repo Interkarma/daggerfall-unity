@@ -106,11 +106,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             go.transform.position = matrix.GetColumn(3);
             go.transform.rotation = matrix.rotation;
 
-            //We can't simply apply scale, since we can't guarantee that custom models will have a defualt (1,1,1) scale
-            go.transform.localScale = new Vector3(go.transform.localScale.x * matrix.lossyScale.x,
-                                                    go.transform.localScale.y * matrix.lossyScale.y,
-                                                    go.transform.localScale.z * matrix.lossyScale.z);
-
+            //Multiply the scale instead of applying it, since custom 3D models doesn't necessary have (1,1,1) scale
+            go.transform.localScale = Vector3.Scale(go.transform.localScale, matrix.lossyScale);
 
             // Finalise gameobject
             FinaliseMaterials(go);
