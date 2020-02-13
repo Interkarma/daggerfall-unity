@@ -499,24 +499,26 @@ namespace DaggerfallWorkshop.Game
         /// Check if player is really standing on an shallow water tile, determined by if the water design takes up the majority of the texture.
         /// </summary>
         /// <returns>True if player is is on a shallow water tile.</returns>
-        bool OnShallowWaterTile(){
+        bool OnShallowWaterTile()
+        {
             return GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 5
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 6
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 8
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 20
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 21
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 23
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 30
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 31
-            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex >= 33 && GameManager.Instance.StreamingWorld.PlayerTileMapIndex <= 36)
-            || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 49;
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 6
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 8
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 20
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 21
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 23
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 30
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 31
+                || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex >= 33 && GameManager.Instance.StreamingWorld.PlayerTileMapIndex <= 36)
+                || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 49;
         }
 
         /// <summary>
         /// Check if player is really standing on a path tile.
         /// </summary>
         /// <returns>True if player is is on a path tile.</returns>
-        bool OnPathTile(){
+        bool OnPathTile()
+        {
             return GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 46
                 || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 47
                 || GameManager.Instance.StreamingWorld.PlayerTileMapIndex == 55;
@@ -531,8 +533,8 @@ namespace DaggerfallWorkshop.Game
         OnExteriorWaterMethod GetOnExteriorWaterMethod()
         {
             bool onShallowWaterTile = OnShallowWaterTile();
-            if(!GetOnExteriorGroundMethod()
-            || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && !onShallowWaterTile))
+            if (!GetOnExteriorGroundMethod()
+                || (GameManager.Instance.StreamingWorld.PlayerTileMapIndex != 0 && !onShallowWaterTile))
                return OnExteriorWaterMethod.None;
 
             // Handle swimming/waterwalking
