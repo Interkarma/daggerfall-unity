@@ -13,14 +13,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using DaggerfallConnect.FallExe;
+using DaggerfallConnect;
+using DaggerfallConnect.Save;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -1103,7 +1107,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Assigns basic starting gear to a new character.
         /// </summary>
-        public void AssignStartingGear(PlayerEntity playerEntity, int classIndex, bool isCustom)
+        public void AssignStartingGear(PlayerEntity playerEntity, CharacterDocument characterDocument)
         {
             // Get references
             ItemCollection items = playerEntity.Items;
@@ -1136,7 +1140,7 @@ namespace DaggerfallWorkshop.Game.Items
             equipTable.EquipItem(shortShirt, true, false);
             equipTable.EquipItem(casualPants, true, false);
 
-            if (!isCustom)
+            if (!characterDocument.isCustom)
             {
                 // Add class-specific starting weapon
                 Weapons[] StartingWeaponTypesByClass = { Weapons.Shortsword, // Mage
@@ -1159,6 +1163,7 @@ namespace DaggerfallWorkshop.Game.Items
                                                          Weapons.Longsword   // Knight
                 };
                 byte[] StartingWeaponMaterialsByClass = { 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 }; // 0 = iron, 1 = steel
+                int classIndex = characterDocument.classIndex;
                 items.AddItem(ItemBuilder.CreateWeapon(StartingWeaponTypesByClass[classIndex], (WeaponMaterialTypes)StartingWeaponMaterialsByClass[classIndex]));
 
                 // Archer also gets a steel battleaxe and some arrows
@@ -1188,6 +1193,69 @@ namespace DaggerfallWorkshop.Game.Items
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch));
                 for (int i=0; i < 2; i++)
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Candle));
+            }
+        }
+
+        /// <summary>
+        /// Assigns starting spells to the spellbook item for a new character.
+        /// </summary>
+        public void AssignStartingSpells(PlayerEntity playerEntity, CharacterDocument characterDocument)
+        {
+            if (characterDocument.classIndex > 6 && !characterDocument.isCustom) // Class does not have starting spells
+                return;
+
+            // Get starting set based on class
+            int spellSetIndex = -1;
+            if (characterDocument.isCustom)
+            {
+                DFCareer dfc = characterDocument.career;
+
+                // Custom class uses Spellsword starting spells if it has at least 1 primary or major magic skill
+                if (Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill1) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill2) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill3) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill1) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill2) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill3))
+                {
+                    spellSetIndex = 1;
+                }
+            }
+            else
+            {
+                spellSetIndex = characterDocument.classIndex;
+            }
+
+            if (spellSetIndex == -1)
+                return;
+
+            // Get the set's spell indices
+            TextAsset spells = Resources.Load<TextAsset>("StartingSpells") as TextAsset;
+            List<CareerStartingSpells> startingSpells = SaveLoadManager.Deserialize(typeof(List<CareerStartingSpells>), spells.text) as List<CareerStartingSpells>;
+            List<StartingSpell> spellsToAdd = new List<StartingSpell>();
+            for (int i = 0; i < startingSpells[spellSetIndex].SpellsList.Length; i++)
+            {
+                spellsToAdd.Add(startingSpells[spellSetIndex].SpellsList[i]);
+            }
+
+            // Add spells to player from standard list
+            foreach (StartingSpell spell in spellsToAdd)
+            {
+                SpellRecord.SpellRecordData spellData;
+                GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spell.SpellID, out spellData);
+                if (spellData.index == -1)
+                {
+                    Debug.LogError("Failed to locate starting spell in standard spells list.");
+                    continue;
+                }
+
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
+                {
+                    Debug.LogError("Failed to create effect bundle for starting spell.");
+                    continue;
+                }
+                playerEntity.AddSpell(bundle);
             }
         }
 
