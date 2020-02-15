@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Game
         public const float minAcceleration = 1.0f;
         public const float maxAcceleration = 10.0f;
 
+        public Texture2D controllerCursorImage;
+
         Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>()
         {
             { 5000, "JoystickAxis9Button0" },
@@ -93,6 +95,13 @@ namespace DaggerfallWorkshop.Game
         bool posVerticalImpulse;
         bool negVerticalImpulse;
         float acceleration = 5.0f;
+
+        bool usingControllerCursor;
+        Vector2 controllerCursorPosition = new Vector2(0,0);
+        int controllerCursorWidth = 32;
+        int controllerCursorHeight = 32;
+        float controllerCursorHorizontalSpeed = 300.0F;
+        float controllerCursorVerticalSpeed = 300.0F;
 
         #endregion
 
@@ -169,6 +178,17 @@ namespace DaggerfallWorkshop.Game
         public float Vertical
         {
             get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
+        }
+
+        public bool CursorVisible { get; set; }
+
+        public Vector3 MousePosition {
+            get {
+                if(usingControllerCursor)
+                    return controllerCursorPosition;
+                else
+                    return Input.mousePosition;
+            }
         }
 
         #endregion
@@ -377,6 +397,50 @@ namespace DaggerfallWorkshop.Game
 
             // Apply friction to movement force
             ApplyFriction();
+        }
+
+        void OnGUI()
+        {
+            var horizj = Input.GetAxis(GetAxisBinding(AxisActions.MovementHorizontal));
+            var vertj = Input.GetAxis(GetAxisBinding(AxisActions.MovementVertical));
+
+            if (!usingControllerCursor && (horizj != 0 || vertj != 0))
+            {
+                usingControllerCursor = true;
+                controllerCursorPosition = Input.mousePosition;
+            }
+            else if (usingControllerCursor && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
+            {
+                usingControllerCursor = false;
+            }
+
+            if (CursorVisible)
+            {
+                if (usingControllerCursor)
+                {
+                    Cursor.visible = false;
+                    //Cursor.lockState = CursorLockMode.Locked;
+
+                    GUI.depth = 0;
+
+                    controllerCursorPosition.x += controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
+                    controllerCursorPosition.y += controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+
+                    controllerCursorPosition.x = Mathf.Clamp(controllerCursorPosition.x, 0, Screen.width);
+                    controllerCursorPosition.y = Mathf.Clamp(controllerCursorPosition.y, 0, Screen.height);
+
+                    GUI.DrawTexture(new Rect(controllerCursorPosition.x, Screen.height - controllerCursorPosition.y, controllerCursorWidth, controllerCursorHeight), controllerCursorImage);
+                }
+                else
+                {
+                    Cursor.visible = true;
+                }
+            }
+            else
+            {
+                //note: we don't even need to do anything to hide the visibility of the controller cursor since it will stop rendering
+                Cursor.visible = false;
+            }
         }
 
         void OnApplicationQuit()
