@@ -629,6 +629,16 @@ namespace DaggerfallWorkshop.Game
 
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
+
+            SetAxisBinding("HorizontalJ", AxisActions.MovementHorizontal);
+            SetAxisBinding("VerticalJ", AxisActions.MovementVertical);
+            SetAxisBinding("Joy X", AxisActions.CameraHorizontal);
+            SetAxisBinding("Joy Y", AxisActions.CameraVertical);
+
+            SetAxisBinding("Left Trigger", AxisActions.LeftTrigger);
+            SetAxisBinding("Right Trigger", AxisActions.RightTrigger);
+            SetAxisBinding("Horizontal D-Pad", AxisActions.DPadHorizontal);
+            SetAxisBinding("Vertical D-Pad", AxisActions.DPadVertical);
         }
 
         #endregion
