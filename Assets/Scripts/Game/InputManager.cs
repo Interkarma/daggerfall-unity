@@ -41,14 +41,28 @@ namespace DaggerfallWorkshop.Game
             { 5005, "JoystickAxis6Button1" }
         };
 
+        //These three dictionaries are built for InputManager.GetAxisRaw(...), specifically to
+        //deal with raising KeyUp events, since Unity does not provide an "OnAxisValueChange" event
+        Dictionary<int, float> previousAxisRaw = new Dictionary<int, float>();
+        Dictionary<int, bool> upAxisRaw = new Dictionary<int, bool>();
+        Dictionary<int, AxisActions> axisKeyCodeToActionsMap = new Dictionary<int, AxisActions>()
+        {
+            { 5000, AxisActions.LeftTrigger },
+            { 5001, AxisActions.RightTrigger },
+            { 5002, AxisActions.DPadVertical },
+            { 5003, AxisActions.DPadVertical },
+            { 5004, AxisActions.DPadHorizontal },
+            { 5005, AxisActions.DPadHorizontal }
+        };
+
         Dictionary<int, System.Func<bool>> axisKeyCodePresses = new Dictionary<int, System.Func<bool>>()
         {
-            { 5000, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.LeftTrigger)) != 0 },
-            { 5001, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.RightTrigger)) != 0 },
-            { 5002, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadVertical)) > 0 },
-            { 5003, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadVertical)) < 0 },
-            { 5004, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadHorizontal)) < 0 },
-            { 5005, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadHorizontal)) > 0 }
+            { 5000, () => InputManager.Instance.GetAxisRaw(5000) != 0 },
+            { 5001, () => InputManager.Instance.GetAxisRaw(5001) != 0 },
+            { 5002, () => InputManager.Instance.GetAxisRaw(5002) > 0 },
+            { 5003, () => InputManager.Instance.GetAxisRaw(5003) < 0 },
+            { 5004, () => InputManager.Instance.GetAxisRaw(5004) < 0 },
+            { 5005, () => InputManager.Instance.GetAxisRaw(5005) > 0 }
         };
 
         const string keyBindsFilename = "KeyBinds.txt";
@@ -846,8 +860,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKeyUp(KeyCode key)
         {
-            //TODO: create a "GetAxisKeyUp"
-            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKeyUp(key)) || GetAxisKey((int)key);
+            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
         }
 
         public bool AnyKeyDown {
@@ -876,6 +889,38 @@ namespace DaggerfallWorkshop.Game
         bool GetAxisKey(int key)
         {
             return axisKeyCodePresses.ContainsKey(key) && axisKeyCodePresses[key]();
+        }
+
+        bool GetAxisKeyUp(int key)
+        {
+            //This is a hacky solution. Without this statement, when the game is paused on a window,
+            //the GetAxisRaw function will stop running (if there is nothing in that script updating
+            //for a "GetKey" or "GetKeyDown").
+            //Because it stops running, GetAxisKeyUp(...) will be unable to listen for that "up" event,
+            //and thus if the user presses the toggle button on the window, it will do nothing.
+            GetAxisRaw(key);
+
+            return upAxisRaw.ContainsKey(key) && upAxisRaw[key];
+        }
+
+        float GetAxisRaw(int keyCode)
+        {
+            if(!axisKeyCodeToActionsMap.ContainsKey(keyCode))
+                return 0;
+
+            AxisActions action = axisKeyCodeToActionsMap[keyCode];
+            String unityInputAxisString = GetAxisBinding(action);
+            float ret = Input.GetAxisRaw(unityInputAxisString);
+
+            if(previousAxisRaw.ContainsKey(keyCode))
+            {
+                float prev = previousAxisRaw[keyCode];
+                upAxisRaw[keyCode] = (ret == 0 && prev != ret);
+            }
+
+            previousAxisRaw[keyCode] = ret;
+
+            return ret;
         }
 
         bool AnyAxisKeyDown
