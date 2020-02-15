@@ -31,26 +31,25 @@ namespace DaggerfallWorkshop.Game
         public const float minAcceleration = 1.0f;
         public const float maxAcceleration = 10.0f;
 
-		Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>()
-		{
-			{5000, "JoystickTrigger1"},
-			{5001, "JoystickTrigger2"},
-			{5002, "JoystickDPadUp"},
-			{5003, "JoystickDPadDown"},
-			{5004, "JoystickDPadLeft"},
-			{5005, "JoystickDPadRight"},
-			
-		};
-		
-		Dictionary<int, System.Func<float>> axisKeyCodeFloats = new Dictionary<int, System.Func<float>>()
-		{
-			{5000, () => Input.GetAxis("Left Trigger")},
-			{5001, () => Input.GetAxis("Right Trigger")},
-			{5002, () => { return Input.GetAxis("Vertical D-Pad") > 0 ? 1 : 0; } },
-			{5003, () => { return Input.GetAxis("Vertical D-Pad") < 0 ? -1 : 0; } },
-			{5004, () => { return Input.GetAxis("Horizontal D-Pad") < 0 ? -1 : 0; } },
-			{5005, () => { return Input.GetAxis("Horizontal D-Pad") > 0 ? 1 : 0; } }
-		};
+        Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>()
+        {
+            { 5000, "JoystickAxis9Button0" },
+            { 5001, "JoystickAxis10Button0" },
+            { 5002, "JoystickAxis7Button0" },
+            { 5003, "JoystickAxis7Button1" },
+            { 5004, "JoystickAxis6Button0" },
+            { 5005, "JoystickAxis6Button1" }
+        };
+
+        Dictionary<int, System.Func<bool>> axisKeyCodePresses = new Dictionary<int, System.Func<bool>>()
+        {
+            { 5000, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.LeftTrigger)) != 0 },
+            { 5001, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.RightTrigger)) != 0 },
+            { 5002, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadVertical)) > 0 },
+            { 5003, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadVertical)) < 0 },
+            { 5004, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadHorizontal)) < 0 },
+            { 5005, () => Input.GetAxisRaw(InputManager.Instance.GetAxisBinding(AxisActions.DPadHorizontal)) > 0 }
+        };
 
         const string keyBindsFilename = "KeyBinds.txt";
 
@@ -60,6 +59,8 @@ namespace DaggerfallWorkshop.Game
         IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
+        Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
+
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
         bool isPaused;
@@ -87,6 +88,7 @@ namespace DaggerfallWorkshop.Game
         public class KeyBindData_v1
         {
             public Dictionary<int, Actions> actionKeyBinds;
+            public Dictionary<String, AxisActions> axisActionKeyBinds;
         }
 
         #endregion
@@ -98,10 +100,10 @@ namespace DaggerfallWorkshop.Game
             get { return isPaused; }
             set { isPaused = value; }
         }
-		
-		public IList KeyCodeList {
-			get { return GetKeyCodeList(); }
-		}
+
+        public IList KeyCodeList {
+            get { return GetKeyCodeList(); }
+        }
 
         public KeyCode[] ReservedKeys
         {
@@ -158,6 +160,17 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Enums
+
+        public enum AxisActions {
+            MovementHorizontal,
+            MovementVertical,
+            CameraHorizontal,
+            CameraVertical,
+            DPadVertical,
+            DPadHorizontal,
+            LeftTrigger,
+            RightTrigger,
+        }
 
         public enum Actions
         {
@@ -335,11 +348,11 @@ namespace DaggerfallWorkshop.Game
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
             if(mouseX == 0F)
-                mouseX = Input.GetAxis("Joy X");
+                mouseX = Input.GetAxis(GetAxisBinding(AxisActions.CameraHorizontal));
 
             mouseY = Input.GetAxisRaw("Mouse Y");
             if(mouseY == 0F)
-                mouseY = Input.GetAxis("Joy Y");
+                mouseY = Input.GetAxis(GetAxisBinding(AxisActions.CameraVertical));
 
             // Update look impulse
             UpdateLook();
@@ -426,6 +439,23 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Finds first unity axis input string bound to a specific action.
+        /// </summary>
+        public String GetAxisBinding(AxisActions action)
+        {
+            if (axisActionKeyDict.ContainsValue(action))
+            {
+                foreach (var k in axisActionKeyDict.Keys)
+                {
+                    if (axisActionKeyDict[k] == action)
+                        return k;
+                }
+            }
+
+            return String.Empty;
+        }
+
+        /// <summary>
         /// Finds all keycodes made to a specific action.
         /// Will return empty array if no bindings found.
         /// </summary>
@@ -461,12 +491,46 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // Bind an input axis string to an axis action
+        public void SetAxisBinding(String code, AxisActions action)
+        {
+            // Not allowing multi-bind at this time as the front-end doesn't support it
+            ClearAxisBinding(action);
+
+            if (!axisActionKeyDict.ContainsKey(code))
+            {
+                axisActionKeyDict.Add(code, action);
+            }
+            else
+            {
+                axisActionKeyDict.Remove(code);
+                axisActionKeyDict.Add(code, action);
+            }
+        }
+
         // Unbind a KeyCode or action
         public void ClearBinding(KeyCode code)
         {
             if (actionKeyDict.ContainsKey(code))
             {
                 actionKeyDict.Remove(code);
+            }
+        }
+
+        // Unbind a KeyCode or action
+        public void ClearAxisBinding(String code)
+        {
+            if (axisActionKeyDict.ContainsKey(code))
+            {
+                axisActionKeyDict.Remove(code);
+            }
+        }
+
+        public void ClearAxisBinding(AxisActions action)
+        {
+            foreach (var binding in axisActionKeyDict.Where(kvp => kvp.Value == action).ToList())
+            {
+                axisActionKeyDict.Remove(binding.Key);
             }
         }
 
@@ -485,6 +549,7 @@ namespace DaggerfallWorkshop.Game
 
             KeyBindData_v1 keyBindsData = new KeyBindData_v1();
             keyBindsData.actionKeyBinds = actionKeyDict.Select(x => x).ToDictionary(entry => (int)entry.Key, entry => (Actions)entry.Value);
+            keyBindsData.axisActionKeyBinds = axisActionKeyDict.Select(x => x).ToDictionary(entry => (String)entry.Key, entry => (AxisActions)entry.Value);
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
             RaiseSavedKeyBindsEvent();
@@ -597,6 +662,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // Sets KeyCode binding only if action is missing
+        // This is to ensure default actions are restored if missing
+        // and to push out new actions to existing keybind files
+        private void TestSetAxisBinding(String code, AxisActions action)
+        {
+            if (!axisActionKeyDict.ContainsValue(action))
+            {
+                SetAxisBinding(code, action);
+            }
+        }
+
         // Deploys default values if action missing from loaded keybinds
         private void SetupDefaults()
         {
@@ -655,6 +731,16 @@ namespace DaggerfallWorkshop.Game
 
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
+
+            TestSetAxisBinding("HorizontalJ", AxisActions.MovementHorizontal);
+            TestSetAxisBinding("VerticalJ", AxisActions.MovementVertical);
+            TestSetAxisBinding("Joy X", AxisActions.CameraHorizontal);
+            TestSetAxisBinding("Joy Y", AxisActions.CameraVertical);
+
+            TestSetAxisBinding("Left Trigger", AxisActions.LeftTrigger);
+            TestSetAxisBinding("Right Trigger", AxisActions.RightTrigger);
+            TestSetAxisBinding("Horizontal D-Pad", AxisActions.DPadHorizontal);
+            TestSetAxisBinding("Vertical D-Pad", AxisActions.DPadVertical);
         }
 
         // Apply force to horizontal axis
@@ -740,7 +826,7 @@ namespace DaggerfallWorkshop.Game
             foreach (var e in Enum.GetValues(typeof(KeyCode)))
                 list.Add((KeyCode)e);
 
-            foreach (var k in axisKeyCodeFloats.Keys)
+            foreach (var k in axisKeyCodePresses.Keys)
                 list.Add((KeyCode)k);
 
             keyCodeList = list;
@@ -789,15 +875,15 @@ namespace DaggerfallWorkshop.Game
 
         bool GetAxisKey(int key)
         {
-            return axisKeyCodeFloats.ContainsKey(key) && axisKeyCodeFloats[key]() != 0;
+            return axisKeyCodePresses.ContainsKey(key) && axisKeyCodePresses[key]();
         }
 
         bool AnyAxisKeyDown
         {
             get
             {
-                foreach (var f in axisKeyCodeFloats.Values)
-                    if (f() != 0) return true;
+                foreach (var f in axisKeyCodePresses.Values)
+                    if (f()) return true;
                 return false;
             }
         }
@@ -836,8 +922,8 @@ namespace DaggerfallWorkshop.Game
 
         void FindInputAxisActions()
         {
-            float horiz = Input.GetAxis("HorizontalJ");
-            float vert = Input.GetAxis("VerticalJ");
+            float horiz = Input.GetAxis(GetAxisBinding(AxisActions.MovementHorizontal));
+            float vert = Input.GetAxis(GetAxisBinding(AxisActions.MovementVertical));
             float threshold = 0.5F;
             if (horiz != 0 || vert != 0)
             {
@@ -881,6 +967,12 @@ namespace DaggerfallWorkshop.Game
             {
                 if (!actionKeyDict.ContainsKey((KeyCode)item.Key))
                     actionKeyDict.Add((KeyCode)item.Key, item.Value);
+            }
+
+            foreach(var item in keyBindsData.axisActionKeyBinds)
+            {
+                if (!axisActionKeyDict.ContainsKey((String)item.Key))
+                    axisActionKeyDict.Add((String)item.Key, item.Value);
             }
             RaiseLoadedKeyBindsEvent();
         }
