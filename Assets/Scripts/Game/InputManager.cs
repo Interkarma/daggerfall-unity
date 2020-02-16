@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
+        KeyCode[] controllerUIDict = new KeyCode[3]; //leftClick, rightClick, MiddleClick
 
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
@@ -401,8 +402,14 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            var horizj = Input.GetAxis(GetAxisBinding(AxisActions.MovementHorizontal));
-            var vertj = Input.GetAxis(GetAxisBinding(AxisActions.MovementVertical));
+            var horizBinding = GetAxisBinding(AxisActions.MovementHorizontal);
+            var vertBinding = GetAxisBinding(AxisActions.MovementVertical);
+
+            if(String.IsNullOrEmpty(horizBinding) || String.IsNullOrEmpty(vertBinding))
+                return;
+
+            var horizj = Input.GetAxis(horizBinding);
+            var vertj = Input.GetAxis(vertBinding);
 
             if (!usingControllerCursor && (horizj != 0 || vertj != 0))
             {
@@ -703,6 +710,25 @@ namespace DaggerfallWorkshop.Game
             SetAxisBinding("Right Trigger", AxisActions.RightTrigger);
             SetAxisBinding("Horizontal D-Pad", AxisActions.DPadHorizontal);
             SetAxisBinding("Vertical D-Pad", AxisActions.DPadVertical);
+
+            controllerUIDict[0] = KeyCode.Joystick1Button0;
+            controllerUIDict[1] = KeyCode.Joystick1Button1;
+        }
+
+        public bool GetMouseButtonDown(int button)
+        {
+            if(usingControllerCursor)
+                return GetKeyDown(controllerUIDict[button]);
+
+            return Input.GetMouseButtonDown(button);
+        }
+
+        public bool GetMouseButton(int button)
+        {
+            if(usingControllerCursor)
+                return GetKey(controllerUIDict[button]);
+
+            return Input.GetMouseButton(button);
         }
 
         #endregion
@@ -829,6 +855,9 @@ namespace DaggerfallWorkshop.Game
             TestSetAxisBinding("Right Trigger", AxisActions.RightTrigger);
             TestSetAxisBinding("Horizontal D-Pad", AxisActions.DPadHorizontal);
             TestSetAxisBinding("Vertical D-Pad", AxisActions.DPadVertical);
+
+            controllerUIDict[0] = KeyCode.Joystick1Button0;
+            controllerUIDict[1] = KeyCode.Joystick1Button1;
         }
 
         // Apply force to horizontal axis
@@ -924,17 +953,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode key)
         {
-            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKey(key)) || GetAxisKey((int)key);
+            return (((int)key) < 5000 && Input.GetKey(key)) || GetAxisKey((int)key);
         }
 
         public bool GetKeyDown(KeyCode key)
         {
-            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKeyDown(key)) || GetAxisKey((int)key);
+            return (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKey((int)key);
         }
 
         public bool GetKeyUp(KeyCode key)
         {
-            return (Enum.IsDefined(typeof(KeyCode), key) && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
+            return (((int)key) < 5000 && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
         }
 
         public bool AnyKeyDown {
