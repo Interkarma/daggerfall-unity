@@ -731,6 +731,44 @@ namespace DaggerfallWorkshop.Game
             return Input.GetMouseButton(button);
         }
 
+        public bool GetKey(KeyCode key)
+        {
+            return (((int)key) < 5000 && Input.GetKey(key)) || GetAxisKey((int)key);
+        }
+
+        public bool GetKeyDown(KeyCode key)
+        {
+            return (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKey((int)key);
+        }
+
+        public bool GetKeyUp(KeyCode key)
+        {
+            return (((int)key) < 5000 && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
+        }
+
+        public bool AnyKeyDown {
+            get { return Input.anyKeyDown || AnyAxisKeyDown; }
+        }
+
+        public String GetKeyString(KeyCode key)
+        {
+            if (axisKeyCodeStrings.ContainsKey((int)key))
+                return axisKeyCodeStrings[(int)key];
+            else
+                return key.ToString();
+        }
+
+        public KeyCode ParseKeyCodeString(String s){
+            try
+            {
+                return (KeyCode)Enum.Parse(typeof(KeyCode), s);
+            }
+            catch
+            {
+                return (KeyCode)axisKeyCodeStrings.FirstOrDefault(x => x.Value == s).Key;
+            }
+        }
+
         #endregion
 
         #region Public Static Methods
@@ -949,44 +987,6 @@ namespace DaggerfallWorkshop.Game
             keyCodeList = list;
 
             return keyCodeList;
-        }
-
-        public bool GetKey(KeyCode key)
-        {
-            return (((int)key) < 5000 && Input.GetKey(key)) || GetAxisKey((int)key);
-        }
-
-        public bool GetKeyDown(KeyCode key)
-        {
-            return (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKey((int)key);
-        }
-
-        public bool GetKeyUp(KeyCode key)
-        {
-            return (((int)key) < 5000 && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
-        }
-
-        public bool AnyKeyDown {
-            get { return Input.anyKeyDown || AnyAxisKeyDown; }
-        }
-
-        public String GetKeyString(KeyCode key)
-        {
-            if (axisKeyCodeStrings.ContainsKey((int)key))
-                return axisKeyCodeStrings[(int)key];
-            else
-                return key.ToString();
-        }
-
-        public KeyCode ParseKeyCodeString(String s){
-            try
-            {
-                return (KeyCode)Enum.Parse(typeof(KeyCode), s);
-            }
-            catch
-            {
-                return (KeyCode)axisKeyCodeStrings.FirstOrDefault(x => x.Value == s).Key;
-            }
         }
 
         bool GetAxisKey(int key)
