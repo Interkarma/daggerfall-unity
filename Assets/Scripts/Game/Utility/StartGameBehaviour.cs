@@ -390,14 +390,14 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
             }
 
+            // Apply biography effects to player entity
+            BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
+
             // Assign starting gear to player entity
             AssignStartingEquipment(playerEntity, characterDocument);
             
             // Assign starting spells to player entity
             AssignStartingSpells(playerEntity, characterDocument);
-
-            // Apply biography effects to player entity
-            BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
 
             // Assign starting level up skill sum
             playerEntity.SetCurrentLevelUpSkillSum();
