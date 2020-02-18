@@ -689,7 +689,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (automap.ITweenCameraAnimationIsRunning)
             {
                 // update oldMousePosition to prevent problems with drag and drog action that starts before animation is over 
-                oldMousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                oldMousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
 
                 // if so update automap view so animation plays correctly
                 UpdateAutomapView();
@@ -714,11 +714,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (
                 (automap.DebugTeleportMode == true) &&
                 leftMouseClickedOnPanelAutomap && // make sure click happened in panel area
-                Input.GetMouseButtonDown(0) && // make sure click was issued in this frame
+                InputManager.Instance.GetMouseButtonDown(0) && // make sure click was issued in this frame
                 ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift)))
                )
             {
-                //Vector2 mousePosition = new Vector2((Input.mousePosition.x / Screen.width) * panelRenderAutomap.Size.x, (Input.mousePosition.y / Screen.height) * panelRenderAutomap.Size.y);
+                //Vector2 mousePosition = new Vector2((InputManager.Instance.MousePosition.x / Screen.width) * panelRenderAutomap.Size.x, (InputManager.Instance.MousePosition.y / Screen.height) * panelRenderAutomap.Size.y);
                 Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
                 mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
                 automap.TryTeleportPlayerToDungeonSegmentAtScreenPosition(mousePosition);
@@ -870,7 +870,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // check mouse input and assign actions
             if (leftMouseDownOnPanelAutomap)
             {
-                Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                Vector2 mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
 
                 float dragSpeedCompensated;
                 switch (automapViewMode)
@@ -893,7 +893,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnPanelAutomap)
             {
-                Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                Vector2 mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
 
                 Vector2 bias = mousePosition - oldMousePosition;
 
@@ -915,7 +915,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (middleMouseDownOnPanelAutomap)
             {
-                Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                Vector2 mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
 
                 Vector2 bias = mousePosition - oldMousePosition;
 
@@ -1902,7 +1902,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (automap.DebugTeleportMode && ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift))))
                 return;
 
-            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            Vector2 mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
             oldMousePosition = mousePosition;
             leftMouseDownOnPanelAutomap = true;
             alreadyInMouseDown = true;
@@ -1920,7 +1920,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (alreadyInRightMouseDown)
                 return;
 
-            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            Vector2 mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
             oldMousePosition = mousePosition;
             rightMouseDownOnPanelAutomap = true;
             alreadyInRightMouseDown = true;
@@ -1937,7 +1937,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (alreadyInMiddleMouseDown)
                 return;
 
-            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            Vector2 mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
             oldMousePosition = mousePosition;
             middleMouseDownOnPanelAutomap = true;
             alreadyInMiddleMouseDown = true;
