@@ -1072,16 +1072,42 @@ namespace DaggerfallWorkshop.Game
         {
             float horiz = Input.GetAxis(GetAxisBinding(AxisActions.MovementHorizontal));
             float vert = Input.GetAxis(GetAxisBinding(AxisActions.MovementVertical));
-            float threshold = 0.5F;
-            if (horiz != 0 || vert != 0)
-            {
-                horiz = horiz > threshold ? 1
-                        : horiz < -threshold ? -1
-                        : horiz;
 
-                vert = vert > threshold ? 1
-                        : vert < -threshold ? -1
-                        : vert;
+            //if the force is greater than this threshold, round it up to 1
+            const float threshold = 0.95F;
+
+            //this arbitrary float value seems to be the minimum force that can be given without unnecessarily
+            //triggering FrictionMotor's UnstickHandling() method, which can create jagged movement at lower force
+            const float minimum = 0.68f;
+
+            if (vert != 0 || horiz != 0)
+            {
+                float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), minimum, 1.0F);
+
+                if(dist > threshold)
+                    dist = 1.0F;
+
+                if (horiz > 0)
+                {
+                    currentActions.Add(Actions.MoveRight);
+                    horiz = dist;
+                }
+                else if (horiz < 0)
+                {
+                    currentActions.Add(Actions.MoveLeft);
+                    horiz = -dist;
+                }
+
+                if (vert > 0)
+                {
+                    currentActions.Add(Actions.MoveForwards);
+                    vert = dist;
+                }
+                else if (vert < 0)
+                {
+                    currentActions.Add(Actions.MoveBackwards);
+                    vert = -dist;
+                }
 
                 ApplyHorizontalForce(horiz);
                 ApplyVerticalForce(vert);
