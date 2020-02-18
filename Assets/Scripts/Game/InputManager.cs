@@ -701,15 +701,15 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
 
-            SetAxisBinding("HorizontalJ", AxisActions.MovementHorizontal);
-            SetAxisBinding("VerticalJ", AxisActions.MovementVertical);
-            SetAxisBinding("Joy X", AxisActions.CameraHorizontal);
-            SetAxisBinding("Joy Y", AxisActions.CameraVertical);
+            SetAxisBinding("Axis1", AxisActions.MovementHorizontal);
+            SetAxisBinding("Axis2", AxisActions.MovementVertical);
+            SetAxisBinding("Axis4", AxisActions.CameraHorizontal);
+            SetAxisBinding("Axis5", AxisActions.CameraVertical);
 
-            SetAxisBinding("Left Trigger", AxisActions.LeftTrigger);
-            SetAxisBinding("Right Trigger", AxisActions.RightTrigger);
-            SetAxisBinding("Horizontal D-Pad", AxisActions.DPadHorizontal);
-            SetAxisBinding("Vertical D-Pad", AxisActions.DPadVertical);
+            SetAxisBinding("Axis9", AxisActions.LeftTrigger);
+            SetAxisBinding("Axis10", AxisActions.RightTrigger);
+            SetAxisBinding("Axis6", AxisActions.DPadHorizontal);
+            SetAxisBinding("Axis7", AxisActions.DPadVertical);
 
             controllerUIDict[0] = KeyCode.Joystick1Button0;
             controllerUIDict[1] = KeyCode.Joystick1Button1;
@@ -884,15 +884,15 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
 
-            TestSetAxisBinding("HorizontalJ", AxisActions.MovementHorizontal);
-            TestSetAxisBinding("VerticalJ", AxisActions.MovementVertical);
-            TestSetAxisBinding("Joy X", AxisActions.CameraHorizontal);
-            TestSetAxisBinding("Joy Y", AxisActions.CameraVertical);
+            TestSetAxisBinding("Axis1", AxisActions.MovementHorizontal);
+            TestSetAxisBinding("Axis2", AxisActions.MovementVertical);
+            TestSetAxisBinding("Axis4", AxisActions.CameraHorizontal);
+            TestSetAxisBinding("Axis5", AxisActions.CameraVertical);
 
-            TestSetAxisBinding("Left Trigger", AxisActions.LeftTrigger);
-            TestSetAxisBinding("Right Trigger", AxisActions.RightTrigger);
-            TestSetAxisBinding("Horizontal D-Pad", AxisActions.DPadHorizontal);
-            TestSetAxisBinding("Vertical D-Pad", AxisActions.DPadVertical);
+            TestSetAxisBinding("Axis9", AxisActions.LeftTrigger);
+            TestSetAxisBinding("Axis10", AxisActions.RightTrigger);
+            TestSetAxisBinding("Axis6", AxisActions.DPadHorizontal);
+            TestSetAxisBinding("Axis7", AxisActions.DPadVertical);
 
             controllerUIDict[0] = KeyCode.Joystick1Button0;
             controllerUIDict[1] = KeyCode.Joystick1Button1;
