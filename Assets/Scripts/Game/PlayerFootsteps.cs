@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game
         int currentClimateIndex;
         bool isInside = false;
         bool isInOutsideWater = false;
+        bool isInOutsidePath = false;
 
         void Start()
         {
@@ -103,13 +104,16 @@ namespace DaggerfallWorkshop.Game
             // Play splash footsteps whether player is walking on or swimming in exterior water
             bool playerOnExteriorWater = (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.WaterWalking);
 
-            // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
-            if (playerSeason != currentSeason || playerClimateIndex != currentClimateIndex || isInside != playerInside || playerOnExteriorWater != isInOutsideWater)
+            bool playerOnExteriorPath = GameManager.Instance.PlayerMotor.OnExteriorPath;
+
+            // Change footstep sounds between winter/summer variants, when player enters/exits an interior space, or changes between path, water, or other outdoor ground
+            if (playerSeason != currentSeason || playerClimateIndex != currentClimateIndex || isInside != playerInside || playerOnExteriorWater != isInOutsideWater || playerOnExteriorPath != isInOutsidePath)
             {
                 currentSeason = playerSeason;
                 currentClimateIndex = playerClimateIndex;
                 isInside = playerInside;
                 isInOutsideWater = playerOnExteriorWater;
+                isInOutsidePath = playerOnExteriorPath;
                 if (!isInside)
                     if (currentSeason == DaggerfallDateTime.Seasons.Winter && !WeatherManager.IsSnowFreeClimate(currentClimateIndex))
                     {
@@ -141,6 +145,15 @@ namespace DaggerfallWorkshop.Game
             {
                 currentFootstepSound1 = FootstepSoundSubmerged;
                 currentFootstepSound2 = FootstepSoundSubmerged;
+                clip1 = null;
+                clip2 = null;
+            }
+
+            // walking on path tile
+            if (playerOnExteriorPath)
+            {
+                currentFootstepSound1 = FootstepSoundDungeon1;
+                currentFootstepSound2 = FootstepSoundDungeon2;
                 clip1 = null;
                 clip2 = null;
             }
