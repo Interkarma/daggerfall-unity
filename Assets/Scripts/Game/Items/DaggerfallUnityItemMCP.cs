@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop.Game.Items
             {   // %qua
                 if (parent.maxCondition > 0 && parent.currentCondition <= parent.maxCondition)
                 {
-                    int conditionPercentage = 100 * parent.currentCondition / parent.maxCondition;
+                    int conditionPercentage = parent.ConditionPercentage;
                     int i = 0;
                     while (conditionPercentage > conditionThresholds[i])
                         i++;
