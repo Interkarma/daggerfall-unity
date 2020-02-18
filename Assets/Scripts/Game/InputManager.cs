@@ -59,12 +59,12 @@ namespace DaggerfallWorkshop.Game
 
         Dictionary<int, System.Func<bool>> axisKeyCodePresses = new Dictionary<int, System.Func<bool>>()
         {
-            { 5000, () => InputManager.Instance.GetAxisRaw(5000) != 0 },
-            { 5001, () => InputManager.Instance.GetAxisRaw(5001) != 0 },
-            { 5002, () => InputManager.Instance.GetAxisRaw(5002) > 0 },
-            { 5003, () => InputManager.Instance.GetAxisRaw(5003) < 0 },
-            { 5004, () => InputManager.Instance.GetAxisRaw(5004) < 0 },
-            { 5005, () => InputManager.Instance.GetAxisRaw(5005) > 0 }
+            { 5000, () => InputManager.Instance.GetAxisRaw(5000, 0) != 0 },
+            { 5001, () => InputManager.Instance.GetAxisRaw(5001, 0) != 0 },
+            { 5002, () => InputManager.Instance.GetAxisRaw(5002, 1) > 0 },
+            { 5003, () => InputManager.Instance.GetAxisRaw(5003, -1) < 0 },
+            { 5004, () => InputManager.Instance.GetAxisRaw(5004, -1) < 0 },
+            { 5005, () => InputManager.Instance.GetAxisRaw(5005, 1) > 0 }
         };
 
         const string keyBindsFilename = "KeyBinds.txt";
@@ -996,17 +996,22 @@ namespace DaggerfallWorkshop.Game
 
         bool GetAxisKeyUp(int key)
         {
+            if(key < 5000)
+                return false;
+
             //This is a hacky solution. Without this statement, when the game is paused on a window,
             //the GetAxisRaw function will stop running (if there is nothing in that script updating
             //for a "GetKey" or "GetKeyDown").
+
             //Because it stops running, GetAxisKeyUp(...) will be unable to listen for that "up" event,
-            //and thus if the user presses the toggle button on the window, it will do nothing.
-            GetAxisRaw(key);
+            //(via the upAxisRaw dictionary), and thus if the user presses the toggle button on the window,
+            //it will do nothing.
+            axisKeyCodePresses[key]();
 
             return upAxisRaw.ContainsKey(key) && upAxisRaw[key];
         }
 
-        float GetAxisRaw(int keyCode)
+        float GetAxisRaw(int keyCode, int signage)
         {
             if(!axisKeyCodeToActionsMap.ContainsKey(keyCode))
                 return 0;
@@ -1018,7 +1023,14 @@ namespace DaggerfallWorkshop.Game
             if(previousAxisRaw.ContainsKey(keyCode))
             {
                 float prev = previousAxisRaw[keyCode];
-                upAxisRaw[keyCode] = (ret == 0 && prev != ret);
+				
+				bool statement = (prev != ret);
+				if(signage < 0)
+					statement = prev < 0;
+				else if(signage > 0)
+					statement = prev > 0;
+				
+                upAxisRaw[keyCode] = (ret == 0 && statement);
             }
 
             previousAxisRaw[keyCode] = ret;
