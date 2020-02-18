@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop.Game
         [fsObject("v1")]
         public class KeyBindData_v1
         {
-            public Dictionary<int, Actions> actionKeyBinds;
+            public Dictionary<String, Actions> actionKeyBinds;
             public Dictionary<String, AxisActions> axisActionKeyBinds;
         }
 
@@ -633,8 +633,8 @@ namespace DaggerfallWorkshop.Game
             string path = GetKeyBindsSavePath();
 
             KeyBindData_v1 keyBindsData = new KeyBindData_v1();
-            keyBindsData.actionKeyBinds = actionKeyDict.Select(x => x).ToDictionary(entry => (int)entry.Key, entry => (Actions)entry.Value);
-            keyBindsData.axisActionKeyBinds = axisActionKeyDict.Select(x => x).ToDictionary(entry => (String)entry.Key, entry => (AxisActions)entry.Value);
+            keyBindsData.actionKeyBinds = actionKeyDict.Select(x => x).ToDictionary(entry => GetKeyString(entry.Key), entry => (Actions)entry.Value);
+            keyBindsData.axisActionKeyBinds = axisActionKeyDict;
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
             RaiseSavedKeyBindsEvent();
@@ -1139,8 +1139,9 @@ namespace DaggerfallWorkshop.Game
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
             foreach(var item in keyBindsData.actionKeyBinds)
             {
-                if (!actionKeyDict.ContainsKey((KeyCode)item.Key))
-                    actionKeyDict.Add((KeyCode)item.Key, item.Value);
+                KeyCode key = ParseKeyCodeString(item.Key);
+                if (!actionKeyDict.ContainsKey(key))
+                    actionKeyDict.Add(key, item.Value);
             }
 
             foreach(var item in keyBindsData.axisActionKeyBinds)
