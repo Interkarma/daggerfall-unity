@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign default player equipment & spells allocation methods
             AssignStartingEquipment = DaggerfallUnity.Instance.ItemHelper.AssignStartingGear;
-            AssignStartingSpells = DaggerfallUnity.Instance.ItemHelper.AssignStartingSpells;
+            AssignStartingSpells = SetStartingSpells;
         }
 
         void Start()
@@ -763,6 +763,69 @@ namespace DaggerfallWorkshop.Game.Utility
             // Weapon hand and equip state not serialized currently
             // Interim measure is to reset weapon manager state on new game
             GameManager.Instance.WeaponManager.Reset();
+        }
+
+        /// <summary>
+        /// Assigns starting spells to the spellbook item for a new character.
+        /// </summary>
+        void SetStartingSpells(PlayerEntity playerEntity, CharacterDocument characterDocument)
+        {
+            if (characterDocument.classIndex > 6 && !characterDocument.isCustom) // Class does not have starting spells
+                return;
+
+            // Get starting set based on class
+            int spellSetIndex = -1;
+            if (characterDocument.isCustom)
+            {
+                DFCareer dfc = characterDocument.career;
+
+                // Custom class uses Spellsword starting spells if it has at least 1 primary or major magic skill
+                if (Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill1) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill2) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill3) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill1) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill2) ||
+                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill3))
+                {
+                    spellSetIndex = 1;
+                }
+            }
+            else
+            {
+                spellSetIndex = characterDocument.classIndex;
+            }
+
+            if (spellSetIndex == -1)
+                return;
+
+            // Get the set's spell indices
+            TextAsset spells = Resources.Load<TextAsset>("StartingSpells") as TextAsset;
+            List<CareerStartingSpells> startingSpells = SaveLoadManager.Deserialize(typeof(List<CareerStartingSpells>), spells.text) as List<CareerStartingSpells>;
+            List<StartingSpell> spellsToAdd = new List<StartingSpell>();
+            for (int i = 0; i < startingSpells[spellSetIndex].SpellsList.Length; i++)
+            {
+                spellsToAdd.Add(startingSpells[spellSetIndex].SpellsList[i]);
+            }
+
+            // Add spells to player from standard list
+            foreach (StartingSpell spell in spellsToAdd)
+            {
+                SpellRecord.SpellRecordData spellData;
+                GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spell.SpellID, out spellData);
+                if (spellData.index == -1)
+                {
+                    Debug.LogError("Failed to locate starting spell in standard spells list.");
+                    continue;
+                }
+
+                EffectBundleSettings bundle;
+                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
+                {
+                    Debug.LogError("Failed to create effect bundle for starting spell.");
+                    continue;
+                }
+                playerEntity.AddSpell(bundle);
+            }
         }
 
         #endregion

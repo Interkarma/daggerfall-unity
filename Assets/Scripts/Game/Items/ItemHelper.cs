@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -1196,66 +1197,117 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        /// <summary>
-        /// Assigns starting spells to the spellbook item for a new character.
-        /// </summary>
-        public void AssignStartingSpells(PlayerEntity playerEntity, CharacterDocument characterDocument)
+        public void AssignEnemyStartingEquipment(PlayerEntity player, EnemyEntity enemyEntity, int variant)
         {
-            if (characterDocument.classIndex > 6 && !characterDocument.isCustom) // Class does not have starting spells
-                return;
+            int itemLevel = player.Level;
+            Genders playerGender = player.Gender;
+            Races race = player.Race;
+            int chance = 0;
 
-            // Get starting set based on class
-            int spellSetIndex = -1;
-            if (characterDocument.isCustom)
+            // City watch never have items above iron or steel
+            if (enemyEntity.EntityType == EntityTypes.EnemyClass && enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                itemLevel = 1;
+
+            if (variant == 0)
             {
-                DFCareer dfc = characterDocument.career;
+                // right-hand weapon
+                int item = UnityEngine.Random.Range((int)Weapons.Broadsword, (int)(Weapons.Longsword) + 1);
+                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
+                enemyEntity.Items.AddItem(weapon);
 
-                // Custom class uses Spellsword starting spells if it has at least 1 primary or major magic skill
-                if (Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill1) ||
-                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill2) ||
-                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.PrimarySkill3) ||
-                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill1) ||
-                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill2) ||
-                    Enum.IsDefined(typeof(DFCareer.MagicSkills), (int)dfc.MajorSkill3))
+                chance = 50;
+
+                // left-hand shield
+                item = UnityEngine.Random.Range((int)Armor.Buckler, (int)(Armor.Round_Shield) + 1);
+                if (Dice100.SuccessRoll(chance))
                 {
-                    spellSetIndex = 1;
+                    DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, (Items.Armor)item, ItemBuilder.RandomArmorMaterial(itemLevel));
+                    enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                    enemyEntity.Items.AddItem(armor);
+                }
+                // left-hand weapon
+                else if (Dice100.SuccessRoll(chance))
+                {
+                    item = UnityEngine.Random.Range((int)Weapons.Dagger, (int)(Weapons.Shortsword) + 1);
+                    weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                    enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
+                    enemyEntity.Items.AddItem(weapon);
                 }
             }
             else
             {
-                spellSetIndex = characterDocument.classIndex;
+                // right-hand weapon
+                int item = UnityEngine.Random.Range((int)Weapons.Claymore, (int)(Weapons.Battle_Axe) + 1);
+                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
+                enemyEntity.Items.AddItem(weapon);
+
+                if (variant == 1)
+                    chance = 75;
+                else if (variant == 2)
+                    chance = 90;
+            }
+            // helm
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Helm, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // right pauldron
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Right_Pauldron, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // left pauldron
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Left_Pauldron, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // cuirass
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Cuirass, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // greaves
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Greaves, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // boots
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Boots, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
             }
 
-            if (spellSetIndex == -1)
-                return;
-
-            // Get the set's spell indices
-            TextAsset spells = Resources.Load<TextAsset>("StartingSpells") as TextAsset;
-            List<CareerStartingSpells> startingSpells = SaveLoadManager.Deserialize(typeof(List<CareerStartingSpells>), spells.text) as List<CareerStartingSpells>;
-            List<StartingSpell> spellsToAdd = new List<StartingSpell>();
-            for (int i = 0; i < startingSpells[spellSetIndex].SpellsList.Length; i++)
+            // Chance for poisoned weapon
+            if (player.Level > 1)
             {
-                spellsToAdd.Add(startingSpells[spellSetIndex].SpellsList[i]);
-            }
-
-            // Add spells to player from standard list
-            foreach (StartingSpell spell in spellsToAdd)
-            {
-                SpellRecord.SpellRecordData spellData;
-                GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spell.SpellID, out spellData);
-                if (spellData.index == -1)
+                DaggerfallUnityItem weapon = enemyEntity.ItemEquipTable.GetItem(EquipSlots.RightHand);
+                if (weapon != null && (enemyEntity.EntityType == EntityTypes.EnemyClass || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Orc
+                        || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Centaur || enemyEntity.MobileEnemy.ID == (int)MobileTypes.OrcSergeant))
                 {
-                    Debug.LogError("Failed to locate starting spell in standard spells list.");
-                    continue;
-                }
+                    int chanceToPoison = 5;
+                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Assassin)
+                        chanceToPoison = 60;
 
-                EffectBundleSettings bundle;
-                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
-                {
-                    Debug.LogError("Failed to create effect bundle for starting spell.");
-                    continue;
+                    if (Dice100.SuccessRoll(chanceToPoison))
+                    {
+                        // Apply poison
+                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 135 + 1);
+                    }
                 }
-                playerEntity.AddSpell(bundle);
             }
         }
 

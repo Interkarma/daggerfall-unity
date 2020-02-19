@@ -16,8 +16,6 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -101,12 +99,10 @@ namespace DaggerfallWorkshop.Game
             entityBehaviour.CorpseLootContainer = loot;
 
 
-            // Transfer any items owned by entity to loot container, possibly with modifications.
+            // Transfer any items owned by entity to loot container
             // Many quests will stash a reward in enemy inventory for player to find
             // This will be in addition to normal random loot table generation
-            DaggerfallUnityItem[] entityItems = entityBehaviour.Entity.Items.Export();
-            FormulaHelper.ModifyFoundLootItems(ref entityItems);
-            loot.Items.Import(entityItems);
+            loot.Items.TransferAll(entityBehaviour.Entity.Items);
 
             // Play body collapse sound
             if (DaggerfallUI.Instance.DaggerfallAudioSource)
