@@ -122,6 +122,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.questFoeSpellQueueIndex = entity.QuestFoeSpellQueueIndex;
             data.questFoeItemQueueIndex = entity.QuestFoeItemQueueIndex;
             data.wabbajackActive = entity.WabbajackActive;
+            data.team = (int)entity.Team + 1;
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -173,6 +174,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.SetHealth(data.currentHealth, true);
             entity.SetFatigue(data.currentFatigue, true);
             entity.SetMagicka(data.currentMagicka, true);
+            int team = data.team;
+            if (team > 0)   // Added 1 to made backwards compatible. 0 = no team saved
+                entity.Team = (MobileTeams)(team - 1);
             motor.IsHostile = data.isHostile;
             senses.HasEncounteredPlayer = data.hasEncounteredPlayer;
 
