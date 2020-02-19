@@ -98,7 +98,6 @@ namespace DaggerfallWorkshop.Game
 
             entityBehaviour.CorpseLootContainer = loot;
 
-
             // Transfer any items owned by entity to loot container
             // Many quests will stash a reward in enemy inventory for player to find
             // This will be in addition to normal random loot table generation
