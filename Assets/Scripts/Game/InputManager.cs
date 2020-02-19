@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
 
-        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote, KeyCode.SysReq };
+        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote, KeyCode.F8 };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
@@ -521,7 +521,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
 
-            SetBinding(KeyCode.SysReq, Actions.PrintScreen);
+            SetBinding(KeyCode.F8, Actions.PrintScreen);
         }
 
         #endregion
@@ -628,7 +628,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
 
-            TestSetBinding(KeyCode.SysReq, Actions.PrintScreen);
+            TestSetBinding(KeyCode.F8, Actions.PrintScreen);
         }
 
         // Apply force to horizontal axis

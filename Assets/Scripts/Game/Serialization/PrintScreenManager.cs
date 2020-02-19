@@ -31,16 +31,25 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class PrintScreenManager : MonoBehaviour
     {
 
-       const string rootScreenshotsFolder = "Screenshots";
+        #region Fields
+
+        const string rootScreenshotsFolder = "Screenshots";
 
         private string unityScreenshotsPath;
+        private KeyCode prtscrBinding = KeyCode.None;
+
+        #endregion
+
+        #region Properties
+
         public string UnityScreenshotsPath
         {
             get { return GetUnityScreenshotsPath(); } 
         }
 
-        private KeyCode prtscrBinding = KeyCode.None;
+        #endregion
 
+        #region Unity
 
         void Update ()
         {
@@ -56,6 +65,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                     StartCoroutine(TakeScreenshot());
             }
         }
+
+        #endregion
+
+        #region Private Methods
 
         IEnumerator TakeScreenshot()
         {
@@ -111,6 +124,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             return result;
         }
-    }
 
+        #endregion
+    }
 }
