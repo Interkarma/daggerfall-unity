@@ -411,6 +411,15 @@ namespace DaggerfallConnect
             /// <summary>Z position in 3D space.</summary>
             public Int32 ZPos;
 
+            /// <summary>X scale</summary>
+            public float XScale;
+
+            /// <summary>Y scale</summary>
+            public float YScale;
+
+            /// <summary>Z scale</summary>
+            public float ZScale;
+
             /// <summary>Unknown.</summary>
             internal UInt32 NullValue2;
 

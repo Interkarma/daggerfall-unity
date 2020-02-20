@@ -104,7 +104,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             go.name = GameObjectHelper.GetGoModelName(modelID) + " [Replacement]";
             go.transform.parent = parent;
             go.transform.position = matrix.GetColumn(3);
-            go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
+            go.transform.rotation = matrix.rotation;
+
+            //Multiply the scale instead of applying it, since custom 3D models doesn't necessary have (1,1,1) scale
+            go.transform.localScale = Vector3.Scale(go.transform.localScale, matrix.lossyScale);
 
             // Finalise gameobject
             FinaliseMaterials(go);

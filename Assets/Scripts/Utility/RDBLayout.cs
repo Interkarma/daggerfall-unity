@@ -732,7 +732,8 @@ namespace DaggerfallWorkshop.Utility
             uint modelID = (uint)modelData.DFMesh.ObjectId;
             GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, makeStatic, null, ignoreCollider, convexCollider);
             go.transform.position = matrix.GetColumn(3);
-            go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
+            go.transform.rotation = matrix.rotation;
+            go.transform.localScale = matrix.lossyScale;
 
             return go;
         }
