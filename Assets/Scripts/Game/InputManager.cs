@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game
         //deal with raising KeyUp events, since Unity does not provide an "OnAxisValueChange" event
         Dictionary<int, float> previousAxisRaw = new Dictionary<int, float>();
         Dictionary<int, bool> upAxisRaw = new Dictionary<int, bool>();
+        Dictionary<int, bool> downAxisRaw = new Dictionary<int, bool>();
         Dictionary<int, AxisActions> axisKeyCodeToActionsMap = new Dictionary<int, AxisActions>()
         {
             { 5000, AxisActions.LeftTrigger },
@@ -738,7 +739,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKeyDown(KeyCode key)
         {
-            return (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKey((int)key);
+            return (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKeyDown((int)key);
         }
 
         public bool GetKeyUp(KeyCode key)
@@ -994,7 +995,7 @@ namespace DaggerfallWorkshop.Game
             return axisKeyCodePresses.ContainsKey(key) && axisKeyCodePresses[key]();
         }
 
-        bool GetAxisKeyUp(int key)
+        bool GetAxisKeyDown(int key)
         {
             if(key < 5000)
                 return false;
@@ -1003,9 +1004,20 @@ namespace DaggerfallWorkshop.Game
             //the GetAxisRaw function will stop running (if there is nothing in that script updating
             //for a "GetKey" or "GetKeyDown").
 
-            //Because it stops running, GetAxisKeyUp(...) will be unable to listen for that "up" event,
-            //(via the upAxisRaw dictionary), and thus if the user presses the toggle button on the window,
+            //Because it stops running, GetAxisKeyDown(...) will be unable to listen for that "up" event,
+            //(via the downAxisRaw dictionary), and thus if the user presses the toggle button on the window,
             //it will do nothing.
+            axisKeyCodePresses[key]();
+
+            return downAxisRaw.ContainsKey(key) && downAxisRaw[key];
+        }
+
+        bool GetAxisKeyUp(int key)
+        {
+            if(key < 5000)
+                return false;
+
+            //Same hacky solution as GetAxisKeyDown
             axisKeyCodePresses[key]();
 
             return upAxisRaw.ContainsKey(key) && upAxisRaw[key];
@@ -1023,14 +1035,25 @@ namespace DaggerfallWorkshop.Game
             if(previousAxisRaw.ContainsKey(keyCode))
             {
                 float prev = previousAxisRaw[keyCode];
-				
-				bool statement = (prev != ret);
-				if(signage < 0)
-					statement = prev < 0;
-				else if(signage > 0)
-					statement = prev > 0;
-				
+
+                // keyup -> if the previous frame captured input, but the current frame has not
+                bool statement = (prev != ret);
+                if(signage < 0)
+                    statement = prev < 0;
+                else if(signage > 0)
+                    statement = prev > 0;
+
                 upAxisRaw[keyCode] = (ret == 0 && statement);
+
+                // keydown -> if the previous frame did not captured input, but the current frame has
+                statement = (prev != ret);
+                if(signage < 0)
+                    statement = ret < 0;
+                else if(signage > 0)
+                    statement = ret > 0;
+
+                downAxisRaw[keyCode] = (prev == 0 && statement);
+
             }
 
             previousAxisRaw[keyCode] = ret;
