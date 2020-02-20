@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Game
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         KeyCode[] controllerUIDict = new KeyCode[3]; //leftClick, rightClick, MiddleClick
+        String[] cameraAxisBindingCache = new String[2];
+        String[] movementAxisBindingCache = new String[2];
 
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
@@ -384,11 +386,11 @@ namespace DaggerfallWorkshop.Game
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
             if (mouseX == 0F)
-                mouseX = Input.GetAxis(GetAxisBinding(AxisActions.CameraHorizontal));
+                mouseX = Input.GetAxis(cameraAxisBindingCache[0]);
 
             mouseY = Input.GetAxisRaw("Mouse Y");
             if (mouseY == 0F)
-                mouseY = Input.GetAxis(GetAxisBinding(AxisActions.CameraVertical));
+                mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
 
             // Update look impulse
             UpdateLook();
@@ -403,8 +405,8 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            var horizBinding = GetAxisBinding(AxisActions.MovementHorizontal);
-            var vertBinding = GetAxisBinding(AxisActions.MovementVertical);
+            var horizBinding = movementAxisBindingCache[0];
+            var vertBinding = movementAxisBindingCache[1];
 
             if (String.IsNullOrEmpty(horizBinding) || String.IsNullOrEmpty(vertBinding))
                 return;
@@ -653,6 +655,7 @@ namespace DaggerfallWorkshop.Game
             keyBindsData.axisActionKeyBinds = axisActionKeyDict;
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
+            UpdateAxisBindingCache();
             RaiseSavedKeyBindsEvent();
         }
 
@@ -729,6 +732,7 @@ namespace DaggerfallWorkshop.Game
 
             controllerUIDict[0] = KeyCode.Joystick1Button0;
             controllerUIDict[1] = KeyCode.Joystick1Button1;
+            UpdateAxisBindingCache();
         }
 
         public bool GetMouseButtonDown(int button)
@@ -818,6 +822,14 @@ namespace DaggerfallWorkshop.Game
                     Destroy(gameObject);
                 }
             }
+        }
+
+        private void UpdateAxisBindingCache()
+        {
+            cameraAxisBindingCache[0] = GetAxisBinding(AxisActions.CameraHorizontal);
+            cameraAxisBindingCache[1] = GetAxisBinding(AxisActions.CameraVertical);
+            movementAxisBindingCache[0] = GetAxisBinding(AxisActions.MovementHorizontal);
+            movementAxisBindingCache[1] = GetAxisBinding(AxisActions.MovementVertical);
         }
 
         // Sets KeyCode binding only if action is missing
@@ -913,6 +925,7 @@ namespace DaggerfallWorkshop.Game
 
             controllerUIDict[0] = KeyCode.Joystick1Button0;
             controllerUIDict[1] = KeyCode.Joystick1Button1;
+            UpdateAxisBindingCache();
         }
 
         // Apply force to horizontal axis
@@ -1072,7 +1085,6 @@ namespace DaggerfallWorkshop.Game
                     statement = ret > 0;
 
                 downAxisRaw[keyCode] = (prev == 0 && statement);
-
             }
 
             previousAxisRaw[keyCode] = ret;
@@ -1125,8 +1137,8 @@ namespace DaggerfallWorkshop.Game
         // processes player movement via joystick
         void FindInputAxisActions()
         {
-            float horiz = Input.GetAxis(GetAxisBinding(AxisActions.MovementHorizontal));
-            float vert = Input.GetAxis(GetAxisBinding(AxisActions.MovementVertical));
+            float horiz = Input.GetAxis(movementAxisBindingCache[0]);
+            float vert = Input.GetAxis(movementAxisBindingCache[1]);
 
             //if the force is greater than this threshold, round it up to 1
             const float threshold = 0.95F;
@@ -1204,6 +1216,7 @@ namespace DaggerfallWorkshop.Game
                 if (!axisActionKeyDict.ContainsKey((String)item.Key))
                     axisActionKeyDict.Add((String)item.Key, item.Value);
             }
+            UpdateAxisBindingCache();
             RaiseLoadedKeyBindsEvent();
         }
 
