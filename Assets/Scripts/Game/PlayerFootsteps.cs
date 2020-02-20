@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game
         bool isInside = false;
         bool isInOutsideWater = false;
         bool isInOutsidePath = false;
+        bool isOnStaticGeometry = false;
 
         void Start()
         {
@@ -105,16 +106,19 @@ namespace DaggerfallWorkshop.Game
             bool playerOnExteriorWater = (GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming || GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.WaterWalking);
 
             bool playerOnExteriorPath = GameManager.Instance.PlayerMotor.OnExteriorPath;
+            bool playerOnStaticGeometry = GameManager.Instance.PlayerMotor.OnExteriorStaticGeometry;
 
             // Change footstep sounds between winter/summer variants, when player enters/exits an interior space, or changes between path, water, or other outdoor ground
-            if (playerSeason != currentSeason || playerClimateIndex != currentClimateIndex || isInside != playerInside || playerOnExteriorWater != isInOutsideWater || playerOnExteriorPath != isInOutsidePath)
+            if (playerSeason != currentSeason || playerClimateIndex != currentClimateIndex || isInside != playerInside || playerOnExteriorWater != isInOutsideWater || playerOnExteriorPath != isInOutsidePath || playerOnStaticGeometry != isOnStaticGeometry)
             {
                 currentSeason = playerSeason;
                 currentClimateIndex = playerClimateIndex;
                 isInside = playerInside;
                 isInOutsideWater = playerOnExteriorWater;
                 isInOutsidePath = playerOnExteriorPath;
-                if (!isInside)
+                isOnStaticGeometry = playerOnStaticGeometry;
+                if (!isInside && !playerOnStaticGeometry)
+                {
                     if (currentSeason == DaggerfallDateTime.Seasons.Winter && !WeatherManager.IsSnowFreeClimate(currentClimateIndex))
                     {
                         currentFootstepSound1 = FootstepSoundSnow1;
@@ -125,6 +129,7 @@ namespace DaggerfallWorkshop.Game
                         currentFootstepSound1 = FootstepSoundOutside1;
                         currentFootstepSound2 = FootstepSoundOutside2;
                     }
+                }
                 else if (playerInBuilding)
                 {
                     currentFootstepSound1 = FootstepSoundBuilding1;

@@ -19,6 +19,9 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        const float walkingRayDistance = 1.0f;
+        const float ridingRayDistance = 2.0f;
+
         bool isCrouching = false;
 
         bool isRiding = false;
@@ -61,6 +64,7 @@ namespace DaggerfallWorkshop.Game
         float freezeMotor = 0;
         OnExteriorWaterMethod onExteriorWaterMethod = OnExteriorWaterMethod.None;
         bool onExteriorPathMethod = false;
+        bool onExteriorStaticGeometryMethod = false;
 
         #endregion
 
@@ -228,6 +232,14 @@ namespace DaggerfallWorkshop.Game
             get { return onExteriorPathMethod; }
         }
 
+        /// <summary>
+        /// The method by which player is standing on outdoor path.
+        /// </summary>
+        public bool OnExteriorStaticGeometry
+        {
+            get { return onExteriorStaticGeometryMethod; }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -341,6 +353,7 @@ namespace DaggerfallWorkshop.Game
             // Update on water check
             onExteriorWaterMethod = GetOnExteriorWaterMethod();
             onExteriorPathMethod = GetOnExteriorPathMethod();
+            onExteriorStaticGeometryMethod = GetOnExteriorStaticGeometryMethod();
 
             heightChanger.DecideHeightAction();
 
@@ -472,11 +485,8 @@ namespace DaggerfallWorkshop.Game
         /// Same when player is levitating above water they should not hear splash sounds.
         /// </summary>
         /// <returns>True if player is physically in range of an outdoor tile.</returns>
-        bool GetOnExteriorGroundMethod()
+        public bool GetOnExteriorGroundMethod()
         {
-            const float walkingRayDistance = 1.0f;
-            const float ridingRayDistance = 2.0f;
-
             float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
 
             // Must be outside and actually be standing on a terrain object not some other object (e.g. player ship)
@@ -493,6 +503,28 @@ namespace DaggerfallWorkshop.Game
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Check if player is really standing on an outdoor StaticGeometry object, not just positioned above one.
+        /// For example when player is on their ship they are standing above water but should not be swimming.
+        /// Same when player is levitating above water they should not hear splash sounds.
+        /// </summary>
+        /// <returns>True if player is physically in range of a StaticGeometry object.</returns>
+        bool GetOnExteriorStaticGeometryMethod()
+        {
+            float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
+
+            // Must be outside and actually be standing on a terrain object not some other object (e.g. player ship)
+            RaycastHit hit;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
+            {
+                return false;
+            }
+            else
+            {
+                return hit.collider.tag.Equals("StaticGeometry");
+            }
         }
 
         /// <summary>
