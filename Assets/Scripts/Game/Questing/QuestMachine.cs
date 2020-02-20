@@ -224,6 +224,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return Path.Combine(Application.persistentDataPath, questLogFilename); }
         }
 
+        /// <summary>
+        /// Return a new random seed
+        /// </summary>
+        public int InternalSeed { get { return internalSeed.Next(); } }
+
         #endregion
 
         #region Structs & Enums
