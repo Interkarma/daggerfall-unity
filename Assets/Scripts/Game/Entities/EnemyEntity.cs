@@ -375,7 +375,6 @@ namespace DaggerfallWorkshop.Game.Entity
                 // they are better than the value in the definition.
                 for (int i = 0; i < ArmorValues.Length; i++)
                 {
-                     // BUG? this is using mobs armor val if it's less than equipment, contrary to comment above
                     if (ArmorValues[i] > (sbyte)(mobileEnemy.ArmorValue * 5))
                     {
                         ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
