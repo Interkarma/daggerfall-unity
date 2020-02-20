@@ -398,9 +398,9 @@ namespace DaggerfallWorkshop
             summary.AnimStateRecord = record;
             Vector2 size = summary.RecordSizes[record];
 
-            // Post-fix female spellsword scale while casting spells
+            // Post-fix female texture scale for 475 while casting spells
             // The scale read from Daggerfall's files is too small 
-            if ((MobileTypes)summary.Enemy.ID == MobileTypes.Spellsword &&
+            if (summary.Enemy.FemaleTexture == 475 &&
                 summary.Enemy.Gender == MobileGender.Female &&
                 record >= 20 && record <= 24)
             {
