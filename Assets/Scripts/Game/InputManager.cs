@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 MousePosition {
             get {
-                if(usingControllerCursor)
+                if (usingControllerCursor)
                     return controllerCursorPosition;
                 else
                     return Input.mousePosition;
@@ -383,11 +383,11 @@ namespace DaggerfallWorkshop.Game
 
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
-            if(mouseX == 0F)
+            if (mouseX == 0F)
                 mouseX = Input.GetAxis(GetAxisBinding(AxisActions.CameraHorizontal));
 
             mouseY = Input.GetAxisRaw("Mouse Y");
-            if(mouseY == 0F)
+            if (mouseY == 0F)
                 mouseY = Input.GetAxis(GetAxisBinding(AxisActions.CameraVertical));
 
             // Update look impulse
@@ -406,7 +406,7 @@ namespace DaggerfallWorkshop.Game
             var horizBinding = GetAxisBinding(AxisActions.MovementHorizontal);
             var vertBinding = GetAxisBinding(AxisActions.MovementVertical);
 
-            if(String.IsNullOrEmpty(horizBinding) || String.IsNullOrEmpty(vertBinding))
+            if (String.IsNullOrEmpty(horizBinding) || String.IsNullOrEmpty(vertBinding))
                 return;
 
             var horizj = Input.GetAxis(horizBinding);
@@ -560,7 +560,9 @@ namespace DaggerfallWorkshop.Game
             return keyCodes.ToArray();
         }
 
-        // Bind a KeyCode to an action
+        /// <summary>
+        /// Binds a KeyCode to an action
+        /// </summary>
         public void SetBinding(KeyCode code, Actions action)
         {
             // Not allowing multi-bind at this time as the front-end doesn't support it
@@ -577,7 +579,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        // Bind an input axis string to an axis action
+        /// <summary>
+        /// Binds an Input Axis to an AxisAction
+        /// </summary>
         public void SetAxisBinding(String code, AxisActions action)
         {
             // Not allowing multi-bind at this time as the front-end doesn't support it
@@ -594,7 +598,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        // Unbind a KeyCode or action
+        /// <summary>
+        /// Unbinds a KeyCode to an action via KeyCode
+        /// </summary>
         public void ClearBinding(KeyCode code)
         {
             if (actionKeyDict.ContainsKey(code))
@@ -603,7 +609,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        // Unbind a KeyCode or action
+        /// <summary>
+        /// Unbinds an Input Axis to an AxisAction via Axis string name
+        /// </summary>
         public void ClearAxisBinding(String code)
         {
             if (axisActionKeyDict.ContainsKey(code))
@@ -612,6 +620,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Unbinds an Input Axis to an AxisAction via the AxisAction
+        /// </summary>
         public void ClearAxisBinding(AxisActions action)
         {
             foreach (var binding in axisActionKeyDict.Where(kvp => kvp.Value == action).ToList())
@@ -620,6 +631,10 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+
+        /// <summary>
+        /// Unbinds a KeyCode to an action via Action
+        /// </summary>
         public void ClearBinding(Actions action)
         {
             foreach (var binding in actionKeyDict.Where(kvp => kvp.Value == action).ToList())
@@ -718,7 +733,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            if(usingControllerCursor)
+            if (usingControllerCursor)
                 return GetKeyDown(controllerUIDict[button]);
 
             return Input.GetMouseButtonDown(button);
@@ -726,7 +741,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButton(int button)
         {
-            if(usingControllerCursor)
+            if (usingControllerCursor)
                 return GetKey(controllerUIDict[button]);
 
             return Input.GetMouseButton(button);
@@ -759,7 +774,8 @@ namespace DaggerfallWorkshop.Game
                 return key.ToString();
         }
 
-        public KeyCode ParseKeyCodeString(String s){
+        public KeyCode ParseKeyCodeString(String s)
+        {
             try
             {
                 return (KeyCode)Enum.Parse(typeof(KeyCode), s);
@@ -971,11 +987,11 @@ namespace DaggerfallWorkshop.Game
             lookY = (invertLookY) ? -lookY : lookY;
         }
 
+        // returns a list of all the Unity Input.KeyCodes and the custom axis KeyCodes
         IList GetKeyCodeList()
         {
-            if (keyCodeList != null){
+            if (keyCodeList != null)
                 return keyCodeList;
-            }
 
             List<KeyCode> list = new List<KeyCode>();
 
@@ -997,7 +1013,7 @@ namespace DaggerfallWorkshop.Game
 
         bool GetAxisKeyDown(int key)
         {
-            if(key < 5000)
+            if (key < 5000)
                 return false;
 
             //This is a hacky solution. Without this statement, when the game is paused on a window,
@@ -1014,7 +1030,7 @@ namespace DaggerfallWorkshop.Game
 
         bool GetAxisKeyUp(int key)
         {
-            if(key < 5000)
+            if (key < 5000)
                 return false;
 
             //Same hacky solution as GetAxisKeyDown
@@ -1023,33 +1039,36 @@ namespace DaggerfallWorkshop.Game
             return upAxisRaw.ContainsKey(key) && upAxisRaw[key];
         }
 
+
+        // Returns the raw axis value based on the custom axis KeyCode and input direction via signage
+        // Also updates upAxisRaw and downAxisRaw dictionaries to process GetAxisKeyDown and GetAxisKeyUp events
         float GetAxisRaw(int keyCode, int signage)
         {
-            if(!axisKeyCodeToActionsMap.ContainsKey(keyCode))
+            if (!axisKeyCodeToActionsMap.ContainsKey(keyCode))
                 return 0;
 
             AxisActions action = axisKeyCodeToActionsMap[keyCode];
             String unityInputAxisString = GetAxisBinding(action);
             float ret = Input.GetAxisRaw(unityInputAxisString);
 
-            if(previousAxisRaw.ContainsKey(keyCode))
+            if (previousAxisRaw.ContainsKey(keyCode))
             {
                 float prev = previousAxisRaw[keyCode];
 
                 // keyup -> if the previous frame captured input, but the current frame has not
                 bool statement = (prev != ret);
-                if(signage < 0)
+                if (signage < 0)
                     statement = prev < 0;
-                else if(signage > 0)
+                else if (signage > 0)
                     statement = prev > 0;
 
                 upAxisRaw[keyCode] = (ret == 0 && statement);
 
                 // keydown -> if the previous frame did not captured input, but the current frame has
                 statement = (prev != ret);
-                if(signage < 0)
+                if (signage < 0)
                     statement = ret < 0;
-                else if(signage > 0)
+                else if (signage > 0)
                     statement = ret > 0;
 
                 downAxisRaw[keyCode] = (prev == 0 && statement);
@@ -1103,6 +1122,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // processes player movement via joystick
         void FindInputAxisActions()
         {
             float horiz = Input.GetAxis(GetAxisBinding(AxisActions.MovementHorizontal));
@@ -1119,7 +1139,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), minimum, 1.0F);
 
-                if(dist > threshold)
+                if (dist > threshold)
                     dist = 1.0F;
 
                 if (horiz > 0)
