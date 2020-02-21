@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="person">Target Person resource to remove.</param>
         public void DropFace(Person person)
         {
-            faces.RemoveAll(face => face.questUID == person.ParentQuest.UID && face.targetPerson.Equals(person.Symbol));
+            faces.RemoveAll(face => face.questUID == person.ParentQuest.UID && person.Symbol.Equals(face.targetPerson));
             RefreshFaces();
         }
 
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="foe">Target Foe resource to remove.</param>
         public void DropFace(Foe foe)
         {
-            faces.RemoveAll(face => face.questUID == foe.ParentQuest.UID && face.targetFoe.Equals(foe.Symbol));
+            faces.RemoveAll(face => face.questUID == foe.ParentQuest.UID && foe.Symbol.Equals(face.targetFoe));
             RefreshFaces();
         }
 
