@@ -186,6 +186,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public List<string> BackStory { get; set; }
         public VampireClans PreviousVampireClan { get; set; }
         public bool EnemyAlertActive { get { return enemyAlertActive; } }
+        public int DaedraSummonDay { get; set; }
+        public int DaedraSummonIndex { get; set; }
 
         #endregion
 
@@ -793,6 +795,7 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
+            DaedraSummonDay = DaedraSummonIndex = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
 
