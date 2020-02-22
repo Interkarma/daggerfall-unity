@@ -517,7 +517,7 @@ namespace DaggerfallWorkshop.Game
 
             // Must be outside and actually be standing on a terrain object not some other object (e.g. player ship)
             RaycastHit hit;
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance))
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance * 2))
             {
                 return false;
             }
