@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop.Game
         bool lostGrounding;
         float distance;
         bool alternateStep = false;
+        bool ignoreLostGrounding = true;
 
         SoundClips currentFootstepSound1 = SoundClips.None;
         SoundClips currentFootstepSound2 = SoundClips.None;
@@ -94,6 +95,15 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+
+            //this condition helps prevent making a nuisance footstep noise when the player first
+            //loads a save, or into an interior or exterior location
+            if (GameManager.Instance.SaveLoadManager.LoadInProgress || GameManager.Instance.StreamingWorld.IsRepositioningPlayer)
+            {
+                ignoreLostGrounding = true;
+                return;
+            }
+
             DaggerfallDateTime.Seasons playerSeason = dfUnity.WorldTime.Now.SeasonValue;
             int playerClimateIndex = GameManager.Instance.PlayerGPS.CurrentClimateIndex;
 
@@ -117,6 +127,7 @@ namespace DaggerfallWorkshop.Game
                 isInOutsideWater = playerOnExteriorWater;
                 isInOutsidePath = playerOnExteriorPath;
                 isOnStaticGeometry = playerOnStaticGeometry;
+
                 if (!isInside && !playerOnStaticGeometry)
                 {
                     if (currentSeason == DaggerfallDateTime.Seasons.Winter && !WeatherManager.IsSnowFreeClimate(currentClimateIndex))
@@ -233,10 +244,25 @@ namespace DaggerfallWorkshop.Game
                         distance = 0f;
                         lastPosition = GetHorizontalPosition();
                         lostGrounding = false;
+
+                        if (ignoreLostGrounding)
+                            ignoreLostGrounding = false;
+                        else if (customAudioSource && clip1 && clip2)
+                        {
+                            if (!alternateStep)
+                                customAudioSource.PlayOneShot(clip1, FootstepVolumeScale * DaggerfallUnity.Settings.SoundVolume);
+                            else
+                                customAudioSource.PlayOneShot(clip2, FootstepVolumeScale * DaggerfallUnity.Settings.SoundVolume);
+
+                            alternateStep = (!alternateStep);
+                        }
                         return;
                     }
                 }
             }
+
+            if (playerMotor.IsStandingStill)
+                return;
 
             // Get distance player travelled horizontally
             Vector3 position = GetHorizontalPosition();
@@ -274,12 +300,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool IsGrounded()
         {
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position, Vector3.down);
-            if (Physics.Raycast(ray, out hit, GroundDistance))
-                return true;
-            else
-                return false;
+            return playerMotor.IsGrounded;
         }
 
         // Capture this message so we can play fall damage sound
