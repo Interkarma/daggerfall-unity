@@ -1230,12 +1230,20 @@ namespace DaggerfallWorkshop.Game
                     actionKeyDict.Add(key, item.Value);
             }
 
-            foreach(var item in keyBindsData.axisActionKeyBinds)
+            if (keyBindsData.axisActionKeyBinds != null)
             {
-                if (!axisActionKeyDict.ContainsKey((String)item.Key))
-                    axisActionKeyDict.Add((String)item.Key, item.Value);
+                foreach (var item in keyBindsData.axisActionKeyBinds)
+                {
+                    if (!axisActionKeyDict.ContainsKey((String)item.Key))
+                        axisActionKeyDict.Add((String)item.Key, item.Value);
+                }
+                UpdateAxisBindingCache();
             }
-            UpdateAxisBindingCache();
+            else
+            {
+                keyBindsData.axisActionKeyBinds = new Dictionary<String, AxisActions>();
+            }
+
             RaiseLoadedKeyBindsEvent();
         }
 
