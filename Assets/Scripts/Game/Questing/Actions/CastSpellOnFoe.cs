@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get
             {
-                return @"cast (?<aSpell>[a-zA-Z0-9_.-]+) spell on (?<aFoe>[a-zA-Z0-9_.-]+)|" +
+                return @"cast (?<aSpell>[a-zA-Z0-9'_.-]+) spell on (?<aFoe>[a-zA-Z0-9_.-]+)|" +
                        @"cast (?<aCustomSpell>[a-zA-Z0-9_.-]+) custom spell on (?<aFoe>[a-zA-Z0-9_.-]+)";
             }
         }
