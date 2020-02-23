@@ -737,8 +737,8 @@ namespace DaggerfallWorkshop.Game
             SetAxisBinding("Axis6", AxisActions.DPadHorizontal);
             SetAxisBinding("Axis7", AxisActions.DPadVertical);
 
-            controllerUIDict[0] = KeyCode.Joystick1Button0;
-            controllerUIDict[1] = KeyCode.Joystick1Button1;
+            controllerUIDict[0] = KeyCode.JoystickButton0;
+            controllerUIDict[1] = KeyCode.JoystickButton1;
             UpdateAxisBindingCache();
         }
 
@@ -760,7 +760,8 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode key)
         {
-            var k = (((int)key) < 5000 && Input.GetKey(key)) || GetAxisKey((int)key);
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var k = (((int)conv) < 5000 && Input.GetKey(conv)) || GetAxisKey((int)conv);
             if (k)
                 LastKeyDown = key;
             return k;
@@ -768,7 +769,8 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKeyDown(KeyCode key)
         {
-            var kd = (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKeyDown((int)key);
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var kd = (((int)conv) < 5000 && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
             if (kd)
                 LastKeyDown = key;
             return kd;
@@ -776,7 +778,8 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKeyUp(KeyCode key)
         {
-            return (((int)key) < 5000 && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            return (((int)conv) < 5000 && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
         public bool AnyKeyDown
@@ -942,8 +945,8 @@ namespace DaggerfallWorkshop.Game
             TestSetAxisBinding("Axis6", AxisActions.DPadHorizontal);
             TestSetAxisBinding("Axis7", AxisActions.DPadVertical);
 
-            controllerUIDict[0] = KeyCode.Joystick1Button0;
-            controllerUIDict[1] = KeyCode.Joystick1Button1;
+            controllerUIDict[0] = KeyCode.JoystickButton0;
+            controllerUIDict[1] = KeyCode.JoystickButton1;
             UpdateAxisBindingCache();
         }
 
@@ -1036,6 +1039,22 @@ namespace DaggerfallWorkshop.Game
             keyCodeList = list;
 
             return keyCodeList;
+        }
+
+        //Converts all joystick KeyCodes to be controller-agnostic (e.g. "Joystick3Button0" to "JoystickButton0")
+        //Sometimes, Unity will recognize input from the controller as Joystick1ButtonX, and other times as JoystickButtonX
+        //This method deals with this inconsistency by converting them to JoystickButtonX
+        KeyCode ConvertJoystickButtonKeyCode(KeyCode k)
+        {
+            if (k < KeyCode.Joystick1Button0 || k > KeyCode.Joystick8Button19)
+                return k;
+
+            //Retrieves the button number from the enum. There are twenty buttons per joystick number
+            //Returns a range from 0 to 19
+            int num = (((int)k) + 10) % 20;
+
+            //Add that number starting at JoystickButton0
+            return KeyCode.JoystickButton0 + num;
         }
 
         bool GetAxisKey(int key)
