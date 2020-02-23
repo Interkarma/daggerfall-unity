@@ -51,6 +51,16 @@ namespace DaggerfallWorkshop.Utility
         #region Layout Methods
 
         /// <summary>
+        /// Gets the model scale vector, converting zeros to 1s if needed.
+        /// </summary>
+        /// <param name="obj">RmbBlock3dObjectRecord structure</param>
+        /// <returns>Vector3 with the scaling factors</returns>
+        public static Vector3 GetModelScaleVector(DFBlock.RmbBlock3dObjectRecord obj)
+        {
+            return new Vector3(obj.XScale == 0 ? 1 : obj.XScale, obj.YScale == 0 ? 1 : obj.YScale, obj.ZScale == 0 ? 1 : obj.YScale);
+        }
+
+        /// <summary>
         /// Gets block data with validation.
         /// </summary>
         /// <param name="blockName">Block name.</param>
@@ -710,7 +720,7 @@ namespace DaggerfallWorkshop.Utility
                     // Get model transform
                     Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                     Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
-                    Vector3 modelScale = new Vector3(obj.XScale, obj.YScale, obj.ZScale);
+                    Vector3 modelScale = GetModelScaleVector(obj);
                     Matrix4x4 modelMatrix = subRecordMatrix * Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
                     // Get model data
@@ -782,7 +792,7 @@ namespace DaggerfallWorkshop.Utility
                 // Get model transform
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos + propsOffsetY, obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
                 Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
-                Vector3 modelScale = new Vector3(obj.XScale, obj.YScale, obj.ZScale);
+                Vector3 modelScale = GetModelScaleVector(obj);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
                 // Get model data
