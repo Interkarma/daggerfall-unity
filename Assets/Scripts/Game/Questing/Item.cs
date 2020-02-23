@@ -137,12 +137,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
             string declMatchStr = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) item class (?<itemClass>\d+) subclass (?<itemSubClass>\d+)|"+
                                   @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<artifact>artifact) (?<itemName>[a-zA-Z0-9_.-]+)|"+
+                                  @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+) key (?<itemKey>\d+)|"+
                                   @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+)";
 
             string optionsMatchStr = @"range (?<rangeLow>\d+) to (?<rangeHigh>\d+)";
 
             // Try to match source line with pattern
             string itemName = string.Empty;
+            int itemKey = -1;
             int itemClass = -1;
             int itemSubClass = -1;
             bool isGold = false;
@@ -171,6 +173,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (!string.IsNullOrEmpty(match.Groups["artifact"].Value))
                     artifact = true;
 
+                // Item id (for books and potions)
+                Group itemKeyGroup = match.Groups["itemKey"];
+                if (itemKeyGroup.Success)
+                    itemKey = Parser.ParseInt(itemKeyGroup.Value);
+
                 // Set gold - this is not in the lookup table
                 if (itemName == "gold")
                     isGold = true;
@@ -197,7 +204,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (itemClass != -1 && itemSubClass != -1 && !isGold)
                     item = CreateItem(itemClass, itemSubClass);         // Create item by class and subclass (a.k.a ItemGroup and GroupIndex)
                 else if (!string.IsNullOrEmpty(itemName) && !isGold)
-                    item = CreateItem(itemName);                        // Create by name of item in lookup table
+                    item = CreateItem(itemName, itemKey);                        // Create by name of item in lookup table
                 else if (isGold)
                     item = CreateGold(rangeLow, rangeHigh);             // Create gold pieces of amount by level or range values
                 else
@@ -255,7 +262,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Create by item or artifact name
         // This gets class and subclass values from p1 and p2 of items lookup table
-        DaggerfallUnityItem CreateItem(string itemName)
+        DaggerfallUnityItem CreateItem(string itemName, int itemKey)
         {
             // Get items table
             Table itemsTable = QuestMachine.Instance.ItemsTable;
@@ -263,7 +270,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 int p1 = Parser.ParseInt(itemsTable.GetValue("p1", itemName));
                 int p2 = Parser.ParseInt(itemsTable.GetValue("p2", itemName));
-                return CreateItem(p1, p2);
+                return CreateItem(p1, p2, itemKey);
             }
             else
             {
@@ -272,7 +279,7 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         // Create by item class and subclass
-        DaggerfallUnityItem CreateItem(int itemClass, int itemSubClass)
+        DaggerfallUnityItem CreateItem(int itemClass, int itemSubClass, int itemKey = -1)
         {
             // Validate
             if (itemClass == -1)
@@ -289,7 +296,12 @@ namespace DaggerfallWorkshop.Game.Questing
             // Handle books
             else if (itemClass == (int)ItemGroups.Books)
             {
-                result = ItemBuilder.CreateRandomBook();
+                result = (itemKey != -1) ? ItemBuilder.CreateBook(itemKey) : ItemBuilder.CreateRandomBook();
+            }
+            // Handle potions
+            else if (itemClass == (int)ItemGroups.UselessItems1 && itemSubClass == 1)
+            {
+                result = (itemKey != -1) ? ItemBuilder.CreatePotion(itemKey) : ItemBuilder.CreateRandomPotion();
             }
             else
             {

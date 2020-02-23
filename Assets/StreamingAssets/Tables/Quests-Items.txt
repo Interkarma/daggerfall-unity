@@ -45,6 +45,7 @@ sursam                 ,0,1
 quaesto_vil            ,0,2
 aegrostat              ,0,3
 junk                   ,1,-1
+potion                 ,1,1
 decanter               ,1,2
 small_sack             ,1,4
 large_sack             ,1,5
