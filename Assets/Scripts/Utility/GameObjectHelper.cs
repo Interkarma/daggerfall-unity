@@ -1167,7 +1167,7 @@ namespace DaggerfallWorkshop.Utility
                 {
                     // Assign gender randomly
                     MobileGender gender;
-                    if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
+                    if (UnityEngine.Random.Range(0f, 1f) < 0.55f)
                         gender = MobileGender.Male;
                     else
                         gender = MobileGender.Female;
