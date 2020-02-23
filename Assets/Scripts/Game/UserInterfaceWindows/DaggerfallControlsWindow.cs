@@ -361,20 +361,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             waitingForInput = false;
 
-            foreach (KeyCode code in InputManager.Instance.KeyCodeList)
+            KeyCode code = InputManager.Instance.LastKeyDown;
+
+            if (code != KeyCode.None)
             {
-                if (InputManager.Instance.GetKeyDown(code))
+                String toString = InputManager.Instance.GetKeyString(code);
+                if (toString != "Escape")
                 {
-                    String toString = InputManager.Instance.GetKeyString(code);
-                    if (toString != "Escape")
-                    {
-                        button.Label.Text = toString;
-                        CheckDuplicates();
-                    }
-                    else
-                    {
-                        button.Label.Text = currentLabel;
-                    }
+                    button.Label.Text = toString;
+                    CheckDuplicates();
+                }
+                else
+                {
+                    button.Label.Text = currentLabel;
                 }
             }
         }

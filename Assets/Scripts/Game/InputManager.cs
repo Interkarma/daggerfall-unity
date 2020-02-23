@@ -184,6 +184,8 @@ namespace DaggerfallWorkshop.Game
             get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
         }
 
+        public KeyCode LastKeyDown { get; private set; }
+
         public bool CursorVisible { get; set; }
 
         public Vector3 MousePosition {
@@ -753,12 +755,18 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode key)
         {
-            return (((int)key) < 5000 && Input.GetKey(key)) || GetAxisKey((int)key);
+            var k = (((int)key) < 5000 && Input.GetKey(key)) || GetAxisKey((int)key);
+            if (k)
+                LastKeyDown = key;
+            return k;
         }
 
         public bool GetKeyDown(KeyCode key)
         {
-            return (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKeyDown((int)key);
+            var kd = (((int)key) < 5000 && Input.GetKeyDown(key)) || GetAxisKeyDown((int)key);
+            if (kd)
+                LastKeyDown = key;
+            return kd;
         }
 
         public bool GetKeyUp(KeyCode key)
@@ -766,8 +774,14 @@ namespace DaggerfallWorkshop.Game
             return (((int)key) < 5000 && Input.GetKeyUp(key)) || GetAxisKeyUp((int)key);
         }
 
-        public bool AnyKeyDown {
-            get { return Input.anyKeyDown || AnyAxisKeyDown; }
+        public bool AnyKeyDown
+        {
+            get
+            {
+                foreach (KeyCode k in KeyCodeList)
+                    if (GetKeyDown(k)) return true;
+                return false;
+            }
         }
 
         public String GetKeyString(KeyCode key)
@@ -1037,7 +1051,6 @@ namespace DaggerfallWorkshop.Game
             //(via the downAxisRaw dictionary), and thus if the user presses the toggle button on the window,
             //it will do nothing.
             axisKeyCodePresses[key]();
-
             return downAxisRaw.ContainsKey(key) && downAxisRaw[key];
         }
 
@@ -1085,21 +1098,14 @@ namespace DaggerfallWorkshop.Game
                     statement = ret > 0;
 
                 downAxisRaw[keyCode] = (prev == 0 && statement);
+
+                if (downAxisRaw[keyCode])
+                    LastKeyDown = (KeyCode)keyCode;
             }
 
             previousAxisRaw[keyCode] = ret;
 
             return ret;
-        }
-
-        bool AnyAxisKeyDown
-        {
-            get
-            {
-                foreach (var f in axisKeyCodePresses.Values)
-                    if (f()) return true;
-                return false;
-            }
         }
 
         // Enumerate all keyboard actions in progress
