@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop
 
                 // Get model transform
                 Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
-                Vector3 modelScale = new Vector3(obj.XScale, obj.YScale, obj.ZScale);
+                Vector3 modelScale = RMBLayout.GetModelScaleVector(obj);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
                 // Does this model have doors?
