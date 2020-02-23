@@ -210,6 +210,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public short reputationSGroup9;
         public short reputationSGroup10;
         public VampireClans previousVampireClan;
+        public int daedraSummonDay;
+        public int daedraSummonIndex;
     }
 
     [fsObject("v1")]
