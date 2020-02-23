@@ -364,6 +364,8 @@ namespace DaggerfallConnect
         /// <summary>
         /// 3D object data, such as buildings, walls, tables, cages, etc.
         /// </summary>
+        ///
+        [fsObject(Processor = typeof(RmbBlock3dObjectRecordProcessor))]
         public struct RmbBlock3dObjectRecord
         {
             /// <summary>ID of model to be loaded.</summary>
@@ -1233,6 +1235,22 @@ namespace DaggerfallConnect
                     resources.Remove("LightResource");
                 if (type == DFBlock.RdbResourceTypes.Model || type == DFBlock.RdbResourceTypes.Light)
                     resources.Remove("FlatResource");
+            }
+        }
+
+        public class RmbBlock3dObjectRecordProcessor : fsObjectProcessor
+        {
+            // Invoked after serialization has finished. Update any state inside of instance, modify the output data, etc.
+            public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+            {
+                // Remove any unused (zero) scale values from serialized form.
+                Dictionary<string, fsData> rmb3dObj = data.AsDictionary;
+                if (rmb3dObj["XScale"].AsDouble == 0)
+                    rmb3dObj.Remove("XScale");
+                if (rmb3dObj["YScale"].AsDouble == 0)
+                    rmb3dObj.Remove("YScale");
+                if (rmb3dObj["ZScale"].AsDouble == 0)
+                    rmb3dObj.Remove("ZScale");
             }
         }
 
