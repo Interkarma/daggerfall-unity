@@ -138,7 +138,7 @@ B0B40Y09, KnightlyOrder, M, 4, 0, Passed.
 B0B50Y11, KnightlyOrder, M, 5, 0, Passed
 B0B60Y12, KnightlyOrder, M, 6, 0, Passed.
 B0B70Y14, KnightlyOrder, M, 7, 0, Passed.
-B0B70Y16, KnightlyOrder, M, 7, X, Passed.
+B0B70Y16, KnightlyOrder, M, 7, 0, Passed.
 B0B71Y03, KnightlyOrder, M, 7, 1, Passed.	Discovered a new op-code: _0x3c_ 19
 B0B80Y17, KnightlyOrder, M, 8, 0, Passed.
 B0B81Y02, KnightlyOrder, M, 8, 1, Passed

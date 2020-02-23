@@ -433,6 +433,12 @@ namespace DaggerfallWorkshop.Game.Items
             get { return repairData; }
         }
 
+        /// <summary>Gets current item condition as a percentage of max.</summary>
+        public int ConditionPercentage
+        {
+            get { return 100 * currentCondition / maxCondition; }
+        }
+
         #endregion
 
         #region Constructors
