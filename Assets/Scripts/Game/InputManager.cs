@@ -392,11 +392,11 @@ namespace DaggerfallWorkshop.Game
 
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
-            if (mouseX == 0F)
+            if (mouseX == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
                 mouseX = Input.GetAxis(cameraAxisBindingCache[0]);
 
             mouseY = Input.GetAxisRaw("Mouse Y");
-            if (mouseY == 0F)
+            if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
                 mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
 
             // Update look impulse
@@ -1080,6 +1080,10 @@ namespace DaggerfallWorkshop.Game
 
             AxisActions action = axisKeyCodeToActionsMap[keyCode];
             String unityInputAxisString = GetAxisBinding(action);
+
+            if(String.IsNullOrEmpty(unityInputAxisString))
+                return 0;
+
             float ret = Input.GetAxisRaw(unityInputAxisString);
 
             if (previousAxisRaw.ContainsKey(keyCode))
@@ -1148,6 +1152,10 @@ namespace DaggerfallWorkshop.Game
         // processes player movement via joystick
         void FindInputAxisActions()
         {
+
+            if (String.IsNullOrEmpty(movementAxisBindingCache[0]) || String.IsNullOrEmpty(movementAxisBindingCache[1]))
+                return;
+
             float horiz = Input.GetAxis(movementAxisBindingCache[0]);
             float vert = Input.GetAxis(movementAxisBindingCache[1]);
 
