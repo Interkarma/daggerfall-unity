@@ -485,7 +485,7 @@ namespace DaggerfallWorkshop.Game
         /// Same when player is levitating above water they should not hear splash sounds.
         /// </summary>
         /// <returns>True if player is physically in range of an outdoor tile.</returns>
-        public bool GetOnExteriorGroundMethod()
+        bool GetOnExteriorGroundMethod()
         {
             float rayDistance = (GameManager.Instance.TransportManager.IsOnFoot) ? walkingRayDistance : ridingRayDistance;
 
