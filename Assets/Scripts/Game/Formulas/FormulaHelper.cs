@@ -463,8 +463,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             EnemyEntity AIAttacker = attacker as EnemyEntity;
             if (AIAttacker != null && weapon != null)
             {
-                int weaponAverage = ((minBaseDamage + maxBaseDamage) / 2);
-                int noWeaponAverage = ((AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2);
+                int weaponAverage = (weapon.GetBaseDamageMin() + weapon.GetBaseDamageMax()) / 2;
+                int noWeaponAverage = (AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2;
 
                 if (noWeaponAverage > weaponAverage)
                 {
