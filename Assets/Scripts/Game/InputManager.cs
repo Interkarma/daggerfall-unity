@@ -100,6 +100,7 @@ namespace DaggerfallWorkshop.Game
         bool negVerticalImpulse;
         float acceleration = 5.0f;
 
+        bool cursorVisible = true;
         bool usingControllerCursor;
         Vector2 controllerCursorPosition = new Vector2(0,0);
         int controllerCursorWidth = 32;
@@ -186,7 +187,11 @@ namespace DaggerfallWorkshop.Game
 
         public KeyCode LastKeyDown { get; private set; }
 
-        public bool CursorVisible { get; set; }
+        public bool CursorVisible
+        {
+            get { return cursorVisible; }
+            set { cursorVisible = value; }
+        }
 
         public Vector3 MousePosition {
             get {
