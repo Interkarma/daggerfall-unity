@@ -180,6 +180,7 @@ namespace DaggerfallWorkshop
         public bool EnemyInfighting { get; set; }
         public bool EnhancedCombatAI { get; set; }
         public bool GuildQuestListBox { get; set; }
+        public bool BowLeftHandWithSwitching { get; set; }
 
         #endregion
 
@@ -303,6 +304,7 @@ namespace DaggerfallWorkshop
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
             GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
+            BowLeftHandWithSwitching = GetBool(sectionEnhancements, "BowLeftHandWithSwitching");
         }
 
         /// <summary>
@@ -414,6 +416,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
             SetBool(sectionEnhancements, "GuildQuestListBox", GuildQuestListBox);
+            SetBool(sectionEnhancements, "BowLeftHandWithSwitching", BowLeftHandWithSwitching);
 
             // Write settings to persistent file
             WriteSettingsFile();

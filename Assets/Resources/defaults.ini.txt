@@ -120,3 +120,4 @@ CombatVoices=True
 EnemyInfighting=True
 EnhancedCombatAI=True
 GuildQuestListBox=False
+BowLeftHandWithSwitching=False
