@@ -763,7 +763,7 @@ namespace DaggerfallWorkshop.Game
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
             var k = (((int)conv) < 5000 && Input.GetKey(conv)) || GetAxisKey((int)conv);
             if (k)
-                LastKeyDown = key;
+                LastKeyDown = conv;
             return k;
         }
 
@@ -772,7 +772,7 @@ namespace DaggerfallWorkshop.Game
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
             var kd = (((int)conv) < 5000 && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
             if (kd)
-                LastKeyDown = key;
+                LastKeyDown = conv;
             return kd;
         }
 
