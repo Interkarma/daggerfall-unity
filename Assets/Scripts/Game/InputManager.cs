@@ -31,6 +31,13 @@ namespace DaggerfallWorkshop.Game
         public const float minAcceleration = 1.0f;
         public const float maxAcceleration = 10.0f;
 
+        //if the force is greater than this threshold, round it up to 1
+        const float controllerAxisThresholdFloat = 0.95F;
+
+        //this arbitrary float value seems to be the minimum force that can be given without unnecessarily
+        //triggering FrictionMotor's UnstickHandling() method, which can create jagged movement at lower force
+        const float controllerMinimumAxisFloat = 0.68f;
+
         public Texture2D controllerCursorImage;
 
         Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>()
@@ -100,6 +107,9 @@ namespace DaggerfallWorkshop.Game
         bool negVerticalImpulse;
         float acceleration = 5.0f;
 
+
+        float joystickCameraSensitivity = 1.0f;
+        float joystickUIMouseSensitivity = 1.0f;
         bool cursorVisible = true;
         bool usingControllerCursor;
         Vector2 controllerCursorPosition = new Vector2(0,0);
@@ -199,6 +209,36 @@ namespace DaggerfallWorkshop.Game
                     return controllerCursorPosition;
                 else
                     return Input.mousePosition;
+            }
+        }
+
+        //TODO: have this value be adjustable and serializable for the future joystick window
+        public float JoystickCameraSensitivity
+        {
+            get
+            {
+                return joystickCameraSensitivity;
+            }
+            set
+            {
+                if (value < 0.0f)
+                    value = 0.0f;
+                joystickCameraSensitivity = value;
+            }
+        }
+
+        //TODO: have this value be adjustable and serializable for the future joystick window
+        public float JoystickUIMouseSensitivity
+        {
+            get
+            {
+                return joystickUIMouseSensitivity;
+            }
+            set
+            {
+                if (value < 0.0f)
+                    value = 0.0f;
+                joystickUIMouseSensitivity = value;
             }
         }
 
@@ -393,11 +433,11 @@ namespace DaggerfallWorkshop.Game
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
             if (mouseX == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
-                mouseX = Input.GetAxis(cameraAxisBindingCache[0]);
+                mouseX = Input.GetAxis(cameraAxisBindingCache[0]) * JoystickCameraSensitivity;
 
             mouseY = Input.GetAxisRaw("Mouse Y");
             if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
-                mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
+                mouseY = Input.GetAxis(cameraAxisBindingCache[1]) * JoystickCameraSensitivity;
 
             // Update look impulse
             UpdateLook();
@@ -440,8 +480,8 @@ namespace DaggerfallWorkshop.Game
 
                     GUI.depth = 0;
 
-                    controllerCursorPosition.x += controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
-                    controllerCursorPosition.y += controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                    controllerCursorPosition.x += JoystickUIMouseSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
+                    controllerCursorPosition.y += JoystickUIMouseSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
 
                     controllerCursorPosition.x = Mathf.Clamp(controllerCursorPosition.x, 0, Screen.width);
                     controllerCursorPosition.y = Mathf.Clamp(controllerCursorPosition.y, 0, Screen.height);
@@ -1178,18 +1218,11 @@ namespace DaggerfallWorkshop.Game
             float horiz = Input.GetAxis(movementAxisBindingCache[0]);
             float vert = Input.GetAxis(movementAxisBindingCache[1]);
 
-            //if the force is greater than this threshold, round it up to 1
-            const float threshold = 0.95F;
-
-            //this arbitrary float value seems to be the minimum force that can be given without unnecessarily
-            //triggering FrictionMotor's UnstickHandling() method, which can create jagged movement at lower force
-            const float minimum = 0.68f;
-
             if (vert != 0 || horiz != 0)
             {
-                float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), minimum, 1.0F);
+                float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
 
-                if (dist > threshold)
+                if (dist > controllerAxisThresholdFloat)
                     dist = 1.0F;
 
                 if (horiz > 0)
