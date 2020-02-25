@@ -842,11 +842,11 @@ namespace DaggerfallWorkshop.Game
 
         public KeyCode ParseKeyCodeString(String s)
         {
-            try
+            if (Enum.IsDefined(typeof(KeyCode), s))
             {
                 return (KeyCode)Enum.Parse(typeof(KeyCode), s);
             }
-            catch
+            else
             {
                 return (KeyCode)axisKeyCodeStrings.FirstOrDefault(x => x.Value == s).Key;
             }
