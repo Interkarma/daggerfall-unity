@@ -31,6 +31,10 @@ namespace DaggerfallWorkshop.Game
         public const float minAcceleration = 1.0f;
         public const float maxAcceleration = 10.0f;
 
+        //there are only 16 recognized axes
+        const int numAxes = 16;
+        const int startingAxisKeyCode = 5000;
+
         //if the force is greater than this threshold, round it up to 1
         const float controllerAxisThresholdFloat = 0.95F;
 
@@ -40,40 +44,15 @@ namespace DaggerfallWorkshop.Game
 
         public Texture2D controllerCursorImage;
 
-        Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>()
-        {
-            { 5000, "JoystickAxis9Button0" },
-            { 5001, "JoystickAxis10Button0" },
-            { 5002, "JoystickAxis7Button0" },
-            { 5003, "JoystickAxis7Button1" },
-            { 5004, "JoystickAxis6Button0" },
-            { 5005, "JoystickAxis6Button1" }
-        };
+        Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>();
+        Dictionary<int, String> axisKeyCodeToInputAxis = new Dictionary<int, String>();
+        Dictionary<int, System.Func<bool>> axisKeyCodePresses = new Dictionary<int, System.Func<bool>>();
 
         //These three dictionaries are built for InputManager.GetAxisRaw(...), specifically to
         //deal with raising KeyUp events, since Unity does not provide an "OnAxisValueChange" event
         Dictionary<int, float> previousAxisRaw = new Dictionary<int, float>();
         Dictionary<int, bool> upAxisRaw = new Dictionary<int, bool>();
         Dictionary<int, bool> downAxisRaw = new Dictionary<int, bool>();
-        Dictionary<int, AxisActions> axisKeyCodeToActionsMap = new Dictionary<int, AxisActions>()
-        {
-            { 5000, AxisActions.LeftTrigger },
-            { 5001, AxisActions.RightTrigger },
-            { 5002, AxisActions.DPadVertical },
-            { 5003, AxisActions.DPadVertical },
-            { 5004, AxisActions.DPadHorizontal },
-            { 5005, AxisActions.DPadHorizontal }
-        };
-
-        Dictionary<int, System.Func<bool>> axisKeyCodePresses = new Dictionary<int, System.Func<bool>>()
-        {
-            { 5000, () => InputManager.Instance.GetAxisRaw(5000, 0) != 0 },
-            { 5001, () => InputManager.Instance.GetAxisRaw(5001, 0) != 0 },
-            { 5002, () => InputManager.Instance.GetAxisRaw(5002, 1) > 0 },
-            { 5003, () => InputManager.Instance.GetAxisRaw(5003, -1) < 0 },
-            { 5004, () => InputManager.Instance.GetAxisRaw(5004, -1) < 0 },
-            { 5005, () => InputManager.Instance.GetAxisRaw(5005, 1) > 0 }
-        };
 
         const string keyBindsFilename = "KeyBinds.txt";
 
@@ -251,10 +230,6 @@ namespace DaggerfallWorkshop.Game
             MovementVertical,
             CameraHorizontal,
             CameraVertical,
-            DPadVertical,
-            DPadHorizontal,
-            LeftTrigger,
-            RightTrigger,
         }
 
         public enum Actions
@@ -356,6 +331,14 @@ namespace DaggerfallWorkshop.Game
         {
             // Read acceleration/deceleration setting
             acceleration = DaggerfallUnity.Settings.MoveSpeedAcceleration;
+
+            //memoization for 'axis keycodes'
+            for (int i = startingAxisKeyCode; i < startingAxisKeyCode + numAxes * 2; i++)
+            {
+                axisKeyCodeStrings[i] = AxisKeyCodeToString(i);
+                axisKeyCodePresses[i] = AxisKeyCodePress(i);
+                axisKeyCodeToInputAxis[i] = AxisKeyCodeToInputAxis(i);
+            }
 
             try
             {
@@ -772,11 +755,6 @@ namespace DaggerfallWorkshop.Game
             SetAxisBinding("Axis4", AxisActions.CameraHorizontal);
             SetAxisBinding("Axis5", AxisActions.CameraVertical);
 
-            SetAxisBinding("Axis9", AxisActions.LeftTrigger);
-            SetAxisBinding("Axis10", AxisActions.RightTrigger);
-            SetAxisBinding("Axis6", AxisActions.DPadHorizontal);
-            SetAxisBinding("Axis7", AxisActions.DPadVertical);
-
             controllerUIDict[0] = KeyCode.JoystickButton0;
             controllerUIDict[1] = KeyCode.JoystickButton1;
             UpdateAxisBindingCache();
@@ -801,7 +779,7 @@ namespace DaggerfallWorkshop.Game
         public bool GetKey(KeyCode key)
         {
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var k = (((int)conv) < 5000 && Input.GetKey(conv)) || GetAxisKey((int)conv);
+            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
             if (k)
                 LastKeyDown = conv;
             return k;
@@ -810,7 +788,7 @@ namespace DaggerfallWorkshop.Game
         public bool GetKeyDown(KeyCode key)
         {
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var kd = (((int)conv) < 5000 && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
+            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
             if (kd)
                 LastKeyDown = conv;
             return kd;
@@ -819,7 +797,7 @@ namespace DaggerfallWorkshop.Game
         public bool GetKeyUp(KeyCode key)
         {
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            return (((int)conv) < 5000 && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
+            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
         public bool AnyKeyDown
@@ -980,11 +958,6 @@ namespace DaggerfallWorkshop.Game
             TestSetAxisBinding("Axis4", AxisActions.CameraHorizontal);
             TestSetAxisBinding("Axis5", AxisActions.CameraVertical);
 
-            TestSetAxisBinding("Axis9", AxisActions.LeftTrigger);
-            TestSetAxisBinding("Axis10", AxisActions.RightTrigger);
-            TestSetAxisBinding("Axis6", AxisActions.DPadHorizontal);
-            TestSetAxisBinding("Axis7", AxisActions.DPadVertical);
-
             controllerUIDict[0] = KeyCode.JoystickButton0;
             controllerUIDict[1] = KeyCode.JoystickButton1;
             UpdateAxisBindingCache();
@@ -1097,6 +1070,42 @@ namespace DaggerfallWorkshop.Game
             return KeyCode.JoystickButton0 + num;
         }
 
+        //Returns a string that will visibly appear in the Keybinds window
+        String AxisKeyCodeToString(int key)
+        {
+            if (key < startingAxisKeyCode)
+                return String.Empty;
+
+            return String.Concat("Joystick", AxisKeyCodeToInputAxis(key), "Button", key % 2);
+        }
+
+        //Returns the name of the axis that Unity's Input Manager uses
+        //there are always two keys to a single axis for positive and negative floats
+        String AxisKeyCodeToInputAxis(int key)
+        {
+            if (key < startingAxisKeyCode)
+                return String.Empty;
+
+            int axisNum = (key % startingAxisKeyCode) / 2 + 1;
+
+            if (axisNum > numAxes)
+                return String.Empty;
+
+            return String.Concat("Axis", axisNum);
+        }
+
+        //Returns a function to determine if an axis button has been pressed
+        System.Func<bool> AxisKeyCodePress(int key){
+            if (key < startingAxisKeyCode)
+                return () => false;
+
+            //even-numbered keys are positive axis, odd are negative
+            if (key % 2 == 0)
+                return () => InputManager.Instance.GetAxisRaw(key, 1) > 0;
+            else
+                return () => InputManager.Instance.GetAxisRaw(key, -1) < 0;
+        }
+
         bool GetAxisKey(int key)
         {
             return axisKeyCodePresses.ContainsKey(key) && axisKeyCodePresses[key]();
@@ -1104,7 +1113,7 @@ namespace DaggerfallWorkshop.Game
 
         bool GetAxisKeyDown(int key)
         {
-            if (key < 5000)
+            if (key < startingAxisKeyCode)
                 return false;
 
             //This is a hacky solution. Without this statement, when the game is paused on a window,
@@ -1120,7 +1129,7 @@ namespace DaggerfallWorkshop.Game
 
         bool GetAxisKeyUp(int key)
         {
-            if (key < 5000)
+            if (key < startingAxisKeyCode)
                 return false;
 
             //Same hacky solution as GetAxisKeyDown
@@ -1129,19 +1138,14 @@ namespace DaggerfallWorkshop.Game
             return upAxisRaw.ContainsKey(key) && upAxisRaw[key];
         }
 
-
         // Returns the raw axis value based on the custom axis KeyCode and input direction via signage
         // Also updates upAxisRaw and downAxisRaw dictionaries to process GetAxisKeyDown and GetAxisKeyUp events
         float GetAxisRaw(int keyCode, int signage)
         {
-            if (!axisKeyCodeToActionsMap.ContainsKey(keyCode))
+            if (keyCode < startingAxisKeyCode || !axisKeyCodeToInputAxis.ContainsKey(keyCode))
                 return 0;
 
-            AxisActions action = axisKeyCodeToActionsMap[keyCode];
-            String unityInputAxisString = GetAxisBinding(action);
-
-            if(String.IsNullOrEmpty(unityInputAxisString))
-                return 0;
+            String unityInputAxisString = axisKeyCodeToInputAxis[keyCode];
 
             float ret = Input.GetAxisRaw(unityInputAxisString);
 
