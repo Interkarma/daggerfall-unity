@@ -768,6 +768,14 @@ namespace DaggerfallWorkshop.Game
             return Input.GetMouseButtonDown(button);
         }
 
+        public bool GetMouseButtonUp(int button)
+        {
+            if (usingControllerCursor)
+                return GetKeyUp(controllerUIDict[button]);
+
+            return Input.GetMouseButtonUp(button);
+        }
+
         public bool GetMouseButton(int button)
         {
             if (usingControllerCursor)
