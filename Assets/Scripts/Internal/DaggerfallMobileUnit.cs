@@ -40,6 +40,9 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(MeshRenderer))]
     public class DaggerfallMobileUnit : MonoBehaviour
     {
+        const int numberOrientations = 8;
+        const float anglePerOrientation = 360f / numberOrientations;
+
         [SerializeField]
         MobileUnitSummary summary = new MobileUnitSummary();
 
@@ -344,32 +347,10 @@ namespace DaggerfallWorkshop
             enemyFacingAngle = Vector3.Angle(dir, parentForward);
             enemyFacingAngle = enemyFacingAngle * -Mathf.Sign(Vector3.Cross(dir, parentForward).y);
 
-            // Hand-tune facing index
-            int orientation = 0;
-
-            // Right-hand side
-            if (enemyFacingAngle > 0.0f && enemyFacingAngle < 22.5f)
-                orientation = 0;
-            if (enemyFacingAngle > 22.5f && enemyFacingAngle < 67.5f)
-                orientation = 7;
-            if (enemyFacingAngle > 67.5f && enemyFacingAngle < 112.5f)
-                orientation = 6;
-            if (enemyFacingAngle > 112.5f && enemyFacingAngle < 157.5f)
-                orientation = 5;
-            if (enemyFacingAngle > 157.5f && enemyFacingAngle < 180.0f)
-                orientation = 4;
-
-            // Left-hand side
-            if (enemyFacingAngle < 0.0f && enemyFacingAngle > -22.5f)
-                orientation = 0;
-            if (enemyFacingAngle < -22.5f && enemyFacingAngle > -67.5f)
-                orientation = 1;
-            if (enemyFacingAngle < -67.5f && enemyFacingAngle > -112.5f)
-                orientation = 2;
-            if (enemyFacingAngle < -112.5f && enemyFacingAngle > -157.5f)
-                orientation = 3;
-            if (enemyFacingAngle < -157.5f && enemyFacingAngle > -180.0f)
-                orientation = 4;
+            // Facing index
+            int orientation = - Mathf.RoundToInt(enemyFacingAngle / anglePerOrientation);
+            // Wrap values to 0 .. numberOrientations-1
+            orientation = (orientation + numberOrientations) % numberOrientations;
 
             // Change enemy to this orientation
             if (orientation != lastOrientation)
