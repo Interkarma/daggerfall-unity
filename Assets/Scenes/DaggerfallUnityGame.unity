@@ -492,6 +492,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MinWaitTime: 5
   MaxWaitTime: 25
+  CemeteryMinWaitTime: 1
+  CemeteryMaxWaitTime: 80
   Presets: 0
   IsMuted: 0
   doNotPlayInCastle: 1
@@ -1244,6 +1246,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MinWaitTime: 5
   MaxWaitTime: 28
+  CemeteryMinWaitTime: 1
+  CemeteryMaxWaitTime: 80
   Presets: 1
   IsMuted: 0
   doNotPlayInCastle: 1
