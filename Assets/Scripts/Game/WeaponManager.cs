@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
+        public DaggerfallUnityItem LastBowUsed { get { return lastBowUsed; } }
         public bool UsingRightHand { get { return usingRightHand; } set { usingRightHand = value; } }
 
         #endregion
@@ -413,49 +414,43 @@ namespace DaggerfallWorkshop.Game
             SheathWeapons();
         }
 
-        // Returns true if hit an enemy entity
-        public bool WeaponDamage(RaycastHit hit, Vector3 direction, Collider arrowHitCollider = null, bool arrowHit = false)
+        // Returns true if hit the environment
+        public bool WeaponEnvDamage(DaggerfallUnityItem strikingWeapon, RaycastHit hit)
         {
-            DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
-
-            if (arrowHit)
+            // Check if hit has an DaggerfallAction component
+            DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
+            if (action)
             {
-                strikingWeapon = lastBowUsed;
-            }
-            else
-            {
-                // Check if hit has an DaggerfallAction component
-                DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
-                if (action)
-                {
-                    action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
-                }
-
-                // Check if hit has an DaggerfallActionDoor component
-                DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
-                if (actionDoor)
-                {
-                    actionDoor.AttemptBash(true);
-                    return false;
-                }
-
-                // Check if player hit a static exterior door
-                if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
-                {
-                    return false;
-                }
-
-                // Make hitting walls do a thud or clinging sound (not in classic)
-                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
-                {
-                    DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
-                    return false;
-                }
+                action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
             }
 
-            // Set up for use below
-            Transform hitTransform = arrowHit ? arrowHitCollider.gameObject.transform : hit.transform;
-            Vector3 impactPosition = arrowHit ? hitTransform.position : hit.point;
+            // Check if hit has an DaggerfallActionDoor component
+            DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
+            if (actionDoor)
+            {
+                actionDoor.AttemptBash(true);
+                return true;
+            }
+
+            // Check if player hit a static exterior door
+            if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
+            {
+                return true;
+            }
+
+            // Make hitting walls do a thud or clinging sound (not in classic)
+            if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
+            {
+                DaggerfallUI.Instance.PlayOneShot(strikingWeapon == null ? SoundClips.Hit2 : SoundClips.Parry6);
+                return true;
+            }
+
+            return false;
+        }
+
+        // Returns true if hit an enemy entity
+        public bool WeaponDamage(DaggerfallUnityItem strikingWeapon, bool arrowHit, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
+        {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
             DaggerfallMobileUnit entityMobileUnit = hitTransform.GetComponentInChildren<DaggerfallMobileUnit>();
             EnemyMotor enemyMotor = hitTransform.GetComponent<EnemyMotor>();
@@ -842,7 +837,13 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
-                hitEnemy = WeaponDamage(hit, mainCamera.transform.forward);
+                DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
+                if(!WeaponEnvDamage(strikingWeapon, hit)
+                   // Fall back to simple ray for narrow cages https://forums.dfworkshop.net/viewtopic.php?f=5&t=2195#p39524
+                   || Physics.Raycast(ray, out hit, weapon.Reach, playerLayerMask))
+                {
+                    hitEnemy = WeaponDamage(strikingWeapon, false, hit.transform, hit.point, mainCamera.transform.forward);
+                }
             }
         }
 

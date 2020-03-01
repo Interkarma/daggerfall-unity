@@ -597,8 +597,8 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                RaycastHit unused = new RaycastHit();
-                GameManager.Instance.WeaponManager.WeaponDamage(unused, goModel.transform.forward, arrowHitCollider, true);
+                Transform hitTransform = arrowHitCollider.gameObject.transform;
+                GameManager.Instance.WeaponManager.WeaponDamage(GameManager.Instance.WeaponManager.LastBowUsed, true, hitTransform, hitTransform.position, goModel.transform.forward);
             }
         }
 
