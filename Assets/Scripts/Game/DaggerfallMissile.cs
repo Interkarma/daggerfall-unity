@@ -236,6 +236,7 @@ namespace DaggerfallWorkshop.Game
 
                 goModel.transform.localPosition = adjust;
                 goModel.transform.rotation = Quaternion.LookRotation(GetAimDirection());
+                goModel.layer = gameObject.layer;
             }
 
             // Ignore missile collision with caster (this is a different check to AOE targets)
@@ -519,6 +520,7 @@ namespace DaggerfallWorkshop.Game
             // Add new billboard parented to this missile
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(), record, transform);
             go.transform.localPosition = Vector3.zero;
+            go.layer = gameObject.layer;
             myBillboard = go.GetComponent<DaggerfallBillboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
             myBillboard.FaceY = true;
