@@ -1056,7 +1056,7 @@ namespace DaggerfallWorkshop.Game
         void ObstacleCheck(Vector3 direction)
         {
             obstacleDetected = false;
-            const float checkDistance = 1f;
+            const float checkDistance = 0.8f;
             foundUpwardSlope = false;
             foundDoor = false;
 
