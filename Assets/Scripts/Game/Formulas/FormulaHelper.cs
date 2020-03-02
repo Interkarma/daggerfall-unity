@@ -576,7 +576,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             {
                 if (attacker == player || (AIAttacker != null && AIAttacker.EntityType == EntityTypes.EnemyClass))
                 {
-                    if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
+                    if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
                     {
                         minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
                         maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
@@ -615,7 +615,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                         int reflexesChance = 50 - (10 * ((int)player.Reflexes - 2));
 
-                        if (DFRandom.rand() % 100 < reflexesChance && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
+                        if (DFRandom.rand() % 100 < reflexesChance && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
                         {
                             int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
                             // Apply special monster attack effects
@@ -639,7 +639,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // Mod hook for adjusting final hit chance mod. (is a no-op in DFU)
                 chanceToHitMod = AdjustWeaponHitChanceMod(attacker, target, chanceToHitMod, weaponAnimTime, weapon);
 
-                if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart) > 0)
+                if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
                 {
                     damage = CalculateWeaponAttackDamage(attacker, target, damageModifiers, weaponAnimTime, weapon);
 
@@ -938,15 +938,14 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         /// <summary>
-        /// Calculates whether an attack on a target is successful. Returns 1 on success and 0 otherwise.
-        /// (uses an int instead of bool to fit common override signature)
+        /// Calculates whether an attack on a target is successful or not.
         /// </summary>
-        public static int CalculateSuccessfulHit(DaggerfallEntity attacker, DaggerfallEntity target, int chanceToHitMod, int struckBodyPart)
+        public static bool CalculateSuccessfulHit(DaggerfallEntity attacker, DaggerfallEntity target, int chanceToHitMod, int struckBodyPart)
         {
             if (attacker == null || target == null)
-                return 0;
+                return false;
 
-            Func<DaggerfallEntity, DaggerfallEntity, int, int, int> del;
+            Func<DaggerfallEntity, DaggerfallEntity, int, int, bool> del;
             if (TryGetOverride("CalculateSuccessfulHit", out del))
                 return del(attacker, target, chanceToHitMod, struckBodyPart);
 
@@ -1014,10 +1013,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             Mathf.Clamp(chanceToHit, 3, 97);
 
-            if (Dice100.SuccessRoll(chanceToHit))
-                return 1;
-            else
-                return 0;
+            return Dice100.SuccessRoll(chanceToHit);
         }
 
         static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
