@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    jefetienne
 // 
 // Notes:
 //
@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         const int startingAxisKeyCode = 5000;
 
         //if the force is greater than this threshold, round it up to 1
-        const float controllerAxisThresholdFloat = 0.95F;
+        float joystickMovementThreshold = 0.95F;
 
         //this arbitrary float value seems to be the minimum force that can be given without unnecessarily
         //triggering FrictionMotor's UnstickHandling() method, which can create jagged movement at lower force
@@ -219,6 +219,13 @@ namespace DaggerfallWorkshop.Game
                     value = 0.0f;
                 joystickUIMouseSensitivity = value;
             }
+        }
+
+        //TODO: have this value be adjustable and serializable for the future joystick window
+        public float JoystickMovementThreshold
+        {
+            get { return joystickMovementThreshold; }
+            set { joystickMovementThreshold = value; }
         }
 
         #endregion
@@ -1234,7 +1241,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
 
-                if (dist > controllerAxisThresholdFloat)
+                if (dist > JoystickMovementThreshold)
                     dist = 1.0F;
 
                 if (horiz > 0)
