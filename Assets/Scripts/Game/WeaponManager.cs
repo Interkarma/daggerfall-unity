@@ -34,6 +34,9 @@ namespace DaggerfallWorkshop.Game
         const float defaultBowReach = 50f;
         public const float defaultWeaponReach = 2.25f;
 
+        // Equip delay times for weapons
+        public static ushort[] EquipDelayTimes = { 500, 700, 1200, 900, 900, 1800, 1600, 1700, 1700, 3000, 3400, 2000, 2200, 2000, 2200, 2000, 4000, 5000 };
+
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
 
@@ -674,6 +677,22 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.Instance.PopupMessage(HardStrings.usingRightHand);
             else
                 DaggerfallUI.Instance.PopupMessage(HardStrings.usingLeftHand);
+
+            if (DaggerfallUnity.Settings.BowLeftHandWithSwitching)
+            {
+                int switchDelay = 0;
+                if (currentRightHandWeapon != null)
+                    switchDelay += EquipDelayTimes[currentRightHandWeapon.GroupIndex];
+                if (currentRightHandWeapon != null)
+                    switchDelay += EquipDelayTimes[currentLeftHandWeapon.GroupIndex];
+                if (switchDelay > 0)
+                {
+                    if (UsingRightHand)
+                        EquipCountdownRightHand += switchDelay / 4;
+                    else
+                        EquipCountdownLeftHand += switchDelay / 4;
+                }
+            }
 
             ApplyWeapon();
         }

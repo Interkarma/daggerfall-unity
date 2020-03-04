@@ -89,6 +89,8 @@ loiterLimitInHours,                                 Maximum loiter time in hours
 loiterLimitInHoursInfo,                             Change default loiter time limit in hours
 guildQuestListBox,                                  Guild quest player selection
 guildQuestListBoxInfo,                              Presents eligible guild quests in a list box
+bowLeftHandWithSwitching,                           Equip bows in left hand only
+bowLeftHandWithSwitchingInfo,                       Equip bows in left hand and allow 1H weapon switching - switching has a short delay
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.

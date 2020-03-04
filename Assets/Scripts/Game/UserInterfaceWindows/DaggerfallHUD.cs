@@ -221,7 +221,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             arrowCountTextLabel.Enabled = false;
             if (!largeHUDEnabled && ShowArrowCount && !GameManager.Instance.WeaponManager.Sheathed)
             {
-                DaggerfallUnityItem held = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(EquipSlots.RightHand);
+                EquipSlots slot = DaggerfallUnity.Settings.BowLeftHandWithSwitching ? EquipSlots.LeftHand : EquipSlots.RightHand;
+                DaggerfallUnityItem held = GameManager.Instance.PlayerEntity.ItemEquipTable.GetItem(slot);
                 if (held != null && held.ItemGroup == ItemGroups.Weapons &&
                     (held.TemplateIndex == (int)Weapons.Long_Bow || held.TemplateIndex == (int)Weapons.Short_Bow))
                 {

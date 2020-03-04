@@ -1133,8 +1133,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetEquipDelayTime(bool setTime)
         {
-            ushort[] equipDelayTimes = { 500, 700, 1200, 900, 900, 1800, 1600, 1700, 1700, 3000, 3400, 2000, 2200, 2000, 2200, 2000, 4000, 5000 };
-
             int delayTimeRight = 0;
             int delayTimeLeft = 0;
             PlayerEntity player = GameManager.Instance.PlayerEntity;
@@ -1147,21 +1145,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Add delay for unequipping old item
                     if (lastRightHandItem != null)
-                        delayTimeRight = equipDelayTimes[lastRightHandItem.GroupIndex];
+                        delayTimeRight = WeaponManager.EquipDelayTimes[lastRightHandItem.GroupIndex];
 
                     // Add delay for equipping new item
                     if (currentRightHandItem != null)
-                        delayTimeRight += equipDelayTimes[currentRightHandItem.GroupIndex];
+                        delayTimeRight += WeaponManager.EquipDelayTimes[currentRightHandItem.GroupIndex];
                 }
                 if (lastLeftHandItem != currentLeftHandItem)
                 {
                     // Add delay for unequipping old item
                     if (lastLeftHandItem != null)
-                        delayTimeLeft = equipDelayTimes[lastLeftHandItem.GroupIndex];
+                        delayTimeLeft = WeaponManager.EquipDelayTimes[lastLeftHandItem.GroupIndex];
 
                     // Add delay for equipping new item
                     if (currentLeftHandItem != null)
-                        delayTimeLeft += equipDelayTimes[currentLeftHandItem.GroupIndex];
+                        delayTimeLeft += WeaponManager.EquipDelayTimes[currentLeftHandItem.GroupIndex];
                 }
             }
             else
