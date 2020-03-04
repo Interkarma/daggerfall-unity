@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
 
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
+        Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
         bool isPaused;
@@ -64,7 +65,7 @@ namespace DaggerfallWorkshop.Game
         [fsObject("v1")]
         public class KeyBindData_v1
         {
-            public Dictionary<KeyCode, Actions> actionKeyBinds;
+            public Dictionary<KeyCode, string> actionKeyBinds;
         }
 
         #endregion
@@ -187,6 +188,8 @@ namespace DaggerfallWorkshop.Game
 
             QuickSave,
             QuickLoad,
+
+            Unknown,
         }
 
         #endregion
@@ -452,7 +455,20 @@ namespace DaggerfallWorkshop.Game
             string path = GetKeyBindsSavePath();
 
             KeyBindData_v1 keyBindsData = new KeyBindData_v1();
-            keyBindsData.actionKeyBinds = actionKeyDict;
+            keyBindsData.actionKeyBinds = new Dictionary<KeyCode, string>();
+
+            foreach (var item in actionKeyDict)
+            {
+                keyBindsData.actionKeyBinds.Add(item.Key, item.Value.ToString());
+            }
+
+            // If unknown actions were detected in this run, make sure we append them back to the settings file, so we won't break
+            // the newer builds potentially using them.
+            foreach (var item in unknownActions)
+            {
+                keyBindsData.actionKeyBinds.Add(item.Key, item.Value);
+            }
+
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
             RaiseSavedKeyBindsEvent();
@@ -754,10 +770,33 @@ namespace DaggerfallWorkshop.Game
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
             foreach(var item in keyBindsData.actionKeyBinds)
             {
-                if (!actionKeyDict.ContainsKey(item.Key))
-                    actionKeyDict.Add(item.Key, item.Value);
+                var actionVal = ActionNameToEnum(item.Value);
+                if (!actionKeyDict.ContainsKey(item.Key) && actionVal != Actions.Unknown)
+                    actionKeyDict.Add(item.Key, actionVal);
+                else
+                {
+                    // This action is unknown in this game, make sure we still keep it so once we save the settings, we
+                    // won't discard them.
+                    unknownActions.Add(item.Key, item.Value);
+                }
             }
             RaiseLoadedKeyBindsEvent();
+        }
+
+        static Actions ActionNameToEnum(string value)
+        {
+            Actions action;
+
+            try
+            {
+                action = (Actions)Enum.Parse(typeof(Actions), value, true);
+                return action;
+            }
+            catch (ArgumentException)
+            {
+                DaggerfallUnity.LogMessage("Unknown key action detected: " + value, true);
+                return Actions.Unknown;
+            }
         }
 
         #endregion
