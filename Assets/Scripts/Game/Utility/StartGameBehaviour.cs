@@ -45,8 +45,8 @@ namespace DaggerfallWorkshop.Game.Utility
         public bool GodMode = false;
 
         //events used to update state in state manager
-        public static System.EventHandler OnStartMenu;
-        public static System.EventHandler OnStartGame;
+        public static EventHandler OnStartMenu;
+        public static EventHandler OnStartGame;
 
         // Private fields
         CharacterDocument characterDocument;
@@ -76,6 +76,12 @@ namespace DaggerfallWorkshop.Game.Utility
             get { return lastStartMethod; }
         }
 
+        public delegate void PlayerStartingEquipment(PlayerEntity playerEntity, CharacterDocument characterDocument);
+        public PlayerStartingEquipment AssignStartingEquipment { get; set; }
+
+        public delegate void PlayerStartingSpells(PlayerEntity playerEntity, CharacterDocument characterDocument);
+        public PlayerStartingSpells AssignStartingSpells { get; set; }
+
         #endregion
 
         #region Enums
@@ -100,6 +106,10 @@ namespace DaggerfallWorkshop.Game.Utility
             // Get player objects
             player = FindPlayer();
             playerEnterExit = FindPlayerEnterExit(player);
+
+            // Assign default player equipment & spells allocation methods
+            AssignStartingEquipment = DaggerfallUnity.Instance.ItemHelper.AssignStartingGear;
+            AssignStartingSpells = SetStartingSpells;
         }
 
         void Start()
@@ -380,14 +390,14 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
             }
 
-            // Assign starting gear to player entity
-            DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity, characterDocument.classIndex, characterDocument.isCustom);
-
-            // Assign starting spells to player entity
-            SetStartingSpells(playerEntity);
-
             // Apply biography effects to player entity
             BiogFile.ApplyEffects(characterDocument.biographyEffects, playerEntity);
+
+            // Assign starting gear to player entity
+            AssignStartingEquipment(playerEntity, characterDocument);
+            
+            // Assign starting spells to player entity
+            AssignStartingSpells(playerEntity, characterDocument);
 
             // Assign starting level up skill sum
             playerEntity.SetCurrentLevelUpSkillSum();
@@ -755,7 +765,10 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.Instance.WeaponManager.Reset();
         }
 
-        void SetStartingSpells(PlayerEntity playerEntity)
+        /// <summary>
+        /// Assigns starting spells to the spellbook item for a new character.
+        /// </summary>
+        void SetStartingSpells(PlayerEntity playerEntity, CharacterDocument characterDocument)
         {
             if (characterDocument.classIndex > 6 && !characterDocument.isCustom) // Class does not have starting spells
                 return;

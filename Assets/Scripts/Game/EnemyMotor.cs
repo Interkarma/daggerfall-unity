@@ -1056,7 +1056,7 @@ namespace DaggerfallWorkshop.Game
         void ObstacleCheck(Vector3 direction)
         {
             obstacleDetected = false;
-            const int checkDistance = 1;
+            const float checkDistance = 0.8f;
             foundUpwardSlope = false;
             foundDoor = false;
 
@@ -1064,10 +1064,11 @@ namespace DaggerfallWorkshop.Game
             // Climbable/not climbable step for the player seems to be at around a height of 0.65f. The player is 1.8f tall.
             // Using the same ratio to height as these values, set the capsule for the enemy. 
             Vector3 p1 = transform.position + (Vector3.up * -originalHeight * 0.1388F);
-            Vector3 p2 = p1 + (Vector3.up * originalHeight * 0.5f);
+            Vector3 p2 = p1 + (Vector3.up * Mathf.Min(originalHeight, 1.75f) / 2);
 
             if (Physics.CapsuleCast(p1, p2, controller.radius / 2, direction, out hit, checkDistance))
             {
+                // Debug.DrawRay(transform.position, direction, Color.red, 2.0f);
                 obstacleDetected = true;
                 DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
@@ -1108,6 +1109,10 @@ namespace DaggerfallWorkshop.Game
                         foundUpwardSlope = true;
                     }
                 }
+            }
+            else
+            {
+                // Debug.DrawRay(transform.position, direction, Color.green, 2.0f);
             }
         }
 

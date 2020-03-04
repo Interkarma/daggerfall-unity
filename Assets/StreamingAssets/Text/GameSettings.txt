@@ -77,7 +77,7 @@ enhancedItemLists,                                  Enhanced Item Lists
 enhancedItemListsInfo,                              Inventory 16x item grid
 enableModernConversationStyleInTalkWindow,          TalkWindow Modern Style
 enableModernConversationStyleInTalkWindowInfo,      Modern Conversation Style In TalkWindow
-iconsPositioningScheme,                             Buff Icons
+iconsPositioningScheme,                             Buff Icons Layout
 iconsPositioningSchemeInfo,                         Size and position of onscreen (de)buff icons
 helmAndShieldMaterialDisplay,                       Helm and Shield Material Display
 helmAndShieldMaterialDisplayInfo,                   Show material for helms and shields in info popups and tooltips
@@ -89,6 +89,8 @@ loiterLimitInHours,                                 Maximum loiter time in hours
 loiterLimitInHoursInfo,                             Change default loiter time limit in hours
 guildQuestListBox,                                  Guild quest player selection
 guildQuestListBoxInfo,                              Presents eligible guild quests in a list box
+bowLeftHandWithSwitching,                           Equip bows in left hand only
+bowLeftHandWithSwitchingInfo,                       Equip bows in left hand and allow 1H weapon switching - switching has a short delay
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.

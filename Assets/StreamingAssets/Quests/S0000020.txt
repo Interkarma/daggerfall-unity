@@ -148,7 +148,7 @@ _no_ task:
 
 _S.05_ task:
 	toting GortwogsLetter and _gortwog_ clicked 
-	place item EmperorsLetter at _Orsinium_ 
+	place item EmperorsLetter at _Orsinium_ marker 0
 	say 1015 
 
 _S.06_ task:

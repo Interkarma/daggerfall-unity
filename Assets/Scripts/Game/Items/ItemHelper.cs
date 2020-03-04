@@ -13,14 +13,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using DaggerfallConnect.FallExe;
+using DaggerfallConnect;
+using DaggerfallConnect.Save;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -1103,7 +1108,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Assigns basic starting gear to a new character.
         /// </summary>
-        public void AssignStartingGear(PlayerEntity playerEntity, int classIndex, bool isCustom)
+        public void AssignStartingGear(PlayerEntity playerEntity, CharacterDocument characterDocument)
         {
             // Get references
             ItemCollection items = playerEntity.Items;
@@ -1136,7 +1141,7 @@ namespace DaggerfallWorkshop.Game.Items
             equipTable.EquipItem(shortShirt, true, false);
             equipTable.EquipItem(casualPants, true, false);
 
-            if (!isCustom)
+            if (!characterDocument.isCustom)
             {
                 // Add class-specific starting weapon
                 Weapons[] StartingWeaponTypesByClass = { Weapons.Shortsword, // Mage
@@ -1159,6 +1164,7 @@ namespace DaggerfallWorkshop.Game.Items
                                                          Weapons.Longsword   // Knight
                 };
                 byte[] StartingWeaponMaterialsByClass = { 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 }; // 0 = iron, 1 = steel
+                int classIndex = characterDocument.classIndex;
                 items.AddItem(ItemBuilder.CreateWeapon(StartingWeaponTypesByClass[classIndex], (WeaponMaterialTypes)StartingWeaponMaterialsByClass[classIndex]));
 
                 // Archer also gets a steel battleaxe and some arrows
@@ -1188,6 +1194,120 @@ namespace DaggerfallWorkshop.Game.Items
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch));
                 for (int i=0; i < 2; i++)
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Candle));
+            }
+        }
+
+        public void AssignEnemyStartingEquipment(PlayerEntity player, EnemyEntity enemyEntity, int variant)
+        {
+            int itemLevel = player.Level;
+            Genders playerGender = player.Gender;
+            Races race = player.Race;
+            int chance = 0;
+
+            // City watch never have items above iron or steel
+            if (enemyEntity.EntityType == EntityTypes.EnemyClass && enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                itemLevel = 1;
+
+            if (variant == 0)
+            {
+                // right-hand weapon
+                int item = UnityEngine.Random.Range((int)Weapons.Broadsword, (int)(Weapons.Longsword) + 1);
+                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
+                enemyEntity.Items.AddItem(weapon);
+
+                chance = 50;
+
+                // left-hand shield
+                item = UnityEngine.Random.Range((int)Armor.Buckler, (int)(Armor.Round_Shield) + 1);
+                if (Dice100.SuccessRoll(chance))
+                {
+                    DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, (Items.Armor)item, ItemBuilder.RandomArmorMaterial(itemLevel));
+                    enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                    enemyEntity.Items.AddItem(armor);
+                }
+                // left-hand weapon
+                else if (Dice100.SuccessRoll(chance))
+                {
+                    item = UnityEngine.Random.Range((int)Weapons.Dagger, (int)(Weapons.Shortsword) + 1);
+                    weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                    enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
+                    enemyEntity.Items.AddItem(weapon);
+                }
+            }
+            else
+            {
+                // right-hand weapon
+                int item = UnityEngine.Random.Range((int)Weapons.Claymore, (int)(Weapons.Battle_Axe) + 1);
+                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
+                enemyEntity.Items.AddItem(weapon);
+
+                if (variant == 1)
+                    chance = 75;
+                else if (variant == 2)
+                    chance = 90;
+            }
+            // helm
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Helm, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // right pauldron
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Right_Pauldron, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // left pauldron
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Left_Pauldron, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // cuirass
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Cuirass, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // greaves
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Greaves, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+            // boots
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Boots, ItemBuilder.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
+
+            // Chance for poisoned weapon
+            if (player.Level > 1)
+            {
+                DaggerfallUnityItem weapon = enemyEntity.ItemEquipTable.GetItem(EquipSlots.RightHand);
+                if (weapon != null && (enemyEntity.EntityType == EntityTypes.EnemyClass || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Orc
+                        || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Centaur || enemyEntity.MobileEnemy.ID == (int)MobileTypes.OrcSergeant))
+                {
+                    int chanceToPoison = 5;
+                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Assassin)
+                        chanceToPoison = 60;
+
+                    if (Dice100.SuccessRoll(chanceToPoison))
+                    {
+                        // Apply poison
+                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 135 + 1);
+                    }
+                }
             }
         }
 

@@ -159,13 +159,19 @@ namespace DaggerfallWorkshop.Game.Utility
             RaycastHit initialHit;
             if (Physics.Raycast(ray, out initialHit, maxDistance))
             {
-                // Separate out from hit point
-                float extraDistance = UnityEngine.Random.Range(0f, 2f);
-                currentPoint = initialHit.point + initialHit.normal.normalized * (separationDistance + extraDistance);
+                float cos_normal = Vector3.Dot(-spawnDirection, initialHit.normal.normalized);
+                if (cos_normal < 1e-6)
+                    return;
+                float separationForward = separationDistance / cos_normal;
 
                 // Must be greater than minDistance
-                if (initialHit.distance < minDistance)
+                float distanceSlack = initialHit.distance - separationForward - minDistance;
+                if (distanceSlack < 0f)
                     return;
+
+                // Separate out from hit point
+                float extraDistance = UnityEngine.Random.Range(0f, Mathf.Min(2f, distanceSlack));
+                currentPoint = initialHit.point - spawnDirection * (separationForward + extraDistance);
             }
             else
             {

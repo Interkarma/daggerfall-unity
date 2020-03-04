@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop
         // [Daggerfall]
         public string MyDaggerfallPath { get; set; }
         public string MyDaggerfallUnitySavePath { get; set; }
+        public string MyDaggerfallUnityScreenshotsPath { get; set; }
 
         // [Video]
         public int ResolutionWidth { get; set; }
@@ -180,6 +181,7 @@ namespace DaggerfallWorkshop
         public bool EnemyInfighting { get; set; }
         public bool EnhancedCombatAI { get; set; }
         public bool GuildQuestListBox { get; set; }
+        public bool BowLeftHandWithSwitching { get; set; }
 
         #endregion
 
@@ -196,6 +198,7 @@ namespace DaggerfallWorkshop
             // Read ini data to property cache
             MyDaggerfallPath = GetString(sectionDaggerfall, "MyDaggerfallPath");
             MyDaggerfallUnitySavePath = GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath");
+            MyDaggerfallUnityScreenshotsPath = GetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath");
 
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
@@ -303,6 +306,7 @@ namespace DaggerfallWorkshop
             EnemyInfighting = GetBool(sectionEnhancements, "EnemyInfighting");
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
             GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
+            BowLeftHandWithSwitching = GetBool(sectionEnhancements, "BowLeftHandWithSwitching");
         }
 
         /// <summary>
@@ -313,6 +317,7 @@ namespace DaggerfallWorkshop
             // Write property cache to ini data
             SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
             SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
+            SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", MyDaggerfallUnityScreenshotsPath);
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
@@ -414,6 +419,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "EnemyInfighting", EnemyInfighting);
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
             SetBool(sectionEnhancements, "GuildQuestListBox", GuildQuestListBox);
+            SetBool(sectionEnhancements, "BowLeftHandWithSwitching", BowLeftHandWithSwitching);
 
             // Write settings to persistent file
             WriteSettingsFile();

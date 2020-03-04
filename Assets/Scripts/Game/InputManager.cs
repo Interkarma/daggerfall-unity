@@ -60,9 +60,10 @@ namespace DaggerfallWorkshop.Game
         const float inputWaitTotal = 0.0833f;
 
         IList keyCodeList;
-        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote };
+        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote, KeyCode.F8 };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
+        Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
         KeyCode[] controllerUIDict = new KeyCode[3]; //leftClick, rightClick, MiddleClick
         String[] cameraAxisBindingCache = new String[2];
         String[] movementAxisBindingCache = new String[2];
@@ -104,7 +105,7 @@ namespace DaggerfallWorkshop.Game
         [fsObject("v1")]
         public class KeyBindData_v1
         {
-            public Dictionary<String, Actions> actionKeyBinds;
+            public Dictionary<String, string> actionKeyBinds;
             public Dictionary<String, AxisActions> axisActionKeyBinds;
         }
 
@@ -293,6 +294,10 @@ namespace DaggerfallWorkshop.Game
 
             QuickSave,
             QuickLoad,
+
+            PrintScreen,
+            
+            Unknown,
         }
 
         #endregion
@@ -688,8 +693,21 @@ namespace DaggerfallWorkshop.Game
             string path = GetKeyBindsSavePath();
 
             KeyBindData_v1 keyBindsData = new KeyBindData_v1();
-            keyBindsData.actionKeyBinds = actionKeyDict.Select(x => x).ToDictionary(entry => GetKeyString(entry.Key), entry => (Actions)entry.Value);
             keyBindsData.axisActionKeyBinds = axisActionKeyDict;
+            keyBindsData.actionKeyBinds = new Dictionary<string, string>();
+
+            foreach (var item in actionKeyDict)
+            {
+                keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
+            }
+
+            // If unknown actions were detected in this run, make sure we append them back to the settings file, so we won't break
+            // the newer builds potentially using them.
+            foreach (var item in unknownActions)
+            {
+                keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value);
+            }
+
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
             UpdateAxisBindingCache();
@@ -754,6 +772,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.M, Actions.AutoMap);
             SetBinding(KeyCode.V, Actions.TravelMap);
 
+            SetBinding(KeyCode.F8, Actions.PrintScreen);
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
 
@@ -965,6 +984,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.M, Actions.AutoMap);
             TestSetBinding(KeyCode.V, Actions.TravelMap);
 
+            TestSetBinding(KeyCode.F8, Actions.PrintScreen);
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
 
@@ -1297,8 +1317,15 @@ namespace DaggerfallWorkshop.Game
             foreach(var item in keyBindsData.actionKeyBinds)
             {
                 KeyCode key = ParseKeyCodeString(item.Key);
-                if (!actionKeyDict.ContainsKey(key))
-                    actionKeyDict.Add(key, item.Value);
+                var actionVal = ActionNameToEnum(item.Value);
+                if (!actionKeyDict.ContainsKey(key) && actionVal != Actions.Unknown)
+                    actionKeyDict.Add(key, actionVal);
+                else
+                {
+                    // This action is unknown in this game, make sure we still keep it so once we save the settings, we
+                    // won't discard them.
+                    unknownActions.Add(key, item.Value);
+                }
             }
 
             if (keyBindsData.axisActionKeyBinds != null)
@@ -1316,6 +1343,22 @@ namespace DaggerfallWorkshop.Game
             }
 
             RaiseLoadedKeyBindsEvent();
+        }
+
+        static Actions ActionNameToEnum(string value)
+        {
+            Actions action;
+
+            try
+            {
+                action = (Actions)Enum.Parse(typeof(Actions), value, true);
+                return action;
+            }
+            catch (ArgumentException)
+            {
+                DaggerfallUnity.LogMessage("Unknown key action detected: " + value, true);
+                return Actions.Unknown;
+            }
         }
 
         #endregion

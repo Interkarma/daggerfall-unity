@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             bool success = false;
             if(ParentQuest != null)
             {
-                //UnityEngine.Random.InitState(System.Environment.TickCount);
+                UnityEngine.Random.InitState(GameManager.Instance.QuestMachine.InternalSeed);
                 selected = taskSymbols[UnityEngine.Random.Range(0, taskSymbols.Length)];
                 Task task = ParentQuest.GetTask(selected);
 

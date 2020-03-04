@@ -132,6 +132,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox instantRepairs;
         Checkbox playerTorchFromItems;
         Checkbox guildQuestListBox;
+        Checkbox bowLeftHandWithSwitching;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
@@ -311,6 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             allowMagicRepairs = AddCheckbox(rightPanel, "allowMagicRepairs", DaggerfallUnity.Settings.AllowMagicRepairs);
             instantRepairs = AddCheckbox(rightPanel, "instantRepairs", DaggerfallUnity.Settings.InstantRepairs);
             guildQuestListBox = AddCheckbox(rightPanel, "guildQuestListBox", DaggerfallUnity.Settings.GuildQuestListBox);
+            bowLeftHandWithSwitching = AddCheckbox(rightPanel, "bowLeftHandWithSwitching", DaggerfallUnity.Settings.BowLeftHandWithSwitching);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -414,6 +416,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.AllowMagicRepairs = allowMagicRepairs.IsChecked;
             DaggerfallUnity.Settings.InstantRepairs = instantRepairs.IsChecked;
             DaggerfallUnity.Settings.GuildQuestListBox = guildQuestListBox.IsChecked;
+            DaggerfallUnity.Settings.BowLeftHandWithSwitching = bowLeftHandWithSwitching.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();

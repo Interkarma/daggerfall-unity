@@ -57,7 +57,7 @@ N0B00Y16, MagesGuild, M, 0, 0, Passed
 N0B00Y17, MagesGuild, M, 0, 0, Passed
 N0B10Y01, MagesGuild, M, 1, 0, Passed
 N0B10Y03, MagesGuild, M, 1, 0, Passed
-N0B11Y18, MagesGuild, M, 1, 1, Passed. Sequel quest disabled until tested.
+-N0B11Y18, MagesGuild, M, 1, 1, Passed. Sequel quests not yet tested
 N0B20Y02, MagesGuild, M, 2, 0, Passed
 N0B20Y05, MagesGuild, M, 2, 0, Passed
 N0B21Y14, MagesGuild, M, 2, 1, Passed
@@ -71,7 +71,7 @@ C0C00Y12, HolyOrder, N, 0, 0, Passed
 C0C00Y13, HolyOrder, N, 0, 0, Passed
 C0B00Y00, HolyOrder, M, 0, 0, Passed
 C0B00Y01, HolyOrder, M, 0, 0, Passed
--C0B00Y02, HolyOrder, M, 0, 0, FAILED. Needs a lot of work since NPCs don't respond properly. Action not found. Ignoring 'clicked _sneaker_ and at least 50 gold otherwise do _S.18_ '
+C0B00Y02, HolyOrder, M, 0, 0, Passed
 C0B00Y03, HolyOrder, M, 0, 0, Passed
 C0B00Y04, HolyOrder, M, 0, 0, Passed
 C0B00Y14, HolyOrder, M, 0, 0, Passed
@@ -138,7 +138,7 @@ B0B40Y09, KnightlyOrder, M, 4, 0, Passed.
 B0B50Y11, KnightlyOrder, M, 5, 0, Passed
 B0B60Y12, KnightlyOrder, M, 6, 0, Passed.
 B0B70Y14, KnightlyOrder, M, 7, 0, Passed.
-B0B70Y16, KnightlyOrder, M, 7, X, Passed.
+B0B70Y16, KnightlyOrder, M, 7, 0, Passed.
 B0B71Y03, KnightlyOrder, M, 7, 1, Passed.	Discovered a new op-code: _0x3c_ 19
 B0B80Y17, KnightlyOrder, M, 8, 0, Passed.
 B0B81Y02, KnightlyOrder, M, 8, 1, Passed
@@ -182,9 +182,9 @@ A0C41Y18, Commoners, M, 4, 1,
 K0C00Y00, Merchants, M, 0, 0,
 K0C00Y02, Merchants, N, 0, 0,
 K0C00Y03, Merchants, M, 0, 0,
--K0C00Y04, Merchants, M, 0, 0, problems with NPCs spawning in other towns
+K0C00Y04, Merchants, M, 0, 0, Passed
 K0C00Y05, Merchants, M, 0, 0,
--K0C00Y06, Merchants, M, 0, 0,
+-K0C00Y06, Merchants, M, 0, 0, "A Mix-Up"
 K0C00Y07, Merchants, M, 0, 0,
 K0C00Y08, Merchants, M, 0, 0,
 K0C00Y09, Merchants, M, 0, 0, Passed
@@ -232,10 +232,10 @@ R0C11Y27, Nobility, N, 1, 1,
 R0C11Y28, Nobility, M, 1, 1, Needs %vcn macro implementation to get vamp clan of _vamp_ npc to be tested
 R0C20Y07, Nobility, N, 2, 0,
 R0C20Y22, Nobility, M, 2, 0,
--R0C30Y25, Nobility, N, 3, 0, Needs support for: reveal totambuCoven in province 46 at 423290
+R0C30Y25, Nobility, N, 3, 0, Passed
 -R0C40Y23, Nobility, N, 4, 0, BROKEN. QRC file is missing in DF+DFQFIX. Duplicate of r0c4xy23.
--R0C4XY23, Nobility, M, 4, X, Needs support for: until _thing_ performed: & reveal _skeffingcoven_ in province 38 at 5531
--R0C60Y24, Nobility, M, 6, 0, Needs support for: reveal kykosCoven in province 11 at 484567
+R0C4XY23, Nobility, M, 4, X, Passed
+R0C60Y24, Nobility, M, 6, 0, Passed
 
 -- Daedra Princes (unused as handled in code)
 -10C00Y00, Oblivion, 0, 0,

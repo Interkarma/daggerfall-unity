@@ -578,21 +578,45 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         }
 
         /// <summary>
-        /// Checks if peered entity is globally immune to disease from career or effect system.
+        /// Checks if peered entity is globally immune to disease from career, race, and effect system.
         /// </summary>
         /// <returns>True if entity immune to disease.</returns>
         public bool IsEntityImmuneToDisease()
         {
-            return entityBehaviour.Entity.Career.Disease == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToDisease;
+            // Entity is hard immune from career or effect
+            if (entityBehaviour.Entity.Career.Disease == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToDisease)
+                return true;
+
+            // Player entity is hard immune from racial template unless they have an overriding career weakness
+            if (IsPlayerEntity && (((PlayerEntity)entityBehaviour.Entity).GetLiveRaceTemplate().ImmunityFlags & DFCareer.EffectFlags.Disease) != 0)
+            {
+                return entityBehaviour.Entity.Career.Disease != DFCareer.Tolerance.LowTolerance &&
+                       entityBehaviour.Entity.Career.Disease != DFCareer.Tolerance.CriticalWeakness;
+            }
+
+            // Not hard immune - fallback to saving throws where entity may still have enhanced resistance
+            return false;
         }
 
         /// <summary>
-        /// Checks if peered entity is globally immune to paralysis from career or effect system.
+        /// Checks if peered entity is globally immune to paralysis from career, race, and effect system.
         /// </summary>
         /// <returns>True if entity immune to paralysis.</returns>
         public bool IsEntityImmuneToParalysis()
         {
-            return entityBehaviour.Entity.Career.Paralysis == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToParalysis;
+            // Entity is hard immune from career or effect
+            if (entityBehaviour.Entity.Career.Paralysis == DFCareer.Tolerance.Immune || entityBehaviour.Entity.IsImmuneToParalysis)
+                return true;
+
+            // Player entity is hard immune from racial template unless they have an overriding career weakness
+            if (IsPlayerEntity && (((PlayerEntity)entityBehaviour.Entity).GetLiveRaceTemplate().ImmunityFlags & DFCareer.EffectFlags.Paralysis) != 0)
+            {
+                return entityBehaviour.Entity.Career.Paralysis != DFCareer.Tolerance.LowTolerance &&
+                       entityBehaviour.Entity.Career.Paralysis != DFCareer.Tolerance.CriticalWeakness;
+            }
+
+            // Not hard immune - fallback to saving throws where entity may still have enhanced resistance
+            return false;
         }
 
         /// <summary>

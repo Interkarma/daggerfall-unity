@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 size;
         Vector2 rootSize;
         bool useFocus = false;
+        bool overridesHotkeySequences = false;
 
         ToolTip toolTip = null;
         string toolTipText = string.Empty;
@@ -172,6 +173,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return useFocus; }
             set { useFocus = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets flag to make control bypass hotkeys.
+        /// When enabled, hotkeys will not be interpreted while this control has focus.
+        /// </summary>
+        public bool OverridesHotkeySequences
+        {
+            get { return overridesHotkeySequences; }
+            set { overridesHotkeySequences = value; }
         }
 
         /// <summary>

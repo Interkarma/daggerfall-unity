@@ -161,6 +161,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.reputationSGroup9 = entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup9];
             data.playerEntity.reputationSGroup10 = entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup10];
             data.playerEntity.previousVampireClan = entity.PreviousVampireClan;
+            data.playerEntity.daedraSummonDay = entity.DaedraSummonDay;
+            data.playerEntity.daedraSummonIndex = entity.DaedraSummonIndex;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -318,6 +320,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup9] = data.playerEntity.reputationSGroup9;
             entity.SGroupReputations[(int)FactionFile.SocialGroups.SGroup10] = data.playerEntity.reputationSGroup10;
             entity.PreviousVampireClan = data.playerEntity.previousVampireClan;
+            entity.DaedraSummonDay = data.playerEntity.daedraSummonDay;
+            entity.DaedraSummonIndex = data.playerEntity.daedraSummonIndex;
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 

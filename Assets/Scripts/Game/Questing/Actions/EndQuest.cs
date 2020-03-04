@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public EndQuest(Quest parentQuest)
             : base(parentQuest)
         {
+            allowRearm = false;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)

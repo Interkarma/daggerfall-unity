@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="person">Target Person resource to remove.</param>
         public void DropFace(Person person)
         {
-            faces.Remove(CreateFaceDetails(person));
+            faces.RemoveAll(face => face.questUID == person.ParentQuest.UID && person.Symbol.Equals(face.targetPerson));
             RefreshFaces();
         }
 
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <param name="foe">Target Foe resource to remove.</param>
         public void DropFace(Foe foe)
         {
-            faces.Remove(CreateFaceDetails(foe));
+            faces.RemoveAll(face => face.questUID == foe.ParentQuest.UID && foe.Symbol.Equals(face.targetFoe));
             RefreshFaces();
         }
 
@@ -225,6 +225,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Get image for this face
                 Texture2D faceTexture = null;
                 Panel facePanel = new Panel();
+                // Disable until placed
+                facePanel.Enabled = false;
                 if (face.factionFaceIndex >= 0 && face.factionFaceIndex <= 60)
                 {
                     // Use special NPC face set at time face data was added
@@ -296,15 +298,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             // Remove any faces belonging to this quest
-            FaceDetails[] faceArray = faces.ToArray();
-            for (int i = 0; i < faceArray.Length; i++)
-            {
-                // Remove from list if face belongs to ending quest
-                if (faceArray[i].questUID == quest.UID)
-                {
-                    faces.Remove(faceArray[i]);
-                }
-            }
+            faces.RemoveAll(face => face.questUID == quest.UID);
 
             RefreshFaces();
         }

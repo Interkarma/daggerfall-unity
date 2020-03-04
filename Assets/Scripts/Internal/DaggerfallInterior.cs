@@ -438,7 +438,8 @@ namespace DaggerfallWorkshop
 
                 // Get model transform
                 Vector3 modelRotation = new Vector3(-obj.XRotation / BlocksFile.RotationDivisor, -obj.YRotation / BlocksFile.RotationDivisor, -obj.ZRotation / BlocksFile.RotationDivisor);
-                Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), Vector3.one);
+                Vector3 modelScale = RMBLayout.GetModelScaleVector(obj);
+                Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
                 // Does this model have doors?
                 if (modelData.Doors != null)
@@ -459,7 +460,8 @@ namespace DaggerfallWorkshop
                         // Add individual GameObject
                         go = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
                         go.transform.position = modelMatrix.GetColumn(3);
-                        go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(modelMatrix);
+                        go.transform.rotation = modelMatrix.rotation;
+                        go.transform.localScale = modelMatrix.lossyScale;
 
                         // Update climate
                         DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();

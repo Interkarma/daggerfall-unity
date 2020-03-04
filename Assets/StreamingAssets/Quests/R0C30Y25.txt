@@ -6,6 +6,7 @@
 -- QuestId: 25
 Messages: 36
 Quest: R0C30Y25
+DisplayName: The Thieves Gang
 -- Message panels
 QRC:
 
@@ -168,7 +169,7 @@ Item _item3_ magic_item
 Item _map_ letter used 1035
 
 Person _questgiver_ face 72 group Questor
-Person faction absent from data base!
+Person _contact_ faction Dancers
 -- Person:    1 80 -1 0 13278 0 0.
 
 Person _qgenemy_ face 1 faction The_Thieves_Guild anyInfo 1015 rumors 1016
@@ -194,7 +195,8 @@ Foe _guards_ is Rogue
 
 _pcgetsgold_ task:
 	toting _item2_ and _questgiver_ clicked 
-	give pc _reward_ and _item3_ 
+	give pc _reward_
+	give pc _item3_ 
 	end quest 
 
 _queston_ task:
@@ -216,7 +218,8 @@ variable _1stparton_
 variable _pchasitem1_
 _pchasitem2_ task:
 	pc at _thievesguild_ set _S.10_ 
-	place item _item2_ at _thievesguild_ 
+-	place item _item2_ at _thievesguild_ 
+- this duplicate was placed on the floor for some reason, should not be
 	start timer _2ndparton_ 
 
 variable yes

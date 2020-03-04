@@ -437,6 +437,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             optionsPanel.Components.Add(titleLabel);
 
+            // Add version text
+            TextLabel versionLabel = new TextLabel(DaggerfallUI.DefaultFont);
+            versionLabel.Text = string.Format("{0} v{1}", char.ToUpper(VersionInfo.DaggerfallUnityStatus[0]) + VersionInfo.DaggerfallUnityStatus.Substring(1), VersionInfo.DaggerfallUnityVersion);
+            versionLabel.Position = new Vector2(0, 40);
+            versionLabel.TextScale = 1.0f;
+            versionLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            versionLabel.ShadowPosition = Vector2.zero;
+            versionLabel.TextColor = secondaryTextColor;
+            optionsPanel.Components.Add(versionLabel);
+
             // Add settings path text
             TextLabel settingsPathLabel = new TextLabel();
             settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;

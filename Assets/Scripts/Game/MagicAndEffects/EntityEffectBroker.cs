@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     BaseEntityEffect variantEffect = CloneEffect(effect) as BaseEntityEffect;
                     variantEffect.CurrentVariant = i;
                     magicEffectTemplates.Add(variantEffect.Key, variantEffect);
-                    IndexEffectRecipes(variantEffect);
+                    IndexEffectRecipes(variantEffect, allowReplacement);
                     MapClassicKey(variantEffect, allowReplacement);
                 }
             }
@@ -285,7 +285,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 // Just store singleton effect
                 magicEffectTemplates.Add(effect.Key, effect);
-                IndexEffectRecipes(effect);
+                IndexEffectRecipes(effect, allowReplacement);
                 MapClassicKey(effect, allowReplacement);
             }
 
@@ -725,7 +725,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
         }
 
-        void IndexEffectRecipes(BaseEntityEffect effect)
+        void IndexEffectRecipes(BaseEntityEffect effect, bool allowReplacement = false)
         {
             // Must have at least one recipe
             int recipeCount = GetEffectPotionRecipeCount(effect);
@@ -743,14 +743,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 {
                     // Add potion effect or log error if collision
                     int recipeKey = recipe.GetHashCode();
-                    if (!potionEffectTemplates.ContainsKey(recipeKey))
+                    if (!potionEffectTemplates.ContainsKey(recipeKey) || allowReplacement)
                     {
-                        potionEffectTemplates.Add(recipeKey, effect);
+                        potionEffectTemplates[recipeKey] = effect;
                         Debug.LogFormat("'{0}' recipe {1} [key={2}] ingredients: {3}", effect.Key, i, recipeKey, recipe.ToString());
                     }
                     else
                     {
-                        Debug.LogErrorFormat("EnityEffectBroker: Already contains potion recipe key {0} for ingredients: {1}", recipeKey, recipe.ToString());
+                        Debug.LogErrorFormat("EnityEffectBroker: Already contains potion recipe key {0} for ingredients: {1}. Use allowReplacement=true to replace this recipe.", recipeKey, recipe.ToString());
                     }
                 }
             }

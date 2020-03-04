@@ -188,6 +188,8 @@ namespace DaggerfallWorkshop
             get { return playerTilemapIndex; }
         }
 
+        public bool IsRepositioningPlayer { get; private set; }
+
         #endregion
 
         #region Structs/Enums
@@ -1318,6 +1320,7 @@ namespace DaggerfallWorkshop
             {
                 // Get target position at terrain height + player standing height
                 // This is our minimum height before player falls through world
+                IsRepositioningPlayer = true;
                 Vector3 targetPosition = new Vector3(position.x, 0, position.z);
                 float height = terrain.SampleHeight(targetPosition + terrain.transform.position) + worldCompensation.y;
                 targetPosition.y = height + controller.height / 2f + 0.15f;
@@ -1337,6 +1340,7 @@ namespace DaggerfallWorkshop
                 CollectLooseObjects();
 
                 ResyncWorldCoordinates();
+                IsRepositioningPlayer = false;
             }
             else
             {
