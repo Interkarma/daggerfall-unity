@@ -189,7 +189,7 @@ namespace DaggerfallWorkshop.Game
             QuickSave,
             QuickLoad,
 
-            PrintScreen
+            PrintScreen,
             
             Unknown,
         }
