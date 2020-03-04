@@ -34,26 +34,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect weaponsAndArmorRect = new Rect(0, 0, 92, 10);
-        Rect magicItemsRect = new Rect(93, 0, 69, 10);
-        Rect clothingAndMiscRect = new Rect(163, 0, 91, 10);
-        Rect ingredientsRect = new Rect(255, 0, 65, 10);
+        protected Rect weaponsAndArmorRect = new Rect(0, 0, 92, 10);
+        protected Rect magicItemsRect = new Rect(93, 0, 69, 10);
+        protected Rect clothingAndMiscRect = new Rect(163, 0, 91, 10);
+        protected Rect ingredientsRect = new Rect(255, 0, 65, 10);
 
-        Rect wagonButtonRect = new Rect(226, 14, 31, 14);
-        Rect infoButtonRect = new Rect(226, 36, 31, 14);
-        Rect equipButtonRect = new Rect(226, 58, 31, 14);
-        Rect removeButtonRect = new Rect(226, 80, 31, 14);
-        Rect useButtonRect = new Rect(226, 103, 31, 14);
-        Rect goldButtonRect = new Rect(226, 126, 31, 14);
+        protected Rect wagonButtonRect = new Rect(226, 14, 31, 14);
+        protected Rect infoButtonRect = new Rect(226, 36, 31, 14);
+        protected Rect equipButtonRect = new Rect(226, 58, 31, 14);
+        protected Rect removeButtonRect = new Rect(226, 80, 31, 14);
+        protected Rect useButtonRect = new Rect(226, 103, 31, 14);
+        protected Rect goldButtonRect = new Rect(226, 126, 31, 14);
 
-        Rect localTargetIconRect = new Rect(165, 12, 55, 34);
-        Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
+        protected Rect localTargetIconRect = new Rect(165, 12, 55, 34);
+        protected Rect remoteTargetIconRect = new Rect(263, 12, 55, 34);
 
-        Rect localItemListScrollerRect = new Rect(163, 48, 59, 152);
-        Rect remoteItemListScrollerRect = new Rect(261, 48, 59, 152);
+        protected Rect localItemListScrollerRect = new Rect(163, 48, 59, 152);
+        protected Rect remoteItemListScrollerRect = new Rect(261, 48, 59, 152);
 
-        Rect itemInfoPanelRect = new Rect(223, 145, 37, 32);
-        Rect infoCutoutRect = new Rect(196, 68, 50, 37);
+        protected Rect itemInfoPanelRect = new Rect(223, 145, 37, 32);
+        protected Rect infoCutoutRect = new Rect(196, 68, 50, 37);
 
         protected Rect exitButtonRect = new Rect(222, 178, 39, 22);
 
@@ -61,22 +61,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Button weaponsAndArmorButton;
-        Button magicItemsButton;
-        Button clothingAndMiscButton;
-        Button ingredientsButton;
+        protected Button weaponsAndArmorButton;
+        protected Button magicItemsButton;
+        protected Button clothingAndMiscButton;
+        protected Button ingredientsButton;
 
-        Button wagonButton;
-        Button infoButton;
-        Button equipButton;
-        Button removeButton;
-        Button useButton;
-        Button goldButton;
+        protected Button wagonButton;
+        protected Button infoButton;
+        protected Button equipButton;
+        protected Button removeButton;
+        protected Button useButton;
+        protected Button goldButton;
 
-        Button[] accessoryButtons = new Button[accessoryCount];
-        Panel[] accessoryIconPanels = new Panel[accessoryCount];
+        protected Button[] accessoryButtons = new Button[accessoryCount];
+        protected Panel[] accessoryIconPanels = new Panel[accessoryCount];
 
-        PaperDoll paperDoll = new PaperDoll();
+        protected PaperDoll paperDoll = new PaperDoll();
 
         protected Panel localTargetIconPanel;
         protected TextLabel localTargetIconLabel;
@@ -130,62 +130,62 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected const string textDatabase = "DaggerfallUI";
 
-        readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
-        readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
-        readonly string damSrc = TextManager.Instance.GetText(textDatabase, "damSrc");
-        readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
-        readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
-        readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
-        readonly string goldAmount = TextManager.Instance.GetText(textDatabase, "goldAmount");
-        readonly string goldWeight = TextManager.Instance.GetText(textDatabase, "goldWeight");
-        readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
+        protected readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
+        protected readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
+        protected readonly string damSrc = TextManager.Instance.GetText(textDatabase, "damSrc");
+        protected readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
+        protected readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
+        protected readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
+        protected readonly string goldAmount = TextManager.Instance.GetText(textDatabase, "goldAmount");
+        protected readonly string goldWeight = TextManager.Instance.GetText(textDatabase, "goldWeight");
+        protected readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
 
-        const string baseTextureName = "INVE00I0.IMG";
-        const string goldTextureName = "INVE01I0.IMG";
-        const string infoTextureName = "ITEM00I0.IMG";
+        protected const string baseTextureName = "INVE00I0.IMG";
+        protected const string goldTextureName = "INVE01I0.IMG";
+        protected const string infoTextureName = "ITEM00I0.IMG";
 
-        const string coinsAnimTextureName = "TEXTURE.434";
-        const string magicAnimTextureName = "TEXTURE.434";
+        protected const string coinsAnimTextureName = "TEXTURE.434";
+        protected const string magicAnimTextureName = "TEXTURE.434";
 
         protected const float coinsAnimationDelay = 0.08f;
         protected const float magicAnimationDelay = 0.15f;
 
-        const int accessoryCount = 12;                                  // Number of accessory slots
-        const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
+        protected const int accessoryCount = 12;                                  // Number of accessory slots
+        protected const int accessoryButtonMarginSize = 1;                        // Margin of accessory buttons
 
-        Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
-        Color lightSourceBackgroundColor = new Color(0.6f, 0.5f, 0f, 0.5f);
-        Color summonedItemBackgroundColor = new Color(0.18f, 0.32f, 0.48f, 0.5f);
+        protected Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
+        protected Color lightSourceBackgroundColor = new Color(0.6f, 0.5f, 0f, 0.5f);
+        protected Color summonedItemBackgroundColor = new Color(0.18f, 0.32f, 0.48f, 0.5f);
 
-        PlayerEntity playerEntity;
+        protected PlayerEntity playerEntity;
 
-        TabPages selectedTabPage = TabPages.WeaponsAndArmor;
+        protected TabPages selectedTabPage = TabPages.WeaponsAndArmor;
         protected ActionModes selectedActionMode = ActionModes.Equip;
         protected RemoteTargetTypes remoteTargetType = RemoteTargetTypes.Dropped;
 
         protected ItemCollection localItems = null;
         protected ItemCollection remoteItems = null;
         protected ItemCollection theftBasket = null;
-        ItemCollection droppedItems = new ItemCollection();
+        protected ItemCollection droppedItems = new ItemCollection();
         protected List<DaggerfallUnityItem> localItemsFiltered = new List<DaggerfallUnityItem>();
         protected List<DaggerfallUnityItem> remoteItemsFiltered = new List<DaggerfallUnityItem>();
 
-        DaggerfallLoot lootTarget = null;
-        bool usingWagon = false;
-        bool allowDungeonWagonAccess = false;
-        bool chooseOne = false;
-        Action<DaggerfallUnityItem> chooseOneCallback;
-        bool shopShelfStealing = false;
-        bool isPrivateProperty = false;
-        int lootTargetStartCount = 0;
+        protected DaggerfallLoot lootTarget = null;
+        protected bool usingWagon = false;
+        protected bool allowDungeonWagonAccess = false;
+        protected bool chooseOne = false;
+        protected Action<DaggerfallUnityItem> chooseOneCallback;
+        protected bool shopShelfStealing = false;
+        protected bool isPrivateProperty = false;
+        protected int lootTargetStartCount = 0;
 
         private DaggerfallUnityItem stackItem;
         private ItemCollection stackFrom;
         private ItemCollection stackTo;
         private bool stackEquip;
 
-        ItemCollection lastRemoteItems = null;
-        RemoteTargetTypes lastRemoteTargetType;
+        protected ItemCollection lastRemoteItems = null;
+        protected RemoteTargetTypes lastRemoteTargetType;
 
         int lastMouseOverPaperDollEquipIndex = -1;
         int dropIconArchive;
@@ -1363,7 +1363,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<DaggerfallUnityItem> unequippedList = playerEntity.ItemEquipTable.EquipItem(item);
             if (unequippedList != null)
             {
-                foreach (DaggerfallUnityItem unequippedItem in unequippedList) {
+                foreach (DaggerfallUnityItem unequippedItem in unequippedList)
+                {
                     playerEntity.UpdateEquippedArmorValues(unequippedItem, false);
                 }
                 playerEntity.UpdateEquippedArmorValues(item, true);
@@ -1420,7 +1421,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return canHold;
         }
 
-        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null, 
+        protected void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to, int? maxAmount = null,
                                     bool blockTransport = false, bool equip = false, bool allowSplitting = true)
         {
             // Block transfer of horse or cart (don't allow putting either in wagon)
@@ -1617,7 +1618,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Moving local and remote Use item clicks to new method
         // This ensures the items are handled the same except when needed
         // This will need more work as more usable items are available
-        void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
+        protected void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
             const int noSpellsTextId = 12;
 
@@ -1776,7 +1777,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             const int mapTextId = 499;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
 
-            try {
+            try
+            {
                 DFLocation revealedLocation = playerGPS.DiscoverRandomLocation();
 
                 if (string.IsNullOrEmpty(revealedLocation.Name))
@@ -1862,7 +1864,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUnityItem item = PaperDoll_GetItem(sender, position);
-            if(item == null)
+            if (item == null)
                 return;
 
             // Handle click based on action
@@ -1888,7 +1890,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void PaperDoll_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUnityItem item = PaperDoll_GetItem(sender, position);
-            if(item == null)
+            if (item == null)
                 return;
 
             NextVariant(item);
