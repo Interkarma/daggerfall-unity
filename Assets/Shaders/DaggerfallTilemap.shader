@@ -55,7 +55,7 @@ Shader "Daggerfall/Tilemap" {
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
 			// Get offset to tile in atlas
-			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex;
+			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
 			int xpos = index % _TilesetDim;
 			int ypos = index / _TilesetDim;
 			float2 uv = float2(xpos, ypos) / _TilesetDim;

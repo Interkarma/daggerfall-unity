@@ -6,6 +6,7 @@
 -- QuestId: 24
 Messages: 41
 Quest: R0C60Y24
+DisplayName: Business with Vampires
 -- Message panels
 QRC:
 
@@ -214,6 +215,8 @@ _thankyou_ task:
 	make _vampitem_ permanent 
 	make _vampreward_ permanent 
 	change repute with _vampire_ by +10 
+	end quest
+--eliminates long wait for quest to end. quest is impossible with this choice
 
 _gimme_ task:
 	get item _item_ 

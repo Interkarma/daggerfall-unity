@@ -463,8 +463,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             EnemyEntity AIAttacker = attacker as EnemyEntity;
             if (AIAttacker != null && weapon != null)
             {
-                int weaponAverage = ((minBaseDamage + maxBaseDamage) / 2);
-                int noWeaponAverage = ((AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2);
+                int weaponAverage = (weapon.GetBaseDamageMin() + weapon.GetBaseDamageMax()) / 2;
+                int noWeaponAverage = (AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2;
 
                 if (noWeaponAverage > weaponAverage)
                 {
@@ -1574,13 +1574,20 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cost;
         }
 
-        public static int CalculateCost(int baseItemValue, int shopQuality)
+        /// <summary>
+        /// Calculate the cost of something in a given shop.
+        /// </summary>
+        /// <param name="baseValue">Base value</param>
+        /// <param name="shopQuality">Shop quality 0-20</param>
+        /// <param name="conditionPercentage">Condition of item as a percentage, -1 indicates condition not applicable</param>
+        /// <returns>Shop specific cost</returns>
+        public static int CalculateCost(int baseValue, int shopQuality, int conditionPercentage = -1)
         {
-            Func<int, int, int> del;
+            Func<int, int, int, int> del;
             if (TryGetOverride("CalculateCost", out del))
-                return del(baseItemValue, shopQuality);
+                return del(baseValue, shopQuality, conditionPercentage);
 
-            int cost = baseItemValue;
+            int cost = baseValue;
 
             if (cost < 1)
                 cost = 1;
@@ -1593,6 +1600,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateItemRepairCost(int baseItemValue, int shopQuality, int condition, int max, IGuild guild)
         {
+            Func<int, int, int, int, IGuild, int> del;
+            if (TryGetOverride("CalculateItemRepairCost", out del))
+                return del(baseItemValue, shopQuality, condition, max, guild);
+
             // Don't cost already repaired item
             if (condition == max)
                 return 0;
@@ -1769,6 +1780,21 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Allows loot found in containers and enemy corpses to be modified.
+        /// </summary>
+        /// <param name="lootItems">An array of the loot items</param>
+        /// <returns>The number of items modified.</returns>
+        public static int ModifyFoundLootItems(ref DaggerfallUnityItem[] lootItems)
+        {
+            Func<DaggerfallUnityItem[], int> del;
+            if (TryGetOverride("ModifyFoundLootItems", out del))
+                return del(lootItems);
+
+            // DFU does no post-processing of loot items hence report zero changes, this is solely for mods to override.
+            return 0;
         }
 
         #endregion

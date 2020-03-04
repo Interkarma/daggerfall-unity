@@ -77,10 +77,10 @@ QuestLogEntry:  [1010]
 %qdt:
  _qgiver_ of ___qgiver_
  wants me to see if a =child_ named
- _child_ is a victim of
- possession, and, if so, to cure %g2.
- I am to talk first with %g3 guardian,
- _guardian_ of _tavern_.
+ _child_ in _house_
+ is a victim of possession, and, if so,
+ to cure %g2. I am to talk first with %g3
+ guardian, _guardian_ of _tavern_.
 
 Message:  1011
 <ce>                  You've come from __qgiver_? Please
@@ -124,7 +124,7 @@ Message:  1014
 %qdt:
  _guardian_,
  the guardian of _child_
- asked to go to _house3_
+ asked me to go to _house3_
  in __house3_ to ask
  _priest_ for some special
  _item_ to exorcise the daedric
@@ -247,7 +247,7 @@ Message:  1025
 
 Message:  1026
 %qdt:
- _sneaker_, a =sneaker_ over at
+ _hooker_, a =hooker_ over at
  _tavern_ told me (for fifty gold
  pieces) that that _guardian_ ran to
  _house2_ after _child_
@@ -288,7 +288,7 @@ Message:  1026
 --          _priest_ occurs 10 times.
 --          _qgiver_ occurs 3 times.
 --          _reward_ occurs 1 time.
---         _sneaker_ occurs 1 time.
+--         _hooker_ occurs 1 time.
 --          _tavern_ occurs 4 times.
 
 QBN:
@@ -300,135 +300,139 @@ Person _qgiver_ group Questor male
 Person _child_ face 1 faction Children
 Person _guardian_ face 1 factiontype Knightly_Guard
 Person _priest_ face 104 factiontype Temple
-Person _sneaker_ face 1 faction The_Prostitutes
+Person _hooker_ face 1 faction The_Prostitutes
 
 Place _house_ local house2
 Place _house2_ local house2
 Place _house3_ remote random
 Place _tavern_ local tavern
 
-Clock _queston_ 5.00:00 10.00:00
--flag 17 range 1 4
+Clock _queston_ 5.00:00 10.00:00 flag 17 range 1 4
 
 Foe _daedra_ is Daedroth
 
 --	Quest start-up:
-	dialog link for location _house2_ person _sneaker_ 
+	dialog link for location _house2_ person _hooker_ 
 	start timer _queston_ 
 	log 1010 step 0 
-	pick one of _S.03_ _S.02_ 
-	have _item_ set _S.16_ 
-	create npc at _house3_ 
-	create npc at _house_ 
+	pick one of _sham_ _real_
 	place npc _child_ at _house_ 
 	place npc _guardian_ at _tavern_ 
-	place npc _priest_ at _house3_ 
+	place npc _priest_ at _house3_
+	have _item_ set _haverelic_  
 
 _queston_ task:
 	end quest 
 
-_S.01_ task:
+_talkguardian_ task:
 	clicked npc _guardian_ 
 
-variable _S.02_
-variable _S.03_
-_S.04_ task:
-	when _S.01_ and _S.02_ 
+variable _real_
+variable _sham_
+_realtalk_ task:
+	when _talkguardian_ and _real_ 
 	log 1013 step 1 
 	say 1011 
 
-_S.05_ task:
-	when _S.01_ and _S.03_ 
+_shamtalk_ task:
+	when _talkguardian_ and _sham_ and not _revealsham_
 	log 1014 step 2 
 	say 1012 
 
-_S.06_ task:
+_clickchild_ task:
 	clicked npc _child_ 
 
-_S.07_ task:
-	when _S.09_ and _S.02_ 
+_exorcise_ task:
+	when _haverelic_ and _real_ and _clickchild_
 	take _item_ from pc 
 	hide npc _child_ 
 	say 1015 
 	place foe _daedra_ at _house_ 
 
-until _S.07_ performed:
-	clear _S.14_ _qgclicked_ 
+-until _exorcise_ performed:
+-	clear _clickpriest_ _qgclicked_ 
 
-_S.08_ task:
-	when _S.09_ and _S.03_ 
-	give item _item_ to _daedra_ 
+_revealsham_ task:
+	when _haverelic_ and _sham_ and _clickchild_ 
+	take _item_ from pc
 	hide npc _child_ 
 	say 1016 
 	place npc _guardian_ at _house2_ 
-	place npc _sneaker_ at _tavern_ 
+	place npc _hooker_ at _tavern_ 
+	clear _talkguardian_
 
-variable _S.09_
-_S.10_ task:
-	clicked npc _child_ 
-	have _item_ set _S.09_ 
-	clear _S.10_ 
-
-_S.11_ task:
-	when _S.06_ and not _S.07_ and not _S.08_ 
+variable _haverelic_
+_firstclickchild_ task:
+	when _clickchild_ and not _haverelic_ 
 	log 1020 step 3 
 	say 1017 
+-	clear _clickchild_
 
-_S.12_ task:
-	when _S.14_ and not _S.11_ 
-	say 1018 
-
-_S.13_ task:
-	when _S.14_ and _S.11_ 
-	get item _item_ 
-	say 1019 
-
-_S.14_ task:
+_clickpriest_ task:
 	clicked npc _priest_ 
 
-_atronach_ task:
-	when _S.01_ and _S.07_ 
+_rebuff_ task:
+	when _clickpriest_ and not _firstclickchild_ and not _rescueitem_ and not _exorcise_ and not _givenitem_
+	say 1018 
+
+_priestgivesitem_ task:
+	when _clickpriest_ and _firstclickchild_ and not _exorcise_ and not _rescueitem_
+	say 1019 
+	start task _givenitem_
+-	start task _giverelictask_
+-
+-_giverelictask_ task:
+	get item _item_ 
+	clear _clickpriest_
+	clear _clickchild_
+
+variable _givenitem_
+_thanks_ task:
+	when _talkguardian_ and _exorcise_ 
 	say 1021 
 
-variable _S.16_
-_S.17_ task:
+_hookerconfess_ task:
 	add dialog for location _house2_ 
 	log 1026 step 6 
 	say 1024 
 
-_S.18_ task:
+_toopoor_ task:
 	say 1022 
 
 _bribe_ task:
-	clicked _sneaker_ and at least 50 gold otherwise do _S.18_ 
-	prompt 1023 yes _S.17_ no _S.20_ 
+	clicked _hooker_ and at least 50 gold otherwise do _toopoor_ 
+	prompt 1023 yes _hookerconfess_ no _refuseconfess_ 
 
-_S.20_ task:
+_refuseconfess_ task:
 	get item _gold_ 
 	make _gold_ permanent 
 
-_S.21_ task:
-	when _S.01_ and _S.08_ 
+_rescueitem_ task:
+	when _talkguardian_ and _revealsham_ 
 	get item _item_ 
 	hide npc _guardian_ 
 	say 1025 
 
-until _S.21_ performed:
-	clear _S.23_ _S.22_ _S.01_ 
+-until _rescueitem_ performed:
+-	clear _itemtopriest_ _itemtoqg_ _talkguardian_ 
 
-_S.22_ task:
-	toting _item_ and _qgiver_ clicked 
+-_itemtoqg_ task:
+-	toting _item_ and _qgiver_ clicked 
 
-_S.23_ task:
-	toting _item_ and _priest_ clicked 
+-_itemtopriest_ task:
+-	toting _item_ and _priest_ clicked 
 
-_S.24_ task:
-	when _S.23_ and _S.21_ 
-	when _S.22_ and _S.21_ 
-	when _qgclicked_ and _S.07_ 
-	when _S.14_ and _S.07_ 
+_victory_ task:
+	when _qgclicked_ and _rescueitem_
+	when _qgclicked_ and _exorcise_ 
+	when _clickpriest_ and _rescueitem_
+	when _clickpriest_ and _exorcise_
 	give pc _reward_ 
-	end quest 
+	end quest
 
 _qgclicked_ task:
 	clicked npc _qgiver_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _rescueitem_ and not _exorcise_
+	clear _qgclicked_

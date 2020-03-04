@@ -621,10 +621,18 @@ namespace DaggerfallWorkshop.Game
 
         public bool ProcessHotKeySequences()
         {
-            if (uiManager.TopWindow != null && uiManager.TopWindow.ParentPanel != null)
+            if (uiManager.TopWindow != null)
             {
-                return uiManager.TopWindow.ParentPanel.ProcessHotkeySequences(lastKeyModifiers);
+                BaseScreenComponent focusControl = uiManager.TopWindow.FocusControl;
+                if (focusControl == null || !focusControl.OverridesHotkeySequences)
+                {
+                    if (uiManager.TopWindow.ParentPanel != null)
+                    {
+                        return uiManager.TopWindow.ParentPanel.ProcessHotkeySequences(lastKeyModifiers);
+                    }
+                }
             }
+
             return false;
         }
 

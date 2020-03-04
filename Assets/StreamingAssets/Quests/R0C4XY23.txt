@@ -6,6 +6,7 @@
 -- QuestId: 23
 Messages: 31
 Quest: R0C4XY23
+DisplayName: The Daedric Book
 -- Message panels
 QRC:
 
@@ -161,7 +162,7 @@ Item _item_ book2
 Item _map_ letter used 1030
 
 Person _questgiver_ group Questor male
-Person faction absent from data base!
+Person _contact_ faction Dancers
 -- Person:    1 0 -1 0 13278 0 0.
 
 Person _oblivion_ factiontype Daedra female anyInfo 1013 rumors 1014
@@ -200,6 +201,8 @@ _npcclicked_ task:
 _thankyou_ task:
 	say 1012 
 	change repute with _oblivion_ by +20 
+	end quest
+--eliminates long wait for quest to end. quest is impossible with this choice
 
 until _thankyou_ performed:
 	create foe _firedaedra_ every 6 minutes 7 times with 25% success 

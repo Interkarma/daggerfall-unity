@@ -16,6 +16,7 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop
 {
@@ -67,6 +68,8 @@ namespace DaggerfallWorkshop
         {
             LootChanceMatrix matrix = LootTables.GetMatrix(LootTableKey);
             DaggerfallUnityItem[] newitems = LootTables.GenerateRandomLoot(matrix, GameManager.Instance.PlayerEntity);
+
+            FormulaHelper.ModifyFoundLootItems(ref newitems);
 
             collection.Import(newitems);
         }

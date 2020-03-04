@@ -171,23 +171,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void DaedraSummoningService(int npcFactionId)
         {
-            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionId, out summonerFactionData))
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (!playerEntity.FactionData.GetFactionData(npcFactionId, out summonerFactionData))
             {
                 DaggerfallUnity.LogMessage("Error no faction data for NPC FactionId: " + npcFactionId);
                 return;
             }
             // Select appropriate Daedra for summoning attempt.
+            int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
             if (summonerFactionData.id == (int) FactionFile.FactionIDs.The_Glenmoril_Witches)
-            {   // Always Hircine at Glenmoril witches.
+            {   // Always Hircine at Glenmoril witches. (wonder if this was just a bug in classic, or actually intentional)
                 daedraToSummon = daedraData[0];
             }
             else if ((FactionFile.FactionTypes) summonerFactionData.type == FactionFile.FactionTypes.WitchesCoven)
-            {   // Witches covens summon a random Daedra.
-                daedraToSummon = daedraData[Random.Range(1, daedraData.Length)];
+            {   // Witches covens summon a random Daedra each day.
+                int daedraIndex = playerEntity.DaedraSummonIndex;
+                if (playerEntity.DaedraSummonDay != dayOfYear || daedraIndex == 0)
+                {
+                    playerEntity.DaedraSummonIndex = daedraIndex = Random.Range(1, daedraData.Length);
+                    playerEntity.DaedraSummonDay = dayOfYear;
+                }
+                daedraToSummon = daedraData[daedraIndex];
             }
             else
             {   // Is this a summoning day?
-                int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
                 foreach (DaedraData dd in daedraData)
                 {
                     if (dd.dayOfYear == dayOfYear)

@@ -76,6 +76,9 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
+        const int numberOrientations = 8;
+        const float anglePerOrientation = 360f / numberOrientations;
+
         Vector3 cameraPosition;
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
@@ -120,7 +123,6 @@ namespace DaggerfallWorkshop
 
         const int IdleAnimSpeed = 1;
         const int MoveAnimSpeed = 4;
-
         static MobileAnimation[] IdleAnims = new MobileAnimation[]
         {
             new MobileAnimation() {Record = 5, FramePerSecond = IdleAnimSpeed, FlipLeftRight = false},          // Idle
@@ -411,32 +413,10 @@ namespace DaggerfallWorkshop
             facingAngle = Vector3.Angle(dir, parentForward);
             facingAngle = facingAngle * -Mathf.Sign(Vector3.Cross(dir, parentForward).y);
 
-            // Hand-tune facing index
-            int orientation = 0;
-
-            // Right-hand side
-            if (facingAngle > 0.0f && facingAngle < 22.5f)
-                orientation = 0;
-            if (facingAngle > 22.5f && facingAngle < 67.5f)
-                orientation = 7;
-            if (facingAngle > 67.5f && facingAngle < 112.5f)
-                orientation = 6;
-            if (facingAngle > 112.5f && facingAngle < 157.5f)
-                orientation = 5;
-            if (facingAngle > 157.5f && facingAngle < 180.0f)
-                orientation = 4;
-
-            // Left-hand side
-            if (facingAngle < 0.0f && facingAngle > -22.5f)
-                orientation = 0;
-            if (facingAngle < -22.5f && facingAngle > -67.5f)
-                orientation = 1;
-            if (facingAngle < -67.5f && facingAngle > -112.5f)
-                orientation = 2;
-            if (facingAngle < -112.5f && facingAngle > -157.5f)
-                orientation = 3;
-            if (facingAngle < -157.5f && facingAngle > -180.0f)
-                orientation = 4;
+            // Facing index
+            int orientation = - Mathf.RoundToInt(facingAngle / anglePerOrientation);
+            // Wrap values to 0 .. numberOrientations-1
+            orientation = (orientation + numberOrientations) % numberOrientations;
 
             // Change person to this orientation
             if (orientation != lastOrientation)

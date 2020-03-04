@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop
 
             // Perform layout
             startMarker = null;
-            if (location.Name == "Orsinium")
+            if (location.MapTableData.MapId == 19021260)
                 LayoutOrsinium(ref location, importEnemies);
             else
                 LayoutDungeon(ref location, importEnemies);

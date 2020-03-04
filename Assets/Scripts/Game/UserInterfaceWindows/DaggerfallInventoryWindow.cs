@@ -367,6 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(localItemListScroller);
             localItemListScroller.OnItemClick += LocalItemListScroller_OnItemClick;
+            localItemListScroller.OnItemRightClick += LocalItemListScroller_OnItemRightClick;
             if (itemInfoPanelLabel != null)
                 localItemListScroller.OnItemHover += ItemListScroller_OnHover;
 
@@ -380,6 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             NativePanel.Components.Add(remoteItemListScroller);
             remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
+            remoteItemListScroller.OnItemRightClick += RemoteItemListScroller_OnItemRightClick;
             SetRemoteItemsAnimation();
 
             if (itemInfoPanelLabel != null)
@@ -453,6 +455,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             paperDoll.Position = new Vector2(49, 13);
             paperDoll.OnMouseMove += PaperDoll_OnMouseMove;
             paperDoll.OnMouseClick += PaperDoll_OnMouseClick;
+            paperDoll.OnRightMouseClick += PaperDoll_OnRightMouseClick;
             paperDoll.ToolTip = defaultToolTip;
             paperDoll.Refresh();
         }
@@ -1844,18 +1847,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private DaggerfallUnityItem PaperDoll_GetItem(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // Get equip value
             byte value = paperDoll.GetEquipIndex((int)position.x, (int)position.y);
             if (value == 0xff)
-                return;
+                return null;
 
             // Get item
             EquipSlots slot = (EquipSlots)value;
             DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem(slot);
-            if (item == null)
+            return item;
+        }
+
+        protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUnityItem item = PaperDoll_GetItem(sender, position);
+            if(item == null)
                 return;
 
             // Handle click based on action
@@ -1876,6 +1885,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 UseItem(item);
             }
+        }
+
+        protected virtual void PaperDoll_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUnityItem item = PaperDoll_GetItem(sender, position);
+            if(item == null)
+                return;
+
+            NextVariant(item);
         }
 
         protected virtual void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item)
@@ -1915,6 +1933,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ShowInfoPopup(item);
             }
+        }
+
+        protected virtual void LocalItemListScroller_OnItemRightClick(DaggerfallUnityItem item)
+        {
+            NextVariant(item);
         }
 
         protected virtual void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item)
@@ -1957,6 +1980,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ShowInfoPopup(item);
             }
+        }
+
+        protected virtual void RemoteItemListScroller_OnItemRightClick(DaggerfallUnityItem item)
+        {
+            NextVariant(item);
         }
 
         protected void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

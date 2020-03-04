@@ -446,7 +446,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     {
                         case WindowModes.Sell:
                             modeActionEnabled = true;
-                            cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality) * item.stackCount;
+                            cost += FormulaHelper.CalculateCost(item.value, buildingDiscoveryData.quality, item.ConditionPercentage) * item.stackCount;
                             break;
                         case WindowModes.SellMagic: // TODO: Fencing base price higher and guild rep affects it. Implement new formula or can this be used?
                             modeActionEnabled = true;
