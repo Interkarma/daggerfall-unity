@@ -950,66 +950,24 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return del(attacker, target, chanceToHitMod, struckBodyPart);
 
             int chanceToHit = chanceToHitMod;
-            PlayerEntity player = GameManager.Instance.PlayerEntity;
-            EnemyEntity AITarget = target as EnemyEntity;
-
-            int armorValue = 0;
-
-            // Apply hit mod from character biography
-            if (target == player)
-            {
-                chanceToHit -= player.BiographyAvoidHitMod;
-            }
 
             // Get armor value for struck body part
-            if (struckBodyPart <= target.ArmorValues.Length)
-            {
-                armorValue = target.ArmorValues[struckBodyPart] + target.IncreasedArmorValueModifier + target.DecreasedArmorValueModifier;
-            }
-
-            chanceToHit += armorValue;
+            chanceToHit += CalculateArmorToHit(target, struckBodyPart);
 
             // Apply adrenaline rush modifiers.
-            const int adrenalineRushModifier = 5;
-            const int improvedAdrenalineRushModifier = 8;
-            if (attacker.Career.AdrenalineRush && attacker.CurrentHealth < (attacker.MaxHealth / 8))
-            {
-                chanceToHit += (attacker.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
-            }
-
-            if (target.Career.AdrenalineRush && target.CurrentHealth < (target.MaxHealth / 8))
-            {
-                chanceToHit -= (target.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
-            }
+            chanceToHit += CalculateAdrenalineRushToHit(attacker, target);
 
             // Apply enchantment modifier
             chanceToHit += attacker.ChanceToHitModifier;
 
-            // Apply luck modifier.
-            chanceToHit += ((attacker.Stats.LiveLuck - target.Stats.LiveLuck) / 10);
+            // Apply stat differential modifiers. (default: luck and agility)
+            chanceToHit += CalculateStatsToHit(attacker, target);
 
-            // Apply agility modifier.
-            chanceToHit += ((attacker.Stats.LiveAgility - target.Stats.LiveAgility) / 10);
+            // Apply skill modifiers. (default: dodge and crit strike)
+            chanceToHit += CalculateSkillsToHit(attacker, target);
 
-            // Apply dodging modifier.
-            // This modifier is bugged in classic and the attacker's dodging skill is used rather than the target's.
-            // DF Chronicles says the dodging calculation is (dodging / 10), but it actually seems to be (dodging / 4).
-            chanceToHit -= (target.Skills.GetLiveSkillValue(DFCareer.Skills.Dodging) / 4);
-
-            // Apply critical strike modifier.
-            if (Dice100.SuccessRoll(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike)))
-            {
-                chanceToHit += (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / 10);
-            }
-
-            // Apply monster modifier.
-            if ((target != player) && (AITarget.EntityType == EntityTypes.EnemyMonster))
-            {
-                chanceToHit += 40;
-            }
-
-            // DF Chronicles says -60 is applied at the end, but it actually seems to be -50.
-            chanceToHit -= 50;
+            // Apply monster modifier and biography adjustments.
+            chanceToHit += CalculateAdjustmentsToHit(attacker, target);
 
             Mathf.Clamp(chanceToHit, 3, 97);
 
@@ -1356,6 +1314,115 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             return result;
         }
+
+        #endregion
+
+        #region Combat & Damage Sub-formula (private)
+
+        private static int CalculateArmorToHit(DaggerfallEntity target, int struckBodyPart)
+        {
+            Func<DaggerfallEntity, int, int> del;
+            if (TryGetOverride("CalculateArmorToHit", out del))
+                return del(target, struckBodyPart);
+
+            int armorValue = 0;
+            if (struckBodyPart <= target.ArmorValues.Length)
+            {
+                armorValue = target.ArmorValues[struckBodyPart] + target.IncreasedArmorValueModifier + target.DecreasedArmorValueModifier;
+            }
+            return armorValue;
+        }
+
+        private static int CalculateAdrenalineRushToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        {
+            Func<DaggerfallEntity, DaggerfallEntity, int> del;
+            if (TryGetOverride("CalculateAdrenalineRushToHit", out del))
+                return del(attacker, target);
+
+            const int adrenalineRushModifier = 5;
+            const int improvedAdrenalineRushModifier = 8;
+
+            int chanceToHitMod = 0;
+            if (attacker.Career.AdrenalineRush && attacker.CurrentHealth < (attacker.MaxHealth / 8))
+            {
+                chanceToHitMod += (attacker.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
+            }
+
+            if (target.Career.AdrenalineRush && target.CurrentHealth < (target.MaxHealth / 8))
+            {
+                chanceToHitMod -= (target.ImprovedAdrenalineRush) ? improvedAdrenalineRushModifier : adrenalineRushModifier;
+            }
+            return chanceToHitMod;
+        }
+
+        private static int CalculateStatsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        {
+            Func<DaggerfallEntity, DaggerfallEntity, int> del;
+            if (TryGetOverride("CalculateStatDiffsToHit", out del))
+                return del(attacker, target);
+
+            int chanceToHitMod = 0;
+
+            // Apply luck modifier.
+            chanceToHitMod += (attacker.Stats.LiveLuck - target.Stats.LiveLuck) / 10;
+
+            // Apply agility modifier.
+            chanceToHitMod += (attacker.Stats.LiveAgility - target.Stats.LiveAgility) / 10;
+
+            return chanceToHitMod;
+        }
+
+        private static int CalculateSkillsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        {
+            Func<DaggerfallEntity, DaggerfallEntity, int> del;
+            if (TryGetOverride("CalculateSkillsToHit", out del))
+                return del(attacker, target);
+
+            int chanceToHitMod = 0;
+
+            // Apply dodging modifier.
+            // This modifier is bugged in classic and the attacker's dodging skill is used rather than the target's.
+            // DF Chronicles says the dodging calculation is (dodging / 10), but it actually seems to be (dodging / 4).
+            chanceToHitMod -= target.Skills.GetLiveSkillValue(DFCareer.Skills.Dodging) / 4;
+
+            // Apply critical strike modifier.
+            if (Dice100.SuccessRoll(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike)))
+            {
+                chanceToHitMod += attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / 10;
+            }
+
+            return chanceToHitMod;
+        }
+
+        private static int CalculateAdjustmentsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        {
+            Func<DaggerfallEntity, DaggerfallEntity, int> del;
+            if (TryGetOverride("CalculateAdjustmentsToHit", out del))
+                return del(attacker, target);
+
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            EnemyEntity AITarget = target as EnemyEntity;
+
+            int chanceToHitMod = 0;
+            
+            // Apply hit mod from character biography
+            if (target == player)
+            {
+                chanceToHitMod -= player.BiographyAvoidHitMod;
+            }
+
+            // Apply monster modifier.
+            if ((target != player) && (AITarget.EntityType == EntityTypes.EnemyMonster))
+            {
+                chanceToHitMod += 40;
+            }
+
+            // DF Chronicles says -60 is applied at the end, but it actually seems to be -50.
+            chanceToHitMod -= 50;
+
+            return chanceToHitMod;
+        }
+
 
         #endregion
 
