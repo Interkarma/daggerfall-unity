@@ -41,6 +41,9 @@ namespace Wenzil.Console
         /// </summary>
         public void ToggleConsole(bool force = false)
         {
+            //refresh keybinds if player rebinded it
+            transform.GetComponent<ConsoleController>().GetConsoleKeyBind();
+
             // Do nothing if HUD is not top window (e.g. player in some other menu)
             if (!DaggerfallWorkshop.Game.GameManager.Instance.IsPlayerOnHUD && !force)
                 return;
