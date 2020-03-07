@@ -1359,7 +1359,7 @@ namespace DaggerfallWorkshop.Game
 
                             MeshRenderer meshRenderer = inner2Elem.gameObject.GetComponent<MeshRenderer>();
                             if (meshRenderer == null)
-                                break;
+                                continue;
 
                             // update materials and set meshes as visited in this run (so "Interior" geometry always is colored
                             // (since we don't disable the mesh, it is also discovered - which is a precondition for being rendered))
@@ -1388,7 +1388,7 @@ namespace DaggerfallWorkshop.Game
 
                                 MeshRenderer meshRenderer = inner3Elem.gameObject.GetComponent<MeshRenderer>();
                                 if (meshRenderer == null)
-                                    break;
+                                    continue;
 
                                 // update materials (omit 2nd parameter so default behavior is initiated which is:
                                 // meshes are marked as not visited in this run (so "Dungeon" geometry that has been discovered in a previous dungeon run is rendered in grayscale)
