@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut, ifkopifko, Numidium, TheLacus
+// Contributors:    Allofich, Hazelnut, ifkopifko, Numidium, TheLacus
 // 
 // Notes:
 //
@@ -435,7 +435,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <param name="enemyAnimStateRecord">Record # of the target, used for backstabbing</param>
         /// <param name="weaponAnimTime">Time the weapon animation lasted before the attack in ms, used for bow drawing </param>
         /// <param name="weapon">The weapon item being used</param>
-        /// <returns>Damage inflicted to target, can be 0</returns>
+        /// <returns>Damage inflicted to target, can be 0 for a miss or ineffective hit</returns>
         public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int enemyAnimStateRecord, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             if (attacker == null || target == null)
@@ -445,8 +445,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateAttackDamage", out del))
                 return del(attacker, target, enemyAnimStateRecord, weaponAnimTime, weapon);
 
-            int minBaseDamage = 0;
-            int maxBaseDamage = 0;
             int damageModifiers = 0;
             int damage = 0;
             int chanceToHitMod = 0;
@@ -578,22 +576,16 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
                     {
-                        minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
-                        maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
-                        damage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                        damage = CalculateHandToHandAttackDamage(attacker, target, damageModifiers, attacker == player);
 
-                        // Apply damage modifiers.
-                        damage += damageModifiers;
-                        // Apply strength modifier. It is not applied in classic despite what the in-game description for the Strength attribute says.
-                        if (attacker == player)
-                            damage += DamageModifier(attacker.Stats.LiveStrength);
-                        // Handle backstabbing
                         damage = CalculateBackstabDamage(damage, backstabChance);
                     }
                 }
-                else if (AIAttacker != null) // attacker is monster
+                else if (AIAttacker != null) // attacker is a monster
                 {
                     // Handle multiple attacks by AI
+                    int minBaseDamage = 0;
+                    int maxBaseDamage = 0;
                     int attackNumber = 0;
                     while (attackNumber < 3) // Classic supports up to 5 attacks but no monster has more than 3
                     {
@@ -632,11 +624,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             else if (weapon != null)
             {
                 // Apply weapon material modifier.
-                if (weapon.GetWeaponMaterialModifier() > 0)
-                {
-                    chanceToHitMod += (weapon.GetWeaponMaterialModifier() * 10);
-                }
-                // Mod hook for adjusting final hit chance mod. (is a no-op in DFU)
+                chanceToHitMod += CalculateWeaponToHit(weapon);
+
+                // Mod hook for adjusting final hit chance mod and adding new elements to calculation. (no-op in DFU)
                 chanceToHitMod = AdjustWeaponHitChanceMod(attacker, target, chanceToHitMod, weaponAnimTime, weapon);
 
                 if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
@@ -722,8 +712,28 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
 
-            // Mod hook for adjusting final damage. (is a no-op in DFU)
+            // Mod hook for adjusting final weapon damage. (no-op in DFU)
             damage = AdjustWeaponAttackDamage(attacker, target, damage, weaponAnimTime, weapon);
+
+            return damage;
+        }
+
+        public static int CalculateHandToHandAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, bool player)
+        {
+            Func<DaggerfallEntity, DaggerfallEntity, int, int> del;
+            if (TryGetOverride("CalculateHandToHandAttackDamage", out del))
+                return del(attacker, target, damageModifier);
+
+            int minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+            int maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
+            int damage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+
+            // Apply damage modifiers.
+            damage += damageModifier;
+
+            // Apply strength modifier for players. It is not applied in classic despite what the in-game description for the Strength attribute says.
+            if (player)
+                damage += DamageModifier(attacker.Stats.LiveStrength);
 
             return damage;
         }
@@ -965,6 +975,20 @@ namespace DaggerfallWorkshop.Game.Formulas
                 amount = 1;
 
             item.LowerCondition(amount, owner);
+        }
+
+        private static int CalculateWeaponToHit(DaggerfallUnityItem weapon)
+        {
+            Func<DaggerfallUnityItem, int> del;
+            if (TryGetOverride("CalculateWeaponToHit", out del))
+                return del(weapon);
+
+            int chanceToHitMod = 0;
+            if (weapon.GetWeaponMaterialModifier() > 0)
+            {
+                chanceToHitMod += weapon.GetWeaponMaterialModifier() * 10;
+            }
+            return chanceToHitMod;
         }
 
         private static int CalculateArmorToHit(DaggerfallEntity target, int struckBodyPart)
