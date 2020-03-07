@@ -921,7 +921,7 @@ namespace DaggerfallWorkshop.Game.Items
                 if (item.nativeMaterialValue == (int)ArmorMaterialTypes.Leather)
                     variant = 0;
                 else
-                    variant = 1;
+                    variant = Mathf.Clamp(variant, 1, 2);
             }
 
             // Store variant
