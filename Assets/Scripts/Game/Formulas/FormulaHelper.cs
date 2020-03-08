@@ -983,12 +983,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateWeaponToHit", out del))
                 return del(weapon);
 
-            int chanceToHitMod = 0;
-            if (weapon.GetWeaponMaterialModifier() > 0)
-            {
-                chanceToHitMod += weapon.GetWeaponMaterialModifier() * 10;
-            }
-            return chanceToHitMod;
+            return weapon.GetWeaponMaterialModifier() * 10;
         }
 
         private static int CalculateArmorToHit(DaggerfallEntity target, int struckBodyPart)
