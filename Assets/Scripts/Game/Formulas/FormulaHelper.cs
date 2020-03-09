@@ -825,7 +825,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         private static ToHitAndDamageMods CalculateRacialModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon, PlayerEntity player)
         {
             Func<DaggerfallEntity, DaggerfallUnityItem, PlayerEntity, ToHitAndDamageMods> del;
-            if (TryGetOverride("CalculateSwingModifiers", out del))
+            if (TryGetOverride("CalculateRacialModifiers", out del))
                 return del(attacker, weapon, player);
 
             ToHitAndDamageMods mods = new ToHitAndDamageMods();
