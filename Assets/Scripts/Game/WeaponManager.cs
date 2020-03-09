@@ -683,7 +683,7 @@ namespace DaggerfallWorkshop.Game
                 int switchDelay = 0;
                 if (currentRightHandWeapon != null)
                     switchDelay += EquipDelayTimes[currentRightHandWeapon.GroupIndex];
-                if (currentRightHandWeapon != null)
+                if (currentLeftHandWeapon != null)
                     switchDelay += EquipDelayTimes[currentLeftHandWeapon.GroupIndex];
                 if (switchDelay > 0)
                 {
