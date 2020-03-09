@@ -35,14 +35,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect costPanelRect = new Rect(49, 13, 111, 9);
 
         Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
-        Rect wagonButtonRect = new Rect(4, 4, 31, 14);
-        Rect infoButtonRect = new Rect(4, 26, 31, 14);
+        new Rect wagonButtonRect = new Rect(4, 4, 31, 14);
+        new Rect infoButtonRect = new Rect(4, 26, 31, 14);
         Rect selectButtonRect = new Rect(4, 48, 31, 14);
         Rect stealButtonRect = new Rect(4, 102, 31, 14);
         Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
         Rect clearButtonRect = new Rect(4, 146, 31, 14);
 
-        Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
+        new Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
         Rect itemBuyInfoPanelRect = new Rect(223, 76, 37, 32);
 
         #endregion
@@ -54,8 +54,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel goldLabel;
 
         Panel actionButtonsPanel;
-        Button wagonButton;
-        Button infoButton;
         Button selectButton;
         Button stealButton;
         Button modeActionButton;

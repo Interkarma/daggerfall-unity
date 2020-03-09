@@ -1979,7 +1979,7 @@ namespace Wenzil.Console
                             {
                                 ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(clothing, i);
                                 if ((playerEntity.Gender == Genders.Male && mensUsableClothing.Contains((MensClothing)enumArray.GetValue(i))) ||
-                                    womensUsableClothing.Contains((WomensClothing)enumArray.GetValue(i)))
+                                    womensUsableClothing.Contains((WomensClothing)enumArray.GetValue(i)) || itemTemplate.variants == 0)
                                     itemTemplate.variants = 1;
 
                                 for (int v = 0; v < itemTemplate.variants; v++)
@@ -2032,14 +2032,21 @@ namespace Wenzil.Console
                                         vf = 6;
                                     }
                                 }
-                                else if (armorType == Armor.Gauntlets && material != ArmorMaterialTypes.Leather)
+                                else if (armorType == Armor.Gauntlets || armorType == Armor.Boots)
                                 {
-                                    vs = 1;
+                                    if (material == ArmorMaterialTypes.Leather)
+                                    {
+                                        vf = 1;
+                                    }
+                                    else
+                                    {
+                                        vs = 1;
+                                        vf = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i).variants;
+                                    }
                                 }
                                 else
                                 {
-                                    ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i);
-                                    vf = itemTemplate.variants;
+                                    vf = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i).variants;
                                 }
                                 if (vf == 0)
                                     vf = vs + 1;
