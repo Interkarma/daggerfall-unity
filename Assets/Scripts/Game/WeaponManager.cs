@@ -376,7 +376,7 @@ namespace DaggerfallWorkshop.Game
                         missile.ElementType = ElementTypes.None;
                         missile.IsArrow = true;
 
-                        lastBowUsed = currentRightHandWeapon;
+                        lastBowUsed = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;;
                     }
                 }
 
