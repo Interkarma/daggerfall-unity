@@ -427,6 +427,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
+        public struct ToHitAndDamageMods
+        {
+            public int damageMod;
+            public int toHitMod;
+        }
+
         /// <summary>
         /// Calculate the damage caused by an attack.
         /// </summary>
@@ -494,73 +500,20 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             if (attacker == player)
             {
-                // Apply swing modifiers.
-                FPSWeapon onscreenWeapon = GameManager.Instance.WeaponManager.ScreenWeapon;
+                // Apply swing modifiers
+                ToHitAndDamageMods swingMods = CalculateSwingModifiers(GameManager.Instance.WeaponManager.ScreenWeapon);
+                damageModifiers += swingMods.damageMod;
+                chanceToHitMod += swingMods.toHitMod;
 
-                if (onscreenWeapon != null)
-                {
-                    // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
-                    // Classic does not apply swing modifiers to unarmed attacks.
-                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeUp)
-                    {
-                        damageModifiers += -4;
-                        chanceToHitMod += 10;
-                    }
-                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
-                    {
-                        damageModifiers += -2;
-                        chanceToHitMod += 5;
-                    }
-                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownLeft)
-                    {
-                        damageModifiers += 2;
-                        chanceToHitMod += -5;
-                    }
-                    if (onscreenWeapon.WeaponState == WeaponStates.StrikeDown)
-                    {
-                        damageModifiers += 4;
-                        chanceToHitMod += -10;
-                    }
-                }
-
-                if (weapon != null)
-                {
-                    // Apply weapon proficiency
-                    if (((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
-                    {
-                        damageModifiers += ((attacker.Level / 3) + 1);
-                        chanceToHitMod += attacker.Level;
-                    }
-                }
-                // Apply hand-to-hand proficiency. Hand-to-hand proficiency is not applied in classic.
-                else if (((int)attacker.Career.ExpertProficiencies & (int)(DFCareer.ProficiencyFlags.HandToHand)) != 0)
-                {
-                    damageModifiers += ((attacker.Level / 3) + 1);
-                    chanceToHitMod += attacker.Level;
-                }
+                // Apply proficiency modifiers
+                ToHitAndDamageMods proficiencyMods = CalculateProficiencyModifiers(attacker, weapon);
+                damageModifiers += proficiencyMods.damageMod;
+                chanceToHitMod += proficiencyMods.toHitMod;
 
                 // Apply racial bonuses
-                if (weapon != null)
-                {
-                    if (player.RaceTemplate.ID == (int)Races.DarkElf)
-                    {
-                        damageModifiers += (attacker.Level / 4);
-                        chanceToHitMod += (attacker.Level / 4);
-                    }
-                    else if (skillID == (short)DFCareer.Skills.Archery)
-                    {
-                        if (player.RaceTemplate.ID == (int)Races.WoodElf)
-                        {
-                            damageModifiers += (attacker.Level / 3);
-                            chanceToHitMod += (attacker.Level / 3);
-                        }
-                    }
-                    else if (player.RaceTemplate.ID == (int)Races.Redguard)
-                    {
-                        damageModifiers += (attacker.Level / 3);
-                        chanceToHitMod += (attacker.Level / 3);
-                    }
-                }
+                ToHitAndDamageMods racialMods = CalculateRacialModifiers(attacker, weapon, player);
+                damageModifiers += racialMods.damageMod;
+                chanceToHitMod += racialMods.toHitMod;
 
                 backstabChance = CalculateBackstabChance(player, null, enemyAnimStateRecord);
                 chanceToHitMod += backstabChance;
@@ -807,6 +760,97 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
             return bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
+        }
+
+        private static ToHitAndDamageMods CalculateSwingModifiers(FPSWeapon onscreenWeapon)
+        {
+            Func<FPSWeapon, ToHitAndDamageMods> del;
+            if (TryGetOverride("CalculateSwingModifiers", out del))
+                return del(onscreenWeapon);
+
+            ToHitAndDamageMods mods = new ToHitAndDamageMods();
+            if (onscreenWeapon != null)
+            {
+                // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
+                // Classic does not apply swing modifiers to unarmed attacks.
+                if (onscreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                {
+                    mods.damageMod = -4;
+                    mods.toHitMod = 10;
+                }
+                if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
+                {
+                    mods.damageMod = -2;
+                    mods.toHitMod = 5;
+                }
+                if (onscreenWeapon.WeaponState == WeaponStates.StrikeDownLeft)
+                {
+                    mods.damageMod = 2;
+                    mods.toHitMod = -5;
+                }
+                if (onscreenWeapon.WeaponState == WeaponStates.StrikeDown)
+                {
+                    mods.damageMod = 4;
+                    mods.toHitMod = -10;
+                }
+            }
+            return mods;
+        }
+
+        private static ToHitAndDamageMods CalculateProficiencyModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon)
+        {
+            Func<DaggerfallEntity, DaggerfallUnityItem, ToHitAndDamageMods> del;
+            if (TryGetOverride("CalculateProficiencyModifiers", out del))
+                return del(attacker, weapon);
+
+            ToHitAndDamageMods mods = new ToHitAndDamageMods();
+            if (weapon != null)
+            {
+                // Apply weapon proficiency
+                if (((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
+                {
+                    mods.damageMod = (attacker.Level / 3) + 1;
+                    mods.toHitMod = attacker.Level;
+                }
+            }
+            // Apply hand-to-hand proficiency. Hand-to-hand proficiency is not applied in classic.
+            else if (((int)attacker.Career.ExpertProficiencies & (int)DFCareer.ProficiencyFlags.HandToHand) != 0)
+            {
+                mods.damageMod = (attacker.Level / 3) + 1;
+                mods.toHitMod = attacker.Level;
+            }
+            return mods;
+        }
+
+        private static ToHitAndDamageMods CalculateRacialModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon, PlayerEntity player)
+        {
+            Func<DaggerfallEntity, DaggerfallUnityItem, PlayerEntity, ToHitAndDamageMods> del;
+            if (TryGetOverride("CalculateSwingModifiers", out del))
+                return del(attacker, weapon, player);
+
+            ToHitAndDamageMods mods = new ToHitAndDamageMods();
+            if (weapon != null)
+            {
+                if (player.RaceTemplate.ID == (int)Races.DarkElf)
+                {
+                    mods.damageMod = attacker.Level / 4;
+                    mods.toHitMod = attacker.Level / 4;
+                }
+                else if (weapon.GetWeaponSkillIDAsShort() == (short)DFCareer.Skills.Archery)
+                {
+                    if (player.RaceTemplate.ID == (int)Races.WoodElf)
+                    {
+                        mods.damageMod = attacker.Level / 3;
+                        mods.toHitMod = attacker.Level / 3;
+                    }
+                }
+                else if (player.RaceTemplate.ID == (int)Races.Redguard)
+                {
+                    mods.damageMod = attacker.Level / 3;
+                    mods.toHitMod = attacker.Level / 3;
+                }
+            }
+            return mods;
         }
 
         private static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
