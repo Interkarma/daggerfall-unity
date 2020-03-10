@@ -40,8 +40,9 @@ namespace DaggerfallWorkshop.Game
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
 
-        // Max time bow can be held drawn
+        // Max time bow can be held drawn and switch divisor
         private const int MaxBowHeldDrawnSeconds = 10;
+        private const int BowSwitchDivisor = 3;
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
@@ -688,9 +689,9 @@ namespace DaggerfallWorkshop.Game
                 if (switchDelay > 0)
                 {
                     if (UsingRightHand)
-                        EquipCountdownRightHand += switchDelay / 4;
+                        EquipCountdownRightHand += switchDelay / BowSwitchDivisor;
                     else
-                        EquipCountdownLeftHand += switchDelay / 4;
+                        EquipCountdownLeftHand += switchDelay / BowSwitchDivisor;
                 }
             }
 
