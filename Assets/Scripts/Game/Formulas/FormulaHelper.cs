@@ -53,6 +53,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Approximation of classic frame updates
         public const int classicFrameUpdate = 980;
 
+        /// <summary>Struct for return values of formula that affect damage and to-hit chance.</summary>
+        public struct ToHitAndDamageMods
+        {
+            public int damageMod;
+            public int toHitMod;
+        }
+
         #region Basic Formulas
 
         public static int DamageModifier(int strength)
@@ -427,10 +434,78 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public struct ToHitAndDamageMods
+        public static int CalculateWeaponMinDamage(Weapons weapon)
         {
-            public int damageMod;
-            public int toHitMod;
+            Func<Weapons, int> del;
+            if (TryGetOverride("CalculateWeaponMinDamage", out del))
+                return del(weapon);
+
+            switch (weapon)
+            {
+                case Weapons.Dagger:
+                case Weapons.Tanto:
+                case Weapons.Wakazashi:
+                case Weapons.Shortsword:
+                case Weapons.Broadsword:
+                case Weapons.Staff:
+                case Weapons.Mace:
+                    return 1;
+                case Weapons.Longsword:
+                case Weapons.Claymore:
+                case Weapons.Battle_Axe:
+                case Weapons.War_Axe:
+                case Weapons.Flail:
+                    return 2;
+                case Weapons.Saber:
+                case Weapons.Katana:
+                case Weapons.Dai_Katana:
+                case Weapons.Warhammer:
+                    return 3;
+                case Weapons.Short_Bow:
+                case Weapons.Long_Bow:
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
+
+        public static int CalculateWeaponMaxDamage(Weapons weapon)
+        {
+            Func<Weapons, int> del;
+            if (TryGetOverride("CalculateWeaponMaxDamage", out del))
+                return del(weapon);
+
+            switch (weapon)
+            {
+                case Weapons.Dagger:
+                    return 6;
+                case Weapons.Tanto:
+                case Weapons.Shortsword:
+                case Weapons.Staff:
+                    return 8;
+                case Weapons.Wakazashi:
+                    return 10;
+                case Weapons.Broadsword:
+                case Weapons.Saber:
+                case Weapons.Battle_Axe:
+                case Weapons.Mace:
+                    return 12;
+                case Weapons.Flail:
+                    return 14;
+                case Weapons.Longsword:
+                case Weapons.Katana:
+                case Weapons.War_Axe:
+                case Weapons.Short_Bow:
+                    return 16;
+                case Weapons.Claymore:
+                case Weapons.Warhammer:
+                case Weapons.Long_Bow:
+                    return 18;
+                case Weapons.Dai_Katana:
+                    return 21;
+                default:
+                    return 0;
+            }
         }
 
         /// <summary>
