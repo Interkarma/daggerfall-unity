@@ -967,14 +967,14 @@ namespace DaggerfallWorkshop.Utility
                 case DFBlock.RdbActionFlags.Translation:
                     {
                         action.Magnitude = magnitude;
-                        GetTranslationActionVector(ref action, (DFBlock.RdbActionAxes)axis_raw);
+                        GetTranslationActionVector(ref action, (DFBlock.RdbActionAxes)(axis_raw & 7));
                     }
                     break;
 
                 case DFBlock.RdbActionFlags.Rotation:
                     {
                         action.Magnitude = magnitude;
-                        GetRotationActionVector(ref action, (DFBlock.RdbActionAxes)axis_raw);
+                        GetRotationActionVector(ref action, (DFBlock.RdbActionAxes)(axis_raw & 7));
                     }
                     break;
                 case DFBlock.RdbActionFlags.PositiveX:
