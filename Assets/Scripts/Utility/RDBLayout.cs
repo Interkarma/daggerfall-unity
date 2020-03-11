@@ -753,6 +753,14 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         private static void GetRotationActionVector(ref DaggerfallAction action, DFBlock.RdbActionAxes axis)
         {
+            // HACK: Workaround for a specific rotation case where TRP object has a raw axis value > 6
+            // If more examples with a raw axis value > 6 can be found, there's possibly some global bitwise op needed here instead
+            if (action.ActionAxisRawValue == 13 && action.ModelDescription == "TRP")
+            {
+                axis = DFBlock.RdbActionAxes.NegativeX;
+                action.Magnitude = 400; // Classic magnitude is 392 but player is able to stick to that angle so increasing to 400
+            }
+
             Vector3 vector = Vector3.zero;
             float magnitude = action.Magnitude;
             switch (axis)
@@ -967,14 +975,14 @@ namespace DaggerfallWorkshop.Utility
                 case DFBlock.RdbActionFlags.Translation:
                     {
                         action.Magnitude = magnitude;
-                        GetTranslationActionVector(ref action, (DFBlock.RdbActionAxes)(axis_raw & 7));
+                        GetTranslationActionVector(ref action, (DFBlock.RdbActionAxes)axis_raw);
                     }
                     break;
 
                 case DFBlock.RdbActionFlags.Rotation:
                     {
                         action.Magnitude = magnitude;
-                        GetRotationActionVector(ref action, (DFBlock.RdbActionAxes)(axis_raw & 7));
+                        GetRotationActionVector(ref action, (DFBlock.RdbActionAxes)axis_raw);
                     }
                     break;
                 case DFBlock.RdbActionFlags.PositiveX:
