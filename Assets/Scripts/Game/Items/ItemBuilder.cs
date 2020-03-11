@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.Items
         static readonly short[] valueMultipliersByMaterial = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 };
 
         // Condition multipliers by material type. Iron through Daedric. MaxCondition is baseMaxCondition * value / 4.
-        static readonly short[] conditionMultipliersByMaterial = { 4, 4, 6, 8, 12, 16, 20, 24, 28, 32 };
+        static readonly short[] conditionMultipliersByMaterial = { 4, 6, 6, 8, 12, 16, 20, 24, 28, 32 };
 
         // Enchantment point multipliers by material type. Iron through Daedric. Enchantment points is baseEnchanmentPoints * value / 4.
         static readonly short[] enchantmentPointMultipliersByMaterial = { 3, 4, 7, 5, 6, 5, 7, 8, 10, 12 };
@@ -680,9 +680,9 @@ namespace DaggerfallWorkshop.Game.Items
         {
             item.value *= 3 * valueMultipliersByMaterial[(int)material];
             item.weightInKg = CalculateWeightForMaterial(item, material);
-            item.maxCondition *= conditionMultipliersByMaterial[(int)material] / 4;
+            item.maxCondition = item.maxCondition * conditionMultipliersByMaterial[(int)material] / 4;
             item.currentCondition = item.maxCondition;
-            item.enchantmentPoints *= enchantmentPointMultipliersByMaterial[(int)material] / 4;
+            item.enchantmentPoints = item.enchantmentPoints * enchantmentPointMultipliersByMaterial[(int)material] / 4;
 
             return item;
         }
