@@ -99,6 +99,48 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #endregion
 
+        #region Singleton
+
+        static StartGameBehaviour instance = null;
+        public static StartGameBehaviour Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    if (!FindSingleton(out instance))
+                    {
+                        GameObject go = new GameObject();
+                        go.name = "StartGameBehaviour";
+                        instance = go.AddComponent<StartGameBehaviour>();
+                    }
+                }
+                return instance;
+            }
+        }
+
+        public static bool HasInstance
+        {
+            get
+            {
+                return (instance != null);
+            }
+        }
+
+        public static bool FindSingleton(out StartGameBehaviour singletonOut)
+        {
+            singletonOut = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (singletonOut == null)
+            {
+                DaggerfallUnity.LogMessage("Could not locate StartGameBehaviour GameObject instance in scene!", true);
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
         #region Unity
 
         void Awake()
@@ -172,7 +214,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Common Startup
 
-        void ApplyStartSettings()
+        public void ApplyStartSettings()
         {
             // Resolution
             if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
