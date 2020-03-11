@@ -872,7 +872,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return mods;
         }
 
-        private static ToHitAndDamageMods CalculateProficiencyModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon)
+        public static ToHitAndDamageMods CalculateProficiencyModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon)
         {
             Func<DaggerfallEntity, DaggerfallUnityItem, ToHitAndDamageMods> del;
             if (TryGetOverride("CalculateProficiencyModifiers", out del))
@@ -897,7 +897,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return mods;
         }
 
-        private static ToHitAndDamageMods CalculateRacialModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon, PlayerEntity player)
+        public static ToHitAndDamageMods CalculateRacialModifiers(DaggerfallEntity attacker, DaggerfallUnityItem weapon, PlayerEntity player)
         {
             Func<DaggerfallEntity, DaggerfallUnityItem, PlayerEntity, ToHitAndDamageMods> del;
             if (TryGetOverride("CalculateRacialModifiers", out del))
@@ -1096,7 +1096,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             item.LowerCondition(amount, owner);
         }
 
-        private static int CalculateWeaponToHit(DaggerfallUnityItem weapon)
+        public static int CalculateWeaponToHit(DaggerfallUnityItem weapon)
         {
             Func<DaggerfallUnityItem, int> del;
             if (TryGetOverride("CalculateWeaponToHit", out del))
@@ -1105,7 +1105,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return weapon.GetWeaponMaterialModifier() * 10;
         }
 
-        private static int CalculateArmorToHit(DaggerfallEntity target, int struckBodyPart)
+        public static int CalculateArmorToHit(DaggerfallEntity target, int struckBodyPart)
         {
             Func<DaggerfallEntity, int, int> del;
             if (TryGetOverride("CalculateArmorToHit", out del))
@@ -1119,7 +1119,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return armorValue;
         }
 
-        private static int CalculateAdrenalineRushToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        public static int CalculateAdrenalineRushToHit(DaggerfallEntity attacker, DaggerfallEntity target)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("CalculateAdrenalineRushToHit", out del))
@@ -1141,7 +1141,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return chanceToHitMod;
         }
 
-        private static int CalculateStatsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        public static int CalculateStatsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("CalculateStatDiffsToHit", out del))
@@ -1158,7 +1158,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return chanceToHitMod;
         }
 
-        private static int CalculateSkillsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        public static int CalculateSkillsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("CalculateSkillsToHit", out del))
