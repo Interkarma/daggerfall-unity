@@ -953,26 +953,31 @@ namespace DaggerfallWorkshop
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
                 // Instantiate door prefab and add model - DoorModelIndex is modulo to known-good range just in case
+                // A custom prefab can be provided by mods and must include DaggerfallActionDoor component with all requirements.
                 uint modelId = (uint)(doorModelBaseId + obj.DoorModelIndex % 5);
-                GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_InteriorDoorPrefab.gameObject, string.Empty, actionDoorsNode.transform, Vector3.zero);
-                GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, actionDoorsNode.transform, false, go, true);
-
-                // Resize box collider to new mesh bounds
-                BoxCollider boxCollider = go.GetComponent<BoxCollider>();
-                MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-                if (boxCollider != null && meshRenderer != null)
+                GameObject go = MeshReplacement.ImportCustomGameobject(modelId, actionDoorsNode.transform, Matrix4x4.identity);
+                if (!go)
                 {
-                    boxCollider.center = meshRenderer.bounds.center;
-                    boxCollider.size = meshRenderer.bounds.size;
+                    go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_InteriorDoorPrefab.gameObject, string.Empty, actionDoorsNode.transform, Vector3.zero);
+                    GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, actionDoorsNode.transform, false, go, true);
+
+                    // Resize box collider to new mesh bounds
+                    BoxCollider boxCollider = go.GetComponent<BoxCollider>();
+                    MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+                    if (boxCollider != null && meshRenderer != null)
+                    {
+                        boxCollider.center = meshRenderer.bounds.center;
+                        boxCollider.size = meshRenderer.bounds.size;
+                    }  
+
+                    // Update climate
+                    DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                 }
 
                 // Apply transforms
                 go.transform.rotation = Quaternion.Euler(modelRotation);
                 go.transform.position = modelPosition;
-
-                // Update climate
-                DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
 
                 // Get action door script
                 DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();

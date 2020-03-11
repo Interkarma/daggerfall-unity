@@ -244,7 +244,10 @@ namespace DaggerfallWorkshop.Utility
                         if (IsActionDoor(ref blockData, obj, modelReference))
                         {
                             GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform, loadID);
-                            cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
+
+                            var dfMesh = cgo.GetComponent<DaggerfallMesh>();
+                            if (dfMesh)
+                                dfMesh.SetDungeonTextures(textureTable);
 
                             // Add action component to door if it also has an action
                             if (HasAction(obj))
@@ -1114,16 +1117,22 @@ namespace DaggerfallWorkshop.Utility
             Matrix4x4 modelMatrix = GetModelMatrix(obj);
 
             // Instantiate door prefab and add model
-            GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_DungeonDoorPrefab.gameObject, string.Empty, parent, Vector3.zero);
-            GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, parent, false, go, true);
-
-            // Resize box collider to new mesh bounds
-            BoxCollider boxCollider = go.GetComponent<BoxCollider>();
-            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-            if (boxCollider != null && meshRenderer != null)
+            // A custom prefab can be provided by mods and must include DaggerfallActionDoor component with all requirements.
+            // LIMITATION: custom prefabs are not given texture table.
+            GameObject go = MeshReplacement.ImportCustomGameobject(modelId, parent, Matrix4x4.identity);
+            if (!go)
             {
-                boxCollider.center = meshRenderer.bounds.center;
-                boxCollider.size = meshRenderer.bounds.size;
+                go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_DungeonDoorPrefab.gameObject, string.Empty, parent, Vector3.zero);
+                GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, parent, false, go, true);
+
+                // Resize box collider to new mesh bounds
+                BoxCollider boxCollider = go.GetComponent<BoxCollider>();
+                MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+                if (boxCollider != null && meshRenderer != null)
+                {
+                    boxCollider.center = meshRenderer.bounds.center;
+                    boxCollider.size = meshRenderer.bounds.size;
+                }
             }
 
             // Get rotation angle for each axis
