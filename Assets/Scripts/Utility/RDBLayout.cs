@@ -375,6 +375,16 @@ namespace DaggerfallWorkshop.Utility
                             AssignFixedTreasure(flatObject, obj, ref blockData, dungeonType);
                         }
 
+                        // Parent random treasure to marker to use actions on parent
+                        const int randomTreasureFlatIndex = 19;
+                        if (archive == TextureReader.EditorFlatsTextureArchive &&
+                            record == randomTreasureFlatIndex &&
+                            dfUnity.Option_ImportRandomTreasure &&
+                            dfUnity.Option_LootContainerPrefab)
+                        {
+                            AddRandomTreasure(obj, flatObject.transform, ref blockData, dungeonType, true);
+                        }
+
                         //add action component to flat if it has an action
                         if (obj.Resources.FlatResource.Action > 0)
                         {
@@ -388,36 +398,6 @@ namespace DaggerfallWorkshop.Utility
             editorObjectsOut = editorObjects.ToArray();
             startMarkersOut = startMarkers.ToArray();
             enterMarkersOut = enterMarkers.ToArray();
-        }
-
-        public static void AddTreasure(
-            GameObject go,
-            DFBlock.RdbObject[] editorObjects,
-            ref DFBlock blockData,
-            DFRegion.DungeonTypes dungeonType,
-            bool serialize = true)
-        {
-            const int randomTreasureFlatIndex = 19;
-
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
-                return;
-
-            // Must have import enabled and prefab set
-            if (!dfUnity.Option_ImportRandomTreasure || dfUnity.Option_LootContainerPrefab == null)
-                return;
-
-            // Add parent node
-            GameObject randomTreasureNode = new GameObject("Random Treasure");
-            randomTreasureNode.transform.parent = go.transform;
-
-            // Iterate editor flats for random treasure
-            for (int i = 0; i < editorObjects.Length; i++)
-            {
-                // Add treasure flat
-                if (editorObjects[i].Resources.FlatResource.TextureRecord == randomTreasureFlatIndex)
-                    AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, dungeonType, serialize);
-            }
         }
 
         public static void AssignFixedTreasure(
