@@ -529,11 +529,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Internal Methods
 
         /// <summary>
-        /// Used internally when the game seeks assets from all mods and handles a global cache.
-        /// This method allows to load directly from bundle without mod cache to avoid
-        /// references that would prevents garbage collection to be performed.
-        /// Shouldn't be used for prefabs because <see cref="ImportedComponentAttribute"/> is currently unsupported.
+        /// Loads an asset without cache. In most cases <see cref="GetAsset{T}(string, bool)"/> should be used instead.
         /// </summary>
+        /// <typeparam name="T">The asset must be assignable to this type to be accepted.</typeparam>
+        /// <param name="assetName">The name of the asset with or without extension.</param>
+        /// <remarks>
+        /// This method allows to load directly from bundle without mod cache to avoid references that would prevent
+        /// garbage collection to be performed. For example is used internally when the game seeks assets from all mods
+        /// and handles a global cache.
+        /// Shouldn't be used for prefabs because <see cref="ImportedComponentAttribute"/> is currently unsupported.
+        /// </remarks>
+        /// <returns>Returns the loaded asset if found; otherwise returns null without logging errors.</returns>
         internal T LoadAsset<T>(string assetName)
             where T : UnityEngine.Object
         {
@@ -555,11 +561,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 asset = AssetBundle.LoadAsset<T>(assetName);
             }
 
-            if (asset)
-                return asset;
-
-            Debug.LogErrorFormat("Failed to load asset: {0}", assetName);
-            return null;
+            return asset;
         }
 
         /// <summary>
