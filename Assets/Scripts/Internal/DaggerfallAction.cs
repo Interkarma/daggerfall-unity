@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop
                         {
                             // Spell is fired at player, at strength of player level, from triggering object
                             DaggerfallMissile missile = GameManager.Instance.PlayerEffectManager.InstantiateSpellMissile(bundleSettings.ElementType);
-                            missile.Payload = new EntityEffectBundle(bundleSettings, GameManager.Instance.PlayerEntityBehaviour);
+                            missile.Payload = new EntityEffectBundle(bundleSettings);
                             Vector3 customAimPosition = thisAction.transform.position;
                             customAimPosition.y += 40 * MeshReader.GlobalScale;
                             missile.CustomAimPosition = customAimPosition;

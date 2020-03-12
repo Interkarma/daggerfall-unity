@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Setup senses
-            if (caster != GameManager.Instance.PlayerEntityBehaviour)
+            if (caster && caster != GameManager.Instance.PlayerEntityBehaviour)
             {
                 enemySenses = caster.GetComponent<EnemySenses>();
             }
@@ -246,10 +246,6 @@ namespace DaggerfallWorkshop.Game
 
         private void Update()
         {
-            // Exit if no caster
-            if (!caster)
-                return;
-
             // Execute based on target type
             if (!missileReleased)
             {
@@ -262,8 +258,9 @@ namespace DaggerfallWorkshop.Game
                     case TargetTypes.AreaAtRange:
                         DoMissile();
                         break;
-                    case TargetTypes.AreaAroundCaster:
-                        DoAreaOfEffect(caster.transform.position, true);
+                    case TargetTypes.AreaAroundCaster:  // Must have a caster to perform area around caster
+                        if (caster)
+                            DoAreaOfEffect(caster.transform.position, true);
                         break;
                     default:
                         return;
