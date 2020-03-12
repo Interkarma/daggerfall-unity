@@ -1203,7 +1203,10 @@ namespace DaggerfallWorkshop.Game.Items
             foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
             {
                 if (owner.ItemEquipTable.GetItem(slot) == this)
+                {
                     owner.ItemEquipTable.UnequipItem(slot);
+                    owner.UpdateEquippedArmorValues(this, false);
+                }
             }
         }
 
@@ -1338,7 +1341,6 @@ namespace DaggerfallWorkshop.Game.Items
             // Unequip item - entity must equip again
             // This ensures "on equip" effect payloads execute correctly
             UnequipItem(owner);
-            owner.UpdateEquippedArmorValues(this, false);
 
             // Set new enchantments and identified flag
             legacyMagic = legacyEnchantments.ToArray();
