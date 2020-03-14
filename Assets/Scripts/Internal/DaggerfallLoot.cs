@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop
 {
@@ -194,7 +195,7 @@ namespace DaggerfallWorkshop
                         System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
                         for (int j = 0; j < enumArray.Length; ++j)
                         {
-                            DaggerfallConnect.FallExe.ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, j);
+                            ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, j);
                             if (itemTemplate.rarity <= shopQuality)
                             {
                                 int stockChance = chanceMod * 5 * (21 - itemTemplate.rarity) / 100;
@@ -225,6 +226,23 @@ namespace DaggerfallWorkshop
                                         if (DaggerfallUnity.Settings.PlayerTorchFromItems && item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
                                             item.stackCount = Random.Range(5, 20 + 1);  // Shops stock 5-20 bottles
                                     }
+                                    items.AddItem(item);
+                                }
+                            }
+                        }
+                        // Add any modded items registered for shop stocking
+                        int[] itemTemplateIndexes = DaggerfallUnity.Instance.ItemHelper.GetItemShopStock(itemGroup);
+                        for (int j = 0; j < itemTemplateIndexes.Length; j++)
+                        {
+                            ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, itemTemplateIndexes[j]);
+                            if (itemTemplate.rarity <= shopQuality)
+                            {
+                                int stockChance = chanceMod * 5 * (21 - itemTemplate.rarity) / 100;
+                                if (Dice100.SuccessRoll(stockChance))
+                                {
+                                    // TODO: Allow new item classes to be instantiated here...
+
+                                    DaggerfallUnityItem item = ItemBuilder.CreateItem(itemGroup, itemTemplateIndexes[j]);
                                     items.AddItem(item);
                                 }
                             }

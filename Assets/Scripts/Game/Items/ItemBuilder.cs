@@ -158,6 +158,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem.</returns>
         public static DaggerfallUnityItem CreateItem(ItemGroups itemGroup, int templateIndex)
         {
+            if (templateIndex > ItemHelper.LastDFTemplate)
+                return new DaggerfallUnityItem(itemGroup, templateIndex);
+
             // Create item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, templateIndex);
             if (groupIndex == -1)
