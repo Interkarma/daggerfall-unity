@@ -790,7 +790,7 @@ namespace DaggerfallWorkshop.Game.Items
             return data;
         }
 
-        public SoundClips GetEquipSound()
+        public virtual SoundClips GetEquipSound()
         {
             switch (itemGroup)
             {
@@ -848,7 +848,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public SoundClips GetSwingSound()
+        public virtual SoundClips GetSwingSound()
         {
             switch (TemplateIndex)
             {
@@ -880,7 +880,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public int GetWeaponSkillUsed()
+        public virtual int GetWeaponSkillUsed()
         {
             switch (TemplateIndex)
             {
@@ -913,7 +913,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public short GetWeaponSkillIDAsShort()
+        public virtual short GetWeaponSkillIDAsShort()
         {
             int skill = GetWeaponSkillUsed();
             switch (skill)
@@ -939,12 +939,12 @@ namespace DaggerfallWorkshop.Game.Items
             return (DFCareer.Skills)GetWeaponSkillIDAsShort();
         }
 
-        public int GetBaseDamageMin()
+        public virtual int GetBaseDamageMin()
         {
             return FormulaHelper.CalculateWeaponMinDamage((Weapons)TemplateIndex);
         }
 
-        public int GetBaseDamageMax()
+        public virtual int GetBaseDamageMax()
         {
             return FormulaHelper.CalculateWeaponMaxDamage((Weapons)TemplateIndex);
         }
@@ -1031,7 +1031,7 @@ namespace DaggerfallWorkshop.Game.Items
             return result;
         }
 
-        public int GetShieldArmorValue()
+        public virtual int GetShieldArmorValue()
         {
             switch (TemplateIndex)
             {
@@ -1052,7 +1052,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Get body parts protected by a shield.
         /// </summary>
-        public BodyParts[] GetShieldProtectedBodyParts()
+        public virtual BodyParts[] GetShieldProtectedBodyParts()
         {
             switch (TemplateIndex)
             {
