@@ -51,6 +51,8 @@ namespace DaggerfallWorkshop.Game.Items
         const int artifactMaleTextureArchive = 432;
         const int artifactFemaleTextureArchive = 433;
 
+        public const int LastDFTemplate = 287;
+
         public static int WagonKgLimit = 750;
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
@@ -62,6 +64,10 @@ namespace DaggerfallWorkshop.Game.Items
 
         public delegate bool ItemUseHander(DaggerfallUnityItem item, ItemCollection collection);
         Dictionary<int, ItemUseHander> itemUseHandlers = new Dictionary<int, ItemUseHander>();
+
+        Dictionary<int, Type> itemClassTypes = new Dictionary<int, Type>();
+
+        Dictionary<ItemGroups, List<int>> itemShopStock = new Dictionary<ItemGroups, List<int>>();
 
         #endregion
 
@@ -94,12 +100,40 @@ namespace DaggerfallWorkshop.Game.Items
             return itemUseHandlers.TryGetValue(templateIndex, out itemUseHander);
         }
 
+        public bool RegisterItemShopStock(ItemGroups itemGroup, int templateIndex)
+        {
+            DaggerfallUnity.LogMessage("RegisterItemShopStock: ItemGroup= " + itemGroup + ", TemplateIndex=" + templateIndex);
+            List<int> itemTemplateIndexes;
+            if (!itemShopStock.TryGetValue(itemGroup, out itemTemplateIndexes))
+            {
+                itemTemplateIndexes = new List<int>();
+                itemShopStock[itemGroup] = itemTemplateIndexes;
+            }
+            if (!itemTemplateIndexes.Contains(templateIndex))
+            {
+                itemTemplateIndexes.Add(templateIndex);
+                return true;
+            }
+            return false;
+        }
+
+        public int[] GetItemShopStock(ItemGroups itemGroup)
+        {
+            if (itemShopStock.ContainsKey(itemGroup))
+                return itemShopStock[itemGroup].ToArray();
+            return new int[0];
+        }
+
 
         /// <summary>
         /// Gets item template data using group and index.
         /// </summary>
         public ItemTemplate GetItemTemplate(ItemGroups itemGroup, int groupIndex)
         {
+            // Items added by mods are after last DF template, with groupIndex == templateIndex
+            if (groupIndex > LastDFTemplate)
+                return GetItemTemplate(groupIndex);
+
             Array values = GetEnumArray(itemGroup);
             if (groupIndex < 0 || groupIndex >= values.Length)
             {
@@ -118,6 +152,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public ItemTemplate GetItemTemplate(int templateIndex)
         {
+            // Items added by mods are after last DF template
+            if (templateIndex > LastDFTemplate)
+            {
+                for (int i = LastDFTemplate; i < itemTemplates.Count; i++)
+                    if (itemTemplates[i].index == templateIndex)
+                        return itemTemplates[i];
+            }
+
             if (templateIndex < 0 || templateIndex >= itemTemplates.Count)
             {
                 string message = string.Format("Item template index out of range: TemplateIndex={0}", templateIndex);
