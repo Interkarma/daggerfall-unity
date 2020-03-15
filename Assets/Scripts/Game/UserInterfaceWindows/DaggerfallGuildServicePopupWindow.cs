@@ -736,7 +736,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int amount = 0;
             if (int.TryParse(input, out amount))
             {
-                if (playerEntity.GetGoldAmount() > amount)
+                if (playerEntity.GetGoldAmount() >= amount)
                 {
                     // Deduct gold, and apply blessing
                     playerEntity.DeductGoldAmount(amount);
