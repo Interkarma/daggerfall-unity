@@ -1963,6 +1963,7 @@ namespace Wenzil.Console
                     return usage;
 
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
                 ItemCollection items = playerEntity.Items;
                 DaggerfallUnityItem newItem = null;
 
@@ -1974,10 +1975,10 @@ namespace Wenzil.Console
                         ItemGroups clothing = (playerEntity.Gender == Genders.Male) ? ItemGroups.MensClothing : ItemGroups.WomensClothing;
                         foreach (DyeColors dye in clothingDyes)
                         {
-                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(clothing);
+                            Array enumArray = itemHelper.GetEnumArray(clothing);
                             for (int i = 0; i < enumArray.Length; i++)
                             {
-                                ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(clothing, i);
+                                ItemTemplate itemTemplate = itemHelper.GetItemTemplate(clothing, i);
                                 if ((playerEntity.Gender == Genders.Male && mensUsableClothing.Contains((MensClothing)enumArray.GetValue(i))) ||
                                     womensUsableClothing.Contains((WomensClothing)enumArray.GetValue(i)) || itemTemplate.variants == 0)
                                     itemTemplate.variants = 1;
@@ -1997,7 +1998,7 @@ namespace Wenzil.Console
                     case "armor":
                         foreach (ArmorMaterialTypes material in armorMaterials)
                         {
-                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Armor);
+                            Array enumArray = itemHelper.GetEnumArray(ItemGroups.Armor);
                             for (int i = 0; i < enumArray.Length; i++)
                             {
                                 Armor armorType = (Armor)enumArray.GetValue(i);
@@ -2041,12 +2042,12 @@ namespace Wenzil.Console
                                     else
                                     {
                                         vs = 1;
-                                        vf = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i).variants;
+                                        vf = itemHelper.GetItemTemplate(ItemGroups.Armor, i).variants;
                                     }
                                 }
                                 else
                                 {
-                                    vf = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Armor, i).variants;
+                                    vf = itemHelper.GetItemTemplate(ItemGroups.Armor, i).variants;
                                 }
                                 if (vf == 0)
                                     vf = vs + 1;
@@ -2064,7 +2065,7 @@ namespace Wenzil.Console
                     case "magicWeapons":
                         foreach (WeaponMaterialTypes material in weaponMaterials)
                         {
-                            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
+                            Array enumArray = itemHelper.GetEnumArray(ItemGroups.Weapons);
                             for (int i = 0; i < enumArray.Length-1; i++)
                             {
                                 newItem = ItemBuilder.CreateWeapon((Weapons)enumArray.GetValue(i), material);
@@ -2072,6 +2073,15 @@ namespace Wenzil.Console
                                     newItem.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 5 } };
                                     newItem.IdentifyItem();
                                 }
+                                playerEntity.Items.AddItem(newItem);
+                            }
+                            int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(ItemGroups.Weapons);
+                            for (int i = 0; i < customItemTemplates.Length; i++)
+                            {
+                                newItem = ItemBuilder.CreateItem(ItemGroups.Weapons, customItemTemplates[i]);
+                                newItem.nativeMaterialValue = (int)material;
+                                newItem = ItemBuilder.SetItemPropertiesByMaterial(newItem, material);
+                                newItem.dyeColor = itemHelper.GetWeaponDyeColor(material);
                                 playerEntity.Items.AddItem(newItem);
                             }
                         }
