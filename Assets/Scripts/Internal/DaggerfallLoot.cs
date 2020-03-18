@@ -247,9 +247,7 @@ namespace DaggerfallWorkshop
                                     if (itemGroup == ItemGroups.Weapons)
                                     {
                                         WeaponMaterialTypes material = ItemBuilder.RandomMaterial(playerEntity.Level);
-                                        item.nativeMaterialValue = (int)material;
-                                        item = ItemBuilder.SetItemPropertiesByMaterial(item, material);
-                                        item.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
+                                        ItemBuilder.ApplyWeaponMaterial(item, material);
                                     }
 
                                     items.AddItem(item);
