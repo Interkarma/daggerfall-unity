@@ -158,10 +158,18 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem.</returns>
         public static DaggerfallUnityItem CreateItem(ItemGroups itemGroup, int templateIndex)
         {
+            // Handle custom items
             if (templateIndex > ItemHelper.LastDFTemplate)
-                return new DaggerfallUnityItem(itemGroup, templateIndex);
+            {
+                // Allow custom item classes to be instantiated when registered
+                Type itemClassType;
+                if (DaggerfallUnity.Instance.ItemHelper.GetCustomItemClass(templateIndex, out itemClassType))
+                    return (DaggerfallUnityItem)Activator.CreateInstance(itemClassType);
+                else
+                    return new DaggerfallUnityItem(itemGroup, templateIndex);
+            }
 
-            // Create item
+            // Create classic item
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, templateIndex);
             if (groupIndex == -1)
             {
@@ -426,17 +434,24 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomWeapon(int playerLevel)
         {
-            // Create random weapon type
-            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Weapons);
-            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
-            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
+            // Create a random weapon type, including any custom items registered as weapons
+            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
+            Array enumArray = itemHelper.GetEnumArray(ItemGroups.Weapons);
+            int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(ItemGroups.Weapons);
 
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length + customItemTemplates.Length);
+            DaggerfallUnityItem newItem;
+            if (groupIndex < enumArray.Length)
+                newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
+            else
+                newItem = CreateItem(ItemGroups.Weapons, customItemTemplates[groupIndex - enumArray.Length]);
+ 
             // Random weapon material
             WeaponMaterialTypes material = RandomMaterial(playerLevel);
             newItem.nativeMaterialValue = (int)material;
 
             newItem = SetItemPropertiesByMaterial(newItem, material);
-            newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
+            newItem.dyeColor = itemHelper.GetWeaponDyeColor(material);
 
             // Handle arrows
             if (groupIndex == 18)

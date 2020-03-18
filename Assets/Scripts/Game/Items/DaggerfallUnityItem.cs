@@ -165,7 +165,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Gets or sets item group index.
         /// Setting will reset item data from new template.
         /// </summary>
-        public int GroupIndex
+        public virtual int GroupIndex
         {
             get { return groupIndex; }
             set { SetItem(itemGroup, value); }
@@ -977,7 +977,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public int GetMaterialArmorValue()
+        public virtual int GetMaterialArmorValue()
         {
             int result = 0;
             if (!IsShield)
@@ -1123,6 +1123,21 @@ namespace DaggerfallWorkshop.Game.Items
                 default:
                     return BodyParts.None;
             }
+        }
+
+        public virtual EquipSlots GetEquipSlot()
+        {
+            return EquipSlots.None;
+        }
+
+        public virtual ItemHands GetItemHands()
+        {
+            return ItemHands.None;
+        }
+
+        public virtual WeaponTypes GetWeaponType()
+        {
+            return WeaponTypes.None;
         }
 
         public void LowerCondition(int amount, DaggerfallEntity unequipFromOwner = null, ItemCollection removeFromCollectionWhenBreaks = null)
