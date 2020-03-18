@@ -2079,9 +2079,7 @@ namespace Wenzil.Console
                             for (int i = 0; i < customItemTemplates.Length; i++)
                             {
                                 newItem = ItemBuilder.CreateItem(ItemGroups.Weapons, customItemTemplates[i]);
-                                newItem.nativeMaterialValue = (int)material;
-                                newItem = ItemBuilder.SetItemPropertiesByMaterial(newItem, material);
-                                newItem.dyeColor = itemHelper.GetWeaponDyeColor(material);
+                                ItemBuilder.ApplyWeaponMaterial(newItem, material);
                                 playerEntity.Items.AddItem(newItem);
                             }
                         }

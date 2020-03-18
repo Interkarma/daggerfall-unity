@@ -419,10 +419,8 @@ namespace DaggerfallWorkshop.Game.Items
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
             else
-            {   // Adjust material
-                newItem.nativeMaterialValue = (int)material;
-                newItem = SetItemPropertiesByMaterial(newItem, material);
-                newItem.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
+            {
+                ApplyWeaponMaterial(newItem, material);
             }
             return newItem;
         }
@@ -448,10 +446,7 @@ namespace DaggerfallWorkshop.Game.Items
  
             // Random weapon material
             WeaponMaterialTypes material = RandomMaterial(playerLevel);
-            newItem.nativeMaterialValue = (int)material;
-
-            newItem = SetItemPropertiesByMaterial(newItem, material);
-            newItem.dyeColor = itemHelper.GetWeaponDyeColor(material);
+            ApplyWeaponMaterial(newItem, material);
 
             // Handle arrows
             if (groupIndex == 18)
@@ -462,6 +457,14 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             return newItem;
+        }
+
+        /// <summary>Set material and adjust weapon stats accordingly</summary>
+        public static void ApplyWeaponMaterial(DaggerfallUnityItem weapon, WeaponMaterialTypes material)
+        {
+            weapon.nativeMaterialValue = (int)material;
+            weapon = SetItemPropertiesByMaterial(weapon, material);
+            weapon.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
         }
 
         /// <summary>
