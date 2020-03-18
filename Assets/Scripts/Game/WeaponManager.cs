@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game
 
         // Max time bow can be held drawn and switch divisor
         private const int MaxBowHeldDrawnSeconds = 10;
-        private const int BowSwitchDivisor = 3;
+        private const float BowSwitchDivisor = 1.7f;
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
@@ -225,14 +225,6 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Do nothing if weapon isn't done equipping
-            if ((usingRightHand && EquipCountdownRightHand != 0)
-                || (!usingRightHand && EquipCountdownLeftHand != 0))
-            {
-                ShowWeapons(false);
-                return;
-            }
-
             // Hide weapons and do nothing if spell is ready or cast animation in progress
             if (GameManager.Instance.PlayerEffectManager)
             {
@@ -257,6 +249,14 @@ namespace DaggerfallWorkshop.Game
             // Toggle weapon hand
             if (!isAttacking && InputManager.Instance.ActionComplete(InputManager.Actions.SwitchHand))
                 ToggleHand();
+
+            // Do nothing if weapon isn't done equipping
+            if ((usingRightHand && EquipCountdownRightHand != 0)
+                || (!usingRightHand && EquipCountdownLeftHand != 0))
+            {
+                ShowWeapons(false);
+                return;
+            }
 
             // Do nothing if weapons sheathed
             if (Sheathed)
@@ -683,9 +683,9 @@ namespace DaggerfallWorkshop.Game
             {
                 int switchDelay = 0;
                 if (currentRightHandWeapon != null)
-                    switchDelay += EquipDelayTimes[currentRightHandWeapon.GroupIndex];
+                    switchDelay += EquipDelayTimes[currentRightHandWeapon.GroupIndex] - 500;
                 if (currentLeftHandWeapon != null)
-                    switchDelay += EquipDelayTimes[currentLeftHandWeapon.GroupIndex];
+                    switchDelay += EquipDelayTimes[currentLeftHandWeapon.GroupIndex] - 500;
                 if (switchDelay > 0)
                 {
                     if (UsingRightHand)
