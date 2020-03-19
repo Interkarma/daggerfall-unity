@@ -10,9 +10,7 @@
 //
 
 using UnityEngine;
-using UnityEngine.Rendering;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
@@ -970,6 +968,29 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 253, record = 52 },
             new DaggerfallTextureIndex() { archive = 253, record = 75 },
             new DaggerfallTextureIndex() { archive = 253, record = 77 },
+
+            // Frost daedra
+            new DaggerfallTextureIndex() { archive = 280, record = 0 },
+            new DaggerfallTextureIndex() { archive = 280, record = 1 },
+            new DaggerfallTextureIndex() { archive = 280, record = 2 },
+            new DaggerfallTextureIndex() { archive = 280, record = 3 },
+            new DaggerfallTextureIndex() { archive = 280, record = 4 },
+            new DaggerfallTextureIndex() { archive = 280, record = 5 },
+            new DaggerfallTextureIndex() { archive = 280, record = 6 },
+            new DaggerfallTextureIndex() { archive = 280, record = 7 },
+            new DaggerfallTextureIndex() { archive = 280, record = 8 },
+            new DaggerfallTextureIndex() { archive = 280, record = 9 },
+            new DaggerfallTextureIndex() { archive = 280, record = 10 },
+            new DaggerfallTextureIndex() { archive = 280, record = 11 },
+            new DaggerfallTextureIndex() { archive = 280, record = 12 },
+            new DaggerfallTextureIndex() { archive = 280, record = 13 },
+            new DaggerfallTextureIndex() { archive = 280, record = 14 },
+            new DaggerfallTextureIndex() { archive = 280, record = 15 },
+            new DaggerfallTextureIndex() { archive = 280, record = 16 },
+            new DaggerfallTextureIndex() { archive = 280, record = 17 },
+            new DaggerfallTextureIndex() { archive = 280, record = 18 },
+            new DaggerfallTextureIndex() { archive = 280, record = 19 },
+            new DaggerfallTextureIndex() { archive = 400, record = 3 }, // corpse
 
             // Fire daedra
             new DaggerfallTextureIndex() { archive = 281, record = 0 },

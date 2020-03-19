@@ -239,13 +239,13 @@ namespace DaggerfallWorkshop.Utility
             // Exclude ranges which return a false-positive from this method but actually use normal emission
             // Currently spells and lights
             if (archive >= 375 && archive <= 379 ||
-                archive == 210)
+                archive == 210 || archive == 280)
             {
                 return false;
             }
 
             // Normalise archive index
-            archive = (archive - (archive / 100) * 100);
+            archive = archive % 100;
 
             // First check if texture archive even has a window, based on known archives
             switch (archive)
