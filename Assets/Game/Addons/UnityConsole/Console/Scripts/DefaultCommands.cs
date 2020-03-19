@@ -2058,6 +2058,14 @@ namespace Wenzil.Console
                                     playerEntity.Items.AddItem(newItem);
                                 }
                             }
+                            int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(ItemGroups.Armor);
+                            for (int i = 0; i < customItemTemplates.Length; i++)
+                            {
+                                newItem = ItemBuilder.CreateItem(ItemGroups.Armor, customItemTemplates[i]);
+                                ItemBuilder.SetRace(newItem, playerEntity.Race);
+                                ItemBuilder.ApplyArmorMaterial(newItem, material);
+                                playerEntity.Items.AddItem(newItem);
+                            }
                         }
                         return string.Format("Added all armor types for a {0} {1}", playerEntity.Gender, playerEntity.Race);
 

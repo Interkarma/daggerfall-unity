@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets inventory texture record.
         /// </summary>
-        public int InventoryTextureRecord
+        public virtual int InventoryTextureRecord
         {
             get { return GetInventoryTextureRecord(); }
         }
@@ -422,7 +422,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets native material value.
         /// </summary>
-        public int NativeMaterialValue
+        public virtual int NativeMaterialValue
         {
             get { return nativeMaterialValue; }
         }
