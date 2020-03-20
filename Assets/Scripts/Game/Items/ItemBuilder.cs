@@ -881,9 +881,14 @@ namespace DaggerfallWorkshop.Game.Items
                 if (item.nativeMaterialValue >= (int)ArmorMaterialTypes.Iron)
                     variant = UnityEngine.Random.Range(1, 4);
             }
+            else if (item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Boots) && (item.nativeMaterialValue >= (int)ArmorMaterialTypes.Iron))
+            {
+                variant = UnityEngine.Random.Range(1, 3);
+            }
             else if (item.IsOfTemplate(ItemGroups.Armor, (int)Armor.Helm))
+            {
                 variant = UnityEngine.Random.Range(0, item.ItemTemplate.variants);
-
+            }
             SetVariant(item, variant);
         }
 
