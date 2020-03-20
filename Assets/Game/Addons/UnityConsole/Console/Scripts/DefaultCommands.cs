@@ -2062,8 +2062,7 @@ namespace Wenzil.Console
                             for (int i = 0; i < customItemTemplates.Length; i++)
                             {
                                 newItem = ItemBuilder.CreateItem(ItemGroups.Armor, customItemTemplates[i]);
-                                ItemBuilder.SetRace(newItem, playerEntity.Race);
-                                ItemBuilder.ApplyArmorMaterial(newItem, material);
+                                ItemBuilder.ApplyArmorSettings(newItem, playerEntity.Gender, playerEntity.Race, material);
                                 playerEntity.Items.AddItem(newItem);
                             }
                         }

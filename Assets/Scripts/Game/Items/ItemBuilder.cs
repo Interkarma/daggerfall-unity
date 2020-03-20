@@ -482,23 +482,7 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.Armor, (int)armor);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Armor, groupIndex);
 
-            // Adjust for gender
-            if (gender == Genders.Female)
-                newItem.PlayerTextureArchive = firstFemaleArchive;
-            else
-                newItem.PlayerTextureArchive = firstMaleArchive;
-
-            // Adjust for body morphology
-            SetRace(newItem, race);
-
-            // Adjust material
-            ApplyArmorMaterial(newItem, material);
-
-            // Adjust for variant
-            if (variant >= 0)
-                SetVariant(newItem, variant);
-            else
-                RandomizeArmorVariant(newItem);
+            ApplyArmorSettings(newItem, gender, race, material, variant);
 
             return newItem;
         }
@@ -524,22 +508,31 @@ namespace DaggerfallWorkshop.Game.Items
             else
                 newItem = CreateItem(ItemGroups.Armor, customItemTemplates[groupIndex - enumArray.Length]);
 
-            // Adjust for gender
-            if (gender == Genders.Female)
-                newItem.PlayerTextureArchive = firstFemaleArchive;
-            else
-                newItem.PlayerTextureArchive = firstMaleArchive;
-
-            // Adjust for body morphology
-            SetRace(newItem, race);
-
-            // Random armor material
-            ArmorMaterialTypes material = RandomArmorMaterial(playerLevel);
-            ApplyArmorMaterial(newItem, material);
-
-            RandomizeArmorVariant(newItem);
+            ApplyArmorSettings(newItem, gender, race, RandomArmorMaterial(playerLevel));
 
             return newItem;
+        }
+
+        /// <summary>Set gender, body morphology and material of armor</summary>
+        public static void ApplyArmorSettings(DaggerfallUnityItem armor, Genders gender, Races race, ArmorMaterialTypes material, int variant = 0)
+        {
+            // Adjust for gender
+            if (gender == Genders.Female)
+                armor.PlayerTextureArchive = firstFemaleArchive;
+            else
+                armor.PlayerTextureArchive = firstMaleArchive;
+
+            // Adjust for body morphology
+            SetRace(armor, race);
+
+            // Adjust material
+            ApplyArmorMaterial(armor, material);
+
+            // Adjust for variant
+            if (variant >= 0)
+                SetVariant(armor, variant);
+            else
+                RandomizeArmorVariant(armor);
         }
 
         /// <summary>Set material and adjust armor stats accordingly</summary>
