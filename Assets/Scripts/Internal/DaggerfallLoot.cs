@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop
 {
@@ -252,8 +253,7 @@ namespace DaggerfallWorkshop
                                     else if (itemGroup == ItemGroups.Armor)
                                     {
                                         ArmorMaterialTypes material = ItemBuilder.RandomArmorMaterial(playerEntity.Level);
-                                        ItemBuilder.SetRace(item, playerEntity.Race);
-                                        ItemBuilder.ApplyArmorMaterial(item, material);
+                                        ItemBuilder.ApplyArmorSettings(item, playerEntity.Gender, playerEntity.Race, material);
                                     }
 
                                     items.AddItem(item);
