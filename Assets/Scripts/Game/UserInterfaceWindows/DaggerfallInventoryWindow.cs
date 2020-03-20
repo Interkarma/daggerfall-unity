@@ -329,9 +329,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAccessoryItemsDisplay();
             UpdateLocalTargetIcon();
             UpdateRemoteTargetIcon();
-
-            // Store toggle closed binding for this window
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Inventory);
         }
 
         public override void Update()
@@ -574,6 +571,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Local items always points to player inventory
             localItems = PlayerEntity.Items;
+
+            // Reload binding if changed since last push
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Inventory);
 
             // Start a new dropped items target
             droppedItems.Clear();

@@ -171,10 +171,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             questMessages = QuestMachine.Instance.GetAllQuestLogMessages();
 
-            // Store toggle closed bindings for this window
-            toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
-            toggleClosedBinding2 = InputManager.Instance.GetBinding(InputManager.Actions.NoteBook);
-
 #if LAYOUT
             SetBackgroundColors();
 #endif
@@ -191,6 +187,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             lastMessageIndex    = NULLINT;
             currentMessageIndex = 0;
             selectedEntry       = NULLINT;
+
+            // Store toggle closed bindings for this window
+            toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
+            toggleClosedBinding2 = InputManager.Instance.GetBinding(InputManager.Actions.NoteBook);
+
             DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 

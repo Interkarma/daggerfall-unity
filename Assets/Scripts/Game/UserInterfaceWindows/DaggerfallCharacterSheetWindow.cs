@@ -209,9 +209,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update player paper doll for first time
             UpdatePlayerValues();
             characterPortrait.Refresh();
-
-            // Store toggle closed binding for this window
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
         }
 
         #endregion
@@ -234,6 +231,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             Refresh();
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
         }
 
         public override void OnReturn()
