@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net), Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut, TheLacus
+// Contributors:    Hazelnut, TheLacus, Numidium
 // 
 // Notes:
 //
@@ -323,6 +323,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 CloseRegionPanel();
             }
 
+            // Store toggle closed binding for this window
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.TravelMap);
+
         }
 
         public override void OnPop()
@@ -479,10 +482,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(verticalArrowButton);
             verticalArrowButton.Name = "verticalArrowButton";
             verticalArrowButton.OnMouseClick += ArrowButtonClickHandler;
-
-            // Store toggle closed binding for this window
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.TravelMap);
-
         }
 
         void SetupArrowButtons()
