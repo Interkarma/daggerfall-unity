@@ -131,7 +131,8 @@ Foe _F.01_ is 4 Knight
 	log 1010 step 0
 	create npc at _magesguild_ 
 
-_oneday_ task:
+_timeout_ task:
+	when _oneday_ and not _S.07_ 
 	end quest 
 
 _clickonqgiver_ task:
@@ -174,7 +175,6 @@ _S.08_ task:
 
 _questdone_ task:
 	when _S.10_ and _S.07_ 
-	when _oneday_ and not _S.07_ 
 	make _treasure_ permanent 
 	end quest 
 
