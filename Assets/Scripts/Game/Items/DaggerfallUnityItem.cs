@@ -1229,6 +1229,14 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gets the enchantment points of this item.
+        /// </summary>
+        public virtual int GetEnchantmentPower()
+        {
+            return FormulaHelper.GetItemEnchantmentPower(this);
+        }
+
+        /// <summary>
         /// Set enchantments on this item. Any existing enchantments will be overwritten.
         /// </summary>
         /// <param name="enchantments">Array of enchantment settings. Maximum of 10 enchantments are applied.</param>

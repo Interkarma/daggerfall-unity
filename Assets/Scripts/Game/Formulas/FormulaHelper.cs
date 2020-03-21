@@ -2442,117 +2442,88 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <returns>Item max enchantment power.</returns>
         public static int GetItemEnchantmentPower(DaggerfallUnityItem item)
         {
+            Func<DaggerfallUnityItem, int> del;
+            if (TryGetOverride("GetItemEnchantmentPower", out del))
+                return del(item);
+
             if (item == null)
                 throw new Exception("GetItemEnchantmentPower: item is null");
 
+            float multiplier = 0f;
             if (item.ItemGroup == ItemGroups.Weapons)
-                return GetWeaponEnchantmentPower(item);
+                multiplier = GetWeaponEnchantmentMultiplier((WeaponMaterialTypes)item.NativeMaterialValue);
             else if (item.ItemGroup == ItemGroups.Armor)
-                return GetArmorEnchantmentPower(item);
-            else
-                return item.ItemTemplate.enchantmentPoints;
-        }
-
-        public static int GetWeaponEnchantmentPower(DaggerfallUnityItem item)
-        {
-            if (item == null || item.ItemGroup != ItemGroups.Weapons)
-                throw new Exception("GetWeaponEnchantmentPower: item is null or not a weapon type");
-
-            // UESP lists regular material power progression in weapon matrix: https://en.uesp.net/wiki/Daggerfall:Enchantment_Power#Weapons
-            // Enchantment power values for staves are inaccurate in UESP weapon matrix (confirmed in classic)
-            // The below yields correct enchantment power for staves matching classic
-            float multiplier;
-            switch((WeaponMaterialTypes)item.NativeMaterialValue)
-            {
-                default:       
-                case WeaponMaterialTypes.Steel:         // Steel uses base enchantment power
-                    multiplier = 0;
-                    break;
-                case WeaponMaterialTypes.Iron:          // Iron is -25% from base
-                    multiplier = -0.25f;
-                    break;
-                case WeaponMaterialTypes.Silver:        // Silver is +75% from base
-                    multiplier = 0.75f;
-                    break;
-                case WeaponMaterialTypes.Elven:         // Elven is +25% from base
-                    multiplier = 0.25f;
-                    break;
-                case WeaponMaterialTypes.Dwarven:       // Dwarven is +50% from base
-                    multiplier = 0.5f;
-                    break;
-                case WeaponMaterialTypes.Mithril:       // Mithril is +25% from base
-                    multiplier = 0.25f;
-                    break;
-                case WeaponMaterialTypes.Adamantium:    // Adamantium is +75% from base
-                    multiplier = 0.75f;
-                    break;
-                case WeaponMaterialTypes.Ebony:         // Ebony is +100% from base
-                    multiplier = 1.0f;
-                    break;
-                case WeaponMaterialTypes.Orcish:        // Orcish is +150% from base
-                    multiplier = 1.5f;
-                    break;
-                case WeaponMaterialTypes.Daedric:       // Daedric is +200% from base
-                    multiplier = 2.0f;
-                    break;
-            }
+                multiplier = GetArmorEnchantmentMultiplier((ArmorMaterialTypes)item.NativeMaterialValue);
 
             // Final enchantment power is basePower + basePower*multiplier (rounded down)
-            int basePower = item.ItemTemplate.enchantmentPoints;
+            int basePower = item.enchantmentPoints;
             return basePower + Mathf.FloorToInt(basePower * multiplier);
         }
 
-        public static int GetArmorEnchantmentPower(DaggerfallUnityItem item)
+        public static float GetWeaponEnchantmentMultiplier(WeaponMaterialTypes weaponMaterial)
         {
-            if (item == null || item.ItemGroup != ItemGroups.Armor)
-                throw new Exception("GetArmorEnchantmentPower: item is null or not an armour type");
+            // UESP lists regular material power progression in weapon matrix: https://en.uesp.net/wiki/Daggerfall:Enchantment_Power#Weapons
+            // Enchantment power values for staves are inaccurate in UESP weapon matrix (confirmed in classic)
+            // The below yields correct enchantment power for staves matching classic
+            switch(weaponMaterial)
+            {
+                default:       
+                case WeaponMaterialTypes.Steel:         // Steel uses base enchantment power
+                    return 0f;
+                case WeaponMaterialTypes.Iron:          // Iron is -25% from base
+                    return -0.25f;
+                case WeaponMaterialTypes.Silver:        // Silver is +75% from base
+                    return 0.75f;
+                case WeaponMaterialTypes.Elven:         // Elven is +25% from base
+                    return 0.25f;
+                case WeaponMaterialTypes.Dwarven:       // Dwarven is +50% from base
+                    return 0.5f;
+                case WeaponMaterialTypes.Mithril:       // Mithril is +25% from base
+                    return 0.25f;
+                case WeaponMaterialTypes.Adamantium:    // Adamantium is +75% from base
+                    return 0.75f;
+                case WeaponMaterialTypes.Ebony:         // Ebony is +100% from base
+                    return 1.0f;
+                case WeaponMaterialTypes.Orcish:        // Orcish is +150% from base
+                    return 1.5f;
+                case WeaponMaterialTypes.Daedric:       // Daedric is +200% from base
+                    return 2.0f;
+            }
+        }
 
+        public static float GetArmorEnchantmentMultiplier(ArmorMaterialTypes armorMaterial)
+        {
             // UESP lists highly variable material power progression in armour matrix: https://en.uesp.net/wiki/Daggerfall:Enchantment_Power#Armor
             // This indicates certain armour types don't follow the same general material progression patterns for enchantment point multipliers
             // Yet to confirm this in classic - but not entirely confident in accuracy of UESP information here either
             // For now using consistent progression for enchantment point multipliers and can improve later if required
-            float multiplier;
-            switch ((ArmorMaterialTypes)item.NativeMaterialValue)
+            switch (armorMaterial)
             {
                 default:
                 case ArmorMaterialTypes.Leather:        // Leather/Chain/Steel all use base enchantment power
                 case ArmorMaterialTypes.Chain:
                 case ArmorMaterialTypes.Chain2:
                 case ArmorMaterialTypes.Steel:
-                    multiplier = 0;
-                    break;
+                    return 0f;
                 case ArmorMaterialTypes.Iron:           // Iron is -25% from base
-                    multiplier = -0.25f;
-                    break;
+                    return -0.25f;
                 case ArmorMaterialTypes.Silver:         // Silver is +75% from base
-                    multiplier = 0.75f;
-                    break;
+                    return 0.75f;
                 case ArmorMaterialTypes.Elven:          // Elven is +25% from base
-                    multiplier = 0.25f;
-                    break;
+                    return 0.25f;
                 case ArmorMaterialTypes.Dwarven:        // Dwarven is +50% from base
-                    multiplier = 0.5f;
-                    break;
+                    return 0.5f;
                 case ArmorMaterialTypes.Mithril:        // Mithril is +25% from base
-                    multiplier = 0.25f;
-                    break;
+                    return 0.25f;
                 case ArmorMaterialTypes.Adamantium:     // Adamantium is +75% from base
-                    multiplier = 0.75f;
-                    break;
+                    return 0.75f;
                 case ArmorMaterialTypes.Ebony:          // Ebony is +100% from base
-                    multiplier = 1.0f;
-                    break;
+                    return 1.0f;
                 case ArmorMaterialTypes.Orcish:         // Orcish is +150% from base
-                    multiplier = 1.5f;
-                    break;
+                    return 1.5f;
                 case ArmorMaterialTypes.Daedric:        // Daedric is +200% from base
-                    multiplier = 2.0f;
-                    break;
+                    return 2.0f;
             }
-
-            // Final enchantment power is basePower + basePower*multiplier (rounded down)
-            int basePower = item.ItemTemplate.enchantmentPoints;
-            return basePower + Mathf.FloorToInt(basePower * multiplier);
         }
 
         #endregion
