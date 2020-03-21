@@ -198,7 +198,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 int totalEnchantmentCost = GetTotalEnchantmentCost();
                 int totalGoldCost = GetTotalGoldCost();
-                enchantmentCostLabel.Text = string.Format("{0}/{1}", totalEnchantmentCost, FormulaHelper.GetItemEnchantmentPower(selectedItem));
+                int itemEnchantmentPower = selectedItem.GetEnchantmentPower();
+
+                enchantmentCostLabel.Text = string.Format("{0}/{1}", totalEnchantmentCost, itemEnchantmentPower);
+                Debug.LogFormat("used: {0} onBuild: {1}", itemEnchantmentPower, selectedItem.enchantmentPoints);
+
                 goldCostLabel.Text = totalGoldCost.ToString();
             }
 
@@ -713,7 +717,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get costs
             int totalEnchantmentCost = GetTotalEnchantmentCost();
             int totalGoldCost = GetTotalGoldCost();
-            int itemEnchantmentPower = FormulaHelper.GetItemEnchantmentPower(selectedItem);
+            int itemEnchantmentPower = selectedItem.GetEnchantmentPower();
 
             // Check for available gold and display "You do not have the gold to properly pay the enchanter." if not enough
             int playerGold = GameManager.Instance.PlayerEntity.GetGoldAmount();
