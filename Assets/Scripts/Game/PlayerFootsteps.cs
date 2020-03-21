@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game
             // Check if player is grounded
             // Note: In classic, submerged "footstep" sound is only played when walking on the floor while in the water, but it sounds like a swimming sound
             // and when outside is played while swimming at the water's surface, so it seems better to play it all the time while submerged in water.
-            if (currentFootstepSound1 != FootstepSoundSubmerged)
+            if (!playerMotor.IsSwimming)
             {
                 if (!IsGrounded())
                 {
