@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Utility
             { "%kno", FactionOrderName }, // A knightly guild name
             { "%lev", GuildTitle }, // Rank in guild that you are in.
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
-            { "%ln", null },  //  Random lastname
+            { "%ln", LastName },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", TitleOfLordOfFaction1 }, // Title of _fl1
             { "%ltn", LegalReputation }, // In the eyes of the law you are.......
@@ -986,6 +986,11 @@ namespace DaggerfallWorkshop.Utility
         private static string LocationOfRegionalBuilding(IMacroContextProvider mcp)
         {   // %fcn
             return GameManager.Instance.TalkManager.LocationOfRegionalBuilding;
+        }
+
+        private static string LastName(IMacroContextProvider mcp)
+        {   // %ln
+            return DaggerfallUnity.Instance.NameHelper.Surname(GetRandomNameBank());
         }
 
         private static string FemaleName(IMacroContextProvider mcp)
