@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -190,7 +191,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Resolve this item's name.
         /// </summary>
-        public string ItemName
+        public virtual string ItemName
         {
             get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemName(this); }
         }
@@ -198,7 +199,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Resolve this item's full name (mainly for tooltips).
         /// </summary>
-        public string LongName
+        public virtual string LongName
         {
             get { return DaggerfallUnity.Instance.ItemHelper.ResolveItemLongName(this); }
         }
@@ -223,7 +224,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets current variant of this item.
         /// </summary>
-        public int CurrentVariant
+        public virtual int CurrentVariant
         {
             get { return currentVariant; }
             set { SetCurrentVariant(value); }
