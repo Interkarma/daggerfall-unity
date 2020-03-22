@@ -462,6 +462,10 @@ namespace DaggerfallWorkshop.Game.Items
             weapon.nativeMaterialValue = (int)material;
             weapon = SetItemPropertiesByMaterial(weapon, material);
             weapon.dyeColor = DaggerfallUnity.Instance.ItemHelper.GetWeaponDyeColor(material);
+
+            // Female characters use archive - 1 (i.e. 233 rather than 234) for weapons
+            if (GameManager.Instance.PlayerEntity.Gender == Genders.Female)
+                weapon.PlayerTextureArchive -= 1;
         }
 
         /// <summary>

@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Gets inventory texture archive.
         /// </summary>
-        public int InventoryTextureArchive
+        public virtual int InventoryTextureArchive
         {
             get { return GetInventoryTextureArchive(); }
         }
