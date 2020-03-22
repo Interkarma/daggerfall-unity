@@ -46,6 +46,9 @@ namespace DaggerfallWorkshop.Game.Items
         // Value multipliers by material type. Iron through Daedric. Value is baseValue * ( 3 * value).
         static readonly short[] valueMultipliersByMaterial = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 };
 
+        // Condition multipliers by material type. Iron through Daedric. MaxCondition is baseMaxCondition * value / 4.
+        static readonly short[] conditionMultipliersByMaterial = { 4, 6, 6, 8, 12, 16, 20, 24, 28, 32 };
+
         // Enchantment point/gold value data for item powers
         static readonly int[] extraSpellPtsEnchantPts = { 0x1F4, 0x1F4, 0x1F4, 0x1F4, 0xC8, 0xC8, 0xC8, 0x2BC, 0x320, 0x384, 0x3E8 };
         static readonly int[] potentVsEnchantPts = { 0x320, 0x384, 0x3E8, 0x4B0 };
