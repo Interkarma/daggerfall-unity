@@ -2456,7 +2456,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 multiplier = GetArmorEnchantmentMultiplier((ArmorMaterialTypes)item.NativeMaterialValue);
 
             // Final enchantment power is basePower + basePower*multiplier (rounded down)
-            int basePower = item.enchantmentPoints;
+            int basePower = item.ItemTemplate.enchantmentPoints;
             return basePower + Mathf.FloorToInt(basePower * multiplier);
         }
 
