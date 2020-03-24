@@ -827,7 +827,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Combat & Damage: component sub-formula
 
-        private static int CalculateStruckBodyPart()
+        public static int CalculateStruckBodyPart()
         {
             Func<int> del;
             if (TryGetOverride("CalculateStruckBodyPart", out del))
@@ -837,7 +837,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
         }
 
-        private static ToHitAndDamageMods CalculateSwingModifiers(FPSWeapon onscreenWeapon)
+        public static ToHitAndDamageMods CalculateSwingModifiers(FPSWeapon onscreenWeapon)
         {
             Func<FPSWeapon, ToHitAndDamageMods> del;
             if (TryGetOverride("CalculateSwingModifiers", out del))
@@ -928,7 +928,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return mods;
         }
 
-        private static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
+        public static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
         {
             Func<PlayerEntity, DaggerfallEntity, int, int> del;
             if (TryGetOverride("CalculateBackstabChance", out del))
@@ -943,7 +943,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 0;
         }
 
-        private static int CalculateBackstabDamage(int damage, int backstabbingLevel)
+        public static int CalculateBackstabDamage(int damage, int backstabbingLevel)
         {
             Func<int, int, int> del;
             if (TryGetOverride("CalculateBackstabDamage", out del))
@@ -958,7 +958,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        private static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
+        public static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
         {
             Func<DaggerfallEntity, EnemyEntity, int> del;
             if (TryGetOverride("GetBonusOrPenaltyByEnemyType", out del))
@@ -1018,7 +1018,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        private static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
+        public static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
             if (TryGetOverride("AdjustWeaponHitChanceMod", out del))
@@ -1027,7 +1027,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return hitChanceMod;
         }
 
-        private static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
+        public static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
             if (TryGetOverride("AdjustWeaponAttackDamage", out del))
@@ -1039,7 +1039,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <summary>
         /// Allocate any equipment damage from a strike, and reduce item condition.
         /// </summary>
-        private static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
+        public static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int, DaggerfallUnityItem, int, bool> del;
             if (TryGetOverride("DamageEquipment", out del))
@@ -1082,7 +1082,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <summary>
         /// Applies condition damage to an item based on physical hit damage.
         /// </summary>
-        private static void ApplyConditionDamageThroughPhysicalHit(DaggerfallUnityItem item, DaggerfallEntity owner, int damage)
+        public static void ApplyConditionDamageThroughPhysicalHit(DaggerfallUnityItem item, DaggerfallEntity owner, int damage)
         {
             Func<DaggerfallUnityItem, DaggerfallEntity, int, bool> del;
             if (TryGetOverride("ApplyConditionDamageThroughPhysicalHit", out del))
@@ -1180,7 +1180,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return chanceToHitMod;
         }
 
-        private static int CalculateAdjustmentsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        public static int CalculateAdjustmentsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("CalculateAdjustmentsToHit", out del))
