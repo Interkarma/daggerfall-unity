@@ -134,41 +134,37 @@ namespace DaggerfallWorkshop.Game
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
             bool tryingToMoveBackwards = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
-            if (tryingToMoveForwards || tryingToMoveBackwards)
-            {
+            if ((tryingToMoveForwards || tryingToMoveBackwards) &&
                 // Use a sqrmagnitude movement threshold check to see if player is stuck
                 // This is fast and overcomes precision issues with a simple position check
                 // Player must be stuck for multiple frames before unstuck handler will attempt to resolve
-                float testMagnitude = (lastMovePosition - myTransform.position).sqrMagnitude;
-                //Debug.LogFormat("Testing stuck with {0} test magnitude", testMagnitude);
-                if (testMagnitude < Mathf.Pow(stuckMovementThreshold, 2))
+                (lastMovePosition - myTransform.position).sqrMagnitude < Mathf.Pow(stuckMovementThreshold, 2))
+            {
+                stuckFrameCount++;
+                if (stuckFrameCount > stuckFrameThreshold)
                 {
-                    stuckFrameCount++;
-                    if (stuckFrameCount > stuckFrameThreshold)
+                    //Debug.LogFormat("Stuck for {0} frames", stuckFrameCount);
+
+                    // Attempt resolution by first checking if nothing in the way using a spherecast
+                    // Then teleport player forwards until stuck test is cleared by normal movement
+                    // The spherecast check is smaller than player capsule to avoid most sticky spots
+                    // But large enough not to pass through small cracks or openings the player should not traverse
+                    Vector3 sampleDirection = (tryingToMoveForwards) ? myTransform.forward : -myTransform.forward;
+                    Ray sampleRay = new Ray(myTransform.position, sampleDirection);
+                    if (!Physics.SphereCast(sampleRay, controller.radius - 0.01f, stuckSampleDistance))
                     {
-                        //Debug.LogFormat("Stuck for {0} frames", stuckFrameCount);
+                        //Debug.LogFormat("Trying to resolve stuck for {0} frames", stuckFrameCount);
 
-                        // Attempt resolution by first checking if nothing in the way using a spherecast
-                        // Then teleport player forwards until stuck test is cleared by normal movement
-                        // The spherecast check is smaller than player capsule to avoid most sticky spots
-                        // But large enough not to pass through small cracks or openings the player should not traverse
-                        Vector3 sampleDirection = (tryingToMoveForwards) ? myTransform.forward : -myTransform.forward;
-                        Ray sampleRay = new Ray(myTransform.position, sampleDirection);
-                        if (!Physics.SphereCast(sampleRay, controller.radius - 0.01f, stuckSampleDistance))
-                        {
-                            //Debug.LogFormat("Trying to resolve stuck for {0} frames", stuckFrameCount);
-
-                            // Do not unstick farther than stuckSampleDistance or player may teleport through a nearby wall
-                            myTransform.position += sampleDirection * stuckSampleDistance;
-                        }
+                        // Do not unstick farther than stuckSampleDistance or player may teleport through a nearby wall
+                        myTransform.position += sampleDirection * stuckSampleDistance;
                     }
                 }
-                else
-                {
-                    // Reset during normal movement
-                    lastMovePosition = myTransform.position;
-                    stuckFrameCount = 0;
-                }
+            }
+            else
+            {
+                // Reset during normal movement
+                lastMovePosition = myTransform.position;
+                stuckFrameCount = 0;
             }
         }
 
