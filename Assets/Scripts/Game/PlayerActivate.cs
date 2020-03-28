@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop.Game
             return HandleRegisterCustomActivation(goFlatName, customActivation);
         }
 
-        public static bool HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
+        private static bool HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             if (!CheckCustomActivation(goFlatModelName))
