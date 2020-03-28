@@ -746,10 +746,7 @@ namespace DaggerfallWorkshop.Utility
         private static bool HasAction(DFBlock.RdbObject obj)
         {
             DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
-            if (action.Flags != 0) {
-                return true;
-            }
-            return false;
+            return (action.Flags != 0);
         }
 
         /// <summary>
