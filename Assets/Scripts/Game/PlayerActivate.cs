@@ -98,26 +98,21 @@ namespace DaggerfallWorkshop.Game
         public static bool RegisterCustomActivation(uint modelID, CustomActivation customActivation)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
-            return HandleRegisterCustomActivation(goModelName, customActivation);
+            HandleRegisterCustomActivation(goModelName, customActivation);
+            return true;
         }
 
         public static bool RegisterCustomActivation(int textureArchive, int textureRecord, CustomActivation customActivation)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
-            return HandleRegisterCustomActivation(goFlatName, customActivation);
+            HandleRegisterCustomActivation(goFlatName, customActivation);
+            return true;
         }
 
-        private static bool HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
+        private static void HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
-            if (!CheckCustomActivation(goFlatModelName))
-            {
-                customActivations.Add(goFlatModelName, customActivation);
-                return true;
-            } else {
-                DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName + " already registered", true);
-            }
-            return false;
+            customActivations[goFlatModelName] = customActivation;
         }
 
         public static bool HasCustomActivation(uint modelID)
@@ -305,14 +300,14 @@ namespace DaggerfallWorkshop.Game
                     // Check for functional interior furniture: Ladders, Bookshelves.
                     ActivateLaddersAndShelves(hit);
 
-                    // Invoke any matched custom model activations registered by mods.
-                    string modelName = hit.transform.gameObject.name;
-                    int pos = modelName.IndexOf(']');
-                    if (pos > 0 && pos < modelName.Length - 1)
-                        modelName = modelName.Remove(pos + 1);
+                    // Invoke any matched custom flat / model activations registered by mods.
+                    string flatModelName = hit.transform.gameObject.name;
+                    int pos = flatModelName.IndexOf(']');
+                    if (pos > 0 && pos < flatModelName.Length - 1)
+                        flatModelName = flatModelName.Remove(pos + 1);
 
                     CustomActivation customActivation;
-                    if (customActivations.TryGetValue(modelName, out customActivation))
+                    if (customActivations.TryGetValue(flatModelName, out customActivation))
                     {
                         customActivation(hit.transform);
                     }

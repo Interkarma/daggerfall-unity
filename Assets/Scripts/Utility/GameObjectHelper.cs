@@ -280,7 +280,8 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
 
-            if(PlayerActivate.CheckCustomActivation(flatName)) {
+            if (PlayerActivate.CheckCustomActivation(flatName)) 
+            {
                 // Add box collider to flats with actions for raycasting - only flats that can be activated directly need this, so this can possibly be restricted in future
                 // Skip this for flats that already have a collider assigned from elsewhere (e.g. NPC flats)
                 if (!go.GetComponent<Collider>())

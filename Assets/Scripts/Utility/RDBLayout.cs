@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Utility
                                 dfMesh.SetDungeonTextures(textureTable);
 
                             // Add action component to door if it also has an action
-                            if (HasAction(obj, ref blockData))
+                            if (HasAction(obj))
                             {
                                 AddActionModelHelper(cgo, actionLinkDict, obj, ref blockData, serialize);
                             }
@@ -626,7 +626,7 @@ namespace DaggerfallWorkshop.Utility
                         }
 
                         // Check if model has an action record
-                        bool hasAction = HasAction(obj, ref blockData);
+                        bool hasAction = HasAction(obj);
 
                         // Get GameObject
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
@@ -651,7 +651,7 @@ namespace DaggerfallWorkshop.Utility
                             }
 
                             // Add or combine
-                            if (combiner == null || hasAction)
+                            if (combiner == null || hasAction || PlayerActivate.HasCustomActivation(modelId))
                             {
                                 standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
                                 standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
@@ -743,14 +743,10 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Check is model has action record.
         /// </summary>
-        private static bool HasAction(DFBlock.RdbObject obj, ref DFBlock blockData)
+        private static bool HasAction(DFBlock.RdbObject obj)
         {
             DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
             if (action.Flags != 0) {
-                return true;
-            }
-            uint modelID = blockData.RdbBlock.ModelReferenceList[obj.Resources.ModelResource.ModelIndex].ModelIdNum;
-            if(PlayerActivate.HasCustomActivation(modelID)) {
                 return true;
             }
             return false;
