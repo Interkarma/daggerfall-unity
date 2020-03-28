@@ -95,18 +95,16 @@ namespace DaggerfallWorkshop.Game
         public delegate void CustomActivation(Transform transform);
         private static Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
-        public static bool RegisterCustomActivation(uint modelID, CustomActivation customActivation)
+        public static void RegisterCustomActivation(uint modelID, CustomActivation customActivation)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
             HandleRegisterCustomActivation(goModelName, customActivation);
-            return true;
         }
 
-        public static bool RegisterCustomActivation(int textureArchive, int textureRecord, CustomActivation customActivation)
+        public static void RegisterCustomActivation(int textureArchive, int textureRecord, CustomActivation customActivation)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
             HandleRegisterCustomActivation(goFlatName, customActivation);
-            return true;
         }
 
         private static void HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
