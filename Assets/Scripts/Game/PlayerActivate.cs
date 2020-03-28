@@ -92,30 +92,30 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Allow mods to register custom flat / model activation methods.
-        public delegate void FlatModelActivation(Transform transform);
-        private static Dictionary<string, FlatModelActivation> customFlatModelActivations = new Dictionary<string, FlatModelActivation>();
+        public delegate void CustomActivation(Transform transform);
+        private static Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
-        public static bool RegisterFlatModelActivation(uint modelID, FlatModelActivation flatModelActivation)
+        public static bool RegisterCustomActivation(uint modelID, CustomActivation customActivation)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
-            return HandleRegisterFlatModelActivation(goModelName, flatModelActivation);
+            return HandleRegisterCustomActivation(goModelName, customActivation);
         }
 
-        public static bool RegisterFlatModelActivation(int textureArchive, int textureRecord, FlatModelActivation flatModelActivation)
+        public static bool RegisterCustomActivation(int textureArchive, int textureRecord, CustomActivation customActivation)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
-            return HandleRegisterFlatModelActivation(goFlatName, flatModelActivation);
+            return HandleRegisterCustomActivation(goFlatName, customActivation);
         }
 
-        public static bool HandleRegisterFlatModelActivation(string goFlatModelName, FlatModelActivation flatModelActivation)
+        public static bool HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
         {
-            DaggerfallUnity.LogMessage("HandleRegisterFlatModelActivation: " + goFlatModelName, true);
+            DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             if (!CheckCustomActivation(goFlatModelName))
             {
-                customFlatModelActivations.Add(goFlatModelName, flatModelActivation);
+                customActivations.Add(goFlatModelName, customActivation);
                 return true;
             } else {
-                DaggerfallUnity.LogMessage("HandleRegisterFlatModelActivation: " + goFlatModelName + " already registered", true);
+                DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName + " already registered", true);
             }
             return false;
         }
@@ -133,7 +133,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public static bool CheckCustomActivation(string goFlatModelName) {
-            return customFlatModelActivations.ContainsKey(goFlatModelName);
+            return customActivations.ContainsKey(goFlatModelName);
         }
 
         void Start()
@@ -311,10 +311,10 @@ namespace DaggerfallWorkshop.Game
                     if (pos > 0 && pos < modelName.Length - 1)
                         modelName = modelName.Remove(pos + 1);
 
-                    FlatModelActivation flatModelActivation;
-                    if (customFlatModelActivations.TryGetValue(modelName, out flatModelActivation))
+                    CustomActivation customActivation;
+                    if (customActivations.TryGetValue(modelName, out customActivation))
                     {
-                        flatModelActivation(hit.transform);
+                        customActivation(hit.transform);
                     }
 
                     // Check for custom activation
