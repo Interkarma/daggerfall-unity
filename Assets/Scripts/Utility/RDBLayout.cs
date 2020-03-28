@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Utility
                                 dfMesh.SetDungeonTextures(textureTable);
 
                             // Add action component to door if it also has an action
-                            if (HasAction(obj))
+                            if (HasAction(obj, ref blockData))
                             {
                                 AddActionModelHelper(cgo, actionLinkDict, obj, ref blockData, serialize);
                             }
@@ -626,7 +626,7 @@ namespace DaggerfallWorkshop.Utility
                         }
 
                         // Check if model has an action record
-                        bool hasAction = HasAction(obj);
+                        bool hasAction = HasAction(obj, ref blockData);
 
                         // Get GameObject
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
@@ -743,11 +743,16 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Check is model has action record.
         /// </summary>
-        private static bool HasAction(DFBlock.RdbObject obj)
+        private static bool HasAction(DFBlock.RdbObject obj, ref DFBlock blockData)
         {
             DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
-            if (action.Flags != 0)
+            if (action.Flags != 0) {
                 return true;
+            }
+            uint modelID = blockData.RdbBlock.ModelReferenceList[obj.Resources.ModelResource.ModelIndex].ModelIdNum;
+            if(PlayerActivate.HasCustomActivation(modelID)) {
+                return true;
+            }
             return false;
         }
 
