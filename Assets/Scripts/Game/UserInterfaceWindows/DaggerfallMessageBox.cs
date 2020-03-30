@@ -362,9 +362,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     b.DefaultButton = false;
             }
 
-            Texture2D background = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
-            Vector2 size = TextureReplacement.GetSize(background, buttonsFilename, (int)messageBoxButton);
-            Debug.Log("Size = x: " + size.x.ToString() + " - y: " + size.y.ToString());
+            Texture2D background;// = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
+            TextureReplacement.TryImportImage("button" + tag, true, out background);
+            //Vector2 size = TextureReplacement.GetSize(background, buttonsFilename, (int)messageBoxButton);
+            Vector2 size = new Vector2(background.width, background.height);
             Button button = DaggerfallUI.AddButton(Vector2.zero, 
                 size, buttonPanel);
             button.BackgroundTexture = background;
