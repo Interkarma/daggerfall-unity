@@ -500,14 +500,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (buttons.Count > 0)
             {
                 float buttonY = messagePanel.Size.y - ((messagePanel.Size.y - label.Size.y) / 2) - buttonPanel.Size.y - messagePanel.BottomMargin;
-                string message = "";
-                message += "Message panel size: " + messagePanel.Size.y.ToString();
-                message += "\nLabel size: " + label.Size.y.ToString();
-                message += "\nButton panel size: " + buttonPanel.Size.y.ToString();
-                message += "\nButton panel Y: " + buttonY.ToString();
-                message += "\nButton panel margin: " + messagePanel.BottomMargin.ToString();
-                Debug.Log(message);
-
                 buttonPanel.Position = new Vector2(buttonPanel.Position.x, buttonY);
             }
 
