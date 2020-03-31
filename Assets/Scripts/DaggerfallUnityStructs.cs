@@ -304,6 +304,7 @@ namespace DaggerfallWorkshop
         public int FramePerSecond;                  // Speed at which this animation plays
         public WeaponAlignment Alignment;           // Side of screen to align animation
         public float Offset;                        // Offset from edge of screen in 0-1 range, ignored for WeaponAlignment.Center
+        public float Offsety;
     }
 
     /// <summary>
