@@ -167,7 +167,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.QuestFoeSpellQueueIndex = data.questFoeSpellQueueIndex;
             entity.QuestFoeItemQueueIndex = data.questFoeItemQueueIndex;
             entity.WabbajackActive = data.wabbajackActive;
-            entity.Items.DeserializeItems(data.items);
+            entity.Items.DeserializeItems(data.items, data.equipTable);
             entity.ItemEquipTable.DeserializeEquipTable(data.equipTable, entity.Items);
             entity.MaxHealth = data.startingHealth;
             entity.SetHealth(data.currentHealth, true);
