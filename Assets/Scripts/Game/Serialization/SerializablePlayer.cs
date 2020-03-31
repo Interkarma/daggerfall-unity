@@ -286,7 +286,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.StartingLevelUpSkillSum = data.playerEntity.startingLevelUpSkillSum;
             if ((entity.CurrentLevelUpSkillSum = data.playerEntity.currentLevelUpSkillSum) == 0)
                 entity.SetCurrentLevelUpSkillSum();
-            entity.Items.DeserializeItems(data.playerEntity.items);
+            entity.Items.DeserializeItems(data.playerEntity.items, data.playerEntity.equipTable);
             entity.WagonItems.DeserializeItems(data.playerEntity.wagonItems);
             entity.OtherItems.DeserializeItems(data.playerEntity.otherItems);
             entity.ItemEquipTable.DeserializeEquipTable(data.playerEntity.equipTable, entity.Items);

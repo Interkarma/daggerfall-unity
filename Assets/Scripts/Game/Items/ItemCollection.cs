@@ -531,7 +531,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Existing items will be destroyed.
         /// </summary>
         /// <param name="itemArray">ItemData_v1 array.</param>
-        public void DeserializeItems(ItemData_v1[] itemArray)
+        public void DeserializeItems(ItemData_v1[] itemArray, ulong[] equipTable = null)
         {
             // Clear existing items
             Clear();
@@ -543,6 +543,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Add items to this collection
             for (int i = 0; i < itemArray.Length; i++)
             {
+                bool isEquipped = equipTable != null && (Array.IndexOf(equipTable, itemArray[i].uid) >= 0);
                 if (itemArray[i].className != null)
                 {
                     Type itemClassType;
@@ -551,12 +552,12 @@ namespace DaggerfallWorkshop.Game.Items
                     {
                         DaggerfallUnityItem modItem = (DaggerfallUnityItem)Activator.CreateInstance(itemClassType);
                         modItem.FromItemData(itemArray[i]);
-                        AddItem(modItem, AddPosition.DontCare, true);
+                        AddItem(modItem, noStack: isEquipped);
                         continue;
                     }
                 }
                 DaggerfallUnityItem item = new DaggerfallUnityItem(itemArray[i]);
-                AddItem(item);
+                AddItem(item, noStack: isEquipped);
             }
         }
 
