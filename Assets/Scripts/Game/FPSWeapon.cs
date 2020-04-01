@@ -924,6 +924,12 @@ namespace DaggerfallWorkshop.Game
                     if (frameBeforeStepping != currentFrame)
                     {
                         //*COMBAT OVERHAUL ADDITION*//
+                        //calculates lerp values for each frame change. When the frame changes,
+                        //it grabs the current total animation time, amount of passed time, users fps,
+                        //and then uses them to calculate and set the lerp value to ensure proper animation
+                        //offsetting no matter users fps or attack speed.
+
+
                         //grabs animation time for each frame render of the 5 frames.
                         time = animTickTime;
 
@@ -952,6 +958,7 @@ namespace DaggerfallWorkshop.Game
 
                         //calculates the totaloffsets possible within the attack animation time by dividing the animation time
                         //by the time a frame would render at players current max fps. Rounds down to ensure doens't render more than possible.
+                        //This is critical to calculate and use in the lerp calculations to ensure default attack speeds work no matter user fps.
                         totalOffsets = Mathf.FloorToInt(time / maxframeseconds);
 
                         //figures out the range the sprite needs to move by taking the total animation time and dividing it by float value.
@@ -964,7 +971,8 @@ namespace DaggerfallWorkshop.Game
                             lerpRange = 0;
 
                         //figures out how long to wait before restarting coroutine based on the number of frame offsets
-                        //divided by the total time of the individual frame animation.
+                        //divided by the total time of the individual frame animation. This ensures attack speeds are not
+                        //slowed down by needing to render more offsets than possible in the attack animation time; used in coroutine below.
                         time = time / totalOffsets;
 
                         //sets the offset range using the mathf.lerp calculation.
@@ -1017,21 +1025,28 @@ namespace DaggerfallWorkshop.Game
                 //added mahf.lerp calculations for animation offsetting to ensure better smoothness no matter speed or framerate.
                 if (WeaponState != WeaponStates.Idle && !GameManager.Instance.WeaponManager.hitobject && WeaponType != WeaponTypes.Bow)
                 {
-                    //begin for loop to loop until the maximum number of offset frames are ran.
+                    //begin for loop to loop until the maximum number of offset frames are ran. Ensures animation doesn't go longer than
+                    //the calcuated attack speed/time and thus slow down the users attack speed.
                     for (int Offset = 0; Offset < totalOffsets; Offset++)
                     {
-                        //moves the rpite using the above mathf.lerp calculation
+                        //moves the sprite using the above mathf.lerp calculation
+                        //lerprange is checked and recalculated every animation frame update out of the 5.
                         posi = posi + lerpRange;
 
                         //waits between offsets and moves to ensure attack speed is not influenced by fps/engine render limits.
                         yield return new WaitForSeconds(time);
                     }
                 }
+                else if (GameManager.Instance.WeaponManager.hitobject)
+                {
+                    //added recoil if then check to allow more recoil animation custimization.
+                    yield return new WaitForSeconds(animTickTime*1.33f);
+                }
                 else
                 {
-                    //added else trigger with combat oerhaul mod
+                    //added else trigger with combat overhaul mod to ensure
                     //All other animations wait default animation time and renders new frame.
-                    yield return new WaitForSeconds(animTickTime/2);
+                    yield return new WaitForSeconds(animTickTime);
                 }
             }
         }
