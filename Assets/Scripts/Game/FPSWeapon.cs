@@ -52,18 +52,6 @@ namespace DaggerfallWorkshop.Game
         public SoundClips DrawWeaponSound = SoundClips.DrawWeapon;
         public SoundClips SwingWeaponSound = SoundClips.SwingMediumPitch;
 
-        //*COMBAT OVERHAUL ADDITION*//
-        //added for combat overhaul mod. Used to calculate and run animation offsetting routines.
-        //Also used for debug messages in debug routine.
-        float avgFrameRate;
-        float lerpRange;
-        float maxframeseconds;
-        int totalOffsets;
-        float Offset;
-        float timePass;
-        float percentagetime;
-        string action;
-
         WeaponTypes currentWeaponType;
         MetalTypes currentMetalType;
 
@@ -90,11 +78,18 @@ namespace DaggerfallWorkshop.Game
         public float animTickTime;
         Rect curAnimRect;
 
-        public bool hitObject;
-        float timer = 0;
+        //*COMBAT OVERHAUL ADDITION*//
+        //added for combat overhaul mod. Used to calculate and run animation offsetting routines.
+        //Also used for debug messages in debug routine.
+        float avgFrameRate;
+        float lerpRange;
+        float maxframeseconds;
+        int totalOffsets;
+        float timePass;
+        float percentagetime;
+        string action;
         float bob = 0;
         float posi = 0;
-        bool posiswitch = false;
         bool bobSwitch;
 
         PlayerEntity playerEntity;

@@ -59,9 +59,6 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallMissile ArrowMissilePrefab;
         public DaggerfallUnityItem strikingWeapon;
 
-        private PlayerSpeedChanger playerspeed;
-        PlayerMotor playerMotor;
-
         float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
         private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
@@ -88,20 +85,17 @@ namespace DaggerfallWorkshop.Game
         public float EquipCountdownLeftHand;
         public Vector3 attackPosition;
 
+        //COMBAT OVERHAUL\\
+        //Sets Vars and Objects for combat overhaul rayarc
+        //and FPSWeapon script animation system.
+        private PlayerSpeedChanger playerspeed;
         FPSConsoleCommands fpsconsole;
         float startpos;
         float endpos;
-        float raynum = 0f;
-        float rot = 0f;
         int CurrentFrame = 0;
         float timer = 0f;
-        float wait = 0f;
         float animetime = 0f;
         Vector3 attackcast;
-        float finishedperc = 0;
-
-        float walkspeed;
-        float runspeed;
 
         public bool IsAttacking
         {
@@ -220,10 +214,14 @@ namespace DaggerfallWorkshop.Game
             DownRight
         }
 
+        public enum test
+        {
+
+        }
+
         void Start()
         {
             playerspeed = GetComponent<PlayerSpeedChanger>();
-            playerMotor = GetComponent<PlayerMotor>();
             weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
@@ -336,6 +334,10 @@ namespace DaggerfallWorkshop.Game
             var attackDirection = MouseDirections.None;
             if (!isAttacking)
             {
+                //COMBAT OVERHAUL\\
+                //Start of movement based attack system. Checks players movement input and picks corresponding mouse attack direction.
+                //if no attack is selected, it randomly selects from the mouse attacks. attacks are limited to the down,left,right,up directions
+                //in the FPSWeapon scrip; there is no smooth animations yet for down-right and down-left. Preserves original bow triggers.
 
                 if (bowEquipped)
                 {
@@ -345,35 +347,26 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
                 {
-                    //DaggerfallUI.Instance.PopupMessage("LEFT!");
                     attackDirection = MouseDirections.Left;
-                    //attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
                     isClickAttack = false;
                 }
                 else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
                 {
-                    // DaggerfallUI.Instance.PopupMessage("Right!");
                     attackDirection = MouseDirections.Right;
-                    //attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
                     isClickAttack = false;
                 }
                 else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
                 {
-                    //DaggerfallUI.Instance.PopupMessage("Up!");
                     attackDirection = MouseDirections.Up;
-                    //attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
                     isClickAttack = false;
                 }
                 else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
                 {
-                    // DaggerfallUI.Instance.PopupMessage("Down!");
                     attackDirection = MouseDirections.Down;
-                    //attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
                     isClickAttack = false;
                 }
                 else if (isClickAttack)
                 {
-                    // DaggerfallUI.Instance.PopupMessage("Random!");
                     attackDirection = (MouseDirections)UnityEngine.Random.Range((int)MouseDirections.Left, (int)MouseDirections.DownRight + 1);
                     isClickAttack = false;
                 }
@@ -429,8 +422,6 @@ namespace DaggerfallWorkshop.Game
                 //*COMBAT OVERHAUL ADDITION*//
                 //resets values for hit arc code below.
                 hitobject = false;
-                rot = 0;
-                raynum = 0;
                 itemRange = 0;
                 itemRange = ItemHelper.getItemRange(strikingWeapon);
                 timer = 0;
@@ -698,6 +689,8 @@ namespace DaggerfallWorkshop.Game
                 isDamageFinished = true;
             }
         }
+
+        
 
         void FireRayArc()
         {
