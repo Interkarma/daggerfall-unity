@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game
         {
             public static readonly string name = "OffsetDistance";
             public static readonly string error = "Failed to set OffsetDistance - invalid setting or DaggerfallUnity singleton object";
-            public static readonly string description = "Changes animation offset distance";
+            public static readonly string description = "Changes animation offset distance/how far the sprite is moved on each frame";
             public static readonly string usage = "OffsetDistance";
 
             public static float offsetDistance { get; private set; }
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (args == null || args.Length < 1)
                 {
-                    return "true or false";
+                    return "Insert a number";
                 }
                 else if (!float.TryParse(args[0], out AttackSpeed))
                     return error;
@@ -165,7 +165,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (args == null || args.Length < 1)
                 {
-                    return "true or false";
+                    return "Insert a number";
                 }
                 else if (!int.TryParse(args[0], out WeaponIndex))
                     return error;
@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game
                     try
                     {
                         changeWeaponIndex = WeaponIndex;
-                        return string.Format("lerpValue set to:" + WeaponIndex.ToString());
+                        return string.Format("WeaponIndex set to:" + WeaponIndex.ToString());
                     }
                     catch
                     {
@@ -204,7 +204,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (args == null || args.Length < 1)
                 {
-                    return "true or false";
+                    return "Insert a number";
                 }
                 else if (!float.TryParse(args[0], out lerpValue))
                     return error;
@@ -213,7 +213,7 @@ namespace DaggerfallWorkshop.Game
                     try
                     {
                         changeRaycastLerp = lerpValue;
-                        return string.Format("lerpValue set to:" + lerpValue.ToString());
+                        return string.Format("Raycast Draw Speed set to:" + lerpValue.ToString());
                     }
                     catch
                     {
@@ -254,7 +254,7 @@ namespace DaggerfallWorkshop.Game
                         if (args[i] == "-start" || args[i] == "-s")
                         {
                             if (!float.TryParse(args[i + 1], out SHorPos))
-                             return error;
+                                return error;
 
                             try
                             {
@@ -273,14 +273,14 @@ namespace DaggerfallWorkshop.Game
                                 return error;
 
                             try
-                            { 
+                            {
                                 EchangeHorPos = EHorPos;
                             }
                             catch
                             {
                                 return "Unspecified error; failed to set lerp";
                             }
-                        }                
+                        }
                     }
                 }
                 return string.Format("HorPos set to Start: " + SchangeHorPos.ToString() + ", End: " + EchangeHorPos.ToString());

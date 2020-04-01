@@ -359,8 +359,12 @@ namespace DaggerfallWorkshop.Game
 
                     //*COMBAT OVERHAUL ADDITION*//
                     //added offset checks for individual attacks and weapons. Also, allows for the weapon bobbing effect.
+                    //helps smooth out some animaitions by swapping out certain weapon animation attack frames and repositioning.
+                    //to line up the 5 animation frame changes with one another. This was critical for certain weapons and attacks.
+                    //this is a ridiculous if then loop set. Researching better ways of structuring this, of possible.
                     if (weaponState == WeaponStates.Idle)
                     {
+                        //bobbing system. Need to simplify this if then check.
                         if ((InputManager.Instance.HasAction(InputManager.Actions.MoveRight) || InputManager.Instance.HasAction(InputManager.Actions.MoveLeft) || InputManager.Instance.HasAction(InputManager.Actions.MoveForwards) || InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)))
                         {
                             if (bob >= .10f && bobSwitch)
@@ -381,6 +385,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
+                        //begging of ridiculous if then loops to setup and place each animation frame by frame. Ensures smoothing no matter attack or weapon.
                         curAnimRect = isImported ? new Rect(0, 0, 1, 1) : weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
                         if (weaponState == WeaponStates.StrikeLeft)
                         {
@@ -869,9 +874,7 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-
-                if (posiswitch == false)
-                    posi = 0;
+                posi = 0;
 
                 if (weaponAnims != null && ShowWeapon && !GameManager.Instance.WeaponManager.hitobject)
                 {
@@ -937,7 +940,7 @@ namespace DaggerfallWorkshop.Game
                         percentagetime = timePass / time;
 
                         //computes users avg fps.
-                        avgFrameRate = (Mathf.Round(1 / Time.unscaledDeltaTime));
+                        avgFrameRate = Mathf.Round(1 / Time.unscaledDeltaTime);
 
                         //caps calculation at 60 fps to match engine cap.
                         //Stops weird animation offsetting calculations that happen passed 60fps.
@@ -970,8 +973,6 @@ namespace DaggerfallWorkshop.Game
                         //default engine update loop starts here.
                         UpdateWeapon();
                     }
-                    else
-                        posiswitch = false;
                 }
 
                 //*COMBAT OVERHAUL ADDITION*//
@@ -1004,7 +1005,6 @@ namespace DaggerfallWorkshop.Game
                     else
                     {
                         currentFrame = 0;
-                        posiswitch = false;
                         ChangeWeaponState(WeaponStates.Idle);   // If this is a one-shot anim go to queued weapon state
                     }
 
@@ -1031,7 +1031,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     //added else trigger with combat oerhaul mod
                     //All other animations wait default animation time and renders new frame.
-                    yield return new WaitForSeconds(animTickTime);
+                    yield return new WaitForSeconds(animTickTime/2);
                 }
             }
         }
