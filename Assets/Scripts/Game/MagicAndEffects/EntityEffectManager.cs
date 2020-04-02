@@ -1616,6 +1616,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         effect.ConstantEffect();
                 }
             }
+
+            // MaxMagickaModifier stacks with no upper limit
+            // This can cause player to lose current spellpoints when loading game or stacking effects using this modifier
+            // So clamp spellpoints to current max only after applying all constant effects for this entity
+            if (entityBehaviour.Entity.CurrentMagicka > entityBehaviour.Entity.MaxMagicka)
+                entityBehaviour.Entity.CurrentMagicka = entityBehaviour.Entity.MaxMagicka;
         }
 
         /// <summary>
