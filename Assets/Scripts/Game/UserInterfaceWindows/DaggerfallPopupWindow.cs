@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cancelled = false;
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                if (allowCancel && Input.GetKeyDown(exitKey))
+                if (allowCancel && Input.GetKeyUp(exitKey))
                     CancelWindow();
             }
         }
