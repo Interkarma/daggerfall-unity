@@ -275,4 +275,73 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
     public delegate void DFModMessageReceiver(string message, object data, DFModMessageCallback callBack);
     public delegate void DFModMessageCallback(string message, object data);
+
+    /// <summary>
+    /// One of the physics layer that was reserved for a mod.
+    /// </summary>
+    public sealed class ModReservedLayer : IDisposable
+    {
+        static readonly Stack<int> availableLayers = new Stack<int>(new[] { 28, 29, 30, 31 });
+
+        readonly int layer;
+        bool disposed = false;
+
+        /// <summary>
+        /// The numeric index of the layer.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">Layer has already been released.</exception>
+        public int Layer
+        {
+            get
+            {
+                AssertIsNotReleased();
+                return layer;
+            }
+        }
+
+        private ModReservedLayer()
+        {
+            layer = availableLayers.Pop();
+        }
+
+        /// <summary>
+        /// Gets the name of the layer.
+        /// </summary>
+        /// <returns>The name associated to this layer index.</returns>
+        public sealed override string ToString()
+        {
+            return LayerMask.LayerToName(layer);
+        }
+
+        /// <summary>
+        /// Releases this layer so it can be made available to other mods.
+        /// </summary>
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                availableLayers.Push(layer);
+                disposed = true;
+            }
+        }
+
+        private void AssertIsNotReleased()
+        {
+            if (disposed)
+                throw new ObjectDisposedException(this.ToString(), "Layer has already been released.");
+        }
+
+        /// <summary>
+        /// Requests a reserved layer. There is a limited number of layers so it
+        /// should be released with <see cref="Dispose()"/> if not used anymore.
+        /// </summary>
+        /// <returns>A reserved layer or null if none is available.</returns>
+        public static ModReservedLayer Request()
+        {
+            if (availableLayers.Count > 0)
+                return new ModReservedLayer();
+
+            return null;
+        }
+    }
 }
