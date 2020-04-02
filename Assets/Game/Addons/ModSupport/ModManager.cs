@@ -406,7 +406,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #endif
                         select clone.HasValue ? mod.GetAsset<T>(name, clone.Value) : mod.LoadAsset<T>(name);
 
-            return (asset = query.FirstOrDefault()) != null;
+            return (asset = query.FirstOrDefault(x => x != null)) != null;
         }
 
         /// <summary>
@@ -433,7 +433,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #endif
                         select clone.HasValue ? mod.GetAsset<T>(name, clone.Value) : mod.LoadAsset<T>(name);
 
-            return (asset = query.FirstOrDefault()) != null;
+            return (asset = query.FirstOrDefault(x => x != null)) != null;
         }
 
         /// <summary>
