@@ -237,20 +237,20 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem.</returns>
         public static DaggerfallUnityItem CreateRandomClothing(Genders gender, Races race)
         {
-            // Create random clothing by gender
+            // Create random clothing by gender, including any custom items registered as clothes
+            ItemGroups genderClothingGroup = (gender == Genders.Male) ? ItemGroups.MensClothing : ItemGroups.WomensClothing;
+
+            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
+            Array enumArray = itemHelper.GetEnumArray(genderClothingGroup);
+            int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(genderClothingGroup);
+
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length + customItemTemplates.Length);
             DaggerfallUnityItem newItem;
-            if (gender == Genders.Male)
-            {
-                Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.MensClothing);
-                int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
-                newItem = new DaggerfallUnityItem(ItemGroups.MensClothing, groupIndex);
-            }
+            if (groupIndex < enumArray.Length)
+                newItem = new DaggerfallUnityItem(genderClothingGroup, groupIndex);
             else
-            {
-                Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.WomensClothing);
-                int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
-                newItem = new DaggerfallUnityItem(ItemGroups.WomensClothing, groupIndex);
-            }
+                newItem = CreateItem(genderClothingGroup, customItemTemplates[groupIndex - enumArray.Length]);
+
             SetRace(newItem, race);
 
             // Random dye colour
