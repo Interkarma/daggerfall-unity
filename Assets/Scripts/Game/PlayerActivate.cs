@@ -116,16 +116,16 @@ namespace DaggerfallWorkshop.Game
         public static bool HasCustomActivation(uint modelID)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
-            return CheckCustomActivation(goModelName);
+            return HasCustomActivation(goModelName);
         }
 
         public static bool HasCustomActivation(int textureArchive, int textureRecord)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
-            return CheckCustomActivation(goFlatName);
+            return HasCustomActivation(goFlatName);
         }
 
-        public static bool CheckCustomActivation(string goFlatModelName) {
+        public static bool HasCustomActivation(string goFlatModelName) {
             return customActivations.ContainsKey(goFlatModelName);
         }
 
