@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop.Game
 
         // Allow mods to register custom flat / model activation methods.
         public delegate void CustomActivation(Transform transform);
-        private static Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
+        private static readonly Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
         public static void RegisterCustomActivation(uint modelID, CustomActivation customActivation)
         {
