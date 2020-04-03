@@ -384,6 +384,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Check object and all children
             foreach (var meshRenderer in go.GetComponentsInChildren<MeshRenderer>())
             {
+                if (meshRenderer.gameObject.GetComponent<RuntimeMaterials>())
+                    continue;
+
                 // Check all materials
                 Material[] materials = meshRenderer.sharedMaterials;
                 for (int i = 0; i < materials.Length; i++)
