@@ -181,7 +181,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             //"ToggleConsole" is too long as a word when looking in non-SDF font view
             //"Screenshot" is a better word and is one letter less than "PrintScreen"
-            label.Text = action == InputManager.Actions.ToggleConsole ? "Console"
+            label.Text = action == InputManager.Actions.Escape ? "Pause"
+                                   : action == InputManager.Actions.ToggleConsole ? "Console"
                                    : action == InputManager.Actions.PrintScreen ? "Screenshot"
                                    : action.ToString();
 
