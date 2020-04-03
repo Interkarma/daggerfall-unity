@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         FLCPlayer playerPanel;
         MultiFormatTextLabel messageLabel;
+        TextCursor textCursor;
 
         DaggerfallQuestPopupWindow.DaedraData daedraSummoned;
         Quest daedraQuest;
@@ -87,6 +88,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             playerPanel.Components.Add(messageLabel);
             playerPanel.OnMouseClick += PlayerPanel_OnMouseClick;
 
+            textCursor = new TextCursor();
+            textCursor.Enabled = false;
+            playerPanel.Components.Add(textCursor);
+
             // Initialise message to display,
             if (daedraQuest != null)
             {   // with the quest offer message.
@@ -125,6 +130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void HandleAnswer(QuestMachine.QuestMessages qMessage)
         {
             lastChunk = false;
+            textCursor.Enabled = false;
             answerGiven = true;
             idx = 0;
             Message message = daedraQuest.GetMessage((int) qMessage);
@@ -146,6 +152,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (!answerGiven)
                 {   // Disable click and listen for Y/N keypress.
                     playerPanel.OnMouseClick -= PlayerPanel_OnMouseClick;
+                    textCursor.Position = new Vector2(310, 190);
+                    textCursor.Enabled = true;
+                    textCursor.BlinkOn();
                 }
             }
             idx += TokensPerChunk;

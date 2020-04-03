@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected bool saveSettings = false;
 
+        protected KeyCode toggleClosedBinding;
+
         #endregion
 
         #region Constructors
@@ -148,6 +150,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Escape);
+
             hud = DaggerfallUI.Instance.DaggerfallHUD;
         }
 
@@ -166,6 +170,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Scale version text based on native panel scaling
             versionTextLabel.TextScale = NativePanel.LocalScale.x * 0.75f;
+
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            {
+                // Toggle window closed with same hotkey used to open it
+                if (Input.GetKeyUp(toggleClosedBinding))
+                    CloseWindow();
+            }
         }
 
         public override void Draw()

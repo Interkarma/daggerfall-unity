@@ -233,6 +233,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
             Refresh();
         }
 
