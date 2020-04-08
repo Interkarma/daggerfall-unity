@@ -49,19 +49,6 @@ namespace DaggerfallWorkshop.Game
     public class PlayerActivate : MonoBehaviour
     {
 
-        private struct CustomModActivation
-        {
-            internal readonly CustomActivation Action;
-            internal readonly Mod Provider;
-
-            internal CustomModActivation(CustomActivation action, Mod provider)
-            {
-                Action = action;
-                Provider = provider;
-            }
-        }
-        readonly static Dictionary<string, CustomModActivation> customModActivations = new Dictionary<string, CustomModActivation>();
-
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         GameObject mainCamera;
@@ -107,22 +94,55 @@ namespace DaggerfallWorkshop.Game
                     closeHours[(int)buildingType] > DaggerfallUnity.Instance.WorldTime.Now.Hour);
         }
 
+        #region custom mod activation
+        private struct CustomModActivation
+        {
+            internal readonly CustomActivation Action;
+            internal readonly Mod Provider;
+
+            internal CustomModActivation(CustomActivation action, Mod provider)
+            {
+                Action = action;
+                Provider = provider;
+            }
+        }
+        readonly static Dictionary<string, CustomModActivation> customModActivations = new Dictionary<string, CustomModActivation>();
         // Allow mods to register custom flat / model activation methods.
         public delegate void CustomActivation(RaycastHit hit);
         //private static readonly Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
+        /// <summary>
+        /// Registers a custom activation for a model object. Uses the modelID parameter to retrieve the correct object name
+        /// </summary>
+        /// <param name="provider">The mod that provides this override; used to enforce load order.</param>
+        /// <param name="modelID">The model ID of the object that will trigger the custom action upon activation.</param>
+        /// <param name="customActivation">A callback that implements the custom action.</param>
         public static void RegisterCustomActivation(Mod provider, uint modelID, CustomActivation customActivation)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
             HandleRegisterCustomActivation(provider, goModelName, customActivation);
         }
 
+        /// <summary>
+        /// Registers a custom activation for a flat object. Uses the textureArchive and textureRecord parameters to retrieve the correct object name
+        /// </summary>
+        /// <param name="provider">The mod that provides this override; used to enforce load order.</param>
+        /// <param name="textureArchive">The texture archive of the flat object that will trigger the custom action upon activation.</param>
+        /// <param name="textureRecord">The texture record of the flat object that will trigger the custom action upon activation.</param>
+        /// <param name="customActivation">A callback that implements the custom action.</param>
         public static void RegisterCustomActivation(Mod provider, int textureArchive, int textureRecord, CustomActivation customActivation)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
             HandleRegisterCustomActivation(provider, goFlatName, customActivation);
         }
 
+        /// <summary>
+        /// Registers a custom activation for a flat object
+        /// </summary>
+        /// <param name="provider">The mod that provides this override; used to enforce load order.</param>
+        /// <param name="textureArchive">The texture archive of the flat object that will trigger the custom action upon activation.</param>
+        /// <param name="textureRecord">The texture record of the flat object that will trigger the custom action upon activation.</param>
+        /// <param name="customActivation">A callback that implements the custom action.</param>
         private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
@@ -155,6 +175,7 @@ namespace DaggerfallWorkshop.Game
         public static bool HasCustomActivation(string goFlatModelName) {
             return customModActivations.ContainsKey(goFlatModelName);
         }
+        #endregion
 
         void Start()
         {
