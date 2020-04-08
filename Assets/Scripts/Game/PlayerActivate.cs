@@ -51,10 +51,10 @@ namespace DaggerfallWorkshop.Game
 
         private struct CustomModActivation
         {
-            internal readonly Delegate Action;
+            internal readonly CustomActivation Action;
             internal readonly Mod Provider;
 
-            internal CustomModActivation(Delegate action, Mod provider)
+            internal CustomModActivation(CustomActivation action, Mod provider)
             {
                 Action = action;
                 Provider = provider;
@@ -108,8 +108,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Allow mods to register custom flat / model activation methods.
-        public delegate void CustomActivation(Transform transform);
-        private static readonly Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
+        public delegate void CustomActivation(RaycastHit hit);
+        //private static readonly Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
         public static void RegisterCustomActivation(Mod provider, uint modelID, CustomActivation customActivation)
         {
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game
             HandleRegisterCustomActivation(provider, goFlatName, customActivation);
         }
 
-        private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, Delegate customActivation)
+        private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             bool allowRegistration = true;
@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public static bool HasCustomActivation(string goFlatModelName) {
-            return customActivations.ContainsKey(goFlatModelName);
+            return customModActivations.ContainsKey(goFlatModelName);
         }
 
         void Start()
@@ -334,8 +334,8 @@ namespace DaggerfallWorkshop.Game
                     CustomModActivation customActivation;
                     if (customModActivations.TryGetValue(flatModelName, out customActivation))
                     {
-                        //customActivation(hit.transform);
-                        
+                        customActivation.Action(hit);
+
                     }
 
                     // Check for custom activation
@@ -433,10 +433,10 @@ namespace DaggerfallWorkshop.Game
                             }
 
                             // Attempt to unlock building
-                            Random.InitState(Time.frameCount);
+                            UnityEngine.Random.InitState(Time.frameCount);
                             player.TallySkill(DFCareer.Skills.Lockpicking, 1);
                             int chance = FormulaHelper.CalculateExteriorLockpickingChance(buildingLockValue, skillValue);
-                            int roll = Random.Range(1, 101);
+                            int roll = UnityEngine.Random.Range(1, 101);
                             Debug.LogFormat("Attempting pick against lock strength {0}. Chance={1}, Roll={2}.", buildingLockValue, chance, roll);
                             if (chance > roll)
                             {
@@ -699,7 +699,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                 return;
             }
-            Random.InitState(Time.frameCount);
+            UnityEngine.Random.InitState(Time.frameCount);
             UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
             switch (loot.ContainerType)
             {
@@ -901,7 +901,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Roll for chance to open - Lower lock values have a higher chance
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                Random.InitState(Time.frameCount);
+                UnityEngine.Random.InitState(Time.frameCount);
                 int chance = 25 - lockValue;
                 if (Dice100.SuccessRoll(chance))
                 {
@@ -1399,7 +1399,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (Dice100.FailedRoll(33))
                 {
-                    int pinchedGoldPieces = Random.Range(0, 6) + 1;
+                    int pinchedGoldPieces = UnityEngine.Random.Range(0, 6) + 1;
                     player.GoldPieces += pinchedGoldPieces;
                     string gotGold;
                     if (pinchedGoldPieces == 1)
