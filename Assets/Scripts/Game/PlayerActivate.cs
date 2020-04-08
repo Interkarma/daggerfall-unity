@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using System;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -467,10 +466,10 @@ namespace DaggerfallWorkshop.Game
                             }
 
                             // Attempt to unlock building
-                            UnityEngine.Random.InitState(Time.frameCount);
+                            Random.InitState(Time.frameCount);
                             player.TallySkill(DFCareer.Skills.Lockpicking, 1);
                             int chance = FormulaHelper.CalculateExteriorLockpickingChance(buildingLockValue, skillValue);
-                            int roll = UnityEngine.Random.Range(1, 101);
+                            int roll = Random.Range(1, 101);
                             Debug.LogFormat("Attempting pick against lock strength {0}. Chance={1}, Roll={2}.", buildingLockValue, chance, roll);
                             if (chance > roll)
                             {
@@ -733,7 +732,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
                 return;
             }
-            UnityEngine.Random.InitState(Time.frameCount);
+            Random.InitState(Time.frameCount);
             UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
             switch (loot.ContainerType)
             {
@@ -935,7 +934,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Roll for chance to open - Lower lock values have a higher chance
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                UnityEngine.Random.InitState(Time.frameCount);
+                Random.InitState(Time.frameCount);
                 int chance = 25 - lockValue;
                 if (Dice100.SuccessRoll(chance))
                 {
@@ -1433,7 +1432,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (Dice100.FailedRoll(33))
                 {
-                    int pinchedGoldPieces = UnityEngine.Random.Range(0, 6) + 1;
+                    int pinchedGoldPieces = Random.Range(0, 6) + 1;
                     player.GoldPieces += pinchedGoldPieces;
                     string gotGold;
                     if (pinchedGoldPieces == 1)
