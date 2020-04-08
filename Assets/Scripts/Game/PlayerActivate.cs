@@ -160,18 +160,31 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Checks if a model object has a custom activation assigned
+        /// </summary>
+        /// <param name="modelID">The model ID of the object to check.</param>
         public static bool HasCustomActivation(uint modelID)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
             return HasCustomActivation(goModelName);
         }
 
+        /// <summary>
+        /// Checks if a model object has a custom activation assigned
+        /// </summary>
+        /// <param name="textureArchive">The texture archive of the flat object to check.</param>
+        /// <param name="textureRecord">The texture record of the flat object to check.</param>
         public static bool HasCustomActivation(int textureArchive, int textureRecord)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
             return HasCustomActivation(goFlatName);
         }
 
+        /// <summary>
+        /// Checks if an object has a custom activation assigned
+        /// </summary>
+        /// <param name="goFlatModelName">The name of the flat / model object to check.</param>
         public static bool HasCustomActivation(string goFlatModelName) {
             return customModActivations.ContainsKey(goFlatModelName);
         }
