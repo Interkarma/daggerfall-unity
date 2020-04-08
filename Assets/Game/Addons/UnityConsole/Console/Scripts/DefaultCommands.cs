@@ -2211,7 +2211,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "startquest";
             public static readonly string description = "Starts the specified quest";
-            public static readonly string usage = "startquest {quest name}";
+            public static readonly string usage = "startquest {quest ID}";
 
             public static string Execute(params string[] args)
             {
@@ -2219,10 +2219,16 @@ namespace Wenzil.Console
                     return usage;
                 UnityEngine.Random.InitState(Time.frameCount);
                 Quest quest = GameManager.Instance.QuestListsManager.GetQuest(args[0]);
-                if (quest != null)
-                    QuestMachine.Instance.StartQuest(quest);
 
-                return "Finished";
+                if (quest != null)
+                {
+                    QuestMachine.Instance.StartQuest(quest);
+                    return "Started quest '" + quest.DisplayName + "'";
+                }
+                else
+                {
+                    return "Quest ID '" + args[0] + "' could not be found";
+                }
             }
         }
 
