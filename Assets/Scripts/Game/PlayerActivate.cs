@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -25,6 +26,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -46,6 +48,20 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerActivate : MonoBehaviour
     {
+
+        private struct CustomModActivation
+        {
+            internal readonly Delegate Action;
+            internal readonly Mod Provider;
+
+            internal CustomModActivation(Delegate action, Mod provider)
+            {
+                Action = action;
+                Provider = provider;
+            }
+        }
+        readonly static Dictionary<string, CustomModActivation> customModActivations = new Dictionary<string, CustomModActivation>();
+
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         GameObject mainCamera;
@@ -95,22 +111,33 @@ namespace DaggerfallWorkshop.Game
         public delegate void CustomActivation(Transform transform);
         private static readonly Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
-        public static void RegisterCustomActivation(uint modelID, CustomActivation customActivation)
+        public static void RegisterCustomActivation(Mod provider, uint modelID, CustomActivation customActivation)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
-            HandleRegisterCustomActivation(goModelName, customActivation);
+            HandleRegisterCustomActivation(provider, goModelName, customActivation);
         }
 
-        public static void RegisterCustomActivation(int textureArchive, int textureRecord, CustomActivation customActivation)
+        public static void RegisterCustomActivation(Mod provider, int textureArchive, int textureRecord, CustomActivation customActivation)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
-            HandleRegisterCustomActivation(goFlatName, customActivation);
+            HandleRegisterCustomActivation(provider, goFlatName, customActivation);
         }
 
-        private static void HandleRegisterCustomActivation(string goFlatModelName, CustomActivation customActivation)
+        private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, Delegate customActivation)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
-            customActivations[goFlatModelName] = customActivation;
+            bool allowRegistration = true;
+            CustomModActivation existingActivation;
+            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation)) {
+                if(existingActivation.Provider.LoadPriority > provider.LoadPriority) {
+                    allowRegistration = false;
+                    DaggerfallUnity.LogMessage("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
+                }
+            }
+            if(allowRegistration) {
+                //customActivations[goFlatModelName] = customActivation;
+                customModActivations[goFlatModelName] = new CustomModActivation(customActivation, provider);
+            }
         }
 
         public static bool HasCustomActivation(uint modelID)
@@ -304,10 +331,11 @@ namespace DaggerfallWorkshop.Game
                     if (pos > 0 && pos < flatModelName.Length - 1)
                         flatModelName = flatModelName.Remove(pos + 1);
 
-                    CustomActivation customActivation;
-                    if (customActivations.TryGetValue(flatModelName, out customActivation))
+                    CustomModActivation customActivation;
+                    if (customModActivations.TryGetValue(flatModelName, out customActivation))
                     {
-                        customActivation(hit.transform);
+                        //customActivation(hit.transform);
+                        
                     }
 
                     // Check for custom activation
