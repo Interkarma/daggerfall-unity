@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider moveSpeedAccelerationSlider;
         Checkbox invertMouseVerticalCheckbox;
         Checkbox mouseSmoothingCheckbox;
+        Checkbox clickToAttackCheckbox;
         TextBox weaponAttackThresholdTextbox;
 
         List<Button> buttonGroup = new List<Button>();
@@ -126,6 +127,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             invertMouseVerticalCheckbox = AddOption(20, 100, "Invert Mouse", DaggerfallUnity.Settings.InvertMouseVertical);
 
             mouseSmoothingCheckbox = AddOption(20, 110, "Mouse Smoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
+
+            clickToAttackCheckbox = AddOption(20, 120, "Click to Attack", DaggerfallUnity.Settings.ClickToAttack);
 
             weaponAttackThresholdTextbox = AddTextbox("Weapon Attack Threshold", 115, 100, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
@@ -338,6 +341,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.MoveSpeedAcceleration = moveSpeedAccelerationSlider.GetValue();
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVerticalCheckbox.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothingCheckbox.IsChecked;
+            DaggerfallUnity.Settings.ClickToAttack = clickToAttackCheckbox.IsChecked;
 
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThresholdTextbox.Text, out weaponAttackThresholdValue))
