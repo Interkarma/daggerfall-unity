@@ -316,6 +316,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.TravelMap);
+
             if(IsSetup)
             {
                 StartIdentify();

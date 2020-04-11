@@ -37,10 +37,10 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - ModReserved28
+  - ModReserved29
+  - ModReserved30
+  - ModReserved31
   m_SortingLayers:
   - name: Default
     uniqueID: 0

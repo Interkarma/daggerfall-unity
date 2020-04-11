@@ -156,6 +156,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CastSpell);
+
             if (buyMode && GameManager.Instance.PlayerEnterExit.IsPlayerInside)
                 buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
 

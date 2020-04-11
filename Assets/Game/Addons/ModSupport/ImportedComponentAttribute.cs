@@ -304,7 +304,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (types.TryGetValue(typeName, out type))
                 return type;
 
-            return types[typeName] = mod.GetCompiledType(typeName);
+            if ((type = mod.GetCompiledType(typeName)) == null && mod.ModInfo.Dependencies != null)
+            {
+                for (int i = 0; i < mod.ModInfo.Dependencies.Length; i++)
+                {
+                    ModDependency dependency = mod.ModInfo.Dependencies[i];
+                    if (!dependency.IsOptional)
+                    {
+                        Mod target = ModManager.Instance.GetModFromName(dependency.Name);
+                        if (target != null && (type = target.GetCompiledType(typeName)) != null)
+                            break;
+                    }
+                }
+            }
+
+            return types[typeName] = type;
         }
 
         private static string LoadSerializedFile(Mod mod, string name)

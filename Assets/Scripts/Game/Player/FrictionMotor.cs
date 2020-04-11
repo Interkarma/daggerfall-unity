@@ -130,7 +130,6 @@ namespace DaggerfallWorkshop.Game
             //  -Works best when player is standing as spherecast test has more clearance
             //  -Enemies will still become stuck as their motor does not have this handling
             const float stuckMovementThreshold = 0.07f;
-            const float stuckSampleDistance = 0.5f;
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
             bool tryingToMoveBackwards = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
@@ -148,19 +147,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         //Debug.LogFormat("Stuck for {0} frames", stuckFrameCount);
 
-                        // Attempt resolution by first checking if nothing in the way using a spherecast
-                        // Then teleport player forwards until stuck test is cleared by normal movement
-                        // The spherecast check is smaller than player capsule to avoid most sticky spots
-                        // But large enough not to pass through small cracks or openings the player should not traverse
-                        Vector3 sampleDirection = (tryingToMoveForwards) ? myTransform.forward : -myTransform.forward;
-                        Ray sampleRay = new Ray(myTransform.position, sampleDirection);
-                        if (!Physics.SphereCast(sampleRay, controller.radius - 0.01f, stuckSampleDistance))
-                        {
-                            //Debug.LogFormat("Trying to resolve stuck for {0} frames", stuckFrameCount);
-
-                            // Do not unstick farther than stuckSampleDistance or player may teleport through a nearby wall
-                            myTransform.position += sampleDirection * stuckSampleDistance;
-                        }
+                        TryUnsticking(tryingToMoveForwards);
                     }
                 }
                 else
@@ -169,6 +156,51 @@ namespace DaggerfallWorkshop.Game
                     lastMovePosition = myTransform.position;
                     stuckFrameCount = 0;
                 }
+            }
+        }
+
+        private void TryUnsticking(bool tryingToMoveForwards)
+        {
+            // Attempt resolution by first checking if nothing in the way using a capsulecast
+            // Then teleport player forwards until stuck test is cleared by normal movement
+
+            // size of the step
+            const float stuckSampleForward = 0.5f;
+            const float stuckSampleUpward = 0.35f;
+
+            Vector3 originBottom = myTransform.position - myTransform.up * (controller.height / 2 - controller.radius);
+            Vector3 originTop = myTransform.position + myTransform.up * (controller.height / 2 - controller.radius);
+
+            Vector3 sampleDirection = tryingToMoveForwards ? myTransform.forward : -myTransform.forward;
+            Vector3 displacementUp = myTransform.up * stuckSampleUpward;
+            // Debug.DrawRay(originBottom, displacementUp, Color.green, 2f);
+            // Debug.DrawRay(originTop, displacementUp, Color.blue, 2f);
+            if (Physics.CapsuleCast(originTop, originBottom, controller.radius, displacementUp, displacementUp.magnitude))
+                return;
+
+            originBottom += displacementUp;
+            originTop += displacementUp;
+            Vector3 displacementForward = sampleDirection * stuckSampleForward;
+            // Debug.DrawRay(originBottom, displacementForward, Color.green, 2f);
+            // Debug.DrawRay(originTop, displacementForward, Color.blue, 2f);
+            if (Physics.CapsuleCast(originTop, originBottom, controller.radius, displacementForward, displacementForward.magnitude))
+                return;
+
+            originBottom += displacementForward;
+            originTop += displacementForward;
+            Vector3 displacementDownward = -myTransform.up * stuckSampleUpward;
+            // Debug.DrawRay(originBottom, displacementDownward, Color.green, 2f);
+            // Debug.DrawRay(originTop, displacementDownward, Color.blue, 2f);
+            //Debug.LogFormat("Trying to resolve stuck for {0} frames", stuckFrameCount);
+            RaycastHit hit;
+            if (!Physics.CapsuleCast(originTop, originBottom, controller.radius, displacementDownward, out hit, displacementDownward.magnitude))
+            {
+                myTransform.position += displacementForward;
+            }
+            else
+            {
+                // Player landed on something during the last part of the step
+                myTransform.position += displacementUp + displacementForward - myTransform.up * hit.distance;
             }
         }
 

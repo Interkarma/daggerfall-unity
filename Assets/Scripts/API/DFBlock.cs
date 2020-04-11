@@ -992,7 +992,7 @@ namespace DaggerfallConnect
             public UInt16 ModelIndex;
 
             /// <summary>Trigger flag and starting lock for doors.</summary>
-            internal UInt32 TriggerFlag_StartingLock;
+            public UInt32 TriggerFlag_StartingLock;
 
             /// <summary>ID of sound to play when action is executed. Also used for spell and text index.</summary>
             public Byte SoundIndex;
