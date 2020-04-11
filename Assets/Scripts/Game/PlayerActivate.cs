@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerActivate : MonoBehaviour
     {
-
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         GameObject mainCamera;
@@ -121,7 +120,7 @@ namespace DaggerfallWorkshop.Game
         public static void RegisterCustomActivation(Mod provider, uint modelID, CustomActivation customActivation, float activationDistance = DefaultActivationDistance)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
-            HandleRegisterCustomActivation(provider, goModelName, customActivation, activationDistance);
+            RegisterCustomActivation(provider, goModelName, customActivation, activationDistance);
         }
 
         /// <summary>
@@ -134,7 +133,7 @@ namespace DaggerfallWorkshop.Game
         public static void RegisterCustomActivation(Mod provider, int textureArchive, int textureRecord, CustomActivation customActivation, float activationDistance = DefaultActivationDistance)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
-            HandleRegisterCustomActivation(provider, goFlatName, customActivation, activationDistance);
+            RegisterCustomActivation(provider, goFlatName, customActivation, activationDistance);
         }
 
         /// <summary>
@@ -144,13 +143,13 @@ namespace DaggerfallWorkshop.Game
         /// <param name="textureArchive">The texture archive of the flat object that will trigger the custom action upon activation.</param>
         /// <param name="textureRecord">The texture record of the flat object that will trigger the custom action upon activation.</param>
         /// <param name="customActivation">A callback that implements the custom action.</param>
-        private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation, float activationDistance)
+        private static void RegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation, float activationDistance)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             bool allowRegistration = true;
             CustomModActivation existingActivation;
             if (customModActivations.TryGetValue(goFlatModelName, out existingActivation)) {
-                if(existingActivation.Provider.LoadPriority > provider.LoadPriority) {
+                if (existingActivation.Provider.LoadPriority > provider.LoadPriority) {
                     allowRegistration = false;
                     Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
                 }
@@ -366,11 +365,9 @@ namespace DaggerfallWorkshop.Game
                         flatModelName = flatModelName.Remove(pos + 1);
 
                     CustomModActivation customActivation;
-                    if (customModActivations.TryGetValue(flatModelName, out customActivation))
+                    if (customModActivations.TryGetValue(flatModelName, out customActivation) && hit.distance <= customActivation.ActivationDistance)
                     {
-                        if(hit.distance <= customActivation.ActivationDistance) {
-                            customActivation.Action(hit);
-                        }
+                        customActivation.Action(hit);
                     }
 
                     // Check for custom activation
