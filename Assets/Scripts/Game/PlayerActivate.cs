@@ -67,14 +67,14 @@ namespace DaggerfallWorkshop.Game
                                                                     // be done in classic for as far as the view distance.
 
         // Maximum distance from which different object types can be activated, converted from classic units (divided by 40)
-        const float DefaultActivationDistance = 128 * MeshReader.GlobalScale;
-        const float DoorActivationDistance = 128 * MeshReader.GlobalScale;
-        const float TreasureActivationDistance = 128 * MeshReader.GlobalScale;
-        const float PickpocketDistance = 128 * MeshReader.GlobalScale;
-        const float CorpseActivationDistance = 150 * MeshReader.GlobalScale;
+        public const float DefaultActivationDistance = 128 * MeshReader.GlobalScale;
+        public const float DoorActivationDistance = 128 * MeshReader.GlobalScale;
+        public const float TreasureActivationDistance = 128 * MeshReader.GlobalScale;
+        public const float PickpocketDistance = 128 * MeshReader.GlobalScale;
+        public const float CorpseActivationDistance = 150 * MeshReader.GlobalScale;
         //const float TouchSpellActivationDistance = 160 * MeshReader.GlobalScale;
-        const float StaticNPCActivationDistance = 256 * MeshReader.GlobalScale;
-        const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
+        public const float StaticNPCActivationDistance = 256 * MeshReader.GlobalScale;
+        public const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
 
         // Opening and closing hours by building type
         static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
@@ -97,11 +97,14 @@ namespace DaggerfallWorkshop.Game
         private struct CustomModActivation
         {
             internal readonly CustomActivation Action;
+
+            internal readonly float ActivationDistance;
             internal readonly Mod Provider;
 
-            internal CustomModActivation(CustomActivation action, Mod provider)
+            internal CustomModActivation(CustomActivation action, float activationDistance, Mod provider)
             {
                 Action = action;
+                ActivationDistance = activationDistance;
                 Provider = provider;
             }
         }
@@ -116,10 +119,10 @@ namespace DaggerfallWorkshop.Game
         /// <param name="provider">The mod that provides this override; used to enforce load order.</param>
         /// <param name="modelID">The model ID of the object that will trigger the custom action upon activation.</param>
         /// <param name="customActivation">A callback that implements the custom action.</param>
-        public static void RegisterCustomActivation(Mod provider, uint modelID, CustomActivation customActivation)
+        public static void RegisterCustomActivation(Mod provider, uint modelID, CustomActivation customActivation, float activationDistance = DefaultActivationDistance)
         {
             string goModelName = GameObjectHelper.GetGoModelName(modelID);
-            HandleRegisterCustomActivation(provider, goModelName, customActivation);
+            HandleRegisterCustomActivation(provider, goModelName, customActivation, activationDistance);
         }
 
         /// <summary>
@@ -129,10 +132,10 @@ namespace DaggerfallWorkshop.Game
         /// <param name="textureArchive">The texture archive of the flat object that will trigger the custom action upon activation.</param>
         /// <param name="textureRecord">The texture record of the flat object that will trigger the custom action upon activation.</param>
         /// <param name="customActivation">A callback that implements the custom action.</param>
-        public static void RegisterCustomActivation(Mod provider, int textureArchive, int textureRecord, CustomActivation customActivation)
+        public static void RegisterCustomActivation(Mod provider, int textureArchive, int textureRecord, CustomActivation customActivation, float activationDistance = DefaultActivationDistance)
         {
             string goFlatName = GameObjectHelper.GetGoFlatName(textureArchive, textureRecord);
-            HandleRegisterCustomActivation(provider, goFlatName, customActivation);
+            HandleRegisterCustomActivation(provider, goFlatName, customActivation, activationDistance);
         }
 
         /// <summary>
@@ -142,7 +145,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="textureArchive">The texture archive of the flat object that will trigger the custom action upon activation.</param>
         /// <param name="textureRecord">The texture record of the flat object that will trigger the custom action upon activation.</param>
         /// <param name="customActivation">A callback that implements the custom action.</param>
-        private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation)
+        private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation, float activationDistance)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             bool allowRegistration = true;
@@ -150,12 +153,11 @@ namespace DaggerfallWorkshop.Game
             if (customModActivations.TryGetValue(goFlatModelName, out existingActivation)) {
                 if(existingActivation.Provider.LoadPriority > provider.LoadPriority) {
                     allowRegistration = false;
-                    DaggerfallUnity.LogMessage("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
+                    Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
                 }
             }
-            if(allowRegistration) {
-                //customActivations[goFlatModelName] = customActivation;
-                customModActivations[goFlatModelName] = new CustomModActivation(customActivation, provider);
+            if (allowRegistration) {
+                customModActivations[goFlatModelName] = new CustomModActivation(customActivation, activationDistance, provider);
             }
         }
 
@@ -367,8 +369,9 @@ namespace DaggerfallWorkshop.Game
                     CustomModActivation customActivation;
                     if (customModActivations.TryGetValue(flatModelName, out customActivation))
                     {
-                        customActivation.Action(hit);
-
+                        if(hit.distance <= customActivation.ActivationDistance) {
+                            customActivation.Action(hit);
+                        }
                     }
 
                     // Check for custom activation
