@@ -148,7 +148,6 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             CustomModActivation existingActivation;
             if (customModActivations.TryGetValue(goFlatModelName, out existingActivation) && existingActivation.Provider.LoadPriority > provider.LoadPriority) {
-                allowRegistration = false;
                 Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
             } else {
                 customModActivations[goFlatModelName] = new CustomModActivation(customActivation, activationDistance, provider);
