@@ -551,12 +551,12 @@ namespace DaggerfallWorkshop.Game.Items
                     {
                         DaggerfallUnityItem modItem = (DaggerfallUnityItem)Activator.CreateInstance(itemClassType);
                         modItem.FromItemData(itemArray[i]);
-                        AddItem(modItem, AddPosition.DontCare, true);
+                        AddItem(modItem, noStack: true);
                         continue;
                     }
                 }
                 DaggerfallUnityItem item = new DaggerfallUnityItem(itemArray[i]);
-                AddItem(item);
+                AddItem(item, noStack: true);
             }
         }
 

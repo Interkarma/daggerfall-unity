@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 11493622}
   - component: {fileID: 54817387169916590}
   - component: {fileID: 114379227581842172}
+  - component: {fileID: 114305462486005928}
   - component: {fileID: 114097946917833764}
   - component: {fileID: 114338371543951144}
   - component: {fileID: 114374306957635026}
@@ -1163,6 +1164,19 @@ MonoBehaviour:
   useWalkSpeedOverride: 0
   runSpeedOverride: 11
   useRunSpeedOverride: 0
+--- !u!114 &114305462486005928
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3594b379058f9d4c8f12486a1197782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateTransform: 0
+  updateParticles: 1
 --- !u!114 &114338371543951144
 MonoBehaviour:
   m_ObjectHideFlags: 1

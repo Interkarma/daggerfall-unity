@@ -40,8 +40,9 @@ namespace DaggerfallWorkshop.Game
         // Max time-length of a trail of mouse positions for attack gestures
         private const float MaxGestureSeconds = 1.0f;
 
-        // Max time bow can be held drawn
+        // Max time bow can be held drawn and switch divisor
         private const int MaxBowHeldDrawnSeconds = 10;
+        private const float BowSwitchDivisor = 1.7f;
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
@@ -224,14 +225,6 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Do nothing if weapon isn't done equipping
-            if ((usingRightHand && EquipCountdownRightHand != 0)
-                || (!usingRightHand && EquipCountdownLeftHand != 0))
-            {
-                ShowWeapons(false);
-                return;
-            }
-
             // Hide weapons and do nothing if spell is ready or cast animation in progress
             if (GameManager.Instance.PlayerEffectManager)
             {
@@ -256,6 +249,14 @@ namespace DaggerfallWorkshop.Game
             // Toggle weapon hand
             if (!isAttacking && InputManager.Instance.ActionComplete(InputManager.Actions.SwitchHand))
                 ToggleHand();
+
+            // Do nothing if weapon isn't done equipping
+            if ((usingRightHand && EquipCountdownRightHand != 0)
+                || (!usingRightHand && EquipCountdownLeftHand != 0))
+            {
+                ShowWeapons(false);
+                return;
+            }
 
             // Do nothing if weapons sheathed
             if (Sheathed)
@@ -376,7 +377,7 @@ namespace DaggerfallWorkshop.Game
                         missile.ElementType = ElementTypes.None;
                         missile.IsArrow = true;
 
-                        lastBowUsed = currentRightHandWeapon;
+                        lastBowUsed = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;;
                     }
                 }
 
@@ -682,15 +683,15 @@ namespace DaggerfallWorkshop.Game
             {
                 int switchDelay = 0;
                 if (currentRightHandWeapon != null)
-                    switchDelay += EquipDelayTimes[currentRightHandWeapon.GroupIndex];
-                if (currentRightHandWeapon != null)
-                    switchDelay += EquipDelayTimes[currentLeftHandWeapon.GroupIndex];
+                    switchDelay += EquipDelayTimes[currentRightHandWeapon.GroupIndex] - 500;
+                if (currentLeftHandWeapon != null)
+                    switchDelay += EquipDelayTimes[currentLeftHandWeapon.GroupIndex] - 500;
                 if (switchDelay > 0)
                 {
                     if (UsingRightHand)
-                        EquipCountdownRightHand += switchDelay / 4;
+                        EquipCountdownRightHand += switchDelay / BowSwitchDivisor;
                     else
-                        EquipCountdownLeftHand += switchDelay / 4;
+                        EquipCountdownLeftHand += switchDelay / BowSwitchDivisor;
                 }
             }
 

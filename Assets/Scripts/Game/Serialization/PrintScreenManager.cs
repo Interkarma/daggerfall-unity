@@ -51,16 +51,16 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Unity
 
+        void Start ()
+        {
+            DaggerfallWorkshop.Game.InputManager.OnSavedKeyBinds += GetPrintScreenKeyBind;
+            GetPrintScreenKeyBind();
+        }
+
         void Update ()
         {
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                //Trying to set 'prtscrBinding' on Start() or Awake() will set it to 'None'
-                //This 'if' statement avoids calling GetBinding() every Update() for when I GetKeyUp()
-                if(prtscrBinding == KeyCode.None
-                    && InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen) != KeyCode.None)
-                    prtscrBinding = InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen);
-
                 if (Input.GetKeyUp(prtscrBinding))
                     StartCoroutine(TakeScreenshot());
             }
@@ -69,6 +69,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Private Methods
+
+        void GetPrintScreenKeyBind()
+        {
+            prtscrBinding = InputManager.Instance.GetBinding(InputManager.Actions.PrintScreen);
+        }
 
         IEnumerator TakeScreenshot()
         {

@@ -941,70 +941,12 @@ namespace DaggerfallWorkshop.Game.Items
 
         public int GetBaseDamageMin()
         {
-            switch (TemplateIndex)
-            {
-                case (int)Weapons.Dagger:
-                case (int)Weapons.Tanto:
-                case (int)Weapons.Wakazashi:
-                case (int)Weapons.Shortsword:
-                case (int)Weapons.Broadsword:
-                case (int)Weapons.Staff:
-                case (int)Weapons.Mace:
-                    return 1;
-                case (int)Weapons.Longsword:
-                case (int)Weapons.Claymore:
-                case (int)Weapons.Battle_Axe:
-                case (int)Weapons.War_Axe:
-                case (int)Weapons.Flail:
-                    return 2;
-                case (int)Weapons.Saber:
-                case (int)Weapons.Katana:
-                case (int)Weapons.Dai_Katana:
-                case (int)Weapons.Warhammer:
-                    return 3;
-                case (int)Weapons.Short_Bow:
-                case (int)Weapons.Long_Bow:
-                    return 4;
-
-                default:
-                    return 0;
-            }
+            return FormulaHelper.CalculateWeaponMinDamage((Weapons)TemplateIndex);
         }
 
         public int GetBaseDamageMax()
         {
-            switch (TemplateIndex)
-            {
-                case (int)Weapons.Dagger:
-                    return 6;
-                case (int)Weapons.Tanto:
-                case (int)Weapons.Shortsword:
-                case (int)Weapons.Staff:
-                    return 8;
-                case (int)Weapons.Wakazashi:
-                    return 10;
-                case (int)Weapons.Broadsword:
-                case (int)Weapons.Saber:
-                case (int)Weapons.Battle_Axe:
-                case (int)Weapons.Mace:
-                    return 12;
-                case (int)Weapons.Flail:
-                    return 14;
-                case (int)Weapons.Longsword:
-                case (int)Weapons.Katana:
-                case (int)Weapons.War_Axe:
-                case (int)Weapons.Short_Bow:
-                    return 16;
-                case (int)Weapons.Claymore:
-                case (int)Weapons.Warhammer:
-                case (int)Weapons.Long_Bow:
-                    return 18;
-                case (int)Weapons.Dai_Katana:
-                    return 21;
-
-                default:
-                    return 0;
-            }
+            return FormulaHelper.CalculateWeaponMaxDamage((Weapons)TemplateIndex);
         }
 
         public int GetWeaponMaterialModifier()
@@ -1203,7 +1145,10 @@ namespace DaggerfallWorkshop.Game.Items
             foreach (EquipSlots slot in Enum.GetValues(typeof(EquipSlots)))
             {
                 if (owner.ItemEquipTable.GetItem(slot) == this)
+                {
                     owner.ItemEquipTable.UnequipItem(slot);
+                    owner.UpdateEquippedArmorValues(this, false);
+                }
             }
         }
 
@@ -1338,7 +1283,6 @@ namespace DaggerfallWorkshop.Game.Items
             // Unequip item - entity must equip again
             // This ensures "on equip" effect payloads execute correctly
             UnequipItem(owner);
-            owner.UpdateEquippedArmorValues(this, false);
 
             // Set new enchantments and identified flag
             legacyMagic = legacyEnchantments.ToArray();

@@ -129,7 +129,8 @@ namespace DaggerfallWorkshop
                 {
                     found = true;
                     doorOut = Doors[i];
-                    break;
+                    if (doorOut.doorType == DoorTypes.DungeonExit)
+                        break;
                 }
             }
 
