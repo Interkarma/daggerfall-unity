@@ -111,7 +111,6 @@ namespace DaggerfallWorkshop.Game
         readonly static Dictionary<string, CustomModActivation> customModActivations = new Dictionary<string, CustomModActivation>();
         // Allow mods to register custom flat / model activation methods.
         public delegate void CustomActivation(RaycastHit hit);
-        //private static readonly Dictionary<string, CustomActivation> customActivations = new Dictionary<string, CustomActivation>();
 
         /// <summary>
         /// Registers a custom activation for a model object. Uses the modelID parameter to retrieve the correct object name
