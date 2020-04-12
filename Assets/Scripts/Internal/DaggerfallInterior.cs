@@ -916,7 +916,7 @@ namespace DaggerfallWorkshop
                 DFLocation.BuildingTypes buildingType = buildingData.buildingType;
                 if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
                     (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType) 
-                     && !(PlayerActivate.IsBuildingOpen(buildingType) || guild.HallAccessAnytime())))
+                     && !(PlayerActivate.IsBuildingOpen(buildingType) || buildingType == DFLocation.BuildingTypes.GuildHall && guild.HallAccessAnytime())))
                 {
                     go.SetActive(false);
                 }
