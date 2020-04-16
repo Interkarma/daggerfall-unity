@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -118,8 +119,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Mouse
             Button mouseButton = DaggerfallUI.AddButton(new Rect(80, 190, 80, 10), controlsPanel);
-            mouseButton.BackgroundColor = new Color(0.3f, 0.42f, 0.16f, 1f);
-            mouseButton.Label.Text = "ADVANCED";
+            mouseButton.BackgroundColor = new Color(0f, 0f, 0f, 1f);
+            Texture2D tex;
+            if (!TextureReplacement.TryImportTexture("advanced_controls_button", true, out tex)) {
+                tex = Resources.Load<Texture2D>("advanced_controls_button");    
+            }
+            tex.filterMode = FilterMode.Point;
+            mouseButton.BackgroundTexture = tex;
+            //mouseButton.Label.Text = "ADVANCED";
             mouseButton.OnMouseClick += MouseButton_OnMouseClick;
 
             // Default
