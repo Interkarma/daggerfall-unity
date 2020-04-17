@@ -103,7 +103,6 @@ namespace DaggerfallWorkshop
         public bool MipMaps = true;
         public bool ReadableTextures = false;
         public SupportedAlphaTextureFormats AlphaTextureFormat = SupportedAlphaTextureFormats.ARGB32;
-        public int AssetCacheThreshold;
 
         // Window settings
         public Color DayWindowColor = new Color32(89, 154, 178, 0xff);
@@ -872,15 +871,10 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Removes from cache all materials that have not been accessed from the time in minutes defined
-        /// by <see cref="AssetCacheThreshold"/>. If equals to <c>0</c> assets are never removed from cache.
+        /// by <paramref name="threshold"/>.
         /// </summary>
-        internal void PruneCache()
+        internal void PruneCache(float time, float threshold)
         {
-            if (AssetCacheThreshold == 0)
-                return;
-
-            float time = Time.realtimeSinceStartup;
-            float threshold = AssetCacheThreshold * 60;
             foreach (var item in materialDict.Where(x => time - x.Value.timeStamp > threshold).ToList())
                 materialDict.Remove(item.Key);
         }

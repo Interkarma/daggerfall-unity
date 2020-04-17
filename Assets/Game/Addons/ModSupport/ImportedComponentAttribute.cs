@@ -226,6 +226,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         readonly static fsSerializer fsSerializer = new fsSerializer();
         readonly static Dictionary<string, Type> types = new Dictionary<string, Type>();
+        readonly static Dictionary<string, float> deserializedObjects = new Dictionary<string, float>();
 
         #endregion
 
@@ -280,8 +281,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="mod">The mod that contains components type and serialized data.</param>
         /// <param name="gameObject">A gameobject instance.</param>
-        public static void Restore(Mod mod, GameObject gameObject)
+        /// <param name="assetname">Persistent and unique assetname inside the mod.</param>
+        public static void Restore(Mod mod, GameObject gameObject, string assetname)
         {
+            if (mod.GUID.Equals("invalid", StringComparison.Ordinal))
+            {
+                Debug.LogErrorFormat("Failed to deserialize asset {0} for mod {1} because mod GUID is invalid.", assetname, mod.Title);
+                return;
+            }
+
+            string assetKey = string.Format("{0}-{1}", mod.GUID, assetname);
+            float instanceID = gameObject.GetInstanceID();
+
+            // Make sure a gameobject is not deserialized more than one time.
+            // This can happen if is removed from cache then readded without being unloaded due to other references.
+            float currentInstanceID;
+            if (deserializedObjects.TryGetValue(assetKey, out currentInstanceID) && currentInstanceID == instanceID)
+                return;
+            
             fsSerializer.Context.Set(mod);
             object instance = gameObject;
             fsData fsData = fsJsonParser.Parse(LoadSerializedFile(mod, gameObject.name));
@@ -289,6 +306,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (fsResult.Failed || fsResult.HasWarnings)
                 Debug.LogErrorFormat("Deserialization of {0} from {1} {2} with messages:\n{3}",
                     gameObject.name, mod.Title, fsResult.Succeeded ? "succeeded" : "failed", fsResult.FormattedMessages);
+
+            deserializedObjects[assetKey] = instanceID;
         }
 
         #endregion

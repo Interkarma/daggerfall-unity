@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop
 {
@@ -465,6 +466,29 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Internal Methods
+
+        /// <summary>
+        /// Removes from cache all assets that have not been accessed from the time in minutes defined by
+        /// <see cref="SettingsManager.AssetCacheThreshold"/>. If equals to <c>0</c> assets are never removed from cache.
+        /// </summary>
+        internal void PruneCache()
+        {
+            if (Settings.AssetCacheThreshold == 0)
+                return;
+
+            float time = Time.realtimeSinceStartup;
+            float threshold = Settings.AssetCacheThreshold * 60;
+
+            MaterialReader.PruneCache(time, threshold);
+            if (ModManager.Instance)
+                ModManager.Instance.PruneCache(time, threshold);
+
+            RaiseOnPruneCacheEvent(time, threshold);
+        }
+
+        #endregion
+
         #region Private Methods
 
         private void SetupSingleton()
@@ -519,6 +543,14 @@ namespace DaggerfallWorkshop
         {
             if (OnSetTextProvider != null)
                 OnSetTextProvider();
+        }
+
+        public delegate void OnPruneCacheEventHandler(float time, float threshold);
+        public event OnPruneCacheEventHandler OnPruneCache;
+        private void RaiseOnPruneCacheEvent(float time, float threshold)
+        {
+            if (OnPruneCache != null)
+                OnPruneCache(time, threshold);
         }
 
         #endregion
