@@ -379,7 +379,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Once a button has been added the owner is expecting some kind of input from player
             // Don't allow a messagebox with buttons to be cancelled with escape
             AllowCancel = false;
-            Debug.Log("Updating panel sizes for custom buttons");
             UpdatePanelSizes();
 
             return button;
