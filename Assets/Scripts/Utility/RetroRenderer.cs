@@ -25,6 +25,9 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public class RetroRenderer : MonoBehaviour
     {
+        [SerializeField]
+        private Material postprocessMaterial;
+
         public RenderTexture RetroTexture320x200;
         public RenderTexture RetroTexture640x400;
 
@@ -48,6 +51,12 @@ namespace DaggerfallWorkshop.Utility
                 retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400;
             else
                 gameObject.SetActive(false);
+
+            Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPostprocessingShaderName);
+            if (shader)
+                postprocessMaterial = new Material(shader);
+            else
+                Debug.Log("Couldn't find shader " + MaterialReader._DaggerfallRetroPostprocessingShaderName);
         }
 
         private void Update()
@@ -62,7 +71,7 @@ namespace DaggerfallWorkshop.Utility
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             if (retroTexture)
-                Graphics.Blit(retroTexture, null as RenderTexture);
+                Graphics.Blit(retroTexture, null as RenderTexture, postprocessMaterial);
         }
     }
 }
