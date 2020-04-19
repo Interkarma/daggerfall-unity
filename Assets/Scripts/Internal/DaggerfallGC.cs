@@ -14,16 +14,12 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop
 {
-    public class DaggerfallGC
+    public static class DaggerfallGC
     {
         // Min time between two unused assets collections
         private const float uuaThrottleDelay = 180f;
 
         private static float uuaTimer = Time.realtimeSinceStartup;
-
-        private DaggerfallGC()
-        {
-        }
 
         public static void ThrottledUnloadUnusedAssets()
         {
