@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Utility
         DaggerfallSky sky;
         RenderTexture retroTexture;
 
+        public static bool postprocessing = false;
         private Material postprocessMaterial = null;
 
         public RenderTexture RetroTexture
@@ -58,14 +59,7 @@ namespace DaggerfallWorkshop.Utility
             else
                 gameObject.SetActive(false);
 
-            if (retroTexture && DaggerfallUnity.Settings.UsePostProcessingInRetroMode)
-            {
-                Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPostprocessingShaderName);
-                if (shader)
-                    postprocessMaterial = new Material(shader);
-                else
-                    Debug.Log("Couldn't find shader " + MaterialReader._DaggerfallRetroPostprocessingShaderName);
-            }
+            postprocessing = DaggerfallUnity.Settings.UsePostProcessingInRetroMode;
         }
 
         private void Update()
@@ -79,11 +73,29 @@ namespace DaggerfallWorkshop.Utility
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            if (retroTexture)
+            if (!retroTexture)
+                return;
+
+            if (postprocessing)
+            {
+                if (!postprocessMaterial)
+                {
+                    Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPostprocessingShaderName);
+                    if (shader)
+                        postprocessMaterial = new Material(shader);
+                    else
+                    {
+                        postprocessing = false;
+                        Debug.Log("Couldn't find shader " + MaterialReader._DaggerfallRetroPostprocessingShaderName);
+                    }
+                }
                 if (postprocessMaterial)
+                {
                     Graphics.Blit(retroTexture, null as RenderTexture, postprocessMaterial);
-                else
-                    Graphics.Blit(retroTexture, null as RenderTexture);
+                    return;
+                }
+            }
+            Graphics.Blit(retroTexture, null as RenderTexture);
         }
     }
 }

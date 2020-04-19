@@ -12,6 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -251,6 +252,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HUDToggle).IsDownWith(keyModifiers))
             {
                 renderHUD = !renderHUD;
+            }
+
+            // Toggle Retro Renderer Postprocessing
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.ToggleRetroPP).IsDownWith(keyModifiers))
+            {
+                RetroRenderer.postprocessing = !RetroRenderer.postprocessing;
             }
 
             flickerController.NextCycle();
