@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
             mainPanel.Size = mainPanelSize;
             mainPanel.Outline.Enabled = true;
-            SetBackground(mainPanel, mainPanelBackgroundColor, "mainPanelBackgroundColor");
+            SetBackground(mainPanel, mainPanelBackgroundColor, "advancedControlsMainPanelBackgroundColor");
             NativePanel.Components.Add(mainPanel);
 
             // Title label
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             continueButton.Size = new Vector2(80, 10);
             continueButton.HorizontalAlignment = HorizontalAlignment.Right;
             continueButton.VerticalAlignment = VerticalAlignment.Bottom;
-            SetBackground(continueButton, continueButtonBackgroundColor, "continueButtonBackgroundColor");
+            SetBackground(continueButton, continueButtonBackgroundColor, "advancedControlsContinueButtonBackgroundColor");
             mainPanel.Components.Add(continueButton);
 
             // keybind buttons
@@ -199,7 +199,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.HorizontalAlignment = HorizontalAlignment.Right;
             button.VerticalAlignment = VerticalAlignment.Middle;
 
-            SetBackground(button, keybindButtonBackgroundColor, "advancedKeybindBackgroundColor");
+            SetBackground(button, keybindButtonBackgroundColor, "advancedControlsKeybindBackgroundColor");
             button.OnMouseClick += KeybindButton_OnMouseClick;
 
             buttonGroup.Add(button);
