@@ -151,6 +151,8 @@ exteriorLightShadows,                               Exterior Light Shadows
 exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
 retroRenderingMode,                                 Retro Rendering Mode
 retroRenderingModeInfo,                             3D world rendered at low resolution while UI remains at set resolution
+usePostProcessingInRetroMode,                       Retro Rendering Postprocessing
+usePostProcessingInRetroModeInfo,                   Shrink color palette in retro mode to emulate classic look
 
 - Options shared among sliders. Missing keys use default text.
 
