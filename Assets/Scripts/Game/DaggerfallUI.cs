@@ -944,9 +944,14 @@ namespace DaggerfallWorkshop.Game
 
         public static HorizontalSlider AddSlider(Vector2 position, Action<HorizontalSlider> setIndicator, float textScale = 1, Panel panel = null)
         {
+            return AddSlider(position, 80.0f, setIndicator, textScale, panel);
+        }
+
+        public static HorizontalSlider AddSlider(Vector2 position, float length, Action<HorizontalSlider> setIndicator, float textScale = 1, Panel panel = null)
+        {
             var slider = new HorizontalSlider();
             slider.Position = position;
-            slider.Size = new Vector2(80.0f, 4.0f);
+            slider.Size = new Vector2(length, 4.0f);
             slider.DisplayUnits = 20;
             slider.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
             slider.TintColor = new Color(153, 153, 0);

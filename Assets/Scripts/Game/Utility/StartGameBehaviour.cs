@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Common Startup
 
-        void ApplyStartSettings()
+        public void ApplyStartSettings()
         {
             // Resolution
             if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
