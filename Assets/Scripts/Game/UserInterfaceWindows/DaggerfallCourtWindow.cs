@@ -53,10 +53,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float prisonUpdateInterval = 0.3f; // Approximated to classic based on measuring a video recording.
 
         // From FALL.EXE offset 0x1B34E0
-        byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x00,  0x06,  0x00, 0x00 };
-        short[] BasePenaltyAmounts      = { 0x12C,  0xC8, 0x258, 0x3E8, 0x2710,   0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x00,  0xC8,  0xC8, 0x00 };
-        short[] MinimumPenaltyAmounts   = {  0x32,  0x0A,  0x50,  0x0A, 0x2328,   0x00,  0x0A,  0x02,  0x00,  0x00, 0x00,  0x05,  0x05, 0x00 };
-        short[] MaximumPenaltyAmounts   = { 0x3E8, 0x320, 0x4B0, 0x5DC, 0x2EE0, 0x2EE0, 0x5DC, 0x2BC,  0x00,  0x00, 0x00, 0x3E8, 0x3E8, 0x00 };
+        // Vanilla unused crime values adjusted below by adding reasonable values for any zeros and a column for loan default crime.
+        // Mnemonics                        TryB&E  Tressp  B&E Assault  Murder  TaxEv CrimCon Vagrant Smuggle Pirate HiTre PickP Theft Treason LoanD
+        byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
+        short[] BasePenaltyAmounts      = { 0x12C,  0xC8, 0x258, 0x3E8, 0x2710,   0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
+        short[] MinimumPenaltyAmounts   = {  0x32,  0x0A,  0x50,  0x0A, 0x2328,   0x0A,  0x0A,  0x02,  0x0A,  0x0A, 0xA0,  0x05,  0x05,  0x0A,  0x04 };
+        short[] MaximumPenaltyAmounts   = { 0x3E8, 0x320, 0x4B0, 0x5DC, 0x2EE0, 0x2EE0, 0x5DC, 0x2BC, 0x5DC, 0x5DC, 0x7D0, 0x3E8, 0x3E8, 0x5DC, 0x2BC };
 
         public int PunishmentType { get { return punishmentType; } }
         public int Fine { get { return fine; } }
@@ -134,11 +136,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int penaltyAmount = 0;
 
                 if (legalRep >= 0)
-                    penaltyAmount = PenaltyPerLegalRepPoint[crimeType] * legalRep
-                    + BasePenaltyAmounts[crimeType];
+                    penaltyAmount = PenaltyPerLegalRepPoint[crimeType] * legalRep + BasePenaltyAmounts[crimeType];
                 else
-                    penaltyAmount = BasePenaltyAmounts[crimeType]
-                    - PenaltyPerLegalRepPoint[crimeType] * legalRep;
+                    penaltyAmount = BasePenaltyAmounts[crimeType] - PenaltyPerLegalRepPoint[crimeType] * legalRep;
 
                 if (penaltyAmount > MaximumPenaltyAmounts[crimeType])
                     penaltyAmount = MaximumPenaltyAmounts[crimeType];

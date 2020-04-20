@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    DFIronman (forums.dfworkshop.net)
 // 
 // Notes:
 //
@@ -15,18 +15,18 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Makes all foes hostile, or clears (removes) them all.
+    /// Unrestrains a foe restrained by RestrainFoe
     /// </summary>
-    public class Enemies : ActionTemplate
+    public class UnrestrainFoe : ActionTemplate
     {
-        bool clear = false;
+        Symbol foeSymbol;
 
         public override string Pattern
         {
-            get { return @"enemies (?<action>makehostile|clear)"; }
+            get { return @"unrestrain foe (?<aFoe>[a-zA-Z0-9_.-]+)"; }
         }
 
-        public Enemies(Quest parentQuest)
+        public UnrestrainFoe(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -39,19 +39,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            Enemies action = new Enemies(parentQuest);
-            if (match.Groups["action"].Value == "clear")
-                action.clear = true;
+            UnrestrainFoe action = new UnrestrainFoe(parentQuest);
+            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            if (clear)
-                GameManager.Instance.ClearEnemies();
-            else
-                GameManager.Instance.MakeEnemiesHostile();
+            // Get related Foe resource
+            Foe foe = ParentQuest.GetFoe(foeSymbol);
+            if (foe == null)
+                return;
+
+            // Raise the restrained flag
+            foe.ClearRestrained();
+
             SetComplete();
         }
 
@@ -60,13 +63,13 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public bool clear;
+            public Symbol foeSymbol;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.clear = clear;
+            data.foeSymbol = foeSymbol;
 
             return data;
         }
@@ -77,7 +80,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            clear = data.clear;
+            foeSymbol = data.foeSymbol;
         }
 
         #endregion
