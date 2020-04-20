@@ -86,6 +86,7 @@ namespace DaggerfallWorkshop.Game
             get { return currentMode; }
         }
 
+        // Public opening hours; Guilds' HallAccessAnytime can override that
         public static bool IsBuildingOpen(DFLocation.BuildingTypes buildingType)
         {
             return (openHours[(int)buildingType] <= DaggerfallUnity.Instance.WorldTime.Now.Hour &&
@@ -1135,7 +1136,7 @@ namespace DaggerfallWorkshop.Game
             if (type == DFLocation.BuildingTypes.GuildHall)
             {
                 IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
-                unlocked = guild.HallAccessAnytime() ? true : IsBuildingOpen(type);
+                unlocked = guild.HallAccessAnytime() || IsBuildingOpen(type);
             }
             // Handle TG/DB houses
             else if (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0)
