@@ -395,7 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (code != KeyCode.None)
             {
-                if (InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
+                if(InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
                 {
                     button.Label.Text = InputManager.Instance.GetKeyString(code);
 
