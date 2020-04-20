@@ -235,8 +235,8 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Do nothing if player paralyzed
-            if (GameManager.Instance.PlayerEntity.IsParalyzed)
+            // Do nothing if player paralyzed or is climbing
+            if (GameManager.Instance.PlayerEntity.IsParalyzed || GameManager.Instance.ClimbingMotor.IsClimbing)
             {
                 ShowWeapons(false);
                 return;
