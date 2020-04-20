@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
-            properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.WeaponOnly;
+            properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held | EnchantmentPayloadFlags.Strikes;
         }
 
