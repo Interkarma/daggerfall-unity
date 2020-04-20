@@ -51,6 +51,9 @@ namespace DaggerfallWorkshop.Game.Items
         const int artifactMaleTextureArchive = 432;
         const int artifactFemaleTextureArchive = 433;
 
+        // Last template index for vanilla DF items, any higher index is a custom item
+        public const int LastDFTemplate = 287;
+
         public static int WagonKgLimit = 750;
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
@@ -62,6 +65,9 @@ namespace DaggerfallWorkshop.Game.Items
 
         public delegate bool ItemUseHander(DaggerfallUnityItem item, ItemCollection collection);
         Dictionary<int, ItemUseHander> itemUseHandlers = new Dictionary<int, ItemUseHander>();
+
+        Dictionary<int, Type> customItemTypes = new Dictionary<int, Type>();
+        Dictionary<ItemGroups, List<int>> customItemGroups = new Dictionary<ItemGroups, List<int>>();
 
         #endregion
 
@@ -78,15 +84,16 @@ namespace DaggerfallWorkshop.Game.Items
 
         #region Public Methods
 
-        public bool RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
+        /// <summary>
+        /// Registers a custom usage handler for a given item template index.
+        /// Not required for custom items with implementing classes, override UseItem() instead.
+        /// </summary>
+        /// <param name="templateIndex">Template index of the item, can be either a classic or custom item</param>
+        /// <param name="itemUseHander">Implementation of ItemUseHandler delegate to call when item is used</param>
+        public void RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
         {
             DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex=" + templateIndex);
-            if (!itemUseHandlers.ContainsKey(templateIndex))
-            {
-                itemUseHandlers.Add(templateIndex, itemUseHander);
-                return true;
-            }
-            return false;
+            itemUseHandlers[templateIndex] = itemUseHander;
         }
 
         public bool GetItemUseHander(int templateIndex, out ItemUseHander itemUseHander)
@@ -94,12 +101,71 @@ namespace DaggerfallWorkshop.Game.Items
             return itemUseHandlers.TryGetValue(templateIndex, out itemUseHander);
         }
 
+        /// <summary>
+        /// Registers a custom item defined by an item template entry for in-game generation and with a custom implementation class if required.
+        /// </summary>
+        /// <param name="templateIndex">Template index to use for the item, must match entry in item templates</param>
+        /// <param name="itemGroup">Set to assign the item to a group for purposes of loot generation and shop stocking</param>
+        /// <param name="itemClassType">Provide the Type of a custom implementation class to be used, which must extend DaggerfallUnityItem</param>
+        public void RegisterCustomItem(int templateIndex, ItemGroups itemGroup = ItemGroups.None, Type itemClassType = null)
+        {
+            if (templateIndex <= LastDFTemplate)
+                throw new Exception("RegisterCustomItem: Template index must not be of an existing DF item.");
+            if (itemGroup == ItemGroups.None && itemClassType == null)
+                throw new Exception("RegisterCustomItem: Nothing specified to register the item .");
+
+            DaggerfallUnity.LogMessage("RegisterCustomItem: TemplateIndex=" + templateIndex + ", Class=" + itemClassType + ", Group=" + itemGroup, true);
+
+            // Register custom item class
+            if (itemClassType != null)
+            {
+                // Register with item collection for de-serialization, no conflicts allowed here
+                string itemClassName = itemClassType.ToString();
+                if (!ItemCollection.RegisterCustomItem(itemClassName, itemClassType))
+                    throw new Exception("RegisterCustomItem: Unable to register the item for de-serialization.");
+
+                customItemTypes[templateIndex] = itemClassType;
+                DaggerfallUnity.LogMessage("RegisterCustomItem: TemplateIndex=" + templateIndex + ", Class=" + itemClassType, true);
+            }
+
+            // Register custom item group
+            if (itemGroup != ItemGroups.None)
+            {
+                List<int> itemTemplateIndexes;
+                if (!customItemGroups.TryGetValue(itemGroup, out itemTemplateIndexes))
+                {
+                    itemTemplateIndexes = new List<int>();
+                    customItemGroups[itemGroup] = itemTemplateIndexes;
+                }
+                if (!itemTemplateIndexes.Contains(templateIndex))
+                {
+                    itemTemplateIndexes.Add(templateIndex);
+                }
+                DaggerfallUnity.LogMessage("RegisterCustomItem: TemplateIndex=" + templateIndex + ", Class=" + itemClassType + ", Group=" + itemGroup, true);
+            }
+        }
+
+        public bool GetCustomItemClass(int templateIndex, out Type itemClassType)
+        {
+            return customItemTypes.TryGetValue(templateIndex, out itemClassType);
+        }
+
+        public int[] GetCustomItemsForGroup(ItemGroups itemGroup)
+        {
+            if (customItemGroups.ContainsKey(itemGroup))
+                return customItemGroups[itemGroup].ToArray();
+            return new int[0];
+        }
 
         /// <summary>
         /// Gets item template data using group and index.
         /// </summary>
         public ItemTemplate GetItemTemplate(ItemGroups itemGroup, int groupIndex)
         {
+            // Items added by mods are after last DF template, with groupIndex == templateIndex
+            if (groupIndex > LastDFTemplate)
+                return GetItemTemplate(groupIndex);
+
             Array values = GetEnumArray(itemGroup);
             if (groupIndex < 0 || groupIndex >= values.Length)
             {
@@ -118,6 +184,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public ItemTemplate GetItemTemplate(int templateIndex)
         {
+            // Items added by mods are after last DF template
+            if (templateIndex > LastDFTemplate)
+            {
+                for (int i = LastDFTemplate; i < itemTemplates.Count; i++)
+                    if (itemTemplates[i].index == templateIndex)
+                        return itemTemplates[i];
+            }
+
             if (templateIndex < 0 || templateIndex >= itemTemplates.Count)
             {
                 string message = string.Format("Item template index out of range: TemplateIndex={0}", templateIndex);
@@ -707,7 +781,12 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Find FPS animation set for this weapon type
             // Daggerfall re-uses the same animations for many different weapons
-            WeaponTypes result;
+
+            // Check for a custom item weapon type, if None then continue
+            WeaponTypes result = item.GetWeaponType();
+            if (result != WeaponTypes.None)
+                return result;
+
             switch (item.TemplateIndex)
             {
                 case (int)Weapons.Dagger:

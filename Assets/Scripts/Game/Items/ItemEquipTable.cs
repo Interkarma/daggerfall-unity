@@ -245,7 +245,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>EquipSlot.</returns>
         public EquipSlots GetEquipSlot(DaggerfallUnityItem item)
         {
-            EquipSlots result = EquipSlots.None;
+            // Check for a custom item defining an equip slot, and return if so, else if None then continue
+            EquipSlots result = item.GetEquipSlot();
+            if (result != EquipSlots.None)
+                return result;
 
             // Resolve based on equipment category
             switch (item.ItemGroup)
@@ -642,8 +645,8 @@ namespace DaggerfallWorkshop.Game.Items
                     return ItemHands.LeftOnly;
             }
 
-            // Nothing found
-            return ItemHands.None;
+            // Nothing found, return custom item value or None.
+            return item.GetItemHands();
         }
 
         #endregion

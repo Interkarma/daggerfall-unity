@@ -346,7 +346,7 @@ namespace DaggerfallWorkshop
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
             if ((RMBLayout.IsShop(buildingType) && !playerEnterExit.IsPlayerInsideOpenShop) ||
-                (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType)))
+                (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.Palace && buildingType != DFLocation.BuildingTypes.HouseForSale))
             {
                 Transform npcTransforms = transform.Find(peopleFlats);
                 if (PlayerActivate.IsBuildingOpen(buildingType))

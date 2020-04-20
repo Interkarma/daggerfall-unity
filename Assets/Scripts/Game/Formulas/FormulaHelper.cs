@@ -827,7 +827,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Combat & Damage: component sub-formula
 
-        private static int CalculateStruckBodyPart()
+        public static int CalculateStruckBodyPart()
         {
             Func<int> del;
             if (TryGetOverride("CalculateStruckBodyPart", out del))
@@ -837,7 +837,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
         }
 
-        private static ToHitAndDamageMods CalculateSwingModifiers(FPSWeapon onscreenWeapon)
+        public static ToHitAndDamageMods CalculateSwingModifiers(FPSWeapon onscreenWeapon)
         {
             Func<FPSWeapon, ToHitAndDamageMods> del;
             if (TryGetOverride("CalculateSwingModifiers", out del))
@@ -928,7 +928,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return mods;
         }
 
-        private static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
+        public static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
         {
             Func<PlayerEntity, DaggerfallEntity, int, int> del;
             if (TryGetOverride("CalculateBackstabChance", out del))
@@ -943,7 +943,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 0;
         }
 
-        private static int CalculateBackstabDamage(int damage, int backstabbingLevel)
+        public static int CalculateBackstabDamage(int damage, int backstabbingLevel)
         {
             Func<int, int, int> del;
             if (TryGetOverride("CalculateBackstabDamage", out del))
@@ -958,7 +958,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        private static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
+        public static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
         {
             Func<DaggerfallEntity, EnemyEntity, int> del;
             if (TryGetOverride("GetBonusOrPenaltyByEnemyType", out del))
@@ -1018,7 +1018,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        private static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
+        public static int AdjustWeaponHitChanceMod(DaggerfallEntity attacker, DaggerfallEntity target, int hitChanceMod, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
             if (TryGetOverride("AdjustWeaponHitChanceMod", out del))
@@ -1027,7 +1027,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return hitChanceMod;
         }
 
-        private static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
+        public static int AdjustWeaponAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damage, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
             if (TryGetOverride("AdjustWeaponAttackDamage", out del))
@@ -1039,7 +1039,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <summary>
         /// Allocate any equipment damage from a strike, and reduce item condition.
         /// </summary>
-        private static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
+        public static void DamageEquipment(DaggerfallEntity attacker, DaggerfallEntity target, int damage, DaggerfallUnityItem weapon, int struckBodyPart)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int, DaggerfallUnityItem, int, bool> del;
             if (TryGetOverride("DamageEquipment", out del))
@@ -1082,7 +1082,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <summary>
         /// Applies condition damage to an item based on physical hit damage.
         /// </summary>
-        private static void ApplyConditionDamageThroughPhysicalHit(DaggerfallUnityItem item, DaggerfallEntity owner, int damage)
+        public static void ApplyConditionDamageThroughPhysicalHit(DaggerfallUnityItem item, DaggerfallEntity owner, int damage)
         {
             Func<DaggerfallUnityItem, DaggerfallEntity, int, bool> del;
             if (TryGetOverride("ApplyConditionDamageThroughPhysicalHit", out del))
@@ -1180,7 +1180,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return chanceToHitMod;
         }
 
-        private static int CalculateAdjustmentsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
+        public static int CalculateAdjustmentsToHit(DaggerfallEntity attacker, DaggerfallEntity target)
         {
             Func<DaggerfallEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("CalculateAdjustmentsToHit", out del))
@@ -2442,117 +2442,88 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <returns>Item max enchantment power.</returns>
         public static int GetItemEnchantmentPower(DaggerfallUnityItem item)
         {
+            Func<DaggerfallUnityItem, int> del;
+            if (TryGetOverride("GetItemEnchantmentPower", out del))
+                return del(item);
+
             if (item == null)
                 throw new Exception("GetItemEnchantmentPower: item is null");
 
+            float multiplier = 0f;
             if (item.ItemGroup == ItemGroups.Weapons)
-                return GetWeaponEnchantmentPower(item);
+                multiplier = GetWeaponEnchantmentMultiplier((WeaponMaterialTypes)item.NativeMaterialValue);
             else if (item.ItemGroup == ItemGroups.Armor)
-                return GetArmorEnchantmentPower(item);
-            else
-                return item.ItemTemplate.enchantmentPoints;
-        }
-
-        public static int GetWeaponEnchantmentPower(DaggerfallUnityItem item)
-        {
-            if (item == null || item.ItemGroup != ItemGroups.Weapons)
-                throw new Exception("GetWeaponEnchantmentPower: item is null or not a weapon type");
-
-            // UESP lists regular material power progression in weapon matrix: https://en.uesp.net/wiki/Daggerfall:Enchantment_Power#Weapons
-            // Enchantment power values for staves are inaccurate in UESP weapon matrix (confirmed in classic)
-            // The below yields correct enchantment power for staves matching classic
-            float multiplier;
-            switch((WeaponMaterialTypes)item.NativeMaterialValue)
-            {
-                default:       
-                case WeaponMaterialTypes.Steel:         // Steel uses base enchantment power
-                    multiplier = 0;
-                    break;
-                case WeaponMaterialTypes.Iron:          // Iron is -25% from base
-                    multiplier = -0.25f;
-                    break;
-                case WeaponMaterialTypes.Silver:        // Silver is +75% from base
-                    multiplier = 0.75f;
-                    break;
-                case WeaponMaterialTypes.Elven:         // Elven is +25% from base
-                    multiplier = 0.25f;
-                    break;
-                case WeaponMaterialTypes.Dwarven:       // Dwarven is +50% from base
-                    multiplier = 0.5f;
-                    break;
-                case WeaponMaterialTypes.Mithril:       // Mithril is +25% from base
-                    multiplier = 0.25f;
-                    break;
-                case WeaponMaterialTypes.Adamantium:    // Adamantium is +75% from base
-                    multiplier = 0.75f;
-                    break;
-                case WeaponMaterialTypes.Ebony:         // Ebony is +100% from base
-                    multiplier = 1.0f;
-                    break;
-                case WeaponMaterialTypes.Orcish:        // Orcish is +150% from base
-                    multiplier = 1.5f;
-                    break;
-                case WeaponMaterialTypes.Daedric:       // Daedric is +200% from base
-                    multiplier = 2.0f;
-                    break;
-            }
+                multiplier = GetArmorEnchantmentMultiplier((ArmorMaterialTypes)item.NativeMaterialValue);
 
             // Final enchantment power is basePower + basePower*multiplier (rounded down)
             int basePower = item.ItemTemplate.enchantmentPoints;
             return basePower + Mathf.FloorToInt(basePower * multiplier);
         }
 
-        public static int GetArmorEnchantmentPower(DaggerfallUnityItem item)
+        public static float GetWeaponEnchantmentMultiplier(WeaponMaterialTypes weaponMaterial)
         {
-            if (item == null || item.ItemGroup != ItemGroups.Armor)
-                throw new Exception("GetArmorEnchantmentPower: item is null or not an armour type");
+            // UESP lists regular material power progression in weapon matrix: https://en.uesp.net/wiki/Daggerfall:Enchantment_Power#Weapons
+            // Enchantment power values for staves are inaccurate in UESP weapon matrix (confirmed in classic)
+            // The below yields correct enchantment power for staves matching classic
+            switch(weaponMaterial)
+            {
+                default:       
+                case WeaponMaterialTypes.Steel:         // Steel uses base enchantment power
+                    return 0f;
+                case WeaponMaterialTypes.Iron:          // Iron is -25% from base
+                    return -0.25f;
+                case WeaponMaterialTypes.Silver:        // Silver is +75% from base
+                    return 0.75f;
+                case WeaponMaterialTypes.Elven:         // Elven is +25% from base
+                    return 0.25f;
+                case WeaponMaterialTypes.Dwarven:       // Dwarven is +50% from base
+                    return 0.5f;
+                case WeaponMaterialTypes.Mithril:       // Mithril is +25% from base
+                    return 0.25f;
+                case WeaponMaterialTypes.Adamantium:    // Adamantium is +75% from base
+                    return 0.75f;
+                case WeaponMaterialTypes.Ebony:         // Ebony is +100% from base
+                    return 1.0f;
+                case WeaponMaterialTypes.Orcish:        // Orcish is +150% from base
+                    return 1.5f;
+                case WeaponMaterialTypes.Daedric:       // Daedric is +200% from base
+                    return 2.0f;
+            }
+        }
 
+        public static float GetArmorEnchantmentMultiplier(ArmorMaterialTypes armorMaterial)
+        {
             // UESP lists highly variable material power progression in armour matrix: https://en.uesp.net/wiki/Daggerfall:Enchantment_Power#Armor
             // This indicates certain armour types don't follow the same general material progression patterns for enchantment point multipliers
             // Yet to confirm this in classic - but not entirely confident in accuracy of UESP information here either
             // For now using consistent progression for enchantment point multipliers and can improve later if required
-            float multiplier;
-            switch ((ArmorMaterialTypes)item.NativeMaterialValue)
+            switch (armorMaterial)
             {
                 default:
                 case ArmorMaterialTypes.Leather:        // Leather/Chain/Steel all use base enchantment power
                 case ArmorMaterialTypes.Chain:
                 case ArmorMaterialTypes.Chain2:
                 case ArmorMaterialTypes.Steel:
-                    multiplier = 0;
-                    break;
+                    return 0f;
                 case ArmorMaterialTypes.Iron:           // Iron is -25% from base
-                    multiplier = -0.25f;
-                    break;
+                    return -0.25f;
                 case ArmorMaterialTypes.Silver:         // Silver is +75% from base
-                    multiplier = 0.75f;
-                    break;
+                    return 0.75f;
                 case ArmorMaterialTypes.Elven:          // Elven is +25% from base
-                    multiplier = 0.25f;
-                    break;
+                    return 0.25f;
                 case ArmorMaterialTypes.Dwarven:        // Dwarven is +50% from base
-                    multiplier = 0.5f;
-                    break;
+                    return 0.5f;
                 case ArmorMaterialTypes.Mithril:        // Mithril is +25% from base
-                    multiplier = 0.25f;
-                    break;
+                    return 0.25f;
                 case ArmorMaterialTypes.Adamantium:     // Adamantium is +75% from base
-                    multiplier = 0.75f;
-                    break;
+                    return 0.75f;
                 case ArmorMaterialTypes.Ebony:          // Ebony is +100% from base
-                    multiplier = 1.0f;
-                    break;
+                    return 1.0f;
                 case ArmorMaterialTypes.Orcish:         // Orcish is +150% from base
-                    multiplier = 1.5f;
-                    break;
+                    return 1.5f;
                 case ArmorMaterialTypes.Daedric:        // Daedric is +200% from base
-                    multiplier = 2.0f;
-                    break;
+                    return 2.0f;
             }
-
-            // Final enchantment power is basePower + basePower*multiplier (rounded down)
-            int basePower = item.ItemTemplate.enchantmentPoints;
-            return basePower + Mathf.FloorToInt(basePower * multiplier);
         }
 
         #endregion
