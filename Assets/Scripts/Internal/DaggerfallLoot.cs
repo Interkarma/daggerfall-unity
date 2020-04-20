@@ -17,6 +17,8 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop
 {
@@ -134,6 +136,7 @@ namespace DaggerfallWorkshop
             DFLocation.BuildingTypes buildingType = buildingData.buildingType;
             int shopQuality = buildingData.quality;
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
             byte[] itemGroups = { 0 };
 
             switch (buildingType)
@@ -191,10 +194,10 @@ namespace DaggerfallWorkshop
                     }
                     else
                     {
-                        System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
+                        System.Array enumArray = itemHelper.GetEnumArray(itemGroup);
                         for (int j = 0; j < enumArray.Length; ++j)
                         {
-                            DaggerfallConnect.FallExe.ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, j);
+                            ItemTemplate itemTemplate = itemHelper.GetItemTemplate(itemGroup, j);
                             if (itemTemplate.rarity <= shopQuality)
                             {
                                 int stockChance = chanceMod * 5 * (21 - itemTemplate.rarity) / 100;
@@ -225,6 +228,34 @@ namespace DaggerfallWorkshop
                                         if (DaggerfallUnity.Settings.PlayerTorchFromItems && item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
                                             item.stackCount = Random.Range(5, 20 + 1);  // Shops stock 5-20 bottles
                                     }
+                                    items.AddItem(item);
+                                }
+                            }
+                        }
+                        // Add any modded items registered in applicable groups
+                        int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(itemGroup);
+                        for (int j = 0; j < customItemTemplates.Length; j++)
+                        {
+                            ItemTemplate itemTemplate = itemHelper.GetItemTemplate(itemGroup, customItemTemplates[j]);
+                            if (itemTemplate.rarity <= shopQuality)
+                            {
+                                int stockChance = chanceMod * 5 * (21 - itemTemplate.rarity) / 100;
+                                if (Dice100.SuccessRoll(stockChance))
+                                {
+                                    DaggerfallUnityItem item = ItemBuilder.CreateItem(itemGroup, customItemTemplates[j]);
+
+                                    // Setup specific group stats
+                                    if (itemGroup == ItemGroups.Weapons)
+                                    {
+                                        WeaponMaterialTypes material = ItemBuilder.RandomMaterial(playerEntity.Level);
+                                        ItemBuilder.ApplyWeaponMaterial(item, material);
+                                    }
+                                    else if (itemGroup == ItemGroups.Armor)
+                                    {
+                                        ArmorMaterialTypes material = ItemBuilder.RandomArmorMaterial(playerEntity.Level);
+                                        ItemBuilder.ApplyArmorSettings(item, playerEntity.Gender, playerEntity.Race, material);
+                                    }
+
                                     items.AddItem(item);
                                 }
                             }

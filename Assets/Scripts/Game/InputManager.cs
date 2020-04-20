@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game
         const float inputWaitTotal = 0.0833f;
 
         IList keyCodeList;
-        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape, KeyCode.BackQuote, KeyCode.F8 };
+        KeyCode[] reservedKeys = new KeyCode[] { };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();

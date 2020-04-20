@@ -739,7 +739,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected int GetMagnitude(DaggerfallEntityBehaviour caster = null)
         {
             if (caster == null)
-                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster.", Properties.Key);
+                Debug.LogWarningFormat("GetMagnitude() for {0} has no caster. Using caster level 1 for magnitude.", Properties.Key);
 
             if (manager == null)
                 Debug.LogWarningFormat("GetMagnitude() for {0} has no parent manager.", Properties.Key);

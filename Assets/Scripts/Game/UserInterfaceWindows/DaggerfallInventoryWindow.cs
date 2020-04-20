@@ -566,6 +566,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Inventory);
+
             // Racial override can suppress inventory
             // We still setup and push window normally, actual suppression is done in Update()
             MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
@@ -1333,7 +1335,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     prohibited = true;
 
                 // Check for prohibited material
-                else if (((item.NativeMaterialValue >> 8) == 2)
+                else if (((item.nativeMaterialValue >> 8) == 2)
                     && (1 << (item.NativeMaterialValue & 0xFF) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
                     prohibited = true;
             }

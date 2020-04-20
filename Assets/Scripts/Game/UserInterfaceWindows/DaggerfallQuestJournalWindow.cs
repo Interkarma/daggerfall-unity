@@ -187,6 +187,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             base.OnPush();
+
+            toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
+            toggleClosedBinding2 = InputManager.Instance.GetBinding(InputManager.Actions.NoteBook);
+
             questMessages       = QuestMachine.Instance.GetAllQuestLogMessages();
             lastMessageIndex    = NULLINT;
             currentMessageIndex = 0;

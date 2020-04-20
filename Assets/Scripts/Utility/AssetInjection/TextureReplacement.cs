@@ -670,7 +670,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>The name for the texture array with requested options.</returns>
         public static string GetNameTexArray(int archive, TextureMap textureMap = TextureMap.Albedo)
         {
-            string name = string.Format("{0}-TexArray", archive);
+            string name = string.Format("{0:000}-TexArray", archive);
 
             if (textureMap != TextureMap.Albedo)
                 name = string.Format("{0}_{1}", name, textureMap);

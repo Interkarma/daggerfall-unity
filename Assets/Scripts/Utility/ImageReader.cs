@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Get colors array without mask
             Color32[] colors = imageData.dfBitmap.GetColor32(imageData.alphaIndex, 0xff, maskColor, true);
-            if (colors == null)
+            if (colors == null || colors.Length == 0)
                 return;
 
             // Create new Texture2D from mask

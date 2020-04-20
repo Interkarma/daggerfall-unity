@@ -212,6 +212,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);
+
             // Reset counters
             minutesOfHour = 0;
             hoursRemaining = 0;

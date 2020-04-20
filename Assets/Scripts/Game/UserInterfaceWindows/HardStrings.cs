@@ -236,6 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string Pickpocketing = "Pickpocketing";
         public const string Theft = "Theft";
         public const string Treason = "Treason";
+        public const string Loan_Default = "Loan Default";
 
         public const string Regular_Punishment_String = "%gtp gold pieces in fines and %dip days in prison";
         public const string Banishment = "Banishment";

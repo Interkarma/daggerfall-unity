@@ -195,7 +195,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public void HandleAttackFromSource(DaggerfallEntityBehaviour sourceEntityBehaviour)
         {
             // Break "normal power" concealment effects on source
-            if (sourceEntityBehaviour.Entity.IsMagicallyConcealedNormalPower)
+            if (sourceEntityBehaviour && sourceEntityBehaviour.Entity.IsMagicallyConcealedNormalPower)
                 EntityEffectManager.BreakNormalPowerConcealmentEffects(sourceEntityBehaviour);
 
             // When source is player

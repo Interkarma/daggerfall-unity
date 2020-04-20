@@ -302,10 +302,11 @@ Message:  1036
 <ce>                     _barmaid_ begins whispering:
 <ce>                    "Ok %pcf, here's what we'll do.
 <ce>                   We'll split up, and make our way
-<ce>                        to _wereBrother_. Then
+<ce>                        to __mondung_. Then
 <ce>                   while you distract him, I'll cast
 <ce>               the spell to tame the beast within him."
 
+--Changed _wereBrother_ to __mondung_ so _barmaid_ specifies dungeon werewolf is in, not dungeon brother NPC currently stashed in
 
 -- Symbols used in the QRC file:
 --
@@ -327,15 +328,14 @@ Message:  1036
 
 QBN:
 Item _letter_ letter used 1018
--Item _I.01_ letter used 1017
---edited prior to my revision.
+Item _I.01_ letter used 1017
 Item _relic_ magic_item used 1026
 
 Person _cyndassa_ named Cyndassa atHome anyInfo 1019
 Person courtier face 89 faction Court_of_Daggerfall
 Person _barmaid_ face 115 faction The_Daggerfall_Witches anyInfo 1020
 Person _P.03_ faction The_Sisters_of_the_Bluff female
-Person _wereBrother_ face 13 faction The_Mages_Guild anyInfo 1025
+Person _wereBrother_ face 13 faction The_Mages_Guild anyInfo 1025 male
 Person _P.05_ named Br'itsa
 
 Place _mondung_ permanent Tristore_Laboratory4
@@ -349,11 +349,12 @@ Clock _2mondung_ 00:00 0 flag 17 range 0 2
 Clock _2ndparton_ 00:00 0 flag 17 range 0 2
 Clock _delay_ 02:12 1.00:17
 Clock _S.27_ 00:01 00:01
-Clock _S.32_ 00:02 00:02
+Clock _S.32_ 00:01 00:01
+--Reduced time before quest success displays after player arrives at coven
 
 Foe _brother_ is Werewolf
 Foe talisman is 2 Werewolf
--Foe boar is Wereboar
+Foe boar is Wereboar
 
 --	Quest start-up:
 	dialog link for person _wereBrother_ 
@@ -367,7 +368,7 @@ Foe talisman is 2 Werewolf
 	repute with _barmaid_ exceeds 4 do _S.11_ 
 	pc at glenmorilCoven set _S.30_ 
 	pc at _mondung_ set _S.14_ 
-	-_I.01_ used do _S.34_ 
+	_I.01_ used do _S.34_ 
 
 _2mondung_ task:
 	drop _cyndassa_ as questor 
@@ -380,7 +381,7 @@ _S.02_ task:
 
 _S.03_ task:
 	when _2ndparton_ 
-	drop _P.05_ face 
+	drop _barmaid_ face 
 	drop _wereBrother_ face 
 	drop _cyndassa_ as questor 
 	end quest 
@@ -408,14 +409,14 @@ _S.08_ task:
 	clicked npc _barmaid_ 
 
 yes task:
-	-place item _I.01_ at _L.02_ 
-	place item _letter_ at _L.01_ 
+	place item _I.01_ at _L.02_ questmarker 0
+	place item _letter_ at _L.01_ marker 0
 	log 1023 step 0 
 	reveal _mondung_ in province 19 at 255132 
 	pick one of _S.13_ _S.12_ _S.13_ _S.12_ 
 	say AcceptQuest 
 	add _cyndassa_ as questor 
-	place foe _brother_ at _mondung_ 
+	place foe _brother_ at _mondung_ marker 1
 
 _no_ task:
 	say RefuseQuest 
@@ -441,7 +442,7 @@ _S.19_ task:
 
 _S.20_ task:
 	when _S.14_ and _S.16_ 
-	-place foe boar at _L.02_ 
+	place foe boar at _L.02_ marker 0
 
 _S.21_ task:
 	when _S.17_ and _S.16_ 
@@ -452,7 +453,7 @@ _S.22_ task:
 	when _S.14_ and _S.37_ 
 	restore _barmaid_ 
 	say 1036 
-	drop _P.05_ face 
+	drop _barmaid_ face 
 	place npc _barmaid_ at _mondung_ 
 
 _S.23_ task:
@@ -476,25 +477,28 @@ _S.27_ task:
 	clear _S.25_ _S.23_ _S.24_ 
 
 _mmap_ task:
-	when _S.27_ and not _S.37_ and not _mondead_ 
+	when _S.27_ and not _S.37_ and not _mondead_ and _S.11_ and not _S.32_
 	say 1024 
 	add _wereBrother_ face 
-	place foe _brother_ at _npc2_ 
+	place foe _brother_ at _npc2_
+    place npc _barmaid_ at _tavern_
+    --Need to move _barmaid_ to tavern mentioned in quest for final reunion
+    clear _S.08_
+    --Clear click on _barmaid_ or ending will fire too soon
 
 _S.29_ task:
-	when _S.27_ and _S.37_ and not _mondead_ 
+	when _S.27_ and not _S.37_ and not _mondead_ and not _S.11_
 	log 1030 step 0 
 	log 1031 step 1 
 	reveal glenmorilCoven in province 17 at 191097 
 	give item _relic_ to _brother_ 
-	hide npc _barmaid_ 
+	hide npc _barmaid_
+    say 1032 
 	say 1012 
 	say 1033 
-	say 1032 
 	add _wereBrother_ face 
-	add _P.05_ face 
+	add _barmaid_ face 
 	place foe _brother_ at _npc2_ 
-	place npc _barmaid_ at _tavern_ 
 
 variable _S.30_
 _S.31_ task:
@@ -506,7 +510,7 @@ _S.32_ task:
 	start timer _delay_ 
 	stop timer _2ndparton_ 
 	say 1034 
-	drop _P.05_ face 
+	drop _barmaid_ face 
 	drop _wereBrother_ face 
 	change repute with courtier by +10 
 	change repute with _barmaid_ by +12 
@@ -534,16 +538,18 @@ _S.36_ task:
 	location _tavern_ 100 27000 
 --not known what this intends to do
 	log 1015 step 1 
-	get item _relic_ 
+	get item _relic_
 
 _S.37_ task:
 	when _S.08_ and not _mondead_ and not _S.17_ and not _S.11_ 
 	hide npc _barmaid_ 
 	say 1029 
-	add _P.05_ face 
+	add _barmaid_ face 
 
 _S.38_ task:
-	when _S.08_ and not _mondead_ and _S.17_ and not _S.19_ 
+	when _S.08_ and _mondead_ and _S.17_ and not _S.19_ 
+	--_barmaid_ previously berates player when werewolf injured, even though that is how quest is supposed to be played
+    --Changed this to only happen when player kills werewolf, which seems to be the intent
 	add dialog for person _wereBrother_ 
 	say 1028 
 	change repute with _barmaid_ by -5 
@@ -562,10 +568,10 @@ _S.41_ task:
 	say 1021 
 
 _S.42_ task:
-	when _S.08_ and not _mondead_ and _S.19_ and not _S.14_ 
+	when _S.08_ and not _mondead_ and _S.19_ and not _S.14_
+    say 1011
 	say 1012 
-	say 1013 
-	say 1011 
+    say 1013
 	make _relic_ permanent 
 	drop _wereBrother_ face 
 

@@ -327,7 +327,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="resource">Incoming resource type about to be added.</param>
         /// <param name="markerIndex">Static index to use. Must be able to find preferred marker type. Used by main quest only.</param>
-        bool GetSiteMarker(QuestResource resource, int markerIndex = -1)
+        /// <param name="markerPreference">Marker preference when using static index.</param>
+        bool GetSiteMarker(QuestResource resource, int markerIndex = -1, MarkerPreference markerIndexPreference = MarkerPreference.Default)
         {
             // Direct to previously selected marker, unless specific index specified
             if (siteDetails.selectedMarker.targetResources != null)
@@ -335,7 +336,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (markerIndex > -1)
                 {
                     // Specific index specified and already got the main selected marker, so just assign directly to marker list
-                    if (resource is Person || resource is Foe)
+                    if (resource is Person || resource is Foe || markerIndexPreference == MarkerPreference.UseQuestMarker)
                         AssignResourceToMarker(resource.Symbol.Clone(), ref siteDetails.questSpawnMarkers[markerIndex]);
                     else if (resource is Item)
                         AssignResourceToMarker(resource.Symbol.Clone(), ref siteDetails.questItemMarkers[markerIndex]);
@@ -346,7 +347,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Determine preferred marker type for this resource
             MarkerTypes preferredMarkerType = MarkerTypes.None;
-            if (resource is Person || resource is Foe)
+            if (resource is Person || resource is Foe || markerIndexPreference == MarkerPreference.UseQuestMarker)
                 preferredMarkerType = MarkerTypes.QuestSpawn;
             else if (resource is Item)
                 preferredMarkerType = MarkerTypes.QuestItem;
@@ -393,7 +394,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="targetSymbol">Resource symbol of Person, Item, or Foe to assign.</param>
         /// <param name="markerIndex">Preferred marker index to use instead of random. Must be able to find preferred marker type. Used by main quest only.</param>
-        public void AssignQuestResource(Symbol targetSymbol, int markerIndex = -1, bool cullExisting = true)
+        public void AssignQuestResource(Symbol targetSymbol, int markerIndex = -1, MarkerPreference markerIndexPreference = MarkerPreference.Default, bool cullExisting = true)
         {
             // Site must have at least one marker available
             if (!ValidateQuestMarkers(siteDetails.questSpawnMarkers, siteDetails.questItemMarkers))
@@ -411,7 +412,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 QuestMachine.Instance.CullResourceTarget(resource, Symbol);
 
             // Get marker for new resource and assign resource to marker
-            if (GetSiteMarker(resource, markerIndex))
+            if (GetSiteMarker(resource, markerIndex, markerIndexPreference))
                 AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.selectedMarker);
 
             // Output debug information
@@ -537,7 +538,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             previousMarkerIndex = siteDetails.selectedQuestItemMarker;
 
                         // Reassign to same marker
-                        AssignQuestResource(symbol, previousMarkerIndex, false);
+                        AssignQuestResource(symbol, previousMarkerIndex, MarkerPreference.Default, false);
                         Debug.LogFormat("Reassigned resource {0} to new marker system.", symbol.Original);
                     }
                 }

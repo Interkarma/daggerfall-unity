@@ -628,6 +628,15 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Marker preference when allocating quest resources to a static marker index.
+    /// </summary>
+    public enum MarkerPreference
+    {
+        Default,                // Assign Foe/Person to specified questmarker index and Item to specified itemmarker index
+        UseQuestMarker,         // Assign Foe/Person/Item to specified questmarker index
+    }
+
+    /// <summary>
     /// Phases of the moons.
     /// </summary>
     public enum LunarPhases

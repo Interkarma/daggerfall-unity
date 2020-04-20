@@ -1114,11 +1114,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Handle effect-based absorption
             SpellAbsorption absorbEffect = FindIncumbentEffect<SpellAbsorption>() as SpellAbsorption;
-            if (absorbEffect != null && TryEffectBasedAbsorption(effect, absorbEffect, casterEntity))
+            if (absorbEffect != null && TryEffectBasedAbsorption(effect, absorbEffect, entityBehaviour.Entity))
                 return true;
 
             // Handle career-based absorption
-            if (entityBehaviour.Entity.Career.SpellAbsorption != DFCareer.SpellAbsorptionFlags.None && TryCareerBasedAbsorption(effect, casterEntity))
+            if (entityBehaviour.Entity.Career.SpellAbsorption != DFCareer.SpellAbsorptionFlags.None && TryCareerBasedAbsorption(effect, entityBehaviour.Entity))
                 return true;
 
             // Handle persistant absorption (e.g. special advantage general/day/night or from weapon effects)
@@ -1214,17 +1214,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return spellPointCost;
         }
 
-        bool TryEffectBasedAbsorption(IEntityEffect effect, SpellAbsorption absorbEffect, DaggerfallEntity casterEntity)
+        bool TryEffectBasedAbsorption(IEntityEffect effect, SpellAbsorption absorbEffect, DaggerfallEntity entity)
         {
-            int chance = absorbEffect.Settings.ChanceBase + absorbEffect.Settings.ChancePlus * (int)Mathf.Floor(casterEntity.Level / absorbEffect.Settings.ChancePerLevel);
+            int chance = absorbEffect.Settings.ChanceBase + absorbEffect.Settings.ChancePlus * (int)Mathf.Floor(entity.Level / absorbEffect.Settings.ChancePerLevel);
 
             return Dice100.SuccessRoll(chance);
         }
 
-        bool TryCareerBasedAbsorption(IEntityEffect effect, DaggerfallEntity casterEntity)
+        bool TryCareerBasedAbsorption(IEntityEffect effect, DaggerfallEntity entity)
         {
             // Always resists
-            DFCareer.SpellAbsorptionFlags spellAbsorption = casterEntity.Career.SpellAbsorption;
+            DFCareer.SpellAbsorptionFlags spellAbsorption = entity.Career.SpellAbsorption;
             if (spellAbsorption == DFCareer.SpellAbsorptionFlags.Always)
                 return true;
 
@@ -1616,6 +1616,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         effect.ConstantEffect();
                 }
             }
+
+            // MaxMagickaModifier stacks with no upper limit
+            // This can cause player to lose current spellpoints when loading game or stacking effects using this modifier
+            // So clamp spellpoints to current max only after applying all constant effects for this entity
+            if (entityBehaviour.Entity.CurrentMagicka > entityBehaviour.Entity.MaxMagicka)
+                entityBehaviour.Entity.CurrentMagicka = entityBehaviour.Entity.MaxMagicka;
         }
 
         /// <summary>
