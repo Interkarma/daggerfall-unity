@@ -47,7 +47,6 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerActivate : MonoBehaviour
     {
-
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         GameObject mainCamera;
@@ -87,6 +86,7 @@ namespace DaggerfallWorkshop.Game
             get { return currentMode; }
         }
 
+        // Public opening hours; Guilds' HallAccessAnytime can override that
         public static bool IsBuildingOpen(DFLocation.BuildingTypes buildingType)
         {
             return (openHours[(int)buildingType] <= DaggerfallUnity.Instance.WorldTime.Now.Hour &&
@@ -147,15 +147,10 @@ namespace DaggerfallWorkshop.Game
         private static void HandleRegisterCustomActivation(Mod provider, string goFlatModelName, CustomActivation customActivation, float activationDistance)
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
-            bool allowRegistration = true;
             CustomModActivation existingActivation;
-            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation)) {
-                if(existingActivation.Provider.LoadPriority > provider.LoadPriority) {
-                    allowRegistration = false;
-                    Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
-                }
-            }
-            if (allowRegistration) {
+            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation) && existingActivation.Provider.LoadPriority > provider.LoadPriority) {
+                Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
+            } else {
                 customModActivations[goFlatModelName] = new CustomModActivation(customActivation, activationDistance, provider);
             }
         }
@@ -1141,7 +1136,7 @@ namespace DaggerfallWorkshop.Game
             if (type == DFLocation.BuildingTypes.GuildHall)
             {
                 IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingSummary.FactionId);
-                unlocked = guild.HallAccessAnytime() ? true : IsBuildingOpen(type);
+                unlocked = guild.HallAccessAnytime() || IsBuildingOpen(type);
             }
             // Handle TG/DB houses
             else if (type == DFLocation.BuildingTypes.House2 && buildingSummary.FactionId != 0)

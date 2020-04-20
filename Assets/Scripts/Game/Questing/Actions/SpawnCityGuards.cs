@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    DFIronman, Hazelnut
 // 
 // Notes:
 //
@@ -15,18 +15,18 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Makes all foes hostile, or clears (removes) them all.
+    /// Spawns city guards using PlayerEntity.SpawnCityGuards().
     /// </summary>
-    public class Enemies : ActionTemplate
+    public class SpawnCityGuards : ActionTemplate
     {
-        bool clear = false;
+        bool immediateSpawn;
 
         public override string Pattern
         {
-            get { return @"enemies (?<action>makehostile|clear)"; }
+            get { return @"spawncityguards (immediate)?"; }
         }
 
-        public Enemies(Quest parentQuest)
+        public SpawnCityGuards(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -38,20 +38,21 @@ namespace DaggerfallWorkshop.Game.Questing
             if (!match.Success)
                 return null;
 
-            // Factory new action
-            Enemies action = new Enemies(parentQuest);
-            if (match.Groups["action"].Value == "clear")
-                action.clear = true;
+            // Trim source end or trailing white space will be split to an empty symbol at end of array
+            source = source.TrimEnd();
+
+            SpawnCityGuards action = new SpawnCityGuards(parentQuest);
+            action.immediateSpawn = match.Groups.Count > 1;
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            if (clear)
-                GameManager.Instance.ClearEnemies();
-            else
-                GameManager.Instance.MakeEnemiesHostile();
+            base.Update(caller);
+
+            GameManager.Instance.PlayerEntity.SpawnCityGuards(immediateSpawn);
+
             SetComplete();
         }
 
@@ -60,13 +61,13 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public bool clear;
+            public bool immediateSpawn;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.clear = clear;
+            data.immediateSpawn = immediateSpawn;
 
             return data;
         }
@@ -77,7 +78,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            clear = data.clear;
+            immediateSpawn = data.immediateSpawn;
         }
 
         #endregion

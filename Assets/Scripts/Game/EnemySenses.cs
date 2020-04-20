@@ -726,8 +726,8 @@ namespace DaggerfallWorkshop.Game
                             continue;
                     }
 
-                    // For now, quest AI only targets player
-                    if (questBehaviour && targetBehaviour != player)
+                    // Quest enemy AI only targets player by default unless explicitly marked as attackable by a mod/quest.
+                    if (questBehaviour && !questBehaviour.IsAttackableByAI && targetBehaviour != player)
                         continue;
 
                     EnemySenses targetSenses = null;

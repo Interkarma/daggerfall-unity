@@ -15,7 +15,7 @@ using FullSerializer;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Displays a prompt which user can click to dismiss.
+    /// Adds a text entry to the player journal as a note.
     /// </summary>
     public class JournalNote : ActionTemplate
     {

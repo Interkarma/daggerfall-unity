@@ -118,7 +118,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Mouse
             Button mouseButton = DaggerfallUI.AddButton(new Rect(80, 190, 80, 10), controlsPanel);
-            mouseButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            mouseButton.BackgroundColor = new Color(0.3f, 0.42f, 0.16f, 1f);
+            mouseButton.Label.Text = "ADVANCED";
             mouseButton.OnMouseClick += MouseButton_OnMouseClick;
 
             // Default
@@ -316,7 +317,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void MouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenMouseControlsWindow);
+            if (waitingForInput)
+                return;
+
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenMouseControlsWindow);
         }
 
         private void DefaultButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

@@ -4,29 +4,31 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    DFIronman, Hazelnut
 // 
 // Notes:
-//
+// 
 
 using System.Text.RegularExpressions;
+using DaggerfallWorkshop.Game.Entity;
 using FullSerializer;
+using System;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Makes all foes hostile, or clears (removes) them all.
+    /// Sets a player's crime.
     /// </summary>
-    public class Enemies : ActionTemplate
+    public class SetPlayerCrime : ActionTemplate
     {
-        bool clear = false;
-
+        public PlayerEntity.Crimes playerCrime;
+        
         public override string Pattern
         {
-            get { return @"enemies (?<action>makehostile|clear)"; }
+            get { return @"setplayercrime (?<crime>[a-zA-Z_]+)"; }
         }
 
-        public Enemies(Quest parentQuest)
+        public SetPlayerCrime(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -39,19 +41,24 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            Enemies action = new Enemies(parentQuest);
-            if (match.Groups["action"].Value == "clear")
-                action.clear = true;
+            SetPlayerCrime action = new SetPlayerCrime(parentQuest);
+            string crime = match.Groups["crime"].Value;
+            if (!Enum.IsDefined(typeof(PlayerEntity.Crimes), crime))
+            {
+                SetComplete();
+                throw new Exception(string.Format("SetPlayerCrime: Crime {0} is not a known crime from PlayerEntity.Crimes enum.", crime));
+            }
+            action.playerCrime = (PlayerEntity.Crimes)Enum.Parse(typeof(PlayerEntity.Crimes), crime);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            if (clear)
-                GameManager.Instance.ClearEnemies();
-            else
-                GameManager.Instance.MakeEnemiesHostile();
+            base.Update(caller);
+
+            GameManager.Instance.PlayerEntity.CrimeCommitted = playerCrime;
+
             SetComplete();
         }
 
@@ -60,13 +67,13 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public struct SaveData_v1
         {
-            public bool clear;
+            public PlayerEntity.Crimes crime;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.clear = clear;
+            data.crime = playerCrime;
 
             return data;
         }
@@ -77,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            clear = data.clear;
+            playerCrime = data.crime;
         }
 
         #endregion
