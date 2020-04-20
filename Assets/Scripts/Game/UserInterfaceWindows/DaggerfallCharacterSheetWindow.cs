@@ -369,7 +369,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.Show();
         }
 
-        void ShowAffiliationsDialog()
+        protected virtual void ShowAffiliationsDialog()
         {
             List<TextFile.Token> tokens = new List<TextFile.Token>();
             List<IGuild> guildMemberships = GameManager.Instance.GuildManager.GetMemberships();
