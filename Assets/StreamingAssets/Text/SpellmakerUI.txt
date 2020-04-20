@@ -23,5 +23,6 @@ nameSpell,                  Name spell
 enterSpellName,             Enter spell name :
 noEffectsError,             You must add at least one effect to this spell.
 deleteSpell,                Do you want to delete this spell?
+sortSpells,                 Do you want to sort spells?
 effectNotFoundError,        <effect not found>
 noItemToActivate,           You have no usable magic item

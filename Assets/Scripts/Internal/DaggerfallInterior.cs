@@ -346,7 +346,7 @@ namespace DaggerfallWorkshop
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
             if ((RMBLayout.IsShop(buildingType) && !playerEnterExit.IsPlayerInsideOpenShop) ||
-                (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType)))
+                (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.Palace && buildingType != DFLocation.BuildingTypes.HouseForSale))
             {
                 Transform npcTransforms = transform.Find(peopleFlats);
                 if (PlayerActivate.IsBuildingOpen(buildingType))
@@ -883,7 +883,8 @@ namespace DaggerfallWorkshop
         {
             GameObject node = new GameObject(peopleFlats);
             node.transform.parent = this.transform;
-            bool isMemberOfBuildingGuild = GameManager.Instance.GuildManager.GetGuild(buildingData.factionID).IsMember();
+            IGuild guild = GameManager.Instance.GuildManager.GetGuild(buildingData.factionID);
+            bool isMemberOfBuildingGuild = guild.IsMember();
 
             // Add block flats
             foreach (DFBlock.RmbBlockPeopleRecord obj in recordData.Interior.BlockPeopleRecords)
@@ -914,7 +915,8 @@ namespace DaggerfallWorkshop
                 // Disable people if shop or building is closed
                 DFLocation.BuildingTypes buildingType = buildingData.buildingType;
                 if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
-                    (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType) && !PlayerActivate.IsBuildingOpen(buildingType)))
+                    (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType) 
+                     && !(PlayerActivate.IsBuildingOpen(buildingType) || buildingType == DFLocation.BuildingTypes.GuildHall && guild.HallAccessAnytime())))
                 {
                     go.SetActive(false);
                 }

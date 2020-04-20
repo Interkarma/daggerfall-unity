@@ -97,6 +97,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             (incumbent as Teleport).PromptPlayer();
         }
 
+        public override void End()
+        {
+            anchorPosition = null;
+            base.End();
+        }
+
         #endregion
 
         #region Private Methods
@@ -148,7 +154,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Just need to move player
                 serializablePlayer.RestorePosition(anchorPosition);
-                return;
             }
             else
             {
@@ -270,7 +275,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Teleport)
             {
-                if (!anchorSet)
+                if (!anchorSet || anchorPosition == null)
                 {
                     DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallUI.Instance.UserInterfaceManager.TopWindow);
                     mb.SetTextTokens(achorMustBeSet);

@@ -90,6 +90,11 @@ namespace DaggerfallWorkshop.Utility
             return string.Format("DaggerfallMesh [ID={0}]", modelID);
         }
 
+        public static string GetGoFlatName(int textureArchive, int textureRecord)
+        {
+            return string.Format("DaggerfallBillboard [TEXTURE.{0:000}, Index={1}]", textureArchive, textureRecord);
+        }
+
         /// <summary>
         /// Adds a single DaggerfallMesh game object to scene.
         /// </summary>
@@ -268,11 +273,23 @@ namespace DaggerfallWorkshop.Utility
 
         public static GameObject CreateDaggerfallBillboardGameObject(int archive, int record, Transform parent)
         {
-            GameObject go = new GameObject(string.Format("DaggerfallBillboard [TEXTURE.{0:000}, Index={1}]", archive, record));
+            string flatName = GetGoFlatName(archive, record);
+            GameObject go = new GameObject(flatName);
             if (parent) go.transform.parent = parent;
 
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
+
+            if (PlayerActivate.HasCustomActivation(flatName)) 
+            {
+                // Add box collider to flats with actions for raycasting - only flats that can be activated directly need this, so this can possibly be restricted in future
+                // Skip this for flats that already have a collider assigned from elsewhere (e.g. NPC flats)
+                if (!go.GetComponent<Collider>())
+                {
+                    Collider col = go.AddComponent<BoxCollider>();
+                    col.isTrigger = true;
+                }
+            }
 
             return go;
         }

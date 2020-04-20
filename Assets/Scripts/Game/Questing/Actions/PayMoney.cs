@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
     /// Take an amount from player, and start a task depending on if they could pay.
+    /// Amount can be gold, letter of credit, or a combination.
     /// </summary>
     public class PayMoney : ActionTemplate
     {

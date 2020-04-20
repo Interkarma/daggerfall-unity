@@ -636,7 +636,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (IsAssetLoaded(assetName))
                 {
                     la = loadedAssets[assetName];
-                    return la.Obj as T;
+                    if (la.Obj)
+                        return la.Obj as T;
+
+                    loadedAssets.Remove(assetName);
+                    Debug.LogWarningFormat("Removed asset {0} from cache of mod {1} because object is unloaded.", assetName, Title);
                 }
 
 #if UNITY_EDITOR
