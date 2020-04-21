@@ -1492,6 +1492,11 @@ namespace DaggerfallWorkshop.Game.Entity
             if (item == null || item.Symbol == null)
                 return;
 
+            // Always set prototype item permanent when requested
+            // This handles cases where prototype is given directly to player
+            if (makePermanent)
+                item.DaggerfallUnityItem.MakePermanent();
+
             // Get all player held quest items matching this quest and item symbol
             DaggerfallUnityItem[] items = GameManager.Instance.PlayerEntity.Items.ExportQuestItems(questUID, item.Symbol);
             if (items == null || items.Length == 0)
