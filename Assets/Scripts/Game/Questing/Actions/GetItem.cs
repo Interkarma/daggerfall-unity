@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Release item so we can give back to player
             // Sometimes a quest item is both carried by player then handed back to them
             // Example is Sx012 where courier hands back two items of jewellery
-            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
+            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(ParentQuest.UID, item);
 
             // Give quest item to player
             if (item.DaggerfallUnityItem.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces))

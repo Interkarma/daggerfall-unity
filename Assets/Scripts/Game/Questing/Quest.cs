@@ -285,10 +285,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (ticksToEnd > 0)
             {
                 if (--ticksToEnd == 0)
-                {
                     questComplete = true;
-                    CleanupPlayerQuestItems();
-                }
             }
 
             // Tick resources
@@ -521,30 +518,6 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach(string key in keys)
             {
                 DropQuestor(new Symbol(key));
-            }
-        }
-
-        /// <summary>
-        /// Releases all orphaned non-permanent quest items from player inventory when quest is ended.
-        /// Item will no longer belong to any collection and will be garbage collected.
-        /// Only call this method once quest has fully completed and entered tombstone state.
-        /// </summary>
-        void CleanupPlayerQuestItems()
-        {
-            // Quest must be completed
-            if (!questComplete)
-                throw new Exception("CleanupPlayerQuestItems() called prior to quest completion.");
-
-            // Get all non-permanent quest items in player inventory linked to this quest UID
-            DaggerfallUnityItem[] items = GameManager.Instance.PlayerEntity.Items.ExportQuestItems(UID);
-            if (items == null || items.Length == 0)
-                return;
-
-            // Release these items from collection
-            // Using ReleaseQuestItemForReoffer() to ensure item is correctly unequipped before release as player may have equipped quest item
-            foreach (DaggerfallUnityItem item in items)
-            {
-                GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item);
             }
         }
 
