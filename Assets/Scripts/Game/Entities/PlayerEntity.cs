@@ -1494,6 +1494,10 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Get all player held quest items matching this quest and item symbol
             DaggerfallUnityItem[] items = GameManager.Instance.PlayerEntity.Items.ExportQuestItems(questUID, item.Symbol);
+            if (items == null || items.Length == 0)
+                return;
+
+            // Process all matching items
             foreach (DaggerfallUnityItem dfitem in items)
             {
                 // Unequip item if player is wearing it
