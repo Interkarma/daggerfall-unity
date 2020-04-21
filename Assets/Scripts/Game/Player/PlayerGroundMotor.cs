@@ -52,9 +52,9 @@ namespace DaggerfallWorkshop.Game
         /// <param name="moveDirection">The vector the player should move to.</param>
         public void MoveWithMovingPlatform(Vector3 moveDirection)
         {
-            // Do nothing if movement pending cancel
-            if (playerMotor.CancelMovement)
-                return;
+            // Clear active platform if player just cancelled climbing
+            if (GameManager.Instance.ClimbingMotor.WasClimbing)
+                ClearActivePlatform();
 
             // Moving platform support
             if (activePlatform != null)
