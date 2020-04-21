@@ -170,6 +170,7 @@ namespace DaggerfallWorkshop.Game
             ClimbQuitMoveUnderToHang = (inputBack && !moveScanner.HitSomethingInFront && moveScanner.FrontUnderCeiling != null);
 
             // Should we reset climbing starter timers?
+            bool wasClimbing = isClimbing;
             if ((!pushingFaceAgainstWallNearCeiling)
                 &&
                 (inputAbortCondition
@@ -193,6 +194,10 @@ namespace DaggerfallWorkshop.Game
                 releasedFromCeiling = false;
                 // Reset position for horizontal distance check and timer to wait for climbing start
                 lastHorizontalPosition = new Vector2(controller.transform.position.x, controller.transform.position.z);
+
+                // Cancel movement if we just stopped climbing
+                if (wasClimbing)
+                    GameManager.Instance.PlayerMotor.CancelMovement = true;
             }
             else // countdown climbing events
             { 
