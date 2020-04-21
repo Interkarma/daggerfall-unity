@@ -176,6 +176,18 @@ namespace DaggerfallWorkshop.Game
 
             ClimbQuitMoveUnderToHang = (inputBack && !moveScanner.HitSomethingInFront && moveScanner.FrontUnderCeiling != null);
 
+            // Allow climbing slight overhangs when capsule hits above but upwards ray from near wall side of capsule has clear space overhead
+            // Works by gently bumping player capsule away from wall at point of contact so they can acquire new vertical climb position on normal ascent
+            // Provided angle not too extreme then player will keep climbing upwards or downwards
+            // Allows player to climb out of gently angled positions like the coffin tunnel in Scourg Barrow (which this fix is specifically for)
+            // Does not allow climbing past overhangs that extend above head close to wall, which includes ceilings and most eaves
+            if (isClimbing && (playerMotor.CollisionFlags & CollisionFlags.Above) == CollisionFlags.Above)
+            {
+                Vector3 testPosition = controller.transform.position + wallDirection * controller.radius * 0.90f;
+                if (!Physics.Raycast(testPosition, Vector3.up, controller.height / 2 + 0.12f))
+                    controller.transform.position += -wallDirection * 0.1f;
+            }
+
             // Should we reset climbing starter timers?
             wasClimbing = isClimbing;
             if ((!pushingFaceAgainstWallNearCeiling)
