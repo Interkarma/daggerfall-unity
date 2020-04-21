@@ -253,6 +253,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 renderHUD = !renderHUD;
             }
 
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Pause).IsUpWith(keyModifiers))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
+            }
+
             flickerController.NextCycle();
 
             // Don't display persistent HUD elements during initial startup
