@@ -1498,6 +1498,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 item.DaggerfallUnityItem.MakePermanent();
 
             // Get all player held quest items matching this quest and item symbol
+            // This can include items cloned from prototype to a Foe resource then picked up by player
             DaggerfallUnityItem[] items = GameManager.Instance.PlayerEntity.Items.ExportQuestItems(questUID, item.Symbol);
             if (items == null || items.Length == 0)
                 return;
