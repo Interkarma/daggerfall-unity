@@ -510,6 +510,23 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gets all quest items for a specific quest.
+        /// Ignores ex-quest items that have been made permanent.
+        /// </summary>
+        /// <param name="questUID">Quest UID for item search.</param>
+        public DaggerfallUnityItem[] ExportQuestItems(ulong questUID)
+        {
+            List<DaggerfallUnityItem> results = new List<DaggerfallUnityItem>();
+            foreach (DaggerfallUnityItem item in items.Values)
+            {
+                if (item.IsQuestItem && item.QuestUID == questUID)
+                    results.Add(item);
+            }
+
+            return results.ToArray();
+        }
+
+        /// <summary>
         /// Serialize items from this collection.
         /// </summary>
         /// <returns>ItemData_v1 array.</returns>
