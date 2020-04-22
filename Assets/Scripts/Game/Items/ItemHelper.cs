@@ -90,15 +90,15 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="templateIndex">Template index of the item, can be either a classic or custom item</param>
         /// <param name="itemUseHander">Implementation of ItemUseHandler delegate to call when item is used</param>
-        public void RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
+        public void RegisterItemUseHandler(int templateIndex, ItemUseHander itemUseHandler)
         {
-            DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex=" + templateIndex);
-            itemUseHandlers[templateIndex] = itemUseHander;
+            DaggerfallUnity.LogMessage("RegisterItemUseHandler: TemplateIndex=" + templateIndex);
+            itemUseHandlers[templateIndex] = itemUseHandler;
         }
 
-        public bool GetItemUseHander(int templateIndex, out ItemUseHander itemUseHander)
+        public bool GetItemUseHandler(int templateIndex, out ItemUseHander itemUseHandler)
         {
-            return itemUseHandlers.TryGetValue(templateIndex, out itemUseHander);
+            return itemUseHandlers.TryGetValue(templateIndex, out itemUseHandler);
         }
 
         /// <summary>
