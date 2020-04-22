@@ -51,9 +51,10 @@ OptionsHeadBobbing,   H
 HUDToggle,            Shift-F10
 
 -- Debugger
-DebuggerToggle,       Shift-Tab
-DebuggerPrevQuest,    LeftBracket
-DebuggerNextQuest,    RightBracket
+DebuggerToggle,             Shift-Tab
+DebuggerPrevQuest,          LeftBracket
+DebuggerNextQuest,          RightBracket
+DebuggerActiveQuestToggle,  A
 
 -- Rest menu
 RestForAWhile,        F

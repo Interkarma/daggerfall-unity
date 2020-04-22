@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         ulong[] allQuests;
         int currentQuestIndex;
         Quest currentQuest;
+        bool activeQuestToggle = false;
 
         DisplayState displayState = DisplayState.Nothing;
 
@@ -153,6 +154,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 MovePreviousQuest();
             else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerNextQuest).IsDownWith(keyModifiers))
                 MoveNextQuest();
+            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerActiveQuestToggle).IsDownWith(keyModifiers))
+                ToggleActiveQuestView();
         }
 
         private void QuestMachine_OnTick()
@@ -470,6 +473,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestIndex = 0;
 
             SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[currentQuestIndex]));
+            if (activeQuestToggle && !ActiveQuest(currentQuest))
+                MoveNextQuest();
         }
 
         void MovePreviousQuest()
@@ -481,6 +486,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestIndex = allQuests.Length - 1;
 
             SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[currentQuestIndex]));
+            if (activeQuestToggle && !ActiveQuest(currentQuest))
+                MovePreviousQuest();
+        }
+
+        void ToggleActiveQuestView()
+        {
+            ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
+            activeQuestToggle = !activeQuestToggle;
+
+            if (activeQuestToggle && activeQuests.Length == 0)
+            {
+                DaggerfallUI.AddHUDText("No Currently Active Quests. Showing all Quests");
+                activeQuestToggle = false;
+            }
+
+            if (activeQuestToggle && (currentQuest.QuestComplete || currentQuest.QuestTombstoned))
+                MoveNextQuest();
+        }
+
+        bool ActiveQuest(Quest currentQuest)
+        {
+            ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
+            if (activeQuests.Length > 0)
+            {
+                if (currentQuest.QuestComplete || currentQuest.QuestTombstoned)
+                    return false;
+            }
+            return true;
         }
 
         void EnableGlobalVars(bool value)
