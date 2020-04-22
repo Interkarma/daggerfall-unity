@@ -38,8 +38,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int buttonTextDistance = 4;
         bool buttonClicked = false;
         MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
-
-        string selectedCustomButton = "";
         bool clickAnywhereToClose = false;
         DaggerfallMessageBox nextMessageBox;
         int customYPos = -1;
@@ -143,11 +141,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public MessageBoxButtons SelectedButton
         {
             get { return selectedButton; }
-        }
-
-        public string SelectedCustomButton
-        {
-            get { return selectedCustomButton; }
         }
 
         public bool ClickAnywhereToClose
@@ -349,42 +342,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return button;
         }
 
-        public Button AddCustomButton(int messageBoxButton, string tag, bool defaultButton = false)
-        {
-            if (!IsSetup)
-                Setup();
-
-            // If this is to become default button, first unset any other default buttons
-            // Only one button in collection can be default
-            if (defaultButton)
-            {
-                foreach (Button b in buttons)
-                    b.DefaultButton = false;
-            }
-
-            Texture2D background;// = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
-            TextureReplacement.TryImportImage("button" + tag, true, out background);
-            //Vector2 size = TextureReplacement.GetSize(background, buttonsFilename, (int)messageBoxButton);
-            Vector2 size = new Vector2(background.width, background.height);
-            Button button = DaggerfallUI.AddButton(Vector2.zero, 
-                size, buttonPanel);
-            button.BackgroundTexture = background;
-            button.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-            button.Tag = tag;
-            button.OnMouseClick += CustomButtonClickHandler;
-            button.DefaultButton = defaultButton;
-            //button.Hotkey = DaggerfallShortcut.GetBinding(ToShortcutButton(messageBoxButton));
-            buttons.Add(button);
-
-            // Once a button has been added the owner is expecting some kind of input from player
-            // Don't allow a messagebox with buttons to be cancelled with escape
-            AllowCancel = false;
-            Debug.Log("Updating panel sizes for custom buttons");
-            UpdatePanelSizes();
-
-            return button;
-        }
-
         /// <summary>
         /// Gets default button (if any).
         /// </summary>
@@ -464,13 +421,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             buttonClicked = true;
             selectedButton = (MessageBoxButtons)sender.Tag;
             RaiseOnButtonClickEvent(this, selectedButton);
-        }
-
-        void CustomButtonClickHandler(BaseScreenComponent sender, Vector2 position)
-        {
-            buttonClicked = true;
-            selectedCustomButton = (string)sender.Tag;
-            RaiseOnCustomButtonClickEvent(this, selectedCustomButton);
         }
 
         void UpdatePanelSizes()
@@ -593,15 +543,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnButtonClick != null)
                 OnButtonClick(sender, messageBoxButton);
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-        }
-
-        public delegate void OnCustomButtonClickHandler(DaggerfallMessageBox sender, string messageBoxButton);
-        public event OnCustomButtonClickHandler OnCustomButtonClick;
-        void RaiseOnCustomButtonClickEvent(DaggerfallMessageBox sender, string messageBoxButton)
-        {
-            if (OnCustomButtonClick != null)
-                OnCustomButtonClick(sender, messageBoxButton);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
