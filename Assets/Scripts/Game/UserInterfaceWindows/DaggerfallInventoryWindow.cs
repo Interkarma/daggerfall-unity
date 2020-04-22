@@ -1659,10 +1659,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Try to handle use with a registered delegate
-            ItemHelper.ItemUseHander itemUseHander;
-            if (DaggerfallUnity.Instance.ItemHelper.GetItemUseHander(item.TemplateIndex, out itemUseHander))
+            ItemHelper.ItemUseHandler itemUseHandler;
+            if (DaggerfallUnity.Instance.ItemHelper.GetItemUseHandler(item.TemplateIndex, out itemUseHandler))
             {
-                if (itemUseHander(item, collection))
+                if (itemUseHandler(item, collection))
                     return;
             }
 
