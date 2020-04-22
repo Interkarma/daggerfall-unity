@@ -63,8 +63,8 @@ namespace DaggerfallWorkshop.Game.Items
         readonly Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         readonly Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
 
-        public delegate bool ItemUseHander(DaggerfallUnityItem item, ItemCollection collection);
-        Dictionary<int, ItemUseHander> itemUseHandlers = new Dictionary<int, ItemUseHander>();
+        public delegate bool ItemUseHandler(DaggerfallUnityItem item, ItemCollection collection);
+        Dictionary<int, ItemUseHandler> itemUseHandlers = new Dictionary<int, ItemUseHandler>();
 
         Dictionary<int, Type> customItemTypes = new Dictionary<int, Type>();
         Dictionary<ItemGroups, List<int>> customItemGroups = new Dictionary<ItemGroups, List<int>>();
@@ -90,15 +90,15 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="templateIndex">Template index of the item, can be either a classic or custom item</param>
         /// <param name="itemUseHander">Implementation of ItemUseHandler delegate to call when item is used</param>
-        public void RegisterItemUseHander(int templateIndex, ItemUseHander itemUseHander)
+        public void RegisterItemUseHandler(int templateIndex, ItemUseHandler itemUseHandler)
         {
-            DaggerfallUnity.LogMessage("RegisterItemUseHander: TemplateIndex=" + templateIndex);
-            itemUseHandlers[templateIndex] = itemUseHander;
+            DaggerfallUnity.LogMessage("RegisterItemUseHandler: TemplateIndex=" + templateIndex);
+            itemUseHandlers[templateIndex] = itemUseHandler;
         }
 
-        public bool GetItemUseHander(int templateIndex, out ItemUseHander itemUseHander)
+        public bool GetItemUseHandler(int templateIndex, out ItemUseHandler itemUseHandler)
         {
-            return itemUseHandlers.TryGetValue(templateIndex, out itemUseHander);
+            return itemUseHandlers.TryGetValue(templateIndex, out itemUseHandler);
         }
 
         /// <summary>
