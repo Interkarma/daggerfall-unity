@@ -325,6 +325,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Loads all assets from asset bundle immediately.
         /// Invidual assets can then be retrieved with <see cref="GetAsset{T}(string, bool)"/>.
+        /// Assets are permanently cached until requested once; then they benefit of memory management.
         /// </summary>
         /// <param name="unloadBundle">Unload asset bundle if true</param>
         /// <returns>True if assetbundle has been loaded succesfully.</returns>
@@ -358,6 +359,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
 
                     la.T = la.Obj.GetType();
+                    la.TimeStamp = -1;
                     AddAsset(assetname, la);
                 }
 
@@ -376,6 +378,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Load all assets from asset bundle asynchronously.
         /// Invidual assets can then be retrieved with <see cref="GetAsset{T}(string, bool)"/>.
+        /// Assets are permanently cached until requested once; then they benefit of memory management.
         /// </summary>
         /// <param name="unloadBundle">Unload asset bundle if true.</param>
         public IEnumerator LoadAllAssetsFromBundleAsync(bool unloadBundle = true)
@@ -608,6 +611,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return TryLocalize(string.Join(".", keyParts));
         }
 
+        internal void PruneCache(float time, float threshold)
+        {
+            foreach (var asset in loadedAssets.Where(x => x.Value.TimeStamp >= 0 && time - x.Value.TimeStamp > threshold).ToList())
+                loadedAssets.Remove(asset.Key);
+        }
+
         #endregion
 
         #region Private Methods
@@ -632,12 +641,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             try
             {
                 assetName = ModManager.GetAssetName(assetName);
+                float time = Time.realtimeSinceStartup;
 
                 if (IsAssetLoaded(assetName))
                 {
                     la = loadedAssets[assetName];
                     if (la.Obj)
+                    {
+                        // Update timestamp of last access, but only if difference is
+                        // significant to limit the number of reassignment to dictionary.
+                        if (la.TimeStamp < 0 || time - la.TimeStamp > 59)
+                        {
+                            la.TimeStamp = time;
+                            loadedAssets[assetName] = la;
+                        }
+
                         return la.Obj as T;
+                    }
 
                     loadedAssets.Remove(assetName);
                     Debug.LogWarningFormat("Removed asset {0} from cache of mod {1} because object is unloaded.", assetName, Title);
@@ -650,6 +670,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     if (la.Obj != null)
                     {
                         la.T = la.Obj.GetType();
+                        la.TimeStamp = time;
                         loadedAssets.Add(assetName, la);
                     }
                     return la.Obj as T;
@@ -666,6 +687,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     if (la.Obj != null)
                     {
                         la.T = la.Obj.GetType();
+                        la.TimeStamp = time;
                         AddAsset(assetName, la);
                     }
                     return la.Obj as T;
@@ -986,6 +1008,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
 
             LoadedAsset la = new LoadedAsset(asset.GetType(), asset);
+            la.TimeStamp = -1;
             return AddAsset(assetName, la);
         }
 
@@ -998,7 +1021,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             else
             {
                 if (la.T == typeof(GameObject) && AssetBundle.Contains(ImportedComponentAttribute.MakeFileName(assetName)))
-                    ImportedComponentAttribute.Restore(this, la.Obj as GameObject);
+                    ImportedComponentAttribute.Restore(this, la.Obj as GameObject, assetName);
 
                 loadedAssets.Add(assetName, la);
 

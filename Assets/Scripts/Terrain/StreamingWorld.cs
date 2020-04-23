@@ -22,6 +22,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Serialization;
 using Unity.Jobs;
 
@@ -658,7 +659,7 @@ namespace DaggerfallWorkshop
             // Keeps memory usage much lower over time
             if (init)
             {
-                DaggerfallUnity.Instance.MaterialReader.PruneCache();
+                DaggerfallUnity.Instance.PruneCache();
                 DaggerfallGC.ThrottledUnloadUnusedAssets();
             }
 
