@@ -1333,6 +1333,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (toleranceFlags == DFCareer.Tolerance.Immune)
                 return;
 
+            // Handle player with racial resistance to poison
+            if (target is PlayerEntity)
+            {
+                RaceTemplate raceTemplate = (target as PlayerEntity).GetLiveRaceTemplate();
+                if ((raceTemplate.ImmunityFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
+                    return;
+            }
+
             if (bypassResistance || SavingThrow(DFCareer.Elements.DiseaseOrPoison, DFCareer.EffectFlags.Poison, target, 0) != 0)
             {
                 if (target.Level != 1)
