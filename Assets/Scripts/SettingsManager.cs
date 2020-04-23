@@ -81,6 +81,8 @@ namespace DaggerfallWorkshop
         public bool DungeonLightShadows { get; set; }
         public bool InteriorLightShadows { get; set; }
         public bool ExteriorLightShadows { get; set; }
+        public bool MobileNPCShadows { get; set; }
+        public bool GeneralBillboardShadows { get; set; }
         public float DungeonShadowDistance { get; set; }
         public float InteriorShadowDistance { get; set; }
         public float ExteriorShadowDistance { get; set; }
@@ -215,6 +217,8 @@ namespace DaggerfallWorkshop
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
             ExteriorLightShadows = GetBool(sectionVideo, "ExteriorLightShadows");
+            MobileNPCShadows = GetBool(sectionVideo, "MobileNPCShadows");
+            GeneralBillboardShadows = GetBool(sectionVideo, "GeneralBillboardShadows");
             DungeonShadowDistance = GetFloat(sectionVideo, "DungeonShadowDistance", 0.1f, 50.0f);
             InteriorShadowDistance = GetFloat(sectionVideo, "InteriorShadowDistance", 0.1f, 50.0f);
             ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
@@ -334,6 +338,8 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
             SetBool(sectionVideo, "ExteriorLightShadows", ExteriorLightShadows);
+            SetBool(sectionVideo, "MobileNPCShadows", MobileNPCShadows);
+            SetBool(sectionVideo, "GeneralBillboardShadows", GeneralBillboardShadows);
             SetFloat(sectionVideo, "DungeonShadowDistance", DungeonShadowDistance);
             SetFloat(sectionVideo, "InteriorShadowDistance", InteriorShadowDistance);
             SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);

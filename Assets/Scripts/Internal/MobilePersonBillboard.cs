@@ -178,6 +178,10 @@ namespace DaggerfallWorkshop
                 mainCamera = GameManager.Instance.MainCamera;
                 meshFilter = GetComponent<MeshFilter>();
             }
+
+            // Mobile NPC shadows if enabled
+            if (DaggerfallUnity.Settings.MobileNPCShadows)
+                GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
         }
 
         private void Update()
