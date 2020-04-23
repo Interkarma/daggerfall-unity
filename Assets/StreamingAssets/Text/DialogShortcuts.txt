@@ -49,6 +49,7 @@ OptionsHeadBobbing,   H
 
 -- General
 HUDToggle,            Shift-F10
+Pause,                Shift-Escape
 
 -- Debugger
 DebuggerToggle,       Shift-Tab

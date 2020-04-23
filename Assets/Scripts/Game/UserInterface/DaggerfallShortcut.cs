@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // General
             HUDToggle,
+            Pause,
 
             // Debugger
             DebuggerToggle,
