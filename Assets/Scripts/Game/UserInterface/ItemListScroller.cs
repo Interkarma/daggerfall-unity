@@ -432,7 +432,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Set image to button icon
                 itemIconPanels[i].BackgroundTexture = image.texture;
-                itemIconPanels[i].Size = new Vector2(image.width, image.height);
+                // Use texture size if base image size is zero (i.e. new images that are not present in classic data)
+                if (image.width != 0 && image.height != 0)
+                    itemIconPanels[i].Size = new Vector2(image.width, image.height);
+                else
+                    itemIconPanels[i].Size = new Vector2(image.texture.width, image.texture.height);
 
                 // Set stack count
                 if (item.stackCount > 1)

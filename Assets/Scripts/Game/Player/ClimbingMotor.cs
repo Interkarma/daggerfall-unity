@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game
         private bool releasedFromCeiling = false;
         private bool overrideSkillCheck = false;
         private bool isClimbing = false;
+        private bool wasClimbing = false;
         private bool isSlipping = false;
         private bool atOutsideCorner = false;
         private bool atInsideCorner = false;
@@ -83,6 +84,12 @@ namespace DaggerfallWorkshop.Game
             get { return isClimbing; }
             set { isClimbing = value; }
         }
+
+        public bool WasClimbing
+        {
+            get { return wasClimbing; }
+        }
+
         /// <summary>
         /// true if player is climbing but trying to regain hold of wall
         /// </summary>
@@ -169,7 +176,29 @@ namespace DaggerfallWorkshop.Game
 
             ClimbQuitMoveUnderToHang = (inputBack && !moveScanner.HitSomethingInFront && moveScanner.FrontUnderCeiling != null);
 
+            // Allow climbing slight overhangs when capsule hits above but upwards test rays have clear space overhead
+            // Works by gently bumping player capsule away from wall at point of contact so they can acquire new vertical climb position
+            // Provided angle not too extreme then player will keep climbing upwards or downwards
+            // Allows player to climb up gently angled positions like the coffin tunnel in Scourg Barrow and up over shallow eaves
+            if (isClimbing && (playerMotor.CollisionFlags & CollisionFlags.Above) == CollisionFlags.Above)
+            {
+                Vector3 frontTestPosition = controller.transform.position + wallDirection * controller.radius * 0.9f;
+                Vector3 backTestPosition = controller.transform.position - wallDirection * controller.radius * 0.1f;
+
+                //Debug.DrawLine(frontTestPosition, frontTestPosition + Vector3.up * 2, Color.red);
+                //Debug.DrawLine(backTestPosition, backTestPosition + Vector3.up * 2, Color.red);
+
+                // Test close to front of head for backward sloping wall like Scourg Barrow and bump a little backwards
+                // Then slightly further back for short overhangs like eaves and bump more backwards and a little upwards
+                // Height of raycast test is extended to help ensure there is clear space above not just an angled ceiling
+                if (!Physics.Raycast(frontTestPosition, Vector3.up, controller.height / 2 + 0.3f))
+                    controller.transform.position += -wallDirection * 0.1f;
+                else if (!Physics.Raycast(backTestPosition, Vector3.up, controller.height / 2 + 0.5f))
+                    controller.transform.position += -wallDirection * 0.4f + Vector3.up * 0.3f;
+            }
+
             // Should we reset climbing starter timers?
+            wasClimbing = isClimbing;
             if ((!pushingFaceAgainstWallNearCeiling)
                 &&
                 (inputAbortCondition

@@ -114,6 +114,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return go;
         }
 
+        public static string GetFlatReplacementName (int archive, int record)
+        {
+            return string.Format("DaggerfallBillboard [TEXTURE.{0:000}, Index={1}] [Replacement]", archive, record);
+        }
+
         /// <summary>
         /// Seek and import a GameObject from mods to replace a Daggerfall billboard.
         /// </summary>
@@ -129,7 +134,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (!TryImportGameObject(archive, record, true, out go))
                 return null;
 
-            go.name = string.Format("DaggerfallBillboard [Replacement] [TEXTURE.{0:000}, Index={1}]", archive, record);
+            go.name = GetFlatReplacementName(archive, record);
             go.transform.parent = parent;
 
             // Assign position
@@ -170,13 +175,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             GameObject go = null;
 
-            string name = string.Format("DaggerfallBillboard [Replacement] [TEXTURE.{0:000}, Index={1}]", archive, record);
+            string name = GetFlatReplacementName(archive, record);
             for (int i = 0; i < parent.childCount; i++)
             {
                 Transform transform = parent.GetChild(i);
                 if (transform.name == name)
                     AlignToBase((go = transform.gameObject).transform, position, archive, record, inDungeon);
-                else if (transform.name.StartsWith("DaggerfallBillboard [Replacement]"))
+                else if (transform.name.EndsWith(" [Replacement]"))
                     GameObject.Destroy(transform.gameObject);
             }
 
@@ -384,6 +389,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Check object and all children
             foreach (var meshRenderer in go.GetComponentsInChildren<MeshRenderer>())
             {
+                if (meshRenderer.gameObject.GetComponent<RuntimeMaterials>())
+                    continue;
+
                 // Check all materials
                 Material[] materials = meshRenderer.sharedMaterials;
                 for (int i = 0; i < materials.Length; i++)

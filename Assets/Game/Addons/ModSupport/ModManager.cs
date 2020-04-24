@@ -1026,6 +1026,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return mods.FirstOrDefault(x => x.FileName.Equals(name, StringComparison.Ordinal));
         }
 
+        internal void PruneCache(float time, float threshold)
+        {
+            foreach (Mod mod in mods)
+                mod.PruneCache(time, threshold);
+        }
+
         /// <summary>
         /// Gets a localized string for a mod system text.
         /// </summary>

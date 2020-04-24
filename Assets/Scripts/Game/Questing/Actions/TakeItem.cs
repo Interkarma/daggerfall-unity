@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Release item - this will clear equip state and remove item from player's inventory
             // Now item is not associated with any collections and will just be garbage collected
-            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
+            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(ParentQuest.UID, item);
 
             // "saying" popup
             if (textId != 0)

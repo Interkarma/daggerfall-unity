@@ -9,14 +9,13 @@
 // Notes:
 //
 
-using System;
 using System.Text.RegularExpressions;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Converts a quest item into a permanent item.
+    /// Makes all foes hostile, or clears (removes) them all.
     /// </summary>
     public class Enemies : ActionTemplate
     {

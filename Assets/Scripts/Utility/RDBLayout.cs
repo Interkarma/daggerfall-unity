@@ -651,7 +651,7 @@ namespace DaggerfallWorkshop.Utility
                             }
 
                             // Add or combine
-                            if (combiner == null || hasAction)
+                            if (combiner == null || hasAction || PlayerActivate.HasCustomActivation(modelId))
                             {
                                 standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
                                 standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
@@ -746,9 +746,7 @@ namespace DaggerfallWorkshop.Utility
         private static bool HasAction(DFBlock.RdbObject obj)
         {
             DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
-            if (action.Flags != 0)
-                return true;
-            return false;
+            return (action.Flags != 0);
         }
 
         /// <summary>

@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Release item so we can offer back to player
             // Sometimes a quest item is both carried by player then offered back to them
             // Example is Sx010 where "curse" is removed and player can keep item
-            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem, true);
+            GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(ParentQuest.UID, item, true);
 
             // Create a dropped loot container window for player to loot their reward
             rewardLoot = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);

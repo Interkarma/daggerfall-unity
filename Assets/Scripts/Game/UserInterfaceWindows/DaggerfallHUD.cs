@@ -248,6 +248,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 questDebugger.NextState();
             }
 
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Pause).IsUpWith(keyModifiers))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
+            }
+
             // Toggle HUD rendering
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HUDToggle).IsDownWith(keyModifiers))
             {

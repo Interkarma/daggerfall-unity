@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             OptionsHeadBobbing,
 
             // General
+            Pause,
             HUDToggle,
             ToggleRetroPP,
 

@@ -1335,7 +1335,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     prohibited = true;
 
                 // Check for prohibited material
-                else if (((item.NativeMaterialValue >> 8) == 2)
+                else if (((item.nativeMaterialValue >> 8) == 2)
                     && (1 << (item.NativeMaterialValue & 0xFF) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
                     prohibited = true;
             }
@@ -1659,10 +1659,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Try to handle use with a registered delegate
-            ItemHelper.ItemUseHander itemUseHander;
-            if (DaggerfallUnity.Instance.ItemHelper.GetItemUseHander(item.TemplateIndex, out itemUseHander))
+            ItemHelper.ItemUseHandler itemUseHandler;
+            if (DaggerfallUnity.Instance.ItemHelper.GetItemUseHandler(item.TemplateIndex, out itemUseHandler))
             {
-                if (itemUseHander(item, collection))
+                if (itemUseHandler(item, collection))
                     return;
             }
 

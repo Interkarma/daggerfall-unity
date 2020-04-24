@@ -48,6 +48,7 @@ OptionsFullScreen,    F
 OptionsHeadBobbing,   H
 
 -- General
+Pause,                Shift-Escape
 HUDToggle,            Shift-F10
 ToggleRetroPP,        Shift-F11
 

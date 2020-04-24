@@ -133,29 +133,24 @@ namespace DaggerfallWorkshop.Game
             const int stuckFrameThreshold = 3;
             bool tryingToMoveForwards = InputManager.Instance.HasAction(InputManager.Actions.MoveForwards);
             bool tryingToMoveBackwards = InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards);
-            if (tryingToMoveForwards || tryingToMoveBackwards)
-            {
+            if ((tryingToMoveForwards || tryingToMoveBackwards) &&
                 // Use a sqrmagnitude movement threshold check to see if player is stuck
                 // This is fast and overcomes precision issues with a simple position check
                 // Player must be stuck for multiple frames before unstuck handler will attempt to resolve
-                float testMagnitude = (lastMovePosition - myTransform.position).sqrMagnitude;
-                //Debug.LogFormat("Testing stuck with {0} test magnitude", testMagnitude);
-                if (testMagnitude < Mathf.Pow(stuckMovementThreshold, 2))
+                (lastMovePosition - myTransform.position).sqrMagnitude < Mathf.Pow(stuckMovementThreshold, 2))
+            {
+                stuckFrameCount++;
+                if (stuckFrameCount > stuckFrameThreshold)
                 {
-                    stuckFrameCount++;
-                    if (stuckFrameCount > stuckFrameThreshold)
-                    {
-                        //Debug.LogFormat("Stuck for {0} frames", stuckFrameCount);
-
-                        TryUnsticking(tryingToMoveForwards);
-                    }
+                    //Debug.LogFormat("Stuck for {0} frames", stuckFrameCount);
+                    TryUnsticking(tryingToMoveForwards);
                 }
-                else
-                {
-                    // Reset during normal movement
-                    lastMovePosition = myTransform.position;
-                    stuckFrameCount = 0;
-                }
+            }
+            else
+            {
+                // Reset during normal movement
+                lastMovePosition = myTransform.position;
+                stuckFrameCount = 0;
             }
         }
 

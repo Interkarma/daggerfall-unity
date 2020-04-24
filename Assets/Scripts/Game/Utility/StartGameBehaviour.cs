@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Common Startup
 
-        void ApplyStartSettings()
+        public void ApplyStartSettings()
         {
             // Resolution
             if (DaggerfallUnity.Settings.ExclusiveFullscreen && DaggerfallUnity.Settings.Fullscreen)
@@ -233,7 +233,6 @@ namespace DaggerfallWorkshop.Game.Utility
             // Filter settings
             DaggerfallUnity.Instance.MaterialReader.MainFilterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
             DaggerfallUnity.Instance.MaterialReader.CompressModdedTextures = DaggerfallUnity.Settings.CompressModdedTextures;
-            DaggerfallUnity.Instance.MaterialReader.AssetCacheThreshold = DaggerfallUnity.Settings.AssetCacheThreshold;
 
             // HUD settings
             DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;

@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
                     // Show message popup, remove item, return true on trigger
                     ParentQuest.ShowMessagePopup(id);
-                    GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(item.DaggerfallUnityItem);
+                    GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(ParentQuest.UID, item);
                     return true;
                 }
             }

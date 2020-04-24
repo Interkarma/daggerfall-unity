@@ -1484,26 +1484,42 @@ namespace DaggerfallWorkshop.Game.Entity
         /// Releases a quest item carried by player so it can be assigned back again by quest script.
         /// This ensures item is properly unequipped and optionally makes permanent.
         /// </summary>
-        /// <param name="item">Item to release.</param>
+        /// <param name="questUID">Quest UID owning Item.</param>
+        /// <param name="item">Quest Item to release.</param>
         /// <param name="makePermanent">True to make item permanent.</param>
-        public void ReleaseQuestItemForReoffer(DaggerfallUnityItem item, bool makePermanent = false)
+        public void ReleaseQuestItemForReoffer(ulong questUID, Item item, bool makePermanent = false)
         {
-            if (item == null)
+            if (item == null || item.Symbol == null)
                 return;
 
-            // Unequip item if player is wearing it
-            if (GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(item))
-            {
-                // If item was actually unequipped then update armour values
-                GameManager.Instance.PlayerEntity.UpdateEquippedArmorValues(item, false);
-            }
-
-            // Remove quest from inventory so it can be offered back to player
-            GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
-
-            // Optionally make permanent
+            // Always set prototype item permanent when requested
+            // This handles cases where prototype is given directly to player
             if (makePermanent)
-                item.MakePermanent();
+                item.DaggerfallUnityItem.MakePermanent();
+
+            // Get all player held quest items matching this quest and item symbol
+            // This can include items cloned from prototype to a Foe resource then picked up by player
+            DaggerfallUnityItem[] items = GameManager.Instance.PlayerEntity.Items.ExportQuestItems(questUID, item.Symbol);
+            if (items == null || items.Length == 0)
+                return;
+
+            // Process all matching items
+            foreach (DaggerfallUnityItem dfitem in items)
+            {
+                // Unequip item if player is wearing it
+                if (GameManager.Instance.PlayerEntity.ItemEquipTable.UnequipItem(dfitem))
+                {
+                    // If item was actually unequipped then update armour values
+                    GameManager.Instance.PlayerEntity.UpdateEquippedArmorValues(dfitem, false);
+                }
+
+                // Remove quest from inventory so it can be offered back to player
+                GameManager.Instance.PlayerEntity.Items.RemoveItem(dfitem);
+
+                // Optionally make permanent
+                if (makePermanent)
+                    dfitem.MakePermanent();
+            }
         }
 
         public void ClearReactionMods()

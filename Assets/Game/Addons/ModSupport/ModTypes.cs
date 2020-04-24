@@ -20,11 +20,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     {
         public Type T;
         public UnityEngine.Object Obj;
+        public float TimeStamp;
 
         public LoadedAsset(Type T, UnityEngine.Object Obj)
         {
             this.T = T;
             this.Obj = Obj;
+            this.TimeStamp = 0;
         }
     }
 
