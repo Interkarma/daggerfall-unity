@@ -965,6 +965,11 @@ namespace DaggerfallWorkshop
             if (onlyIfResidence && !RMBLayout.IsResidence(db.buildingType))
                 return;
 
+            // Do not undiscover residence if it's a Thieves Guild or Dark Brotherhood hideout
+            if (db.factionID == (int)FactionFile.FactionIDs.The_Thieves_Guild ||
+                db.factionID == (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
+                return;
+
             // do nothing if matchName was provided but matchName does not match displayName of building
             if (matchName != null && matchName != db.displayName)
                 return;
