@@ -119,6 +119,8 @@ namespace DaggerfallWorkshop.Game
             rappelMotor = GetComponent<RappelMotor>();
             //hangingMotor = GetComponent<HangingMotor>();
             moveScanner = GetComponent<PlayerMoveScanner>();
+            // Workaround for lack of climbing state saving/reloading
+            GameManager.Instance.SaveLoadManager.RegisterPreventSaveCondition(() => isClimbing);
         }
 
         /// <summary>
