@@ -48,8 +48,9 @@ OptionsFullScreen,    F
 OptionsHeadBobbing,   H
 
 -- General
-HUDToggle,            Shift-F10
 Pause,                Shift-Escape
+HUDToggle,            Shift-F10
+ToggleRetroPP,        Shift-F11
 
 -- Debugger
 DebuggerToggle,       Shift-Tab

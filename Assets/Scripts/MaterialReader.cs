@@ -134,6 +134,7 @@ namespace DaggerfallWorkshop
         public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch";
         public const string _DaggerfallPixelFontShaderName = "Daggerfall/PixelFont";
         public const string _DaggerfallSDFFontShaderName = "Daggerfall/SDFFont";
+        public const string _DaggerfallRetroPostprocessingShaderName = "Daggerfall/RetroPostprocessing";
 
         DaggerfallUnity dfUnity;
         TextureReader textureReader;

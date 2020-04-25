@@ -6,6 +6,7 @@ MyDaggerfallUnitySavePath=
 ResolutionWidth=1280
 ResolutionHeight=720
 RetroRenderingMode=0
+UsePostProcessingInRetroMode=True
 UseMipMapsInRetroMode=False
 VSync=True
 TargetFrameRate=0

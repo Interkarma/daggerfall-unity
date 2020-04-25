@@ -12,6 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -247,15 +248,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 questDebugger.NextState();
             }
 
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Pause).IsUpWith(keyModifiers))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
+            }
+
             // Toggle HUD rendering
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HUDToggle).IsDownWith(keyModifiers))
             {
                 renderHUD = !renderHUD;
             }
 
-            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Pause).IsUpWith(keyModifiers))
+            // Toggle Retro Renderer Postprocessing
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.ToggleRetroPP).IsDownWith(keyModifiers))
             {
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
+                RetroRenderer.postprocessing = !RetroRenderer.postprocessing;
             }
 
             flickerController.NextCycle();
