@@ -502,6 +502,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public float climbingStartTimer;
         public float climbingContinueTimer;
         public Vector3 wallDirection;
+        public Vector3 myLedgeDirection;
     }
 
     #endregion

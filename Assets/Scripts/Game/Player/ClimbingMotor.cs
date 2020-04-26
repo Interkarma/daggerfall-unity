@@ -682,6 +682,7 @@ namespace DaggerfallWorkshop.Game
                 data.climbingStartTimer = climbingStartTimer;
                 data.climbingContinueTimer = climbingContinueTimer;
                 data.wallDirection = wallDirection;
+                data.myLedgeDirection = myLedgeDirection;
             }
             return data;
         }
@@ -694,17 +695,16 @@ namespace DaggerfallWorkshop.Game
                 climbingStartTimer = data.climbingStartTimer;
                 climbingContinueTimer = data.climbingContinueTimer;
                 wallDirection = data.wallDirection;
+                myLedgeDirection = data.myLedgeDirection;
 
                 // Clear some state on restore or a recent climb in same session might trigger improper movement
                 ClearStateOnRestore();
 
                 // Show climbing mode message and force enable touching sides until physics reacquires wall contact
                 // Also freeze motor so player doesn't start falling right away
-                // This has effect of freezing player in place briefly when restoring a save while climbing
-                // 2 seconds of freeze should do it, which is only slightly longer than screen fade-in time
                 showClimbingModeMessage = true;
                 touchingSidesRestoreForce = true;
-                GameManager.Instance.PlayerMotor.FreezeMotor = 2f;
+                GameManager.Instance.PlayerMotor.FreezeMotor = 1f;
             }
         }
 
@@ -718,11 +718,11 @@ namespace DaggerfallWorkshop.Game
             lastHorizontalPosition = Vector2.zero;
             adjacentLedgeDirection = Vector3.zero;
             moveDirection = Vector3.zero;
-            myLedgeDirection = Vector3.zero;
             myStrafeRay = new Ray();
             adjacentWallRay = new Ray();
             cornerNormalRay = new Ray();
             rappelMotor.ResetRappelState();
+            moveScanner.ResetAdjacentSurfaces();
         }
 
         #endregion
