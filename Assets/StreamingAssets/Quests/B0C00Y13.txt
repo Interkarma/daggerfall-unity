@@ -132,16 +132,17 @@ _S.03_ task:
 	say 1011 
 
 _S.04_ task:
-	create foe _bats_ every 1 minutes 8 times with 100% success 
+	create foe _bats_ every 2 minutes 8 times with 100% success 
 
 _S.05_ task:
-	create foe _rats_ every 1 minutes 10 times with 100% success 
+	create foe _rats_ every 2 minutes 10 times with 100% success 
 
 _S.06_ task:
-	create foe _scorpions_ every 2 minutes 4 times with 100% success 
+	create foe _scorpions_ every 3 minutes 4 times with 100% success 
 
 _S.07_ task:
-	create foe _spiders_ every 2 minutes 4 times with 100% success 
+	create foe _spiders_ every 3 minutes 4 times with 100% success
+--slowed enemy spawn due to feedback 
 
 _clearclick_ task:
 	when not _S.03_ and _questdone_ 

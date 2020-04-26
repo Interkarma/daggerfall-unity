@@ -168,7 +168,9 @@ _queston_ task:
 _reward_ task:
 	toting _wrappings_ and _qgiver_ clicked 
 	give pc _gold_ 
+	take _wrappings_ from pc
 	end quest 
+--forums discussion, failsafe to ensure removal of wrappings
 
 variable _qgclicked_
 _S.03_ task:

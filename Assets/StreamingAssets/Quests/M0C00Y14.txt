@@ -126,4 +126,5 @@ _clearclick_ task:
 
 _S.04_ task:
 	say 1011
-	create foe _monster_ every 1 minutes 7 times with 100% success 
+	create foe _monster_ every 2 minutes 7 times with 100% success 
+--slowed enemy spawn due to feedback
