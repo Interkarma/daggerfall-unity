@@ -4,6 +4,8 @@ using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Serialization;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -33,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         private float climbingStartTimer = 0;
         private float climbingContinueTimer = 0;
         private bool showClimbingModeMessage = true;
+        private bool touchingSidesRestoreForce = false;
         #region Rays/Vectors
         private Vector2 lastHorizontalPosition = Vector2.zero;
         /// <summary>
@@ -199,6 +202,15 @@ namespace DaggerfallWorkshop.Game
                     controller.transform.position += -wallDirection * 0.4f + Vector3.up * 0.3f;
             }
 
+            // Handle recently restoring from save game where climbing active
+            if (isClimbing && touchingSidesRestoreForce && !touchingSides)
+            {
+                touchingSides = true;
+                //Debug.Log("Forced touchingSides...");
+            }
+            else
+                touchingSidesRestoreForce = false;
+
             // Should we reset climbing starter timers?
             wasClimbing = isClimbing;
             if ((!pushingFaceAgainstWallNearCeiling)
@@ -301,9 +313,12 @@ namespace DaggerfallWorkshop.Game
 
         public void StopClimbing(bool fromHanging = false)
         {
-            isClimbing = false;
-            showClimbingModeMessage = true;
-            climbingStartTimer = 0;
+            if (isClimbing || fromHanging)
+            {
+                isClimbing = false;
+                showClimbingModeMessage = true;
+                climbingStartTimer = 0;
+            }
         }
 
         private void CalcFrequencyAndToleranceOfWallChecks(bool airborneGraspWall)
@@ -656,6 +671,62 @@ namespace DaggerfallWorkshop.Game
             }
             return true;
         }
+        #endregion
+
+        #region Serialization
+
+        public AdvancedClimbingData_v1 GetSaveData()
+        {
+            AdvancedClimbingData_v1 data = new AdvancedClimbingData_v1();
+            if (DaggerfallUnity.Settings.AdvancedClimbing && isClimbing)
+            {
+                data.isClimbing = isClimbing;
+                data.climbingStartTimer = climbingStartTimer;
+                data.climbingContinueTimer = climbingContinueTimer;
+                data.wallDirection = wallDirection;
+                data.myLedgeDirection = myLedgeDirection;
+            }
+            return data;
+        }
+
+        public void RestoreSaveData(AdvancedClimbingData_v1 data)
+        {
+            if (DaggerfallUnity.Settings.AdvancedClimbing && data.isClimbing)
+            {
+                isClimbing = data.isClimbing;
+                climbingStartTimer = data.climbingStartTimer;
+                climbingContinueTimer = data.climbingContinueTimer;
+                wallDirection = data.wallDirection;
+                myLedgeDirection = data.myLedgeDirection;
+
+                // Clear some state on restore or a recent climb in same session might trigger improper movement
+                ClearStateOnRestore();
+
+                // Show climbing mode message and force enable touching sides until physics reacquires wall contact
+                // Also freeze motor so player doesn't start falling right away
+                showClimbingModeMessage = true;
+                touchingSidesRestoreForce = true;
+                GameManager.Instance.PlayerMotor.FreezeMotor = 1f;
+            }
+        }
+
+        void ClearStateOnRestore()
+        {
+            releasedFromCeiling = false;
+            overrideSkillCheck = false;
+            isSlipping = false;
+            atOutsideCorner = false;
+            atInsideCorner = false;
+            lastHorizontalPosition = Vector2.zero;
+            adjacentLedgeDirection = Vector3.zero;
+            moveDirection = Vector3.zero;
+            myStrafeRay = new Ray();
+            adjacentWallRay = new Ray();
+            cornerNormalRay = new Ray();
+            rappelMotor.ResetRappelState();
+            moveScanner.ResetAdjacentSurfaces();
+        }
+
         #endregion
     }
 }

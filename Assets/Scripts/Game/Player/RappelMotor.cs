@@ -68,15 +68,8 @@ namespace DaggerfallWorkshop.Game
             // "rappelling" only happens while moving the player into climbing position 
             // from the ledge he backstepped off and doesn't happen while climbing
 
-            // Check there is a wall at position slightly below foot level and in front of controller to climb down onto
-            // If player is about to drop into empty space then rappel should not be allowed
-            Vector3 footTestPosition = controller.transform.position - Vector3.up * (controller.height * 1.2f) / 2f;
-            //Debug.DrawLine(footTestPosition, footTestPosition + controller.transform.forward, Color.red);
-            bool footContact = Physics.Raycast(footTestPosition, controller.transform.forward, controller.radius + 0.4f);
-
             bool rappelAllowed = (DaggerfallUnity.Settings.AdvancedClimbing
                 //&& !playerScanner.HitSomethingInFront
-                && footContact
                 && !climbingMotor.WasClimbing
                 && InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)
                 && !climbingMotor.IsSlipping && acrobatMotor.Falling && !acrobatMotor.Jumping);
@@ -90,8 +83,8 @@ namespace DaggerfallWorkshop.Game
             {
                 if (playerScanner.AboveBehindWall != null)
                     rappelDirection = RappelDirection.UpBehind;
-                else if (playerScanner.FrontUnderCeiling != null)
-                    rappelDirection = RappelDirection.DownUnder;
+                //else if (playerScanner.FrontUnderCeiling != null)
+                //    rappelDirection = RappelDirection.DownUnder;
                 else if (playerScanner.BelowBehindWall != null)
                     rappelDirection = RappelDirection.DownBehind;
 
@@ -209,9 +202,9 @@ namespace DaggerfallWorkshop.Game
                     case RappelDirection.UpBehind:
                         CurlOver(swoopBasePosition, swoopDirection);
                         break;
-                    case RappelDirection.DownUnder:
-                        CurlUnder(swoopBasePosition, swoopDirection);
-                        break;
+                    //case RappelDirection.DownUnder:
+                    //    CurlUnder(swoopBasePosition, swoopDirection);
+                    //    break;
                     case RappelDirection.FrontUp:
                         if (updateSwoopBasePosition)
                         {   // enables player to bottom out on DownUnder and continue FrontUp
@@ -251,7 +244,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void ResetRappelState()
+        public void ResetRappelState()
         {
             rappelStage = RappelStage.Inactive;
             rappelDirection = RappelDirection.None;

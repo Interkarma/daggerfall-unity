@@ -93,6 +93,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public FaceDetails[] escortingFaces;
         public SceneCache_v1 sceneCache;
         public TravelMapSaveData travelMapData;
+        public AdvancedClimbingData_v1 advancedClimbingState;
     }
 
     #endregion
@@ -488,6 +489,20 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool sleepInn = true;
         public bool speedCautious = true;
         public bool travelShip = true;
+    }
+
+    #endregion
+
+    #region Climbing Data
+
+    [fsObject("v1")]
+    public struct AdvancedClimbingData_v1
+    {
+        public bool isClimbing;
+        public float climbingStartTimer;
+        public float climbingContinueTimer;
+        public Vector3 wallDirection;
+        public Vector3 myLedgeDirection;
     }
 
     #endregion

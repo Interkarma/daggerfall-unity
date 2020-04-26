@@ -316,5 +316,14 @@ namespace DaggerfallWorkshop.Game
                
             HitSomethingInFront = (Physics.Raycast(controller.transform.position, inFrontDirection, out hit, controller.radius + 0.1f));
         }
+
+        public void ResetAdjacentSurfaces()
+        {
+            AboveBehindWall = null;
+            FrontWall = null;
+            SideWall = null;
+            BelowBehindWall = null;
+            FrontUnderCeiling = null;
+        }
     }
 }
