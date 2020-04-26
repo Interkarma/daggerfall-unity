@@ -83,8 +83,8 @@ namespace DaggerfallWorkshop.Game
             {
                 if (playerScanner.AboveBehindWall != null)
                     rappelDirection = RappelDirection.UpBehind;
-                else if (playerScanner.FrontUnderCeiling != null)
-                    rappelDirection = RappelDirection.DownUnder;
+                //else if (playerScanner.FrontUnderCeiling != null)
+                //    rappelDirection = RappelDirection.DownUnder;
                 else if (playerScanner.BelowBehindWall != null)
                     rappelDirection = RappelDirection.DownBehind;
 
@@ -202,9 +202,9 @@ namespace DaggerfallWorkshop.Game
                     case RappelDirection.UpBehind:
                         CurlOver(swoopBasePosition, swoopDirection);
                         break;
-                    case RappelDirection.DownUnder:
-                        CurlUnder(swoopBasePosition, swoopDirection);
-                        break;
+                    //case RappelDirection.DownUnder:
+                    //    CurlUnder(swoopBasePosition, swoopDirection);
+                    //    break;
                     case RappelDirection.FrontUp:
                         if (updateSwoopBasePosition)
                         {   // enables player to bottom out on DownUnder and continue FrontUp
