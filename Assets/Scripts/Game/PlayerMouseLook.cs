@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
         Vector2 _smoothMouse;
         float cameraPitch = 0.0f;
         float cameraYaw = 0.0f;
-        bool cursorActive;
+        public bool cursorActive;
         float pitchMax = PitchMax;
         float pitchMin = PitchMin;
 
