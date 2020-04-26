@@ -743,6 +743,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.escortingFaces = DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.GetSaveData();
             saveData.sceneCache = stateManager.GetSceneCache();
             saveData.travelMapData = DaggerfallUI.Instance.DfTravelMapWindow.GetTravelMapSaveData();
+            saveData.advancedClimbingState = GameManager.Instance.ClimbingMotor.GetSaveData();
 
             return saveData;
         }
@@ -1213,6 +1214,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             //Restore Travel Map settings
             DaggerfallUI.Instance.DfTravelMapWindow.SetTravelMapFromSaveData(saveData.travelMapData);
+
+            // Restore climbing state
+            GameManager.Instance.ClimbingMotor.RestoreSaveData(saveData.advancedClimbingState);
 
             // Smash to black while respawning
             DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();

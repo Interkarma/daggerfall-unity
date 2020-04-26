@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void ResetRappelState()
+        public void ResetRappelState()
         {
             rappelStage = RappelStage.Inactive;
             rappelDirection = RappelDirection.None;
