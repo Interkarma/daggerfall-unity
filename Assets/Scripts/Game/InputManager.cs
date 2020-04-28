@@ -77,6 +77,8 @@ namespace DaggerfallWorkshop.Game
         float vertical;
         float lookX;
         float lookY;
+        float keyboardLookX;
+        float keyboardLookY;
         float mouseX;
         float mouseY;
         bool invertLookX;
@@ -385,6 +387,8 @@ namespace DaggerfallWorkshop.Game
             mouseY = 0;
             lookX = 0;
             lookY = 0;
+            keyboardLookX = 0;
+            keyboardLookY = 0;
 
             // Clear axis impulse flags, these will be raised again on movement
             posHorizontalImpulse = false;
@@ -434,12 +438,12 @@ namespace DaggerfallWorkshop.Game
             if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
                 mouseY = Input.GetAxis(cameraAxisBindingCache[1]) * JoystickCameraSensitivity;
 
-            // Update look impulse
-            UpdateLook();
-
             // Process actions from input sources
             FindKeyboardActions();
             FindInputAxisActions();
+
+            // Update look impulse
+            UpdateLook();
 
             // Apply friction to movement force
             ApplyFriction();
@@ -1062,8 +1066,8 @@ namespace DaggerfallWorkshop.Game
         void UpdateLook()
         {
             // Assign mouse
-            lookX = mouseX;
-            lookY = mouseY;
+            lookX = (keyboardLookX == 0) ? mouseX : keyboardLookX;
+            lookY = (keyboardLookY == 0) ? mouseY : keyboardLookY;
 
             // Inversion
             lookX = (invertLookX) ? -lookX : lookX;
@@ -1227,7 +1231,8 @@ namespace DaggerfallWorkshop.Game
                     // Add current action to list
                     currentActions.Add(element.Value);
 
-                    // Handle movement impulses
+                    // Handle movement and keyboard look impulses
+                    // Keyboard look overrides current mouseX and mouseY values
                     switch (element.Value)
                     {
                         case Actions.MoveRight:
@@ -1241,6 +1246,18 @@ namespace DaggerfallWorkshop.Game
                             break;
                         case Actions.MoveBackwards:
                             ApplyVerticalForce(-1);
+                            break;
+                        case Actions.TurnLeft:
+                            keyboardLookX = -1;
+                            break;
+                        case Actions.TurnRight:
+                            keyboardLookX = 1;
+                            break;
+                        case Actions.LookUp:
+                            keyboardLookY = 1;
+                            break;
+                        case Actions.LookDown:
+                            keyboardLookY = -1;
                             break;
                     }
                 }
