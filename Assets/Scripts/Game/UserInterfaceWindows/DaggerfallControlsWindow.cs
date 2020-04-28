@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: Justin Steele
+// Contributors: Justin Steele, jefetienne
 //
 // Notes:
 //
@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if(!recorded.Contains(str))
                     recorded.Add(str);
-                else
+                else if (str != "None")
                     dupes.Add(str);
             }
             return dupes;
@@ -200,14 +200,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ResetUnsavedDictionary()
         {
             foreach (InputManager.Actions a in Enum.GetValues(typeof(InputManager.Actions)))
-                UnsavedKeybindDict[a] = InputManager.Instance.GetBinding(a).ToString();
+                UnsavedKeybindDict[a] = InputManager.Instance.GetKeyString(InputManager.Instance.GetBinding(a));
         }
 
         private void SaveAllKeyBindValues()
         {
             foreach(var action in UnsavedKeybindDict.Keys)
             {
-                KeyCode code = (KeyCode)Enum.Parse(typeof(KeyCode), UnsavedKeybindDict[action]);
+                KeyCode code = InputManager.Instance.ParseKeyCodeString(UnsavedKeybindDict[action]);
 
                 // Rebind only if new code is different
                 KeyCode curCode = InputManager.Instance.GetBinding(action);
@@ -391,30 +391,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while(!Input.anyKeyDown)
+            while (!InputManager.Instance.AnyKeyDown)
             {
                 setWaitingForInput(true);
                 yield return null;
             }
             setWaitingForInput(false);
 
-            foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
+            KeyCode code = InputManager.Instance.LastKeyDown;
+
+            if (code != KeyCode.None)
             {
-                if (Input.GetKeyDown(code))
+                if(InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
                 {
-                    if (InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
-                    {
-                        button.Label.Text = code.ToString();
+                    button.Label.Text = InputManager.Instance.GetKeyString(code);
 
-                        var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
+                    var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
 
-                        UnsavedKeybindDict[action] = button.Label.Text;
-                        checkDuplicates();
-                    }
-                    else
-                    {
-                        button.Label.Text = currentLabel;
-                    }
+                    UnsavedKeybindDict[action] = button.Label.Text;
+                    checkDuplicates();
+                }
+                else
+                {
+                    button.Label.Text = currentLabel;
                 }
             }
         }

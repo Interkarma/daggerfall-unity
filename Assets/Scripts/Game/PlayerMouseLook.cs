@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
             if (forceHideCursor)
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                InputManager.Instance.CursorVisible = false;
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game
             if (cursorActive)
             {
                 Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                InputManager.Instance.CursorVisible = true;
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -131,12 +131,12 @@ namespace DaggerfallWorkshop.Game
             if (lockCursor && enableMouseLook)
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                InputManager.Instance.CursorVisible = false;
             }
             else
             {
                 Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                InputManager.Instance.CursorVisible = true;
             }
 
             // Handle mouse look enable/disable

@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
-            Cursor.visible = true;
+            InputManager.Instance.CursorVisible = true;
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             // Shortcuts for options

@@ -2022,6 +2022,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b46be800caa39e46b20653fe90c41f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controllerCursorImage: {fileID: 2800000, guid: 887ec86cd12e1624d8458c8d7950402a,
+    type: 3}
 --- !u!4 &1606437057
 Transform:
   m_ObjectHideFlags: 0

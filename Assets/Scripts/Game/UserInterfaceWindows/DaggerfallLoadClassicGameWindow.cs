@@ -188,7 +188,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void OpenSelectedSaveGame()
         {
             Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            InputManager.Instance.CursorVisible = false;
 
             // Setup start behaviour
             StartGameBehaviour startGameBehaviour = FindStartGameBehaviour();

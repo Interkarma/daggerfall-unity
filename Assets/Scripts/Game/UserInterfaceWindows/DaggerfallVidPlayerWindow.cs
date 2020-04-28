@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle exit any key or end of video
             if (useCustomVideo)
             {
-                if (endOnAnyKey && Input.anyKeyDown ||
+                if (endOnAnyKey && InputManager.Instance.AnyKeyDown ||
                     Input.GetKeyDown(KeyCode.Escape) ||
                     !customVideo.IsPlaying)
                 {
@@ -130,7 +130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                if (endOnAnyKey && Input.anyKeyDown ||
+                if (endOnAnyKey && InputManager.Instance.AnyKeyDown ||
                     Input.GetKeyDown(KeyCode.Escape) ||
                     video.VidFile.EndOfFile && video.Playing)
                 {

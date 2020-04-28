@@ -342,7 +342,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
-            if (Input.GetKeyUp(toggleClosedBinding))
+            if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
             {
                 if (RegionSelected)
                     CloseRegionPanel();
@@ -367,7 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (RegionSelected)
             {
-                if (Input.GetKeyUp(KeyCode.Mouse1))
+                if (InputManager.Instance.GetMouseButtonUp(1))
                 {
                     // Zoom to mouse position
                     zoomPosition = currentMousePos;

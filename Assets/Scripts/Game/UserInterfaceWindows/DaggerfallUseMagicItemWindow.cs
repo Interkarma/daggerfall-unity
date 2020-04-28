@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             // Toggle window closed with same hotkey used to open it
-            if (Input.GetKeyUp(toggleClosedBinding))
+            if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
             else
                 base.Update();

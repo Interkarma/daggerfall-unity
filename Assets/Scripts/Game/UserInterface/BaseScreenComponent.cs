@@ -567,7 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 // Update raw mouse screen position from Input - must invert mouse position Y as Unity 0,0 is bottom-left
-                mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                mousePosition = new Vector2(InputManager.Instance.MousePosition.x, Screen.height - InputManager.Instance.MousePosition.y);
             }
             scaledMousePosition = -Vector2.one;
 
@@ -620,14 +620,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Get left and right mouse down for general click handling and double-click sampling
-            bool leftMouseDown = Input.GetMouseButtonDown(0);
-            bool rightMouseDown = Input.GetMouseButtonDown(1);
-            bool middleMouseDown = Input.GetMouseButtonDown(2);
+            bool leftMouseDown = InputManager.Instance.GetMouseButtonDown(0);
+            bool rightMouseDown = InputManager.Instance.GetMouseButtonDown(1);
+            bool middleMouseDown = InputManager.Instance.GetMouseButtonDown(2);
 
             // Get left and right mouse down for up/down events
-            bool leftMouseHeldDown = Input.GetMouseButton(0);
-            bool rightMouseHeldDown = Input.GetMouseButton(1);
-            bool middleMouseHeldDown = Input.GetMouseButton(2);
+            bool leftMouseHeldDown = InputManager.Instance.GetMouseButton(0);
+            bool rightMouseHeldDown = InputManager.Instance.GetMouseButton(1);
+            bool middleMouseHeldDown = InputManager.Instance.GetMouseButton(2);
 
             // Handle left mouse down/up events
             // Can only trigger mouse down while over component but can release from anywhere
