@@ -100,10 +100,6 @@ namespace DaggerfallWorkshop
                     // Example is the treasury in Daggerfall castle, some action records flow through the quest item marker
                     meshRenderer.enabled = false;
                 }
-
-                // General billboard shadows if enabled
-                if (DaggerfallUnity.Settings.GeneralBillboardShadows)
-                    meshRenderer.shadowCastingMode = ShadowCastingMode.TwoSided;
             }
         }
 
@@ -350,6 +346,9 @@ namespace DaggerfallWorkshop
 #endif
             }
 
+            // General billboard shadows if enabled
+            meshRenderer.shadowCastingMode = (DaggerfallUnity.Settings.GeneralBillboardShadows) ? ShadowCastingMode.TwoSided : ShadowCastingMode.Off;
+
             // Add NPC trigger collider
             if (summary.FlatType == FlatTypes.NPC)
             {
@@ -404,6 +403,9 @@ namespace DaggerfallWorkshop
                 Destroy(oldMesh);
 #endif
             }
+
+            // General billboard shadows if enabled
+            meshRenderer.shadowCastingMode = (DaggerfallUnity.Settings.GeneralBillboardShadows) ? ShadowCastingMode.TwoSided : ShadowCastingMode.Off;
 
             return material;
         }
