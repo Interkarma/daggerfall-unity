@@ -347,7 +347,8 @@ namespace DaggerfallWorkshop
             }
 
             // General billboard shadows if enabled
-            meshRenderer.shadowCastingMode = (DaggerfallUnity.Settings.GeneralBillboardShadows) ? ShadowCastingMode.TwoSided : ShadowCastingMode.Off;
+            bool isLightArchive = (archive == TextureReader.LightsTextureArchive);
+            meshRenderer.shadowCastingMode = (DaggerfallUnity.Settings.GeneralBillboardShadows && !isLightArchive) ? ShadowCastingMode.TwoSided : ShadowCastingMode.Off;
 
             // Add NPC trigger collider
             if (summary.FlatType == FlatTypes.NPC)
@@ -365,7 +366,7 @@ namespace DaggerfallWorkshop
         /// <param name="texture">Texture2D to set on material.</param>
         /// <param name="size">Size of billboard quad in normal units (not Daggerfall units).</param>
         /// <returns>Material.</returns>
-        public Material SetMaterial(Texture2D texture, Vector2 size)
+        public Material SetMaterial(Texture2D texture, Vector2 size, bool isLightArchive = false)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -405,7 +406,7 @@ namespace DaggerfallWorkshop
             }
 
             // General billboard shadows if enabled
-            meshRenderer.shadowCastingMode = (DaggerfallUnity.Settings.GeneralBillboardShadows) ? ShadowCastingMode.TwoSided : ShadowCastingMode.Off;
+            meshRenderer.shadowCastingMode = (DaggerfallUnity.Settings.GeneralBillboardShadows && !isLightArchive) ? ShadowCastingMode.TwoSided : ShadowCastingMode.Off;
 
             return material;
         }
