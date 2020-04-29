@@ -118,7 +118,11 @@ namespace DaggerfallWorkshop
             }
 
             // Rotate to face camera in game
-            if (mainCamera && Application.isPlaying)
+            // Do not rotate if MeshRenderer disabled. The player can't see it anyway and this could be a hidden editor marker with child objects.
+            // In the case of hidden editor markers with child treasure objects, we don't want a 3D replacement spinning around like a billboard.
+            // Treasure objects are parented to editor marker in this way as the moving action data for treasure is actually on editor marker parent.
+            // Visible child of treasure objects have their own MeshRenderer and DaggerfallBillboard to apply rotations.
+            if (mainCamera && Application.isPlaying && meshRenderer.enabled)
             {
                 float y = (FaceY) ? mainCamera.transform.forward.y : 0;
                 Vector3 viewDirection = -new Vector3(mainCamera.transform.forward.x, y, mainCamera.transform.forward.z);
