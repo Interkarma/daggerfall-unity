@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = EnchantmentTypes.WeakensArmor.ToString();
 
         const int enchantCost = -700;
-        const int decreaseArmorValue = -5;
+        const int decreaseArmorValue = 5;          // Higher armor value equals a weaker armor rating
 
         public override void SetProperties()
         {
