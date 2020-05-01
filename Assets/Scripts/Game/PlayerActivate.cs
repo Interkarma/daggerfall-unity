@@ -330,6 +330,11 @@ namespace DaggerfallWorkshop.Game
                         ActivateLootContainer(hit, loot);
                     }
 
+                    //if(BulletinBoardCheck(hit, out bulletinBoard))
+                    //{
+                    //    ActivateBulletinBoard(hit, bulletinBoard);
+                    //}
+
                     // Check for static NPC hit
                     StaticNPC npc;
                     if (NPCCheck(hit, out npc))
@@ -1083,6 +1088,12 @@ namespace DaggerfallWorkshop.Game
 
             return loot != null;
         }
+
+        //// Check if raycast hit a BulletinBoard
+        //private bool BulletinBoardCheck(RaycastHit hitInfo, out BulletinBoard)
+        //{
+
+        //}
 
         // Check if raycast hit a StaticNPC
         private bool NPCCheck(RaycastHit hitInfo, out StaticNPC staticNPC)

@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Utility
         const float natureFlatsOffsetY = -2f;
         public const uint CityGateOpenModelID = 446;
         public const uint CityGateClosedModelID = 447;
+        public const uint BulletinBoardModelID = 41739;
 
         // Animal sounds range. Matched to classic.
         const float animalSoundMaxDistance = 768 * MeshReader.GlobalScale;
@@ -771,7 +772,7 @@ namespace DaggerfallWorkshop.Utility
 
                     // Use Daggerfall Model
                     // Add or combine
-                    if (combiner == null || IsCityGate(obj.ModelIdNum))
+                    if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
@@ -878,10 +879,12 @@ namespace DaggerfallWorkshop.Utility
 
         private static bool IsCityGate(uint modelID)
         {
-            if (modelID == CityGateOpenModelID || modelID == CityGateClosedModelID)
-                return true;
-            else
-                return false;
+            return modelID == CityGateOpenModelID || modelID == CityGateClosedModelID;
+        }
+
+        private static bool IsBulletinBoard(uint modelID)
+        {
+            return modelID == BulletinBoardModelID;
         }
 
         private static void AddAnimalAudioSource(GameObject go)
