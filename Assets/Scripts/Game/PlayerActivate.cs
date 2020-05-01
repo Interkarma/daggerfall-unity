@@ -330,10 +330,12 @@ namespace DaggerfallWorkshop.Game
                         ActivateLootContainer(hit, loot);
                     }
 
-                    //if(BulletinBoardCheck(hit, out bulletinBoard))
-                    //{
-                    //    ActivateBulletinBoard(hit, bulletinBoard);
-                    //}
+                    // Check for bulletin board object hit
+                    DaggerfallBulletinBoard bulletinBoard;
+                    if (BulletinBoardCheck(hit, out bulletinBoard))
+                    {
+                        Debug.Log("Player clicked bulletin board");
+                    }
 
                     // Check for static NPC hit
                     StaticNPC npc;
@@ -1089,11 +1091,13 @@ namespace DaggerfallWorkshop.Game
             return loot != null;
         }
 
-        //// Check if raycast hit a BulletinBoard
-        //private bool BulletinBoardCheck(RaycastHit hitInfo, out BulletinBoard)
-        //{
+        // Check if raycast hit a bulletin board
+        private bool BulletinBoardCheck(RaycastHit hitInfo, out DaggerfallBulletinBoard bulletinBoard)
+        {
+            bulletinBoard = hitInfo.transform.GetComponent<DaggerfallBulletinBoard>();
 
-        //}
+            return bulletinBoard != null;
+        }
 
         // Check if raycast hit a StaticNPC
         private bool NPCCheck(RaycastHit hitInfo, out StaticNPC staticNPC)

@@ -815,7 +815,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Use Daggerfall Model
                 // Add or combine
-                if (combiner == null)
+                if (combiner == null || IsBulletinBoard(obj.ModelIdNum))
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                 else
                     combiner.Add(ref modelData, modelMatrix);
@@ -840,6 +840,12 @@ namespace DaggerfallWorkshop.Utility
             if (IsCityGate(modelID))
             {
                 go.AddComponent<DaggerfallCityGate>();
+            }
+
+            // Is this a bulletin board?
+            if (IsBulletinBoard(modelID))
+            {
+                go.AddComponent<DaggerfallBulletinBoard>();
             }
 
             return go;
@@ -884,6 +890,12 @@ namespace DaggerfallWorkshop.Utility
 
         private static bool IsBulletinBoard(uint modelID)
         {
+            return modelID == BulletinBoardModelID;
+        }
+
+        private static bool IsBulletinBoard(uint modelID)
+        {
+            // Only a single variant of bulletin board model known
             return modelID == BulletinBoardModelID;
         }
 
