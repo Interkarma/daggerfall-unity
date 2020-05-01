@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallBulletinBoard bulletinBoard;
                     if (BulletinBoardCheck(hit, out bulletinBoard))
                     {
-                        Debug.Log("Player clicked bulletin board");
+                        DaggerfallUI.MessageBox("Welcome to " + playerGPS.CurrentLocation.Name);
                     }
 
                     // Check for static NPC hit

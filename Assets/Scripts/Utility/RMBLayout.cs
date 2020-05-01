@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Utility
                         GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
                         go.transform.position = billboardPosition;
                         AlignBillboardToBase(go);
-                    } 
+                    }
                 }
             }
         }
@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Utility
                     }
 
                     // Import light prefab
-                    AddLight(dfUnity, obj, lightsParent);       
+                    AddLight(dfUnity, obj, lightsParent);
                 }
             }
         }
@@ -816,9 +816,13 @@ namespace DaggerfallWorkshop.Utility
                 // Use Daggerfall Model
                 // Add or combine
                 if (combiner == null || IsBulletinBoard(obj.ModelIdNum))
+                {
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
+                }
                 else
+                {
                     combiner.Add(ref modelData, modelMatrix);
+                }
             }
         }
 
@@ -885,17 +889,13 @@ namespace DaggerfallWorkshop.Utility
 
         private static bool IsCityGate(uint modelID)
         {
+            // Two variants of City Gate model known
             return modelID == CityGateOpenModelID || modelID == CityGateClosedModelID;
         }
 
         private static bool IsBulletinBoard(uint modelID)
         {
-            return modelID == BulletinBoardModelID;
-        }
-
-        private static bool IsBulletinBoard(uint modelID)
-        {
-            // Only a single variant of bulletin board model known
+            // Only a single variant of Bulletin Board model known
             return modelID == BulletinBoardModelID;
         }
 
@@ -906,7 +906,7 @@ namespace DaggerfallWorkshop.Utility
 
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             SoundClips sound = SoundClips.None;
-            switch(dfBillboard.Summary.Record)
+            switch (dfBillboard.Summary.Record)
             {
                 case 0:
                 case 1:
