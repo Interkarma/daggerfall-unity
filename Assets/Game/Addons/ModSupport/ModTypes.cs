@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// If not null this string is the minimum accepted version with format X.Y.Z.
         /// Pre-release identifiers following an hyphen are ignored in target version so they must be omitted here.
-        /// For example "1.1.0" is higher than "1.0.12" and equal to "1.0.0-rc.1".
+        /// For example "1.0.0" is equal to "1.0.0-rc.1".
         /// </summary>
         [SerializeField]
         internal string Version;
