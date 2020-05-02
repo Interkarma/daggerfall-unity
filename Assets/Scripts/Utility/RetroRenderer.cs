@@ -80,13 +80,13 @@ namespace DaggerfallWorkshop.Utility
             {
                 if (!postprocessMaterial)
                 {
-                    Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPostprocessingShaderName);
+                    Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPosterizationShaderName);
                     if (shader)
                         postprocessMaterial = new Material(shader);
                     else
                     {
                         postprocessing = false;
-                        Debug.Log("Couldn't find shader " + MaterialReader._DaggerfallRetroPostprocessingShaderName);
+                        Debug.Log("Couldn't find shader " + MaterialReader._DaggerfallRetroPosterizationShaderName);
                     }
                 }
                 if (postprocessMaterial)
