@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop
         public int ResolutionWidth { get; set; }
         public int ResolutionHeight { get; set; }
         public int RetroRenderingMode { get; set; }
-        public bool UsePostProcessingInRetroMode { get; set; }
+        public int PostProcessingInRetroMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
         public int TargetFrameRate { get; set; }
@@ -206,7 +206,7 @@ namespace DaggerfallWorkshop
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
-            UsePostProcessingInRetroMode = GetBool(sectionVideo, "UsePostProcessingInRetroMode");
+            PostProcessingInRetroMode = GetInt(sectionVideo, "PostProcessingInRetroMode");
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
@@ -328,7 +328,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
-            SetBool(sectionVideo, "UsePostProcessingInRetroMode", UsePostProcessingInRetroMode);
+            SetInt(sectionVideo, "PostProcessingInRetroMode", PostProcessingInRetroMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
