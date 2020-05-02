@@ -130,7 +130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             clickToAttackCheckbox = AddOption(20, 120, "Click to Attack", DaggerfallUnity.Settings.ClickToAttack);
 
-            weaponAttackThresholdTextbox = AddTextbox("Weapon Attack Threshold", 115, 100, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
+            weaponAttackThresholdTextbox = AddTextbox("Mouse Weapon Attack Threshold", 115, 100, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
 
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
