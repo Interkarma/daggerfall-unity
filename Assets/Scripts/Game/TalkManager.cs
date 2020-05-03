@@ -1237,6 +1237,55 @@ namespace DaggerfallWorkshop.Game
             return question;
         }
 
+        public string GetNewsOrRumorsForBulletinBoard()
+        {
+            const int outOfNewsRecordIndex = 1457;
+            string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
+            List<RumorMillEntry> validRumors = GetValidRumors(true);
+
+            if (validRumors.Count == 0)
+                return ExpandRandomTextRecord(outOfNewsRecordIndex);
+
+            int randomIndex = UnityEngine.Random.Range(0, validRumors.Count);
+            RumorMillEntry entry = validRumors[randomIndex];
+            if (entry.rumorType == RumorType.CommonRumor)
+            {
+                if (entry.listRumorVariants != null)
+                {
+                    TextFile.Token[] tokens = entry.listRumorVariants[0];
+                    int regionID = -1;
+                    FactionFile.FactionData factionData;
+
+                    if (entry.regionID != -1)
+                        regionID = entry.regionID;
+                    else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData) && factionData.region != -1)
+                        regionID = factionData.region;
+                    else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData) && factionData.region != -1)
+                        regionID = factionData.region;
+                    else // Classic uses a random region in this case, but that can create odd results for the witches rumor and maybe more. Using current region.
+                        regionID = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+
+                    MacroHelper.SetFactionIdsAndRegionID(entry.faction1, entry.faction2, regionID);
+                    MacroHelper.ExpandMacros(ref tokens, this);
+                    MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // Reset again so %reg macro may resolve to current region if needed
+                    news = TokensToString(tokens, false);
+                }
+            }
+            // TODO: hmmm, what about these?
+            //else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
+            //{
+            //    int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
+            //    TextFile.Token[] tokens = entry.listRumorVariants[variant];
+
+            //    // Expand tokens and reveal dialog-linked resources
+            //    QuestMacroHelper macroHelper = new QuestMacroHelper();
+            //    macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
+            //    news = TokensToString(tokens);
+            //}
+
+            return news;
+        }
+
         public string GetNewsOrRumors()
         {
             const int outOfNewsRecordIndex = 1457;
@@ -1292,7 +1341,7 @@ namespace DaggerfallWorkshop.Game
             return ExpandRandomTextRecord(outOfNewsRecordIndex);
         }
 
-        private List<RumorMillEntry> GetValidRumors()
+        private List<RumorMillEntry> GetValidRumors(bool readingSign = false)
         {
             List<RumorMillEntry> validRumors = new List<RumorMillEntry>();
 
@@ -1307,9 +1356,16 @@ namespace DaggerfallWorkshop.Game
                     if (entry.regionID != -1 && entry.regionID != GameManager.Instance.PlayerGPS.CurrentRegionIndex)
                         continue;
 
-                    // TODO: For now, only spoken rumors, no sign messages
-                    if ((entry.flags & 1) == 1)
+                    // skip sign rumors if talking
+                    if (!readingSign && (entry.flags & 1) == 1)
+                    {
                         continue;
+                    }
+                    // skip spoken rumors if reading sign
+                    if(readingSign && (entry.flags & 1) != 1)
+                    {
+                        continue;
+                    }
 
                     if (entry.faction1 != 0 || entry.faction2 != 0 || entry.type != 100)
                     {
@@ -2620,13 +2676,7 @@ namespace DaggerfallWorkshop.Game
 
             uint nowClassic = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
 
-            for (int i = listRumorMill.Count - 1; i >= 0; i--)
-            {
-                if (listRumorMill[i].timeLimit < nowClassic)
-                {
-                    listRumorMill.RemoveAt(i);
-                }
-            }
+            listRumorMill.RemoveAll(x => x.timeLimit < nowClassic);
         }
 
         private void SetupRumorMill()
