@@ -137,7 +137,7 @@ _qgclicked_ task:
 
 _S.04_ task:
 	say 1011
-	create foe _rats_ every 1 minutes 7 times with 100% success 
+	create foe _rats_ every 2 minutes 7 times with 100% success 
 
 _monster1_ task:
 	pc at _house_ set _S.04_ 
@@ -147,4 +147,5 @@ _monster2_ task:
 
 _S.07_ task:
 	say 1012
-	create foe _monster_ every 1 minutes 7 times with 100% success 
+	create foe _monster_ every 2 minutes 7 times with 100% success 
+--slowed enemy spawn due to feedback
