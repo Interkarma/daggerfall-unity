@@ -141,6 +141,7 @@ namespace DaggerfallWorkshop
         public float WeaponAttackThreshold { get; set; }
         public float WeaponSensitivity { get; set; }
         public float MoveSpeedAcceleration { get; set; }
+        public bool ToggleSneak { get; set; }
         public bool ClickToAttack { get; set; }
         public int CameraRecoilStrength { get; set; }
         public float MusicVolume { get; set; }
@@ -269,6 +270,7 @@ namespace DaggerfallWorkshop
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
             MoveSpeedAcceleration = GetFloat(sectionControls, "MoveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration);
+            ToggleSneak = GetBool(sectionControls, "ToggleSneak");
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
@@ -392,6 +394,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
             SetFloat(sectionControls, "MoveSpeedAcceleration", MoveSpeedAcceleration);
+            SetBool(sectionControls, "ToggleSneak", ToggleSneak);
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);
