@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game
         public const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
 
         // Opening and closing hours by building type
-        static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
+        static byte[] openHours = { 7, 8, 9, 8, 0, 9, 10, 10, 9, 6, 9, 11, 9, 9, 0, 0, 10, 0 };
         static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
 
         const int PrivatePropertyId = 37;
@@ -148,9 +148,12 @@ namespace DaggerfallWorkshop.Game
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             CustomModActivation existingActivation;
-            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation) && existingActivation.Provider.LoadPriority > provider.LoadPriority) {
+            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation) && existingActivation.Provider.LoadPriority > provider.LoadPriority)
+            {
                 Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
-            } else {
+            }
+            else
+            {
                 customModActivations[goFlatModelName] = new CustomModActivation(customActivation, activationDistance, provider);
             }
         }
@@ -180,7 +183,8 @@ namespace DaggerfallWorkshop.Game
         /// Checks if an object has a custom activation assigned
         /// </summary>
         /// <param name="goFlatModelName">The name of the flat / model object to check.</param>
-        public static bool HasCustomActivation(string goFlatModelName) {
+        public static bool HasCustomActivation(string goFlatModelName)
+        {
             return customModActivations.ContainsKey(goFlatModelName);
         }
         #endregion
@@ -335,8 +339,17 @@ namespace DaggerfallWorkshop.Game
                     if (BulletinBoardCheck(hit, out bulletinBoard))
                     {
                         var bulletinBoardMessage = GameManager.Instance.TalkManager.GetNewsOrRumorsForBulletinBoard();
-                        //DaggerfallUI.MessageBox("Welcome to " + playerGPS.CurrentLocation.Name + "\n" + bulletinBoardMessage);
-                        DaggerfallUI.MessageBox( bulletinBoardMessage);
+                        var tokens = new List<TextFile.Token>()
+                        {
+                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
+                            new TextFile.Token(TextFile.Formatting.Text, playerGPS.CurrentLocation.Name),
+                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
+                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                            new TextFile.Token(TextFile.Formatting.Text, string.Empty),
+                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                            new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage)
+                        };
+                        DaggerfallUI.MessageBox(tokens.ToArray());
                     }
 
                     // Check for static NPC hit
@@ -372,7 +385,8 @@ namespace DaggerfallWorkshop.Game
                     CustomModActivation customActivation;
                     if (customModActivations.TryGetValue(flatModelName, out customActivation))
                     {
-                        if(hit.distance <= customActivation.ActivationDistance) {
+                        if (hit.distance <= customActivation.ActivationDistance)
+                        {
                             customActivation.Action(hit);
                         }
                     }
@@ -750,7 +764,7 @@ namespace DaggerfallWorkshop.Game
                     // Open Trade Window if shop is open
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
                     {
-                        DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow) UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Buy, null });
+                        DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Buy, null });
                         tradeWindow.MerchantItems = loot.Items;
                         uiManager.PushWindow(tradeWindow);
                         return;
