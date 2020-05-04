@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.Entity
             if (soulTrapEffect.RollTrapChance())
             {
                 // Attempt to fill an empty soul trap
-                if (soulTrapEffect.FillEmptyTrapItem((MobileTypes)mobileEnemy.ID))
+                if (SoulTrap.FillEmptyTrapItem((MobileTypes)mobileEnemy.ID))
                 {
                     // Trap filled, allow entity to die normally
                     DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapSuccess"), 1.5f);
