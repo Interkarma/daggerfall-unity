@@ -130,6 +130,10 @@ namespace DaggerfallWorkshop.Game.Entity
         bool enemyAlertActive = false;
         uint lastEnemyAlertTime;
 
+        // Player-only constant effects
+        // Note: These properties are intentionally not serialized. They should only be set by live effects.
+        public bool IsAzurasStarEquipped { get; set; }
+
         #endregion
 
         #region Properties
@@ -1266,6 +1270,15 @@ namespace DaggerfallWorkshop.Game.Entity
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Clear player-only constant effects.
+        /// </summary>
+        public override void ClearConstantEffects()
+        {
+            base.ClearConstantEffects();
+            IsAzurasStarEquipped = false;
         }
 
         /// <summary>
