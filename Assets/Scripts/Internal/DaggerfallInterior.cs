@@ -407,6 +407,10 @@ namespace DaggerfallWorkshop
             {
                 bool stopCombine = false;
 
+                // Filter out bad interior models
+                if (IsBadInteriorModel(obj.ModelIdNum))
+                    continue;
+
                 // Get model data
                 ModelData modelData;
                 dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
@@ -499,6 +503,31 @@ namespace DaggerfallWorkshop
             // Add static doors component
             DaggerfallStaticDoors c = this.gameObject.AddComponent<DaggerfallStaticDoors>();
             c.Doors = doors.ToArray();
+        }
+
+        /// <summary>
+        /// Identify specific bad interior models.
+        /// </summary>
+        /// <returns>True if model should be filtered out from this specific interior.</returns>
+        bool IsBadInteriorModel(uint modelID)
+        {
+            // RESIBM01.RMB (Index 601), BuildingRecord 7
+            if (EntryDoor.blockIndex == 601 && EntryDoor.recordIndex == 7)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTAA02.RMB (Index 697), BuildingRecord 1
+            if (EntryDoor.blockIndex == 697 && EntryDoor.recordIndex == 1)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            return false;
         }
 
         private void AddFurnitureAction(DFBlock.RmbBlock3dObjectRecord obj, GameObject go, PlayerGPS.DiscoveredBuilding buildingData)
