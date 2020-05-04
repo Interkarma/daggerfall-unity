@@ -587,24 +587,8 @@ namespace DaggerfallWorkshop.Game
                     // Remove health
                     enemyEntity.DecreaseHealth(damage);
 
-                    // Make foe attack their aggressor
-                    // Currently this is just player, but should be expanded later
-                    // for a wider variety of behaviours
-                    if (enemyMotor)
-                    {
-                        // Make enemies in an area aggressive if player attacked a non-hostile one.
-                        if (!enemyMotor.IsHostile)
-                        {
-                            GameManager.Instance.MakeEnemiesHostile();
-                        }
-                        enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
-                    }
-
-                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && enemyEntity.CurrentHealth <= 0)
-                    {
-                        playerEntity.TallyCrimeGuildRequirements(false, 1);
-                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                    }
+                    // Handle attack from player
+                    enemyEntity.EntityBehaviour.HandleAttackFromSource(GameManager.Instance.PlayerEntityBehaviour);
 
                     // Allow custom race handling of weapon hit against enemies, e.g. vampire feeding or lycanthrope killing
                     RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
