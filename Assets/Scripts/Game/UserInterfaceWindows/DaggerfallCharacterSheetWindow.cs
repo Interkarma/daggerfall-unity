@@ -35,6 +35,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         StatsRollout statsRollout;
 
         bool isCloseWindowDeferred = false;
+        bool isInventoryWindowDeferred = false;
+        bool isSpellbookWindowDeferred = false;
+        bool isLogbookWindowDeferred = false;
+        bool isHistoryWindowDeferred = false;
         bool leveling = false;
 
         const int oghmaBonusPool = 30;
@@ -174,21 +178,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button inventoryButton = DaggerfallUI.AddButton(new Rect(3, 151, 65, 12), NativePanel);
             inventoryButton.OnMouseClick += InventoryButton_OnMouseClick;
             inventoryButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetInventory);
+            inventoryButton.OnKeyboardEvent += InventoryButton_OnKeyboardEvent;
 
             // Spellbook button
             Button spellBookButton = DaggerfallUI.AddButton(new Rect(69, 151, 65, 12), NativePanel);
             spellBookButton.OnMouseClick += SpellBookButton_OnMouseClick;
             spellBookButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetSpellbook);
+            spellBookButton.OnKeyboardEvent += SpellBookButton_OnKeyboardEvent;
 
             // Logbook button
             Button logBookButton = DaggerfallUI.AddButton(new Rect(3, 165, 65, 12), NativePanel);
             logBookButton.OnMouseClick += LogBookButton_OnMouseClick;
             logBookButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetLogbook);
+            logBookButton.OnKeyboardEvent += LogBookButton_OnKeyboardEvent;
 
             // History button
             Button historyButton = DaggerfallUI.AddButton(new Rect(69, 165, 65, 12), NativePanel);
             historyButton.OnMouseClick += HistoryButton_OnMouseClick;
             historyButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetHistory);
+            historyButton.OnKeyboardEvent += HistoryButton_OnKeyboardEvent;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(50, 179, 39, 19), NativePanel);
@@ -889,10 +897,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
         }
 
+        void InventoryButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isInventoryWindowDeferred = true;
+            } 
+            else if (keyboardEvent.type == EventType.KeyUp && isInventoryWindowDeferred)
+            {
+                isInventoryWindowDeferred = false;
+                uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+            }
+        }
+
         private void SpellBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
+        }
+
+        void SpellBookButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isSpellbookWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isSpellbookWindowDeferred)
+            {
+                isSpellbookWindowDeferred = false;
+                uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
+            }
         }
 
         private void LogBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -901,11 +937,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
         }
 
+        void LogBookButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isLogbookWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isLogbookWindowDeferred)
+            {
+                isLogbookWindowDeferred = false;
+                uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
+            }
+        }
+
         void HistoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox advantageTextBox = DaggerfallUI.MessageBox(GetClassSpecials());
             advantageTextBox.OnClose += AdvantageTextBox_OnClose;
+        }
+
+        void HistoryButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isHistoryWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isHistoryWindowDeferred)
+            {
+                isHistoryWindowDeferred = false;
+                DaggerfallMessageBox advantageTextBox = DaggerfallUI.MessageBox(GetClassSpecials());
+                advantageTextBox.OnClose += AdvantageTextBox_OnClose;
+            }
         }
 
         void AdvantageTextBox_OnClose()
