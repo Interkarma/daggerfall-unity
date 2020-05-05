@@ -46,6 +46,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         StaticNPC merchantNPC;
 
         bool isCloseWindowDeferred = false;
+        bool isRepairWindowDeferred = false;
+        bool isTalkWindowDeferred = false;
+        bool isSellWindowDeferred = false;
 
         #endregion
 
@@ -79,16 +82,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             repairButton = DaggerfallUI.AddButton(repairButtonRect, mainPanel);
             repairButton.OnMouseClick += RepairButton_OnMouseClick;
             repairButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantRepair);
+            repairButton.OnKeyboardEvent += RepairButton_OnKeyboardEvent;
 
             // Talk button
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantTalk);
+            talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
             // Sell button
             sellButton = DaggerfallUI.AddButton(sellButtonRect, mainPanel);
             sellButton.OnMouseClick += SellButton_OnMouseClick;
             sellButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MerchantSell);
+            sellButton.OnKeyboardEvent += SellButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
@@ -119,6 +125,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Repair, null }));
         }
 
+        void RepairButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isRepairWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isRepairWindowDeferred)
+            {
+                isRepairWindowDeferred = false;
+                CloseWindow();
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Repair, null }));
+            }
+        }
+
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
@@ -126,11 +147,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
+        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isTalkWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isTalkWindowDeferred)
+            {
+                isTalkWindowDeferred = true;
+                CloseWindow();
+                GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
+            }
+        }
+
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Sell, null }));
+        }
+
+        void SellButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isSellWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isSellWindowDeferred)
+            {
+                isSellWindowDeferred = false;
+                CloseWindow();
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Sell, null }));
+            }
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
