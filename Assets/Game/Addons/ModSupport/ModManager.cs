@@ -984,7 +984,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="mod">A mod that should be validated.</param>
         /// <returns>A readable error message or null.</returns>
-        internal string CheckModDependencies(Mod mod)
+        internal void CheckModDependencies(Mod mod, List<string> errorMessages, ref bool hasSortIssues)
         {
             if (mod.ModInfo.Dependencies != null)
             {
@@ -997,28 +997,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         if (dependency.IsOptional)
                             continue;
 
-                        return string.Format(ModManager.GetText("dependencyIsMissing"), dependency.Name);
+                        errorMessages.Add(string.Format(GetText("dependencyIsMissing"), dependency.Name));
+                        continue;
                     }
 
                     // Check load order priority
                     if (!dependency.IsPeer && mod.LoadPriority < target.LoadPriority)
-                        return string.Format(ModManager.GetText("dependencyWithIncorrectPosition"), target.Title);
+                    {
+                        errorMessages.Add(string.Format(GetText("dependencyWithIncorrectPosition"), target.Title));
+                        hasSortIssues = true;
+                    }
 
                     // Check minimum version (ignore pre-release identifiers after hyphen).
                     if (dependency.Version != null)
                     {
                         if (target.ModInfo.ModVersion == null)
-                            return string.Format(ModManager.GetText("dependencyWithIncompatibleVersion"), target.Title, "<undefined>", dependency.Version);
-
-                        int index = target.ModInfo.ModVersion.IndexOf('-');
-                        string referenceVersion = index != -1 ? target.ModInfo.ModVersion.Remove(index) : target.ModInfo.ModVersion;
-                        if (IsVersionLowerOrEqual(dependency.Version, referenceVersion) != true)
-                            return string.Format(ModManager.GetText("dependencyWithIncompatibleVersion"), target.Title, target.ModInfo.ModVersion, dependency.Version);
+                        {
+                            errorMessages.Add(string.Format(GetText("dependencyWithIncompatibleVersion"), target.Title, "<undefined>", dependency.Version));
+                        }
+                        else
+                        {
+                            int index = target.ModInfo.ModVersion.IndexOf('-');
+                            string referenceVersion = index != -1 ? target.ModInfo.ModVersion.Remove(index) : target.ModInfo.ModVersion;
+                            if (IsVersionLowerOrEqual(dependency.Version, referenceVersion) != true)
+                                errorMessages.Add(string.Format(GetText("dependencyWithIncompatibleVersion"), target.Title, target.ModInfo.ModVersion, dependency.Version));
+                        }   
                     }
                 }
             }
-
-            return null;
         }
 
         internal Mod GetModFromName(string name)
