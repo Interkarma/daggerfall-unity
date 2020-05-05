@@ -393,6 +393,11 @@ namespace DaggerfallWorkshop.Game
                 hotkeySequenceProcessed = ProcessHotKeySequences();
             }
 
+            if (Event.current.type == EventType.KeyUp)
+            {
+                hotkeySequenceProcessed = ProcessHotKeySequences();
+            }
+
             if (Event.current.type == EventType.Repaint)
             {
                 RenderTexture oldRT = null;
