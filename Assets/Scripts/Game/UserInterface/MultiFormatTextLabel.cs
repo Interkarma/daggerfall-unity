@@ -47,6 +47,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool wrapText = false;
         bool wrapWords = false;
         int maxTextWidth = 0;
+        int maxTextHeight = 0;
+        int actualTextHeight = 0;
 
         int minTextureDimTextLabel = TextLabel.limitMinTextureDim; // set this with property MinTextureDim to higher values if you experience scaling issues with small texts (e.g. inventory infopanel)
 
@@ -72,6 +74,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return maxTextWidth; }
             set { maxTextWidth = value; }
+        }
+
+        public int MaxTextHeight
+        {
+            get { return maxTextHeight; }
+            set { maxTextHeight = value; }
+        }
+
+        public int ActualTextHeight
+        {
+            get { return actualTextHeight; }
         }
 
         /// <summary>
@@ -264,6 +277,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public void UpdateRestrictedRenderArea()
+        {
+            for (int i = 0; i < labels.Count; i++)
+            {
+                TextLabel textLabel = labels[i];
+                textLabel.RestrictedRenderAreaCoordinateType = RestrictedRenderAreaCoordinateType;
+                textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
+                textLabel.RestrictedRenderAreaCustomParent = RestrictedRenderAreaCustomParent;
+                labels[i] = textLabel;
+            }
+        }
+
+        public void ChangeScrollPosition(int amount)
+        {
+            for (int i = 0; i < labels.Count; i++)
+            {
+                TextLabel textLabel = labels[i];
+                textLabel.Position = new Vector2(textLabel.Position.x, textLabel.Position.y + amount);
+                labels[i] = textLabel;
+            }
+        }
+
         #region Protected Methods
 
         protected virtual void SetRowLeading(int amount)
@@ -346,6 +381,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (rowHeight > totalHeight)
                         totalHeight = rowHeight;
                 }
+            }
+
+            if (maxTextHeight > 0 && totalHeight > maxTextHeight)
+            {
+                actualTextHeight = totalHeight;
+                totalHeight = maxTextHeight;
             }
 
             Size = new Vector2(totalWidth, totalHeight);
