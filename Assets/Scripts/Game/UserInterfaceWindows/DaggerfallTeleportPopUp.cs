@@ -120,7 +120,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void NoButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
-            Debug.Log("In ExitButton_OnKeyboardEvent");
             if (keyboardEvent.type == EventType.KeyDown)
             {
                 isCloseWindowDeferred = true;

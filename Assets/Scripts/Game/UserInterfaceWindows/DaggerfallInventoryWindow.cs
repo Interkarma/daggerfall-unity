@@ -1999,7 +1999,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
-            Debug.Log("In DaggerfallInventoryWindow ExitButton_OnKeyboardEvent");
             if (keyboardEvent.type == EventType.KeyDown)
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
