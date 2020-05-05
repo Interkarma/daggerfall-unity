@@ -415,7 +415,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
             SetTextTokens(tokens, mcp);
-            UpdatePanelSizes();
         }
 
         /// <summary>
@@ -431,17 +430,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// Width is determined by widest text line as with non-scrolling message box.
         /// Must call this before setting text.
         /// </summary>
-        /// <param name="height">Capped height of visible area of message panel. Anything past this size will become srollable.</param>
+        /// <param name="height">Capped height of visible area of message panel. Anything past this size will become scrollable.</param>
         public void EnableVerticalScrolling(int height)
         {
             if (height > 0)
             {
                 label.MaxTextHeight = height;
-                label.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.CustomParent;
-                label.RestrictedRenderAreaCustomParent = scrollingPanel;
-                label.UpdateRestrictedRenderArea();
+                UpdatePanelSizes();
             }
-            UpdatePanelSizes();
         }
 
         #endregion
@@ -516,11 +512,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 scrollBar.Size = new Vector2(8, GetScrollingPanelHeight());
                 scrollBar.TotalUnits = label.ActualTextHeight + 1;
                 scrollBar.DisplayUnits = GetScrollingPanelHeight();
+                StartClippingScrollingText();
             }
             else
             {
                 scrollBar.Enabled = false;
+                StopClippingScrollingText();
             }
+        }
+
+        void StartClippingScrollingText()
+        {
+            label.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.CustomParent;
+            label.RestrictedRenderAreaCustomParent = scrollingPanel;
+            label.UpdateRestrictedRenderArea();
+        }
+
+        void StopClippingScrollingText()
+        {
+            label.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.None;
+            label.RestrictedRenderAreaCustomParent = null;
+            label.UpdateRestrictedRenderArea();
         }
 
         int GetScrollingPanelHeight()

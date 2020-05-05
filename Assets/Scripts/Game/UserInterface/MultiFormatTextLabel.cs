@@ -380,12 +380,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     int rowHeight = (int)lastLabel.Position.y + lastLabel.TextHeight;
                     if (rowHeight > totalHeight)
                         totalHeight = rowHeight;
+
+                    actualTextHeight = totalHeight + lastLabel.TextHeight;
                 }
             }
 
             if (maxTextHeight > 0 && totalHeight > maxTextHeight)
             {
-                actualTextHeight = totalHeight;
                 totalHeight = maxTextHeight;
             }
 
