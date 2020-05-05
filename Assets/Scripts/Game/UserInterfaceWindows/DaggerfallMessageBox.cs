@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallMessageBox nextMessageBox;
         int customYPos = -1;
         float presentationTime = 0;
+        bool isActivateButtonDeferred = false;
 
         KeyCode extraProceedBinding = KeyCode.None;
 
@@ -426,13 +427,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ActivateButton(sender);
         }
 
         void ButtonKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
-            if (keyboardEvent.type == EventType.KeyUp)
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isActivateButtonDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isActivateButtonDeferred)
+            {
+                isActivateButtonDeferred = false;
                 ActivateButton(sender);
+            }
         }
 
         void UpdatePanelSizes()
@@ -555,7 +565,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnButtonClick != null)
                 OnButtonClick(sender, messageBoxButton);
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         #endregion
