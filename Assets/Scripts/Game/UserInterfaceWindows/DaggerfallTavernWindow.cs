@@ -65,6 +65,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int tradePrice = 0;
 
         bool isCloseWindowDeferred = false;
+        bool isTalkWindowDeferred = false;
+        bool isFoodAndDrinkDeferred = false;
 
         #endregion
 
@@ -104,11 +106,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernTalk);
+            talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
             // Food button
             foodButton = DaggerfallUI.AddButton(foodButtonRect, mainPanel);
             foodButton.OnMouseClick += FoodButton_OnMouseClick;
             foodButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernFood);
+            foodButton.OnKeyboardEvent += FoodButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
@@ -259,9 +263,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
-        private void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isTalkWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isTalkWindowDeferred)
+            {
+                isTalkWindowDeferred = false;
+                CloseWindow();
+                GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
+            }
+        }
+
+        private void DoFoodAndDrink()
+        {
             CloseWindow();
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
@@ -310,6 +328,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(price);
                 playerEntity.SetHealth(playerEntity.CurrentHealth + 2 * price);
                 playerEntity.LastTimePlayerAteOrDrankAtTavern = gameMinutes;
+            }
+        }
+
+        private void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DoFoodAndDrink();
+        }
+
+        void FoodButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isFoodAndDrinkDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isFoodAndDrinkDeferred)
+            {
+                isFoodAndDrinkDeferred = false;
+                DoFoodAndDrink();
             }
         }
 
