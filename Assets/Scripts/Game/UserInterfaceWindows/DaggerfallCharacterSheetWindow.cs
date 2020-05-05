@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         StatsRollout statsRollout;
 
+        bool isCloseWindowDeferred = false;
         bool leveling = false;
 
         const int oghmaBonusPool = 30;
@@ -193,6 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(50, 179, 39, 19), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.CharacterSheetExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             // Attribute popup text
             Vector2 pos = new Vector2(141, 6);
@@ -933,6 +935,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (CheckIfDoneLeveling())
                 CloseWindow();
         }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            Debug.Log("In ExitButton_OnKeyboardEvent");
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                if (CheckIfDoneLeveling())
+                    isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
+        }
+
 
         private void StatsRollout_OnStatChanged()
         {

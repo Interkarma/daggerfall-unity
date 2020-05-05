@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Vector3 allocatedBed;
         protected bool ignoreAllocatedBed = false;
         protected bool abortRestForEnemySpawn = false;
+        bool isCloseWindowDeferred = false;
 
         protected PlayerEntity playerEntity;
         protected DaggerfallHUD hud;
@@ -154,6 +155,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
             stopButton.OnMouseClick += StopButton_OnMouseClick;
             stopButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.RestStop);
+            stopButton.OnKeyboardEvent += StopButton_OnKeyboardEvent;
+
 
             // Store toggle closed binding for this window
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);
@@ -641,6 +644,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PopToHUD();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+        }
+
+        protected void StopButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            Debug.Log("In ExitButton_OnKeyboardEvent");
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         private void RestFinishedPopup_OnClose()

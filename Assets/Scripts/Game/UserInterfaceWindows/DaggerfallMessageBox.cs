@@ -416,11 +416,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        private void ActivateButton(BaseScreenComponent sender)
         {
             buttonClicked = true;
             selectedButton = (MessageBoxButtons)sender.Tag;
             RaiseOnButtonClickEvent(this, selectedButton);
+        }
+
+        void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        {
+            ActivateButton(sender);
+        }
+
+        void ButtonKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyUp)
+                ActivateButton(sender);
         }
 
         void UpdatePanelSizes()

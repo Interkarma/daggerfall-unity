@@ -80,6 +80,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool doFastTravel = false; // flag used to indicate Update() function that fast travel should happen
         float waitTimer = 0;
 
+        bool isCloseWindowDeferred = false;
+
         bool speedCautious  = true;
         bool travelShip     = true;
         bool sleepModeInn   = true;
@@ -167,6 +169,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButtonOnClickHandler;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             cautiousToggleButton = DaggerfallUI.AddButton(cautiousButtonRect, NativePanel);
             cautiousToggleButton.OnMouseClick += SpeedButtonOnClickHandler;
@@ -467,6 +470,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             doFastTravel = false;
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            Debug.Log("In ExitButton_OnKeyboardEvent");
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                doFastTravel = false;
+                DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
+            }
         }
 
         public void SpeedButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
