@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         StatsRollout statsRollout;
 
+        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
         bool isInventoryWindowDeferred = false;
         bool isSpellbookWindowDeferred = false;
@@ -235,15 +236,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (!Input.GetKey(toggleClosedBinding))
+                    isCloseWindowRearmed = true;
+                if (InputManager.Instance.GetKeyDown(toggleClosedBinding) && isCloseWindowRearmed)
+                {
                     if (CheckIfDoneLeveling())
-                        CloseWindow();
+                        isCloseWindowDeferred = true;
+                }
+                else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
+                {
+                    isCloseWindowDeferred = false;
+                    CloseWindow();
+                }
             }
         }
 
         public override void OnPush()
         {
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CharacterSheet);
+            isCloseWindowRearmed = false;
             Refresh();
         }
 

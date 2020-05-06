@@ -491,7 +491,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Handle in-game windows
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.CharacterSheet))
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.CharacterSheet))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
             }
