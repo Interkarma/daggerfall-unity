@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Vector3 allocatedBed;
         protected bool ignoreAllocatedBed = false;
         protected bool abortRestForEnemySpawn = false;
+
+        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
 
         protected PlayerEntity playerEntity;
@@ -173,8 +175,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (!InputManager.Instance.GetKey(toggleClosedBinding))
+                    isCloseWindowRearmed = true;
+                if (InputManager.Instance.GetKeyDown(toggleClosedBinding) && isCloseWindowRearmed)
+                    isCloseWindowDeferred = true;
+                else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
+                {
+                    isCloseWindowDeferred = false;
                     CloseWindow();
+                }
             }
 
             // Update HUD
@@ -216,6 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPush();
 
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Rest);
+            isCloseWindowRearmed = false;
 
             // Reset counters
             minutesOfHour = 0;

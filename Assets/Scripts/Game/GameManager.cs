@@ -503,7 +503,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.Rest))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.Rest))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
             }
