@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool isActivateButtonDeferred = false;
 
         KeyCode extraProceedBinding = KeyCode.None;
+        bool isNextMessageRearmed = false;
         bool isNextMessageDeferred = false;
 
         /// <summary>
@@ -236,6 +237,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             parentPanel.OnMouseClick += ParentPanel_OnMouseClick;
             parentPanel.OnRightMouseClick += ParentPanel_OnMouseClick;
             parentPanel.OnMiddleMouseClick += ParentPanel_OnMouseClick;
+
+            isNextMessageRearmed = false;
         }
 
         public override void OnPop()
@@ -279,7 +282,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyDown(extraProceedBinding))
+                if (!Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.KeypadEnter) && !InputManager.Instance.GetKeyDown(extraProceedBinding))
+                    isNextMessageRearmed = true;
+                if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyDown(extraProceedBinding)) && isNextMessageRearmed)
                     isNextMessageDeferred = true;
                 else if ((Input.GetKeyUp(KeyCode.Return) || Input.GetKeyUp(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyUp(extraProceedBinding)) && isNextMessageDeferred)
                 {

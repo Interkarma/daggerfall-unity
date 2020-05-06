@@ -527,7 +527,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.Status))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.Status))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
