@@ -65,6 +65,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ContentReader.MapSummary locationSummary;
 
         KeyCode toggleClosedBinding;
+        bool isCloseWindowRearmed = false;
+        bool isCloseWindowDeferred = false;
 
         Panel borderPanel;
         Panel regionTextureOverlayPanel;
@@ -317,6 +319,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPush();
 
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.TravelMap);
+            isCloseWindowRearmed = false;
 
             if(IsSetup)
             {
@@ -342,8 +345,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
-            if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+            if (!InputManager.Instance.GetKey(toggleClosedBinding))
+                isCloseWindowRearmed = true;
+            if (InputManager.Instance.GetKeyDown(toggleClosedBinding) && isCloseWindowRearmed)
+                isCloseWindowDeferred = true;
+            else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
             {
+                isCloseWindowDeferred = false;
                 if (RegionSelected)
                     CloseRegionPanel();
                 else

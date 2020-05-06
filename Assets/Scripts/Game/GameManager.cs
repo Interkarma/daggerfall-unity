@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.TravelMap))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TravelMap))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
