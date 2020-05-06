@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool isActivateButtonDeferred = false;
 
         KeyCode extraProceedBinding = KeyCode.None;
+        bool isNextMessageDeferred = false;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -276,30 +277,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (!DaggerfallUI.Instance.HotkeySequenceProcessed &&
-                (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyUp(extraProceedBinding)))
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                // Special handling for message boxes with buttons
-                if (buttons.Count > 0)
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyDown(extraProceedBinding))
+                    isNextMessageDeferred = true;
+                else if ((Input.GetKeyUp(KeyCode.Return) || Input.GetKeyUp(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyUp(extraProceedBinding)) && isNextMessageDeferred)
                 {
-                    // Trigger default button if one is present
-                    Button defaultButton = GetDefaultButton();
-                    if (defaultButton != null)
-                        defaultButton.TriggerMouseClick();
+                    isNextMessageDeferred = false;
+                    // Special handling for message boxes with buttons
+                    if (buttons.Count > 0)
+                    {
+                        // Trigger default button if one is present
+                        Button defaultButton = GetDefaultButton();
+                        if (defaultButton != null)
+                            defaultButton.TriggerMouseClick();
 
-                    // Exit here if no other message boxes queued
-                    // Most of the time this won't be the case and we don't want message boxes waiting for input to close prematurely
-                    if (nextMessageBox == null)
-                        return;
+                        // Exit here if no other message boxes queued
+                        // Most of the time this won't be the case and we don't want message boxes waiting for input to close prematurely
+                        if (nextMessageBox == null)
+                            return;
+                    }
+                    // if there is a nested next message box show it
+                    if (this.nextMessageBox != null)
+                    {
+                        nextMessageBox.Show();
+                    }
+                    else // or close window if there is no next message box to show
+                    {
+                        CloseWindow();
+                    }
                 }
-                // if there is a nested next message box show it
-                if (this.nextMessageBox != null)
+                else if (buttonClicked)
                 {
-                    nextMessageBox.Show();
-                }
-                else // or close window if there is no next message box to show
-                {
-                    CloseWindow();
+                    // if there is a nested next message box show it
+                    if (nextMessageBox != null)
+                        nextMessageBox.Show();
                 }
             }
             else if (buttonClicked)
