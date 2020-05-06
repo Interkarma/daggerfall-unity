@@ -533,7 +533,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
-                    if (GameManager.Instance.IsPlayerInside) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations
+                    if (GameManager.Instance.IsPlayerInside)
                     {
                         GameManager.Instance.PauseGame(true);
                         uiManager.PushWindow(dfAutomapWindow);

@@ -531,7 +531,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.AutoMap))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
             }
