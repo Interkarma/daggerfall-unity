@@ -28,6 +28,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool allowCancel = true;
         bool cancelled = false;
 
+        bool isCancelWindowRearmed = false;
+        bool isCancelWindowDeferred = false;
+
         public Color ScreenDimColor
         {
             get { return GetScreenDimColor(); }
@@ -62,6 +65,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
+        public override void OnPush()
+        {
+            isCancelWindowRearmed = false;
+        }
+
         public override void Update()
         {
             base.Update();
@@ -69,8 +77,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cancelled = false;
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                if (allowCancel && Input.GetKeyUp(exitKey))
-                    CancelWindow();
+                if (allowCancel)
+                {
+                    if (!Input.GetKey(exitKey))
+                        isCancelWindowRearmed = true;
+                    if (Input.GetKeyDown(exitKey) && isCancelWindowRearmed)
+                        isCancelWindowDeferred = true;
+                    else if (Input.GetKeyUp(exitKey) && isCancelWindowDeferred)
+                    {
+                        isCancelWindowDeferred = false;
+                        CancelWindow();
+                    }
+                }
             }
         }
 

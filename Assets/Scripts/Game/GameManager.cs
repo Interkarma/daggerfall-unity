@@ -485,7 +485,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Post message to open options dialog on escape during gameplay
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.Escape))
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
             }
@@ -527,13 +527,11 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
             }
-
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.Status))
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.Status))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
-
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.AutoMap))
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.AutoMap))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
             }
