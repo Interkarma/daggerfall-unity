@@ -507,7 +507,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.Transport))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.Transport))
             {
 	            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
             }
