@@ -194,6 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
         KeyCode toggleClosedBinding;
+        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
         private int maxAmount;
 
@@ -343,8 +344,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (!InputManager.Instance.GetKey(toggleClosedBinding))
+                    isCloseWindowRearmed = true;
+                if (InputManager.Instance.GetKeyDown(toggleClosedBinding) && isCloseWindowRearmed)
+                    isCloseWindowDeferred = true;
+                else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
+                {
+                    isCloseWindowDeferred = false;
                     CloseWindow();
+                }
             }
 
             // Close window immediately if inventory suppressed
@@ -569,6 +577,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Inventory);
+            isCloseWindowRearmed = false;
 
             // Racial override can suppress inventory
             // We still setup and push window normally, actual suppression is done in Update()

@@ -495,7 +495,7 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.Inventory))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.Inventory))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
