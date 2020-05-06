@@ -442,6 +442,12 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         
         foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.Enabled))
         {
+            bool? isGameVersionSatisfied = mod.IsGameVersionSatisfied();
+            if (!isGameVersionSatisfied.HasValue)
+                Debug.LogErrorFormat("Mod {0} requires unknown game version ({1}).", mod.Title, mod.ModInfo.DFUnity_Version);
+            else if (!isGameVersionSatisfied.Value)
+                modErrorMessages.Add(string.Format(ModManager.GetText("gameVersionUnsatisfied"), mod.ModInfo.DFUnity_Version));
+
             ModManager.Instance.CheckModDependencies(mod, modErrorMessages, ref hasSortIssues);
             if (modErrorMessages.Count > 0)
             {
