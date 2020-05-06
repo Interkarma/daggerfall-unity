@@ -12,6 +12,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -34,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     /// The content of a json mod manifest file, created from the Mod Builder and bundled with the mod itself.
     /// </summary>
     [Serializable]
+    [fsObject(Processor = typeof(IgnoreNullProcessor))]
     public class ModInfo
     {
         public string ModTitle;         //displayed in game
@@ -124,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// If not null this string is the minimum accepted version with format X.Y.Z.
         /// Pre-release identifiers following an hyphen are ignored in target version so they must be omitted here.
-        /// For example "1.1.0" is higher than "1.0.12" and equal to "1.0.0-rc.1".
+        /// For example "1.0.0" is equal to "1.0.0-rc.1".
         /// </summary>
         [SerializeField]
         internal string Version;
@@ -344,6 +347,44 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return new ModReservedLayer();
 
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Do not serialize members whose values are null.
+    /// </summary>
+    public class IgnoreNullProcessor : fsObjectProcessor
+    {
+        public override void OnAfterSerialize(Type storageType, object instance, ref fsData data)
+        {
+            if (!data.IsDictionary)
+                throw new NotSupportedException("fsData is not a dictionary.");
+
+            RemoveNullMembers(data);
+        }
+
+        private void RemoveNullMembers(fsData data)
+        {
+            if (data.IsDictionary)
+            {
+                var dict = data.AsDictionary;
+                foreach (var item in dict.ToArray())
+                {
+                    if (item.Value.IsNull)
+                        dict.Remove(item.Key);
+                    else if (item.Value.IsDictionary || item.Value.IsList)
+                        RemoveNullMembers(item.Value);
+                }
+            }
+            else if (data.IsList)
+            {
+                var list = data.AsList;
+                if (list.Count > 0 && (list[0].IsDictionary || list[0].IsList))
+                {
+                    foreach (var item in list)
+                        RemoveNullMembers(item);
+                }
+            }
         }
     }
 }
