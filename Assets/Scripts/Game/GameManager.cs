@@ -541,7 +541,10 @@ namespace DaggerfallWorkshop.Game
             // Handle quick save and load
             if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickSave))
             {
-                SaveLoadManager.Instance.QuickSave();
+                if (SaveLoadManager.IsSavingPrevented)
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+                else
+                    SaveLoadManager.Instance.QuickSave();
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickLoad))
             {

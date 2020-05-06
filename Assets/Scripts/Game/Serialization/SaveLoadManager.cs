@@ -106,8 +106,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             get { return loadInProgress; }
         }
 
+        public bool IsSavingPrevented
+        {
+            get { return PreventSaveConditions.Exists(p => p()); }
+        }
+
         #endregion
-        
+
         #region Singleton
 
         static SaveLoadManager instance = null;
@@ -361,7 +366,12 @@ namespace DaggerfallWorkshop.Game.Serialization
         public void QuickSave(bool instantReload = false)
         {
             if (!LoadInProgress)
-                Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
+            {
+                if (GameManager.Instance.SaveLoadManager.IsSavingPrevented)
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+                else
+                    Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
+            }
         }
 
         public void Load(int key)
@@ -1334,6 +1344,18 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             if (OnLoad != null)
                 OnLoad(saveData);
+        }
+
+        // List of conditions that could prevent saving
+        private List<Func<bool>> PreventSaveConditions = new List<Func<bool>>();
+        public void RegisterPreventSaveCondition(Func<bool> handler)
+        {
+            PreventSaveConditions.Add(handler);
+        }
+
+        public void UnregisterPreventSaveCondition(Func<bool> handler)
+        {
+            PreventSaveConditions.Remove(handler);
         }
 
         #endregion

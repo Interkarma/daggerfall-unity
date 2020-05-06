@@ -285,7 +285,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this, false }));
+            if (GameManager.Instance.SaveLoadManager.IsSavingPrevented)
+                DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+            else
+                uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this, false }));
         }
 
         private void LoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
