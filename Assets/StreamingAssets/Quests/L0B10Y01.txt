@@ -16,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>                   Seems there's this untalented bard
 <ce>                   with a penchant for rude limericks
 <ce>                 about former patrons. As it turns out,
-<ce>                %g3 knowledge of geneology was lacking,
+<ce>                %g3 knowledge of genealogy was lacking,
 <ce>                 and %g sang a song about an incestuous
 <ce>                 duke to %g3 new patroness, the duke's
 <ce>                daughter. Interested in accounting this

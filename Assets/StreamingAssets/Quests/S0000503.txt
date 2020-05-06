@@ -284,8 +284,10 @@ _S.19_ task:
 	start timer _S.31_
 	stop timer _keytime_ 
 	say 1051 
-	add _rebel_ face 
 	hide npc _rebel_ 
+	add _rebel_ face 
+--there's still a lingering bug here that I can't figure out. If you do the S.14 route, Baltham's sprite will remain visible at this point. I don't know why.
+
 
 variable _S.20_
 variable _S.21_
