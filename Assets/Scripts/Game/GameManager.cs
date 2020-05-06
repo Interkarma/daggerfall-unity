@@ -511,11 +511,11 @@ namespace DaggerfallWorkshop.Game
             {
 	            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.LogBook))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.LogBook))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
             }
-            else if (InputManager.Instance.ActionComplete(InputManager.Actions.NoteBook))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.NoteBook))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenNotebookWindow);
             }
