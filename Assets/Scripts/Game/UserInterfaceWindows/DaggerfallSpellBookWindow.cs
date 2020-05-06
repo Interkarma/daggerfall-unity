@@ -112,6 +112,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         int presentedCost;
+
+        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
 
         #endregion
@@ -158,6 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.CastSpell);
+            isCloseWindowRearmed = false;
 
             if (buyMode && GameManager.Instance.PlayerEnterExit.IsPlayerInside)
                 buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
@@ -208,8 +211,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (!InputManager.Instance.GetKey(toggleClosedBinding))
+                    isCloseWindowRearmed = true;
+                if (InputManager.Instance.GetKeyDown(toggleClosedBinding) && isCloseWindowRearmed)
+                    isCloseWindowDeferred = true;
+                else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
+                {
+                    isCloseWindowDeferred = false;
                     CloseWindow();
+                }
             }
         }
 
