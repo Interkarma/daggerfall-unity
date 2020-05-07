@@ -952,17 +952,39 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Immediately tombstones then removes all quests.
         /// </summary>
         /// <returns>Number of quests removed.</returns>
-        public int PurgeAllQuests()
+        /// <param name="keepStoryQuests">Retain main story quests (start with S0000).</param>
+        public int PurgeAllQuests(bool keepStoryQuests = false)
         {
             ulong[] uids = GetAllQuests();
             if (uids == null || uids.Length == 0)
                 return 0;
 
+            int nonStoryPurgeCount = 0;
             foreach (ulong uid in uids)
             {
-                RemoveQuest(uid);
+                if (keepStoryQuests)
+                {
+                    Quest quest = GetQuest(uid);
+                    if (quest != null && !quest.QuestName.StartsWith("S0000"))
+                    {
+                        RemoveQuest(uid);
+                        nonStoryPurgeCount++;
+                        continue;
+                    }
+                }
+                else
+                {
+                    RemoveQuest(uid);
+                }
             }
 
+            // End now if only purging non-story quest
+            if (keepStoryQuests)
+            {
+                return nonStoryPurgeCount;
+            }
+
+            // Cleanup rest of quest machine
             quests.Clear();
             siteLinks.Clear();
             questsToTombstone.Clear();
