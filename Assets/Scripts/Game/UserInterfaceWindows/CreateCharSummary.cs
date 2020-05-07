@@ -144,7 +144,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
+            if (statsRollout.BonusPool > 0 || 
+                skillsRollout.PrimarySkillBonusPoints > 0 ||
+                skillsRollout.MajorSkillBonusPoints > 0 ||
+                skillsRollout.MinorSkillBonusPoints > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strYouMustDistributeYourBonusPoints);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+            else
+            {
+                CloseWindow();
+            }
         }
 
         #endregion
