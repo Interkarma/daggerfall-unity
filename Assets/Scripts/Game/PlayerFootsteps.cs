@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game
                     clip2 = null;
                 }
                 // In water, shallow depth
-                else if ((currentFootstepSound1 != FootstepSoundShallow) && !playerEnterExit.IsPlayerSwimming && (playerMotor.transform.position.y - 0.95f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
+                else if ((currentFootstepSound1 != FootstepSoundShallow) && !playerEnterExit.IsPlayerSwimming && (playerMotor.transform.position.y - 0.55f) < (playerEnterExit.blockWaterLevel * -1 * MeshReader.GlobalScale))
                 {
                     currentFootstepSound1 = FootstepSoundShallow;
                     currentFootstepSound2 = FootstepSoundShallow;
