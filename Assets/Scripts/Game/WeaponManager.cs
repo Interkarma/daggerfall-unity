@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
 
         PlayerEntity playerEntity;
+        EntityEffectManager entityEffectManager;
         GameObject player;
         GameObject mainCamera;
         bool joystickSwungOnce = false;
@@ -193,6 +194,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            entityEffectManager = GetComponent<EntityEffectManager>();
             weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
@@ -228,16 +230,6 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Hide weapons and do nothing if spell is ready or cast animation in progress
-            if (GameManager.Instance.PlayerEffectManager)
-            {
-                if (GameManager.Instance.PlayerEffectManager.HasReadySpell || GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
-                {
-                    ShowWeapons(false);
-                    return;
-                }
-            }
-
             // Do nothing if player paralyzed or is climbing
             if (GameManager.Instance.PlayerEntity.IsParalyzed || GameManager.Instance.ClimbingMotor.IsClimbing)
             {
@@ -245,8 +237,33 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            bool doToggleSheath = false;
+
+            // Hide weapons and do nothing if spell is ready or cast animation in progress
+            if (GameManager.Instance.PlayerEffectManager)
+            {
+                if (GameManager.Instance.PlayerEffectManager.HasReadySpell || GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
+                {
+                    if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon) && entityEffectManager)
+                    {
+                        entityEffectManager.AbortReadySpell();
+
+                        //if currently unsheathed, then sheath it, so we can give the effect of unsheathing it again
+                        if (!Sheathed)
+                            ToggleSheath();
+
+                        doToggleSheath = true;
+                    }
+                    else
+                    {
+                        ShowWeapons(false);
+                        return;
+                    }
+                }
+            }
+
             // Toggle weapon sheath
-            if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
+            if (doToggleSheath || (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon)))
                 ToggleSheath();
 
             // Toggle weapon hand
