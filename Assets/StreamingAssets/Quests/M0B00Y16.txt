@@ -240,8 +240,11 @@ _S.17_ task:
 	when _success_ and _escortComplete_ 
 
 _S.18_ task:
-	when _qtime_ or _S.15_ or _S.16_ or _S.17_ 
+	when _qtime_ or _S.15_ or _S.16_ or _S.17_ or _S.19_
 	end quest 
+
+_S.19_ task:
+	when _success_ and _victim_ and not _S.10_
 
 _giantWaveWhileInDungeon_ task:
 	pc at _mondung_ set _spawnGiants_
