@@ -136,6 +136,10 @@ namespace DaggerfallWorkshop
         public bool InvertMouseVertical { get; set; }
         public bool MouseLookSmoothing { get; set; }
         public float MouseLookSensitivity { get; set; }
+        public float JoystickLookSensitivity { get; set; }
+        public float JoystickCursorSensitivity { get; set; }
+        public float JoystickMovementThreshold { get; set; }
+
         public bool HeadBobbing { get; set; }
         public int Handedness { get; set; }
         public float WeaponAttackThreshold { get; set; }
@@ -269,6 +273,9 @@ namespace DaggerfallWorkshop
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
+            JoystickLookSensitivity = GetFloat(sectionControls, "JoystickLookSensitivity", 0.1f, 4.0f);
+            JoystickCursorSensitivity = GetFloat(sectionControls, "JoystickCursorSensitivity", 0.1f, 5.0f);
+            JoystickMovementThreshold = GetFloat(sectionControls, "JoystickMovementThreshold", 0.0f, 1.0f);
             MoveSpeedAcceleration = GetFloat(sectionControls, "MoveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration);
             ToggleSneak = GetBool(sectionControls, "ToggleSneak");
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
@@ -393,6 +400,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
+            SetFloat(sectionControls, "JoystickLookSensitivity", JoystickLookSensitivity);
+            SetFloat(sectionControls, "JoystickCursorSensitivity", JoystickCursorSensitivity);
+            SetFloat(sectionControls, "JoystickMovementThreshold", JoystickMovementThreshold);
             SetFloat(sectionControls, "MoveSpeedAcceleration", MoveSpeedAcceleration);
             SetBool(sectionControls, "ToggleSneak", ToggleSneak);
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
