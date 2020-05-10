@@ -1657,19 +1657,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 if (bundle.fromEquippedItem != null)
                 {
-                    hasRemainingEffectRounds = true; // If bundle has an item source keep it alive until item breaks or is unequipped
-
-                    // Degrade item at an average of 1 point per 4 rounds when awake and not travelling and 1 point hourly when resting/loitering
-                    if (!GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease)
-                    {
-                        int degradeRate = GameManager.Instance.PlayerEntity.IsResting ? restingMagicItemDegradeRate : normalMagicItemDegradeRate;
-
-                        // Note: The below is much too agressive and needs to be revisited
-                        // 1. It degrades even items with passive effects, which does not appear to happen in classic
-                        // 2. Every enchantment bundle on item will multiply degrade rate
-                        //if (UnityEngine.Random.Range(0, degradeRate) == 0)
-                        //    bundle.fromEquippedItem.LowerCondition(1, entityBehaviour.Entity, entityBehaviour.Entity.Items);
-                    }
+                    // If bundle has an item source keep it alive until item breaks or is unequipped
+                    hasRemainingEffectRounds = true;
                 }
 
                 // Expire this bundle once all effects have 0 rounds remaining
