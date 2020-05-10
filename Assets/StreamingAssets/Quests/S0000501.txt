@@ -51,7 +51,7 @@ Dear %pcn,
    I regret to inform you that your noble
  service to Sentinel has been undone.
  _traitor_ still has a few friends, it seems.
- %g has escaped from the dungeon, only days
+ He has escaped from the dungeon, only days
  before he was to be hanged.
    I would be most grateful for your assistance
  in putting this matter to rest once and for all.
