@@ -238,6 +238,8 @@ namespace DaggerfallWorkshop.Game
             set { joystickMovementThreshold = value; }
         }
 
+        public bool MaximizeJoystickMovement { get; set; }
+
         #endregion
 
         #region Enums
@@ -1300,7 +1302,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
 
-                if (dist > JoystickMovementThreshold)
+                if (MaximizeJoystickMovement || dist > JoystickMovementThreshold)
                     dist = 1.0F;
 
                 if (horiz > 0)
@@ -1321,6 +1323,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (vert < 0)
                 {
+                    ToggleAutorun = false;
                     currentActions.Add(Actions.MoveBackwards);
                     vert = -dist;
                 }

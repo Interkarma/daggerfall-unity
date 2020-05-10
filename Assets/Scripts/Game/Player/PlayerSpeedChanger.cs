@@ -115,6 +115,8 @@ namespace DaggerfallWorkshop.Game
                 speed /= 2;
                 speed -= (1 / classicToUnitySpeedUnitRatio);
             }
+
+            InputManager.Instance.MaximizeJoystickMovement = isRunning;
         }
 
         public bool CanRunUnlessRiding()
