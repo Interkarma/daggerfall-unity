@@ -267,7 +267,6 @@ namespace DaggerfallWorkshop.Game
             Crouch,
             Slide,
             Run,
-            AutoRun,
 
             Rest,
             Transport,
@@ -306,6 +305,8 @@ namespace DaggerfallWorkshop.Game
             QuickLoad,
 
             PrintScreen,
+
+            AutoRun,
             
             Unknown,
         }
@@ -759,7 +760,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.RightControl, Actions.Slide);
             SetBinding(KeyCode.LeftShift, Actions.Run);
             SetBinding(KeyCode.RightShift, Actions.Run);
-            SetBinding(KeyCode.F, Actions.AutoRun);
+            SetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             SetBinding(KeyCode.R, Actions.Rest);
             SetBinding(KeyCode.T, Actions.Transport);
@@ -972,7 +973,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.RightControl, Actions.Slide);
             TestSetBinding(KeyCode.LeftShift, Actions.Run);
             TestSetBinding(KeyCode.RightShift, Actions.Run);
-            TestSetBinding(KeyCode.F, Actions.AutoRun);
+            TestSetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             TestSetBinding(KeyCode.R, Actions.Rest);
             TestSetBinding(KeyCode.T, Actions.Transport);
