@@ -228,6 +228,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             GameManager.OnEncounter += GameManager_OnEncounter;
 
+            // Raise player resting flag when UI opens
+            // This is used for random enemy spawning and influences CastWhenHeld durability loss
+            playerEntity.IsResting = true;
         }
 
         public override void OnPop()
@@ -241,6 +244,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 interior.UpdateNpcPresence();
             }
+
+            // Lower player resting flag when UI closes
+            GameManager.Instance.PlayerEntity.IsResting = false;
 
             Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
@@ -312,9 +318,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // This will stop rest from progressing further until player dismisses top window
             if (uiManager.TopWindow != this)
                 return false;
-
-            // Set flag in playerEntity used for random enemy spawning
-            playerEntity.IsResting = true;
 
             // Loitering runs at a slower rate to rest
             float waitTimePerHour = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
@@ -434,8 +437,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     currentRestMode = RestModes.Selection;
                 }
             }
-
-            GameManager.Instance.PlayerEntity.IsResting = false;
         }
 
         bool TickVitals()
