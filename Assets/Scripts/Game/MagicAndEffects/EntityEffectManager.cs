@@ -1664,8 +1664,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     {
                         int degradeRate = GameManager.Instance.PlayerEntity.IsResting ? restingMagicItemDegradeRate : normalMagicItemDegradeRate;
 
-                        if (UnityEngine.Random.Range(0, degradeRate) == 0)
-                            bundle.fromEquippedItem.LowerCondition(1, entityBehaviour.Entity, entityBehaviour.Entity.Items);
+                        // Note: The below is much too agressive and needs to be revisited
+                        // 1. It degrades even items with passive effects, which does not appear to happen in classic
+                        // 2. Every enchantment bundle on item will multiply degrade rate
+                        //if (UnityEngine.Random.Range(0, degradeRate) == 0)
+                        //    bundle.fromEquippedItem.LowerCondition(1, entityBehaviour.Entity, entityBehaviour.Entity.Items);
                     }
                 }
 
