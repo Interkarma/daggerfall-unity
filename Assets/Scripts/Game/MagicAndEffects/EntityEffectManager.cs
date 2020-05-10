@@ -177,6 +177,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void OnDestroy()
         {
             EntityEffectBroker.OnNewMagicRound -= EntityEffectBroker_OnNewMagicRound;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
         }
 
         private void Update()
