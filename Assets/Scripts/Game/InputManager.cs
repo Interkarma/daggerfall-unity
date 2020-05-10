@@ -177,6 +177,8 @@ namespace DaggerfallWorkshop.Game
             get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
         }
 
+        public bool ToggleAutorun { get; set; }
+
         public bool UsingController
         {
             get { return usingControllerCursor; }
@@ -265,6 +267,7 @@ namespace DaggerfallWorkshop.Game
             Crouch,
             Slide,
             Run,
+            AutoRun,
 
             Rest,
             Transport,
@@ -442,6 +445,12 @@ namespace DaggerfallWorkshop.Game
             mouseY = Input.GetAxisRaw("Mouse Y");
             if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
                 mouseY = Input.GetAxis(cameraAxisBindingCache[1]) * JoystickCameraSensitivity;
+
+
+            if(ToggleAutorun)
+            {
+                ApplyVerticalForce(1);
+            }
 
             // Process actions from input sources
             FindKeyboardActions();
@@ -750,6 +759,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.RightControl, Actions.Slide);
             SetBinding(KeyCode.LeftShift, Actions.Run);
             SetBinding(KeyCode.RightShift, Actions.Run);
+            SetBinding(KeyCode.F, Actions.AutoRun);
 
             SetBinding(KeyCode.R, Actions.Rest);
             SetBinding(KeyCode.T, Actions.Transport);
@@ -962,6 +972,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.RightControl, Actions.Slide);
             TestSetBinding(KeyCode.LeftShift, Actions.Run);
             TestSetBinding(KeyCode.RightShift, Actions.Run);
+            TestSetBinding(KeyCode.F, Actions.AutoRun);
 
             TestSetBinding(KeyCode.R, Actions.Rest);
             TestSetBinding(KeyCode.T, Actions.Transport);
@@ -1254,6 +1265,7 @@ namespace DaggerfallWorkshop.Game
                             ApplyVerticalForce(1);
                             break;
                         case Actions.MoveBackwards:
+                            ToggleAutorun = false;
                             ApplyVerticalForce(-1);
                             break;
                         case Actions.TurnLeft:

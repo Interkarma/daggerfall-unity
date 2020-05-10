@@ -69,6 +69,19 @@ namespace DaggerfallWorkshop.Game
                 sneakingMode = InputManager.Instance.HasAction(InputManager.Actions.Sneak);
             else
                 sneakingMode = sneakingMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Sneak);
+
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoRun))
+            {
+                InputManager.Instance.ToggleAutorun = !InputManager.Instance.ToggleAutorun;
+
+                ToggleRun = InputManager.Instance.ToggleAutorun;
+                runningMode = runningMode ^ InputManager.Instance.ToggleAutorun;
+            }
+
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.MoveBackwards))
+            {
+                ToggleRun = false;
+            }
         }
 
         /// <summary>
