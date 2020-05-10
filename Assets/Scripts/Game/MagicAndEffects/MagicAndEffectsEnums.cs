@@ -152,5 +152,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Held = 16,          // Payload executed for duration item is equipped - i.e. effect bundle will be persistently attached to entity until unequipped
         Strikes = 32,       // Payload executed when a weapon item strikes another entity
         Breaks = 64,        // Payload executed when item breaks after durability reaches zero or less
+        MagicRound = 128,   // Payload executed once per magic round
     }
 }

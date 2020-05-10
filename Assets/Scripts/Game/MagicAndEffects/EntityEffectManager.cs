@@ -81,6 +81,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         const int normalMagicItemDegradeRate = 4;
         const int restingMagicItemDegradeRate = 60;
+        Dictionary<ulong, DaggerfallUnityItem> activeMagicItemsInRound = new Dictionary<ulong, DaggerfallUnityItem>();
 
         #endregion
 
@@ -971,6 +972,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Breaks payload
                 if ((flags & EnchantmentPayloadFlags.Breaks) == EnchantmentPayloadFlags.Breaks && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Breaks))
                     BrokenItem(effectTemplate, sourceItem, settings);
+
+                // MagicRound payload
+                if ((flags & EnchantmentPayloadFlags.MagicRound) == EnchantmentPayloadFlags.MagicRound && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.MagicRound))
+                    MagicRoundCallback(effectTemplate, sourceItem, settings);
                     
             }
 
@@ -1061,6 +1066,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Breaks payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
             effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Breaks, param, entityBehaviour, entityBehaviour, item);
+        }
+
+        void MagicRoundCallback(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // MagicRound payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.MagicRound, param, entityBehaviour, entityBehaviour, item);
         }
 
         #endregion
@@ -1640,6 +1652,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return;
 
             // Run all bundles
+            activeMagicItemsInRound.Clear();
             foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 // Run effects for this bundle
@@ -1659,11 +1672,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 {
                     // If bundle has an item source keep it alive until item breaks or is unequipped
                     hasRemainingEffectRounds = true;
+
+                    // Track individual held items for magic round callback
+                    if (!activeMagicItemsInRound.ContainsKey(bundle.fromEquippedItem.UID))
+                        activeMagicItemsInRound.Add(bundle.fromEquippedItem.UID, bundle.fromEquippedItem);
                 }
 
                 // Expire this bundle once all effects have 0 rounds remaining
                 if (!hasRemainingEffectRounds)
                     bundlesToRemove.Add(bundle);
+            }
+
+            // Do MagicRound payload callback for each item
+            if (activeMagicItemsInRound.Count > 0)
+            {
+                foreach (DaggerfallUnityItem item in activeMagicItemsInRound.Values)
+                {
+                    DoItemEnchantmentPayloads(EnchantmentPayloadFlags.MagicRound, item);
+                }
+                activeMagicItemsInRound.Clear();
             }
 
             RemovePendingBundles();
