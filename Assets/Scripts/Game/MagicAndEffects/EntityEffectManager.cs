@@ -78,9 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         RacialOverrideEffect racialOverrideEffect;
         PassiveSpecialsEffect passiveSpecialsEffect;
-
-        const int normalMagicItemDegradeRate = 4;
-        const int restingMagicItemDegradeRate = 60;
+        
         Dictionary<ulong, DaggerfallUnityItem> activeMagicItemsInRound = new Dictionary<ulong, DaggerfallUnityItem>();
 
         #endregion

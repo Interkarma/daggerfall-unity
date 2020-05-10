@@ -23,6 +23,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class CastWhenHeld : BaseEntityEffect
     {
+        const int normalMagicItemDegradeRate = 4;
+        const int restingMagicItemDegradeRate = 60;
+
         public static readonly string EffectKey = EnchantmentTypes.CastWhenHeld.ToString();
 
         // UESP states CastWhenHeld magic items lose 105 durability points on equip and 1 point every minute
@@ -145,14 +148,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else if (context == EnchantmentPayloadFlags.MagicRound)
             {
-                //UnityEngine.Debug.Log("Executing CastWhenHeld MagicRound payload callback.");
-
-                // TODO: Apply CastWhenHeld durability loss
+                // Apply CastWhenHeld durability loss
+                ApplyDurabilityLoss(sourceItem, sourceEntity);
 
                 // TODO: Apply period CastWhenHeld effect reroll
             }
 
             return null;
+        }
+
+        void ApplyDurabilityLoss(DaggerfallUnityItem item, DaggerfallEntityBehaviour entity)
+        {
+            if (!GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease)
+            {
+                int degradeRate = GameManager.Instance.PlayerEntity.IsResting ? restingMagicItemDegradeRate : normalMagicItemDegradeRate;
+                if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % degradeRate == 0)
+                {
+                    item.LowerCondition(1, entity.Entity, entity.Entity.Items);
+                    //UnityEngine.Debug.LogFormat("CastWhenHeld degraded '{0}' by 1 durability point", item.LongName);
+                }
+            }
         }
 
         #endregion
