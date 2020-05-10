@@ -465,7 +465,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             }
         }
 
-        if (errorMessages.Count > 0)
+        if (errorMessages != null && errorMessages.Count > 0)
         {
             if (hasSortIssues)
                 errorMessages.Add(ModManager.GetText("sortModsQuestion"));
