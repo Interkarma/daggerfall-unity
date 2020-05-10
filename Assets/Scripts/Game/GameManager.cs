@@ -487,52 +487,64 @@ namespace DaggerfallWorkshop.Game
             // Post message to open options dialog on escape during gameplay
             if (InputManager.Instance.ActionStarted(InputManager.Actions.Escape))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.Escape);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
             }
 
             // Handle in-game windows
             if (InputManager.Instance.ActionStarted(InputManager.Actions.CharacterSheet))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.CharacterSheet);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.Inventory))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.Inventory);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.TravelMap))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.TravelMap);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.Rest))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.Rest);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.Transport))
             {
-	            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.Transport);
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.LogBook))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.LogBook);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.NoteBook))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.NoteBook);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenNotebookWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.CastSpell))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.CastSpell);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.UseMagicItem))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.UseMagicItem);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.Status))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.Status);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
             {
+                InputManager.Instance.AcknowledgeKey(InputManager.Actions.AutoMap);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
             }
 

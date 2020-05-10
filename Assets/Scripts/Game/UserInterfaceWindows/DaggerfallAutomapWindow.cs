@@ -78,7 +78,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Handle toggle closing
         KeyCode automapBinding = KeyCode.None;
         HotkeySequence HotkeySequence_toggleClose;
-        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
         readonly KeyCode fallbackKey = KeyCode.Home;
 
@@ -544,7 +543,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // update button tool tip texts - since hotkeys changed
                 UpdateButtonToolTipsText();
             }
-            isCloseWindowRearmed = false;
 
             automap.IsOpenAutomap = true; // signal Automap script that automap is open and it should do its stuff in its Update() function            
 
@@ -709,13 +707,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (!Input.GetKey(KeyCode.Escape) &&
-                // Toggle window closed with same hotkey used to open it
-                !HotkeySequence_toggleClose.IsPressedWith(keyModifiers))
-                isCloseWindowRearmed = true;
             if ((Input.GetKeyDown(KeyCode.Escape) ||
                 // Toggle window closed with same hotkey used to open it
-                HotkeySequence_toggleClose.IsDownWith(keyModifiers)) && isCloseWindowRearmed)
+                HotkeySequence_toggleClose.IsDownWith(keyModifiers)))
                 isCloseWindowDeferred = true;
             else if ((Input.GetKeyUp(KeyCode.Escape) ||
                 // Toggle window closed with same hotkey used to open it

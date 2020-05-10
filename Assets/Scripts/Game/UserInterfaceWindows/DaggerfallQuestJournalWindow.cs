@@ -66,7 +66,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downArrowButton;
         Button exitButton;
 
-        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
 
         public JournalDisplay DisplayMode { get; set; }
@@ -194,7 +193,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             toggleClosedBinding1 = InputManager.Instance.GetBinding(InputManager.Actions.LogBook);
             toggleClosedBinding2 = InputManager.Instance.GetBinding(InputManager.Actions.NoteBook);
-            isCloseWindowRearmed = false;
 
             questMessages       = QuestMachine.Instance.GetAllQuestLogMessages();
             lastMessageIndex    = NULLINT;
@@ -217,9 +215,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (!InputManager.Instance.GetKey(toggleClosedBinding1) && !InputManager.Instance.GetKey(toggleClosedBinding2))
-                    isCloseWindowRearmed = true;
-                if ((InputManager.Instance.GetKeyUp(toggleClosedBinding1) || InputManager.Instance.GetKeyUp(toggleClosedBinding2)) && isCloseWindowRearmed)
+                if (InputManager.Instance.GetKeyDown(toggleClosedBinding1) || InputManager.Instance.GetKeyDown(toggleClosedBinding2))
                     isCloseWindowDeferred = true;
                 else if ((InputManager.Instance.GetKeyUp(toggleClosedBinding1) || InputManager.Instance.GetKeyUp(toggleClosedBinding2)) && isCloseWindowDeferred)
                 {

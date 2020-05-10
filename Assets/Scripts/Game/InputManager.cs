@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop.Game
 
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
+        List<KeyCode> acknowledgedKeys = new List<KeyCode>();
         bool isPaused;
         bool wasPaused;
         float inputWaitTimer;
@@ -381,6 +382,13 @@ namespace DaggerfallWorkshop.Game
 
             // Clear current actions
             currentActions.Clear();
+
+            // Clear released acknowledged keys
+            if (acknowledgedKeys.Count > 0)
+            {
+                Debug.Log("Clearing released acknowledged keys");
+                acknowledgedKeys.RemoveAll(key => !GetKey(key, true));
+            }
 
             // Clear look and mouse axes
             mouseX = 0;
@@ -814,27 +822,46 @@ namespace DaggerfallWorkshop.Game
             return Input.GetMouseButton(button);
         }
 
-        public bool GetKey(KeyCode key)
+        public void AcknowledgeKey(KeyCode key)
+        {
+            if (!acknowledgedKeys.Contains(key))
+                acknowledgedKeys.Add(key);
+        }
+
+        public void AcknowledgeKey(Actions action)
+        {
+            KeyCode keyCode = GetBinding(action);
+            if (keyCode != KeyCode.None)
+                AcknowledgeKey(keyCode);
+        }
+
+        public bool GetKey(KeyCode key, bool bypassAcknowledged = false)
         {
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            if (!bypassAcknowledged && acknowledgedKeys.Contains(conv))
+                return false;
             var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
             if (k)
                 LastKeyDown = conv;
             return k;
         }
 
-        public bool GetKeyDown(KeyCode key)
+        public bool GetKeyDown(KeyCode key, bool bypassAcknowledged = false)
         {
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            if (!bypassAcknowledged && acknowledgedKeys.Contains(conv))
+                return false;
             var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
             if (kd)
                 LastKeyDown = conv;
             return kd;
         }
 
-        public bool GetKeyUp(KeyCode key)
+        public bool GetKeyUp(KeyCode key, bool bypassAcknowledged = false)
         {
             KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            if (!bypassAcknowledged && acknowledgedKeys.Contains(conv))
+                return false;
             return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
@@ -843,7 +870,7 @@ namespace DaggerfallWorkshop.Game
             get
             {
                 foreach (KeyCode k in KeyCodeList)
-                    if (GetKeyDown(k)) return true;
+                    if (GetKeyDown(k) && !acknowledgedKeys.Contains(k)) return true;
                 return false;
             }
         }

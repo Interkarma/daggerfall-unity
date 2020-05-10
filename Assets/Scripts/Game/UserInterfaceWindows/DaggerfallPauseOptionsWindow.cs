@@ -44,7 +44,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected KeyCode toggleClosedBinding;
 
-        bool isCloseWindowRearmed = false;
         bool isCloseWindowDeferred = false;
 
         #endregion
@@ -154,7 +153,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPush();
 
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Escape);
-            isCloseWindowRearmed = false;
 
             hud = DaggerfallUI.Instance.DaggerfallHUD;
         }
@@ -178,9 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (!Input.GetKey(toggleClosedBinding))
-                    isCloseWindowRearmed = true;
-                if (Input.GetKeyDown(toggleClosedBinding) && isCloseWindowRearmed)
+                if (Input.GetKeyDown(toggleClosedBinding))
                     isCloseWindowDeferred = true;
                 else if (Input.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
                 {
