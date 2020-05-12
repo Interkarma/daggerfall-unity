@@ -248,7 +248,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Lower player resting flag when UI closes
             GameManager.Instance.PlayerEntity.IsResting = false;
 
-            Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
+            // Raise sleep ended event when popping UI
+            RaiseOnSleepEndEvent();
+
+            //Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
 
         #endregion
@@ -720,6 +723,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnSleepTick != null)
                 OnSleepTick();
+        }
+
+        // OnSleepEnd
+        public delegate void OnSleepEndEventHandler();
+        public static event OnSleepEndEventHandler OnSleepEnd;
+        void RaiseOnSleepEndEvent()
+        {
+            if (OnSleepEnd != null)
+                OnSleepEnd();
         }
 
         #endregion
