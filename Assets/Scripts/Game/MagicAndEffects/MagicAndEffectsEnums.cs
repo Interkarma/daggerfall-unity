@@ -165,5 +165,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Strikes = 32,       // Payload executed when a weapon item strikes another entity
         Breaks = 64,        // Payload executed when item breaks after durability reaches zero or less
         MagicRound = 128,   // Payload executed once per magic round
+        RerollEffect = 256, // Payload executed when effects are recast on item
     }
 }

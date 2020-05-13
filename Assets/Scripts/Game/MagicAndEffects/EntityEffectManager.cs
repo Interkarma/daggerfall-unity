@@ -990,7 +990,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // MagicRound payload
                 if ((flags & EnchantmentPayloadFlags.MagicRound) == EnchantmentPayloadFlags.MagicRound && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.MagicRound))
                     MagicRoundCallback(effectTemplate, sourceItem, settings);
-                    
+
+                // RerollEffect payload
+                if ((flags & EnchantmentPayloadFlags.RerollEffect) == EnchantmentPayloadFlags.RerollEffect && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.RerollEffect))
+                    RerollEffectCallback(effectTemplate, sourceItem, settings);
             }
 
             // Clamp damageOut to 0
@@ -1087,6 +1090,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // MagicRound payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
             effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.MagicRound, param, entityBehaviour, entityBehaviour, item);
+        }
+
+        void RerollEffectCallback(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // RerollEffect payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.RerollEffect, param, entityBehaviour, entityBehaviour, item);
         }
 
         #endregion
@@ -1946,24 +1956,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 Debug.LogFormat("Rerolling flagged item effects on {0}", item.LongName);
 
-                // TODO: Schedule live bundles from this item to be removed
+                // Schedule live bundles from this item to be removed
                 foreach (LiveEffectBundle bundle in instancedBundles)
                 {
                     if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID &&
                         (bundle.runtimeFlags & BundleRuntimeFlags.ItemRecastEnabled) == BundleRuntimeFlags.ItemRecastEnabled)
                     {
-                        //bundlesToRemove.Add(bundle);
+                        bundlesToRemove.Add(bundle);
                     }
                 }
+                RemovePendingBundles();
 
-                // TODO: Execute reroll callbacks on item
+                // Execute reroll callbacks on item
+                DoItemEnchantmentPayloads(EnchantmentPayloadFlags.RerollEffect, item);
 
                 // Update recast time in item
                 item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             }
 
             // Clean up
-            RemovePendingBundles();
             itemsPendingReroll.Clear();
         }
 
