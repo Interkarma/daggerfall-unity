@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game
 
         // Greeting records extracted from FALL.EXE.
         readonly ushort[] greetings =               { 8550, 8551, 8552, 8553, 8554, 8555, 8556, 8557, 8558, 8559, 8560, 8561, 8562, 8562,
-                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 }; 
+                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 };
 
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.6f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.8f; // Chances unknown
@@ -529,7 +529,7 @@ namespace DaggerfallWorkshop.Game
 
         int GetReactionToPlayer_0_1_2(QuestionType qt, FactionFile.SocialGroups npcSocialGroup)
         {
-            int socialGroup = (int) npcSocialGroup;
+            int socialGroup = (int)npcSocialGroup;
             if (socialGroup >= 5)
                 socialGroup = 1; // Merchants
 
@@ -585,7 +585,7 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.QuestItem:
                     classicDataIndex = 6; // == Tell me about Thing
                     break;
-                // 7 == Tell me about Work (not used)
+                    // 7 == Tell me about Work (not used)
             }
 
             int reaction = player.Stats.LivePersonality / 5
@@ -657,7 +657,7 @@ namespace DaggerfallWorkshop.Game
             else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
                 uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer,
-                    new object[] {uiManager, targetNPC.Data, (FactionFile.SocialGroups)npcFactionData.sgroup, menu}));
+                    new object[] { uiManager, targetNPC.Data, (FactionFile.SocialGroups)npcFactionData.sgroup, menu }));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -1113,9 +1113,9 @@ namespace DaggerfallWorkshop.Game
                 playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
 
                 if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
-                    return TextManager.Instance.GetText(textDatabase, "thisPlace");       
+                    return TextManager.Instance.GetText(textDatabase, "thisPlace");
             }
-           
+
             Vector2 vecDirectionToTarget = buildingInfoTargetBuilding.position - playerPos;
             return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
@@ -1173,7 +1173,7 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
                     dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
-                
+
                 // above line could also be done with these statements:
                 // Place place = (Place)dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questResource;
                 // GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, place.SiteDetails.buildingName);
@@ -1271,17 +1271,6 @@ namespace DaggerfallWorkshop.Game
                     news = TokensToString(tokens, false);
                 }
             }
-            // TODO: hmmm, what about these?
-            //else if (entry.rumorType == RumorType.QuestRumorMill || entry.rumorType == RumorType.QuestProgressRumor)
-            //{
-            //    int variant = UnityEngine.Random.Range(0, entry.listRumorVariants.Count);
-            //    TextFile.Token[] tokens = entry.listRumorVariants[variant];
-
-            //    // Expand tokens and reveal dialog-linked resources
-            //    QuestMacroHelper macroHelper = new QuestMacroHelper();
-            //    macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(entry.questID), ref tokens, true);
-            //    news = TokensToString(tokens);
-            //}
 
             return news;
         }
@@ -1362,7 +1351,7 @@ namespace DaggerfallWorkshop.Game
                         continue;
                     }
                     // skip spoken rumors if reading sign
-                    if(readingSign && (entry.flags & 1) != 1)
+                    if (readingSign && (entry.flags & 1) != 1)
                     {
                         continue;
                     }
@@ -1757,7 +1746,7 @@ namespace DaggerfallWorkshop.Game
                 GetPersonResource(currentQuestionListItem.questID, key, out person);
                 if (person.IsQuestor)
                 {
-                    buildingKey = GetPersonBuildingKey(ref person);                    
+                    buildingKey = GetPersonBuildingKey(ref person);
                     if (buildingKey != 0)
                         buildingName = GetBuildingNameForBuildingKey(buildingKey);
                 }
@@ -2002,14 +1991,14 @@ namespace DaggerfallWorkshop.Game
         {
             AssembleTopicLists();
         }
-        
+
         public void AddQuestTopicWithInfoAndRumors(Quest quest)
         {
             // Add RumorsDuringQuest rumor to rumor mill
             Message message = quest.GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
             if (message != null)
                 AddOrReplaceQuestProgressRumor(quest.UID, message);
-            
+
             // Add topics for the places to see, people to meet and items to handle.
             foreach (QuestResource resource in quest.GetAllResources())
             {
@@ -2930,7 +2919,7 @@ namespace DaggerfallWorkshop.Game
         private bool CheckNPCcanKnowAboutTellMeAboutTopic(ListItem item)
         {
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
-            
+
             if (item.questionType == QuestionType.QuestLocation)
             {
                 QuestResource questResource = quest.GetResource(item.key);
