@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Utility
         DaggerfallSky sky;
         RenderTexture retroTexture;
 
-        public static bool postprocessing = false;
+        public static bool enablePostprocessing = false;
         private Material postprocessMaterial = null;
 
         public RenderTexture RetroTexture
@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Utility
             else
                 gameObject.SetActive(false);
 
-            postprocessing = DaggerfallUnity.Settings.UsePostProcessingInRetroMode;
+            enablePostprocessing = DaggerfallUnity.Settings.PostProcessingInRetroMode > 0;
         }
 
         private void Update()
@@ -76,20 +76,29 @@ namespace DaggerfallWorkshop.Utility
             if (!retroTexture)
                 return;
 
-            if (postprocessing)
+            if (enablePostprocessing)
             {
                 if (!postprocessMaterial)
                 {
-                    Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPostprocessingShaderName);
+                    Shader shader = null;
+                    switch(DaggerfallUnity.Settings.PostProcessingInRetroMode)
+                    {
+                        case 1:
+                            shader = Shader.Find(MaterialReader._DaggerfallRetroPosterizationShaderName);
+                            break;
+                        case 2:
+                            shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
+                            break;
+                    }
                     if (shader)
                         postprocessMaterial = new Material(shader);
                     else
                     {
-                        postprocessing = false;
-                        Debug.Log("Couldn't find shader " + MaterialReader._DaggerfallRetroPostprocessingShaderName);
+                        Debug.Log("Couldn't find retro shader " + DaggerfallUnity.Settings.PostProcessingInRetroMode);
+                        enablePostprocessing = false;
                     }
                 }
-                if (postprocessMaterial)
+                if (enablePostprocessing && postprocessMaterial)
                 {
                     Graphics.Blit(retroTexture, null as RenderTexture, postprocessMaterial);
                     return;

@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return RollChance();
         }
 
-        public bool FillEmptyTrapItem(MobileTypes soulType)
+        public static bool FillEmptyTrapItem(MobileTypes soulType, bool azurasStarOnly = false)
         {
             // In classic, the player's items are iterated through and the first instance found of an empty soul trap or Azura's Star is used.
             // Whichever is chosen first would depend on the order of the list of items, which would probably be the order in which the items were added to the inventory.
@@ -131,6 +131,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 }
             }
 
+            // Exit if trapping to Azura's Star and it was not found or already full
+            if (emptyTrap == null && azurasStarOnly)
+                return false;
+
+            // Get another trap
             if (emptyTrap == null)
             {
                 // Get empty soul trap

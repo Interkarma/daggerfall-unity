@@ -135,6 +135,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             reflectedCount++;
         }
 
+        public void AddRuntimeFlags(BundleRuntimeFlags flags)
+        {
+            settings.RuntimeFlags |= flags;
+        }
+
+        public void RemoveRuntimeFlags(BundleRuntimeFlags flags)
+        {
+            settings.RuntimeFlags &= ~flags;
+        }
+
         #endregion
     }
 }

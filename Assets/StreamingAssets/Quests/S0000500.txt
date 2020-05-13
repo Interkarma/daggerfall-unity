@@ -44,10 +44,10 @@ Message:  1022
 %qdt:
  I have rescued _traitor_ from
  Castle Sentinel's dungeon, and
- am taking %g2 to _safehouse_
+ am taking him to _safehouse_
  in __safehouse_, ____safehouse_,
- where we will meet an ally of
- _traitor_.
+ where we will meet an ally
+ named _contact2_.
 
 Message:  1030
 Dear %pcn:
@@ -56,6 +56,7 @@ Dear %pcn:
  please meet me at _tavern_ in
  __tavern_, ____tavern_, as soon as
  possible. This is a matter of life or death!
+ Find me within =firsttimer_ days!
  
 <ce>                              _contact1_
 
@@ -72,6 +73,7 @@ Message:  1040
 <ce>                 for the man, rescue him from certain
 <ce>                  death. He often spoke of your skill
 <ce>                 and bravery. I know you will help us.
+<ce>                  He has only =executiondelay_ days to live! Hurry!
 
 Message:  1041
 <ce>                    %oth, am I glad to see you. We
@@ -90,6 +92,7 @@ Message:  1041
 <ce>                     _safehouse_ who will help me
 <ce>                organize the conquest of Sentinel anew.
 <ce>                   Lead on, good %pcn, let us away!
+<ce>                   We have just =escapetime_ days to make the connection.
 
 Message:  1050
 <ce>                      Raise the alarm! _traitor_
@@ -151,29 +154,37 @@ Place _sentinel_ permanent SentinelCastle4
 Place _safehouse_ remote house4
 
 Clock _S.00_ 31.06:00 93.18:00
-Clock _executiondelay_ 30.00:00 0 flag 1 range 0 1
+Clock _firsttimer_ 7.00:00 14.00:00
+--varied timer, to prevent same number on all timers
+Clock _executiondelay_ 00:00 0 flag 17 range 0 2
 Clock _delay_ 01:00 0 flag 1 range 0 1
-Clock _escapetime_ 30.00:00 0 flag 1 range 0 1
+Clock _escapetime_ 00:00 0 flag 17 range 0 2
 
 Foe _guards_ is Spellsword
 Foe _F.01_ is Spellsword
 
 --	Quest start-up:
 	start timer _S.00_ 
+	have _letter_ set _goclock_
+
+_goclock_ task:
+	start timer _firsttimer_
 
 _S.00_ task:
 	_letter_ used do _readletter_ 
-	start timer _executiondelay_ 
 	give pc _letter_ notify 1070 
 	place foe _guards_ at _sentinel_ 
 	place npc _contact1_ at _tavern_ 
 	place npc _traitor_ at _sentinel_ 
 
 variable _executiondelay_
+variable _firsttimer_
 _S.02_ task:
 	clicked npc _contact1_ 
 	log 1021 step 1 
 	say 1040 
+	start timer _executiondelay_ 
+	stop timer _firsttimer_
 
 _S.03_ task:
 	clicked npc _traitor_ 
@@ -183,9 +194,9 @@ _S.03_ task:
 	hide npc _contact1_ 
 	say 1041 
 	add _traitor_ face 
-	change repute with _queen_ by -20 
-	create npc at _safehouse_ 
+	change repute with _queen_ by -20
 	place npc _contact2_ at _safehouse_ 
+	stop timer _executiondelay_
 
 _greklith_ task:
 	injured _guards_ 
@@ -207,6 +218,11 @@ _delay_ task:
 
 _S.08_ task:
 	when _executiondelay_ and not _S.03_ 
+	rumor mill 1060 
+	end quest 
+
+_S.08a_ task:
+	when _firsttimer_ and not _S.03_ 
 	rumor mill 1060 
 	end quest 
 

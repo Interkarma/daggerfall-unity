@@ -80,6 +80,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (!DaggerfallUnity.Settings.HeadBobbing ||
                 GameManager.Instance.PlayerEntity.CurrentHealth < 1 ||
+                GameManager.Instance.PlayerMouseLook.cursorActive ||
                 GameManager.IsGamePaused ||
                 climbingMotor.IsClimbing ||
 			    !playerMotor.IsGrounded)

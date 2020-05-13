@@ -51,6 +51,63 @@
                 "description": "Relative path from project root of an asset.",
                 "pattern": "^Assets/"
             }
+        },
+        "Contributes": {
+            "type": "object",
+            "description": "Contributes provided by a mod to be injected in game.",
+            "properties": {
+                "BooksMapping": {
+                    "type": "array",
+                    "description": "Look-up maps that announce additional books to be imported. See https://www.dfworkshop.net/projects/daggerfall-unity/modding/books/ for details.",
+                    "items": {
+                        "type": "string",
+                        "description": "The name of a book mapping file without extension."
+                    },
+                    "uniqueItems": true
+                },
+                "SpellIcons": {
+                    "type": "array",
+                    "description": "Names of spell icon packs. See https://www.dfworkshop.net/projects/daggerfall-unity/modding/additional-resources/#spell-icons for details.",
+                    "items": {
+                        "type": "string",
+                        "description": "The name of a Texture2D asset and a TextAsset with `.json` extension."
+                    },
+                    "uniqueItems": true
+                }
+            },
+            "additionalProperties": false
+        },
+        "Dependencies": {
+            "type": "array",
+            "description": "A list of mods that this mod depends on or is otherwise compatible with only if certain conditions are met.",
+            "items": {
+                "type": "object",
+                "description": "A set of rules that defines the limits within which a mod is required or otherwise compatible with another one.",
+                "properties": {
+                    "Name": {
+                        "type": "string",
+                        "description": "FileName of target mod (without .dfmod extension)."
+                    },
+                    "IsOptional": {
+                        "type": "boolean",
+                        "description": "If true, target mod doesn't need to be available, but must validate these criteria if it is.",
+                        "default": false
+                    },
+                    "IsPeer": {
+                        "type": "boolean",
+                        "description": "If true, target mod can be positioned anywhere in the load order, otherwise must be positioned above.",
+                        "default": false
+                    },
+                    "Version": {
+                        "type": "string",
+                        "description": "If not omitted this string is the minimum accepted version with format X.Y.Z. (without pre-release identifiers)."
+                    }
+                },
+                "required": [
+                    "Name"
+                ],
+                "additionalProperties": false
+            }
         }
     },
     "required": [
@@ -62,5 +119,5 @@
         "ModDescription",
         "GUID"
     ],
-    "additionalProperties": true
+    "additionalProperties": false
 }

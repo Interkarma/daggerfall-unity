@@ -44,6 +44,8 @@ namespace DaggerfallWorkshop.Game
         private const int MaxBowHeldDrawnSeconds = 10;
         private const float BowSwitchDivisor = 1.7f;
 
+        private const float resetJoystickSwingRadius = 0.4f;
+
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
         public float SphereCastRadius = 0.25f;      // Radius of SphereCast used to target attacks
@@ -60,6 +62,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
+        bool joystickSwungOnce = false;
         bool isClickAttack = false;
         bool isAttacking = false;
         bool isDamageFinished = false;
@@ -587,24 +590,8 @@ namespace DaggerfallWorkshop.Game
                     // Remove health
                     enemyEntity.DecreaseHealth(damage);
 
-                    // Make foe attack their aggressor
-                    // Currently this is just player, but should be expanded later
-                    // for a wider variety of behaviours
-                    if (enemyMotor)
-                    {
-                        // Make enemies in an area aggressive if player attacked a non-hostile one.
-                        if (!enemyMotor.IsHostile)
-                        {
-                            GameManager.Instance.MakeEnemiesHostile();
-                        }
-                        enemyMotor.MakeEnemyHostileToAttacker(GameManager.Instance.PlayerEntityBehaviour);
-                    }
-
-                    if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch && enemyEntity.CurrentHealth <= 0)
-                    {
-                        playerEntity.TallyCrimeGuildRequirements(false, 1);
-                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Murder;
-                    }
+                    // Handle attack from player
+                    enemyEntity.EntityBehaviour.HandleAttackFromSource(GameManager.Instance.PlayerEntityBehaviour);
 
                     // Allow custom race handling of weapon hit against enemies, e.g. vampire feeding or lycanthrope killing
                     RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
@@ -757,9 +744,27 @@ namespace DaggerfallWorkshop.Game
             // Track action for idle plus all eight mouse directions
             var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
 
-            // Short mouse gestures are ignored
-            if (_gesture.TravelDist/_longestDim < AttackThreshold)
+            if (InputManager.Instance.UsingController)
+            {
+                float x = InputManager.Instance.MouseX;
+                float y = InputManager.Instance.MouseY;
+
+                bool inResetJoystickSwingRadius = (x >= -resetJoystickSwingRadius && x <= resetJoystickSwingRadius && y >= -resetJoystickSwingRadius && y <= resetJoystickSwingRadius);
+
+                if (joystickSwungOnce || inResetJoystickSwingRadius)
+                {
+                    if (inResetJoystickSwingRadius)
+                        joystickSwungOnce = false;
+
+                    return MouseDirections.None;
+                }
+            }
+            else if (_gesture.TravelDist/_longestDim < AttackThreshold)
+            {
                 return MouseDirections.None;
+            }
+
+            joystickSwungOnce = true;
 
             // Treat mouse movement as a vector from the origin
             // The angle of the vector will be used to determine the angle of attack/swing

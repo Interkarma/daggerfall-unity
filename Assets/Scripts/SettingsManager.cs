@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop
         public int ResolutionWidth { get; set; }
         public int ResolutionHeight { get; set; }
         public int RetroRenderingMode { get; set; }
-        public bool UsePostProcessingInRetroMode { get; set; }
+        public int PostProcessingInRetroMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
         public bool VSync { get; set; }
         public int TargetFrameRate { get; set; }
@@ -141,6 +141,7 @@ namespace DaggerfallWorkshop
         public float WeaponAttackThreshold { get; set; }
         public float WeaponSensitivity { get; set; }
         public float MoveSpeedAcceleration { get; set; }
+        public bool ToggleSneak { get; set; }
         public bool ClickToAttack { get; set; }
         public int CameraRecoilStrength { get; set; }
         public float MusicVolume { get; set; }
@@ -206,7 +207,7 @@ namespace DaggerfallWorkshop
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
-            UsePostProcessingInRetroMode = GetBool(sectionVideo, "UsePostProcessingInRetroMode");
+            PostProcessingInRetroMode = GetInt(sectionVideo, "PostProcessingInRetroMode");
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             VSync = GetBool(sectionVideo, "VSync");
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
@@ -269,6 +270,7 @@ namespace DaggerfallWorkshop
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
             MoveSpeedAcceleration = GetFloat(sectionControls, "MoveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration);
+            ToggleSneak = GetBool(sectionControls, "ToggleSneak");
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
@@ -328,7 +330,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
-            SetBool(sectionVideo, "UsePostProcessingInRetroMode", UsePostProcessingInRetroMode);
+            SetInt(sectionVideo, "PostProcessingInRetroMode", PostProcessingInRetroMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetBool(sectionVideo, "VSync", VSync);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
@@ -392,6 +394,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
             SetFloat(sectionControls, "MoveSpeedAcceleration", MoveSpeedAcceleration);
+            SetBool(sectionControls, "ToggleSneak", ToggleSneak);
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);

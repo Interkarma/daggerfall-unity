@@ -125,3 +125,6 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
+  - first: {fileID: 4800000, guid: 3a75d81502a8b4b7fb733569265fee21, type: 3}
+    second:
+      variants: []

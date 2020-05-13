@@ -945,8 +945,11 @@ namespace DaggerfallWorkshop.Game
 
             EnableDungeonParent();
 
-            // Add quest resources - except foes, these are loaded from enemy save data
-            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Dungeon, dungeon.transform, 0, true, false, true);
+            // Add quest resources and selectively enable quest foes
+            //  -Entering a dungeon normally will add quest foes always
+            //  -Loading a game will not add quest foes as these are restored by save state
+            //  -Teleporting into a dungeon will add quest foes like going through entrance normally
+            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Dungeon, dungeon.transform, 0, true, importEnemies, true);
 
             // Set to start position
             MovePlayerToMarker(marker);

@@ -86,6 +86,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Special bundle flags to control additional runtime behaviours.
+    /// </summary>
+    [Flags]
+    public enum BundleRuntimeFlags
+    {
+        /// <summary>No flags.</summary>
+        None = 0,
+        /// <summary>If bundle is from a held magic item, it will be removed at recast time and recast callbacks executed on item.</summary>
+        ItemRecastEnabled = 1,
+    }
+
+    /// <summary>
     /// Determines how effect chance will function.
     /// OnCast: is checked at cast time by EntityEffectManager receiving effect - effect is rejected on failure.
     /// Custom: is always allowed by EntityEffectManager, but still generates ChanceSuccess flag on Start().
@@ -152,5 +164,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         Held = 16,          // Payload executed for duration item is equipped - i.e. effect bundle will be persistently attached to entity until unequipped
         Strikes = 32,       // Payload executed when a weapon item strikes another entity
         Breaks = 64,        // Payload executed when item breaks after durability reaches zero or less
+        MagicRound = 128,   // Payload executed once per magic round
+        RerollEffect = 256, // Payload executed when effects are recast on item
     }
 }

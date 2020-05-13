@@ -118,9 +118,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButton(quickSaveKeybindButton, InputManager.Actions.QuickSave, 20, 40);
             SetupKeybindButton(quickLoadKeybindButton, InputManager.Actions.QuickLoad, 115, 40);
 
-            mouseSensitivitySlider = CreateSlider("Mouse Sensitivity", 15, 80, 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            mouseSensitivitySlider = CreateSlider("Mouse Look Sensitivity", 15, 80, 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
 
-            weaponSensitivitySlider = CreateSlider("Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
+            weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
 
             moveSpeedAccelerationSlider = CreateSlider("Movement Acceleration", 215, 80, InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
 
@@ -130,7 +130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             clickToAttackCheckbox = AddOption(20, 120, "Click to Attack", DaggerfallUnity.Settings.ClickToAttack);
 
-            weaponAttackThresholdTextbox = AddTextbox("Weapon Attack Threshold", 115, 100, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
+            weaponAttackThresholdTextbox = AddTextbox("Mouse Weapon Attack Threshold", 115, 100, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
 
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;

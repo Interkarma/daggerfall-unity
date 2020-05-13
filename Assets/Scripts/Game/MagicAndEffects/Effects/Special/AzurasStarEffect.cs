@@ -28,10 +28,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ShowSpellIcon = false;
-            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Used;
+            properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held | EnchantmentPayloadFlags.Used;
         }
 
         #region Payloads
+
+        public override void ConstantEffect()
+        {
+            base.ConstantEffect();
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Set flag that Azura's Star is equipped and active
+            if (entityBehaviour.EntityType == EntityTypes.Player)
+            {
+                (entityBehaviour.Entity as PlayerEntity).IsAzurasStarEquipped = true;
+            }
+        }
 
         public override PayloadCallbackResults? EnchantmentPayloadCallback(EnchantmentPayloadFlags context, EnchantmentParam? param = null, DaggerfallEntityBehaviour sourceEntity = null, DaggerfallEntityBehaviour targetEntity = null, DaggerfallUnityItem sourceItem = null, int sourceDamage = 0)
         {

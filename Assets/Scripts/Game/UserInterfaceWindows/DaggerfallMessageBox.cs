@@ -31,7 +31,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel imagePanel = new Panel();
         Panel messagePanel = new Panel();
+        Panel scrollingPanel = new Panel();
         Panel buttonPanel = new Panel();
+        VerticalScrollBar scrollBar = new VerticalScrollBar();
         MultiFormatTextLabel label = new MultiFormatTextLabel();
         List<Button> buttons = new List<Button>();
         int buttonSpacing = 32;
@@ -213,6 +215,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.SetDaggerfallPopupStyle(DaggerfallUI.PopupStyle.Parchment, messagePanel);
             NativePanel.Components.Add(messagePanel);
 
+            scrollingPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            scrollingPanel.VerticalAlignment = VerticalAlignment.Top;
+            scrollingPanel.OnMouseScrollUp += ScrollingPanel_OnMouseScrollUp;
+            scrollingPanel.OnMouseScrollDown += ScrollingPanel_OnMouseScrollDown;
+            messagePanel.Components.Add(scrollingPanel);
+
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.VerticalAlignment = VerticalAlignment.Middle;
             messagePanel.Components.Add(label);
@@ -224,6 +232,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             imagePanel.HorizontalAlignment = HorizontalAlignment.Center;
             imagePanel.VerticalAlignment = VerticalAlignment.Top;
             messagePanel.Components.Add(imagePanel);
+
+            scrollBar.HorizontalAlignment = HorizontalAlignment.Right;
+            scrollBar.VerticalAlignment = VerticalAlignment.Top;
+            scrollBar.OnScroll += ScrollBar_OnScroll;
+            messagePanel.Components.Add(scrollBar);
 
             IsSetup = true;
         }
@@ -412,6 +425,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             label.HighlightColor = highlightColor;
         }
 
+        /// <summary>
+        /// Enables vertical scrolling of message panel.
+        /// Width is determined by widest text line as with non-scrolling message box.
+        /// Must call this before setting text.
+        /// </summary>
+        /// <param name="height">Capped height of visible area of message panel. Anything past this size will become scrollable.</param>
+        public void EnableVerticalScrolling(int height)
+        {
+            if (height > 0)
+            {
+                label.MaxTextHeight = height;
+                UpdatePanelSizes();
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -447,9 +475,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             buttonPanel.Size = finalSize;
 
             // Position buttons to be buttonTextDistance pixels below the repositioned text
+            // HACK: Lower vertical position if only a single button so that it aligns like two or more buttons
             if (buttons.Count > 0)
             {
                 float buttonY = messagePanel.Size.y - ((messagePanel.Size.y - label.Size.y) / 2) - buttonPanel.Size.y - messagePanel.BottomMargin;
+                if (buttons.Count == 1)
+                    buttonY += 11;
                 buttonPanel.Position = new Vector2(buttonPanel.Position.x, buttonY);
             }
 
@@ -473,6 +504,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 height = minimum;
 
             messagePanel.Size = new Vector2(width, height);
+
+            if (label.MaxTextHeight > 0 && label.ActualTextHeight > label.MaxTextHeight)
+            {
+                scrollingPanel.Size = new Vector2(label.Size.x, GetScrollingPanelHeight());
+                scrollBar.Enabled = true;
+                scrollBar.Size = new Vector2(8, GetScrollingPanelHeight());
+                scrollBar.TotalUnits = label.ActualTextHeight + 1;
+                scrollBar.DisplayUnits = GetScrollingPanelHeight();
+                StartClippingScrollingText();
+            }
+            else
+            {
+                scrollBar.Enabled = false;
+                StopClippingScrollingText();
+            }
+        }
+
+        void StartClippingScrollingText()
+        {
+            label.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.CustomParent;
+            label.RestrictedRenderAreaCustomParent = scrollingPanel;
+            label.UpdateRestrictedRenderArea();
+        }
+
+        void StopClippingScrollingText()
+        {
+            label.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.None;
+            label.RestrictedRenderAreaCustomParent = null;
+            label.UpdateRestrictedRenderArea();
+        }
+
+        int GetScrollingPanelHeight()
+        {
+            return label.MaxTextHeight + 9;
         }
 
         void SetupBox(TextFile.Token[] tokens, CommonMessageBoxButtons buttons, IMacroContextProvider mcp = null)
@@ -530,6 +595,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else if (clickAnywhereToClose)
                     CloseWindow();
             }
+        }
+
+        int lastScrollIndex = 0;
+        int currentScrollIndex = 0;
+        private void ScrollBar_OnScroll()
+        {
+            lastScrollIndex = currentScrollIndex;
+            currentScrollIndex = scrollBar.ScrollIndex;
+            label.ChangeScrollPosition(lastScrollIndex - currentScrollIndex);
+        }
+
+        private void ScrollingPanel_OnMouseScrollUp(BaseScreenComponent sender)
+        {
+            scrollBar.ScrollIndex -= 6;
+        }
+
+        private void ScrollingPanel_OnMouseScrollDown(BaseScreenComponent sender)
+        {
+            scrollBar.ScrollIndex += 6;
         }
 
         #endregion

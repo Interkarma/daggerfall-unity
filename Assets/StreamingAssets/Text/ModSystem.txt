@@ -61,8 +61,9 @@ presetDeleteInfo,           Delete selected presets.
 presetExportInfo,           Export selected preset to a file that can be shared.
 titleOrDescriptionMissing,  Title and Description are mandatory fields.
 
-dependencyErrorMessage,                 {0} has dependencies that are not satisfied: {1}. Please check the ReadMe provided by mod author for details.
+dependencyErrorMessage,                 One or more mods might not work correctly:
 dependencyIsMissing,                    Failed to retrieve mod {0}
 dependencyWithIncorrectPosition,        {0} must be positioned above in the load order
 dependencyWithIncompatibleVersion,      {0} has version {1} but {2} or higher is requested
 sortModsQuestion,                       Do you want to sort mods automatically?
+gameVersionUnsatisfied,                 Requires Daggerfall Unity v.{0} or higher

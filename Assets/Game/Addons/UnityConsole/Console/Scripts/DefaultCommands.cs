@@ -51,6 +51,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(EndDebugQuest.name, EndDebugQuest.description, EndDebugQuest.usage, EndDebugQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PurgeNonStoryQuests.name, PurgeNonStoryQuests.description, PurgeNonStoryQuests.usage, PurgeNonStoryQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ModNPCRep.name, ModNPCRep.description, ModNPCRep.usage, ModNPCRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetLevel.name, SetLevel.description, SetLevel.usage, SetLevel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Levitate.name, Levitate.description, Levitate.usage, Levitate.Execute);
@@ -1363,6 +1364,24 @@ namespace Wenzil.Console
                 int count = QuestMachine.Instance.PurgeAllQuests();
 
                 return string.Format("Removed {0} quests.", count);
+            }
+        }
+
+        private static class PurgeNonStoryQuests
+        {
+            public static readonly string name = "purgenonstoryquests";
+            public static readonly string error = "Could not find any quests.";
+            public static readonly string description = "Immediately tombstones all non-story quests then removes from quest machine. Does not issue rewards.";
+            public static readonly string usage = "purgenonmqquests";
+
+            public static string Execute(params string[] args)
+            {
+                if (QuestMachine.Instance.QuestCount == 0)
+                    return error;
+
+                int count = QuestMachine.Instance.PurgeAllQuests(true);
+
+                return string.Format("Removed {0} non-story quests.", count);
             }
         }
 

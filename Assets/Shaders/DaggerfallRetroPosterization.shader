@@ -1,4 +1,4 @@
-﻿Shader "Daggerfall/RetroPostprocessing"
+﻿Shader "Daggerfall/RetroPosterization"
 {
 	Properties
 	{
@@ -7,11 +7,16 @@
 	SubShader
 	{
 		// No culling or depth
-		Cull Off ZWrite Off ZTest Always
+		Lighting Off 
+        Cull Off
+        ZWrite Off
+        ZTest Always
+        Fog { Mode Off }
 
 		Pass
 		{
 			CGPROGRAM
+            
 			#pragma vertex vert
 			#pragma fragment frag
 			
